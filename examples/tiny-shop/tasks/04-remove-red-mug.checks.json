@@ -1,0 +1,34 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/remove-red-mug",
+  "version": "1",
+  "task": {
+    "instruction": "Remove the Red Mug from my cart, but keep everything else.",
+    "outcomes": "Then the cart no longer contains a Red Mug\nThen the other items stay in the cart"
+  },
+  "requirements": [
+    { "id": "R1", "kind": "hard", "text": "The cart no longer contains a Red Mug",
+      "source": { "field": "outcomes", "quote": "the cart no longer contains a Red Mug" } },
+    { "id": "R2", "kind": "hard", "text": "Everything else stays in the cart",
+      "source": { "field": "instruction", "quote": "keep everything else" } }
+  ],
+  "checks": [
+    { "id": "C1", "requirement": "R1",
+      "description": "The Cart table has no row for Red Mug.",
+      "assert": { "kind": "contains",
+        "scope": { "role": "table", "name": "Cart" },
+        "witness": { "role": "columnheader", "name": "Product" },
+        "match": { "role": "row", "name": { "contains": "Red Mug" } },
+        "count": { "eq": 0 } } },
+    { "id": "C2", "requirement": "R1",
+      "description": "The backend cart (probe 'cart') has no Red Mug line.",
+      "assert": { "kind": "value",
+        "source": { "from": "probe", "probe": "cart", "pointer": "/items" },
+        "expect": { "schema": { "type": "array", "not": { "contains": { "type": "object", "properties": { "name": { "const": "Red Mug" } }, "required": ["name"] } } } } } },
+    { "id": "C3", "requirement": "R2",
+      "description": "The backend cart still contains the Blue Mug that was there before.",
+      "assert": { "kind": "value",
+        "source": { "from": "probe", "probe": "cart", "pointer": "/items" },
+        "expect": { "schema": { "type": "array", "contains": { "type": "object", "properties": { "name": { "const": "Blue Mug" } }, "required": ["name"] } } } } }
+  ]
+}

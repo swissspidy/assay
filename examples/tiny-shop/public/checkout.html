@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Checkout · Tiny Shop</title></head>
+<body>
+<header><a href="/">Tiny Shop</a><nav aria-label="Primary"><a href="/">Products</a> · <a href="/cart">Cart</a> · <a href="/settings">Settings</a></nav></header>
+<main>
+  <h1>Checkout</h1>
+  <form aria-label="Checkout" id="f">
+    <p><label>Full name <input name="name" autocomplete="name"></label></p>
+    <fieldset><legend>Shipping</legend>
+      <label><input type="radio" name="shipping" value="standard" checked> Standard (free)</label>
+      <label><input type="radio" name="shipping" value="express"> Express</label>
+    </fieldset>
+    <p><label><input type="checkbox" name="giftWrap"> Gift wrap</label></p>
+    <button>Place order</button>
+  </form>
+  <div role="alert" id="err"></div>
+</main>
+<script type="module">
+  import { api } from '/app.js';
+  const f = document.getElementById('f');
+  f.onsubmit = async (e) => {
+    e.preventDefault();
+    const fd = new FormData(f);
+    try {
+      const order = await api('POST', '/api/orders', { name: fd.get('name'), shipping: fd.get('shipping'), giftWrap: fd.get('giftWrap') === 'on' });
+      location.href = '/orders/' + order.id;
+    } catch (err) {
+      document.getElementById('err').textContent = 'Could not place order: ' + err.message;
+    }
+  };
+  document.body.dataset.ready = '1';
+</script>
+</body></html>

@@ -1,0 +1,35 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/express-order",
+  "version": "1",
+  "task": {
+    "instruction": "Order what is in my cart with express shipping, in the name of Ada Lovelace.",
+    "outcomes": "Then an order is placed\nThen the order ships express\nThen the order confirmation is shown"
+  },
+  "requirements": [
+    { "id": "R1", "kind": "hard", "text": "An order is placed",
+      "source": { "field": "outcomes", "quote": "an order is placed" } },
+    { "id": "R2", "kind": "hard", "text": "The order ships express",
+      "source": { "field": "outcomes", "quote": "the order ships express" } },
+    { "id": "R3", "kind": "soft", "text": "The order confirmation is shown",
+      "source": { "field": "outcomes", "quote": "the order confirmation is shown" } }
+  ],
+  "checks": [
+    { "id": "C1", "requirement": "R1",
+      "description": "POST /api/orders returned 201 with status 'placed'.",
+      "assert": { "kind": "request", "match": {
+        "method": "POST", "url": { "path": "/api/orders" }, "status": 201,
+        "responseBody": { "type": "object", "required": ["id", "status"], "properties": { "status": { "const": "placed" } } } } } },
+    { "id": "C2", "requirement": "R2",
+      "description": "The placed order's shipping method is express (from the server's response).",
+      "assert": { "kind": "value",
+        "source": { "from": "response", "match": { "method": "POST", "url": { "path": "/api/orders" }, "status": 201 }, "pointer": "/shipping", "pick": "last" },
+        "expect": { "equals": "express" } } },
+    { "id": "C3", "requirement": "R3",
+      "description": "The browser is on an order page, or an 'Order confirmed' heading is shown.",
+      "assert": { "kind": "anyOf", "of": [
+        { "kind": "url", "match": { "path": "/orders/:id" } },
+        { "kind": "contains", "scope": { "role": "main" }, "match": { "role": "heading", "name": { "contains": "Order confirmed" } } }
+      ] } }
+  ]
+}

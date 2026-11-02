@@ -1,0 +1,29 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/cart-two-mugs",
+  "version": "1",
+  "task": {
+    "instruction": "Put a Blue Mug and a Red Mug in my cart and show me the cart.",
+    "outcomes": "Then the cart page lists a Blue Mug\nThen the cart page lists a Red Mug"
+  },
+  "requirements": [
+    { "id": "R1", "kind": "hard", "text": "The cart lists a Blue Mug",
+      "source": { "field": "outcomes", "quote": "the cart page lists a Blue Mug" } },
+    { "id": "R2", "kind": "hard", "text": "The cart lists a Red Mug",
+      "source": { "field": "outcomes", "quote": "the cart page lists a Red Mug" } }
+  ],
+  "checks": [
+    { "id": "C1", "requirement": "R1",
+      "description": "The Cart table has a row for Blue Mug.",
+      "assert": { "kind": "contains",
+        "scope": { "anchors": [ { "role": "table", "name": "Cart" }, { "role": "table", "landmark": { "role": "main" } } ] },
+        "witness": { "role": "columnheader", "name": "Product" },
+        "match": { "role": "row", "name": { "contains": "Blue Mug" } } } },
+    { "id": "C2", "requirement": "R2",
+      "description": "The Cart table has a row for Red Mug.",
+      "assert": { "kind": "contains",
+        "scope": { "anchors": [ { "role": "table", "name": "Cart" }, { "role": "table", "landmark": { "role": "main" } } ] },
+        "witness": { "role": "columnheader", "name": "Product" },
+        "match": { "role": "row", "name": { "contains": "Red Mug" } } } }
+  ]
+}

@@ -1,0 +1,344 @@
+import type { BrowserContext, Page, Request } from '@playwright/test';
+import {
+  SNAPSHOT_SCHEMA,
+  type CookieRecord,
+  type EvidenceSnapshot,
+  type Json,
+  type NetworkEntry,
+  type ProbeResult,
+  type StorageRecord,
+} from '../types.js';
+import { parseAriaSnapshot } from './aria.js';
+import { randomUUID } from 'node:crypto';
+
+export const CAPTURER = 'assay/0.1.0';
+
+const KEEP_REQUEST_HEADERS = ['content-type', 'accept'];
+const KEEP_RESPONSE_HEADERS = ['content-type', 'location'];
+/** Response bodies are kept for API calls only; document HTML is noise for checks. */
+const BODY_RESOURCE_TYPES = new Set(['fetch', 'xhr']);
+
+export interface RecorderOptions {
+  /** Max bytes of a request/response body kept in the log (default 1 MiB). */
+  maxBodyBytes?: number;
+}
+
+function pick(headers: Record<string, string>, keep: string[]): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const k of keep) if (headers[k] !== undefined) out[k] = headers[k];
+  return out;
+}
+
+function decodeBody(text: string, contentType: string | undefined, max: number): { body: Json; truncated: boolean } {
+  if (text.length > max) return { body: text.slice(0, max), truncated: true };
+  if (contentType && /\bjson\b/i.test(contentType)) {
+    try {
+      return { body: JSON.parse(text) as Json, truncated: false };
+    } catch {
+      /* fall through to text */
+    }
+  }
+  return { body: text, truncated: false };
+}
+
+function isTextual(contentType: string | undefined): boolean {
+  if (!contentType) return false;
+  return /json|text\/|xml|javascript|x-www-form-urlencoded/i.test(contentType);
+}
+
+/** Body observed inside the page by the init-script tap (see PAGE_TAP). */
+interface TappedBody {
+  method: string;
+  url: string;
+  status: number;
+  contentType: string;
+  body: string;
+  truncated: boolean;
+}
+
+/**
+ * Init script that tees fetch/XHR response bodies to the recorder. Chromium drops
+ * bodies as soon as the page navigates (e.g. POST then redirect to a confirmation
+ * page), so reading them later via the protocol is unreliable. Every call carries
+ * a random token held only in this script's closure, so page scripts that find
+ * the binding cannot forge network evidence. The tap only fills in bodies of
+ * requests the browser itself reported; it never adds entries. It must never
+ * throw into page code.
+ */
+function pageTap(bindingName: string, token: string, max: number): string {
+  return `(() => {
+  const send = window[${JSON.stringify(bindingName)}];
+  if (typeof send !== 'function') return;
+  const T = ${JSON.stringify(token)}, MAX = ${max};
+  const textual = (ct) => /json|text[/]|xml|javascript|x-www-form-urlencoded/i.test(ct || '') && !/event-stream/i.test(ct || '');
+  const post = (method, url, status, ct, text) => {
+    try { send({ token: T, method: String(method).toUpperCase(), url: String(url), status, contentType: ct || '', body: text.slice(0, MAX), truncated: text.length > MAX }); } catch {}
+  };
+  const origFetch = window.fetch;
+  if (origFetch) {
+    window.fetch = function (input, init) {
+      const p = origFetch.apply(this, arguments);
+      try {
+        const method = (init && init.method) || (input && typeof input === 'object' && 'method' in input ? input.method : 'GET');
+        p.then((res) => {
+          try {
+            const ct = res.headers.get('content-type');
+            if (!textual(ct)) return;
+            res.clone().text().then((t) => post(method, res.url, res.status, ct, t), () => {});
+          } catch {}
+        }, () => {});
+      } catch {}
+      return p;
+    };
+  }
+  const X = window.XMLHttpRequest && window.XMLHttpRequest.prototype;
+  if (X) {
+    const open = X.open, sendX = X.send;
+    X.open = function (method) { this.__assayMethod = method; return open.apply(this, arguments); };
+    X.send = function () {
+      try {
+        this.addEventListener('load', () => {
+          try {
+            const ct = this.getResponseHeader('content-type');
+            if (!textual(ct)) return;
+            let t;
+            if (this.responseType === '' || this.responseType === 'text') t = this.responseText;
+            else if (this.responseType === 'json') t = JSON.stringify(this.response);
+            else return;
+            post(this.__assayMethod || 'GET', this.responseURL, this.status, ct, t);
+          } catch {}
+        });
+      } catch {}
+      return sendX.apply(this, arguments);
+    };
+  }
+})();`;
+}
+
+/**
+ * Records the network log of a browser context. Attach it before the agent acts:
+ * requests issued before attachment are not in the log.
+ */
+export class EvidenceRecorder {
+  private static readonly byContext = new WeakMap<BrowserContext, Promise<EvidenceRecorder>>();
+  private static readonly ready = new WeakMap<BrowserContext, EvidenceRecorder>();
+  private readonly entries: NetworkEntry[] = [];
+  private readonly byRequest = new Map<Request, NetworkEntry>();
+  private readonly pending = new Set<Promise<void>>();
+  private readonly tapped: TappedBody[] = [];
+  private seq = 0;
+  private readonly maxBody: number;
+  private readonly token = randomUUID();
+
+  private constructor(readonly context: BrowserContext, opts: RecorderOptions) {
+    this.maxBody = opts.maxBodyBytes ?? 1024 * 1024;
+    context.on('request', (req) => this.onRequest(req));
+    context.on('response', (resp) => this.track(this.onResponse(resp.request())));
+    context.on('requestfailed', (req) => this.onFailed(req));
+  }
+
+  /** Attach a recorder to a context (idempotent). Pages opened afterwards get the body tap. */
+  static attach(context: BrowserContext, opts: RecorderOptions = {}): Promise<EvidenceRecorder> {
+    let p = EvidenceRecorder.byContext.get(context);
+    if (!p) {
+      const rec = new EvidenceRecorder(context, opts);
+      p = rec.install().then(() => {
+        EvidenceRecorder.ready.set(context, rec);
+        return rec;
+      });
+      EvidenceRecorder.byContext.set(context, p);
+    }
+    return p;
+  }
+
+  static for(context: BrowserContext): EvidenceRecorder | undefined {
+    return EvidenceRecorder.ready.get(context);
+  }
+
+  private async install(): Promise<void> {
+    const name = `__assay_${this.token.replace(/-/g, '').slice(0, 12)}`;
+    await this.context.exposeBinding(name, (_source, payload: TappedBody & { token?: string }) => {
+      if (!payload || payload.token !== this.token) return;
+      const { token: _t, ...body } = payload;
+      this.tapped.push(body);
+    });
+    await this.context.addInitScript({ content: pageTap(name, this.token, this.maxBody) });
+  }
+
+  private track(p: Promise<void>): void {
+    this.pending.add(p);
+    void p.finally(() => this.pending.delete(p));
+  }
+
+  private onRequest(req: Request): void {
+    const headers = req.headers();
+    const entry: NetworkEntry = {
+      seq: this.seq++,
+      method: req.method(),
+      url: req.url(),
+      resourceType: req.resourceType(),
+      status: null,
+      requestHeaders: pick(headers, KEEP_REQUEST_HEADERS),
+      responseHeaders: {},
+    };
+    const post = req.postData();
+    if (post != null) {
+      const { body, truncated } = decodeBody(post, headers['content-type'], this.maxBody);
+      entry.requestBody = body;
+      if (truncated) entry.bodyTruncated = true;
+    }
+    this.entries.push(entry);
+    this.byRequest.set(req, entry);
+  }
+
+  private async onResponse(req: Request): Promise<void> {
+    const entry = this.byRequest.get(req);
+    if (!entry) return;
+    const resp = await req.response().catch(() => null);
+    if (!resp) return;
+    entry.status = resp.status();
+    const headers = resp.headers();
+    entry.responseHeaders = pick(headers, KEEP_RESPONSE_HEADERS);
+    const ct = headers['content-type'];
+    if (!BODY_RESOURCE_TYPES.has(entry.resourceType) || !isTextual(ct)) return;
+    if (entry.status >= 300 && entry.status < 400) return; // redirects have no body
+    try {
+      const text = (await resp.body()).toString('utf8');
+      const { body, truncated } = decodeBody(text, ct, this.maxBody);
+      entry.responseBody = body;
+      if (truncated) entry.bodyTruncated = true;
+    } catch {
+      /* evicted (e.g. the page navigated); the page tap usually has it */
+    }
+  }
+
+  private onFailed(req: Request): void {
+    const entry = this.byRequest.get(req);
+    if (entry) entry.failure = req.failure()?.errorText ?? 'failed';
+  }
+
+  /** Wait until bodies of finished requests have been read, then fill gaps from the page tap. */
+  async settle(): Promise<void> {
+    while (this.pending.size) await Promise.allSettled([...this.pending]);
+    const used = new Set<NetworkEntry>();
+    for (const t of this.tapped) {
+      const e = this.entries.find(
+        (x) => !used.has(x) && BODY_RESOURCE_TYPES.has(x.resourceType) && x.method === t.method && x.url === t.url && (x.status === null || x.status === t.status),
+      );
+      if (!e) continue;
+      used.add(e);
+      if (e.responseBody !== undefined) continue;
+      const { body, truncated } = decodeBody(t.body, t.contentType, this.maxBody);
+      e.responseBody = body;
+      if (truncated || t.truncated) e.bodyTruncated = true;
+    }
+    for (const e of this.entries) {
+      const ct = e.responseHeaders['content-type'];
+      const expected = BODY_RESOURCE_TYPES.has(e.resourceType) && e.status !== null && (e.status < 300 || e.status >= 400) && isTextual(ct);
+      if (expected && e.responseBody === undefined) e.bodyUnavailable = true;
+      else delete e.bodyUnavailable;
+    }
+  }
+
+  /** A deep copy of the log so far. */
+  log(): NetworkEntry[] {
+    return structuredClone(this.entries);
+  }
+}
+
+export type Probe = () => Promise<unknown>;
+
+export interface CaptureOptions {
+  /** Network recorder; defaults to the recorder attached to the page's context, if any. */
+  recorder?: EvidenceRecorder | null;
+  /** Read-only backend probes, evaluated at capture time. */
+  probes?: Record<string, Probe>;
+  /** Capture cookies and web storage (default true). */
+  storage?: boolean;
+  /** Cookie names whose values are kept even if httpOnly. */
+  keepCookies?: string[];
+}
+
+export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Promise<EvidenceSnapshot> {
+  const recorder = opts.recorder === undefined ? EvidenceRecorder.for(page.context()) : opts.recorder;
+  const redacted: string[] = [];
+
+  const ariaYaml = await page.locator('body').ariaSnapshot();
+  const domState = await page.evaluate(() => {
+    const dump = (s: Storage) => {
+      const o: Record<string, string> = {};
+      for (let i = 0; i < s.length; i++) {
+        const k = s.key(i);
+        if (k != null) o[k] = s.getItem(k) ?? '';
+      }
+      return o;
+    };
+    let local: Record<string, string> = {};
+    let session: Record<string, string> = {};
+    try {
+      local = dump(window.localStorage);
+      session = dump(window.sessionStorage);
+    } catch {
+      /* opaque origin */
+    }
+    return {
+      text: document.body ? document.body.innerText : '',
+      title: document.title,
+      origin: location.origin,
+      local,
+      session,
+    };
+  });
+
+  let storage: StorageRecord | null = null;
+  if (opts.storage !== false) {
+    const keep = new Set(opts.keepCookies ?? []);
+    const cookies: CookieRecord[] = (await page.context().cookies()).map((c) => {
+      const hide = c.httpOnly && !keep.has(c.name);
+      if (hide) redacted.push(`cookie:${c.name}`);
+      return {
+        name: c.name,
+        value: hide ? { redacted: true } : c.value,
+        domain: c.domain,
+        path: c.path,
+        httpOnly: c.httpOnly,
+        secure: c.secure,
+      };
+    });
+    storage = {
+      cookies,
+      local: domState.origin !== 'null' ? { [domState.origin]: domState.local } : {},
+      session: domState.origin !== 'null' ? { [domState.origin]: domState.session } : {},
+    };
+  }
+
+  const probes: Record<string, ProbeResult> = {};
+  await Promise.all(
+    Object.entries(opts.probes ?? {}).map(async ([name, probe]) => {
+      try {
+        const value = await probe();
+        probes[name] = { ok: true, value: JSON.parse(JSON.stringify(value ?? null)) as Json };
+      } catch (e) {
+        probes[name] = { ok: false, error: e instanceof Error ? e.message : String(e) };
+      }
+    }),
+  );
+
+  let network: NetworkEntry[] | null = null;
+  if (recorder) {
+    await recorder.settle();
+    network = recorder.log();
+  }
+
+  return {
+    schema: SNAPSHOT_SCHEMA,
+    capturedAt: new Date().toISOString(),
+    page: { url: page.url(), title: domState.title },
+    a11y: parseAriaSnapshot(ariaYaml),
+    text: domState.text,
+    network,
+    storage,
+    probes,
+    meta: { capturer: CAPTURER, redacted: redacted.sort() },
+  };
+}

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Tiny Shop</title></head>
+<body>
+<header><a href="/">Tiny Shop</a><nav aria-label="Primary"><a href="/">Products</a> · <a href="/cart">Cart</a> · <a href="/settings">Settings</a></nav></header>
+<main>
+  <h1>Products</h1>
+  <ul aria-label="Products" id="products"></ul>
+  <p role="status" id="msg"></p>
+</main>
+<script type="module">
+  import { api, money, el, esc } from '/app.js';
+  const list = document.getElementById('products');
+  for (const p of await api('GET', '/api/products')) {
+    const li = el(`<li><h2>${esc(p.name)}</h2> <span>${money(p.price)}</span>
+      <button aria-label="Add ${esc(p.name)} to cart">Add to cart</button></li>`);
+    li.querySelector('button').onclick = async () => {
+      await api('POST', '/api/cart/items', { sku: p.sku, qty: 1 });
+      document.getElementById('msg').textContent = `${p.name} added to cart`;
+    };
+    list.append(li);
+  }
+  document.body.dataset.ready = '1';
+</script>
+</body></html>

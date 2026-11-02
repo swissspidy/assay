@@ -1,0 +1,25 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/gift-wrap",
+  "version": "1",
+  "task": {
+    "instruction": "Check out my cart as a gift: it must be gift wrapped.",
+    "outcomes": "Then the order is gift wrapped"
+  },
+  "requirements": [
+    { "id": "R1", "kind": "hard", "text": "The order is gift wrapped",
+      "source": { "field": "outcomes", "quote": "the order is gift wrapped" } }
+  ],
+  "checks": [
+    { "id": "C1", "requirement": "R1",
+      "description": "The browser submitted an order with giftWrap = true and the server accepted it.",
+      "assert": { "kind": "request", "match": {
+        "method": "POST", "url": { "path": "/api/orders" }, "status": 201,
+        "requestBody": { "type": "object", "required": ["giftWrap"], "properties": { "giftWrap": { "const": true } } } } } },
+    { "id": "C2", "requirement": "R1",
+      "description": "The backend's latest order (probe 'latestOrder') is gift wrapped.",
+      "assert": { "kind": "value",
+        "source": { "from": "probe", "probe": "latestOrder", "pointer": "/giftWrap" },
+        "expect": { "equals": true } } }
+  ]
+}

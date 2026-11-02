@@ -1,0 +1,24 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/cart-total",
+  "version": "1",
+  "task": {
+    "instruction": "Add one Blue Mug and one Red Mug to my cart and open the cart.",
+    "outcomes": "Then the cart total is $21.50"
+  },
+  "requirements": [
+    { "id": "R1", "kind": "hard", "text": "The cart total is $21.50",
+      "source": { "field": "outcomes", "quote": "the cart total is $21.50" } }
+  ],
+  "checks": [
+    { "id": "C1", "requirement": "R1",
+      "description": "The 'Cart total' output shows US$21.50 (to the cent).",
+      "assert": { "kind": "value",
+        "source": { "from": "node", "field": "text", "target": { "anchors": [
+          { "role": "status", "name": "Cart total" },
+          { "role": "status", "landmark": { "role": "region", "name": "Cart summary" } }
+        ] } },
+        "normalize": [ { "op": "currency", "locale": "en-US", "currency": "USD" } ],
+        "expect": { "approx": { "value": { "amount": 21.5, "currency": "USD" }, "abs": 0.005 } } } }
+  ]
+}

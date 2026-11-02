@@ -1,0 +1,25 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/dark-german",
+  "version": "1",
+  "task": {
+    "instruction": "Switch Tiny Shop to the dark theme and to German.",
+    "outcomes": "Then the theme preference is dark\nThen the language preference is German"
+  },
+  "requirements": [
+    { "id": "R1", "kind": "hard", "text": "Theme is dark",
+      "source": { "field": "instruction", "quote": "the dark theme" } },
+    { "id": "R2", "kind": "hard", "text": "Language is German",
+      "source": { "field": "instruction", "quote": "to German" } }
+  ],
+  "checks": [
+    { "id": "C1", "requirement": "R1",
+      "description": "localStorage 'theme' is 'dark'.",
+      "assert": { "kind": "value", "source": { "from": "storage", "area": "local", "key": "theme" },
+        "normalize": ["trim", "lowercase"], "expect": { "equals": "dark" } } },
+    { "id": "C2", "requirement": "R2",
+      "description": "The 'lang' cookie is 'de'.",
+      "assert": { "kind": "value", "source": { "from": "storage", "area": "cookie", "key": "lang" },
+        "normalize": ["trim", "lowercase"], "expect": { "oneOf": ["de", "de-de"] } } }
+  ]
+}
