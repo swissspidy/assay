@@ -453,4 +453,19 @@ test.describe('check set validation', () => {
     cs.checks[0]!.assert = { kind: 'contains', match: { role: 'status' } };
     expect(validateCheckSet(cs).warnings.join()).toContain('without a scope');
   });
+  test('warns when an accessible-text regex expects a tab (tabs are normalized to spaces)', () => {
+    const cs = base();
+    for (const regex of ['Qty\\t(\\d+)', 'Qty\t(\\d+)']) {
+      cs.checks[0]!.assert = {
+        kind: 'value',
+        source: { from: 'node', target: { role: 'row' }, field: 'text' },
+        normalize: [
+          { op: 'extract', regex },
+          { op: 'number', locale: 'en-US' },
+        ],
+        expect: { equals: 3 },
+      };
+      expect(validateCheckSet(cs).warnings.join()).toContain('whitespace-normalized');
+    }
+  });
 });

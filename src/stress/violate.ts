@@ -204,8 +204,11 @@ export function renderLike(
     }
     const m = NUMBER_IN_TEXT.exec(span);
     if (!m) return undefined;
-    const sign = amount < 0 && !span.includes('-') && !span.includes('−') ? '-' : '';
-    return span.slice(0, m.index) + sign + formatLike(m[0], amount, loc) + span.slice(m.index + m[0].length);
+    let prefix = span.slice(0, m.index);
+    let sign = '';
+    if (amount < 0) sign = !span.includes('-') && !span.includes('−') ? '-' : '';
+    else prefix = prefix.replace(/[-−](?=[^-−]*$)/u, ''); // a non-negative value drops the source's minus
+    return prefix + sign + formatLike(m[0], amount, loc) + span.slice(m.index + m[0].length);
   }
   if (next.type === 'date' && prev.type === 'date') return dateLike(span, prev.value, next.value, loc);
   if (next.type === 'boolean') {

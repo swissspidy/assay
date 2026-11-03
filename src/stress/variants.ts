@@ -210,6 +210,8 @@ function extraStorage(s: EvidenceSnapshot): EvidenceSnapshot | null {
     return null;
   }
   const st = s.storage;
+  // Overwriting a key the task itself stores would not be an unrelated change.
+  if (st.local[u.origin]?.consent !== undefined || st.session[u.origin]?.scrollY !== undefined) return null;
   return {
     ...s,
     storage: {

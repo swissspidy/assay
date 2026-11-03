@@ -14,6 +14,9 @@ import {
   type AXNode,
 } from '../src/index.ts';
 import { schemaViolations } from '../src/stress/mutants.ts';
+import { nearMiss } from '../src/stress/edit.ts';
+import type { NetworkEntry } from '../src/types.ts';
+import { renderLike } from '../src/stress/violate.ts';
 import { TASKS } from '../examples/tiny-shop/scenarios.ts';
 
 const root = new URL('../examples/tiny-shop/', import.meta.url);
@@ -44,8 +47,7 @@ test.describe('handwritten check sets survive stress testing', () => {
 test('generation is deterministic', () => {
   const cs = checks('06-cart-total');
   const [ref] = successRefs('06-cart-total');
-  const ids = (xs: { id: string; snapshot: unknown }[]) =>
-    xs.map((x) => `${x.id}:${JSON.stringify(x.snapshot).length}`);
+  const ids = (xs: { id: string; snapshot: unknown }[]) => xs.map((x) => `${x.id}:${JSON.stringify(x.snapshot)}`);
   expect(ids(generateVariants(cs, ref!.snapshot))).toEqual(ids(generateVariants(cs, ref!.snapshot)));
   expect(ids(generateMutants(cs, ref!.snapshot))).toEqual(ids(generateMutants(cs, ref!.snapshot)));
 });
@@ -326,4 +328,158 @@ test('accounting: success-claim copies are separate; checks already failing on t
   const res = run(cs, snap([{ role: 'paragraph', name: 'p' }]));
   expect(res.overConstrained).toEqual([]);
   expect(res.fragile).toEqual([]);
+});
+
+// ---------------------------------------------------------------------------
+// CodeRabbit review (milestone 3)
+// ---------------------------------------------------------------------------
+
+test('a calendar-invalid date-like string gets a string near miss instead of throwing', () => {
+  expect(nearMiss('2026-99-99')).toBe('2026-99-9x');
+  const r = run(
+    one({ kind: 'value', source: { from: 'probe', probe: 'p' }, expect: { equals: '2026-99-99' } }),
+    snap([], { probes: { p: { ok: true, value: '2026-99-99' } } }),
+  );
+  expect(r.untested).toEqual([]);
+  expect(r.weak).toEqual([]);
+});
+
+test('scoped text sources are mutated in the scoped subtree the evaluator reads', () => {
+  const s = snap(
+    [
+      { role: 'region', name: 'Summary', children: [{ role: 'text', name: 'Total: $5.00' }] },
+      { role: 'region', name: 'Order', children: [{ role: 'text', name: 'Total: $12.00' }] },
+    ],
+    { text: 'Total: $5.00\nTotal: $12.00' },
+  );
+  const r = run(
+    one({
+      kind: 'value',
+      source: { from: 'text', scope: { role: 'region', name: 'Order' }, pattern: 'Total: (\\S+)' },
+      normalize: [{ op: 'currency', locale: 'en-US', currency: 'USD' }],
+      expect: { equals: { amount: 12, currency: 'USD' } },
+    }),
+    s,
+  );
+  expect(r.weak, formatStressReport(r)).toEqual([]);
+  expect(r.rates.mutantsTotal).toBeGreaterThan(0);
+  expect(r.rates.mutantsRejected).toBe(r.rates.mutantsTotal);
+});
+
+const post = (seq: number, status = 201): NetworkEntry => ({
+  seq,
+  method: 'POST',
+  url: 'https://shop.test/api/orders',
+  resourceType: 'fetch',
+  status,
+  requestHeaders: {},
+  responseHeaders: {},
+});
+
+test('a synthesized forbidden request satisfies the status matcher', () => {
+  const forbidden = run(
+    one({
+      kind: 'request',
+      match: { method: 'POST', url: { path: '/api/orders' }, status: { gt: 200 } },
+      count: { eq: 0 },
+    }),
+    snap([]),
+  );
+  expect(forbidden.missed, formatStressReport(forbidden)).toEqual([]);
+  expect(forbidden.untested).toEqual([]);
+});
+
+test('request:extra adds enough requests to exceed the upper bound', () => {
+  const atMostTwo = run(
+    one({ kind: 'request', match: { method: 'POST', url: { path: '/api/orders' } }, count: { lte: 2 } }),
+    snap([], { network: [post(0)] }),
+  );
+  expect(atMostTwo.missed, formatStressReport(atMostTwo)).toEqual([]);
+  expect(atMostTwo.mutants.some((m) => m.id === 'C1:request:extra' && m.rejected)).toBe(true);
+});
+
+test('with only an upper bound, removing or failing the request is not a mutant', () => {
+  const atMostOne = run(
+    one({ kind: 'request', match: { method: 'POST', url: { path: '/api/orders' } }, count: { lte: 1 } }),
+    snap([], { network: [post(0)] }),
+  );
+  expect(atMostOne.missed, formatStressReport(atMostOne)).toEqual([]);
+  expect(atMostOne.weak).toEqual([]);
+});
+
+test('contains:extra keeps the within ancestor of the match', () => {
+  const r = run(
+    one({
+      kind: 'contains',
+      scope: { role: 'table', name: 'Cart' },
+      match: { role: 'cell', name: 'Gift wrap', within: { role: 'row', name: 'Blue Mug' } },
+      count: { lte: 1 },
+    }),
+    snap([
+      {
+        role: 'table',
+        name: 'Cart',
+        children: [{ role: 'row', name: 'Blue Mug', children: [{ role: 'cell', name: 'Gift wrap' }] }],
+      },
+    ]),
+  );
+  expect(r.weak, formatStressReport(r)).toEqual([]);
+  expect(r.mutants.some((m) => m.id === 'C1:contains:extra' && m.rejected)).toBe(true);
+});
+
+test('url:elsewhere moves the browser even when the page is at /elsewhere', () => {
+  const r = run(
+    one({ kind: 'url', match: { path: '/elsewhere' } }),
+    snap([], { page: { url: 'https://shop.test/elsewhere', title: '' } }),
+  );
+  expect(r.missed, formatStressReport(r)).toEqual([]);
+  expect(r.untested).toEqual([]);
+});
+
+test('anyOf:all is emitted only when every alternative stays broken', () => {
+  const r = run(
+    one({
+      kind: 'anyOf',
+      of: [
+        { kind: 'value', source: { from: 'probe', probe: 'p' }, expect: { gte: 0 } },
+        { kind: 'value', source: { from: 'probe', probe: 'p' }, expect: { lte: 10 } },
+      ],
+    }),
+    snap([], { probes: { p: { ok: true, value: 5 } } }),
+  );
+  // gte 0 or lte 10 holds for every number: nothing can break it, so no false "weak".
+  expect(r.weak, formatStressReport(r)).toEqual([]);
+  expect(r.missed).toEqual([]);
+});
+
+test('enum violations are found past five near-miss steps', () => {
+  expect(schemaViolations({ enum: [0, 1, 2, 3, 4, 5] }, 0)).toEqual([
+    { what: 'value outside the allowed set', value: 6 },
+  ]);
+});
+
+test('extra-storage does not overwrite keys the reference already stores', () => {
+  const r = run(
+    one({ kind: 'value', source: { from: 'storage', area: 'local', key: 'consent' }, expect: { equals: 'denied' } }),
+    snap([], {
+      storage: { cookies: [], local: { 'https://shop.test': { consent: 'denied' } }, session: {} },
+    }),
+  );
+  expect(r.overConstrained, formatStressReport(r)).toEqual([]);
+});
+
+test('a positive replacement of a negative amount drops the minus sign', () => {
+  const usd = (amount: number) => ({ type: 'money' as const, value: { amount, currency: 'USD' } });
+  expect(renderLike('-$5.00', usd(-5), usd(1), 'en-US')).toBe('$1.00');
+  const r = run(
+    one({
+      kind: 'value',
+      source: { from: 'node', target: { role: 'status', name: 'Refund' }, field: 'text' },
+      normalize: [{ op: 'currency', locale: 'en-US', currency: 'USD' }],
+      expect: { lte: 0 },
+    }),
+    snap([{ role: 'status', name: 'Refund', children: [{ role: 'text', name: '-$5.00' }] }]),
+  );
+  expect(r.untested).toEqual([]);
+  expect(r.mutants.some((m) => m.description.includes('"$1.00"') && m.rejected)).toBe(true);
 });

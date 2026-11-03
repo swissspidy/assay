@@ -27,7 +27,8 @@ export function exampleOf(schema: unknown): Json | undefined {
 function outside(set: Json[], current: Json): Json | undefined {
   const inSet = (x: Json) => set.some((s) => JSON.stringify(s) === JSON.stringify(x));
   let v: Json | undefined = current;
-  for (let i = 0; i < 5 && v !== undefined; i++) {
+  // One more step than the set has members, so integer near misses always leave it.
+  for (let i = 0; i < Math.max(5, set.length + 1) && v !== undefined; i++) {
     v = nearMiss(v);
     if (v !== undefined && !inSet(v)) return v;
   }

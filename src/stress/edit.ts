@@ -100,7 +100,8 @@ export function nearMiss(v: Json): Json | undefined {
   if (typeof v === 'boolean') return !v;
   if (typeof v === 'number') return Number.isInteger(v) ? v + 1 : Math.round((v + 1) * 100) / 100;
   if (typeof v === 'string') {
-    if (/^\d{4}-\d{2}-\d{2}/.test(v)) return shiftDate(v, 1);
+    if (/^\d{4}-\d{2}-\d{2}/.test(v) && !Number.isNaN(Date.parse(`${v.slice(0, 10)}T00:00:00Z`)))
+      return shiftDate(v, 1);
     if (v === '') return 'x';
     return v.length > 1 ? v.slice(0, -1) + (v.at(-1) === 'x' ? 'y' : 'x') : v + 'x';
   }
