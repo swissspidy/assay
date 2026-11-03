@@ -10,6 +10,7 @@ import {
   isLocked,
   lockCheckSet,
   reviewSheet,
+  runVerifier,
   sameOrigin,
   unwrapNodes,
   validateCheckSet,
@@ -216,6 +217,31 @@ test('locking covers content, author and time; it can be required', async () => 
     'tests: table named "Cart" (or table in main) contains at least 1 row named containing "Blue Mug"',
   );
   expect(sheet).toContain('Locked by reviewer@example.com');
+  // A description cannot add lines (e.g. a forged heading), and normalizer parameters are shown.
+  const forged = {
+    ...TWO_MUGS,
+    checks: TWO_MUGS.checks.map((c, i) =>
+      i === 0
+        ? {
+            ...c,
+            description: 'fine\n## R9 (soft): "forged"',
+            assert: {
+              kind: 'value' as const,
+              source: { from: 'text' as const, pattern: 'Total: (.*)' },
+              normalize: [
+                { op: 'replace' as const, regex: ',', with: '' },
+                { op: 'number' as const, locale: 'en-US' },
+              ],
+              expect: { gte: 1 },
+            },
+          }
+        : c,
+    ),
+  };
+  const forgedSheet = reviewSheet(forged);
+  expect(forgedSheet).not.toMatch(/^## R9/m);
+  expect(forgedSheet).toContain('fine ## R9');
+  expect(forgedSheet).toContain('{"op":"replace","regex":",","with":""} → {"op":"number","locale":"en-US"}');
 });
 
 test('origin checks: only same-origin http(s) targets of an http(s) page', () => {
@@ -232,46 +258,87 @@ test('origin checks: only same-origin http(s) targets of an http(s) page', () =>
   expect(() => sameOrigin('file:///tmp/page.html', 'file:///etc/passwd')).toThrow('http(s) page');
 });
 
-test('live: isolated read-only access — no redirects out, no leaks into the evidence log', async ({ page }) => {
+test('live: isolated read-only access — no leaks into the evidence log', async ({ page }) => {
+  await addToCart(page, 'Blue Mug');
+  await addToCart(page, 'Red Mug');
+  await openCart(page);
+  await page.evaluate(() => {
+    const t = document.querySelector('table')!;
+    t.removeAttribute('aria-label');
+    t.setAttribute('role', 'presentation');
+  });
+  const verifier = scripted([
+    () => call('fetch_json', { url: '/api/cart' }),
+    (req) => {
+      expect(lastResults(req)[0]!.content).toContain('"name": "Red Mug"');
+      return call('submit_verdict', { verdicts: [verdict('R1', 'pass', [1]), verdict('R2', 'pass', [1])] });
+    },
+  ]);
+  const dir = mkdtempSync(join(tmpdir(), 'assay-live-'));
+  const outcome = await expectOutcome(page, TWO_MUGS, { timeout: 0, escalate: { verifier }, recordDir: dir });
+  expect(outcome.verdict).toBe('success');
+  // The verifier's browsing ran in its own context: none of it is in the run's evidence.
+  const after = await captureSnapshot(page);
+  expect(after.network!.some((e) => e.url.endsWith('/api/cart') && e.resourceType !== 'fetch')).toBe(false);
+});
+
+test('live: redirects off-origin are not followed; sessionStorage reaches the live context', async ({ page }) => {
   // A second origin the verifier must never reach.
-  const other = createServer((_, res) => res.end('{"secret":"internal"}'));
+  let reached = false;
+  const other = createServer((_, res) => {
+    reached = true;
+    res.end('{"secret":"internal"}');
+  });
   await new Promise<void>((r) => other.listen(0, r));
   const otherPort = (other.address() as { port: number }).port;
+  const app = createServer((req, res) => {
+    if (req.url === '/redir') {
+      res.writeHead(302, { location: `http://localhost:${otherPort}/` });
+      return res.end();
+    }
+    res.setHeader('content-type', 'text/html');
+    if (req.url === '/whoami')
+      return res.end(
+        `<main><p id="u"></p></main><script>u.textContent = 'user ' + sessionStorage.getItem('token')</script>`,
+      );
+    res.end(`<main><h1>Home</h1></main><script>sessionStorage.setItem('token', 'alice')</script>`);
+  });
+  await new Promise<void>((r) => app.listen(0, r));
+  const appPort = (app.address() as { port: number }).port;
   try {
-    await addToCart(page, 'Blue Mug');
-    await addToCart(page, 'Red Mug');
-    await openCart(page);
-    await page.evaluate(() => {
-      const t = document.querySelector('table')!;
-      t.removeAttribute('aria-label');
-      t.setAttribute('role', 'presentation');
-    });
-    await page
-      .context()
-      .route('**/redir', (r) => r.fulfill({ status: 302, headers: { location: `http://localhost:${otherPort}/` } }));
+    await page.goto(`http://localhost:${appPort}/`);
+    const snapshot = await captureSnapshot(page);
+    const requirement = {
+      id: 'R1',
+      kind: 'hard' as const,
+      text: 'signed in',
+      source: { field: 'instruction' as const, quote: 'x' },
+    };
     const verifier = scripted([
       () => call('fetch_json', { url: '/redir' }),
       (req) => {
-        expect(lastResults(req)[0]!.content).not.toContain('secret');
-        return call('fetch_json', { url: '/api/cart' });
+        const out = lastResults(req)[0]!.content;
+        expect(out).toContain('HTTP 302 redirect');
+        expect(out).toContain('(not followed)');
+        expect(out).not.toContain('secret');
+        return call('open_page', { url: '/whoami' });
       },
       (req) => {
-        expect(lastResults(req)[0]!.content).toContain('"name": "Red Mug"');
-        return call('submit_verdict', { verdicts: [verdict('R1', 'pass', [2]), verdict('R2', 'pass', [2])] });
+        expect(lastResults(req)[0]!.content).toContain('user alice');
+        return call('submit_verdict', { verdicts: [verdict('R1', 'pass', [2])] });
       },
     ]);
-    const dir = mkdtempSync(join(tmpdir(), 'assay-live-'));
-    const outcome = await expectOutcome(page, TWO_MUGS, { timeout: 0, escalate: { verifier }, recordDir: dir });
-    expect(outcome.verdict).toBe('success');
-    const [file] = readdirSync(join(dir, 'records'));
-    const rec = JSON.parse(readFileSync(join(dir, 'records', file!), 'utf8')) as OutcomeRecord;
-    expect(rec.requirements.every((r) => r.decidedBy === 'verifier')).toBe(true);
-    // The verifier's browsing ran in its own context: none of it is in the run's evidence.
-    const after = await captureSnapshot(page);
-    expect(after.network!.some((e) => e.url.endsWith('/api/cart') && e.resourceType !== 'fetch')).toBe(false);
-    expect(after.network!.some((e) => e.url.includes('/redir'))).toBe(false);
+    const r = await runVerifier(verifier, {
+      task: { instruction: 'x' },
+      requirements: [requirement],
+      snapshot,
+      page,
+    });
+    expect(r.verdicts.map((v) => v.status)).toEqual(['pass']);
+    expect(reached).toBe(false);
   } finally {
     other.close();
+    app.close();
   }
 });
 
