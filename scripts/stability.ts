@@ -77,6 +77,8 @@ process.on('unhandledRejection', (e) =>
 );
 const firstLine = (e: unknown) => (e instanceof Error ? e.message.split('\n')[0]! : String(e));
 
+/** Tasks whose check set is missing in the chosen mode (they were not run). */
+const missing = new Set<string>();
 for (const [slot, variant] of VARIANTS.entries()) {
   for (const app of APPS) {
     const releases = variant.releases(app);
@@ -87,7 +89,10 @@ for (const [slot, variant] of VARIANTS.entries()) {
           CHECKS === 'compiled' ? `compiled/${t.id}.checks.json` : `tasks/${t.id}.checks.json`,
           app.dir,
         );
-        if (!existsSync(file)) continue;
+        if (!existsSync(file)) {
+          missing.add(`${app.name}/${t.id}`);
+          continue;
+        }
         const cs = JSON.parse(readFileSync(file, 'utf8')) as CheckSet;
         for (const s of t.scenarios) {
           const expected = expectedIn(app, releases, t.id, s.expected);
@@ -198,5 +203,14 @@ if (rows.length === 0) {
   process.exitCode = 1;
 } else if (rows.some((r) => r.outcome === 'broken')) {
   console.error('Some runs got a wrong decided verdict (broken).');
+  process.exitCode = 1;
+}
+// Unjudged runs are unmeasured, not passing: a regression there would go unnoticed.
+if (missing.size) {
+  console.error(`No ${CHECKS} check set for: ${[...missing].join(', ')}. These tasks were not run.`);
+  process.exitCode = 1;
+}
+if (rows.some((r) => r.outcome === 'agent-error')) {
+  console.error('Some runs could not finish, so nothing was judged (agent-error).');
   process.exitCode = 1;
 }

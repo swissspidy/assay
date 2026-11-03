@@ -35,12 +35,12 @@ All of it must be reproducible offline and in CI. The agent's own success report
 
 All systems judge the same captured snapshot. The agent's report is always "I completed the task as requested.", because agents usually report success.
 
-| System              | What decides                                                                                     | Sees the agent's report            |
-| ------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------- |
-| `checks`            | the check set; abstain counts as "not success"                                                   | no                                 |
-| `checks+escalation` | checks; abstained requirements go to the agentic verifier (ADR 0004), snapshot-only              | as context, marked as not evidence |
-| `llm-judge`         | one model call: task, accessibility outline (200 nodes), visible text (3,000 chars), URL, report | yes, as typical LLM judges do      |
-| `agentic-verifier`  | the ADR 0004 verifier on every hard requirement, snapshot-only                                   | as context, marked as not evidence |
+| System              | What decides                                                                                                                                                                                         | Sees the agent's report            |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| `checks`            | the check set; abstain counts as "not success"                                                                                                                                                       | no                                 |
+| `checks+escalation` | checks; abstained requirements go to the agentic verifier (ADR 0004), snapshot-only                                                                                                                  | as context, marked as not evidence |
+| `llm-judge`         | one judgment (a call, retried at most twice if the reply is not a valid `submit_judgment`; cost covers every call): task, accessibility outline (200 nodes), visible text (3,000 chars), URL, report | yes, as typical LLM judges do      |
+| `agentic-verifier`  | the ADR 0004 verifier on every hard requirement, snapshot-only                                                                                                                                       | as context, marked as not evidence |
 
 The LLM judge seeing the report as a plain statement is deliberate. That is what the baseline being compared against does.
 

@@ -33,7 +33,11 @@ const arg = (name: string, dflt: string) => {
   const i = process.argv.indexOf(`--${name}`);
   return i > 0 ? process.argv[i + 1]! : dflt;
 };
-const SYSTEMS = arg('systems', 'checks,checks+escalation,llm-judge,agentic-verifier').split(',');
+const KNOWN_SYSTEMS = ['checks', 'checks+escalation', 'llm-judge', 'agentic-verifier'];
+const SYSTEMS = arg('systems', KNOWN_SYSTEMS.join(',')).split(',');
+// A typo must not fall through to the (paid) verifier path and be reported under its name.
+const unknownSystems = SYSTEMS.filter((s) => !KNOWN_SYSTEMS.includes(s));
+if (unknownSystems.length) throw new Error(`unknown --systems: ${unknownSystems.join(', ')}`);
 const CHECKS_ARG = arg('checks', 'handwritten');
 if (CHECKS_ARG !== 'handwritten' && CHECKS_ARG !== 'compiled') {
   throw new Error(`--checks must be handwritten or compiled, got ${CHECKS_ARG}`);
@@ -54,6 +58,9 @@ interface Run {
 const runs: Run[] = [];
 /** Compiled mode: the run each check set was compiled from is not scored (it is not held out). */
 const trainingRuns: string[] = [];
+/** Tasks with no check set in the chosen mode: not scored, and named in the report. */
+const unscoredTasks: string[] = [];
+const taskText = (x: CheckSet) => JSON.stringify([x.task.instruction, x.task.outcomes ?? null]);
 for (const app of APPS) {
   for (const t of app.tasks) {
     const training = CHECKS === 'compiled' ? compileReference(t).name : undefined;
@@ -61,8 +68,20 @@ for (const app of APPS) {
       CHECKS === 'compiled'
         ? new URL(`compiled/${t.id}.checks.json`, app.dir)
         : new URL(`tasks/${t.id}.checks.json`, app.dir);
-    if (!existsSync(csFile)) continue;
+    if (!existsSync(csFile)) {
+      unscoredTasks.push(`${app.name}/${t.id}`);
+      continue;
+    }
     const checks = JSON.parse(readFileSync(csFile, 'utf8')) as CheckSet;
+    if (CHECKS === 'compiled') {
+      // Model systems are given checks.task: it must be the task as written now.
+      const written = JSON.parse(readFileSync(new URL(`tasks/${t.id}.checks.json`, app.dir), 'utf8')) as CheckSet;
+      if (taskText(checks) !== taskText(written)) {
+        throw new Error(
+          `${app.name}/${t.id}: the compiled check set's task text is stale; re-run scripts/compile-examples.ts`,
+        );
+      }
+    }
     const dir = new URL(`references/${t.id}/`, app.dir);
     // The held-out guarantee depends on finding the training run; fail loudly if it was renamed.
     if (training && !existsSync(new URL(`${training}.json`, dir))) {
@@ -242,6 +261,11 @@ function writeReport(): string {
     CHECKS === 'handwritten'
       ? `- **Caveat:** these are the handwritten check sets, written by the same author as the labelled runs, so the checks rows are an upper bound and partly circular. The real measure is \`--checks compiled\` (checks compiled by the model from one correct run per task; all other runs held out).`
       : `- Compiled check sets: each was compiled from one correct run per task. Those ${trainingRuns.length} runs are left out for every system, so all scored runs are held out.`,
+    ...(unscoredTasks.length
+      ? [
+          `- **Not scored** (no ${CHECKS} check set): ${unscoredTasks.join(', ')}. The comparison covers the other tasks only.`,
+        ]
+      : []),
     `- The LLM judge is shown the agent's report, as typical LLM judges are; Assay's checks never see it, and the agentic verifier gets it marked as context, not evidence.`,
     ...Object.entries(results)
       .map(([k, v]) => [k, v.rows.filter((r) => r.note).length] as const)
