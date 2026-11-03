@@ -1,0 +1,51 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/assign-bob",
+  "version": "1",
+  "task": {
+    "instruction": "Assign issue #1 to bob.",
+    "outcomes": "Then issue #1 is assigned to bob"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Issue #1 is assigned to bob",
+      "source": {
+        "field": "outcomes",
+        "quote": "issue #1 is assigned to bob"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "The backend reports issue 1 assigned to bob.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["id", "assignee"],
+              "properties": {
+                "id": {
+                  "const": 1
+                },
+                "assignee": {
+                  "const": "bob"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

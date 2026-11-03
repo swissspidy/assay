@@ -1,0 +1,239 @@
+{
+  "label": {
+    "expected": "fail",
+    "kind": "no-op"
+  },
+  "snapshot": {
+    "schema": "assay.snapshot/v1",
+    "capturedAt": "1970-01-01T00:00:00.000Z",
+    "page": {
+      "url": "http://localhost:4175/settings",
+      "title": "Settings · Tiny Calendar"
+    },
+    "a11y": {
+      "role": "document",
+      "children": [
+        {
+          "role": "banner",
+          "children": [
+            {
+              "role": "link",
+              "name": "Tiny Calendar",
+              "url": "/calendar"
+            },
+            {
+              "role": "navigation",
+              "name": "Primary",
+              "children": [
+                {
+                  "role": "link",
+                  "name": "Calendar",
+                  "url": "/calendar"
+                },
+                {
+                  "role": "text",
+                  "name": "·"
+                },
+                {
+                  "role": "link",
+                  "name": "New event",
+                  "url": "/events/new"
+                },
+                {
+                  "role": "text",
+                  "name": "·"
+                },
+                {
+                  "role": "link",
+                  "name": "Settings",
+                  "url": "/settings"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "main",
+          "children": [
+            {
+              "role": "heading",
+              "name": "Settings",
+              "level": 1
+            },
+            {
+              "role": "form",
+              "name": "Calendar settings",
+              "children": [
+                {
+                  "role": "paragraph",
+                  "children": [
+                    {
+                      "role": "text",
+                      "name": "Time zone"
+                    },
+                    {
+                      "role": "combobox",
+                      "name": "Time zone",
+                      "children": [
+                        {
+                          "role": "option",
+                          "name": "UTC",
+                          "states": {
+                            "selected": true
+                          }
+                        },
+                        {
+                          "role": "option",
+                          "name": "Berlin"
+                        },
+                        {
+                          "role": "option",
+                          "name": "New York"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "role": "paragraph",
+                  "children": [
+                    {
+                      "role": "text",
+                      "name": "Week starts on"
+                    },
+                    {
+                      "role": "combobox",
+                      "name": "Week starts on",
+                      "children": [
+                        {
+                          "role": "option",
+                          "name": "Sunday",
+                          "states": {
+                            "selected": true
+                          }
+                        },
+                        {
+                          "role": "option",
+                          "name": "Monday"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "role": "status"
+            }
+          ]
+        }
+      ]
+    },
+    "text": "Tiny Calendar\nCalendar · New event · Settings\nSettings\n\nTime zone \nUTC\nBerlin\nNew York\n\nWeek starts on \nSunday\nMonday",
+    "network": [
+      {
+        "seq": 0,
+        "method": "GET",
+        "url": "http://localhost:4175/settings",
+        "resourceType": "document",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/html; charset=utf-8"
+        }
+      },
+      {
+        "seq": 1,
+        "method": "GET",
+        "url": "http://localhost:4175/app.js",
+        "resourceType": "script",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/javascript"
+        }
+      },
+      {
+        "seq": 2,
+        "method": "GET",
+        "url": "http://localhost:4175/api/settings",
+        "resourceType": "fetch",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "application/json"
+        },
+        "responseBody": {
+          "timezone": "UTC"
+        }
+      }
+    ],
+    "storage": {
+      "cookies": [
+        {
+          "name": "sid",
+          "value": {
+            "redacted": true
+          },
+          "domain": "localhost",
+          "path": "/",
+          "httpOnly": true,
+          "secure": false
+        }
+      ],
+      "local": {
+        "http://localhost:4175": {}
+      },
+      "session": {
+        "http://localhost:4175": {}
+      }
+    },
+    "probes": {
+      "events": {
+        "ok": true,
+        "value": [
+          {
+            "id": 1,
+            "title": "Team standup",
+            "date": "2026-11-04",
+            "time": "09:00",
+            "duration": 30,
+            "location": "Room 1",
+            "reminder": false,
+            "rsvp": "yes"
+          },
+          {
+            "id": 2,
+            "title": "Dentist",
+            "date": "2026-11-06",
+            "time": "14:30",
+            "duration": 60,
+            "location": "Main Street 5",
+            "reminder": true,
+            "rsvp": "yes"
+          },
+          {
+            "id": 3,
+            "title": "Book club",
+            "date": "2026-11-10",
+            "time": "19:00",
+            "duration": 90,
+            "location": "Corner Cafe",
+            "reminder": false,
+            "rsvp": null
+          }
+        ]
+      },
+      "settings": {
+        "ok": true,
+        "value": {
+          "timezone": "UTC"
+        }
+      }
+    },
+    "meta": {
+      "capturer": "assay/0.1.0",
+      "redacted": ["cookie:sid"]
+    }
+  }
+}

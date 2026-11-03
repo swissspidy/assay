@@ -1,0 +1,3167 @@
+[
+ {
+  "checkSet": {
+   "id": "tiny-tracker/create-bug",
+   "version": "1"
+  },
+  "references": [
+   "created-with-bug-label",
+   "created-with-details"
+  ],
+  "variants": [
+   {
+    "reference": "created-with-bug-label",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-details",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-details",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-details",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-details",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-details",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-details",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-details",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-details",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-details",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-details",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "created-with-bug-label",
+    "id": "C1:request:missing",
+    "check": "C1",
+    "description": "the request was never sent",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "C1:request:missing+claim",
+    "check": "C1",
+    "description": "the request was never sent, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "C1:request:failed",
+    "check": "C1",
+    "description": "the request failed with HTTP 500",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "C1:request:failed+claim",
+    "check": "C1",
+    "description": "the request failed with HTTP 500, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "C1:request:requestBody:schema:0",
+    "check": "C1",
+    "description": "requestBody: required title missing",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "C1:request:requestBody:schema:0+claim",
+    "check": "C1",
+    "description": "requestBody: required title missing, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "C1:request:requestBody:schema:1",
+    "check": "C1",
+    "description": "requestBody: title: pinned value changed",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "C1:request:requestBody:schema:1+claim",
+    "check": "C1",
+    "description": "requestBody: title: pinned value changed, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "C2:value:0",
+    "check": "C2",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "C2:value:0+claim",
+    "check": "C2",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "C3:value:0",
+    "check": "C3",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "C3:value:0+claim",
+    "check": "C3",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-bug-label",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail"
+   },
+   {
+    "reference": "created-with-details",
+    "id": "C1:request:missing",
+    "check": "C1",
+    "description": "the request was never sent",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-details",
+    "id": "C1:request:missing+claim",
+    "check": "C1",
+    "description": "the request was never sent, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-details",
+    "id": "C1:request:failed",
+    "check": "C1",
+    "description": "the request failed with HTTP 500",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-details",
+    "id": "C1:request:failed+claim",
+    "check": "C1",
+    "description": "the request failed with HTTP 500, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-details",
+    "id": "C1:request:requestBody:schema:0",
+    "check": "C1",
+    "description": "requestBody: required title missing",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-details",
+    "id": "C1:request:requestBody:schema:0+claim",
+    "check": "C1",
+    "description": "requestBody: required title missing, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-details",
+    "id": "C1:request:requestBody:schema:1",
+    "check": "C1",
+    "description": "requestBody: title: pinned value changed",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-details",
+    "id": "C1:request:requestBody:schema:1+claim",
+    "check": "C1",
+    "description": "requestBody: title: pinned value changed, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-details",
+    "id": "C2:value:0",
+    "check": "C2",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-details",
+    "id": "C2:value:0+claim",
+    "check": "C2",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-details",
+    "id": "C3:value:0",
+    "check": "C3",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-details",
+    "id": "C3:value:0+claim",
+    "check": "C3",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-details",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 12,
+   "mutantsRejectedByFail": 12,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 12,
+   "claimMutantsRejected": 12,
+   "claimMutantsTotal": 12
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-tracker/create-high-priority",
+   "version": "1"
+  },
+  "references": [
+   "created-high-labelled",
+   "created-high"
+  ],
+  "variants": [
+   {
+    "reference": "created-high-labelled",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high-labelled",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high-labelled",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high-labelled",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high-labelled",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high-labelled",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high-labelled",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high-labelled",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high-labelled",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high-labelled",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "created-high-labelled",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-high-labelled",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-high-labelled",
+    "id": "C2:value:0",
+    "check": "C2",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-high-labelled",
+    "id": "C2:value:0+claim",
+    "check": "C2",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-high-labelled",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "created-high",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-high",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-high",
+    "id": "C2:value:0",
+    "check": "C2",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-high",
+    "id": "C2:value:0+claim",
+    "check": "C2",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-high",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 4,
+   "mutantsRejectedByFail": 4,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 4,
+   "claimMutantsRejected": 4,
+   "claimMutantsTotal": 4
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-tracker/close-issue",
+   "version": "1"
+  },
+  "references": [
+   "closed-1",
+   "commented-and-closed"
+  ],
+  "variants": [
+   {
+    "reference": "closed-1",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "closed-1",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "closed-1",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "closed-1",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "closed-1",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "closed-1",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "closed-1",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "closed-1",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "closed-1",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "closed-1",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-and-closed",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-and-closed",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-and-closed",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-and-closed",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-and-closed",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-and-closed",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-and-closed",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-and-closed",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-and-closed",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-and-closed",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "closed-1",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "closed-1",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "closed-1",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "commented-and-closed",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "commented-and-closed",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "commented-and-closed",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 2,
+   "mutantsRejectedByFail": 2,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 2,
+   "claimMutantsRejected": 2,
+   "claimMutantsTotal": 2
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-tracker/reopen-issue",
+   "version": "1"
+  },
+  "references": [
+   "reopened-3",
+   "reopened-from-list"
+  ],
+  "variants": [
+   {
+    "reference": "reopened-3",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-3",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-3",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-3",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-3",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-3",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-3",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-3",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-3",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-3",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-from-list",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-from-list",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-from-list",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-from-list",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-from-list",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-from-list",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-from-list",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-from-list",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-from-list",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-from-list",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "reopened-3",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "reopened-3",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "reopened-3",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "reopened-from-list",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "reopened-from-list",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "reopened-from-list",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 2,
+   "mutantsRejectedByFail": 2,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 2,
+   "claimMutantsRejected": 2,
+   "claimMutantsTotal": 2
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-tracker/assign-bob",
+   "version": "1"
+  },
+  "references": [
+   "assigned-bob",
+   "assigned-carol-then-bob"
+  ],
+  "variants": [
+   {
+    "reference": "assigned-bob",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-bob",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-bob",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-bob",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-bob",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-bob",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-bob",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-bob",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-bob",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-bob",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-carol-then-bob",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-carol-then-bob",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-carol-then-bob",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-carol-then-bob",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-carol-then-bob",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-carol-then-bob",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-carol-then-bob",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-carol-then-bob",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-carol-then-bob",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-carol-then-bob",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "assigned-bob",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "assigned-bob",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "assigned-bob",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "assigned-carol-then-bob",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "assigned-carol-then-bob",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "assigned-carol-then-bob",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 2,
+   "mutantsRejectedByFail": 2,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 2,
+   "claimMutantsRejected": 2,
+   "claimMutantsTotal": 2
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-tracker/add-feature-label",
+   "version": "1"
+  },
+  "references": [
+   "bug-and-feature",
+   "feature-after-correction"
+  ],
+  "variants": [
+   {
+    "reference": "bug-and-feature",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "bug-and-feature",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "bug-and-feature",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "bug-and-feature",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "bug-and-feature",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "bug-and-feature",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "bug-and-feature",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "bug-and-feature",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "bug-and-feature",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "bug-and-feature",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "feature-after-correction",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "feature-after-correction",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "feature-after-correction",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "feature-after-correction",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "feature-after-correction",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "feature-after-correction",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "feature-after-correction",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "feature-after-correction",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "feature-after-correction",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "feature-after-correction",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "bug-and-feature",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "bug-and-feature",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "bug-and-feature",
+    "id": "C2:value:0",
+    "check": "C2",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "bug-and-feature",
+    "id": "C2:value:0+claim",
+    "check": "C2",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "bug-and-feature",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "feature-after-correction",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "feature-after-correction",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "feature-after-correction",
+    "id": "C2:value:0",
+    "check": "C2",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "feature-after-correction",
+    "id": "C2:value:0+claim",
+    "check": "C2",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "feature-after-correction",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 4,
+   "mutantsRejectedByFail": 4,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 4,
+   "claimMutantsRejected": 4,
+   "claimMutantsTotal": 4
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-tracker/comment",
+   "version": "1"
+  },
+  "references": [
+   "commented-with-period",
+   "commented"
+  ],
+  "variants": [
+   {
+    "reference": "commented-with-period",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-with-period",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-with-period",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-with-period",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-with-period",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-with-period",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-with-period",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-with-period",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-with-period",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-with-period",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "commented-with-period",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "commented-with-period",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "commented-with-period",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "commented",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "commented",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "commented",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 2,
+   "mutantsRejectedByFail": 2,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 2,
+   "claimMutantsRejected": 2,
+   "claimMutantsTotal": 2
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-tracker/rename",
+   "version": "1"
+  },
+  "references": [
+   "renamed-after-typo",
+   "renamed"
+  ],
+  "variants": [
+   {
+    "reference": "renamed-after-typo",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "renamed-after-typo",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "renamed",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 2,
+   "mutantsRejectedByFail": 2,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 2,
+   "claimMutantsRejected": 2,
+   "claimMutantsTotal": 2
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-tracker/unassign",
+   "version": "1"
+  },
+  "references": [
+   "reassigned-then-unassigned",
+   "unassigned"
+  ],
+  "variants": [
+   {
+    "reference": "reassigned-then-unassigned",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reassigned-then-unassigned",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reassigned-then-unassigned",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reassigned-then-unassigned",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reassigned-then-unassigned",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reassigned-then-unassigned",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reassigned-then-unassigned",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reassigned-then-unassigned",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reassigned-then-unassigned",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reassigned-then-unassigned",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "unassigned",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "unassigned",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "unassigned",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "unassigned",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "unassigned",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "unassigned",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "unassigned",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "unassigned",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "unassigned",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "unassigned",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "reassigned-then-unassigned",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "reassigned-then-unassigned",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "reassigned-then-unassigned",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "unassigned",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "unassigned",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "unassigned",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 2,
+   "mutantsRejectedByFail": 2,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 2,
+   "claimMutantsRejected": 2,
+   "claimMutantsTotal": 2
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-tracker/filter-open-bugs",
+   "version": "1"
+  },
+  "references": [
+   "filtered-by-url",
+   "filtered"
+  ],
+  "variants": [
+   {
+    "reference": "filtered-by-url",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "extra-row",
+    "description": "an unrelated extra row in each table",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "filtered",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "filtered",
+    "id": "extra-row",
+    "description": "an unrelated extra row in each table",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "filtered",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "filtered",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "filtered",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "filtered",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "filtered",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "filtered",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "filtered",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "filtered",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "filtered-by-url",
+    "id": "C1:url:elsewhere",
+    "check": "C1",
+    "description": "the browser ended on a different page",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "C1:url:elsewhere+claim",
+    "check": "C1",
+    "description": "the browser ended on a different page, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "C1:url:query:status",
+    "check": "C1",
+    "description": "query parameter status differs",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "C1:url:query:status+claim",
+    "check": "C1",
+    "description": "query parameter status differs, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "C2:contains:extra",
+    "check": "C2",
+    "description": "an item that should be absent (cell \"Closed\") is present",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "C2:contains:extra+claim",
+    "check": "C2",
+    "description": "an item that should be absent (cell \"Closed\") is present, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "C3:url:elsewhere",
+    "check": "C3",
+    "description": "the browser ended on a different page",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "C3:url:elsewhere+claim",
+    "check": "C3",
+    "description": "the browser ended on a different page, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "C3:url:query:label",
+    "check": "C3",
+    "description": "query parameter label differs",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "C3:url:query:label+claim",
+    "check": "C3",
+    "description": "query parameter label differs, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "C4:contains:removed",
+    "check": "C4",
+    "description": "the matching item(s) are missing (1 removed)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "C4:contains:removed+claim",
+    "check": "C4",
+    "description": "the matching item(s) are missing (1 removed), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "success",
+    "rejected": false
+   },
+   {
+    "reference": "filtered",
+    "id": "C1:url:elsewhere",
+    "check": "C1",
+    "description": "the browser ended on a different page",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
+    "id": "C1:url:elsewhere+claim",
+    "check": "C1",
+    "description": "the browser ended on a different page, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
+    "id": "C1:url:query:status",
+    "check": "C1",
+    "description": "query parameter status differs",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
+    "id": "C1:url:query:status+claim",
+    "check": "C1",
+    "description": "query parameter status differs, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
+    "id": "C2:contains:extra",
+    "check": "C2",
+    "description": "an item that should be absent (cell \"Closed\") is present",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
+    "id": "C2:contains:extra+claim",
+    "check": "C2",
+    "description": "an item that should be absent (cell \"Closed\") is present, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
+    "id": "C3:url:elsewhere",
+    "check": "C3",
+    "description": "the browser ended on a different page",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
+    "id": "C3:url:elsewhere+claim",
+    "check": "C3",
+    "description": "the browser ended on a different page, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
+    "id": "C3:url:query:label",
+    "check": "C3",
+    "description": "query parameter label differs",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
+    "id": "C3:url:query:label+claim",
+    "check": "C3",
+    "description": "query parameter label differs, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
+    "id": "C4:contains:removed",
+    "check": "C4",
+    "description": "the matching item(s) are missing (1 removed)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
+    "id": "C4:contains:removed+claim",
+    "check": "C4",
+    "description": "the matching item(s) are missing (1 removed), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "success",
+    "rejected": false
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 12,
+   "mutantsRejectedByFail": 12,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 12,
+   "claimMutantsRejected": 12,
+   "claimMutantsTotal": 12
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [
+   {
+    "reference": "filtered-by-url",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable"
+   },
+   {
+    "reference": "filtered",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable"
+   }
+  ],
+  "untested": []
+ }
+]

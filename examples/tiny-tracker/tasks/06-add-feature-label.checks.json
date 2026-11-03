@@ -1,0 +1,95 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/add-feature-label",
+  "version": "1",
+  "task": {
+    "instruction": "Add the feature label to issue #1, keeping its existing labels.",
+    "outcomes": "Then issue #1 has the feature label\nThen issue #1 still has the bug label"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Issue #1 has the feature label",
+      "source": {
+        "field": "outcomes",
+        "quote": "issue #1 has the feature label"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "Issue #1 still has the bug label",
+      "source": {
+        "field": "outcomes",
+        "quote": "issue #1 still has the bug label"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "Issue 1's labels include feature.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["id", "labels"],
+              "properties": {
+                "id": {
+                  "const": 1
+                },
+                "labels": {
+                  "type": "array",
+                  "contains": {
+                    "const": "feature"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "C2",
+      "requirement": "R2",
+      "description": "Issue 1's labels still include bug.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["id", "labels"],
+              "properties": {
+                "id": {
+                  "const": 1
+                },
+                "labels": {
+                  "type": "array",
+                  "contains": {
+                    "const": "bug"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

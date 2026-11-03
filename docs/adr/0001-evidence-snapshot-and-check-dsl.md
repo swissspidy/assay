@@ -125,7 +125,7 @@ interface NetworkEntry {
   status: number | null; // null = no response (failed, aborted or in flight)
   failure?: string;
   requestHeaders: Record<string, string>; // allowlisted: content-type, accept
-  requestBody?: Json | string | null; // parsed JSON when content-type is JSON
+  requestBody?: Json | string | null; // parsed JSON; form posts become objects (repeated fields → arrays)
   responseHeaders: Record<string, string>; // allowlisted: content-type, location
   responseBody?: Json | string | null;
   bodyTruncated?: boolean;

@@ -1,0 +1,44 @@
+{
+  "releases": [
+    {
+      "version": 2,
+      "name": "copy",
+      "summary": "Renamed labels and headings: Cart becomes Shopping basket, Place order becomes Buy now, new newsletter and delivery wording.",
+      "html": [
+        ["aria-label=\"Cart\"", "aria-label=\"Shopping basket\""],
+        ["<h1>Your cart</h1>", "<h1>Basket</h1>"],
+        ["aria-label=\"Cart total\"", "aria-label=\"Order total\""],
+        [">Place order<", ">Buy now<"],
+        ["aria-label=\"Order summary\"", "aria-label=\"Your order\""],
+        ["Email me the newsletter", "Send me news by email"],
+        ["Estimated delivery:", "Arrives:"]
+      ]
+    },
+    {
+      "version": 3,
+      "name": "layout",
+      "summary": "Extra wrapper around the content and a recommendations panel that lists products and prices outside the main content.",
+      "html": [
+        ["<main>", "<main><div class=\"container\">"],
+        ["</main>", "</div></main>"],
+        [
+          "</main>",
+          "</main><aside aria-label=\"Recommended for you\"><h2>Recommended for you</h2><ul><li>Blue Mug — $12.00</li><li>Red Mug — $9.50</li><li>Order total: $0.00</li></ul></aside>"
+        ]
+      ]
+    },
+    {
+      "version": 4,
+      "name": "api",
+      "summary": "Every record in API responses gains updatedAt and etag fields.",
+      "flags": ["api:extra-fields"]
+    },
+    {
+      "version": 5,
+      "name": "regression",
+      "summary": "Bug: saving settings echoes the newsletter choice but does not store it.",
+      "flags": ["bug:newsletter-not-saved"],
+      "breaks": ["01-newsletter"]
+    }
+  ]
+}

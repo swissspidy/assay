@@ -12,6 +12,7 @@ export async function addToCart(page: Page, product: string): Promise<void> {
     await ready(page);
   }
   const done = page.waitForResponse((r) => r.url().endsWith('/api/cart/items') && r.request().method() === 'POST');
+  done.catch(() => {});
   await page.getByRole('button', { name: `Add ${product} to cart` }).click();
   await done;
   await page
@@ -27,6 +28,7 @@ export async function openCart(page: Page): Promise<void> {
 
 export async function removeFromCart(page: Page, product: string): Promise<void> {
   const done = page.waitForResponse((r) => r.request().method() === 'DELETE');
+  done.catch(() => {});
   await page.getByRole('button', { name: `Remove ${product}` }).click();
   await done;
   await page.getByRole('row', { name: new RegExp(product) }).waitFor({ state: 'detached' });
@@ -36,12 +38,13 @@ const money = (n: number) => `$${n.toFixed(2)}`;
 
 export async function setQuantity(page: Page, product: string, qty: number): Promise<void> {
   const saved = page.waitForResponse((r) => r.request().method() === 'PATCH');
+  saved.catch(() => {});
   await page.getByRole('spinbutton', { name: `Quantity for ${product}` }).fill(String(qty));
   await page.keyboard.press('Tab');
   const { total } = (await (await saved).json()) as { total: number };
   // Wait until the page shows the total this PATCH returned, not just any total.
   await page
-    .getByRole('status', { name: 'Cart total' })
+    .getByRole('status', { name: /Cart total|Order total/ })
     .filter({ hasText: money(total) })
     .waitFor();
 }
@@ -55,7 +58,7 @@ export async function checkout(
   if (opts.name) await page.getByLabel('Full name').fill(opts.name);
   if (opts.shipping === 'express') await page.getByRole('radio', { name: 'Express' }).check();
   if (opts.giftWrap) await page.getByRole('checkbox', { name: 'Gift wrap' }).check();
-  await page.getByRole('button', { name: 'Place order' }).click();
+  await page.getByRole('button', { name: /Place order|Buy now/ }).click();
   await page.waitForURL(/\/orders\/\w+$/);
   await ready(page);
 }
@@ -67,7 +70,8 @@ export async function openSettings(page: Page): Promise<void> {
 
 export async function setNewsletter(page: Page, on: boolean): Promise<void> {
   const saved = page.waitForResponse((r) => r.url().endsWith('/api/settings') && r.request().method() === 'PUT');
-  await page.getByRole('checkbox', { name: 'Email me the newsletter' }).setChecked(on);
+  saved.catch(() => {});
+  await page.getByRole('checkbox', { name: /Email me the newsletter|Send me news by email/ }).setChecked(on);
   await saved;
 }
 
@@ -83,5 +87,9 @@ export function shopProbes(page: Page): Record<string, Probe> {
     if (!r.ok()) throw new Error(`${path} → ${r.status()}`);
     return r.json();
   };
-  return { cart: () => get('/api/cart'), latestOrder: () => get('/api/orders/latest') };
+  return {
+    cart: () => get('/api/cart'),
+    latestOrder: () => get('/api/orders/latest'),
+    settings: () => get('/api/settings'),
+  };
 }

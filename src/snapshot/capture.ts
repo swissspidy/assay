@@ -61,7 +61,12 @@ export function cutUtf8(text: string, max: number): string | undefined {
   return bytes.length > limit ? new TextDecoder().decode(bytes.subarray(0, limit), { stream: true }) : undefined;
 }
 
-function decodeBody(text: string, contentType: string | undefined, max: number): { body: Json; truncated: boolean } {
+/** @internal Exported for tests. */
+export function decodeBody(
+  text: string,
+  contentType: string | undefined,
+  max: number,
+): { body: Json; truncated: boolean } {
   const cut = cutUtf8(text, max);
   if (cut !== undefined) return { body: cut, truncated: true };
   if (contentType && /\bjson\b/i.test(contentType)) {
@@ -70,6 +75,17 @@ function decodeBody(text: string, contentType: string | undefined, max: number):
     } catch {
       /* fall through to text */
     }
+  }
+  if (contentType && /application\/x-www-form-urlencoded/i.test(contentType)) {
+    // HTML form posts become objects (repeated fields become arrays), so checks can
+    // match them with JSON Schema like JSON bodies.
+    // No prototype: field names like "constructor" or "__proto__" are plain keys.
+    const form = Object.create(null) as Record<string, Json>;
+    for (const [k, v] of new URLSearchParams(text)) {
+      const prev = Object.hasOwn(form, k) ? form[k] : undefined;
+      form[k] = prev === undefined ? v : Array.isArray(prev) ? [...prev, v] : [prev, v];
+    }
+    return { body: form, truncated: false };
   }
   return { body: text, truncated: false };
 }

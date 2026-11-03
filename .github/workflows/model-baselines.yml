@@ -1,0 +1,67 @@
+name: Model baselines
+
+# The checks and the simulated app releases are deterministic and run in CI on
+# every change (ci.yml, "Stability"). What changes on its own over time is the
+# model side: hosted models are updated, so the LLM judge's and the agentic
+# verifier's verdicts can drift. This weekly run evaluates them live and keeps
+# the reports and recordings as artifacts (90 days), so weeks can be compared.
+# It needs the ANTHROPIC_API_KEY repository secret and does nothing without it.
+on:
+  schedule:
+    - cron: '17 4 * * 1' # Mondays 04:17 UTC
+  workflow_dispatch:
+    inputs:
+      checks:
+        description: Check sets the checks systems use
+        type: choice
+        options: [handwritten, compiled]
+        default: handwritten
+
+permissions:
+  contents: read
+
+concurrency:
+  group: model-baselines
+  cancel-in-progress: false
+
+jobs:
+  baselines:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      CHECKS: ${{ inputs.checks || 'handwritten' }}
+      HAS_KEY: ${{ secrets.ANTHROPIC_API_KEY != '' }}
+    steps:
+      - name: Skip without an API key
+        if: env.HAS_KEY != 'true'
+        run: echo "No ANTHROPIC_API_KEY secret; nothing to measure." >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: env.HAS_KEY == 'true'
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        if: env.HAS_KEY == 'true'
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - if: env.HAS_KEY == 'true'
+        run: npm ci
+      # Fresh recordings every week: the committed cassettes are not reused.
+      - name: Evaluation (live)
+        if: env.HAS_KEY == 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          rm -rf eval/cassettes
+          node scripts/eval.ts --checks "$CHECKS"
+      - name: Summary
+        if: always() && env.HAS_KEY == 'true'
+        run: cat eval/results/REPORT.md >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always() && env.HAS_KEY == 'true'
+        with:
+          name: model-baselines-${{ github.run_id }}
+          path: |
+            eval/results/
+            eval/cassettes/
+          retention-days: 90

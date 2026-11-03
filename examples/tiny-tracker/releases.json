@@ -1,0 +1,46 @@
+{
+  "releases": [
+    {
+      "version": 2,
+      "name": "copy",
+      "summary": "Renamed headings and buttons: Issues becomes All issues, Close issue becomes Resolve, Save labels becomes Apply labels.",
+      "html": [
+        ["aria-label=\"Issues\"", "aria-label=\"Issue list\""],
+        ["<h1>Issues</h1>", "<h1>All issues</h1>"],
+        [">Close issue<", ">Resolve<"],
+        [">Reopen issue<", ">Reopen<"],
+        ["aria-label=\"Issue details\"", "aria-label=\"Summary\""],
+        [">Save assignee<", ">Update assignee<"],
+        [">Save labels<", ">Apply labels<"],
+        [">Comment</button>", ">Post comment</button>"],
+        [">Create issue<", ">Submit issue<"]
+      ]
+    },
+    {
+      "version": 3,
+      "name": "layout",
+      "summary": "Extra wrapper around the content and a panel of recently viewed issues outside the main content.",
+      "html": [
+        ["<main>", "<main><div class=\"layout\">"],
+        ["</main>", "</div></main>"],
+        [
+          "</main>",
+          "</main><aside aria-label=\"Recently viewed\"><h2>Recently viewed</h2><ul><li>#3 Typo in docs — Closed</li><li>#2 Add dark mode — Open, feature</li></ul></aside>"
+        ]
+      ]
+    },
+    {
+      "version": 4,
+      "name": "api",
+      "summary": "Every record in API responses gains updatedAt and etag fields.",
+      "flags": ["api:extra-fields"]
+    },
+    {
+      "version": 5,
+      "name": "regression",
+      "summary": "Bug: saving labels silently drops the feature label.",
+      "flags": ["bug:feature-label-dropped"],
+      "breaks": ["06-add-feature-label"]
+    }
+  ]
+}

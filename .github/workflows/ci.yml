@@ -76,3 +76,45 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 7
+
+  stability:
+    name: Stability (simulated releases) and evaluation
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Playwright version
+        id: pw
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Cache Playwright browsers
+        id: pw-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
+      - name: Install Chromium
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+      - name: Install Chromium system dependencies
+        if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+      # Every scenario against releases v1-v5 of each app; fails if any verdict is wrong.
+      - name: Stability run
+        run: node scripts/stability.ts --out ci-results/stability
+      # Model systems replay committed cassettes (none recorded yet: reported as not measured).
+      - name: Evaluation
+        env:
+          ASSAY_MODEL_MODE: replay
+        run: node scripts/eval.ts
+      - name: Summary
+        if: always()
+        run: |
+          cat ci-results/stability/REPORT.md >> "$GITHUB_STEP_SUMMARY" || true
+          cat eval/results/REPORT.md >> "$GITHUB_STEP_SUMMARY" || true

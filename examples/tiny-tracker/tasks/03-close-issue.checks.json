@@ -1,0 +1,51 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/close-issue",
+  "version": "1",
+  "task": {
+    "instruction": "Close issue #1.",
+    "outcomes": "Then issue #1 is closed"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Issue #1 is closed",
+      "source": {
+        "field": "outcomes",
+        "quote": "issue #1 is closed"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "The backend reports issue 1 with status closed.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["id", "status"],
+              "properties": {
+                "id": {
+                  "const": 1
+                },
+                "status": {
+                  "const": "closed"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

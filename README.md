@@ -8,8 +8,9 @@ check returns **pass**, **fail** or **abstain**. Abstain means the check
 couldn't find or read its evidence, and it triggers escalation to an
 expensive verifier.
 
-> Status: **milestone 1**: snapshot format, check DSL and runtime. The
-> compiler, stress testing, escalation and evaluation come next.
+> Status: all five milestones are in: snapshot format and check DSL, compiler,
+> stress testing, escalation and records, and the 30-task evaluation with
+> stability runs. Model baselines are measured once an API key is set.
 
 - Design: [ADR 0001: Evidence snapshot format and check DSL](docs/adr/0001-evidence-snapshot-and-check-dsl.md)
 - Example check sets: [`examples/tiny-shop/tasks/`](examples/tiny-shop/tasks)
@@ -103,7 +104,7 @@ const { checkSet, report } = await compileTask(
 );
 ```
 
-The compiler writes a rubric of requirements, each quoting the task text. An agent then explores the reference snapshots and submits checks, which are accepted only once they validate and pass on every correct reference. See [ADR 0002](docs/adr/0002-compiler.md). `npm run compile:tiny-shop` compiles the 10 Tiny Shop tasks from one correct run each and judges the held-out runs. It needs `ANTHROPIC_API_KEY` to record and replays the recorded cassettes without one.
+The compiler writes a rubric of requirements, each quoting the task text. An agent then explores the reference snapshots and submits checks, which are accepted only once they validate and pass on every correct reference. See [ADR 0002](docs/adr/0002-compiler.md). `npm run compile:examples` compiles the 30 example tasks from one correct run each and judges the held-out runs. It needs `ANTHROPIC_API_KEY` to record and replays the recorded cassettes without one.
 
 ## Stress testing (milestone 3)
 
@@ -113,7 +114,7 @@ const report = stressTest(checkSet, [{ name: 'reference', snapshot }]);
 console.log(formatStressReport(report)); // acceptance/rejection rates, over-constrained, fragile and weak checks
 ```
 
-The stress test edits correct snapshots into valid variants (reordered rows, unrelated content, extra JSON fields, other number, money and date formats, network noise) and into near-miss mutants (flipped states, missing items, perturbed values, failed or missing requests, pages that only claim success). A check that rejects a valid variant is flagged as over-constrained, and the compiler sends that back to the model as an error. See [ADR 0003](docs/adr/0003-stress-testing.md). `npm run stress:tiny-shop` writes `examples/tiny-shop/stress/handwritten/REPORT.md`.
+The stress test edits correct snapshots into valid variants (reordered rows, unrelated content, extra JSON fields, other number, money and date formats, network noise) and into near-miss mutants (flipped states, missing items, perturbed values, failed or missing requests, pages that only claim success). A check that rejects a valid variant is flagged as over-constrained, and the compiler sends that back to the model as an error. See [ADR 0003](docs/adr/0003-stress-testing.md). `npm run stress` writes `examples/<app>/stress/handwritten/REPORT.md` for each app.
 
 ## Escalation, records and locking (milestone 4)
 
@@ -132,6 +133,18 @@ writeOutcomeRecord('assay-records', record, snapshot, locked, proposal);
 ```
 
 In Playwright: `await expectOutcome(page, locked, { escalate: { verifier }, recordDir: 'assay-records' })`. See [ADR 0004](docs/adr/0004-escalation-and-records.md).
+
+## Evaluation and stability (milestone 5)
+
+Three small apps (`examples/tiny-shop`, `examples/tiny-tracker`, `examples/tiny-calendar`) provide 30 tasks and 123 labelled runs. The runs are correct, wrong item, partial, undone, over-completion, or adversarial pages that only claim success.
+
+- `npm run eval` compares checks, checks with escalation, an LLM judge and the agentic verifier on balanced accuracy, TPR, TNR, cost and latency. Results go to `eval/results/REPORT.md`.
+  - Add `-- --checks compiled` to use the compiled check sets. The run each set was compiled from is then left out.
+  - Model rows are recorded to cassettes when `ANTHROPIC_API_KEY` is set and replayed otherwise.
+- `npm run stability` judges every run against five releases of each app, and against the regression alone, (renamed copy, new layout with look-alike content, extra API fields, and a real regression), with checks written for the first. Results go to `stability/results/REPORT.md`. CI runs it on every change and fails on any wrong verdict.
+- A weekly workflow measures the model baselines live, when the API key secret is set.
+
+See [ADR 0005](docs/adr/0005-evaluation-and-stability.md).
 
 ## Development
 

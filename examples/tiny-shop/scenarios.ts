@@ -5,6 +5,7 @@
  * Used by the M1 tests, reference capture (compiler input) and evaluation.
  */
 import type { Page } from './deps.ts';
+import { bad, ok, type TaskDef } from '../lib/scenario.ts';
 import {
   addToCart,
   checkout,
@@ -17,44 +18,7 @@ import {
   setQuantity,
 } from './agent.ts';
 
-export type ScenarioKind =
-  | 'correct'
-  | 'wrong-item'
-  | 'partial'
-  | 'over-completion'
-  | 'no-op'
-  | 'adversarial'
-  | 'undone';
-
-export interface Scenario {
-  name: string;
-  expected: 'success' | 'fail';
-  kind: ScenarioKind;
-  run(page: Page): Promise<void>;
-}
-
-export interface TaskDef {
-  /** File stem under tasks/ (handwritten check set, also the task text). */
-  id: string;
-  /** Probes the task's checks may use. */
-  probes: ('cart' | 'latestOrder')[];
-  /** Generic stress variants that do not apply to this task (see src/stress/variants.ts). */
-  skipVariants?: string[];
-  scenarios: Scenario[];
-}
-
-const ok = (name: string, run: (page: Page) => Promise<void>): Scenario => ({
-  name,
-  expected: 'success',
-  kind: 'correct',
-  run,
-});
-const bad = (name: string, kind: ScenarioKind, run: (page: Page) => Promise<void>): Scenario => ({
-  name,
-  expected: 'fail',
-  kind,
-  run,
-});
+export type { Scenario, ScenarioKind, TaskDef } from '../lib/scenario.ts';
 
 const twoMugsInCart = async (page: Page) => {
   await addToCart(page, 'Blue Mug');
@@ -77,7 +41,7 @@ const spoofOrder = async (page: Page) => {
 export const TASKS: TaskDef[] = [
   {
     id: '01-newsletter',
-    probes: [],
+    probes: ['settings'],
     scenarios: [
       ok('subscribed', async (p) => {
         await openSettings(p);
@@ -210,7 +174,7 @@ export const TASKS: TaskDef[] = [
         await p.goto('/checkout');
         await ready(p);
         await p.getByRole('radio', { name: 'Express' }).check();
-        await p.getByRole('button', { name: 'Place order' }).click();
+        await p.getByRole('button', { name: /Place order|Buy now/ }).click();
         await p.getByRole('alert').filter({ hasText: 'name is required' }).waitFor();
       }),
     ],

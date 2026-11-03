@@ -1,0 +1,51 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-calendar/location",
+  "version": "1",
+  "task": {
+    "instruction": "Change the Book club location to \"City Library\".",
+    "outcomes": "Then Book club takes place at City Library"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Book club takes place at City Library",
+      "source": {
+        "field": "outcomes",
+        "quote": "Book club takes place at City Library"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "The backend has Book club at City Library.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "events"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["title", "location"],
+              "properties": {
+                "title": {
+                  "const": "Book club"
+                },
+                "location": {
+                  "const": "City Library"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

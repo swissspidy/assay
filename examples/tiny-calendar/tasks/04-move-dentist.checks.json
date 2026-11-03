@@ -1,0 +1,54 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-calendar/move-dentist",
+  "version": "1",
+  "task": {
+    "instruction": "Move the Dentist appointment to November 7, 2026.",
+    "outcomes": "Then the Dentist appointment is on November 7, 2026"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The Dentist appointment is on November 7, 2026",
+      "source": {
+        "field": "outcomes",
+        "quote": "the Dentist appointment is on November 7, 2026"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "The existing Dentist appointment (id 2) is on 2026-11-07.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "events"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["id", "title", "date"],
+              "properties": {
+                "id": {
+                  "const": 2
+                },
+                "title": {
+                  "const": "Dentist"
+                },
+                "date": {
+                  "const": "2026-11-07"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

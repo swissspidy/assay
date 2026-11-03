@@ -5,6 +5,7 @@ import { readFile } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { loadReleases, release } from '../lib/kit.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT ?? 4173);
@@ -16,6 +17,10 @@ export const PRODUCTS = [
 ];
 // Fixed, deterministic delivery estimates.
 const DELIVERY = { standard: '2026-11-12', express: '2026-11-05' };
+
+// Simulated releases for the stability run (APP_VERSION, see releases.json).
+const rel = release('tiny-shop', loadReleases(new URL('./releases.json', import.meta.url)));
+const rewrite = rel.rewrite;
 
 const sessions = new Map();
 function session(req, res) {
@@ -30,7 +35,7 @@ function session(req, res) {
 
 const json = (res, status, body) => {
   res.writeHead(status, { 'content-type': 'application/json' });
-  res.end(JSON.stringify(body));
+  res.end(JSON.stringify(rel.shape(body)));
 };
 
 async function readBody(req) {
@@ -57,6 +62,7 @@ const PAGES = {
 
 const server = createServer(async (req, res) => {
   try {
+    if (rel.meta(req, res)) return;
     const url = new URL(req.url, `http://${req.headers.host}`);
     const s = session(req, res);
     const p = url.pathname;
@@ -111,15 +117,22 @@ const server = createServer(async (req, res) => {
     }
     if (p === '/api/settings' && req.method === 'GET') return json(res, 200, s.settings);
     if (p === '/api/settings' && req.method === 'PUT') {
-      Object.assign(s.settings, await readBody(req));
-      return json(res, 200, s.settings);
+      const b = await readBody(req);
+      // Release 5 regression: the newsletter choice is echoed back but not stored.
+      const { newsletter, ...rest } = b;
+      Object.assign(s.settings, rel.has('bug:newsletter-not-saved') ? rest : b);
+      return json(
+        res,
+        200,
+        rel.has('bug:newsletter-not-saved') && 'newsletter' in b ? { ...s.settings, newsletter } : s.settings,
+      );
     }
 
     const file = PAGES[p] ?? (/^\/orders\/[\w-]+$/.test(p) ? 'order.html' : p === '/app.js' ? 'app.js' : null);
     if (file) {
-      const body = await readFile(join(here, 'public', file));
+      const body = await readFile(join(here, 'public', file), 'utf8');
       res.writeHead(200, { 'content-type': file.endsWith('.js') ? 'text/javascript' : 'text/html; charset=utf-8' });
-      return res.end(body);
+      return res.end(rewrite(body));
     }
     res.writeHead(404, { 'content-type': 'text/plain' });
     res.end('not found');

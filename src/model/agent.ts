@@ -30,7 +30,7 @@ export interface AgentRun<R> {
   status: 'done' | 'max_turns' | 'refusal' | 'max_tokens' | 'gave_up';
   result?: R;
   turns: number;
-  usage: { inputTokens: number; outputTokens: number };
+  usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number; cacheWriteTokens: number };
   transcript: ModelMessage[];
   models: string[];
 }
@@ -43,7 +43,7 @@ export async function runAgent<R>(opts: AgentOptions<R>): Promise<AgentRun<R>> {
   for (const t of opts.tools) validators.set(t.spec.name, ajv.compile(t.spec.inputSchema));
   const byName = new Map(opts.tools.map((t) => [t.spec.name, t] as const));
   const messages: ModelMessage[] = [{ role: 'user', text: opts.prompt }];
-  const usage = { inputTokens: 0, outputTokens: 0 };
+  const usage = { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheWriteTokens: 0 };
   const models = new Set<string>();
   const maxTurns = opts.maxTurns ?? 40;
   let nudges = opts.maxNudges ?? 2;
@@ -60,6 +60,8 @@ export async function runAgent<R>(opts: AgentOptions<R>): Promise<AgentRun<R>> {
     const turn = await opts.model.turn({ system: opts.system, messages, tools: opts.tools.map((t) => t.spec) });
     usage.inputTokens += turn.usage.inputTokens;
     usage.outputTokens += turn.usage.outputTokens;
+    usage.cacheReadTokens += turn.usage.cacheReadTokens ?? 0;
+    usage.cacheWriteTokens += turn.usage.cacheWriteTokens ?? 0;
     models.add(turn.model);
     opts.onTurn?.(turn, i);
     // Check the stop reason before running any tool.

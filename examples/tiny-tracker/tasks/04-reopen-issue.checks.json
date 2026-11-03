@@ -1,0 +1,51 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/reopen-issue",
+  "version": "1",
+  "task": {
+    "instruction": "Reopen issue #3.",
+    "outcomes": "Then issue #3 is open again"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Issue #3 is open again",
+      "source": {
+        "field": "outcomes",
+        "quote": "issue #3 is open again"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "The backend reports issue 3 with status open.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["id", "status"],
+              "properties": {
+                "id": {
+                  "const": 3
+                },
+                "status": {
+                  "const": "open"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

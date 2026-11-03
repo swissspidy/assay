@@ -1,0 +1,60 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/comment",
+  "version": "1",
+  "task": {
+    "instruction": "Comment \"Working on it\" on issue #2.",
+    "outcomes": "Then issue #2 has a comment \"Working on it\""
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Issue #2 has a comment \"Working on it\"",
+      "source": {
+        "field": "outcomes",
+        "quote": "issue #2 has a comment \"Working on it\""
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "Issue 2 has a comment reading \"Working on it\" (a final period or exclamation mark is fine).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["id", "comments"],
+              "properties": {
+                "id": {
+                  "const": 2
+                },
+                "comments": {
+                  "type": "array",
+                  "contains": {
+                    "type": "object",
+                    "required": ["text"],
+                    "properties": {
+                      "text": {
+                        "pattern": "^\\s*Working on it[.!]?\\s*$"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

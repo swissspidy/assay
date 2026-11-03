@@ -1,0 +1,51 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/rename",
+  "version": "1",
+  "task": {
+    "instruction": "Rename issue #3 to \"Fix typo in README\".",
+    "outcomes": "Then issue #3 is titled \"Fix typo in README\""
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Issue #3 is titled \"Fix typo in README\"",
+      "source": {
+        "field": "outcomes",
+        "quote": "issue #3 is titled \"Fix typo in README\""
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "The backend reports issue 3 with the new title.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["id", "title"],
+              "properties": {
+                "id": {
+                  "const": 3
+                },
+                "title": {
+                  "const": "Fix typo in README"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

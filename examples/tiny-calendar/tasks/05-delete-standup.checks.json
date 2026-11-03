@@ -1,0 +1,118 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-calendar/delete-standup",
+  "version": "1",
+  "task": {
+    "instruction": "Delete the Team standup event, but nothing else.",
+    "outcomes": "Then the Team standup event is gone\nThen the other events are still there"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The Team standup event is gone",
+      "source": {
+        "field": "outcomes",
+        "quote": "the Team standup event is gone"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The other events are still there",
+      "source": {
+        "field": "outcomes",
+        "quote": "the other events are still there"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "The backend has no Team standup event, and the seeded standup (id 1) is gone, not just renamed.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "events"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "allOf": [
+              {
+                "not": {
+                  "contains": {
+                    "type": "object",
+                    "required": ["title"],
+                    "properties": {
+                      "title": {
+                        "const": "Team standup"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "not": {
+                  "contains": {
+                    "type": "object",
+                    "required": ["id"],
+                    "properties": {
+                      "id": {
+                        "const": 1
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "C2",
+      "requirement": "R2",
+      "description": "Dentist and Book club still exist.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "events"
+        },
+        "expect": {
+          "schema": {
+            "allOf": [
+              {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "required": ["title"],
+                  "properties": {
+                    "title": {
+                      "const": "Dentist"
+                    }
+                  }
+                }
+              },
+              {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "required": ["title"],
+                  "properties": {
+                    "title": {
+                      "const": "Book club"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,3270 @@
+[
+ {
+  "checkSet": {
+   "id": "tiny-calendar/lunch",
+   "version": "1"
+  },
+  "references": [
+   "created-with-location",
+   "created"
+  ],
+  "variants": [
+   {
+    "reference": "created-with-location",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-location",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-location",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-location",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-location",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-location",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-location",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-location",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-location",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-location",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "created-with-location",
+    "id": "C1:request:missing",
+    "check": "C1",
+    "description": "the request was never sent",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C1:request:missing+claim",
+    "check": "C1",
+    "description": "the request was never sent, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C1:request:failed",
+    "check": "C1",
+    "description": "the request failed with HTTP 500",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C1:request:failed+claim",
+    "check": "C1",
+    "description": "the request failed with HTTP 500, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C2:value:0",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C2:value:0+claim",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C3:value:0",
+    "check": "C3",
+    "description": "page text is \"Friday, November 6, 2026\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C3:value:0+claim",
+    "check": "C3",
+    "description": "page text is \"Friday, November 6, 2026\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C3:value:1",
+    "check": "C3",
+    "description": "page text is \"Wednesday, November 4, 2026\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C3:value:1+claim",
+    "check": "C3",
+    "description": "page text is \"Wednesday, November 4, 2026\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "C1:request:missing",
+    "check": "C1",
+    "description": "the request was never sent",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "C1:request:missing+claim",
+    "check": "C1",
+    "description": "the request was never sent, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "C1:request:failed",
+    "check": "C1",
+    "description": "the request failed with HTTP 500",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "C1:request:failed+claim",
+    "check": "C1",
+    "description": "the request failed with HTTP 500, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "C2:value:0",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "C2:value:0+claim",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "C3:value:0",
+    "check": "C3",
+    "description": "page text is \"Friday, November 6, 2026\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "C3:value:0+claim",
+    "check": "C3",
+    "description": "page text is \"Friday, November 6, 2026\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "C3:value:1",
+    "check": "C3",
+    "description": "page text is \"Wednesday, November 4, 2026\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "C3:value:1+claim",
+    "check": "C3",
+    "description": "page text is \"Wednesday, November 4, 2026\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 10,
+   "mutantsRejectedByFail": 10,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 10,
+   "claimMutantsRejected": 10,
+   "claimMutantsTotal": 10
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-calendar/reminder",
+   "version": "1"
+  },
+  "references": [
+   "created-with-reminder-and-place",
+   "created-with-reminder"
+  ],
+  "variants": [
+   {
+    "reference": "created-with-reminder-and-place",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder-and-place",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder-and-place",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder-and-place",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder-and-place",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder-and-place",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder-and-place",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder-and-place",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder-and-place",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder-and-place",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "created-with-reminder-and-place",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-reminder-and-place",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-reminder-and-place",
+    "id": "C2:value:0",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-reminder-and-place",
+    "id": "C2:value:0+claim",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-reminder-and-place",
+    "id": "C3:value:0",
+    "check": "C3",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-reminder-and-place",
+    "id": "C3:value:0+claim",
+    "check": "C3",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-reminder-and-place",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "created-with-reminder",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-reminder",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-reminder",
+    "id": "C2:value:0",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-reminder",
+    "id": "C2:value:0+claim",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-reminder",
+    "id": "C3:value:0",
+    "check": "C3",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-reminder",
+    "id": "C3:value:0+claim",
+    "check": "C3",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-reminder",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 6,
+   "mutantsRejectedByFail": 6,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 6,
+   "claimMutantsRejected": 6,
+   "claimMutantsTotal": 6
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-calendar/rsvp",
+   "version": "1"
+  },
+  "references": [
+   "going",
+   "maybe-then-going"
+  ],
+  "variants": [
+   {
+    "reference": "going",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "going",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "going",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "going",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "going",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "going",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "going",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "going",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "going",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "going",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "maybe-then-going",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "maybe-then-going",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "maybe-then-going",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "maybe-then-going",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "maybe-then-going",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "maybe-then-going",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "maybe-then-going",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "maybe-then-going",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "maybe-then-going",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "maybe-then-going",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "going",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "going",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "going",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "maybe-then-going",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "maybe-then-going",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "maybe-then-going",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 2,
+   "mutantsRejectedByFail": 2,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 2,
+   "claimMutantsRejected": 2,
+   "claimMutantsTotal": 2
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-calendar/move-dentist",
+   "version": "1"
+  },
+  "references": [
+   "moved-in-two-steps",
+   "moved"
+  ],
+  "variants": [
+   {
+    "reference": "moved-in-two-steps",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved-in-two-steps",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved-in-two-steps",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved-in-two-steps",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved-in-two-steps",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved-in-two-steps",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved-in-two-steps",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved-in-two-steps",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved-in-two-steps",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved-in-two-steps",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "moved-in-two-steps",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "moved-in-two-steps",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "moved-in-two-steps",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "moved",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "moved",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "moved",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 2,
+   "mutantsRejectedByFail": 2,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 2,
+   "claimMutantsRejected": 2,
+   "claimMutantsTotal": 2
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-calendar/delete-standup",
+   "version": "1"
+  },
+  "references": [
+   "deleted-after-viewing",
+   "deleted"
+  ],
+  "variants": [
+   {
+    "reference": "deleted-after-viewing",
+    "id": "reorder",
+    "description": "list items and table rows in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted-after-viewing",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted-after-viewing",
+    "id": "extra-row",
+    "description": "an unrelated extra row in each table",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted-after-viewing",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted-after-viewing",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted-after-viewing",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted-after-viewing",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted-after-viewing",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted-after-viewing",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted-after-viewing",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted-after-viewing",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted-after-viewing",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted",
+    "id": "reorder",
+    "description": "list items and table rows in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted",
+    "id": "extra-row",
+    "description": "an unrelated extra row in each table",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "deleted",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "deleted-after-viewing",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe events is [{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null},{\"title\":\"Team standup\"}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "deleted-after-viewing",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null},{\"title\":\"Team standup\"}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "deleted-after-viewing",
+    "id": "C1:value:1",
+    "check": "C1",
+    "description": "probe events is [{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null},{\"id\":1}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "deleted-after-viewing",
+    "id": "C1:value:1+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null},{\"id\":1}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "deleted-after-viewing",
+    "id": "C2:value:0",
+    "check": "C2",
+    "description": "probe events is [{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "deleted-after-viewing",
+    "id": "C2:value:0+claim",
+    "check": "C2",
+    "description": "probe events is [{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "deleted-after-viewing",
+    "id": "C2:value:1",
+    "check": "C2",
+    "description": "probe events is [{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "deleted-after-viewing",
+    "id": "C2:value:1+claim",
+    "check": "C2",
+    "description": "probe events is [{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "deleted-after-viewing",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "deleted",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe events is [{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null},{\"title\":\"Team standup\"}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "deleted",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null},{\"title\":\"Team standup\"}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "deleted",
+    "id": "C1:value:1",
+    "check": "C1",
+    "description": "probe events is [{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null},{\"id\":1}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "deleted",
+    "id": "C1:value:1+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null},{\"id\":1}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "deleted",
+    "id": "C2:value:0",
+    "check": "C2",
+    "description": "probe events is [{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "deleted",
+    "id": "C2:value:0+claim",
+    "check": "C2",
+    "description": "probe events is [{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "deleted",
+    "id": "C2:value:1",
+    "check": "C2",
+    "description": "probe events is [{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "deleted",
+    "id": "C2:value:1+claim",
+    "check": "C2",
+    "description": "probe events is [{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "deleted",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 24,
+   "variantsTotal": 24,
+   "mutantsRejected": 8,
+   "mutantsRejectedByFail": 8,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 8,
+   "claimMutantsRejected": 8,
+   "claimMutantsTotal": 8
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-calendar/location",
+   "version": "1"
+  },
+  "references": [
+   "changed-twice",
+   "changed"
+  ],
+  "variants": [
+   {
+    "reference": "changed-twice",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed-twice",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed-twice",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed-twice",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed-twice",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed-twice",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed-twice",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed-twice",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed-twice",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed-twice",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "changed-twice",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "changed-twice",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "changed-twice",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "changed",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "changed",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "changed",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 2,
+   "mutantsRejectedByFail": 2,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 2,
+   "claimMutantsRejected": 2,
+   "claimMutantsTotal": 2
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-calendar/timezone",
+   "version": "1"
+  },
+  "references": [
+   "berlin",
+   "new-york-then-berlin"
+  ],
+  "variants": [
+   {
+    "reference": "berlin",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "berlin",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "berlin",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "berlin",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "berlin",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "berlin",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "berlin",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "berlin",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "berlin",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "berlin",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "new-york-then-berlin",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "new-york-then-berlin",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "new-york-then-berlin",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "new-york-then-berlin",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "new-york-then-berlin",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "new-york-then-berlin",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "new-york-then-berlin",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "new-york-then-berlin",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "new-york-then-berlin",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "new-york-then-berlin",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "berlin",
+    "id": "C1:request:missing",
+    "check": "C1",
+    "description": "the request was never sent",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "berlin",
+    "id": "C1:request:missing+claim",
+    "check": "C1",
+    "description": "the request was never sent, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "berlin",
+    "id": "C1:request:failed",
+    "check": "C1",
+    "description": "the request failed with HTTP 500",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "berlin",
+    "id": "C1:request:failed+claim",
+    "check": "C1",
+    "description": "the request failed with HTTP 500, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "berlin",
+    "id": "C2:value:0",
+    "check": "C2",
+    "description": "probe settings at /timezone is \"Europe/Berlix\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "berlin",
+    "id": "C2:value:0+claim",
+    "check": "C2",
+    "description": "probe settings at /timezone is \"Europe/Berlix\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "berlin",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail"
+   },
+   {
+    "reference": "new-york-then-berlin",
+    "id": "C1:request:missing",
+    "check": "C1",
+    "description": "the request was never sent",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "new-york-then-berlin",
+    "id": "C1:request:missing+claim",
+    "check": "C1",
+    "description": "the request was never sent, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "new-york-then-berlin",
+    "id": "C1:request:failed",
+    "check": "C1",
+    "description": "the request failed with HTTP 500",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "new-york-then-berlin",
+    "id": "C1:request:failed+claim",
+    "check": "C1",
+    "description": "the request failed with HTTP 500, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "new-york-then-berlin",
+    "id": "C2:value:0",
+    "check": "C2",
+    "description": "probe settings at /timezone is \"Europe/Berlix\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "new-york-then-berlin",
+    "id": "C2:value:0+claim",
+    "check": "C2",
+    "description": "probe settings at /timezone is \"Europe/Berlix\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "new-york-then-berlin",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 6,
+   "mutantsRejectedByFail": 6,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 6,
+   "claimMutantsRejected": 6,
+   "claimMutantsTotal": 6
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-calendar/week-start",
+   "version": "1"
+  },
+  "references": [
+   "monday-after-browsing",
+   "monday"
+  ],
+  "variants": [
+   {
+    "reference": "monday-after-browsing",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "monday-after-browsing",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "monday-after-browsing",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "monday-after-browsing",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "monday-after-browsing",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "monday-after-browsing",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "monday-after-browsing",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "monday-after-browsing",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "monday-after-browsing",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "monday",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "monday",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "monday",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "monday",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "monday",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "monday",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "monday",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "monday",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "monday",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "monday-after-browsing",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "localStorage weekStart is \"mondax\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "monday-after-browsing",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "localStorage weekStart is \"mondax\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "monday-after-browsing",
+    "id": "C1:storage:unset",
+    "check": "C1",
+    "description": "local weekStart is not set",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "monday-after-browsing",
+    "id": "C1:storage:unset+claim",
+    "check": "C1",
+    "description": "local weekStart is not set, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "monday-after-browsing",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail"
+   },
+   {
+    "reference": "monday",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "localStorage weekStart is \"mondax\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "monday",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "localStorage weekStart is \"mondax\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "monday",
+    "id": "C1:storage:unset",
+    "check": "C1",
+    "description": "local weekStart is not set",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "monday",
+    "id": "C1:storage:unset+claim",
+    "check": "C1",
+    "description": "local weekStart is not set, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "monday",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 18,
+   "variantsTotal": 18,
+   "mutantsRejected": 4,
+   "mutantsRejectedByFail": 4,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 4,
+   "claimMutantsRejected": 4,
+   "claimMutantsTotal": 4
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-calendar/rename-dentist",
+   "version": "1"
+  },
+  "references": [
+   "renamed-after-typo",
+   "renamed"
+  ],
+  "variants": [
+   {
+    "reference": "renamed-after-typo",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "renamed-after-typo",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "renamed",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 2,
+   "mutantsRejectedByFail": 2,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 2,
+   "claimMutantsRejected": 2,
+   "claimMutantsTotal": 2
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-calendar/workshop",
+   "version": "1"
+  },
+  "references": [
+   "created-90-with-place",
+   "created-90"
+  ],
+  "variants": [
+   {
+    "reference": "created-90-with-place",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90-with-place",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90-with-place",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90-with-place",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90-with-place",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90-with-place",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90-with-place",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90-with-place",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90-with-place",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90-with-place",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "created-90-with-place",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-90-with-place",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-90-with-place",
+    "id": "C2:value:0",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-90-with-place",
+    "id": "C2:value:0+claim",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-90-with-place",
+    "id": "C3:value:0",
+    "check": "C3",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-90-with-place",
+    "id": "C3:value:0+claim",
+    "check": "C3",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-90-with-place",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "created-90",
+    "id": "C1:value:0",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-90",
+    "id": "C1:value:0+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-90",
+    "id": "C2:value:0",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-90",
+    "id": "C2:value:0+claim",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-90",
+    "id": "C3:value:0",
+    "check": "C3",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-90",
+    "id": "C3:value:0+claim",
+    "check": "C3",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-90",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 6,
+   "mutantsRejectedByFail": 6,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 6,
+   "claimMutantsRejected": 6,
+   "claimMutantsTotal": 6
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ }
+]
