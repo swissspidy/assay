@@ -11,8 +11,11 @@ export function exampleOf(schema: unknown): Json | undefined {
   const sc = schema as Schema;
   if ('const' in sc) return sc.const as Json;
   if (Array.isArray(sc.enum) && sc.enum.length) return sc.enum[0] as Json;
-  if (sc.type === 'string' && sc.pattern === undefined && sc.format === undefined)
-    return 'x'.repeat(typeof sc.minLength === 'number' ? Math.max(1, sc.minLength) : 1);
+  if (sc.type === 'string' && sc.pattern === undefined && sc.format === undefined) {
+    const min = typeof sc.minLength === 'number' ? sc.minLength : 0;
+    const max = typeof sc.maxLength === 'number' ? sc.maxLength : Infinity;
+    return 'x'.repeat(Math.min(max, Math.max(1, min)));
+  }
   const props = sc.properties as Record<string, unknown> | undefined;
   if (props) {
     const o: Record<string, Json> = {};

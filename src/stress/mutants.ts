@@ -398,8 +398,15 @@ function valueMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, {
 /** The effective integer bounds of a count: the strongest of eq/gte/gt and eq/lte/lt. */
 function countBounds(count: NumberCompare): { lower?: number; upper?: number } {
   if (count.eq !== undefined) return { lower: count.eq, upper: count.eq };
-  const lows = [count.gte, count.gt !== undefined ? count.gt + 1 : undefined].filter((x) => x !== undefined);
-  const highs = [count.lte, count.lt !== undefined ? count.lt - 1 : undefined].filter((x) => x !== undefined);
+  // Counts are integers, so fractional bounds round inward (lt: 2.5 allows at most 2).
+  const lows = [
+    count.gte !== undefined ? Math.ceil(count.gte) : undefined,
+    count.gt !== undefined ? Math.floor(count.gt) + 1 : undefined,
+  ].filter((x) => x !== undefined);
+  const highs = [
+    count.lte !== undefined ? Math.floor(count.lte) : undefined,
+    count.lt !== undefined ? Math.ceil(count.lt) - 1 : undefined,
+  ].filter((x) => x !== undefined);
   return {
     ...(lows.length ? { lower: Math.max(...lows) } : {}),
     ...(highs.length ? { upper: Math.min(...highs) } : {}),

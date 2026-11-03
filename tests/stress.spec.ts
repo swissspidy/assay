@@ -507,6 +507,12 @@ test('count bounds use the strongest of gte/gt and lte/lt', () => {
   );
   expect(lt.missed, formatStressReport(lt)).toEqual([]);
   expect(lt.weak).toEqual([]);
+  expect(lt.mutants.find((m) => m.id === 'C1:request:extra')?.description).toContain('sent twice');
+  const frac = run(
+    one({ kind: 'request', match: { method: 'POST', url: { path: '/api/orders' } }, count: { lt: 2.5 } }),
+    snap([], { network: [post(0)] }),
+  );
+  expect(frac.weak, formatStressReport(frac)).toEqual([]);
 });
 
 test('a forbidden request the synthesizer cannot match is not reported as weak', () => {

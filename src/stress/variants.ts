@@ -204,15 +204,12 @@ function retry(s: EvidenceSnapshot): EvidenceSnapshot | null {
 /** Storage keys some check reads; an unrelated-storage variant must not write them. */
 function readKeys(cs: CheckSet): Set<string> {
   const keys = new Set<string>();
-  const walk = (x: unknown): void => {
-    if (Array.isArray(x)) x.forEach(walk);
-    else if (x && typeof x === 'object') {
-      const o = x as Record<string, unknown>;
-      if (o.from === 'storage' && typeof o.key === 'string') keys.add(o.key);
-      Object.values(o).forEach(walk);
-    }
+  // Only value sources count, not data that merely looks like one (e.g. inside a schema).
+  const walk = (a: Assertion): void => {
+    if (a.kind === 'value' && a.source.from === 'storage') keys.add(a.source.key);
+    else if (a.kind === 'allOf' || a.kind === 'anyOf') a.of.forEach(walk);
   };
-  walk(cs.checks);
+  for (const c of cs.checks) walk(c.assert);
   return keys;
 }
 
