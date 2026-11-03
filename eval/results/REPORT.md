@@ -1,13 +1,13 @@
 # Evaluation: handwritten checks (model baselines not measured yet)
 
-Generated 2026-11-03T02:19:19.709Z · check sets: **handwritten** · 123 labelled runs over 30 tasks (60 correct, 63 incorrect) in 3 apps.
+Generated 2026-11-03T22:13:45.138Z · check sets: **handwritten** · 123 labelled runs over 30 tasks (60 correct, 63 incorrect) in 3 apps.
 
 Positive = the run really completed the task. TPR = correct runs judged success; TNR = incorrect runs judged not success (an abstain counts as not success). The agent always reports success, as agents usually do.
 
 | System | Balanced accuracy | TPR | TNR | Abstain rate | Cost / run | Latency (median / p95) |
 |---|---|---|---|---|---|---|
-| checks | 1.000 | 1.000 | 1.000 | 0.000 | $0.0000 | 133 µs / 2.1 ms |
-| checks+escalation | 1.000 | 1.000 | 1.000 | 0.000 | $0.0000 | 72 µs / 176 µs |
+| checks | 1.000 | 1.000 | 1.000 | 0.000 | $0.0000 | 129 µs / 2.2 ms |
+| checks+escalation | 1.000 | 1.000 | 1.000 | 0.000 | $0.0000 | 79 µs / 182 µs |
 | llm-judge | not measured | | | | | |
 | agentic-verifier | not measured | | | | | |
 

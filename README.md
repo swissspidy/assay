@@ -8,8 +8,9 @@ check returns **pass**, **fail** or **abstain**. Abstain means the check
 couldn't find or read its evidence, and it triggers escalation to an
 expensive verifier.
 
-> Status: **milestone 1**: snapshot format, check DSL and runtime. The
-> compiler, stress testing, escalation and evaluation come next.
+> Status: all five milestones are in: snapshot format and check DSL, compiler,
+> stress testing, escalation and records, and the 30-task evaluation with
+> stability runs. Model baselines are measured once an API key is set.
 
 - Design: [ADR 0001: Evidence snapshot format and check DSL](docs/adr/0001-evidence-snapshot-and-check-dsl.md)
 - Example check sets: [`examples/tiny-shop/tasks/`](examples/tiny-shop/tasks)

@@ -30,7 +30,7 @@
     {
       "id": "C1",
       "requirement": "R1",
-      "description": "The backend has no Team standup event.",
+      "description": "The backend has no Team standup event, and the seeded standup (id 1) is gone, not just renamed.",
       "assert": {
         "kind": "value",
         "source": {
@@ -40,17 +40,34 @@
         "expect": {
           "schema": {
             "type": "array",
-            "not": {
-              "contains": {
-                "type": "object",
-                "required": ["title"],
-                "properties": {
-                  "title": {
-                    "const": "Team standup"
+            "allOf": [
+              {
+                "not": {
+                  "contains": {
+                    "type": "object",
+                    "required": ["title"],
+                    "properties": {
+                      "title": {
+                        "const": "Team standup"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "not": {
+                  "contains": {
+                    "type": "object",
+                    "required": ["id"],
+                    "properties": {
+                      "id": {
+                        "const": 1
+                      }
+                    }
                   }
                 }
               }
-            }
+            ]
           }
         }
       }

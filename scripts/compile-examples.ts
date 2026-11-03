@@ -49,9 +49,6 @@ for (const app of APPS) {
       ...(handwritten.task.outcomes !== undefined ? { outcomes: handwritten.task.outcomes } : {}),
       ...(def.skipVariants ? { skipVariants: def.skipVariants } : {}),
     };
-    const runs = references(root, def.id);
-    const firstOk = compileReference(def);
-    const reference = runs.find((r) => r.name === firstOk.name)!;
     // A failed attempt must not leave an earlier run's checks behind for the tests to read.
     rmSync(new URL(`${def.id}.checks.json`, out), { force: true });
 
@@ -59,7 +56,15 @@ for (const app of APPS) {
     // recording is saved after every turn, so nothing already paid for is lost.
     let result: Awaited<ReturnType<typeof compileTask>>;
     let mode: string;
+    let runs: ReturnType<typeof references>;
+    let reference: (typeof runs)[number];
     try {
+      // Inside the try: a missing or unreadable reference fails this task, not the whole run.
+      const firstOk = compileReference(def);
+      runs = references(root, def.id);
+      const found = runs.find((r) => r.name === firstOk.name);
+      if (!found) throw new Error(`reference run "${firstOk.name}" not found`);
+      reference = found;
       const env = await modelFromEnv(new URL(`${def.id}.cassette.json`, out).pathname);
       result = await compileTask(task, [{ name: reference.name, kind: 'success', snapshot: reference.snapshot }], {
         model: env.model,

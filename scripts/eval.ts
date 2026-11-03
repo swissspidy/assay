@@ -34,7 +34,11 @@ const arg = (name: string, dflt: string) => {
   return i > 0 ? process.argv[i + 1]! : dflt;
 };
 const SYSTEMS = arg('systems', 'checks,checks+escalation,llm-judge,agentic-verifier').split(',');
-const CHECKS = arg('checks', 'handwritten') as 'handwritten' | 'compiled';
+const CHECKS_ARG = arg('checks', 'handwritten');
+if (CHECKS_ARG !== 'handwritten' && CHECKS_ARG !== 'compiled') {
+  throw new Error(`--checks must be handwritten or compiled, got ${CHECKS_ARG}`);
+}
+const CHECKS: 'handwritten' | 'compiled' = CHECKS_ARG;
 const root = new URL('../eval/', import.meta.url);
 
 interface Run {
@@ -60,6 +64,10 @@ for (const app of APPS) {
     if (!existsSync(csFile)) continue;
     const checks = JSON.parse(readFileSync(csFile, 'utf8')) as CheckSet;
     const dir = new URL(`references/${t.id}/`, app.dir);
+    // The held-out guarantee depends on finding the training run; fail loudly if it was renamed.
+    if (training && !existsSync(new URL(`${training}.json`, dir))) {
+      throw new Error(`${app.name}/${t.id}: compiled from "${training}", which is not among the references`);
+    }
     for (const f of readdirSync(dir)
       .filter((x) => x.endsWith('.json'))
       .toSorted()) {
@@ -282,20 +290,22 @@ for (const system of SYSTEMS) {
       continue;
     }
     // Escalation only costs something when the checks abstain.
-    if (system === 'checks+escalation' && evaluate(r.checks, r.snapshot).verdict !== 'abstain') {
+    if (system === 'checks+escalation') {
       const t0 = performance.now();
       const o = evaluate(r.checks, r.snapshot);
-      rows.push({
-        app: r.app,
-        task: r.task,
-        scenario: r.scenario,
-        kind: r.kind,
-        expected: r.expected,
-        verdict: o.verdict,
-        ms: performance.now() - t0,
-        costUsd: 0,
-      });
-      continue;
+      if (o.verdict !== 'abstain') {
+        rows.push({
+          app: r.app,
+          task: r.task,
+          scenario: r.scenario,
+          kind: r.kind,
+          expected: r.expected,
+          verdict: o.verdict,
+          ms: performance.now() - t0,
+          costUsd: 0,
+        });
+        continue;
+      }
     }
     const out = await modelRun(system, r);
     if ('unavailable' in out) {

@@ -52,12 +52,21 @@ const rel = release('tiny-calendar', loadReleases(new URL('./releases.json', imp
 const rewrite = rel.rewrite;
 const json = (res, status, body) => sendJson(res, status, rel.shape(body));
 
+/** A real calendar date: 2026-02-30 and 2026-99-99 are rejected, not stored. */
+const isDate = (d) => {
+  if (typeof d !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(d)) return false;
+  const t = Date.parse(`${d}T00:00:00Z`);
+  return !Number.isNaN(t) && new Date(t).toISOString().startsWith(d);
+};
+
 const valid = (b, partial = false) => {
   const errors = [];
   const has = (k) => b[k] !== undefined;
-  if ((!partial || has('title')) && !String(b.title ?? '').trim()) errors.push('title is required');
-  if ((!partial || has('date')) && !/^\d{4}-\d{2}-\d{2}$/.test(b.date ?? '')) errors.push('date must be YYYY-MM-DD');
-  if ((!partial || has('time')) && !/^\d{2}:\d{2}$/.test(b.time ?? '')) errors.push('time must be HH:MM');
+  if ((!partial || has('title')) && (typeof b.title !== 'string' || !b.title.trim()))
+    errors.push('title must be a non-empty string');
+  if ((!partial || has('date')) && !isDate(b.date)) errors.push('date must be a real YYYY-MM-DD date');
+  if ((!partial || has('time')) && !/^([01]\d|2[0-3]):[0-5]\d$/.test(typeof b.time === 'string' ? b.time : ''))
+    errors.push('time must be HH:MM');
   if (has('duration') && !DURATIONS.has(Number(b.duration))) errors.push('invalid duration');
   return errors;
 };
@@ -108,6 +117,7 @@ const server = createServer(async (req, res) => {
         ev.rsvp = rsvp;
         return json(res, 200, ev);
       }
+      if (m[2]) return json(res, 405, { error: 'method not allowed' });
       if (req.method === 'GET') return json(res, 200, ev);
       if (req.method === 'PATCH') {
         const b = await readBody(req);

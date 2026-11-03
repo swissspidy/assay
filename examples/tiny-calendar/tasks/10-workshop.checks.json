@@ -65,7 +65,7 @@
     {
       "id": "C2",
       "requirement": "R2",
-      "description": "That event lasts 90 minutes.",
+      "description": "That Workshop, on 2026-11-12 at 10:00, lasts 90 minutes.",
       "assert": {
         "kind": "value",
         "source": {
@@ -77,13 +77,19 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": ["title", "duration"],
+              "required": ["title", "duration", "date", "time"],
               "properties": {
                 "title": {
                   "const": "Workshop"
                 },
                 "duration": {
                   "const": 90
+                },
+                "date": {
+                  "const": "2026-11-12"
+                },
+                "time": {
+                  "const": "10:00"
                 }
               }
             }

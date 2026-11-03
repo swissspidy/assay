@@ -1,6 +1,6 @@
 # Stability run
 
-Generated 2026-11-03T02:17:49.284Z · check sets: **handwritten** (written for v1) · 123 scenarios per variant.
+Generated 2026-11-03T22:16:03.896Z · check sets: **handwritten** (written for v1) · 123 scenarios per variant.
 
 Correct = the expected verdict for that version. Abstain = the checks could not decide and would escalate (safe). Broken = a wrong decided verdict. Agent error = the scripted agent could not finish on that UI, so nothing was judged.
 

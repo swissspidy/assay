@@ -3,22 +3,31 @@ import { randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
 /** Per-browser-session state keyed by an httpOnly `sid` cookie. */
-export function sessions(init) {
+export function sessions(init, max = 1000) {
   const store = new Map();
   return (req, res) => {
     const sid = /(?:^|;\s*)sid=([^;]+)/.exec(req.headers.cookie ?? '')?.[1];
     if (sid && store.has(sid)) return store.get(sid);
     const id = randomUUID();
     const s = init();
+    // A demo server: keep the newest sessions only, so cookieless clients cannot grow it forever.
+    if (store.size >= max) store.delete(store.keys().next().value);
     store.set(id, s);
     res.setHeader('Set-Cookie', `sid=${id}; Path=/; HttpOnly; SameSite=Lax`);
     return s;
   };
 }
 
+const MAX_BODY = 1 << 20;
+
 export async function readBody(req) {
   const chunks = [];
-  for await (const c of req) chunks.push(c);
+  let size = 0;
+  for await (const c of req) {
+    size += c.length;
+    if (size > MAX_BODY) throw new Error('request body too large');
+    chunks.push(c);
+  }
   const text = Buffer.concat(chunks).toString('utf8');
   if (!text) return {};
   if (/json/.test(req.headers['content-type'] ?? '')) return JSON.parse(text);

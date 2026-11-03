@@ -16,7 +16,7 @@ async function waitFor(url: string, ms = 10_000): Promise<boolean> {
   const deadline = Date.now() + ms;
   while (Date.now() < deadline) {
     try {
-      const r = await fetch(url, { redirect: 'manual' });
+      const r = await fetch(url, { redirect: 'manual', signal: AbortSignal.timeout(1000) });
       if (r.status < 500) return true;
     } catch {
       /* not up yet */
@@ -29,7 +29,7 @@ async function waitFor(url: string, ms = 10_000): Promise<boolean> {
 /** Which app and version answers on a port, if any (see release() in examples/lib/kit.mjs). */
 async function identify(baseURL: string): Promise<{ app: string; releases: number[] } | null> {
   try {
-    const r = await fetch(`${baseURL}/__assay/version`, { redirect: 'manual' });
+    const r = await fetch(`${baseURL}/__assay/version`, { redirect: 'manual', signal: AbortSignal.timeout(1000) });
     return r.ok ? ((await r.json()) as { app: string; releases: number[] }) : null;
   } catch {
     return null;

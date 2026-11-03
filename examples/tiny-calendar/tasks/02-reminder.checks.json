@@ -65,7 +65,7 @@
     {
       "id": "C2",
       "requirement": "R2",
-      "description": "That event has a reminder.",
+      "description": "That Yoga event, on 2026-11-07 at 08:00, has a reminder.",
       "assert": {
         "kind": "value",
         "source": {
@@ -77,13 +77,19 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": ["title", "reminder"],
+              "required": ["title", "reminder", "date", "time"],
               "properties": {
                 "title": {
                   "const": "Yoga"
                 },
                 "reminder": {
                   "const": true
+                },
+                "date": {
+                  "const": "2026-11-07"
+                },
+                "time": {
+                  "const": "08:00"
                 }
               }
             }

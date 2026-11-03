@@ -12,6 +12,9 @@ import { APPS } from '../examples/apps.ts';
 import { startApp } from './app-runner.ts';
 
 const [onlyApp, ...onlyTasks] = process.argv.slice(2);
+if (onlyApp && !APPS.some((a) => a.name === onlyApp)) {
+  throw new Error(`unknown app ${onlyApp}; expected one of ${APPS.map((a) => a.name).join(', ')}`);
+}
 const incomplete = (s: EvidenceSnapshot) => (s.network ?? []).some((e) => e.bodyUnavailable || e.bodyTruncated);
 
 for (const app of APPS) {

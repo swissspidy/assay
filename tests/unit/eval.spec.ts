@@ -28,7 +28,7 @@ test('metrics: abstain counts as not-success; decided rates exclude abstains', (
   expect(m.decidedTpr).toBeCloseTo(1 / 2);
   expect(m.decidedTnr).toBeCloseTo(1 / 2);
   expect(m.costUsdPerRun).toBeCloseTo(0.01);
-  expect(m.msPerRunMedian).toBe(4);
+  expect(m.msPerRunMedian).toBe(3.5); // even count: mean of the two middle values
   expect(m.msPerRunP95).toBe(6);
 });
 
@@ -77,6 +77,9 @@ test('llmJudge: returns the submitted verdict and shows the judge the page and t
   expect(prompt).toContain('Then the newsletter is on');
   expect(prompt).toContain('The agent reported: Done!');
   expect(prompt).toContain(ref.snapshot.page.url);
+  expect(prompt).toContain('Accessibility tree:');
+  expect(prompt).toContain('Visible text:');
+  expect(prompt).toContain(JSON.stringify(ref.snapshot.text.split('\n')[0]!).slice(1, -1));
   expect(r.usage.inputTokens).toBe(10);
 });
 

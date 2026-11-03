@@ -35,6 +35,13 @@ const quantile = (all: number[], q: number) => {
   const s = xs.toSorted((a, b) => a - b);
   return s[Math.min(s.length - 1, Math.floor(q * s.length))]!;
 };
+/** The conventional median: the mean of the two middle values for an even count. */
+const median = (all: number[]) => {
+  const s = all.filter(Number.isFinite).toSorted((a, b) => a - b);
+  if (!s.length) return NaN;
+  const mid = s.length >> 1;
+  return s.length % 2 ? s[mid]! : (s[mid - 1]! + s[mid]!) / 2;
+};
 
 export function metrics(preds: Prediction[]): Metrics {
   const pos = preds.filter((p) => p.expected === 'success');
@@ -54,10 +61,7 @@ export function metrics(preds: Prediction[]): Metrics {
     decidedTpr: rate(posD.filter((p) => p.verdict === 'success').length, posD.length),
     decidedTnr: rate(negD.filter((p) => p.verdict === 'fail').length, negD.length),
     costUsdPerRun: preds.reduce((a, p) => a + p.costUsd, 0) / Math.max(1, preds.length),
-    msPerRunMedian: quantile(
-      preds.map((p) => p.ms),
-      0.5,
-    ),
+    msPerRunMedian: median(preds.map((p) => p.ms)),
     msPerRunP95: quantile(
       preds.map((p) => p.ms),
       0.95,
