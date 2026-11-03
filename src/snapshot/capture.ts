@@ -402,8 +402,9 @@ export interface CaptureOptions {
 }
 
 /**
- * Names that usually hold credentials. Their values are redacted at capture time,
- * so tokens never reach audit records or a model. Pass keepCookies/keepStorage to keep one.
+ * Names that usually hold credentials. Values under these names, and httpOnly cookie
+ * values, are redacted at capture time. Redaction goes by name only: a secret stored
+ * under another name (e.g. `sid`) is kept. Pass keepCookies/keepStorage to keep one.
  */
 export const CREDENTIAL_NAME = /token|secret|passw(or)?d|session|auth|jwt|bearer|api[-_]?key|credential/i;
 

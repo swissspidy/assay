@@ -23,6 +23,7 @@ ADR 0001 fixed the snapshot format and the check DSL. Milestone 2 produces check
    - a quote or text is empty or blank, or a quote is not verbatim in the instruction or the outcomes,
    - a quote spans several outcome clauses (one requirement per outcome). Identical clauses count once, and a clause nested in another merged clause doesn't count separately.
    - a requirement quoting (part of) an expected outcome is soft, although its quoted words don't say it is optional ("ideally", "if possible", "optional", …). A clause can therefore be split into a hard part and an optional soft part.
+   - a quote mixes a mandatory and an optional part: a soft quote must be one optional part (the optional wording opens it, closes it, or follows it after a comma or dash), a hard quote may not contain optional wording, and a quote with any negation never counts as optional. The rule is deliberately conservative: an unusual phrasing makes compilation fail or a requirement stricter, never drops a mandatory part.
    - an outcome clause is not fully covered. The quotes of all requirements together must cover every word of it: either one quote contains the whole clause, or several partial quotes leave no word out. A quote that drops the decisive word ("the order ships" for "the order ships express") covers nothing on its own.
    - two requirements share an ID, or there is no hard requirement.
 
