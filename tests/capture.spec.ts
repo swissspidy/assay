@@ -16,7 +16,9 @@ test('XHR and fetch response bodies survive an immediate navigation', async ({ p
       xhr.addEventListener('load', r, { once: true });
       xhr.send(JSON.stringify({ sku: 'MUG-RED', qty: 2 }));
     });
-    await fetch('/api/cart');
+    // A URL only this request uses: bodies of repeated same-URL requests are only
+    // filled from the page tap when the pairing is unambiguous (see settle()).
+    await fetch('/api/cart?after=post');
     location.href = '/cart';
   });
   await page.waitForURL('**/cart');
@@ -25,8 +27,7 @@ test('XHR and fetch response bodies survive an immediate navigation', async ({ p
   expect(post.requestBody).toEqual({ sku: 'MUG-RED', qty: 2 });
   expect(post.responseBody).toMatchObject({ total: 19 });
   expect(
-    s.network!.find((e) => e.method === 'GET' && e.url.endsWith('/api/cart') && e.resourceType === 'fetch')!
-      .responseBody,
+    s.network!.find((e) => e.method === 'GET' && e.url.endsWith('/api/cart?after=post'))!.responseBody,
   ).toMatchObject({ total: 19 });
 });
 
@@ -144,7 +145,8 @@ test.describe('a response body that never finishes', () => {
       await response;
       const t0 = Date.now();
       const s = await captureSnapshot(page);
-      expect(Date.now() - t0).toBeLessThan(5000);
+      // Below the 3000 ms default, so the test also fails if the option were ignored.
+      expect(Date.now() - t0).toBeLessThan(2000);
       const stalled = s.network!.find((e) => e.url.endsWith('/stall'))!;
       expect(stalled.status).toBe(200);
       expect(stalled.responseBody).toBeUndefined();
@@ -154,4 +156,50 @@ test.describe('a response body that never finishes', () => {
       await new Promise((r) => server.close(r));
     }
   });
+});
+
+test('a failed request never receives the body of a later request to the same URL', async ({ page, evidence }) => {
+  // /item: the first request is held until the client aborts it; the second succeeds.
+  let first = true;
+  let received!: () => void;
+  const gotFirst = new Promise<void>((r) => (received = r));
+  const server = createServer((req, res) => {
+    if (req.url === '/item') {
+      if (first) {
+        first = false;
+        received();
+        return; // never answered: the client aborts it
+      }
+      res.writeHead(200, { 'content-type': 'application/json' });
+      res.end('{"n":2}');
+      return;
+    }
+    res.writeHead(200, { 'content-type': 'text/html' });
+    res.end('<!doctype html><title>items</title><main>items</main>');
+  });
+  await new Promise<void>((r) => server.listen(0, '127.0.0.1', r));
+  try {
+    const { port } = server.address() as AddressInfo;
+    await page.goto(`http://127.0.0.1:${port}/`);
+    const failed = page.waitForEvent('requestfailed');
+    await page.evaluate(() => {
+      const c = new AbortController();
+      (window as unknown as { abortFirst: () => void }).abortFirst = () => c.abort();
+      void fetch('/item', { signal: c.signal }).catch(() => {});
+    });
+    await gotFirst;
+    await page.evaluate(() => (window as unknown as { abortFirst: () => void }).abortFirst());
+    await failed;
+    await page.evaluate(() => fetch('/item').then((r) => r.text()));
+    // The second response's body has reached the recorder through the page tap.
+    await expect.poll(() => evidence.tappedCount()).toBeGreaterThan(0);
+    const s = await captureSnapshot(page);
+    const items = s.network!.filter((e) => e.url.endsWith('/item'));
+    expect(items).toHaveLength(2);
+    expect(items[0]).toMatchObject({ status: null, failure: expect.any(String) });
+    expect(items[0]!.responseBody).toBeUndefined();
+    expect(items[1]).toMatchObject({ status: 200, responseBody: { n: 2 } });
+  } finally {
+    await new Promise((r) => server.close(r));
+  }
 });
