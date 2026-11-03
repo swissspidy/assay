@@ -1,4 +1,4 @@
-import { createServer, type ServerResponse } from 'node:http';
+import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { expect } from '@playwright/test';
 import { test } from '../src/playwright/index.ts';
@@ -202,4 +202,96 @@ test('a failed request never receives the body of a later request to the same UR
   } finally {
     await new Promise((r) => server.close(r));
   }
+});
+
+/** A local server for one test; `handle` serves everything except `/`, which is an empty page. */
+async function withServer(
+  handle: (req: IncomingMessage, res: ServerResponse) => boolean,
+  run: (origin: string, open: Set<ServerResponse>) => Promise<void>,
+): Promise<void> {
+  const open = new Set<ServerResponse>();
+  const server = createServer((req, res) => {
+    if (req.url !== '/' && handle(req, res)) return;
+    res.writeHead(200, { 'content-type': 'text/html' });
+    res.end('<!doctype html><title>t</title><main>t</main>');
+  });
+  server.on('request', (_req, res) => open.add(res));
+  await new Promise<void>((r) => server.listen(0, '127.0.0.1', r));
+  try {
+    await run(`http://127.0.0.1:${(server.address() as AddressInfo).port}`, open);
+  } finally {
+    for (const res of open) res.destroy();
+    await new Promise((r) => server.close(r));
+  }
+}
+
+test('a streaming response without a length is not held up by the tap', async ({ page }) => {
+  // /stream sends one NDJSON line and never ends.
+  await withServer(
+    (req, res) => {
+      if (req.url !== '/stream') return false;
+      res.writeHead(200, { 'content-type': 'application/x-ndjson' });
+      res.write('{"n":1}\n');
+      return true;
+    },
+    async (origin) => {
+      await page.goto(`${origin}/`);
+      const ms = await page.evaluate(async () => {
+        const t0 = performance.now();
+        const res = await fetch('/stream');
+        const first = await res.body!.getReader().read();
+        if (!first.value) throw new Error('no first chunk');
+        return performance.now() - t0;
+      });
+      expect(ms).toBeLessThan(2000);
+      await captureSnapshot(page); // and capture still completes
+    },
+  );
+});
+
+test('a reused XHR reports each response once, so its failed first request gets no body', async ({ page }) => {
+  let first = true;
+  let received!: () => void;
+  const gotFirst = new Promise<void>((r) => (received = r));
+  await withServer(
+    (req, res) => {
+      if (req.url !== '/item') return false;
+      if (first) {
+        first = false;
+        received();
+        return true; // held until aborted
+      }
+      res.writeHead(200, { 'content-type': 'application/json' });
+      res.end('{"n":2}');
+      return true;
+    },
+    async (origin) => {
+      await page.goto(`${origin}/`);
+      const failed = page.waitForEvent('requestfailed');
+      await page.evaluate(() => {
+        const x = new XMLHttpRequest();
+        (window as unknown as { xhr: XMLHttpRequest }).xhr = x;
+        x.open('GET', '/item');
+        x.send();
+      });
+      await gotFirst;
+      await page.evaluate(() => (window as unknown as { xhr: XMLHttpRequest }).xhr.abort());
+      await failed;
+      await page.evaluate(
+        () =>
+          new Promise((resolve) => {
+            const x = (window as unknown as { xhr: XMLHttpRequest }).xhr;
+            x.addEventListener('load', resolve, { once: true });
+            x.open('GET', '/item');
+            x.send();
+          }),
+      );
+      const s = await captureSnapshot(page);
+      const items = s.network!.filter((e) => e.url.endsWith('/item'));
+      expect(items).toHaveLength(2);
+      expect(items[0]!.failure).toBeDefined();
+      expect(items[0]!.responseBody).toBeUndefined();
+      expect(items[1]).toMatchObject({ status: 200, responseBody: { n: 2 } });
+    },
+  );
 });
