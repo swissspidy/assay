@@ -144,7 +144,7 @@ soon as the page navigates. A common flow is "POST /api/orders, then
 `location.href = '/orders/A1'`", and in that flow the protocol-level read
 (`response.body()`) fails. Milestone 1 tests hit this. The recorder
 therefore also installs an init script that tees `fetch` and `XHR` response
-bodies (`Response.clone()`) to a Playwright binding. Integrity rules:
+bodies to a Playwright binding. For `fetch`, the page receives the response only after the tap has read a clone of its body and reported it. A concurrent read would race an app that navigates the moment it has its data. Streaming (`text/event-stream`) and oversized responses pass through unchanged. Integrity rules:
 
 - Every tap message carries a random token that lives only in the init
   script's closure. Page scripts can find the binding, but they can't forge
@@ -335,7 +335,7 @@ type ValueSource =
 `pick` defaults to `only`: if several requests match, the value is
 ambiguous and the check abstains. `last` is for "the final state was saved".
 
-A `value` check reads, then normalizes, then compares. **Abstain means the
+A `value` check reads, then normalizes, then compares. Accessible names and text (`from: "node"`, fields `name` and `text`) are canonicalized (NFC, whitespace collapsed) before the normalizers run, as in §2.3. Control values, URLs and the `text` channel (`from: "text"`, which keeps line breaks) are read verbatim. The validator warns about `extract` and `replace` patterns on names or text that expect raw whitespace. **Abstain means the
 value couldn't be determined.** That covers a missing anchor, no matching
 request, a missing pointer path, a regex that doesn't match, a redacted
 value, or a normalizer that can't parse the input. **Fail means the value

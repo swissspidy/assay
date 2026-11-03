@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { canonicalJson, sha256 } from '../snapshot/digest.ts';
 import type { ModelClient, ModelRequest, ModelTurn } from './types.ts';
@@ -44,14 +44,17 @@ export function replayModel(path: string): ModelClient {
 }
 
 /**
- * Wraps a live model and records every turn into a fresh cassette at `path`.
- * The file is rewritten after each turn, so a crash keeps what was already paid for.
+ * Wraps a live model and records every turn into a fresh cassette. While the run
+ * is in progress, turns are written to `<path>.partial` after each turn (so a
+ * crash keeps what was already paid for without replacing a complete cassette);
+ * `save()` moves it into place.
  */
 export function recordingModel(inner: ModelClient, path: string): ModelClient & { save(): void } {
   const cassette: Cassette = { schema: 'assay.cassette/v1', model: inner.id, turns: {} };
-  const save = () => {
-    mkdirSync(dirname(path), { recursive: true });
-    writeFileSync(path, JSON.stringify(cassette, null, 1) + '\n');
+  const partial = `${path}.partial`;
+  const write = (file: string) => {
+    mkdirSync(dirname(file), { recursive: true });
+    writeFileSync(file, JSON.stringify(cassette, null, 1) + '\n');
   };
   return {
     id: inner.id,
@@ -59,9 +62,12 @@ export function recordingModel(inner: ModelClient, path: string): ModelClient & 
       const key = requestKey(req, inner.id);
       const out = await inner.turn(req);
       cassette.turns[key] = out;
-      save();
+      write(partial);
       return out;
     },
-    save,
+    save() {
+      write(partial);
+      renameSync(partial, path);
+    },
   };
 }

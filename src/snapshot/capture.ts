@@ -97,19 +97,26 @@ function pageTap(bindingName: string, token: string, max: number): string {
   };
   const origFetch = window.fetch;
   if (origFetch) {
+    // The page receives the response only after the tap has read (a clone of) its body
+    // and reported it. Reading concurrently would race the page: an app that navigates
+    // as soon as it has the data (POST, then location.href = ...) can unload before a
+    // concurrent read finishes. Streaming and oversized responses pass through untouched.
     window.fetch = function (input, init) {
       const p = origFetch.apply(this, arguments);
+      let method = 'GET';
       try {
-        const method = (init && init.method) || (input && typeof input === 'object' && 'method' in input ? input.method : 'GET');
-        p.then((res) => {
-          try {
-            const ct = res.headers.get('content-type');
-            if (!textual(ct)) return;
-            res.clone().text().then((t) => post(method, res.url, res.status, ct, t), () => {});
-          } catch {}
-        }, () => {});
+        method = (init && init.method) || (input && typeof input === 'object' && 'method' in input ? input.method : 'GET');
       } catch {}
-      return p;
+      return p.then((res) => {
+        try {
+          const ct = res.headers.get('content-type');
+          const len = Number(res.headers.get('content-length') || 0);
+          if (!textual(ct) || len > MAX) return res;
+          return res.clone().text().then((t) => { post(method, res.url, res.status, ct, t); return res; }, () => res);
+        } catch {
+          return res;
+        }
+      });
     };
   }
   const X = window.XMLHttpRequest && window.XMLHttpRequest.prototype;

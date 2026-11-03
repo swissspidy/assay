@@ -6,6 +6,8 @@ export const clone = <T>(x: T): T => structuredClone(x);
 /**
  * Rebuild the a11y tree, applying `fn` to nodes by pre-order id (the ids AXIndex
  * assigns). `fn` may return a replacement node, an array (splice), or null (remove).
+ * Only the tree is rebuilt; the rest of the snapshot is shared, so callers that
+ * change other parts must copy them.
  */
 export function editById(
   snapshot: EvidenceSnapshot,
@@ -23,31 +25,38 @@ export function editById(
     if (out === null) return [];
     return Array.isArray(out) ? out : [out];
   };
-  const [root] = walk(clone(snapshot.a11y));
-  return { ...clone(snapshot), a11y: root ?? { role: 'document' } };
+  const [root] = walk(snapshot.a11y);
+  return { ...snapshot, a11y: root ?? { role: 'document' } };
 }
+
+/** Did an edit change the accessibility tree at all? (Generators drop no-op edits.) */
+export function treeChanged(a: EvidenceSnapshot, b: EvidenceSnapshot): boolean {
+  return JSON.stringify(a.a11y) !== JSON.stringify(b.a11y);
+}
+
+const replaceOnce = (s: string, from: string, to: string) => s.replace(from, () => to);
 
 /** Replace `from` with `to` in the first text-bearing place under `node` (text runs, then name/value). */
 export function replaceText(node: AXNode, from: string, to: string): AXNode | null {
   const n = clone(node);
   const visit = (x: AXNode): boolean => {
     if (x.role === 'text' && x.name?.includes(from)) {
-      x.name = x.name.replace(from, to);
+      x.name = replaceOnce(x.name, from, to);
       return true;
     }
     for (const c of x.children ?? []) if (visit(c)) return true;
     return false;
   };
   if (visit(n)) {
-    if (n.name?.includes(from) && n.children) n.name = n.name.replace(from, to);
+    if (n.name?.includes(from) && n.children) n.name = replaceOnce(n.name, from, to);
     return n;
   }
   if (n.name?.includes(from)) {
-    n.name = n.name.replace(from, to);
+    n.name = replaceOnce(n.name, from, to);
     return n;
   }
   if (n.value?.includes(from)) {
-    n.value = n.value.replace(from, to);
+    n.value = replaceOnce(n.value, from, to);
     return n;
   }
   return null;
@@ -76,20 +85,30 @@ export function setPointer(doc: Json, pointer: string, value: Json | undefined):
   return true;
 }
 
-/** A plausible near miss for a JSON value: flip booleans, shift numbers, alter strings. */
-export function nearMiss(v: Json): Json {
+export function shiftDate(iso: string, days: number): string {
+  const d = new Date(iso.slice(0, 10) + 'T00:00:00Z');
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10) + iso.slice(10);
+}
+
+/**
+ * A plausible near miss for a JSON value: flip booleans, shift numbers and
+ * dates, alter one character of strings, change one leaf of an object, drop an
+ * array's last item. `undefined` when no near miss exists (empty array/object).
+ */
+export function nearMiss(v: Json): Json | undefined {
   if (typeof v === 'boolean') return !v;
   if (typeof v === 'number') return Number.isInteger(v) ? v + 1 : Math.round((v + 1) * 100) / 100;
   if (typeof v === 'string') {
-    if (/^\d{4}-\d{2}-\d{2}/.test(v)) {
-      const d = new Date(v.slice(0, 10) + 'T00:00:00Z');
-      d.setUTCDate(d.getUTCDate() + 1);
-      return d.toISOString().slice(0, 10) + v.slice(10);
-    }
+    if (/^\d{4}-\d{2}-\d{2}/.test(v)) return shiftDate(v, 1);
     if (v === '') return 'x';
     return v.length > 1 ? v.slice(0, -1) + (v.at(-1) === 'x' ? 'y' : 'x') : v + 'x';
   }
   if (v === null) return 'x';
-  if (Array.isArray(v)) return v.slice(0, -1);
-  return { ...v, __mutated: true };
+  if (Array.isArray(v)) return v.length ? v.slice(0, -1) : undefined;
+  for (const [k, x] of Object.entries(v)) {
+    const m = nearMiss(x);
+    if (m !== undefined) return { ...v, [k]: m };
+  }
+  return undefined;
 }
