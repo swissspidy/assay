@@ -1,3 +1,5 @@
+import { createServer, type ServerResponse } from 'node:http';
+import type { AddressInfo } from 'node:net';
 import { expect } from '@playwright/test';
 import { test } from '../src/playwright/index.ts';
 import { captureSnapshot, evaluate, type CheckSet, type EvidenceSnapshot } from '../src/index.ts';
@@ -113,4 +115,43 @@ test('a response body that could not be read makes body checks abstain, not fail
     'pass',
     'pass',
   ]);
+});
+
+test.describe('a response body that never finishes', () => {
+  test.use({ evidenceOptions: { bodyTimeoutMs: 300 } });
+
+  test('does not hang capture: the read times out and the body is marked unavailable', async ({ page }) => {
+    // A server whose /stall response sends its headers and a first chunk, then never ends.
+    const open = new Set<ServerResponse>();
+    const server = createServer((req, res) => {
+      if (req.url === '/stall') {
+        open.add(res);
+        res.writeHead(200, { 'content-type': 'application/json' });
+        res.write('{"partial":');
+        return;
+      }
+      res.writeHead(200, { 'content-type': 'text/html' });
+      res.end('<!doctype html><title>stall</title><main>stall</main>');
+    });
+    await new Promise<void>((r) => server.listen(0, '127.0.0.1', r));
+    try {
+      const { port } = server.address() as AddressInfo;
+      await page.goto(`http://127.0.0.1:${port}/`);
+      const response = page.waitForResponse('**/stall');
+      await page.evaluate(() => {
+        void fetch('/stall').catch(() => {});
+      });
+      await response;
+      const t0 = Date.now();
+      const s = await captureSnapshot(page);
+      expect(Date.now() - t0).toBeLessThan(5000);
+      const stalled = s.network!.find((e) => e.url.endsWith('/stall'))!;
+      expect(stalled.status).toBe(200);
+      expect(stalled.responseBody).toBeUndefined();
+      expect(stalled.bodyUnavailable).toBe(true);
+    } finally {
+      for (const res of open) res.destroy();
+      await new Promise((r) => server.close(r));
+    }
+  });
 });
