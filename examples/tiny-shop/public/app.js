@@ -1,11 +1,12 @@
 // Shared helpers for Tiny Shop pages.
 export const money = (n) => '$' + n.toFixed(2);
 export async function api(method, path, body) {
-  const res = await fetch(path, {
-    method,
-    headers: body ? { 'content-type': 'application/json' } : {},
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  const init = { method };
+  if (body) {
+    init.headers = { 'content-type': 'application/json' };
+    init.body = JSON.stringify(body);
+  }
+  const res = await fetch(path, init);
   const data = await res.json();
   if (!res.ok) throw new Error(data.error ?? res.statusText);
   return data;
@@ -15,6 +16,7 @@ export const el = (html) => {
   t.innerHTML = html.trim();
   return t.content.firstElementChild;
 };
-export const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+export const esc = (s) =>
+  String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 // Apply persisted theme.
 document.documentElement.dataset.theme = localStorage.getItem('theme') ?? 'light';

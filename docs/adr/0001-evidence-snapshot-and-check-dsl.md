@@ -24,8 +24,7 @@ These formats must meet these constraints:
   versioned and locked. Checks contain no JavaScript, no CSS selectors and
   no XPath.
 - **Same semantics live and offline.** A check gives the same result on a live
-  page and on a snapshot captured from that page. Stress testing (milestone
-  3) depends on this, because it mutates snapshots rather than driving a
+  page and on a snapshot captured from that page. Stress testing (milestone 3) depends on this, because it mutates snapshots rather than driving a
   browser.
 - **Three outcomes.** Each check returns `pass`, `fail` or `abstain`. Abstain
   means "I cannot decide", and it is what triggers escalation (milestone 4).
@@ -65,14 +64,14 @@ A snapshot is a single JSON document:
 
 **Channels.** Each top-level key is an evidence channel, ranked by trust:
 
-| Channel   | Trust      | Source                                                       |
-|-----------|------------|--------------------------------------------------------------|
-| `probes`  | structured | User-supplied read-only backend adapters (HTTP API, DB query) |
-| `network` | structured | Requests and responses recorded on the browser context from its start |
-| `storage` | structured | Cookies, `localStorage`, `sessionStorage` of the page's origin |
-| `page.url`| structured | Final URL of the main frame                                  |
-| `a11y`    | semantic   | Accessibility tree of the main frame                         |
-| `text`    | free text  | `innerText` of the body; trivially spoofable                 |
+| Channel    | Trust      | Source                                                                |
+| ---------- | ---------- | --------------------------------------------------------------------- |
+| `probes`   | structured | User-supplied read-only backend adapters (HTTP API, DB query)         |
+| `network`  | structured | Requests and responses recorded on the browser context from its start |
+| `storage`  | structured | Cookies, `localStorage`, `sessionStorage` of the page's origin        |
+| `page.url` | structured | Final URL of the main frame                                           |
+| `a11y`     | semantic   | Accessibility tree of the main frame                                  |
+| `text`     | free text  | `innerText` of the body; trivially spoofable                          |
 
 `null` means the channel was **not captured**. That is different from
 "captured and empty" (`[]`, `{}`). A check that needs a missing channel
@@ -83,14 +82,19 @@ abstains. It never fails.
 
 ```ts
 interface AXNode {
-  role: string;              // ARIA role, or "text" for text runs
-  name?: string;             // accessible name (whitespace-normalized)
-  value?: string;            // textbox/searchbox/spinbutton/slider/combobox value
-  url?: string;              // link target (/url)
-  level?: number;            // heading level
-  states?: { checked?: boolean | "mixed"; pressed?: boolean | "mixed";
-             selected?: boolean; expanded?: boolean; disabled?: boolean };
-  props?: Record<string, string>;   // other /key: value properties
+  role: string; // ARIA role, or "text" for text runs
+  name?: string; // accessible name (whitespace-normalized)
+  value?: string; // textbox/searchbox/spinbutton/slider/combobox value
+  url?: string; // link target (/url)
+  level?: number; // heading level
+  states?: {
+    checked?: boolean | 'mixed';
+    pressed?: boolean | 'mixed';
+    selected?: boolean;
+    expanded?: boolean;
+    disabled?: boolean;
+  };
+  props?: Record<string, string>; // other /key: value properties
   children?: AXNode[];
 }
 ```
@@ -114,16 +118,18 @@ before the agent runs, so it sees every request.
 
 ```ts
 interface NetworkEntry {
-  seq: number;                 // order of request start
-  method: string; url: string; resourceType: string;
-  status: number | null;       // null = no response (failed, aborted or in flight)
+  seq: number; // order of request start
+  method: string;
+  url: string;
+  resourceType: string;
+  status: number | null; // null = no response (failed, aborted or in flight)
   failure?: string;
-  requestHeaders: Record<string,string>;   // allowlisted: content-type, accept
-  requestBody?: Json | string | null;      // parsed JSON when content-type is JSON
-  responseHeaders: Record<string,string>;  // allowlisted: content-type, location
+  requestHeaders: Record<string, string>; // allowlisted: content-type, accept
+  requestBody?: Json | string | null; // parsed JSON when content-type is JSON
+  responseHeaders: Record<string, string>; // allowlisted: content-type, location
   responseBody?: Json | string | null;
   bodyTruncated?: boolean;
-  bodyUnavailable?: boolean;   // a body should exist but could not be read
+  bodyUnavailable?: boolean; // a body should exist but could not be read
 }
 ```
 
@@ -146,6 +152,20 @@ bodies (`Response.clone()`) to a Playwright binding. Integrity rules:
 - The tap **only fills in bodies** of entries the browser itself reported.
   It never creates entries, so a page can't invent a request.
 - A protocol-read body takes precedence over a tapped one.
+- A tapped message names only its frame, method, URL and status, not the
+  request it belongs to. A tapped body therefore fills a request only when
+  no other pairing could differ: the requests to that method and URL from
+  that frame match the tapped bodies one to one (equal counts), and those
+  bodies are identical. Otherwise the bodies stay unavailable, so a request
+  never shows another request's body.
+- For `fetch`, the page receives the response once the tap has read and
+  reported its body, or after 500 ms, whichever comes first. So an app that
+  navigates right after the response cannot unload the page mid-read, and a
+  streaming response is held up by at most 500 ms. The tap reads at most the
+  body size limit, and stops a body still open after 10 s, keeping what it has
+  read as a truncated body.
+- A failed request never receives a tapped body, and a reused `XMLHttpRequest`
+  reports each response once.
 - If neither path produced a body that should exist, the entry is marked
   `bodyUnavailable`.
 
@@ -185,22 +205,36 @@ network log, not by navigating at check time (see "Rejected alternatives").
   "version": "1",
   "task": {
     "instruction": "Order one Blue Mug with express shipping.",
-    "outcomes": "Then an order is placed\nThen the shipping method is express"
+    "outcomes": "Then an order is placed\nThen the shipping method is express",
   },
   "requirements": [
-    { "id": "R1", "kind": "hard", "text": "An order is placed",
-      "source": { "field": "outcomes", "quote": "an order is placed" } }
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "An order is placed",
+      "source": { "field": "outcomes", "quote": "an order is placed" },
+    },
   ],
   "checks": [
-    { "id": "C1", "requirement": "R1",
+    {
+      "id": "C1",
+      "requirement": "R1",
       "description": "The browser sent POST /api/orders and got 201 with status 'placed'.",
-      "assert": { "kind": "request",
-                  "match": { "method": "POST", "url": { "path": "/api/orders" },
-                             "status": 201,
-                             "responseBody": { "type": "object",
-                               "required": ["status"],
-                               "properties": { "status": { "const": "placed" } } } } } }
-  ]
+      "assert": {
+        "kind": "request",
+        "match": {
+          "method": "POST",
+          "url": { "path": "/api/orders" },
+          "status": 201,
+          "responseBody": {
+            "type": "object",
+            "required": ["status"],
+            "properties": { "status": { "const": "placed" } },
+          },
+        },
+      },
+    },
+  ],
 }
 ```
 
@@ -222,8 +256,8 @@ This is the core rule behind abstain:
 > If an anchor is missing or ambiguous, the check **abstains**. If the anchor
 > resolves and the assertion is false, the check **fails**.
 
-Take "cart contains Blue Mug". It is written as *scope* = table "Cart"
-(anchor) and *match* = row whose name contains "Blue Mug" (assertion). If
+Take "cart contains Blue Mug". It is written as _scope_ = table "Cart"
+(anchor) and _match_ = row whose name contains "Blue Mug" (assertion). If
 the agent added a Red Mug instead, the table exists and the row doesn't, so
 the check fails. If a redesign renames the table, the anchor is gone and the
 check abstains. It does not wrongly fail, and the case escalates.
@@ -232,14 +266,14 @@ check abstains. It does not wrongly fail, and the case escalates.
 
 ```ts
 interface Locator {
-  role: string;                       // required: ARIA role
-  name?: TextMatch;                   // accessible name
-  text?: TextMatch;                   // derived descendant text
+  role: string; // required: ARIA role
+  name?: TextMatch; // accessible name
+  text?: TextMatch; // derived descendant text
   level?: number;
-  landmark?: { role: LandmarkRole; name?: TextMatch };  // some landmark ancestor
-  within?: Locator;                   // some ancestor matches this locator
+  landmark?: { role: LandmarkRole; name?: TextMatch }; // some landmark ancestor
+  within?: Locator; // some ancestor matches this locator
 }
-type Target = Locator | { anchors: Locator[] };   // redundant anchors
+type Target = Locator | { anchors: Locator[] }; // redundant anchors
 ```
 
 There is no `nth`, no CSS and no XPath. If a locator matches several nodes,
@@ -264,7 +298,8 @@ independently, then:
 #### 2.3 Text matching
 
 ```ts
-type TextMatch = string                         // shorthand for { equals }
+type TextMatch =
+  | string // shorthand for { equals }
   | { equals: string; ignoreCase?: boolean }
   | { contains: string; ignoreCase?: boolean }
   | { regex: string; flags?: string };
@@ -278,14 +313,14 @@ explicitly.
 
 #### 2.4 Assertion kinds
 
-| kind      | anchor(s)                         | assertion                                  |
-|-----------|-----------------------------------|--------------------------------------------|
-| `state`   | `target`                          | `expect` on states, `name`, `value`, `text`, `level` |
-| `contains`| `scope` (optional; default document) and optional `witness` inside it | number of `match` nodes inside scope satisfies `count` (default `{gte:1}`); `{eq:0}` = absence |
-| `value`   | the `source` (see below)          | normalized value satisfies `expect`        |
-| `url`     | none (the page always has a URL)  | `page.url` matches `match`                 |
-| `request` | network channel captured          | number of matching entries satisfies `count` (default `{gte:1}`) |
-| `allOf`, `anyOf` | sub-assertions             | Kleene three-valued logic                  |
+| kind             | anchor(s)                                                             | assertion                                                                                      |
+| ---------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `state`          | `target`                                                              | `expect` on states, `name`, `value`, `text`, `level`                                           |
+| `contains`       | `scope` (optional; default document) and optional `witness` inside it | number of `match` nodes inside scope satisfies `count` (default `{gte:1}`); `{eq:0}` = absence |
+| `value`          | the `source` (see below)                                              | normalized value satisfies `expect`                                                            |
+| `url`            | none (the page always has a URL)                                      | `page.url` matches `match`                                                                     |
+| `request`        | network channel captured                                              | number of matching entries satisfies `count` (default `{gte:1}`)                               |
+| `allOf`, `anyOf` | sub-assertions                                                        | Kleene three-valued logic                                                                      |
 
 A `witness` is a locator for a node that must exist inside the scope
 whatever the outcome, such as the cart table's "Product" column header. If
@@ -302,12 +337,12 @@ compiler should scope it to a landmark or container.
 
 ```ts
 type ValueSource =
-  | { from: "node";     target: Target; field: "name" | "value" | "text" | "url" }
-  | { from: "text";     scope?: Target; pattern: string; flags?: string; group?: number | string }
-  | { from: "url";      part: "href" | "origin" | "pathname" | "search" | "hash" | { param: string } }
-  | { from: "request" | "response"; match: RequestMatch; pointer?: string; pick?: "only" | "first" | "last" }
-  | { from: "storage";  area: "cookie" | "local" | "session"; key: string; origin?: string }
-  | { from: "probe";    probe: string; pointer?: string };
+  | { from: 'node'; target: Target; field: 'name' | 'value' | 'text' | 'url' }
+  | { from: 'text'; scope?: Target; pattern: string; flags?: string; group?: number | string }
+  | { from: 'url'; part: 'href' | 'origin' | 'pathname' | 'search' | 'hash' | { param: string } }
+  | { from: 'request' | 'response'; match: RequestMatch; pointer?: string; pick?: 'only' | 'first' | 'last' }
+  | { from: 'storage'; area: 'cookie' | 'local' | 'session'; key: string; origin?: string }
+  | { from: 'probe'; probe: string; pointer?: string };
 ```
 
 `pointer` is an RFC 6901 JSON Pointer into a JSON body or probe value.
@@ -320,7 +355,7 @@ request, a missing pointer path, a regex that doesn't match, a redacted
 value, or a normalizer that can't parse the input. **Fail means the value
 was determined and is wrong.** There is one deliberate exception: a storage
 key or cookie that isn't set, while the storage channel was captured, is an
-*observed absence*. Storage is a flat key-value map, so absence there is
+_observed absence_. Storage is a flat key-value map, so absence there is
 determinate. The check fails unless it expects `null`. A missing path inside
 a probe or response body still abstains, because that usually means the
 API's shape changed. To assert that something must exist (for
@@ -334,14 +369,14 @@ interface RequestMatch {
   method?: string | string[];
   url?: UrlMatch;
   status?: number | NumberCompare;
-  requestBody?: JSONSchema;     // JSON Schema (draft 2020-12 subset via Ajv)
+  requestBody?: JSONSchema; // JSON Schema (draft 2020-12 subset via Ajv)
   responseBody?: JSONSchema;
 }
 interface UrlMatch {
-  path?: string;          // "/orders/:id", "*" matches one segment, "**" any suffix
-  regex?: string;         // against the full href
+  path?: string; // "/orders/:id", "*" matches one segment, "**" any suffix
+  regex?: string; // against the full href
   origin?: string;
-  query?: Record<string, TextMatch | null>;   // null = parameter must be absent
+  query?: Record<string, TextMatch | null>; // null = parameter must be absent
 }
 ```
 
@@ -355,16 +390,16 @@ over-constraining.
 output of the previous one. Locale and timezone are **required** wherever
 parsing depends on them. Checks never read host settings.
 
-| op                   | in → out       | notes |
-|----------------------|----------------|-------|
-| `trim`, `collapseWhitespace`, `lowercase`, `uppercase`, `nfkc`, `stripDiacritics` | string → string | |
-| `extract {regex, flags?, group?}` | string → string | no match ⇒ `normalize_failed` |
-| `replace {regex, with}` | string → string | |
-| `number {locale}`    | string → number | Separators come from `Intl` for that locale. The whole string must be a number: no stray text. Accepts `-`, `−`, `+` and accounting `(…)` |
-| `currency {locale, currency?}` | string → money `{amount, currency}` | Symbol or ISO code before or after the amount. An ambiguous symbol (`$`, `¥`, `kr`) resolves through `currency`. A symbol that contradicts it gives the symbol's currency, so the comparison fails. An ambiguous symbol without `currency` ⇒ `normalize_failed` |
-| `date {locale, timezone?}` | string → `"YYYY-MM-DD"` | ISO dates, numeric dates in the locale's field order, and English or locale month names. Two-digit years, relative dates ("tomorrow") and invalid days ⇒ `normalize_failed`. An ISO datetime with an offset is converted to `timezone` (required in that case) |
-| `json`               | string → Json  | parse failure ⇒ `normalize_failed` |
-| `boolean`            | string → boolean | true/false/yes/no/on/off/1/0 |
+| op                                                                                | in → out                            | notes                                                                                                                                                                                                                                                           |
+| --------------------------------------------------------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `trim`, `collapseWhitespace`, `lowercase`, `uppercase`, `nfkc`, `stripDiacritics` | string → string                     |                                                                                                                                                                                                                                                                 |
+| `extract {regex, flags?, group?}`                                                 | string → string                     | no match ⇒ `normalize_failed`                                                                                                                                                                                                                                   |
+| `replace {regex, with}`                                                           | string → string                     |                                                                                                                                                                                                                                                                 |
+| `number {locale}`                                                                 | string → number                     | Separators come from `Intl` for that locale. The whole string must be a number: no stray text. Accepts `-`, `−`, `+` and accounting `(…)`                                                                                                                       |
+| `currency {locale, currency?}`                                                    | string → money `{amount, currency}` | Symbol or ISO code before or after the amount. An ambiguous symbol (`$`, `¥`, `kr`) resolves through `currency`. A symbol that contradicts it gives the symbol's currency, so the comparison fails. An ambiguous symbol without `currency` ⇒ `normalize_failed` |
+| `date {locale, timezone?}`                                                        | string → `"YYYY-MM-DD"`             | ISO dates, numeric dates in the locale's field order, and English or locale month names. Two-digit years, relative dates ("tomorrow") and invalid days ⇒ `normalize_failed`. An ISO datetime with an offset is converted to `timezone` (required in that case)  |
+| `json`                                                                            | string → Json                       | parse failure ⇒ `normalize_failed`                                                                                                                                                                                                                              |
+| `boolean`                                                                         | string → boolean                    | true/false/yes/no/on/off/1/0                                                                                                                                                                                                                                    |
 
 A parse failure **abstains** rather than fails. Seeing "N/A", "—" or a new
 date format means the check's model of the page is wrong. It does not show
@@ -374,15 +409,15 @@ that the agent failed, and an LLM judge or human should look at it.
 
 Each comparison object has exactly one operator:
 
-| operator | applies to | semantics |
-|----------|-----------|-----------|
-| `equals` | any | deep equality; strings are canonicalized as in 2.3 |
-| `oneOf` | any | equals one of the listed values |
-| `contains`, `regex` | string | on canonical text |
-| `approx {value, abs?, rel?}` | number, money, date | `|a-b| <= max(abs, rel·|b|)`. For money the currency must also be equal. For dates `abs` is in days |
-| `gt` / `gte` / `lt` / `lte` | number, money, date | ranges can combine bounds in one object |
-| `schema` | Json | validates against a JSON Schema |
-| `exists` | any | the value was read and normalized and is not the empty string |
+| operator                     | applies to          | semantics                                                                                               |
+| ---------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------- |
+| `equals`                     | any                 | deep equality; strings are canonicalized as in 2.3                                                      |
+| `oneOf`                      | any                 | equals one of the listed values                                                                         |
+| `contains`, `regex`          | string              | on canonical text                                                                                       |
+| `approx {value, abs?, rel?}` | number, money, date | `\|a-b\| <= max(abs, rel·\|b\|)`. For money the currency must also be equal. For dates `abs` is in days |
+| `gt` / `gte` / `lt` / `lte`  | number, money, date | ranges can combine bounds in one object                                                                 |
+| `schema`                     | Json                | validates against a JSON Schema                                                                         |
+| `exists`                     | any                 | the value was read and normalized and is not the empty string                                           |
 
 If the value's type doesn't match the operator (for example `approx` on an
 un-normalized string), the check abstains with `type_mismatch`. The
@@ -392,26 +427,33 @@ validator flags the obvious cases before the check runs.
 
 ```ts
 interface CheckResult {
-  check: string; requirement: string;
-  status: "pass" | "fail" | "abstain";
-  reason?: AbstainReason;        // set iff abstain
-  message: string;               // plain-language explanation
-  evidence: Evidence[];          // what decided it
-  drift: string[];               // anchors that matched nothing
+  check: string;
+  requirement: string;
+  status: 'pass' | 'fail' | 'abstain';
+  reason?: AbstainReason; // set iff abstain
+  message: string; // plain-language explanation
+  evidence: Evidence[]; // what decided it
+  drift: string[]; // anchors that matched nothing
 }
 interface Evidence {
-  channel: "a11y" | "text" | "url" | "network" | "storage" | "probe";
-  trust: "structured" | "semantic" | "freetext";
-  origin: "observed";            // runtime evidence is always observed
-  locator?: string;              // e.g. main › table "Cart" › row "Blue Mug …"
+  channel: 'a11y' | 'text' | 'url' | 'network' | 'storage' | 'probe';
+  trust: 'structured' | 'semantic' | 'freetext';
+  origin: 'observed'; // runtime evidence is always observed
+  locator?: string; // e.g. main › table "Cart" › row "Blue Mug …"
   value?: Json;
 }
 type AbstainReason =
-  | "anchor_missing" | "anchor_ambiguous" | "anchor_conflict"
-  | "evidence_unavailable" | "probe_error"
-  | "value_unavailable" | "value_ambiguous"
-  | "normalize_failed" | "type_mismatch"
-  | "uncovered" | "subcheck_abstained";
+  | 'anchor_missing'
+  | 'anchor_ambiguous'
+  | 'anchor_conflict'
+  | 'evidence_unavailable'
+  | 'probe_error'
+  | 'value_unavailable'
+  | 'value_ambiguous'
+  | 'normalize_failed'
+  | 'type_mismatch'
+  | 'uncovered'
+  | 'subcheck_abstained';
 ```
 
 Aggregation uses strong Kleene logic everywhere:

@@ -1,18 +1,21 @@
 import { test as base, type Page } from '@playwright/test';
-import type { CheckSet, EvidenceSnapshot, Outcome, Verdict } from '../types.js';
-import { EvidenceRecorder, captureSnapshot, type CaptureOptions } from '../snapshot/capture.js';
-import { assertValidCheckSet } from '../dsl/validate.js';
-import { evaluate } from '../runtime/evaluate.js';
-import { formatOutcome } from '../report.js';
+import type { CheckSet, EvidenceSnapshot, Outcome, Verdict } from '../types.ts';
+import { EvidenceRecorder, captureSnapshot, type CaptureOptions, type RecorderOptions } from '../snapshot/capture.ts';
+import { assertValidCheckSet } from '../dsl/validate.ts';
+import { evaluate } from '../runtime/evaluate.ts';
+import { formatOutcome } from '../report.ts';
 
 /**
  * Playwright `test` with an auto fixture that records the network log of every
  * test's browser context from its start, so network checks have evidence.
+ * Configure the recorder with `test.use({ evidenceOptions: { bodyTimeoutMs: 10_000 } })`;
+ * it is attached once per context, so later `EvidenceRecorder.attach` options are ignored.
  */
-export const test = base.extend<{ evidence: EvidenceRecorder }>({
+export const test = base.extend<{ evidence: EvidenceRecorder; evidenceOptions: RecorderOptions }>({
+  evidenceOptions: [{}, { option: true }],
   evidence: [
-    async ({ context }, use) => {
-      await use(await EvidenceRecorder.attach(context));
+    async ({ context, evidenceOptions }, use) => {
+      await use(await EvidenceRecorder.attach(context, evidenceOptions));
     },
     { auto: true },
   ],
@@ -30,12 +33,12 @@ export interface ExpectOutcomeOptions extends CaptureOptions {
 }
 
 export class OutcomeError extends Error {
-  constructor(
-    message: string,
-    readonly outcome: Outcome,
-    readonly snapshot: EvidenceSnapshot,
-  ) {
+  readonly outcome: Outcome;
+  readonly snapshot: EvidenceSnapshot;
+  constructor(message: string, outcome: Outcome, snapshot: EvidenceSnapshot) {
     super(message);
+    this.outcome = outcome;
+    this.snapshot = snapshot;
     this.name = 'OutcomeError';
   }
 }
@@ -45,7 +48,11 @@ export class OutcomeError extends Error {
  * the locked check set, polling like Playwright's web-first assertions. Returns
  * the final outcome; throws OutcomeError if the expected verdict is not reached.
  */
-export async function expectOutcome(page: Page, checks: CheckSet | unknown, opts: ExpectOutcomeOptions = {}): Promise<Outcome> {
+export async function expectOutcome(
+  page: Page,
+  checks: CheckSet | unknown,
+  opts: ExpectOutcomeOptions = {},
+): Promise<Outcome> {
   const cs = assertValidCheckSet(checks);
   const want = opts.verdict ?? 'success';
   const timeout = opts.timeout ?? 5000;
@@ -64,15 +71,25 @@ export async function expectOutcome(page: Page, checks: CheckSet | unknown, opts
   if (opts.attach !== false) {
     try {
       const info = base.info();
-      await info.attach(`assay-outcome-${cs.id.replace(/[^\w.-]+/g, '_')}.json`, { body: JSON.stringify(outcome, null, 2), contentType: 'application/json' });
-      await info.attach(`assay-snapshot-${cs.id.replace(/[^\w.-]+/g, '_')}.json`, { body: JSON.stringify(snapshot), contentType: 'application/json' });
+      await info.attach(`assay-outcome-${cs.id.replace(/[^\w.-]+/g, '_')}.json`, {
+        body: JSON.stringify(outcome, null, 2),
+        contentType: 'application/json',
+      });
+      await info.attach(`assay-snapshot-${cs.id.replace(/[^\w.-]+/g, '_')}.json`, {
+        body: JSON.stringify(snapshot),
+        contentType: 'application/json',
+      });
     } catch {
       /* not running inside a Playwright test */
     }
   }
 
   if (outcome.verdict !== want) {
-    throw new OutcomeError(`Expected verdict ${want.toUpperCase()}, got ${outcome.verdict.toUpperCase()}\n\n${formatOutcome(outcome)}`, outcome, snapshot);
+    throw new OutcomeError(
+      `Expected verdict ${want.toUpperCase()}, got ${outcome.verdict.toUpperCase()}\n\n${formatOutcome(outcome)}`,
+      outcome,
+      snapshot,
+    );
   }
   return outcome;
 }

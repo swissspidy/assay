@@ -7,27 +7,59 @@
     "outcomes": "Then the newsletter subscription is saved\nThen the newsletter checkbox in the preferences is checked"
   },
   "requirements": [
-    { "id": "R1", "kind": "hard", "text": "The newsletter subscription is saved",
-      "source": { "field": "outcomes", "quote": "the newsletter subscription is saved" } },
-    { "id": "R2", "kind": "hard", "text": "The newsletter checkbox is checked",
-      "source": { "field": "outcomes", "quote": "the newsletter checkbox in the preferences is checked" } }
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The newsletter subscription is saved",
+      "source": { "field": "outcomes", "quote": "the newsletter subscription is saved" }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The newsletter checkbox is checked",
+      "source": { "field": "outcomes", "quote": "the newsletter checkbox in the preferences is checked" }
+    }
   ],
   "checks": [
-    { "id": "C1", "requirement": "R1",
+    {
+      "id": "C1",
+      "requirement": "R1",
       "description": "The browser saved the settings at least once (PUT /api/settings → 200).",
-      "assert": { "kind": "request", "match": { "method": "PUT", "url": { "path": "/api/settings" }, "status": 200 } } },
-    { "id": "C2", "requirement": "R1",
+      "assert": { "kind": "request", "match": { "method": "PUT", "url": { "path": "/api/settings" }, "status": 200 } }
+    },
+    {
+      "id": "C2",
+      "requirement": "R1",
       "description": "The last saved settings response has newsletter = true.",
-      "assert": { "kind": "value",
-        "source": { "from": "response", "match": { "method": "PUT", "url": { "path": "/api/settings" }, "status": 200 }, "pointer": "/newsletter", "pick": "last" },
-        "expect": { "equals": true } } },
-    { "id": "C3", "requirement": "R2",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "response",
+          "match": { "method": "PUT", "url": { "path": "/api/settings" }, "status": 200 },
+          "pointer": "/newsletter",
+          "pick": "last"
+        },
+        "expect": { "equals": true }
+      }
+    },
+    {
+      "id": "C3",
+      "requirement": "R2",
       "description": "The newsletter checkbox in the Preferences form is checked.",
-      "assert": { "kind": "state",
-        "target": { "anchors": [
-          { "role": "checkbox", "name": "Email me the newsletter" },
-          { "role": "checkbox", "name": { "contains": "newsletter", "ignoreCase": true }, "landmark": { "role": "form", "name": "Preferences" } }
-        ] },
-        "expect": { "checked": true } } }
+      "assert": {
+        "kind": "state",
+        "target": {
+          "anchors": [
+            { "role": "checkbox", "name": "Email me the newsletter" },
+            {
+              "role": "checkbox",
+              "name": { "contains": "newsletter", "ignoreCase": true },
+              "landmark": { "role": "form", "name": "Preferences" }
+            }
+          ]
+        },
+        "expect": { "checked": true }
+      }
+    }
   ]
 }

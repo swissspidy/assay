@@ -1,28 +1,65 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><title>Settings · Tiny Shop</title></head>
-<body>
-<header><a href="/">Tiny Shop</a><nav aria-label="Primary"><a href="/">Products</a> · <a href="/cart">Cart</a> · <a href="/settings">Settings</a></nav></header>
-<main>
-  <h1>Settings</h1>
-  <form aria-label="Preferences" onsubmit="return false">
-    <p><label><input type="checkbox" id="newsletter"> Email me the newsletter</label></p>
-    <p><label>Theme <select id="theme"><option value="light">Light</option><option value="dark">Dark</option></select></label></p>
-    <p><label>Language <select id="lang"><option value="en">English</option><option value="de">Deutsch</option></select></label></p>
-  </form>
-  <p role="status" id="msg"></p>
-</main>
-<script type="module">
-  import { api } from '/app.js';
-  const nl = document.getElementById('newsletter');
-  const theme = document.getElementById('theme');
-  const lang = document.getElementById('lang');
-  nl.checked = (await api('GET', '/api/settings')).newsletter;
-  theme.value = localStorage.getItem('theme') ?? 'light';
-  lang.value = /(?:^|; )lang=(\w+)/.exec(document.cookie)?.[1] ?? 'en';
-  const saved = () => (document.getElementById('msg').textContent = 'Settings saved');
-  nl.onchange = async () => { await api('PUT', '/api/settings', { newsletter: nl.checked }); saved(); };
-  theme.onchange = () => { localStorage.setItem('theme', theme.value); saved(); };
-  lang.onchange = () => { document.cookie = 'lang=' + lang.value + '; path=/'; saved(); };
-  document.body.dataset.ready = '1';
-</script>
-</body></html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Settings · Tiny Shop</title>
+  </head>
+  <body>
+    <header>
+      <a href="/">Tiny Shop</a>
+      <nav aria-label="Primary">
+        <a href="/">Products</a> · <a href="/cart">Cart</a> · <a href="/settings">Settings</a>
+      </nav>
+    </header>
+    <main>
+      <h1>Settings</h1>
+      <form aria-label="Preferences" onsubmit="return false;">
+        <p>
+          <label><input type="checkbox" id="newsletter" /> Email me the newsletter</label>
+        </p>
+        <p>
+          <label
+            >Theme
+            <select id="theme">
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select></label
+          >
+        </p>
+        <p>
+          <label
+            >Language
+            <select id="lang">
+              <option value="en">English</option>
+              <option value="de">Deutsch</option>
+            </select></label
+          >
+        </p>
+      </form>
+      <p role="status" id="msg"></p>
+    </main>
+    <script type="module">
+      import { api } from '/app.js';
+      const nl = document.getElementById('newsletter');
+      const theme = document.getElementById('theme');
+      const lang = document.getElementById('lang');
+      nl.checked = (await api('GET', '/api/settings')).newsletter;
+      theme.value = localStorage.getItem('theme') ?? 'light';
+      lang.value = /(?:^|; )lang=(\w+)/.exec(document.cookie)?.[1] ?? 'en';
+      const saved = () => (document.getElementById('msg').textContent = 'Settings saved');
+      nl.onchange = async () => {
+        await api('PUT', '/api/settings', { newsletter: nl.checked });
+        saved();
+      };
+      theme.onchange = () => {
+        localStorage.setItem('theme', theme.value);
+        saved();
+      };
+      lang.onchange = () => {
+        document.cookie = 'lang=' + lang.value + '; path=/';
+        saved();
+      };
+      document.body.dataset.ready = '1';
+    </script>
+  </body>
+</html>

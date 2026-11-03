@@ -7,14 +7,28 @@
     "outcomes": "Then the cart contains a Blue Mug"
   },
   "requirements": [
-    { "id": "R1", "kind": "hard", "text": "The cart contains a Blue Mug",
-      "source": { "field": "outcomes", "quote": "the cart contains a Blue Mug" } }
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The cart contains a Blue Mug",
+      "source": { "field": "outcomes", "quote": "the cart contains a Blue Mug" }
+    }
   ],
   "checks": [
-    { "id": "C1", "requirement": "R1",
+    {
+      "id": "C1",
+      "requirement": "R1",
       "description": "The backend cart (probe 'cart') has a line item named Blue Mug.",
-      "assert": { "kind": "value",
+      "assert": {
+        "kind": "value",
         "source": { "from": "probe", "probe": "cart", "pointer": "/items" },
-        "expect": { "schema": { "type": "array", "contains": { "type": "object", "required": ["name"], "properties": { "name": { "const": "Blue Mug" } } } } } } }
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": { "type": "object", "required": ["name"], "properties": { "name": { "const": "Blue Mug" } } }
+          }
+        }
+      }
+    }
   ]
 }

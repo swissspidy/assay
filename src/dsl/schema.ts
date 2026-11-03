@@ -6,9 +6,24 @@
 const textMatch = {
   oneOf: [
     { type: 'string' },
-    { type: 'object', additionalProperties: false, required: ['equals'], properties: { equals: { type: 'string' }, ignoreCase: { type: 'boolean' } } },
-    { type: 'object', additionalProperties: false, required: ['contains'], properties: { contains: { type: 'string', minLength: 1 }, ignoreCase: { type: 'boolean' } } },
-    { type: 'object', additionalProperties: false, required: ['regex'], properties: { regex: { type: 'string', minLength: 1 }, flags: { type: 'string', pattern: '^[imsu]*$' } } },
+    {
+      type: 'object',
+      additionalProperties: false,
+      required: ['equals'],
+      properties: { equals: { type: 'string' }, ignoreCase: { type: 'boolean' } },
+    },
+    {
+      type: 'object',
+      additionalProperties: false,
+      required: ['contains'],
+      properties: { contains: { type: 'string', minLength: 1 }, ignoreCase: { type: 'boolean' } },
+    },
+    {
+      type: 'object',
+      additionalProperties: false,
+      required: ['regex'],
+      properties: { regex: { type: 'string', minLength: 1 }, flags: { type: 'string', pattern: '^[imsu]*$' } },
+    },
   ],
 };
 
@@ -16,7 +31,13 @@ const numberCompare = {
   type: 'object',
   additionalProperties: false,
   minProperties: 1,
-  properties: { eq: { type: 'number' }, gt: { type: 'number' }, gte: { type: 'number' }, lt: { type: 'number' }, lte: { type: 'number' } },
+  properties: {
+    eq: { type: 'number' },
+    gt: { type: 'number' },
+    gte: { type: 'number' },
+    lt: { type: 'number' },
+    lte: { type: 'number' },
+  },
 };
 
 const money = {
@@ -26,9 +47,20 @@ const money = {
   properties: { amount: { type: 'number' }, currency: { type: 'string', pattern: '^[A-Z]{3}$' } },
 };
 
-const bound = { oneOf: [{ type: 'number' }, { type: 'string', pattern: '^\\d{4}-\\d{2}-\\d{2}$' }, { $ref: '#/definitions/money' }] };
+const bound = {
+  oneOf: [{ type: 'number' }, { type: 'string', pattern: '^\\d{4}-\\d{2}-\\d{2}$' }, { $ref: '#/definitions/money' }],
+};
 
-const simpleNormalizers = ['trim', 'collapseWhitespace', 'lowercase', 'uppercase', 'nfkc', 'stripDiacritics', 'json', 'boolean'];
+const simpleNormalizers = [
+  'trim',
+  'collapseWhitespace',
+  'lowercase',
+  'uppercase',
+  'nfkc',
+  'stripDiacritics',
+  'json',
+  'boolean',
+];
 
 export const checkSetSchema = {
   $schema: 'http://json-schema.org/draft-07/schema#',
@@ -95,7 +127,9 @@ export const checkSetSchema = {
           additionalProperties: false,
           required: ['role'],
           properties: {
-            role: { enum: ['banner', 'complementary', 'contentinfo', 'form', 'main', 'navigation', 'region', 'search'] },
+            role: {
+              enum: ['banner', 'complementary', 'contentinfo', 'form', 'main', 'navigation', 'region', 'search'],
+            },
             name: { $ref: '#/definitions/textMatch' },
           },
         },
@@ -121,7 +155,10 @@ export const checkSetSchema = {
         path: { type: 'string', pattern: '^/' },
         regex: { type: 'string' },
         origin: { type: 'string', pattern: '^https?://' },
-        query: { type: 'object', additionalProperties: { oneOf: [{ type: 'null' }, { $ref: '#/definitions/textMatch' }] } },
+        query: {
+          type: 'object',
+          additionalProperties: { oneOf: [{ type: 'null' }, { $ref: '#/definitions/textMatch' }] },
+        },
       },
     },
     jsonSchema: { type: ['object', 'boolean'] },
@@ -142,7 +179,11 @@ export const checkSetSchema = {
           type: 'object',
           additionalProperties: false,
           required: ['from', 'target', 'field'],
-          properties: { from: { const: 'node' }, target: { $ref: '#/definitions/target' }, field: { enum: ['name', 'value', 'text', 'url'] } },
+          properties: {
+            from: { const: 'node' },
+            target: { $ref: '#/definitions/target' },
+            field: { enum: ['name', 'value', 'text', 'url'] },
+          },
         },
         {
           type: 'object',
@@ -165,7 +206,12 @@ export const checkSetSchema = {
             part: {
               oneOf: [
                 { enum: ['href', 'origin', 'pathname', 'search', 'hash'] },
-                { type: 'object', additionalProperties: false, required: ['param'], properties: { param: { type: 'string' } } },
+                {
+                  type: 'object',
+                  additionalProperties: false,
+                  required: ['param'],
+                  properties: { param: { type: 'string' } },
+                },
               ],
             },
           },
@@ -196,14 +242,23 @@ export const checkSetSchema = {
           type: 'object',
           additionalProperties: false,
           required: ['from', 'probe'],
-          properties: { from: { const: 'probe' }, probe: { type: 'string', minLength: 1 }, pointer: { type: 'string', pattern: '^(/.*)?$' } },
+          properties: {
+            from: { const: 'probe' },
+            probe: { type: 'string', minLength: 1 },
+            pointer: { type: 'string', pattern: '^(/.*)?$' },
+          },
         },
       ],
     },
     normalizer: {
       oneOf: [
         { enum: simpleNormalizers },
-        { type: 'object', additionalProperties: false, required: ['op'], properties: { op: { enum: simpleNormalizers } } },
+        {
+          type: 'object',
+          additionalProperties: false,
+          required: ['op'],
+          properties: { op: { enum: simpleNormalizers } },
+        },
         {
           type: 'object',
           additionalProperties: false,
@@ -219,14 +274,28 @@ export const checkSetSchema = {
           type: 'object',
           additionalProperties: false,
           required: ['op', 'regex', 'with'],
-          properties: { op: { const: 'replace' }, regex: { type: 'string', minLength: 1 }, flags: { type: 'string', pattern: '^[gimsu]*$' }, with: { type: 'string' } },
+          properties: {
+            op: { const: 'replace' },
+            regex: { type: 'string', minLength: 1 },
+            flags: { type: 'string', pattern: '^[gimsu]*$' },
+            with: { type: 'string' },
+          },
         },
-        { type: 'object', additionalProperties: false, required: ['op', 'locale'], properties: { op: { const: 'number' }, locale: { type: 'string', minLength: 2 } } },
         {
           type: 'object',
           additionalProperties: false,
           required: ['op', 'locale'],
-          properties: { op: { const: 'currency' }, locale: { type: 'string', minLength: 2 }, currency: { type: 'string', pattern: '^[A-Z]{3}$' } },
+          properties: { op: { const: 'number' }, locale: { type: 'string', minLength: 2 } },
+        },
+        {
+          type: 'object',
+          additionalProperties: false,
+          required: ['op', 'locale'],
+          properties: {
+            op: { const: 'currency' },
+            locale: { type: 'string', minLength: 2 },
+            currency: { type: 'string', pattern: '^[A-Z]{3}$' },
+          },
         },
         {
           type: 'object',
@@ -239,9 +308,24 @@ export const checkSetSchema = {
     comparison: {
       oneOf: [
         { type: 'object', additionalProperties: false, required: ['equals'], properties: { equals: {} } },
-        { type: 'object', additionalProperties: false, required: ['oneOf'], properties: { oneOf: { type: 'array', minItems: 1 } } },
-        { type: 'object', additionalProperties: false, required: ['contains'], properties: { contains: { type: 'string', minLength: 1 }, ignoreCase: { type: 'boolean' } } },
-        { type: 'object', additionalProperties: false, required: ['regex'], properties: { regex: { type: 'string', minLength: 1 }, flags: { type: 'string', pattern: '^[imsu]*$' } } },
+        {
+          type: 'object',
+          additionalProperties: false,
+          required: ['oneOf'],
+          properties: { oneOf: { type: 'array', minItems: 1 } },
+        },
+        {
+          type: 'object',
+          additionalProperties: false,
+          required: ['contains'],
+          properties: { contains: { type: 'string', minLength: 1 }, ignoreCase: { type: 'boolean' } },
+        },
+        {
+          type: 'object',
+          additionalProperties: false,
+          required: ['regex'],
+          properties: { regex: { type: 'string', minLength: 1 }, flags: { type: 'string', pattern: '^[imsu]*$' } },
+        },
         {
           type: 'object',
           additionalProperties: false,
@@ -262,7 +346,12 @@ export const checkSetSchema = {
           minProperties: 1,
           properties: { gt: bound, gte: bound, lt: bound, lte: bound },
         },
-        { type: 'object', additionalProperties: false, required: ['schema'], properties: { schema: { $ref: '#/definitions/jsonSchema' } } },
+        {
+          type: 'object',
+          additionalProperties: false,
+          required: ['schema'],
+          properties: { schema: { $ref: '#/definitions/jsonSchema' } },
+        },
         { type: 'object', additionalProperties: false, required: ['exists'], properties: { exists: { const: true } } },
       ],
     },
@@ -316,18 +405,30 @@ export const checkSetSchema = {
             expect: { $ref: '#/definitions/comparison' },
           },
         },
-        { type: 'object', additionalProperties: false, required: ['kind', 'match'], properties: { kind: { const: 'url' }, match: { $ref: '#/definitions/urlMatch' } } },
         {
           type: 'object',
           additionalProperties: false,
           required: ['kind', 'match'],
-          properties: { kind: { const: 'request' }, match: { $ref: '#/definitions/requestMatch' }, count: { $ref: '#/definitions/numberCompare' } },
+          properties: { kind: { const: 'url' }, match: { $ref: '#/definitions/urlMatch' } },
+        },
+        {
+          type: 'object',
+          additionalProperties: false,
+          required: ['kind', 'match'],
+          properties: {
+            kind: { const: 'request' },
+            match: { $ref: '#/definitions/requestMatch' },
+            count: { $ref: '#/definitions/numberCompare' },
+          },
         },
         {
           type: 'object',
           additionalProperties: false,
           required: ['kind', 'of'],
-          properties: { kind: { enum: ['allOf', 'anyOf'] }, of: { type: 'array', minItems: 1, items: { $ref: '#/definitions/assertion' } } },
+          properties: {
+            kind: { enum: ['allOf', 'anyOf'] },
+            of: { type: 'array', minItems: 1, items: { $ref: '#/definitions/assertion' } },
+          },
         },
       ],
     },

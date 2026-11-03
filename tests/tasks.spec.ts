@@ -6,9 +6,19 @@
  *   - removing anchors / evidence channels → abstain (live DOM edits and snapshot edits)
  */
 import { expect, type Page } from '@playwright/test';
-import { test, expectOutcome } from '../src/playwright/index.js';
-import { evaluate, editNodes, removeNodes, type EvidenceSnapshot, type Outcome } from '../src/index.js';
-import { addToCart, checkout, judge, loadChecks, openCart, openSettings, ready, setNewsletter, shopProbes } from './helpers.js';
+import { test, expectOutcome } from '../src/playwright/index.ts';
+import { evaluate, editNodes, removeNodes, type EvidenceSnapshot, type Outcome } from '../src/index.ts';
+import {
+  addToCart,
+  checkout,
+  judge,
+  loadChecks,
+  openCart,
+  openSettings,
+  ready,
+  setNewsletter,
+  shopProbes,
+} from './helpers.ts';
 
 const byId = (o: Outcome, id: string) => o.checks.find((c) => c.check === id)!;
 const req = (o: Outcome, id: string) => o.requirements.find((r) => r.requirement === id)!;
@@ -17,7 +27,11 @@ const req = (o: Outcome, id: string) => o.requirements.find((r) => r.requirement
 const strip = (page: Page, selector: string, attrs: Record<string, string | null>) =>
   page.evaluate(
     ([sel, a]) => {
-      for (const el of document.querySelectorAll(sel)) for (const [k, v] of Object.entries(a)) (v === null ? el.removeAttribute(k) : el.setAttribute(k, v));
+      for (const el of document.querySelectorAll(sel))
+        for (const [k, v] of Object.entries(a)) {
+          if (v === null) el.removeAttribute(k);
+          else el.setAttribute(k, v);
+        }
     },
     [selector, attrs] as const,
   );
@@ -93,9 +107,14 @@ test.describe('02 add blue mug (backend probe + JSON Schema)', () => {
 
   test('probe unavailable → abstain', async ({ page }) => {
     await addToCart(page, 'Blue Mug');
-    const { outcome, snapshot } = await judge(page, checks, { probes: { cart: async () => Promise.reject(new Error('backend down')) } });
+    const { outcome, snapshot } = await judge(page, checks, {
+      probes: { cart: async () => Promise.reject(new Error('backend down')) },
+    });
     expect(byId(outcome, 'C1')).toMatchObject({ status: 'abstain', reason: 'probe_error' });
-    expect(evaluate(checks, { ...snapshot, probes: {} }).checks[0]).toMatchObject({ status: 'abstain', reason: 'evidence_unavailable' });
+    expect(evaluate(checks, { ...snapshot, probes: {} }).checks[0]).toMatchObject({
+      status: 'abstain',
+      reason: 'evidence_unavailable',
+    });
   });
 });
 
@@ -220,7 +239,10 @@ test.describe('05 set quantity (node value + number normalizer)', () => {
     const { outcome, snapshot } = await judge(page, checks);
     expect(outcome.verdict).toBe('success');
     expect(outcome.drift.map((d) => d.locator)).toEqual(['spinbutton named "Quantity for Blue Mug"']);
-    expect(evaluate(checks, removeNodes(snapshot, { role: 'spinbutton' })).checks[0]).toMatchObject({ status: 'abstain', reason: 'anchor_missing' });
+    expect(evaluate(checks, removeNodes(snapshot, { role: 'spinbutton' })).checks[0]).toMatchObject({
+      status: 'abstain',
+      reason: 'anchor_missing',
+    });
   });
 
   test('field changed to a free-text box → abstain', async ({ page }) => {
@@ -247,14 +269,23 @@ test.describe('06 cart total (currency normalizer + tolerance)', () => {
     await openCart(page);
     const { snapshot } = await judge(page, checks);
     for (const shown of ['$21.50', '$ 21.5', 'US$21.50', '21.50 USD', 'USD 21.50']) {
-      const variant = editNodes(snapshot, { role: 'status', name: 'Cart total' }, (n) => ({ ...n, children: [{ role: 'text', name: shown }] }));
+      const variant = editNodes(snapshot, { role: 'status', name: 'Cart total' }, (n) => ({
+        ...n,
+        children: [{ role: 'text', name: shown }],
+      }));
       expect(evaluate(checks, variant).verdict, shown).toBe('success');
     }
     for (const shown of ['$21.51', '€21.50', '$2,150.00']) {
-      const mutant = editNodes(snapshot, { role: 'status', name: 'Cart total' }, (n) => ({ ...n, children: [{ role: 'text', name: shown }] }));
+      const mutant = editNodes(snapshot, { role: 'status', name: 'Cart total' }, (n) => ({
+        ...n,
+        children: [{ role: 'text', name: shown }],
+      }));
       expect(evaluate(checks, mutant).verdict, shown).toBe('fail');
     }
-    const unreadable = editNodes(snapshot, { role: 'status', name: 'Cart total' }, (n) => ({ ...n, children: [{ role: 'text', name: '—' }] }));
+    const unreadable = editNodes(snapshot, { role: 'status', name: 'Cart total' }, (n) => ({
+      ...n,
+      children: [{ role: 'text', name: '—' }],
+    }));
     expect(evaluate(checks, unreadable).checks[0]).toMatchObject({ status: 'abstain', reason: 'normalize_failed' });
   });
 
@@ -353,9 +384,20 @@ test.describe('08 delivery date (extract + date normalizer)', () => {
     await checkout(page, { name: 'Grace Hopper', shipping: 'express' });
     const { snapshot } = await judge(page, checks);
     const show = (s: EvidenceSnapshot, text: string) =>
-      editNodes(s, { role: 'paragraph', text: { contains: 'Estimated delivery' } }, (n) => ({ ...n, children: [{ role: 'text', name: text }] }));
-    for (const t of ['Estimated delivery: 05/11/2026', 'Estimated delivery: Thu, 5 Nov 2026', 'Estimated delivery 2026-11-05']) expect(evaluate(checks, show(snapshot, t)).verdict, t).toBe('success');
-    expect(evaluate(checks, show(snapshot, 'Estimated delivery: soon')).checks[1]).toMatchObject({ status: 'abstain', reason: 'normalize_failed' });
+      editNodes(s, { role: 'paragraph', text: { contains: 'Estimated delivery' } }, (n) => ({
+        ...n,
+        children: [{ role: 'text', name: text }],
+      }));
+    for (const t of [
+      'Estimated delivery: 05/11/2026',
+      'Estimated delivery: Thu, 5 Nov 2026',
+      'Estimated delivery 2026-11-05',
+    ])
+      expect(evaluate(checks, show(snapshot, t)).verdict, t).toBe('success');
+    expect(evaluate(checks, show(snapshot, 'Estimated delivery: soon')).checks[1]).toMatchObject({
+      status: 'abstain',
+      reason: 'normalize_failed',
+    });
   });
 
   test('summary region unlabelled → abstain', async ({ page }) => {

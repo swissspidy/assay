@@ -180,7 +180,12 @@ export type Comparison =
   | { contains: string; ignoreCase?: boolean }
   | { regex: string; flags?: string }
   | { approx: { value: number | string | Money; abs?: number; rel?: number } }
-  | { gt?: number | string | Money; gte?: number | string | Money; lt?: number | string | Money; lte?: number | string | Money }
+  | {
+      gt?: number | string | Money;
+      gte?: number | string | Money;
+      lt?: number | string | Money;
+      lte?: number | string | Money;
+    }
   | { schema: JsonSchema }
   | { exists: true };
 

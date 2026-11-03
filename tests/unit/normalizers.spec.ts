@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { applyNormalizers, parseCurrency, parseDate, parseLocaleNumber, NormalizeError } from '../../src/index.js';
+import { applyNormalizers, parseCurrency, parseDate, parseLocaleNumber, NormalizeError } from '../../src/index.ts';
 
 const reason = (fn: () => unknown) => {
   try {
@@ -94,10 +94,18 @@ test.describe('date', () => {
 });
 
 test('pipeline: extract then number; type mismatch reported', () => {
-  const v = applyNormalizers({ type: 'string', value: 'Qty: 1,200 units' }, [{ op: 'extract', regex: 'Qty: ([\\d,]+)' }, { op: 'number', locale: 'en-US' }]);
+  const v = applyNormalizers({ type: 'string', value: 'Qty: 1,200 units' }, [
+    { op: 'extract', regex: 'Qty: ([\\d,]+)' },
+    { op: 'number', locale: 'en-US' },
+  ]);
   expect(v).toEqual({ type: 'number', value: 1200 });
   expect(reason(() => applyNormalizers({ type: 'json', value: { a: 1 } }, ['lowercase']))).toBe('type_mismatch');
-  expect(reason(() => applyNormalizers({ type: 'string', value: 'abc' }, [{ op: 'extract', regex: '\\d+' }]))).toBe('normalize_failed');
+  expect(reason(() => applyNormalizers({ type: 'string', value: 'abc' }, [{ op: 'extract', regex: '\\d+' }]))).toBe(
+    'normalize_failed',
+  );
   expect(applyNormalizers({ type: 'string', value: '  Yes ' }, ['boolean'])).toEqual({ type: 'boolean', value: true });
-  expect(applyNormalizers({ type: 'string', value: 'Crème Brûlée' }, ['stripDiacritics', 'lowercase'])).toEqual({ type: 'string', value: 'creme brulee' });
+  expect(applyNormalizers({ type: 'string', value: 'Crème Brûlée' }, ['stripDiacritics', 'lowercase'])).toEqual({
+    type: 'string',
+    value: 'creme brulee',
+  });
 });

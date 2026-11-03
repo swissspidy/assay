@@ -1,12 +1,25 @@
-export * from './types.js';
-export { canonical, matchText } from './text.js';
-export { parseAriaSnapshot } from './snapshot/aria.js';
-export { captureSnapshot, EvidenceRecorder, type CaptureOptions, type Probe, type RecorderOptions } from './snapshot/capture.js';
-export { snapshotDigest, checkSetDigest, canonicalJson } from './snapshot/digest.js';
-export { checkSetSchema } from './dsl/schema.js';
-export { validateCheckSet, assertValidCheckSet, CheckSetError, type ValidationReport } from './dsl/validate.js';
-export { evaluate, evaluateAssertion, kleeneAnd, kleeneOr } from './runtime/evaluate.js';
-export { applyNormalizers, parseLocaleNumber, parseCurrency, parseDate, NormalizeError, type TypedValue } from './runtime/values.js';
-export { verifyPage, verifySnapshot, loadSnapshot, type VerifyResult } from './runtime/verify.js';
-export { formatOutcome } from './report.js';
-export { mapA11y, editNodes, removeNodes, unwrapNodes } from './snapshot/edit.js';
+export * from './types.ts';
+export { canonical, matchText } from './text.ts';
+export { parseAriaSnapshot } from './snapshot/aria.ts';
+export {
+  captureSnapshot,
+  EvidenceRecorder,
+  type CaptureOptions,
+  type Probe,
+  type RecorderOptions,
+} from './snapshot/capture.ts';
+export { snapshotDigest, checkSetDigest, canonicalJson } from './snapshot/digest.ts';
+export { checkSetSchema } from './dsl/schema.ts';
+export { validateCheckSet, assertValidCheckSet, CheckSetError, type ValidationReport } from './dsl/validate.ts';
+export { evaluate, evaluateAssertion, kleeneAnd, kleeneOr } from './runtime/evaluate.ts';
+export {
+  applyNormalizers,
+  parseLocaleNumber,
+  parseCurrency,
+  parseDate,
+  NormalizeError,
+  type TypedValue,
+} from './runtime/values.ts';
+export { verifyPage, verifySnapshot, loadSnapshot, type VerifyResult } from './runtime/verify.ts';
+export { formatOutcome } from './report.ts';
+export { mapA11y, editNodes, removeNodes, unwrapNodes } from './snapshot/edit.ts';

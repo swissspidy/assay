@@ -44,14 +44,26 @@ Checks are JSON data, not code. Every check traces to a requirement, and
 every requirement quotes the task text it comes from:
 
 ```json
-{ "id": "C1", "requirement": "R1",
+{
+  "id": "C1",
+  "requirement": "R1",
   "description": "The 'Cart total' output shows US$21.50 (to the cent).",
-  "assert": { "kind": "value",
-    "source": { "from": "node", "field": "text", "target": { "anchors": [
-      { "role": "status", "name": "Cart total" },
-      { "role": "status", "landmark": { "role": "region", "name": "Cart summary" } } ] } },
-    "normalize": [ { "op": "currency", "locale": "en-US", "currency": "USD" } ],
-    "expect": { "approx": { "value": { "amount": 21.5, "currency": "USD" }, "abs": 0.005 } } } }
+  "assert": {
+    "kind": "value",
+    "source": {
+      "from": "node",
+      "field": "text",
+      "target": {
+        "anchors": [
+          { "role": "status", "name": "Cart total" },
+          { "role": "status", "landmark": { "role": "region", "name": "Cart summary" } }
+        ]
+      }
+    },
+    "normalize": [{ "op": "currency", "locale": "en-US", "currency": "USD" }],
+    "expect": { "approx": { "value": { "amount": 21.5, "currency": "USD" }, "abs": 0.005 } }
+  }
+}
 ```
 
 Assertion kinds: `state`, `contains` (with an optional `witness`), `value`
@@ -64,7 +76,7 @@ type flow.
 
 ## A report
 
-A page that only *claims* an order was placed (spoofed heading and URL, no
+A page that only _claims_ an order was placed (spoofed heading and URL, no
 order request):
 
 ```
@@ -81,13 +93,22 @@ Verdict: FAIL  (tiny-shop/express-order v1, snapshot sha256:2f7375b64494…)
 
 ## Development
 
+Requires **Node.js 24+** (see `.nvmrc`). Tooling: [tsrs](https://github.com/oxc-project/tsrs)
+for typechecking and builds, [oxlint](https://oxc.rs/docs/guide/usage/linter) and
+[oxfmt](https://oxc.rs/docs/guide/usage/formatter) for linting and formatting.
+
 ```sh
 npm install
-npm test            # unit tests + live tests against the Tiny Shop demo app (auto-started)
-npm run typecheck
-npm run build
-npm run shop        # run the demo app on :4173
+npx playwright install --with-deps chromium
+npm run check        # format:check + lint + typecheck + build + test (what CI runs)
+npm test             # unit tests + live tests against the Tiny Shop demo app (auto-started)
+npm run format       # oxfmt --write
+npm run build        # tsrs -> dist/
+npm run shop         # run the demo app on :4173
 ```
+
+CI (`.github/workflows/ci.yml`) runs format, lint, typecheck and build, then the
+full test suite on Node 24 and the latest Node release.
 
 Milestone 1 acceptance lives in `tests/tasks.spec.ts`. It covers 10 tasks
 and 20 checks. Each task has a correct run (success), incorrect runs (fail:

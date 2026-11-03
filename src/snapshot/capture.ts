@@ -1,4 +1,4 @@
-import type { BrowserContext, Page, Request } from '@playwright/test';
+import type { BrowserContext, Frame, Page, Request } from '@playwright/test';
 import {
   SNAPSHOT_SCHEMA,
   type CookieRecord,
@@ -7,8 +7,8 @@ import {
   type NetworkEntry,
   type ProbeResult,
   type StorageRecord,
-} from '../types.js';
-import { parseAriaSnapshot } from './aria.js';
+} from '../types.ts';
+import { parseAriaSnapshot } from './aria.ts';
 import { randomUUID } from 'node:crypto';
 
 export const CAPTURER = 'assay/0.1.0';
@@ -21,6 +21,27 @@ const BODY_RESOURCE_TYPES = new Set(['fetch', 'xhr']);
 export interface RecorderOptions {
   /** Max bytes of a request/response body kept in the log (default 1 MiB). */
   maxBodyBytes?: number;
+  /**
+   * Max ms to wait for one response body (default 3000). Chromium can leave a
+   * body read pending forever once the page has navigated away; such a body is
+   * then filled from the page tap or marked unavailable.
+   */
+  bodyTimeoutMs?: number;
+}
+
+const TIMED_OUT = Symbol('timeout');
+
+/** Resolve with the promise's value, or TIMED_OUT after `ms`; never leaves a timer running. */
+async function within<T>(p: Promise<T>, ms: number): Promise<T | typeof TIMED_OUT> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<typeof TIMED_OUT>((resolve) => {
+    timer = setTimeout(() => resolve(TIMED_OUT), ms);
+  });
+  try {
+    return await Promise.race([p, timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 function pick(headers: Record<string, string>, keep: string[]): Record<string, string> {
@@ -29,8 +50,19 @@ function pick(headers: Record<string, string>, keep: string[]): Record<string, s
   return out;
 }
 
+/**
+ * The first `max` UTF-8 bytes of `text`, cut at a character boundary, or undefined
+ * when it fits. (A streaming decode drops an incomplete trailing character.)
+ */
+export function cutUtf8(text: string, max: number): string | undefined {
+  const bytes = Buffer.from(text, 'utf8');
+  const limit = Math.max(0, max);
+  return bytes.length > limit ? new TextDecoder().decode(bytes.subarray(0, limit), { stream: true }) : undefined;
+}
+
 function decodeBody(text: string, contentType: string | undefined, max: number): { body: Json; truncated: boolean } {
-  if (text.length > max) return { body: text.slice(0, max), truncated: true };
+  const cut = cutUtf8(text, max);
+  if (cut !== undefined) return { body: cut, truncated: true };
   if (contentType && /\bjson\b/i.test(contentType)) {
     try {
       return { body: JSON.parse(text) as Json, truncated: false };
@@ -71,24 +103,69 @@ function pageTap(bindingName: string, token: string, max: number): string {
   if (typeof send !== 'function') return;
   const T = ${JSON.stringify(token)}, MAX = ${max};
   const textual = (ct) => /json|text[/]|xml|javascript|x-www-form-urlencoded/i.test(ct || '') && !/event-stream/i.test(ct || '');
-  const post = (method, url, status, ct, text) => {
-    try { send({ token: T, method: String(method).toUpperCase(), url: String(url), status, contentType: ct || '', body: text.slice(0, MAX), truncated: text.length > MAX }); } catch {}
+  // MAX counts UTF-8 bytes; cuts fall on character boundaries (a streaming decode
+  // drops an incomplete trailing character).
+  const enc = new TextEncoder();
+  const capBytes = (text) => {
+    const bytes = enc.encode(text);
+    return bytes.length > MAX ? { text: new TextDecoder().decode(bytes.subarray(0, MAX), { stream: true }), cut: true } : { text, cut: false };
+  };
+  const post = (method, url, status, ct, raw, wasCut) => {
+    try {
+      const { text, cut } = capBytes(raw);
+      send({ token: T, method: String(method).toUpperCase(), url: String(url), status, contentType: ct || '', body: text, truncated: !!wasCut || cut });
+    } catch {}
+  };
+  // Captured now, so page scripts that replace timers cannot stall the tap.
+  const later = window.setTimeout.bind(window);
+  const WAIT = 500;
+  // Reads at most MAX bytes of a body, then stops (streams may never end).
+  // Reads at most MAX bytes of a body, then stops (streams may never end). A body
+  // still open after DEADLINE ms is cut there, so stalled streams release the reader.
+  const DEADLINE = 10000;
+  const readCapped = async (body) => {
+    const reader = body.getReader(), dec = new TextDecoder();
+    let text = '', bytes = 0;
+    const stop = new Promise((r) => later(() => r(null), DEADLINE));
+    for (;;) {
+      const next = await Promise.race([reader.read(), stop]);
+      if (next === null) { reader.cancel().catch(() => {}); return { text, cut: true }; }
+      const { done, value } = next;
+      if (done) return { text: text + dec.decode(), cut: false };
+      if (bytes + value.byteLength > MAX) {
+        reader.cancel().catch(() => {});
+        return { text: text + dec.decode(value.subarray(0, MAX - bytes), { stream: true }), cut: true };
+      }
+      bytes += value.byteLength;
+      text += dec.decode(value, { stream: true });
+    }
   };
   const origFetch = window.fetch;
   if (origFetch) {
+    // The page receives the response once the tap has read (a clone of) its body and
+    // reported it, or after WAIT ms, whichever comes first. Reading concurrently would
+    // race the page: an app that navigates as soon as it has the data (POST, then
+    // location.href = ...) can unload before a concurrent read finishes. The bound keeps
+    // streaming responses from being held up; their read continues in the background.
     window.fetch = function (input, init) {
       const p = origFetch.apply(this, arguments);
+      let method = 'GET';
       try {
-        const method = (init && init.method) || (input && typeof input === 'object' && 'method' in input ? input.method : 'GET');
-        p.then((res) => {
-          try {
-            const ct = res.headers.get('content-type');
-            if (!textual(ct)) return;
-            res.clone().text().then((t) => post(method, res.url, res.status, ct, t), () => {});
-          } catch {}
-        }, () => {});
+        method = (init && init.method) || (input && typeof input === 'object' && 'method' in input ? input.method : 'GET');
       } catch {}
-      return p;
+      return p.then((res) => {
+        try {
+          const ct = res.headers.get('content-type');
+          if (!textual(ct) || !res.body) return res;
+          const reported = readCapped(res.clone().body).then(
+            ({ text, cut }) => post(method, res.url, res.status, ct, text, cut),
+            () => {},
+          );
+          return Promise.race([reported, new Promise((r) => later(r, WAIT))]).then(() => res, () => res);
+        } catch {
+          return res;
+        }
+      });
     };
   }
   const X = window.XMLHttpRequest && window.XMLHttpRequest.prototype;
@@ -97,7 +174,10 @@ function pageTap(bindingName: string, token: string, max: number): string {
     X.open = function (method) { this.__assayMethod = method; return open.apply(this, arguments); };
     X.send = function () {
       try {
-        this.addEventListener('load', () => {
+        // Once per XHR object: a reused XHR must not report each response twice.
+        if (!this.__assayTapped) {
+          this.__assayTapped = true;
+          this.addEventListener('load', () => {
           try {
             const ct = this.getResponseHeader('content-type');
             if (!textual(ct)) return;
@@ -107,7 +187,8 @@ function pageTap(bindingName: string, token: string, max: number): string {
             else return;
             post(this.__assayMethod || 'GET', this.responseURL, this.status, ct, t);
           } catch {}
-        });
+          });
+        }
       } catch {}
       return sendX.apply(this, arguments);
     };
@@ -125,13 +206,22 @@ export class EvidenceRecorder {
   private readonly entries: NetworkEntry[] = [];
   private readonly byRequest = new Map<Request, NetworkEntry>();
   private readonly pending = new Set<Promise<void>>();
-  private readonly tapped: TappedBody[] = [];
+  private readonly tapped: (TappedBody & { frame: Frame | undefined })[] = [];
+  /** The frame that issued each entry's request, to group it with bodies tapped in that frame. */
+  private readonly frameOf = new WeakMap<NetworkEntry, Frame>();
+  private readonly frameIds = new WeakMap<Frame, number>();
+  private frameCount = 0;
   private seq = 0;
   private readonly maxBody: number;
+  private readonly bodyTimeout: number;
   private readonly token = randomUUID();
 
-  private constructor(readonly context: BrowserContext, opts: RecorderOptions) {
-    this.maxBody = opts.maxBodyBytes ?? 1024 * 1024;
+  readonly context: BrowserContext;
+
+  private constructor(context: BrowserContext, opts: RecorderOptions) {
+    this.context = context;
+    this.maxBody = Math.max(0, opts.maxBodyBytes ?? 1024 * 1024);
+    this.bodyTimeout = opts.bodyTimeoutMs ?? 3000;
     context.on('request', (req) => this.onRequest(req));
     context.on('response', (resp) => this.track(this.onResponse(resp.request())));
     context.on('requestfailed', (req) => this.onFailed(req));
@@ -157,10 +247,10 @@ export class EvidenceRecorder {
 
   private async install(): Promise<void> {
     const name = `__assay_${this.token.replace(/-/g, '').slice(0, 12)}`;
-    await this.context.exposeBinding(name, (_source, payload: TappedBody & { token?: string }) => {
+    await this.context.exposeBinding(name, (source, payload: TappedBody & { token?: string }) => {
       if (!payload || payload.token !== this.token) return;
       const { token: _t, ...body } = payload;
-      this.tapped.push(body);
+      this.tapped.push({ ...body, frame: source.frame });
     });
     await this.context.addInitScript({ content: pageTap(name, this.token, this.maxBody) });
   }
@@ -189,13 +279,21 @@ export class EvidenceRecorder {
     }
     this.entries.push(entry);
     this.byRequest.set(req, entry);
+    try {
+      this.frameOf.set(entry, req.frame());
+    } catch {
+      /* service worker requests have no frame */
+    }
   }
 
   private async onResponse(req: Request): Promise<void> {
     const entry = this.byRequest.get(req);
     if (!entry) return;
-    const resp = await req.response().catch(() => null);
-    if (!resp) return;
+    const resp = await within(
+      req.response().catch(() => null),
+      this.bodyTimeout,
+    );
+    if (!resp || resp === TIMED_OUT) return;
     entry.status = resp.status();
     const headers = resp.headers();
     entry.responseHeaders = pick(headers, KEEP_RESPONSE_HEADERS);
@@ -203,7 +301,9 @@ export class EvidenceRecorder {
     if (!BODY_RESOURCE_TYPES.has(entry.resourceType) || !isTextual(ct)) return;
     if (entry.status >= 300 && entry.status < 400) return; // redirects have no body
     try {
-      const text = (await resp.body()).toString('utf8');
+      const buf = await within(resp.body(), this.bodyTimeout);
+      if (buf === TIMED_OUT) return; // evicted; the page tap usually has it
+      const text = buf.toString('utf8');
       const { body, truncated } = decodeBody(text, ct, this.maxBody);
       entry.responseBody = body;
       if (truncated) entry.bodyTruncated = true;
@@ -219,25 +319,64 @@ export class EvidenceRecorder {
 
   /** Wait until bodies of finished requests have been read, then fill gaps from the page tap. */
   async settle(): Promise<void> {
-    while (this.pending.size) await Promise.allSettled([...this.pending]);
-    const used = new Set<NetworkEntry>();
-    for (const t of this.tapped) {
-      const e = this.entries.find(
-        (x) => !used.has(x) && BODY_RESOURCE_TYPES.has(x.resourceType) && x.method === t.method && x.url === t.url && (x.status === null || x.status === t.status),
-      );
-      if (!e) continue;
-      used.add(e);
-      if (e.responseBody !== undefined) continue;
-      const { body, truncated } = decodeBody(t.body, t.contentType, this.maxBody);
-      e.responseBody = body;
-      if (truncated || t.truncated) e.bodyTruncated = true;
+    while (this.pending.size) await Promise.allSettled(this.pending);
+    // Tapped bodies carry no request identity, only frame, method, URL and status.
+    // A body fills a request only when no other assignment could differ: the requests
+    // to that method and URL from that frame pair one to one with the tapped bodies
+    // (equal counts), and those bodies are all identical. Anything ambiguous stays
+    // unavailable, so checks on it abstain instead of reading another request's body.
+    const groups = new Map<string, { entries: NetworkEntry[]; taps: TappedBody[] }>();
+    const group = (frame: Frame | undefined, method: string, url: string) => {
+      const key = `${frame ? this.frameId(frame) : '-'} ${method} ${url}`;
+      let g = groups.get(key);
+      if (!g) groups.set(key, (g = { entries: [], taps: [] }));
+      return g;
+    };
+    for (const e of this.entries) {
+      // A request that failed before a response has no tapped body to pair with.
+      if (BODY_RESOURCE_TYPES.has(e.resourceType) && !(e.failure !== undefined && e.status === null))
+        group(this.frameOf.get(e), e.method, e.url).entries.push(e);
+    }
+    for (const t of this.tapped) group(t.frame, t.method, t.url).taps.push(t);
+    for (const { entries, taps } of groups.values()) {
+      const [t, ...rest] = taps;
+      if (!t || entries.length !== taps.length) continue;
+      const same = (x: TappedBody) =>
+        x.status === t.status && x.contentType === t.contentType && x.body === t.body && x.truncated === t.truncated;
+      if (!rest.every(same)) continue;
+      for (const e of entries) {
+        // A failed request has no response, so it never gets a body.
+        if (e.responseBody !== undefined || e.failure !== undefined || (e.status !== null && e.status !== t.status))
+          continue;
+        const { body, truncated } = decodeBody(t.body, t.contentType, this.maxBody);
+        e.responseBody = body;
+        if (truncated || t.truncated) e.bodyTruncated = true;
+      }
     }
     for (const e of this.entries) {
       const ct = e.responseHeaders['content-type'];
-      const expected = BODY_RESOURCE_TYPES.has(e.resourceType) && e.status !== null && (e.status < 300 || e.status >= 400) && isTextual(ct);
+      const expected =
+        BODY_RESOURCE_TYPES.has(e.resourceType) &&
+        e.status !== null &&
+        (e.status < 300 || e.status >= 400) &&
+        isTextual(ct);
       if (expected && e.responseBody === undefined) e.bodyUnavailable = true;
       else delete e.bodyUnavailable;
     }
+  }
+
+  private frameId(f: Frame): number {
+    let id = this.frameIds.get(f);
+    if (id === undefined) {
+      id = ++this.frameCount;
+      this.frameIds.set(f, id);
+    }
+    return id;
+  }
+
+  /** @internal Bodies the page tap has reported so far (for tests). */
+  tappedCount(): number {
+    return this.tapped.length;
   }
 
   /** A deep copy of the log so far. */
@@ -265,6 +404,7 @@ export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Pr
 
   const ariaYaml = await page.locator('body').ariaSnapshot();
   const domState = await page.evaluate(() => {
+    // oxlint-disable-next-line unicorn/consistent-function-scoping -- runs in the page, must be self-contained
     const dump = (s: Storage) => {
       const o: Record<string, string> = {};
       for (let i = 0; i < s.length; i++) {
@@ -339,6 +479,6 @@ export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Pr
     network,
     storage,
     probes,
-    meta: { capturer: CAPTURER, redacted: redacted.sort() },
+    meta: { capturer: CAPTURER, redacted: redacted.toSorted() },
   };
 }

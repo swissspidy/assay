@@ -11,8 +11,8 @@ import {
   type Assertion,
   type CheckSet,
   type EvidenceSnapshot,
-} from '../../src/index.js';
-import { AXIndex, resolveTarget } from '../../src/runtime/axindex.js';
+} from '../../src/index.ts';
+import { AXIndex, resolveTarget } from '../../src/runtime/axindex.ts';
 
 const YAML = `
 - banner:
@@ -60,7 +60,8 @@ const run = (a: Assertion, s = snap()) => evaluateAssertion({ snapshot: s, index
 test('aria snapshot parsing', () => {
   const tree = parseAriaSnapshot(YAML);
   const idx = new AXIndex(tree);
-  const find = (role: string, name?: string) => idx.all.find((n) => n.node.role === role && (name === undefined || n.node.name === name))!.node;
+  const find = (role: string, name?: string) =>
+    idx.all.find((n) => n.node.role === role && (name === undefined || n.node.name === name))!.node;
   expect(find('link').url).toBe('/cart');
   expect(find('textbox').value).toBe('2');
   expect(find('checkbox', 'Gift wrap').states).toEqual({ checked: true });
@@ -89,38 +90,72 @@ test.describe('target resolution', () => {
     expect(r).toMatchObject({ ok: false, reason: 'anchor_ambiguous' });
   });
   test('redundant anchors: agreement with drift', () => {
-    const r = resolveTarget(idx, { anchors: [{ role: 'checkbox', name: 'Gift wrapping' }, { role: 'checkbox', name: 'Gift wrap', landmark: { role: 'form', name: 'Checkout' } }] });
+    const r = resolveTarget(idx, {
+      anchors: [
+        { role: 'checkbox', name: 'Gift wrapping' },
+        { role: 'checkbox', name: 'Gift wrap', landmark: { role: 'form', name: 'Checkout' } },
+      ],
+    });
     expect(r.ok).toBe(true);
     expect(r.drift).toEqual(['checkbox named "Gift wrapping"']);
   });
   test('redundant anchors: an ambiguous anchor that includes the chosen node is consistent', () => {
-    const r = resolveTarget(idx, { anchors: [{ role: 'checkbox', name: 'Gift wrap' }, { role: 'checkbox', landmark: { role: 'main' } }] });
+    const r = resolveTarget(idx, {
+      anchors: [
+        { role: 'checkbox', name: 'Gift wrap' },
+        { role: 'checkbox', landmark: { role: 'main' } },
+      ],
+    });
     expect(r.ok).toBe(true);
   });
   test('redundant anchors: disagreement → anchor_conflict', () => {
-    const r = resolveTarget(idx, { anchors: [{ role: 'checkbox', name: 'Gift wrap' }, { role: 'checkbox', name: 'Insurance' }] });
+    const r = resolveTarget(idx, {
+      anchors: [
+        { role: 'checkbox', name: 'Gift wrap' },
+        { role: 'checkbox', name: 'Insurance' },
+      ],
+    });
     expect(r).toMatchObject({ ok: false, reason: 'anchor_conflict' });
   });
   test('within', () => {
-    const r = resolveTarget(idx, { role: 'cell', name: { contains: '$' }, within: { role: 'row', name: { contains: 'Gadget' } } });
+    const r = resolveTarget(idx, {
+      role: 'cell',
+      name: { contains: '$' },
+      within: { role: 'row', name: { contains: 'Gadget' } },
+    });
     expect(r.ok && r.node.node.name).toBe('$4.00');
   });
 });
 
 test.describe('assertions', () => {
   test('state: pass, fail, abstain', () => {
-    expect(run({ kind: 'state', target: { role: 'checkbox', name: 'Gift wrap' }, expect: { checked: true } }).status).toBe('pass');
-    expect(run({ kind: 'state', target: { role: 'checkbox', name: 'Insurance' }, expect: { checked: true } }).status).toBe('fail');
-    expect(run({ kind: 'state', target: { role: 'checkbox', name: 'Terms' }, expect: { checked: true } }).status).toBe('fail');
-    expect(run({ kind: 'state', target: { role: 'checkbox', name: 'Gone' }, expect: { checked: true } })).toMatchObject({ status: 'abstain', reason: 'anchor_missing' });
+    expect(
+      run({ kind: 'state', target: { role: 'checkbox', name: 'Gift wrap' }, expect: { checked: true } }).status,
+    ).toBe('pass');
+    expect(
+      run({ kind: 'state', target: { role: 'checkbox', name: 'Insurance' }, expect: { checked: true } }).status,
+    ).toBe('fail');
+    expect(run({ kind: 'state', target: { role: 'checkbox', name: 'Terms' }, expect: { checked: true } }).status).toBe(
+      'fail',
+    );
+    expect(run({ kind: 'state', target: { role: 'checkbox', name: 'Gone' }, expect: { checked: true } })).toMatchObject(
+      { status: 'abstain', reason: 'anchor_missing' },
+    );
   });
   test('contains: missing content fails, missing scope abstains', () => {
     const scope = { role: 'table', name: 'Cart' };
     expect(run({ kind: 'contains', scope, match: { role: 'row', name: { contains: 'Gadget' } } }).status).toBe('pass');
-    expect(run({ kind: 'contains', scope, match: { role: 'row', name: { contains: 'Doohickey' } } }).status).toBe('fail');
+    expect(run({ kind: 'contains', scope, match: { role: 'row', name: { contains: 'Doohickey' } } }).status).toBe(
+      'fail',
+    );
     expect(run({ kind: 'contains', scope, match: { role: 'row' }, count: { eq: 2 } }).status).toBe('pass');
-    expect(run({ kind: 'contains', scope, match: { role: 'row', name: { contains: 'Gadget' } }, count: { eq: 0 } }).status).toBe('fail');
-    expect(run({ kind: 'contains', scope: { role: 'table', name: 'Basket' }, match: { role: 'row' } })).toMatchObject({ status: 'abstain', reason: 'anchor_missing' });
+    expect(
+      run({ kind: 'contains', scope, match: { role: 'row', name: { contains: 'Gadget' } }, count: { eq: 0 } }).status,
+    ).toBe('fail');
+    expect(run({ kind: 'contains', scope: { role: 'table', name: 'Basket' }, match: { role: 'row' } })).toMatchObject({
+      status: 'abstain',
+      reason: 'anchor_missing',
+    });
   });
   test('value: currency with tolerance', () => {
     const a: Assertion = {
@@ -130,43 +165,120 @@ test.describe('assertions', () => {
       expect: { approx: { value: { amount: 7, currency: 'USD' }, abs: 0.005 } },
     };
     expect(run(a).status).toBe('pass');
-    expect(run({ ...a, expect: { approx: { value: { amount: 7.01, currency: 'USD' }, abs: 0.005 } } }).status).toBe('fail');
-    expect(run({ ...a, expect: { approx: { value: { amount: 7, currency: 'EUR' }, abs: 0.005 } } }).status).toBe('fail');
+    expect(run({ ...a, expect: { approx: { value: { amount: 7.01, currency: 'USD' }, abs: 0.005 } } }).status).toBe(
+      'fail',
+    );
+    expect(run({ ...a, expect: { approx: { value: { amount: 7, currency: 'EUR' }, abs: 0.005 } } }).status).toBe(
+      'fail',
+    );
   });
   test('value: unparseable → abstain normalize_failed; type mismatch → abstain', () => {
-    expect(run({ kind: 'value', source: { from: 'node', target: { role: 'status' }, field: 'text' }, normalize: [{ op: 'number', locale: 'en-US' }], expect: { equals: 1 } })).toMatchObject({
+    expect(
+      run({
+        kind: 'value',
+        source: { from: 'node', target: { role: 'status' }, field: 'text' },
+        normalize: [{ op: 'number', locale: 'en-US' }],
+        expect: { equals: 1 },
+      }),
+    ).toMatchObject({
       status: 'abstain',
       reason: 'normalize_failed',
     });
-    expect(run({ kind: 'value', source: { from: 'node', target: { role: 'status' }, field: 'text' }, expect: { gt: 3 } })).toMatchObject({ status: 'abstain', reason: 'type_mismatch' });
+    expect(
+      run({ kind: 'value', source: { from: 'node', target: { role: 'status' }, field: 'text' }, expect: { gt: 3 } }),
+    ).toMatchObject({ status: 'abstain', reason: 'type_mismatch' });
   });
   test('value: free text with a regex', () => {
-    expect(run({ kind: 'value', source: { from: 'text', pattern: 'Order placed: #(\\d+)' }, expect: { equals: '123' } })).toMatchObject({ status: 'pass', evidence: [{ trust: 'freetext' }] });
-    expect(run({ kind: 'value', source: { from: 'text', pattern: 'Refund #(\\d+)' }, expect: { equals: '123' } })).toMatchObject({ status: 'abstain', reason: 'value_unavailable' });
+    expect(
+      run({ kind: 'value', source: { from: 'text', pattern: 'Order placed: #(\\d+)' }, expect: { equals: '123' } }),
+    ).toMatchObject({ status: 'pass', evidence: [{ trust: 'freetext' }] });
+    expect(
+      run({ kind: 'value', source: { from: 'text', pattern: 'Refund #(\\d+)' }, expect: { equals: '123' } }),
+    ).toMatchObject({ status: 'abstain', reason: 'value_unavailable' });
   });
   test('url', () => {
     expect(run({ kind: 'url', match: { path: '/orders/:id', query: { ref: 'x' } } }).status).toBe('pass');
     expect(run({ kind: 'url', match: { path: '/orders/:id', query: { ref: null } } }).status).toBe('fail');
     expect(run({ kind: 'url', match: { path: '/orders/**' } }).status).toBe('pass');
     expect(run({ kind: 'url', match: { path: '/cart' } }).status).toBe('fail');
-    expect(run({ kind: 'value', source: { from: 'url', part: { param: 'ref' } }, expect: { equals: 'x' } }).status).toBe('pass');
+    expect(
+      run({ kind: 'value', source: { from: 'url', part: { param: 'ref' } }, expect: { equals: 'x' } }).status,
+    ).toBe('pass');
   });
   test('request and response values; network channel missing → abstain', () => {
     const s = snap({
       network: [
-        { seq: 0, method: 'POST', url: 'https://shop.test/api/orders', resourceType: 'fetch', status: 201, requestHeaders: {}, requestBody: { shipping: 'express' }, responseHeaders: {}, responseBody: { id: 'A1', status: 'placed' } },
-        { seq: 1, method: 'POST', url: 'https://shop.test/api/orders', resourceType: 'fetch', status: 201, requestHeaders: {}, requestBody: { shipping: 'standard' }, responseHeaders: {}, responseBody: { id: 'A2', status: 'placed' } },
+        {
+          seq: 0,
+          method: 'POST',
+          url: 'https://shop.test/api/orders',
+          resourceType: 'fetch',
+          status: 201,
+          requestHeaders: {},
+          requestBody: { shipping: 'express' },
+          responseHeaders: {},
+          responseBody: { id: 'A1', status: 'placed' },
+        },
+        {
+          seq: 1,
+          method: 'POST',
+          url: 'https://shop.test/api/orders',
+          resourceType: 'fetch',
+          status: 201,
+          requestHeaders: {},
+          requestBody: { shipping: 'standard' },
+          responseHeaders: {},
+          responseBody: { id: 'A2', status: 'placed' },
+        },
       ],
     });
     const match = { method: 'POST', url: { path: '/api/orders' }, status: 201 };
     expect(run({ kind: 'request', match }, s).status).toBe('pass');
     expect(run({ kind: 'request', match, count: { eq: 1 } }, s).status).toBe('fail');
-    expect(run({ kind: 'request', match: { ...match, responseBody: { properties: { status: { const: 'cancelled' } } } } }, s).status).toBe('fail');
-    expect(run({ kind: 'value', source: { from: 'request', match, pointer: '/shipping' }, expect: { equals: 'express' } }, s)).toMatchObject({ status: 'abstain', reason: 'value_ambiguous' });
-    expect(run({ kind: 'value', source: { from: 'request', match, pointer: '/shipping', pick: 'last' }, expect: { equals: 'express' } }, s).status).toBe('fail');
-    expect(run({ kind: 'value', source: { from: 'request', match, pointer: '/shipping', pick: 'first' }, expect: { equals: 'express' } }, s).status).toBe('pass');
-    expect(run({ kind: 'value', source: { from: 'request', match, pointer: '/nope', pick: 'first' }, expect: { equals: 'express' } }, s)).toMatchObject({ status: 'abstain', reason: 'value_unavailable' });
-    expect(run({ kind: 'request', match }, snap({ network: null }))).toMatchObject({ status: 'abstain', reason: 'evidence_unavailable' });
+    expect(
+      run({ kind: 'request', match: { ...match, responseBody: { properties: { status: { const: 'cancelled' } } } } }, s)
+        .status,
+    ).toBe('fail');
+    expect(
+      run(
+        { kind: 'value', source: { from: 'request', match, pointer: '/shipping' }, expect: { equals: 'express' } },
+        s,
+      ),
+    ).toMatchObject({ status: 'abstain', reason: 'value_ambiguous' });
+    expect(
+      run(
+        {
+          kind: 'value',
+          source: { from: 'request', match, pointer: '/shipping', pick: 'last' },
+          expect: { equals: 'express' },
+        },
+        s,
+      ).status,
+    ).toBe('fail');
+    expect(
+      run(
+        {
+          kind: 'value',
+          source: { from: 'request', match, pointer: '/shipping', pick: 'first' },
+          expect: { equals: 'express' },
+        },
+        s,
+      ).status,
+    ).toBe('pass');
+    expect(
+      run(
+        {
+          kind: 'value',
+          source: { from: 'request', match, pointer: '/nope', pick: 'first' },
+          expect: { equals: 'express' },
+        },
+        s,
+      ),
+    ).toMatchObject({ status: 'abstain', reason: 'value_unavailable' });
+    expect(run({ kind: 'request', match }, snap({ network: null }))).toMatchObject({
+      status: 'abstain',
+      reason: 'evidence_unavailable',
+    });
   });
   test('storage: redacted cookie → abstain', () => {
     const s = snap({
@@ -179,15 +291,41 @@ test.describe('assertions', () => {
         session: {},
       },
     });
-    expect(run({ kind: 'value', source: { from: 'storage', area: 'cookie', key: 'lang' }, expect: { equals: 'de' } }, s).status).toBe('pass');
-    expect(run({ kind: 'value', source: { from: 'storage', area: 'local', key: 'theme' }, expect: { equals: 'dark' } }, s).status).toBe('pass');
-    expect(run({ kind: 'value', source: { from: 'storage', area: 'cookie', key: 'sid' }, expect: { exists: true } }, s)).toMatchObject({ status: 'abstain', reason: 'evidence_unavailable' });
+    expect(
+      run({ kind: 'value', source: { from: 'storage', area: 'cookie', key: 'lang' }, expect: { equals: 'de' } }, s)
+        .status,
+    ).toBe('pass');
+    expect(
+      run({ kind: 'value', source: { from: 'storage', area: 'local', key: 'theme' }, expect: { equals: 'dark' } }, s)
+        .status,
+    ).toBe('pass');
+    expect(
+      run({ kind: 'value', source: { from: 'storage', area: 'cookie', key: 'sid' }, expect: { exists: true } }, s),
+    ).toMatchObject({ status: 'abstain', reason: 'evidence_unavailable' });
   });
   test('probes', () => {
-    const s = snap({ probes: { order: { ok: true, value: { status: 'placed', total: 7 } }, broken: { ok: false, error: 'ECONNREFUSED' } } });
-    expect(run({ kind: 'value', source: { from: 'probe', probe: 'order', pointer: '/total' }, expect: { approx: { value: 7, abs: 0.01 } } }, s).status).toBe('pass');
-    expect(run({ kind: 'value', source: { from: 'probe', probe: 'broken' }, expect: { exists: true } }, s)).toMatchObject({ status: 'abstain', reason: 'probe_error' });
-    expect(run({ kind: 'value', source: { from: 'probe', probe: 'missing' }, expect: { exists: true } }, s)).toMatchObject({ status: 'abstain', reason: 'evidence_unavailable' });
+    const s = snap({
+      probes: {
+        order: { ok: true, value: { status: 'placed', total: 7 } },
+        broken: { ok: false, error: 'ECONNREFUSED' },
+      },
+    });
+    expect(
+      run(
+        {
+          kind: 'value',
+          source: { from: 'probe', probe: 'order', pointer: '/total' },
+          expect: { approx: { value: 7, abs: 0.01 } },
+        },
+        s,
+      ).status,
+    ).toBe('pass');
+    expect(
+      run({ kind: 'value', source: { from: 'probe', probe: 'broken' }, expect: { exists: true } }, s),
+    ).toMatchObject({ status: 'abstain', reason: 'probe_error' });
+    expect(
+      run({ kind: 'value', source: { from: 'probe', probe: 'missing' }, expect: { exists: true } }, s),
+    ).toMatchObject({ status: 'abstain', reason: 'evidence_unavailable' });
   });
 });
 
@@ -211,14 +349,33 @@ test('verdict aggregation: soft requirements do not decide; uncovered abstains',
       { id: 'R2', kind: 'soft', text: 'insurance', source: { field: 'instruction', quote: 'insurance' } },
     ],
     checks: [
-      { id: 'C1', requirement: 'R1', description: 'gift wrap checked', assert: { kind: 'state', target: { role: 'checkbox', name: 'Gift wrap' }, expect: { checked: true } } },
-      { id: 'C2', requirement: 'R2', description: 'insurance checked', assert: { kind: 'state', target: { role: 'checkbox', name: 'Insurance' }, expect: { checked: true } } },
+      {
+        id: 'C1',
+        requirement: 'R1',
+        description: 'gift wrap checked',
+        assert: { kind: 'state', target: { role: 'checkbox', name: 'Gift wrap' }, expect: { checked: true } },
+      },
+      {
+        id: 'C2',
+        requirement: 'R2',
+        description: 'insurance checked',
+        assert: { kind: 'state', target: { role: 'checkbox', name: 'Insurance' }, expect: { checked: true } },
+      },
     ],
   };
   const o = evaluate(cs, snap());
   expect(o.verdict).toBe('success');
   expect(o.requirements.map((r) => r.status)).toEqual(['pass', 'fail']);
-  const uncovered = evaluate({ ...cs, requirements: [...cs.requirements, { id: 'R3', kind: 'hard', text: 'terms', source: { field: 'instruction', quote: 'accept terms' } }] }, snap());
+  const uncovered = evaluate(
+    {
+      ...cs,
+      requirements: [
+        ...cs.requirements,
+        { id: 'R3', kind: 'hard', text: 'terms', source: { field: 'instruction', quote: 'accept terms' } },
+      ],
+    },
+    snap(),
+  );
   expect(uncovered.verdict).toBe('abstain');
   expect(uncovered.requirements[2]).toMatchObject({ status: 'abstain', reason: 'uncovered' });
 });
@@ -232,7 +389,7 @@ test('snapshot digest ignores capture time and key order', () => {
 
 test.describe('check set validation', () => {
   const dir = new URL('../../examples/tiny-shop/tasks/', import.meta.url);
-  for (const f of readdirSync(dir).filter((f) => f.endsWith('.json'))) {
+  for (const f of readdirSync(dir).filter((name) => name.endsWith('.json'))) {
     test(`example ${f} is valid`, () => {
       const r = validateCheckSet(JSON.parse(readFileSync(new URL(f, dir), 'utf8')));
       expect(r.errors).toEqual([]);
@@ -249,7 +406,12 @@ test.describe('check set validation', () => {
         id: 'C1',
         requirement: 'R1',
         description: 'qty',
-        assert: { kind: 'value', source: { from: 'node', target: { role: 'spinbutton' }, field: 'value' }, normalize: [{ op: 'number', locale: 'en-US' }], expect: { equals: 3 } },
+        assert: {
+          kind: 'value',
+          source: { from: 'node', target: { role: 'spinbutton' }, field: 'value' },
+          normalize: [{ op: 'number', locale: 'en-US' }],
+          expect: { equals: 3 },
+        },
       },
     ],
   });

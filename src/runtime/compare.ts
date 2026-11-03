@@ -1,8 +1,8 @@
 import { Ajv, type ValidateFunction } from 'ajv';
-import type { Comparison, Json, JsonSchema, Money } from '../types.js';
-import { canonical, stripGlobal } from '../text.js';
-import { canonicalJson } from '../snapshot/digest.js';
-import { NormalizeError, daysBetween, describeValue, type TypedValue } from './values.js';
+import type { Comparison, Json, JsonSchema, Money } from '../types.ts';
+import { canonical, stripGlobal } from '../text.ts';
+import { canonicalJson } from '../snapshot/digest.ts';
+import { NormalizeError, daysBetween, describeValue, type TypedValue } from './values.ts';
 
 const ajv = new Ajv({ allErrors: false, strict: false, validateFormats: false });
 const schemaCache = new Map<string, ValidateFunction>();
@@ -29,14 +29,20 @@ export interface CompareOutcome {
 const isMoney = (x: unknown): x is Money =>
   !!x && typeof x === 'object' && typeof (x as Money).amount === 'number' && typeof (x as Money).currency === 'string';
 
-const mismatch = (op: string, v: TypedValue) => new NormalizeError(`'${op}' cannot compare a ${v.type} value (${describeValue(v)}); add a normalizer`, 'type_mismatch');
+const mismatch = (op: string, v: TypedValue) =>
+  new NormalizeError(
+    `'${op}' cannot compare a ${v.type} value (${describeValue(v)}); add a normalizer`,
+    'type_mismatch',
+  );
 
 function deepEqual(actual: TypedValue, expected: Json): boolean {
   switch (actual.type) {
     case 'string':
       return typeof expected === 'string' && canonical(actual.value) === canonical(expected);
     case 'money':
-      return isMoney(expected) && expected.amount === actual.value.amount && expected.currency === actual.value.currency;
+      return (
+        isMoney(expected) && expected.amount === actual.value.amount && expected.currency === actual.value.currency
+      );
     case 'date':
       return typeof expected === 'string' && expected === actual.value;
     default:
@@ -59,11 +65,12 @@ function scalar(v: TypedValue, bound: unknown, op: string): [number, number] {
 }
 
 class CurrencyMismatch extends Error {
-  constructor(
-    readonly actual: string,
-    readonly expected: string,
-  ) {
+  readonly actual: string;
+  readonly expected: string;
+  constructor(actual: string, expected: string) {
     super(`currency ${actual} ≠ ${expected}`);
+    this.actual = actual;
+    this.expected = expected;
   }
 }
 
@@ -109,7 +116,10 @@ export function compare(v: TypedValue, cmp: Comparison): CompareOutcome {
       }
       const tol = Math.max(abs, rel * ref) + 1e-9;
       const ok = diff <= tol;
-      return { ok, message: `${shown} ${ok ? '≈' : '≉'} ${JSON.stringify(target)} (Δ=${+diff.toFixed(6)}, tolerance ${Math.max(abs, rel * ref)}${v.type === 'date' ? ' days' : ''})` };
+      return {
+        ok,
+        message: `${shown} ${ok ? '≈' : '≉'} ${JSON.stringify(target)} (Δ=${+diff.toFixed(6)}, tolerance ${Math.max(abs, rel * ref)}${v.type === 'date' ? ' days' : ''})`,
+      };
     }
     if ('schema' in cmp) {
       const fn = compileSchema(cmp.schema);
@@ -139,7 +149,10 @@ export function compare(v: TypedValue, cmp: Comparison): CompareOutcome {
   }
 }
 
-export function compareNumber(n: number, c: { eq?: number; gt?: number; gte?: number; lt?: number; lte?: number }): boolean {
+export function compareNumber(
+  n: number,
+  c: { eq?: number; gt?: number; gte?: number; lt?: number; lte?: number },
+): boolean {
   if (c.eq !== undefined && n !== c.eq) return false;
   if (c.gt !== undefined && !(n > c.gt)) return false;
   if (c.gte !== undefined && !(n >= c.gte)) return false;
@@ -148,7 +161,13 @@ export function compareNumber(n: number, c: { eq?: number; gt?: number; gte?: nu
   return true;
 }
 
-export function describeNumberCompare(c: { eq?: number; gt?: number; gte?: number; lt?: number; lte?: number }): string {
+export function describeNumberCompare(c: {
+  eq?: number;
+  gt?: number;
+  gte?: number;
+  lt?: number;
+  lte?: number;
+}): string {
   const parts: string[] = [];
   if (c.eq !== undefined) parts.push(`exactly ${c.eq}`);
   if (c.gt !== undefined) parts.push(`more than ${c.gt}`);

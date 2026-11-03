@@ -7,19 +7,41 @@
     "outcomes": "Then the confirmation shows an estimated delivery of 5 November 2026"
   },
   "requirements": [
-    { "id": "R1", "kind": "hard", "text": "Estimated delivery shown as 5 November 2026",
-      "source": { "field": "outcomes", "quote": "estimated delivery of 5 November 2026" } }
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Estimated delivery shown as 5 November 2026",
+      "source": { "field": "outcomes", "quote": "estimated delivery of 5 November 2026" }
+    }
   ],
   "checks": [
-    { "id": "C1", "requirement": "R1",
+    {
+      "id": "C1",
+      "requirement": "R1",
       "description": "An order was placed (POST /api/orders → 201).",
-      "assert": { "kind": "request", "match": { "method": "POST", "url": { "path": "/api/orders" }, "status": 201 } } },
-    { "id": "C2", "requirement": "R1",
+      "assert": { "kind": "request", "match": { "method": "POST", "url": { "path": "/api/orders" }, "status": 201 } }
+    },
+    {
+      "id": "C2",
+      "requirement": "R1",
       "description": "The Order summary shows an estimated delivery date of 2026-11-05.",
-      "assert": { "kind": "value",
-        "source": { "from": "node", "field": "text", "target": {
-          "role": "paragraph", "text": { "contains": "Estimated delivery" }, "within": { "role": "region", "name": "Order summary" } } },
-        "normalize": [ { "op": "extract", "regex": "Estimated delivery:?\\s*(.+)$" }, { "op": "date", "locale": "en-GB" } ],
-        "expect": { "equals": "2026-11-05" } } }
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "node",
+          "field": "text",
+          "target": {
+            "role": "paragraph",
+            "text": { "contains": "Estimated delivery" },
+            "within": { "role": "region", "name": "Order summary" }
+          }
+        },
+        "normalize": [
+          { "op": "extract", "regex": "Estimated delivery:?\\s*(.+)$" },
+          { "op": "date", "locale": "en-GB" }
+        ],
+        "expect": { "equals": "2026-11-05" }
+      }
+    }
   ]
 }

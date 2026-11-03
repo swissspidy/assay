@@ -1,5 +1,5 @@
-import type { Json, Money, Normalizer } from '../types.js';
-import { canonical, stripGlobal } from '../text.js';
+import type { Json, Money, Normalizer } from '../types.ts';
+import { canonical, stripGlobal } from '../text.ts';
 
 /** A typed value flowing through the normalizer pipeline. */
 export type TypedValue =
@@ -11,11 +11,10 @@ export type TypedValue =
   | { type: 'json'; value: Json }; // null, objects, arrays
 
 export class NormalizeError extends Error {
-  constructor(
-    message: string,
-    readonly reason: 'normalize_failed' | 'type_mismatch',
-  ) {
+  readonly reason: 'normalize_failed' | 'type_mismatch';
+  constructor(message: string, reason: 'normalize_failed' | 'type_mismatch') {
     super(message);
+    this.reason = reason;
   }
 }
 
@@ -53,7 +52,8 @@ export function normalizerName(n: Normalizer): string {
 
 export function applyNormalizers(input: TypedValue, steps: Normalizer[] | undefined): TypedValue {
   let v = input;
-  for (const step of steps ?? []) v = applyOne(v, typeof step === 'string' ? ({ op: step } as Exclude<Normalizer, string>) : step);
+  for (const step of steps ?? [])
+    v = applyOne(v, typeof step === 'string' ? ({ op: step } as Exclude<Normalizer, string>) : step);
   return v;
 }
 
@@ -74,10 +74,12 @@ function applyOne(v: TypedValue, step: Exclude<Normalizer, string>): TypedValue 
     case 'extract': {
       const s = asString(v, step.op);
       const m = new RegExp(step.regex, stripGlobal(step.flags)).exec(s);
-      if (!m) throw new NormalizeError(`extract: /${step.regex}/ does not match ${JSON.stringify(s)}`, 'normalize_failed');
+      if (!m)
+        throw new NormalizeError(`extract: /${step.regex}/ does not match ${JSON.stringify(s)}`, 'normalize_failed');
       const g = step.group ?? (m.length > 1 ? 1 : 0);
       const out = typeof g === 'number' ? m[g] : m.groups?.[g];
-      if (out === undefined) throw new NormalizeError(`extract: group ${g} did not participate in the match`, 'normalize_failed');
+      if (out === undefined)
+        throw new NormalizeError(`extract: group ${g} did not participate in the match`, 'normalize_failed');
       return { type: 'string', value: out };
     }
     case 'replace': {
@@ -144,7 +146,11 @@ function separators(locale: string): Separators {
   if (/[   ]/.test(groupSym)) group.push(' ', ' ', ' ');
   if (groupSym === '’' || groupSym === "'") group.push("'", '’');
   const intGroups = parts.filter((p) => p.type === 'integer').map((p) => p.value.length);
-  const s: Separators = { group: [...new Set(group)], decimal, twoDigitGroups: intGroups.includes(2) && intGroups.length > 2 };
+  const s: Separators = {
+    group: [...new Set(group)],
+    decimal,
+    twoDigitGroups: intGroups.includes(2) && intGroups.length > 2,
+  };
   sepCache.set(locale, s);
   return s;
 }
@@ -208,16 +214,17 @@ const SYMBOLS: Record<string, string[]> = {
   '฿': ['THB'],
   '₫': ['VND'],
   '₱': ['PHP'],
-  'zł': ['PLN'],
+  zł: ['PLN'],
   'Fr.': ['CHF'],
   'kr.': ['DKK'],
   kr: ['SEK', 'NOK', 'DKK', 'ISK'],
 };
-const SYMBOL_KEYS = Object.keys(SYMBOLS).sort((a, b) => b.length - a.length);
+const SYMBOL_KEYS = Object.keys(SYMBOLS).toSorted((a, b) => b.length - a.length);
 
 export function parseCurrency(raw: string, locale: string, declared?: string): Money {
   let s = canonical(raw.normalize('NFC')).replace(/−/g, '-');
-  const fail = (why: string) => new NormalizeError(`currency(${locale}): ${why} in ${JSON.stringify(raw)}`, 'normalize_failed');
+  const fail = (why: string) =>
+    new NormalizeError(`currency(${locale}): ${why} in ${JSON.stringify(raw)}`, 'normalize_failed');
   let sign = '';
   const paren = /^\((.*)\)$/.exec(s);
   if (paren) {
@@ -303,7 +310,8 @@ function dateLocale(locale: string): DateLocale {
     }
     for (let i = 0; i < 7; i++) {
       const d = new Date(Date.UTC(2024, 0, 7 + i));
-      for (const style of ['long', 'short'] as const) weekdays.add(foldName(new Intl.DateTimeFormat(loc, { weekday: style, timeZone: 'UTC' }).format(d)));
+      for (const style of ['long', 'short'] as const)
+        weekdays.add(foldName(new Intl.DateTimeFormat(loc, { weekday: style, timeZone: 'UTC' }).format(d)));
     }
   }
   months.set('sept', 9);
@@ -327,9 +335,12 @@ function isoDate(y: number, m: number, d: number, raw: string): string {
 /** Parse a date to YYYY-MM-DD. Never consults the clock or the host locale/timezone. */
 export function parseDate(raw: string, locale: string, timezone?: string): string {
   const s = canonical(raw.normalize('NFKC'));
-  const fail = (why: string) => new NormalizeError(`date(${locale}): ${why}: ${JSON.stringify(raw)}`, 'normalize_failed');
+  const fail = (why: string) =>
+    new NormalizeError(`date(${locale}): ${why}: ${JSON.stringify(raw)}`, 'normalize_failed');
 
-  const iso = /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?\s*(Z|[+-]\d{2}:?\d{2})?)?$/i.exec(s);
+  const iso = /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?\s*(Z|[+-]\d{2}:?\d{2})?)?$/i.exec(
+    s,
+  );
   if (iso) {
     const [, y, mo, d, hh, , , zone] = iso;
     if (hh !== undefined && zone !== undefined) {
@@ -338,7 +349,12 @@ export function parseDate(raw: string, locale: string, timezone?: string): strin
       if (Number.isNaN(t)) throw fail('invalid datetime');
       let parts: Intl.DateTimeFormatPart[];
       try {
-        parts = new Intl.DateTimeFormat('en-CA', { timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date(t));
+        parts = new Intl.DateTimeFormat('en-CA', {
+          timeZone: timezone,
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        }).formatToParts(new Date(t));
       } catch {
         throw fail(`unknown timezone ${JSON.stringify(timezone)}`);
       }
@@ -351,7 +367,7 @@ export function parseDate(raw: string, locale: string, timezone?: string): strin
   const dl = dateLocale(locale);
   const tokens = foldName(s)
     .replace(/(\d+)(st|nd|rd|th)\b/g, '$1')
-    .split(/[\s,/.\-]+/u)
+    .split(/[\s,/.-]+/u)
     .filter(Boolean)
     .filter((t) => !dl.weekdays.has(t) && !FILLER.has(t));
 
