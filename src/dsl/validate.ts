@@ -2,10 +2,10 @@ import { Ajv } from 'ajv';
 import type {
   Assertion,
   CheckSet,
-  RequestMatch,
   Comparison,
   Locator,
   Normalizer,
+  RequestMatch,
   Target,
   TextMatch,
   ValueSource,

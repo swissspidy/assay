@@ -15,7 +15,7 @@
     "./playwright": "./dist/playwright/index.js"
   },
   "scripts": {
-    "build": "tsrs -p tsconfig.build.json",
+    "build": "tsrs -p tsconfig.build.json && node scripts/rewrite-dts-specifiers.ts",
     "typecheck": "tsrs -p tsconfig.json --noEmit",
     "lint": "oxlint --deny-warnings",
     "lint:fix": "oxlint --fix",
@@ -35,7 +35,7 @@
     "@types/node": "^24.0.0",
     "oxfmt": "^0.75.0",
     "oxlint": "^1.90.0",
-    "tsrs": "^0.20.1-ts7.1.0-beta"
+    "tsrs": "0.20.1-ts7.1.0-beta"
   },
   "peerDependencies": {
     "@playwright/test": ">=1.49.0"

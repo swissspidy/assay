@@ -21,6 +21,27 @@ const BODY_RESOURCE_TYPES = new Set(['fetch', 'xhr']);
 export interface RecorderOptions {
   /** Max bytes of a request/response body kept in the log (default 1 MiB). */
   maxBodyBytes?: number;
+  /**
+   * Max ms to wait for one response body (default 3000). Chromium can leave a
+   * body read pending forever once the page has navigated away; such a body is
+   * then filled from the page tap or marked unavailable.
+   */
+  bodyTimeoutMs?: number;
+}
+
+const TIMED_OUT = Symbol('timeout');
+
+/** Resolve with the promise's value, or TIMED_OUT after `ms`; never leaves a timer running. */
+async function within<T>(p: Promise<T>, ms: number): Promise<T | typeof TIMED_OUT> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<typeof TIMED_OUT>((resolve) => {
+    timer = setTimeout(() => resolve(TIMED_OUT), ms);
+  });
+  try {
+    return await Promise.race([p, timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 function pick(headers: Record<string, string>, keep: string[]): Record<string, string> {
@@ -128,6 +149,7 @@ export class EvidenceRecorder {
   private readonly tapped: TappedBody[] = [];
   private seq = 0;
   private readonly maxBody: number;
+  private readonly bodyTimeout: number;
   private readonly token = randomUUID();
 
   readonly context: BrowserContext;
@@ -135,6 +157,7 @@ export class EvidenceRecorder {
   private constructor(context: BrowserContext, opts: RecorderOptions) {
     this.context = context;
     this.maxBody = opts.maxBodyBytes ?? 1024 * 1024;
+    this.bodyTimeout = opts.bodyTimeoutMs ?? 3000;
     context.on('request', (req) => this.onRequest(req));
     context.on('response', (resp) => this.track(this.onResponse(resp.request())));
     context.on('requestfailed', (req) => this.onFailed(req));
@@ -197,8 +220,11 @@ export class EvidenceRecorder {
   private async onResponse(req: Request): Promise<void> {
     const entry = this.byRequest.get(req);
     if (!entry) return;
-    const resp = await req.response().catch(() => null);
-    if (!resp) return;
+    const resp = await within(
+      req.response().catch(() => null),
+      this.bodyTimeout,
+    );
+    if (!resp || resp === TIMED_OUT) return;
     entry.status = resp.status();
     const headers = resp.headers();
     entry.responseHeaders = pick(headers, KEEP_RESPONSE_HEADERS);
@@ -206,7 +232,9 @@ export class EvidenceRecorder {
     if (!BODY_RESOURCE_TYPES.has(entry.resourceType) || !isTextual(ct)) return;
     if (entry.status >= 300 && entry.status < 400) return; // redirects have no body
     try {
-      const text = (await resp.body()).toString('utf8');
+      const buf = await within(resp.body(), this.bodyTimeout);
+      if (buf === TIMED_OUT) return; // evicted; the page tap usually has it
+      const text = buf.toString('utf8');
       const { body, truncated } = decodeBody(text, ct, this.maxBody);
       entry.responseBody = body;
       if (truncated) entry.bodyTruncated = true;
