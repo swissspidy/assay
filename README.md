@@ -91,6 +91,20 @@ Verdict: FAIL  (tiny-shop/express-order v1, snapshot sha256:2f7375b64494…)
     ✔ C3: The browser is on an order page, or an 'Order confirmed' heading is shown.
 ```
 
+## Compiling checks (milestone 2)
+
+```ts
+import { anthropicModel, compileTask, loadSnapshot } from 'assay';
+
+const { checkSet, report } = await compileTask(
+  { id: 'shop/express-order', instruction, outcomes }, // outcomes: Gherkin "Then" clauses, a Markdown list or plain lines
+  [{ name: 'reference', kind: 'success', snapshot: loadSnapshot(json) }],
+  { model: await anthropicModel() }, // or any ModelClient
+);
+```
+
+The compiler writes a rubric of requirements, each quoting the task text. An agent then explores the reference snapshots and submits checks, which are accepted only once they validate and pass on every correct reference. See [ADR 0002](docs/adr/0002-compiler.md). `npm run compile:tiny-shop` compiles the 10 Tiny Shop tasks from one correct run each and judges the held-out runs. It needs `ANTHROPIC_API_KEY` to record and replays the recorded cassettes without one.
+
 ## Development
 
 Requires **Node.js 24+** (see `.nvmrc`). Tooling: [tsrs](https://github.com/oxc-project/tsrs)

@@ -1,0 +1,484 @@
+/**
+ * The compiler (milestone 2): task instruction + expected outcomes + reference
+ * snapshots → a validated, traceable check set.
+ *
+ *   1. Rubric: requirements, each quoting the task text (model, or deterministic).
+ *   2. Evidence discovery: an agent explores the reference snapshots.
+ *   3. Compile: the agent submits DSL checks; submission validates them and runs
+ *      them against every reference, and the agent repairs until accepted.
+ *
+ * Models run only here. The output is data that runs without one.
+ */
+import type { Assertion, Check, CheckSet, EvidenceSnapshot, Requirement, Channel, Trust } from '../types.ts';
+import { CHECKS_SCHEMA, CHANNEL_TRUST } from '../types.ts';
+import { checkSetSchema } from '../dsl/schema.ts';
+import { validateCheckSet } from '../dsl/validate.ts';
+import { evaluate, evaluateAssertion } from '../runtime/evaluate.ts';
+import { AXIndex } from '../runtime/axindex.ts';
+import { canonical } from '../text.ts';
+import { runAgent, type AgentTool, type AgentRun } from '../model/agent.ts';
+import type { ModelClient } from '../model/types.ts';
+import { parseOutcomes, type Clause } from './outcomes.ts';
+import { findNodes, networkEntry, networkLog, outline, probesView, storageView, summary } from './explore.ts';
+import { DISCOVERY_NUDGE, DISCOVERY_SYSTEM, RUBRIC_SYSTEM } from './prompts.ts';
+
+export interface TaskInput {
+  id: string;
+  instruction: string;
+  /** Expected outcomes: Gherkin "Then" clauses, a Markdown list, or plain lines. */
+  outcomes?: string;
+}
+
+export interface Reference {
+  name: string;
+  /** "success": a correct run (checks must succeed). "negative": an incorrect run (checks must not succeed). */
+  kind: 'success' | 'negative';
+  snapshot: EvidenceSnapshot;
+}
+
+export interface CompileOptions {
+  model: ModelClient;
+  /** "model" (default) asks the model for the rubric; "deterministic" makes one hard requirement per outcome clause. */
+  rubric?: 'model' | 'deterministic';
+  /**
+   * Optional agent trajectory (actions, notes). Context only: it helps the
+   * agent know where to look, it is never evidence.
+   */
+  trajectory?: string;
+  maxTurns?: number;
+  log?: (msg: string) => void;
+}
+
+export interface RequirementCoverage {
+  requirement: string;
+  quote: string;
+  checks: string[];
+  channels: Channel[];
+  /** Weakest-link trust is reported; "freetext" only coverage is flagged. */
+  strongestTrust: Trust | null;
+}
+
+export interface CompileReport {
+  task: string;
+  status: 'compiled' | 'failed';
+  reason?: string;
+  model: string;
+  modelsUsed: string[];
+  turns: { rubric: number; discovery: number };
+  usage: { inputTokens: number; outputTokens: number };
+  coverage: RequirementCoverage[];
+  warnings: string[];
+  references: { name: string; kind: Reference['kind']; verdict: string }[];
+}
+
+export interface CompileResult {
+  checkSet?: CheckSet;
+  report: CompileReport;
+}
+
+// ---------------------------------------------------------------------------
+// Rubric
+// ---------------------------------------------------------------------------
+
+const fold = (s: string) => canonical(s).toLowerCase();
+
+export function rubricFromClauses(task: TaskInput): Requirement[] {
+  const clauses = parseOutcomes(task.outcomes);
+  if (!clauses.length) {
+    return [
+      { id: 'R1', kind: 'hard', text: task.instruction, source: { field: 'instruction', quote: task.instruction } },
+    ];
+  }
+  return clauses.map((c, i) => ({
+    id: `R${i + 1}`,
+    kind: 'hard',
+    text: c.text,
+    source: { field: 'outcomes', quote: c.text },
+  }));
+}
+
+/** Errors that make a rubric unusable: untraceable quotes, duplicate ids, uncovered outcome clauses. */
+export function checkRubric(task: TaskInput, reqs: Requirement[], clauses: Clause[]): string[] {
+  const errors: string[] = [];
+  const ids = new Set<string>();
+  if (!reqs.length) errors.push('No requirements.');
+  if (!reqs.some((r) => r.kind === 'hard')) errors.push('At least one requirement must be hard.');
+  for (const r of reqs) {
+    if (ids.has(r.id)) errors.push(`Duplicate requirement id ${r.id}.`);
+    ids.add(r.id);
+    const src = r.source.field === 'instruction' ? task.instruction : (task.outcomes ?? '');
+    if (!fold(src).includes(fold(r.source.quote)))
+      errors.push(`${r.id}: quote ${JSON.stringify(r.source.quote)} is not verbatim in the ${r.source.field}.`);
+  }
+  for (const c of clauses) {
+    const covered = reqs.some(
+      (r) =>
+        r.source.field === 'outcomes' &&
+        (fold(c.text).includes(fold(r.source.quote)) || fold(r.source.quote).includes(fold(c.text))),
+    );
+    if (!covered) errors.push(`Expected outcome ${JSON.stringify(c.text)} has no requirement quoting it.`);
+  }
+  return errors;
+}
+
+const RUBRIC_TOOL_SCHEMA = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['requirements'],
+  properties: {
+    requirements: {
+      type: 'array',
+      minItems: 1,
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['id', 'kind', 'text', 'field', 'quote'],
+        properties: {
+          id: { type: 'string', pattern: '^R[0-9]+$' },
+          kind: { type: 'string', enum: ['hard', 'soft'] },
+          text: { type: 'string' },
+          field: { type: 'string', enum: ['instruction', 'outcomes'] },
+          quote: { type: 'string' },
+        },
+      },
+    },
+  },
+};
+
+async function modelRubric(
+  task: TaskInput,
+  model: ModelClient,
+  maxTurns: number,
+): Promise<{ run: AgentRun<Requirement[]>; requirements?: Requirement[] }> {
+  const clauses = parseOutcomes(task.outcomes);
+  const prompt = [
+    `Task instruction:\n<instruction>\n${task.instruction}\n</instruction>`,
+    task.outcomes
+      ? `Expected outcomes:\n<outcomes>\n${task.outcomes}\n</outcomes>`
+      : 'No expected outcomes were given.',
+    clauses.length ? `Parsed outcome clauses:\n${clauses.map((c) => `- ${c.text}`).join('\n')}` : '',
+  ]
+    .filter(Boolean)
+    .join('\n\n');
+  const submit: AgentTool<Requirement[]> = {
+    spec: {
+      name: 'submit_rubric',
+      description:
+        'Submit the requirements. Rejected with reasons if a quote is not verbatim or an outcome is uncovered.',
+      inputSchema: RUBRIC_TOOL_SCHEMA,
+      strict: true,
+    },
+    run(input: {
+      requirements: {
+        id: string;
+        kind: 'hard' | 'soft';
+        text: string;
+        field: 'instruction' | 'outcomes';
+        quote: string;
+      }[];
+    }) {
+      const reqs: Requirement[] = input.requirements.map((r) => ({
+        id: r.id,
+        kind: r.kind,
+        text: r.text,
+        source: { field: r.field, quote: r.quote },
+      }));
+      const errors = checkRubric(task, reqs, clauses);
+      if (errors.length) return { content: `Rejected:\n- ${errors.join('\n- ')}`, isError: true };
+      return { content: 'Accepted.', done: reqs };
+    },
+  };
+  const run = await runAgent({ model, system: RUBRIC_SYSTEM, prompt, tools: [submit], maxTurns });
+  return { run, ...(run.result ? { requirements: run.result } : {}) };
+}
+
+// ---------------------------------------------------------------------------
+// Discovery and compilation
+// ---------------------------------------------------------------------------
+
+function sourceChannels(a: Assertion): Channel[] {
+  switch (a.kind) {
+    case 'state':
+    case 'contains':
+      return ['a11y'];
+    case 'url':
+      return ['url'];
+    case 'request':
+      return ['network'];
+    case 'value': {
+      const f = a.source.from;
+      return [f === 'node' ? 'a11y' : f === 'request' || f === 'response' ? 'network' : f === 'text' ? 'text' : f];
+    }
+    case 'allOf':
+    case 'anyOf':
+      return [...new Set(a.of.flatMap(sourceChannels))];
+  }
+}
+
+const TRUST_RANK: Record<Trust, number> = { structured: 3, semantic: 2, freetext: 1 };
+
+export function coverage(cs: CheckSet): RequirementCoverage[] {
+  return cs.requirements.map((r) => {
+    const checks = cs.checks.filter((c) => c.requirement === r.id);
+    const channels = [...new Set(checks.flatMap((c) => sourceChannels(c.assert)))];
+    const strongest =
+      channels.map((c) => CHANNEL_TRUST[c]).toSorted((a, b) => TRUST_RANK[b] - TRUST_RANK[a])[0] ?? null;
+    return {
+      requirement: r.id,
+      quote: r.source.quote,
+      checks: checks.map((c) => c.id),
+      channels,
+      strongestTrust: strongest,
+    };
+  });
+}
+
+interface Verification {
+  errors: string[];
+  warnings: string[];
+  references: CompileReport['references'];
+}
+
+/** Validate a candidate check set and run it against every reference. */
+export function verifyCandidate(cs: CheckSet, refs: Reference[]): Verification {
+  const v = validateCheckSet(cs);
+  const errors = [...v.errors];
+  const warnings = [...v.warnings];
+  const references: CompileReport['references'] = [];
+  for (const r of cs.requirements) {
+    if (!cs.checks.some((c) => c.requirement === r.id)) errors.push(`Requirement ${r.id} has no checks.`);
+  }
+  if (!v.ok) return { errors, warnings, references };
+  for (const ref of refs) {
+    const o = evaluate(cs, ref.snapshot);
+    references.push({ name: ref.name, kind: ref.kind, verdict: o.verdict });
+    if (ref.kind === 'success') {
+      for (const c of o.checks.filter((x) => x.status !== 'pass')) {
+        errors.push(
+          `On correct run "${ref.name}", ${c.check} ${c.status}s${c.reason ? ` (${c.reason})` : ''}: ${c.message}`,
+        );
+      }
+      for (const d of o.drift)
+        warnings.push(`On "${ref.name}", ${d.check} has an anchor that matches nothing: ${d.locator}`);
+    } else if (o.verdict === 'success') {
+      errors.push(
+        `On incorrect run "${ref.name}" the check set still reports success; some requirement is not actually tested.`,
+      );
+    } else if (o.verdict === 'abstain') {
+      warnings.push(`On incorrect run "${ref.name}" the verdict is abstain rather than fail.`);
+    }
+  }
+  for (const cov of coverage(cs)) {
+    if (cov.strongestTrust === 'freetext')
+      warnings.push(`Requirement ${cov.requirement} is covered only by free page text, which a page can spoof.`);
+  }
+  return { errors, warnings, references };
+}
+
+const CHECKS_TOOL_SCHEMA = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['checks'],
+  properties: { checks: { type: 'array', minItems: 1, items: { $ref: '#/definitions/check' } } },
+  definitions: checkSetSchema.definitions,
+};
+
+const ASSERT_TOOL_SCHEMA = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['assert'],
+  properties: { assert: { $ref: '#/definitions/assertion' } },
+  definitions: checkSetSchema.definitions,
+};
+
+const obj = (props: Record<string, unknown>, required: string[] = []) => ({
+  type: 'object',
+  additionalProperties: false,
+  properties: props,
+  required,
+});
+
+function discoveryTools(
+  task: TaskInput,
+  requirements: Requirement[],
+  refs: Reference[],
+  onAccept: (v: Verification) => void,
+) {
+  const refNames = refs.map((r) => r.name);
+  const pickRef = (name: string | undefined): Reference => refs.find((r) => r.name === name) ?? refs[0]!;
+  const refProp = {
+    reference: { type: 'string', enum: refNames, description: 'Reference snapshot name (default: the first one).' },
+  };
+  type In<T> = T & { reference?: string };
+
+  const tools: AgentTool<CheckSet>[] = [
+    {
+      spec: {
+        name: 'page_outline',
+        description: 'Accessibility tree of a reference snapshot, as an indented outline.',
+        inputSchema: obj(refProp),
+      },
+      run: (i: In<object>) => ({
+        content: `${summary(pickRef(i.reference).snapshot)}\n\n${outline(pickRef(i.reference).snapshot)}`,
+      }),
+    },
+    {
+      spec: {
+        name: 'find_nodes',
+        description: 'Find accessibility nodes by role and/or case-insensitive substrings of name or descendant text.',
+        inputSchema: obj({ ...refProp, role: { type: 'string' }, name: { type: 'string' }, text: { type: 'string' } }),
+      },
+      run: (i: In<{ role?: string; name?: string; text?: string }>) => ({
+        content: findNodes(pickRef(i.reference).snapshot, i),
+      }),
+    },
+    {
+      spec: {
+        name: 'network_log',
+        description: 'List recorded document/fetch/XHR requests, optionally filtered by method or a URL substring.',
+        inputSchema: obj({ ...refProp, method: { type: 'string' }, pathContains: { type: 'string' } }),
+      },
+      run: (i: In<{ method?: string; pathContains?: string }>) => ({
+        content: networkLog(pickRef(i.reference).snapshot, i),
+      }),
+    },
+    {
+      spec: {
+        name: 'network_entry',
+        description: 'Show one request with headers and request/response bodies.',
+        inputSchema: obj({ ...refProp, seq: { type: 'integer' } }, ['seq']),
+      },
+      run: (i: In<{ seq: number }>) => ({ content: networkEntry(pickRef(i.reference).snapshot, i.seq) }),
+    },
+    {
+      spec: { name: 'storage', description: 'Cookies, localStorage and sessionStorage.', inputSchema: obj(refProp) },
+      run: (i: In<object>) => ({ content: storageView(pickRef(i.reference).snapshot) }),
+    },
+    {
+      spec: { name: 'probes', description: 'Results of the read-only backend probes.', inputSchema: obj(refProp) },
+      run: (i: In<object>) => ({ content: probesView(pickRef(i.reference).snapshot) }),
+    },
+    {
+      spec: {
+        name: 'try_assertion',
+        description:
+          'Evaluate one assertion against every reference snapshot and report pass/fail/abstain with the reason.',
+        inputSchema: ASSERT_TOOL_SCHEMA,
+      },
+      run(i: { assert: Assertion }) {
+        const lines = refs.map((r) => {
+          const res = evaluateAssertion({ snapshot: r.snapshot, index: new AXIndex(r.snapshot.a11y) }, i.assert);
+          return `${r.name} (${r.kind}): ${res.status}${res.reason ? ` (${res.reason})` : ''} — ${res.message}`;
+        });
+        return { content: lines.join('\n') };
+      },
+    },
+    {
+      spec: {
+        name: 'submit_checks',
+        description:
+          'Submit the complete list of checks. They are validated and run against all references; you get errors to fix, or acceptance.',
+        inputSchema: CHECKS_TOOL_SCHEMA,
+      },
+      run(i: { checks: Check[] }) {
+        const cs: CheckSet = {
+          schema: CHECKS_SCHEMA,
+          id: task.id,
+          version: '1',
+          task: { instruction: task.instruction, ...(task.outcomes !== undefined ? { outcomes: task.outcomes } : {}) },
+          requirements,
+          checks: i.checks,
+        };
+        const v = verifyCandidate(cs, refs);
+        if (v.errors.length) {
+          return {
+            content: `Not accepted. Fix these and resubmit all checks:\n- ${v.errors.join('\n- ')}${v.warnings.length ? `\nWarnings:\n- ${v.warnings.join('\n- ')}` : ''}`,
+            isError: true,
+          };
+        }
+        onAccept(v);
+        return { content: `Accepted.${v.warnings.length ? ` Warnings:\n- ${v.warnings.join('\n- ')}` : ''}`, done: cs };
+      },
+    },
+  ];
+  return tools;
+}
+
+export async function compileTask(task: TaskInput, refs: Reference[], opts: CompileOptions): Promise<CompileResult> {
+  const log = opts.log ?? (() => {});
+  const usage = { inputTokens: 0, outputTokens: 0 };
+  const models = new Set<string>();
+  const report: CompileReport = {
+    task: task.id,
+    status: 'failed',
+    model: opts.model.id,
+    modelsUsed: [],
+    turns: { rubric: 0, discovery: 0 },
+    usage,
+    coverage: [],
+    warnings: [],
+    references: [],
+  };
+  const add = (run: AgentRun<unknown>) => {
+    usage.inputTokens += run.usage.inputTokens;
+    usage.outputTokens += run.usage.outputTokens;
+    run.models.forEach((m) => models.add(m));
+    report.modelsUsed = [...models];
+  };
+  if (!refs.some((r) => r.kind === 'success')) {
+    return { report: { ...report, reason: 'At least one successful reference snapshot is required.' } };
+  }
+
+  // 1. Rubric
+  let requirements: Requirement[];
+  if (opts.rubric === 'deterministic') {
+    requirements = rubricFromClauses(task);
+  } else {
+    log(`${task.id}: rubric`);
+    const r = await modelRubric(task, opts.model, 6);
+    add(r.run);
+    report.turns.rubric = r.run.turns;
+    if (!r.requirements) return { report: { ...report, reason: `Rubric step ended with ${r.run.status}.` } };
+    requirements = r.requirements;
+  }
+
+  // 2+3. Discovery agent with validating submission
+  log(`${task.id}: discovery (${requirements.length} requirements, ${refs.length} references)`);
+  let accepted: Verification | undefined;
+  const tools = discoveryTools(task, requirements, refs, (v) => (accepted = v));
+  const prompt = [
+    `Task id: ${task.id}`,
+    `Instruction:\n<instruction>\n${task.instruction}\n</instruction>`,
+    task.outcomes ? `Expected outcomes:\n<outcomes>\n${task.outcomes}\n</outcomes>` : '',
+    `Requirements (each check must name one):\n${requirements.map((r) => `- ${r.id} [${r.kind}] ${r.text} (quote: ${JSON.stringify(r.source.quote)})`).join('\n')}`,
+    `Reference snapshots:\n${refs.map((r) => `- ${r.name} (${r.kind === 'success' ? 'correct run' : 'incorrect run'}): ${summary(r.snapshot)}`).join('\n')}`,
+    opts.trajectory
+      ? `Agent trajectory of the first correct run. Context only — it tells you where to look; it is never evidence and checks must not rely on it:\n<trajectory>\n${opts.trajectory}\n</trajectory>`
+      : '',
+  ]
+    .filter(Boolean)
+    .join('\n\n');
+  const run = await runAgent<CheckSet>({
+    model: opts.model,
+    system: DISCOVERY_SYSTEM,
+    prompt,
+    tools,
+    maxTurns: opts.maxTurns ?? 40,
+    nudge: DISCOVERY_NUDGE,
+  });
+  add(run);
+  report.turns.discovery = run.turns;
+  if (!run.result || !accepted) return { report: { ...report, reason: `Discovery ended with ${run.status}.` } };
+
+  const checkSet = run.result;
+  return {
+    checkSet,
+    report: {
+      ...report,
+      status: 'compiled',
+      coverage: coverage(checkSet),
+      warnings: (accepted as Verification).warnings,
+      references: (accepted as Verification).references,
+    },
+  };
+}

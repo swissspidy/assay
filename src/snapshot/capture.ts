@@ -353,17 +353,20 @@ export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Pr
     };
   }
 
-  const probes: Record<string, ProbeResult> = {};
-  await Promise.all(
-    Object.entries(opts.probes ?? {}).map(async ([name, probe]) => {
+  // Run probes concurrently but record them in declaration order, so snapshots are reproducible.
+  const probeEntries = Object.entries(opts.probes ?? {});
+  const probeResults = await Promise.all(
+    probeEntries.map(async ([, probe]): Promise<ProbeResult> => {
       try {
         const value = await probe();
-        probes[name] = { ok: true, value: JSON.parse(JSON.stringify(value ?? null)) as Json };
+        return { ok: true, value: JSON.parse(JSON.stringify(value ?? null)) as Json };
       } catch (e) {
-        probes[name] = { ok: false, error: e instanceof Error ? e.message : String(e) };
+        return { ok: false, error: e instanceof Error ? e.message : String(e) };
       }
     }),
   );
+  const probes: Record<string, ProbeResult> = {};
+  probeEntries.forEach(([name], i) => (probes[name] = probeResults[i]!));
 
   let network: NetworkEntry[] | null = null;
   if (recorder) {
