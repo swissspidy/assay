@@ -12,6 +12,7 @@ import type {
   EvidenceSnapshot,
   Json,
   Locator,
+  NumberCompare,
   NetworkEntry,
   Normalizer,
   RequestMatch,
@@ -20,7 +21,8 @@ import type {
 } from '../types.ts';
 import { AXIndex, readNodeField, resolveTarget, type INode } from '../runtime/axindex.ts';
 import { matchRequest } from '../runtime/network.ts';
-import { jsonPointer } from '../runtime/compare.ts';
+import { compareNumber, jsonPointer } from '../runtime/compare.ts';
+import { evaluateAssertion } from '../runtime/evaluate.ts';
 import { applyNormalizers, fromJson, type TypedValue } from '../runtime/values.ts';
 import { stripGlobal } from '../text.ts';
 import { clone, editById, nearMiss, replaceText, setPointer, treeChanged } from './edit.ts';
@@ -165,10 +167,37 @@ function readable(s: EvidenceSnapshot, idx: AXIndex, src: ValueSource): Readable
       };
     }
     case 'text': {
-      const m = new RegExp(src.pattern, stripGlobal(src.flags)).exec(s.text.replace(/[^\S\n]+/g, ' '));
+      // Read what the evaluator reads: the scoped subtree's text, or the free page text.
+      let hay = s.text.replace(/[^\S\n]+/g, ' ');
+      let scopeNode: INode | undefined;
+      if (src.scope) {
+        const r = resolveTarget(idx, src.scope);
+        if (!r.ok) return undefined;
+        scopeNode = r.node;
+        hay = idx.text(r.node);
+      }
+      const m = new RegExp(src.pattern, stripGlobal(src.flags)).exec(hay);
       const g = src.group ?? (m && m.length > 1 ? 1 : 0);
       const got = m ? (typeof g === 'number' ? m[g] : m.groups?.[g]) : undefined;
       if (!got) return undefined;
+      if (scopeNode) {
+        const scope = new Set([scopeNode.id, ...idx.descendants(scopeNode).map((n) => n.id)]);
+        return {
+          raw: got,
+          what: `text of ${idx.path(scopeNode)}`,
+          siblings: [],
+          write(next) {
+            if (typeof next !== 'string') return undefined;
+            const out = editById(s, (n, id) =>
+              scope.has(id) && (n.role === 'text' || !n.children) && n.name?.includes(got)
+                ? { ...n, name: n.name.replace(got, () => next) }
+                : undefined,
+            );
+            if (!treeChanged(s, out)) return undefined;
+            return { ...out, text: s.text.replace(got, () => next) };
+          },
+        };
+      }
       return {
         raw: got,
         what: 'page text',
@@ -366,6 +395,24 @@ function valueMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, {
 
 // --- requests ------------------------------------------------------------------
 
+/** The effective integer bounds of a count: the strongest of eq/gte/gt and eq/lte/lt. */
+function countBounds(count: NumberCompare): { lower?: number; upper?: number } {
+  if (count.eq !== undefined) return { lower: count.eq, upper: count.eq };
+  // Counts are integers, so fractional bounds round inward (lt: 2.5 allows at most 2).
+  const lows = [
+    count.gte !== undefined ? Math.ceil(count.gte) : undefined,
+    count.gt !== undefined ? Math.floor(count.gt) + 1 : undefined,
+  ].filter((x) => x !== undefined);
+  const highs = [
+    count.lte !== undefined ? Math.floor(count.lte) : undefined,
+    count.lt !== undefined ? Math.ceil(count.lt) - 1 : undefined,
+  ].filter((x) => x !== undefined);
+  return {
+    ...(lows.length ? { lower: Math.max(...lows) } : {}),
+    ...(highs.length ? { upper: Math.min(...highs) } : {}),
+  };
+}
+
 function exampleUrl(s: EvidenceSnapshot, m: RequestMatch): string {
   let origin = 'http://localhost';
   try {
@@ -379,7 +426,18 @@ function exampleUrl(s: EvidenceSnapshot, m: RequestMatch): string {
 
 function synthesizeRequest(s: EvidenceSnapshot, m: RequestMatch, seq: number): NetworkEntry {
   const method = Array.isArray(m.method) ? m.method[0]! : (m.method ?? 'POST');
-  const status = typeof m.status === 'number' ? m.status : (m.status?.eq ?? m.status?.gte ?? m.status?.gt ?? 200);
+  const bound = typeof m.status === 'number' ? { eq: m.status } : m.status;
+  const options = bound
+    ? [
+        bound.eq,
+        bound.gte,
+        bound.gt !== undefined ? bound.gt + 1 : undefined,
+        200,
+        bound.lte,
+        bound.lt !== undefined ? bound.lt - 1 : undefined,
+      ]
+    : [];
+  const status = bound ? (options.find((x) => x !== undefined && compareNumber(x, bound)) ?? 200) : 200;
   const reqBody = exampleOf(m.requestBody);
   const respBody = exampleOf(m.responseBody);
   return {
@@ -421,19 +479,26 @@ function requestMutants(s: EvidenceSnapshot, a: Extract<Assertion, { kind: 'requ
   const hits = net.filter((e) => matchRequest(a.match, e) === 'yes').map((e) => e.seq);
   const count = a.count ?? { gte: 1 };
   const nextSeq = Math.max(-1, ...net.map((e) => e.seq)) + 1;
-  const upper = count.eq ?? count.lte ?? (count.lt !== undefined ? count.lt - 1 : undefined);
+  const { lower, upper } = countBounds(count);
   const out: M[] = [];
   if (upper !== undefined) {
-    const extra = hits.length
-      ? { ...clone(net.find((e) => e.seq === hits[0])!), seq: nextSeq }
-      : synthesizeRequest(s, a.match, nextSeq);
-    out.push({
-      id: 'request:extra',
-      description: hits.length ? 'the request was sent twice' : `a forbidden ${extra.method} ${extra.url} was sent`,
-      snapshot: { ...s, network: [...net, extra] },
-    });
+    // Enough extra requests to exceed the upper bound.
+    const n = Math.max(1, upper + 1 - hits.length);
+    const proto = hits.length ? net.find((e) => e.seq === hits[0])! : synthesizeRequest(s, a.match, nextSeq);
+    const extras = Array.from({ length: n }, (_, i) => ({ ...clone(proto), seq: nextSeq + i }));
+    const times = n > 1 ? ` ${hits.length + n} times` : hits.length ? ' twice' : '';
+    // A synthesized request the matcher does not accept (e.g. a required query) is no near miss.
+    if (matchRequest(a.match, proto) === 'yes')
+      out.push({
+        id: 'request:extra',
+        description: hits.length
+          ? `the request was sent${times}`
+          : `a forbidden ${proto.method} ${proto.url} was sent${times}`,
+        snapshot: { ...s, network: [...net, ...extras] },
+      });
   }
-  if (hits.length && (count.eq === undefined || count.eq > 0)) {
+  // Removing or breaking matches only violates a lower bound.
+  if (hits.length && lower !== undefined && lower > 0) {
     out.push({
       id: 'request:missing',
       description: 'the request was never sent',
@@ -449,7 +514,7 @@ function requestMutants(s: EvidenceSnapshot, a: Extract<Assertion, { kind: 'requ
         ),
       },
     });
-    if (hits.length > 1 && (count.gte ?? count.eq ?? 1) > 1) {
+    if (hits.length > 1 && lower > 1) {
       out.push({
         id: 'request:one-fewer',
         description: 'one of the requests is missing',
@@ -542,8 +607,7 @@ function containsMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion
   const hits = idx.find(a.match, scope);
   const ids = new Set(hits.map((n) => n.id));
   const count = a.count ?? { gte: 1 };
-  const lower = count.eq ?? count.gte ?? (count.gt !== undefined ? count.gt + 1 : undefined);
-  const upper = count.eq ?? count.lte ?? (count.lt !== undefined ? count.lt - 1 : undefined);
+  const { lower, upper } = countBounds(count);
   const out: M[] = [];
   if (lower !== undefined && lower > 0 && hits.length) {
     out.push({
@@ -574,16 +638,23 @@ function containsMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion
     }
   }
   if (upper !== undefined) {
-    const sample = hits[0]?.node ?? idx.all.find((n) => idx.matches(n, a.match))?.node ?? synthesize(a.match);
+    const extra = Math.max(1, upper + 1 - hits.length);
+    // A match inside the scope is copied next to itself, so it keeps its within/landmark
+    // ancestors. Otherwise a sample is inserted under the scope; a bare copy of a match
+    // found elsewhere would lose that context, so such locators are synthesized with it.
+    const first = hits[0];
+    const context = a.match.within !== undefined || a.match.landmark !== undefined;
+    const sample =
+      first?.node ?? (context ? undefined : idx.all.find((n) => idx.matches(n, a.match))?.node) ?? synthesize(a.match);
     if (sample) {
-      const extra = Math.max(1, upper + 1 - hits.length);
+      const copies = () => Array.from({ length: extra }, () => clone(sample));
       const scopeId = scope.id;
-      const snap = editById(s, (n, id) =>
-        id === scopeId
-          ? { ...n, children: [...(n.children ?? []), ...Array.from({ length: extra }, () => clone(sample))] }
-          : undefined,
-      );
-      if (treeChanged(s, snap)) {
+      const snap = first
+        ? editById(s, (n, id) => (id === first.id ? [n, ...copies()] : undefined))
+        : editById(s, (n, id) =>
+            id === scopeId ? { ...n, children: [...(n.children ?? []), ...copies()] } : undefined,
+          );
+      if (treeChanged(s, snap) && noneHolds(snap, [a])) {
         out.push({
           id: 'contains:extra',
           description:
@@ -596,6 +667,18 @@ function containsMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion
     }
   }
   return out;
+}
+
+/** No assertion in `subs` passes on `s`. */
+function noneHolds(s: EvidenceSnapshot, subs: Assertion[]): boolean {
+  const ctx = { snapshot: s, index: new AXIndex(s.a11y) };
+  return subs.every((sub) => {
+    try {
+      return evaluateAssertion(ctx, sub).status !== 'pass';
+    } catch {
+      return true; // evaluate() turns a throwing check into an abstention
+    }
+  });
 }
 
 function assertionMutants(s: EvidenceSnapshot, idx: AXIndex, a: Assertion): M[] {
@@ -613,11 +696,12 @@ function assertionMutants(s: EvidenceSnapshot, idx: AXIndex, a: Assertion): M[] 
       } catch {
         return [];
       }
+      const away = [`${u.origin}/elsewhere`, `${u.origin}/`].find((x) => x !== u.href)!;
       const out: M[] = [
         {
           id: 'url:elsewhere',
           description: 'the browser ended on a different page',
-          snapshot: { ...s, page: { ...s.page, url: `${u.origin}/elsewhere` } },
+          snapshot: { ...s, page: { ...s.page, url: away } },
         },
       ];
       for (const [k, v] of Object.entries(a.match.query ?? {})) {
@@ -637,14 +721,18 @@ function assertionMutants(s: EvidenceSnapshot, idx: AXIndex, a: Assertion): M[] 
     case 'allOf':
       return a.of.flatMap((sub, i) => assertionMutants(s, idx, sub).map((m) => ({ ...m, id: `allOf[${i}]:${m.id}` })));
     case 'anyOf': {
-      // Only breaking every alternative at once is a definite near miss.
+      // Only breaking every alternative at once is a definite near miss. Each step
+      // must keep the alternatives broken so far broken (they may share evidence).
       let snap = s;
       const parts: string[] = [];
-      for (const sub of a.of) {
-        const first = assertionMutants(snap, new AXIndex(snap.a11y), sub)[0];
-        if (!first) return [];
-        snap = first.snapshot;
-        parts.push(first.description);
+      for (const [i, sub] of a.of.entries()) {
+        if (noneHolds(snap, [sub])) continue;
+        const next = assertionMutants(snap, new AXIndex(snap.a11y), sub).find((m) =>
+          noneHolds(m.snapshot, a.of.slice(0, i + 1)),
+        );
+        if (!next) return [];
+        snap = next.snapshot;
+        parts.push(next.description);
       }
       return [{ id: 'anyOf:all', description: `every alternative broken: ${parts.join('; ')}`, snapshot: snap }];
     }

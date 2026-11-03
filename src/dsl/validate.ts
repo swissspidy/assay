@@ -252,9 +252,9 @@ function walkAssertion(a: Assertion, at: string, errors: string[], warnings: str
         if (src.field === 'name' || src.field === 'text') {
           for (const n of a.normalize ?? []) {
             if (typeof n !== 'object' || (n.op !== 'extract' && n.op !== 'replace')) continue;
-            if (/\\n|\\r| {2}|\\s\{2|\\u00a0/.test(n.regex) || (n.flags ?? '').includes('m'))
+            if (/\\n|\\r|\\t|[\t\n\r]| {2}|\\s\{2|\\u00a0/.test(n.regex) || (n.flags ?? '').includes('m'))
               warnings.push(
-                `${at}: accessible ${src.field} is whitespace-normalized before normalizers run (newlines and runs of spaces become one space); /${n.regex}/ expects raw whitespace`,
+                `${at}: accessible ${src.field} is whitespace-normalized before normalizers run (newlines, tabs and runs of spaces become one space); /${n.regex}/ expects raw whitespace`,
               );
           }
         }
