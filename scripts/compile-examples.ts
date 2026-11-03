@@ -8,7 +8,7 @@
  *
  * Writes examples/<app>/compiled/<task>.{checks,report,cassette}.json and SUMMARY.md.
  */
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { compileTask, evaluate, type CheckSet, type EvidenceSnapshot } from '../src/index.ts';
 import { APPS } from '../examples/apps.ts';
 import { compileReference } from '../examples/lib/scenario.ts';
@@ -52,6 +52,8 @@ for (const app of APPS) {
     const runs = references(root, def.id);
     const firstOk = compileReference(def);
     const reference = runs.find((r) => r.name === firstOk.name)!;
+    // A failed attempt must not leave an earlier run's checks behind for the tests to read.
+    rmSync(new URL(`${def.id}.checks.json`, out), { force: true });
 
     // One failing task (no cassette, API error) must not stop the others; a live
     // recording is saved after every turn, so nothing already paid for is lost.

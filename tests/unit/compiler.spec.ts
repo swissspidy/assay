@@ -23,6 +23,8 @@ import {
   type Reference,
   type TaskInput,
 } from '../../src/index.ts';
+import { clauseCovered } from '../../src/compiler/compile.ts';
+import { networkLog } from '../../src/compiler/explore.ts';
 
 const ref = (task: string, name: string): EvidenceSnapshot =>
   JSON.parse(readFileSync(new URL(`../../examples/tiny-shop/references/${task}/${name}.json`, import.meta.url), 'utf8'))
@@ -687,4 +689,64 @@ test('compileTask rejects over-constrained checks found by stress testing, then 
   );
   expect(report.status).toBe('compiled');
   expect(checkSet!.checks).toHaveLength(2);
+});
+
+test.describe('review hardening (milestone 2)', () => {
+  const instr = (quote: string, kind: 'hard' | 'soft' = 'hard', id = 'R1') => ({
+    id,
+    kind,
+    text: 'x',
+    source: { field: 'instruction' as const, quote },
+  });
+
+  test('clause coverage indexes by UTF-16 offset after astral characters', () => {
+    expect(clauseCovered(['😀', 'ab'], '😀abc')).toBe(false); // c is not quoted
+    expect(clauseCovered(['ab'], '😀ab')).toBe(true); // the emoji is not a word character
+  });
+
+  test('quotes are verbatim: a change of case is rejected', () => {
+    const task = { id: 't', instruction: 'Subscribe me to the Newsletter.' };
+    expect(checkRubric(task, [instr('subscribe me to the newsletter')], []).join()).toContain('not verbatim');
+    expect(checkRubric(task, [instr('Subscribe me to the Newsletter')], [])).toEqual([]);
+  });
+
+  test('a soft quote whose optional word sits in the middle mixes a mandatory part: rejected', () => {
+    const task = { id: 't', instruction: 'Order it; the order ships express, ideally with a receipt.' };
+    const hard = instr('Order it');
+    expect(
+      checkRubric(task, [hard, instr('the order ships express, ideally with a receipt', 'soft', 'R2')], []).join(),
+    ).toContain('mixes a mandatory and an optional part');
+    expect(
+      checkRubric(
+        task,
+        [hard, instr('the order ships express', 'hard', 'R2'), instr('ideally with a receipt', 'soft', 'R3')],
+        [],
+      ),
+    ).toEqual([]);
+  });
+
+  test('duplicate reference names are rejected up front', async () => {
+    const snap = ref('01-newsletter', 'subscribed');
+    await expect(
+      compileTask(
+        NEWSLETTER,
+        [
+          { name: 'same', kind: 'success', snapshot: snap },
+          { name: 'same', kind: 'negative', snapshot: snap },
+        ],
+        { model: { id: 'unused', turn: () => Promise.reject(new Error('not called')) } },
+      ),
+    ).rejects.toThrow('Duplicate reference name "same"');
+  });
+
+  test('networkLog caps its rows and says how many were left out', () => {
+    const snap = ref('01-newsletter', 'subscribed');
+    const many = {
+      ...snap,
+      network: Array.from({ length: 5 }, (_, i) => ({ ...snap.network![0]!, seq: i, resourceType: 'fetch' })),
+    };
+    const out = networkLog(many, { allTypes: true }, 2);
+    expect(out.split('\n').filter((l) => l.startsWith('#'))).toHaveLength(2);
+    expect(out).toContain('… 3 more');
+  });
 });
