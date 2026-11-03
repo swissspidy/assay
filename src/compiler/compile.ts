@@ -112,21 +112,74 @@ export function rubricFromClauses(task: TaskInput): Requirement[] {
 }
 
 const OPTIONAL = /\b(optional(ly)?|if possible|ideally|nice to have|if you can|bonus)\b/i;
-/** The optional wording opens or closes a soft quote, so it qualifies the whole quote. */
-const OPTIONAL_EDGE =
-  /^(?:(?:then|and|but)\s+)?(?:optional(?:ly)?|if possible|ideally|nice to have|if you can|bonus)\b|\b(?:optional(?:ly)?|if possible|ideally|nice to have|if you can|bonus)[.!]?$/i;
-const WORD = /[\p{L}\p{N}]/u;
+const MARKER = '(?:optional(?:ly)?|if possible|ideally|nice to have|if you can|bonus)';
+const LEADING_OPTIONAL = new RegExp(`^(?:(?:then|and|but)\\s+)?${MARKER}\\b`, 'i');
+const TRAILING_OPTIONAL = new RegExp(`\\b${MARKER}[.!]?$`, 'i');
+/** Anything that can join two parts of a quote: punctuation, a spaced dash, a sentence end, a conjunction. */
+const SEPARATOR = /[,;:.!?]|\s[–—-]\s|\b(?:and|but|then|while|whereas|although|though|whilst|unless|except)\b/i;
+/** Any negation. Near optional wording it may mean the opposite ("not just optional"), so it never relaxes. */
+const NEGATION = /\b(?:not|never|no longer|neither|nor)\b|n['’]t\b/i;
 
-/** Whether `quote` contains the whole clause. */
-export function containsClause(quote: string, clause: string): boolean {
-  const q = fold(quote);
-  return q.length > 0 && q.includes(fold(clause));
+/**
+ * Whether the quote says something is optional. This is deliberately conservative:
+ * a quote with any negation in it does not count, so it can only be hard.
+ */
+export const hasOptionalWording = (quote: string) => {
+  const q = canonical(quote);
+  return OPTIONAL.test(q) && !NEGATION.test(q);
+};
+
+/**
+ * Whether the optional wording qualifies the whole quote. Only three simple
+ * shapes count: the wording opens a single part ("ideally, gift wrap it"),
+ * closes a single part ("a gift note if possible"), or follows one part after
+ * a comma or dash ("ships express, if possible"). Anything with a second part
+ * ("ships express; receipt optional", "ideally a note, but express is
+ * required") is a mixed quote and must be split. Being conservative can only
+ * make a requirement stricter, never drop a mandatory part.
+ */
+export function wholeQuoteOptional(quote: string): boolean {
+  if (!hasOptionalWording(quote)) return false;
+  const q = canonical(quote)
+    .replace(/[.!?]+$/, '')
+    .trimEnd();
+  const lead = LEADING_OPTIONAL.exec(q);
+  if (lead) return !SEPARATOR.test(q.slice(lead[0].length).replace(/^[\s,:–—-]+/, ''));
+  const m = TRAILING_OPTIONAL.exec(q);
+  if (!m) return false;
+  const before = q
+    .slice(0, m.index)
+    .trimEnd()
+    .replace(/\s*[,–—-]$/, '');
+  return !SEPARATOR.test(before);
+}
+/** Letters, digits and combining marks (a vowel sign continues its word). */
+const WORD = /[\p{L}\p{N}\p{M}]/u;
+
+/** Whether `needle` occurs in `hay` at word boundaries ("pay" is not in "repay"). */
+function includesWords(hay: string, needle: string): boolean {
+  if (!needle) return false;
+  // Compare whole code points: an astral letter is two UTF-16 units, neither a WORD on its own.
+  const chars = [...needle];
+  const first = chars[0]!;
+  const last = chars.at(-1)!;
+  for (let i = hay.indexOf(needle); i !== -1; i = hay.indexOf(needle, i + 1)) {
+    const before = Array.from(hay.slice(Math.max(0, i - 2), i)).at(-1) ?? '';
+    const after = Array.from(hay.slice(i + needle.length, i + needle.length + 2))[0] ?? '';
+    const edge = (ch: string, inner: string) => !ch || !WORD.test(ch) || !WORD.test(inner);
+    if (edge(before, first) && edge(after, last)) return true;
+  }
+  return false;
 }
 
-/** Whether `quote` is a part of the clause (possibly all of it). */
+/** Whether `quote` contains the whole clause, at word boundaries. */
+export function containsClause(quote: string, clause: string): boolean {
+  return includesWords(fold(quote), fold(clause));
+}
+
+/** Whether `quote` is a part of the clause (possibly all of it), at word boundaries. */
 export function partOfClause(quote: string, clause: string): boolean {
-  const q = fold(quote);
-  return q.length > 0 && fold(clause).includes(q);
+  return includesWords(fold(clause), fold(quote));
 }
 
 /**
@@ -186,14 +239,17 @@ export function checkRubric(task: TaskInput, reqs: Requirement[], clauses: Claus
       continue;
     }
     // Soft requirements never fail a run, so only text that says it is optional may be soft.
-    if (r.kind === 'soft' && !OPTIONAL.test(r.source.quote)) {
+    if (r.kind === 'soft' && !hasOptionalWording(r.source.quote)) {
       errors.push(
         `${r.id}: ${JSON.stringify(r.source.quote)} is marked soft, but the quoted words do not say it is optional; make it hard.`,
       );
-    } else if (r.kind === 'soft' && !OPTIONAL_EDGE.test(canonical(r.source.quote))) {
+    } else if (hasOptionalWording(r.source.quote) && (r.kind === 'hard' || !wholeQuoteOptional(r.source.quote))) {
       // "ships express, ideally with a receipt": the optional word covers only what follows it.
+      // As soft, the mandatory part could never fail a run; as hard, the optional part could.
       errors.push(
-        `${r.id}: ${JSON.stringify(r.source.quote)} mixes a mandatory and an optional part; quote the mandatory part as a hard requirement and only the optional part (with its optional wording) as soft.`,
+        r.kind === 'hard' && wholeQuoteOptional(r.source.quote)
+          ? `${r.id}: ${JSON.stringify(r.source.quote)} says it is optional; make it soft.`
+          : `${r.id}: ${JSON.stringify(r.source.quote)} mixes a mandatory and an optional part; quote the mandatory part as a hard requirement and only the optional part (with its optional wording) as soft.`,
       );
     }
     if (r.source.field !== 'outcomes') continue;
@@ -485,9 +541,10 @@ function discoveryTools(
           method: { type: 'string' },
           pathContains: { type: 'string' },
           allTypes: { type: 'boolean' },
+          offset: { type: 'integer', minimum: 0, description: 'Skip this many matching rows (for paging).' },
         }),
       },
-      run: (i: In<{ method?: string; pathContains?: string; allTypes?: boolean }>) => ({
+      run: (i: In<{ method?: string; pathContains?: string; allTypes?: boolean; offset?: number }>) => ({
         content: networkLog(pickRef(i.reference).snapshot, i),
       }),
     },

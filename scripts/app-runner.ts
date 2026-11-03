@@ -93,8 +93,11 @@ export async function startApp(
       }
     },
     async close() {
-      await browser.close();
-      server?.kill();
+      try {
+        await browser.close();
+      } finally {
+        server?.kill();
+      }
     },
   };
 }

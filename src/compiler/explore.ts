@@ -65,7 +65,7 @@ export function findNodes(
 
 export function networkLog(
   snapshot: EvidenceSnapshot,
-  q: { method?: string; pathContains?: string; allTypes?: boolean },
+  q: { method?: string; pathContains?: string; allTypes?: boolean; offset?: number },
   limit = 100,
 ): string {
   if (!snapshot.network) return 'The network log was not recorded for this snapshot.';
@@ -76,10 +76,13 @@ export function networkLog(
       (!q.pathContains || e.url.includes(q.pathContains)),
   );
   if (!rows.length) return 'No matching requests.';
-  const more = rows.length > limit ? `\n… ${rows.length - limit} more; narrow with method or pathContains` : '';
+  const offset = Math.max(0, Math.floor(q.offset ?? 0));
+  if (offset >= rows.length) return `No rows at offset ${offset}; ${rows.length} requests match.`;
+  const left = rows.length - offset - limit;
+  const more = left > 0 ? `\n… ${left} more; narrow with method or pathContains, or pass offset ${offset + limit}` : '';
   return (
     rows
-      .slice(0, limit)
+      .slice(offset, offset + limit)
       .map(
         (e) =>
           `#${e.seq} ${e.method} ${e.url} → ${e.status ?? e.failure ?? 'pending'} (${e.resourceType}${e.requestBody !== undefined ? ', has request body' : ''}${e.responseBody !== undefined ? ', has response body' : ''})`,

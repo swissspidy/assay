@@ -23,7 +23,13 @@ import {
   type Reference,
   type TaskInput,
 } from '../../src/index.ts';
-import { clauseCovered } from '../../src/compiler/compile.ts';
+import {
+  clauseCovered,
+  containsClause,
+  hasOptionalWording,
+  partOfClause,
+  wholeQuoteOptional,
+} from '../../src/compiler/compile.ts';
 import { networkLog } from '../../src/compiler/explore.ts';
 
 const ref = (task: string, name: string): EvidenceSnapshot =>
@@ -725,6 +731,73 @@ test.describe('review hardening (milestone 2)', () => {
     ).toEqual([]);
   });
 
+  test('trailing optional wording qualifies the whole quote only when nothing else precedes it unseparated', () => {
+    expect(wholeQuoteOptional('ideally, gift wrap it')).toBe(true);
+    expect(wholeQuoteOptional('ships express, if possible')).toBe(true);
+    expect(wholeQuoteOptional('add a gift note if possible')).toBe(true);
+    expect(wholeQuoteOptional('the order ships express; receipt optional')).toBe(false);
+    expect(wholeQuoteOptional('ships express and a receipt is optional')).toBe(false);
+    expect(wholeQuoteOptional('ships express, ideally with a receipt')).toBe(false);
+    expect(wholeQuoteOptional('ships express - receipt optional')).toBe(false);
+    expect(wholeQuoteOptional('ships express — receipt optional')).toBe(false);
+    expect(wholeQuoteOptional('ships express. receipt optional')).toBe(false);
+    expect(wholeQuoteOptional('Ideally add a gift note, but express shipping is required')).toBe(false);
+    expect(wholeQuoteOptional('if possible, show me the confirmation')).toBe(true);
+    expect(wholeQuoteOptional('add a gift note if possible.')).toBe(true);
+    expect(wholeQuoteOptional('add a gift note if possible?')).toBe(true);
+    expect(wholeQuoteOptional('Ideally include a receipt while express shipping is required')).toBe(false);
+    const task = { id: 't', instruction: 'Order it; the order ships express; receipt optional.' };
+    expect(
+      checkRubric(
+        task,
+        [instr('Order it'), instr('the order ships express; receipt optional', 'soft', 'R2')],
+        [],
+      ).join(),
+    ).toContain('mixes a mandatory and an optional part');
+  });
+
+  test('negated optional wording is mandatory, not optional', () => {
+    for (const q of [
+      'express shipping is not optional',
+      'express shipping is not just optional',
+      'express shipping isn’t optional',
+      "express shipping isn't optional",
+      'a receipt is never optional',
+    ])
+      expect(hasOptionalWording(q), q).toBe(false);
+    expect(hasOptionalWording('a receipt is optional')).toBe(true);
+    const task = { id: 't', instruction: 'Order it; express shipping is not optional.' };
+    const hard = instr('Order it');
+    expect(checkRubric(task, [hard, instr('express shipping is not optional', 'hard', 'R2')], [])).toEqual([]);
+    expect(checkRubric(task, [hard, instr('express shipping is not optional', 'soft', 'R2')], []).join()).toContain(
+      'make it hard',
+    );
+  });
+
+  test('a clause is contained in a quote only at word boundaries', () => {
+    expect(containsClause('repay the invoice', 'pay')).toBe(false);
+    expect(containsClause('then pay the invoice', 'pay')).toBe(true);
+    expect(partOfClause('pay', 'repay the invoice')).toBe(false);
+    expect(containsClause('payment', 'pay')).toBe(false);
+    expect(containsClause('pay\u{20000} now', 'pay')).toBe(false);
+    expect(containsClause('\u{20000}pay', 'pay')).toBe(false);
+    expect(containsClause('नामांकन', 'नाम')).toBe(false);
+    expect(containsClause('नाम दर्ज', 'नाम')).toBe(true);
+    expect(partOfClause('the invoice', 'repay the invoice')).toBe(true);
+    expect(containsClause('pay.', 'pay')).toBe(true);
+  });
+
+  test('a hard quote may not include optional wording', () => {
+    const task = { id: 't', instruction: 'Order it; the order ships express, ideally with a receipt.' };
+    const hard = instr('Order it');
+    expect(
+      checkRubric(task, [hard, instr('the order ships express, ideally with a receipt', 'hard', 'R2')], []).join(),
+    ).toContain('mixes a mandatory and an optional part');
+    expect(checkRubric(task, [hard, instr('ideally with a receipt', 'hard', 'R2')], []).join()).toContain(
+      'make it soft',
+    );
+  });
+
   test('duplicate reference names are rejected up front', async () => {
     const snap = ref('01-newsletter', 'subscribed');
     await expect(
@@ -748,5 +821,13 @@ test.describe('review hardening (milestone 2)', () => {
     const out = networkLog(many, { allTypes: true }, 2);
     expect(out.split('\n').filter((l) => l.startsWith('#'))).toHaveLength(2);
     expect(out).toContain('… 3 more');
+    const page2 = networkLog(many, { allTypes: true, offset: 2 }, 2);
+    expect(page2).toMatch(/^#2 /);
+    expect(page2).toContain('… 1 more');
+    expect(page2).toContain('offset 4');
+    const page3 = networkLog(many, { allTypes: true, offset: 4 }, 2);
+    expect(page3).toMatch(/^#4 /);
+    expect(page3).not.toContain('more');
+    expect(networkLog(many, { allTypes: true, offset: 9 }, 2)).toContain('5 requests match');
   });
 });
