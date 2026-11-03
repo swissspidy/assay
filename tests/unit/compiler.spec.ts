@@ -728,6 +728,10 @@ test.describe('review hardening (milestone 2)', () => {
     expect(wholeQuoteOptional('ships express, ideally with a receipt')).toBe(false);
     expect(wholeQuoteOptional('ships express - receipt optional')).toBe(false);
     expect(wholeQuoteOptional('ships express — receipt optional')).toBe(false);
+    expect(wholeQuoteOptional('ships express. receipt optional')).toBe(false);
+    expect(wholeQuoteOptional('Ideally add a gift note, but express shipping is required')).toBe(false);
+    expect(wholeQuoteOptional('if possible, show me the confirmation')).toBe(true);
+    expect(wholeQuoteOptional('add a gift note if possible.')).toBe(true);
     const task = { id: 't', instruction: 'Order it; the order ships express; receipt optional.' };
     expect(
       checkRubric(
@@ -741,6 +745,7 @@ test.describe('review hardening (milestone 2)', () => {
   test('negated optional wording is mandatory, not optional', () => {
     for (const q of [
       'express shipping is not optional',
+      'express shipping is not just optional',
       "express shipping isn't optional",
       'a receipt is never optional',
     ])

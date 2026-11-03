@@ -104,30 +104,42 @@ const OPTIONAL = /\b(optional(ly)?|if possible|ideally|nice to have|if you can|b
 const MARKER = '(?:optional(?:ly)?|if possible|ideally|nice to have|if you can|bonus)';
 const LEADING_OPTIONAL = new RegExp(`^(?:(?:then|and|but)\\s+)?${MARKER}\\b`, 'i');
 const TRAILING_OPTIONAL = new RegExp(`\\b${MARKER}[.!]?$`, 'i');
-const SEPARATOR = /[,;:]|\s[–—-]\s|\b(?:and|but|then)\b/i;
-/** "is not optional", "never optional", "isn't optional": the opposite of optional. */
-const NEGATED_OPTIONAL = new RegExp(`(?:\\b(?:not|never|no longer)|n't)\\s+(?:(?:be|an?)\\s+)?${MARKER}\\b`, 'gi');
-
-/** The quote without negated optional wording, which states a requirement rather than relaxing one. */
-const withoutNegated = (quote: string) => canonical(quote).replace(NEGATED_OPTIONAL, 'required');
-
-/** Whether the quote says something is optional (negated wording such as "not optional" does not count). */
-export const hasOptionalWording = (quote: string) => OPTIONAL.test(withoutNegated(quote));
+/** Anything that can join two parts of a quote: punctuation, a spaced dash, a sentence end, a conjunction. */
+const SEPARATOR = /[,;:.!?]|\s[–—-]\s|\b(?:and|but|then)\b/i;
+/** Any negation. Near optional wording it may mean the opposite ("not just optional"), so it never relaxes. */
+const NEGATION = /\b(?:not|never|no longer|neither|nor)\b|n't\b/i;
 
 /**
- * Whether the optional wording qualifies the whole quote: it opens the quote
- * ("ideally, gift wrap it"), or it closes the quote and either follows a
- * separator ("ships express, if possible") or the quote has no other part
- * ("a gift note if possible"). In "ships express; receipt optional" it covers
- * only the last part, so the quote mixes a mandatory and an optional part.
+ * Whether the quote says something is optional. This is deliberately conservative:
+ * a quote with any negation in it does not count, so it can only be hard.
+ */
+export const hasOptionalWording = (quote: string) => {
+  const q = canonical(quote);
+  return OPTIONAL.test(q) && !NEGATION.test(q);
+};
+
+/**
+ * Whether the optional wording qualifies the whole quote. Only three simple
+ * shapes count: the wording opens a single part ("ideally, gift wrap it"),
+ * closes a single part ("a gift note if possible"), or follows one part after
+ * a comma or dash ("ships express, if possible"). Anything with a second part
+ * ("ships express; receipt optional", "ideally a note, but express is
+ * required") is a mixed quote and must be split. Being conservative can only
+ * make a requirement stricter, never drop a mandatory part.
  */
 export function wholeQuoteOptional(quote: string): boolean {
-  const q = withoutNegated(quote);
-  if (LEADING_OPTIONAL.test(q)) return true;
+  if (!hasOptionalWording(quote)) return false;
+  const q = canonical(quote)
+    .replace(/[.!]+$/, '')
+    .trimEnd();
+  const lead = LEADING_OPTIONAL.exec(q);
+  if (lead) return !SEPARATOR.test(q.slice(lead[0].length).replace(/^[\s,:–—-]+/, ''));
   const m = TRAILING_OPTIONAL.exec(q);
   if (!m) return false;
-  const before = q.slice(0, m.index).trimEnd();
-  if (/[,;:–—-]$/.test(before)) return true;
+  const before = q
+    .slice(0, m.index)
+    .trimEnd()
+    .replace(/\s*[,–—-]$/, '');
   return !SEPARATOR.test(before);
 }
 const WORD = /[\p{L}\p{N}]/u;
