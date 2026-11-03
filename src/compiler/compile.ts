@@ -104,7 +104,15 @@ const OPTIONAL = /\b(optional(ly)?|if possible|ideally|nice to have|if you can|b
 const MARKER = '(?:optional(?:ly)?|if possible|ideally|nice to have|if you can|bonus)';
 const LEADING_OPTIONAL = new RegExp(`^(?:(?:then|and|but)\\s+)?${MARKER}\\b`, 'i');
 const TRAILING_OPTIONAL = new RegExp(`\\b${MARKER}[.!]?$`, 'i');
-const SEPARATOR = /[,;:]|\b(?:and|but|then)\b/i;
+const SEPARATOR = /[,;:]|\s[–—-]\s|\b(?:and|but|then)\b/i;
+/** "is not optional", "never optional", "isn't optional": the opposite of optional. */
+const NEGATED_OPTIONAL = new RegExp(`(?:\\b(?:not|never|no longer)|n't)\\s+(?:(?:be|an?)\\s+)?${MARKER}\\b`, 'gi');
+
+/** The quote without negated optional wording, which states a requirement rather than relaxing one. */
+const withoutNegated = (quote: string) => canonical(quote).replace(NEGATED_OPTIONAL, 'required');
+
+/** Whether the quote says something is optional (negated wording such as "not optional" does not count). */
+export const hasOptionalWording = (quote: string) => OPTIONAL.test(withoutNegated(quote));
 
 /**
  * Whether the optional wording qualifies the whole quote: it opens the quote
@@ -114,7 +122,7 @@ const SEPARATOR = /[,;:]|\b(?:and|but|then)\b/i;
  * only the last part, so the quote mixes a mandatory and an optional part.
  */
 export function wholeQuoteOptional(quote: string): boolean {
-  const q = canonical(quote);
+  const q = withoutNegated(quote);
   if (LEADING_OPTIONAL.test(q)) return true;
   const m = TRAILING_OPTIONAL.exec(q);
   if (!m) return false;
@@ -193,11 +201,11 @@ export function checkRubric(task: TaskInput, reqs: Requirement[], clauses: Claus
       continue;
     }
     // Soft requirements never fail a run, so only text that says it is optional may be soft.
-    if (r.kind === 'soft' && !OPTIONAL.test(r.source.quote)) {
+    if (r.kind === 'soft' && !hasOptionalWording(r.source.quote)) {
       errors.push(
         `${r.id}: ${JSON.stringify(r.source.quote)} is marked soft, but the quoted words do not say it is optional; make it hard.`,
       );
-    } else if (OPTIONAL.test(r.source.quote) && (r.kind === 'hard' || !wholeQuoteOptional(r.source.quote))) {
+    } else if (hasOptionalWording(r.source.quote) && (r.kind === 'hard' || !wholeQuoteOptional(r.source.quote))) {
       // "ships express, ideally with a receipt": the optional word covers only what follows it.
       // As soft, the mandatory part could never fail a run; as hard, the optional part could.
       errors.push(

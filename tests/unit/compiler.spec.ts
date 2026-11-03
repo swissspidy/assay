@@ -25,7 +25,7 @@ import {
   type Reference,
   type TaskInput,
 } from '../../src/index.ts';
-import { clauseCovered, wholeQuoteOptional } from '../../src/compiler/compile.ts';
+import { clauseCovered, hasOptionalWording, wholeQuoteOptional } from '../../src/compiler/compile.ts';
 import { networkLog } from '../../src/compiler/explore.ts';
 
 const ref = (task: string, name: string): EvidenceSnapshot =>
@@ -726,6 +726,8 @@ test.describe('review hardening (milestone 2)', () => {
     expect(wholeQuoteOptional('the order ships express; receipt optional')).toBe(false);
     expect(wholeQuoteOptional('ships express and a receipt is optional')).toBe(false);
     expect(wholeQuoteOptional('ships express, ideally with a receipt')).toBe(false);
+    expect(wholeQuoteOptional('ships express - receipt optional')).toBe(false);
+    expect(wholeQuoteOptional('ships express — receipt optional')).toBe(false);
     const task = { id: 't', instruction: 'Order it; the order ships express; receipt optional.' };
     expect(
       checkRubric(
@@ -734,6 +736,22 @@ test.describe('review hardening (milestone 2)', () => {
         [],
       ).join(),
     ).toContain('mixes a mandatory and an optional part');
+  });
+
+  test('negated optional wording is mandatory, not optional', () => {
+    for (const q of [
+      'express shipping is not optional',
+      "express shipping isn't optional",
+      'a receipt is never optional',
+    ])
+      expect(hasOptionalWording(q), q).toBe(false);
+    expect(hasOptionalWording('a receipt is optional')).toBe(true);
+    const task = { id: 't', instruction: 'Order it; express shipping is not optional.' };
+    const hard = instr('Order it');
+    expect(checkRubric(task, [hard, instr('express shipping is not optional', 'hard', 'R2')], [])).toEqual([]);
+    expect(checkRubric(task, [hard, instr('express shipping is not optional', 'soft', 'R2')], []).join()).toContain(
+      'make it hard',
+    );
   });
 
   test('a hard quote may not include optional wording', () => {
