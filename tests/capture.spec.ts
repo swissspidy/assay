@@ -344,6 +344,7 @@ test('credential-like storage keys and cookie names are redacted; checks on them
   await ready(page);
   await page.evaluate(() => {
     localStorage.setItem('authToken', 'eyJhbGciOi.secret');
+    sessionStorage.setItem('sessionToken', 'sess.secret');
     localStorage.setItem('theme', 'dark');
     document.cookie = 'session_id=abc123; path=/';
   });
@@ -352,7 +353,11 @@ test('credential-like storage keys and cookie names are redacted; checks on them
   expect(local.authToken).toEqual({ redacted: true });
   expect(local.theme).toBe('dark');
   expect(s.storage!.cookies.find((c) => c.name === 'session_id')!.value).toEqual({ redacted: true });
-  expect(s.meta.redacted).toEqual(expect.arrayContaining(['localStorage:authToken', 'cookie:session_id']));
+  expect(Object.values(s.storage!.session)[0]!.sessionToken).toEqual({ redacted: true });
+  expect(s.meta.redacted).toEqual(
+    expect.arrayContaining(['localStorage:authToken', 'sessionStorage:sessionToken', 'cookie:session_id']),
+  );
+  expect(JSON.stringify(s)).not.toContain('sess.secret');
   expect(JSON.stringify(s)).not.toContain('eyJhbGciOi');
   const check = (key: string): CheckSet => ({
     schema: 'assay.checks/v1',
