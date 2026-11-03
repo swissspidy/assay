@@ -56,7 +56,8 @@ function pick(headers: Record<string, string>, keep: string[]): Record<string, s
  */
 export function cutUtf8(text: string, max: number): string | undefined {
   const bytes = Buffer.from(text, 'utf8');
-  return bytes.length > max ? new TextDecoder().decode(bytes.subarray(0, max), { stream: true }) : undefined;
+  const limit = Math.max(0, max);
+  return bytes.length > limit ? new TextDecoder().decode(bytes.subarray(0, limit), { stream: true }) : undefined;
 }
 
 /** @internal Exported for tests. */
@@ -135,11 +136,17 @@ function pageTap(bindingName: string, token: string, max: number): string {
   const later = window.setTimeout.bind(window);
   const WAIT = 500;
   // Reads at most MAX bytes of a body, then stops (streams may never end).
+  // Reads at most MAX bytes of a body, then stops (streams may never end). A body
+  // still open after DEADLINE ms is cut there, so stalled streams release the reader.
+  const DEADLINE = 10000;
   const readCapped = async (body) => {
     const reader = body.getReader(), dec = new TextDecoder();
     let text = '', bytes = 0;
+    const stop = new Promise((r) => later(() => r(null), DEADLINE));
     for (;;) {
-      const { done, value } = await reader.read();
+      const next = await Promise.race([reader.read(), stop]);
+      if (next === null) { reader.cancel().catch(() => {}); return { text, cut: true }; }
+      const { done, value } = next;
       if (done) return { text: text + dec.decode(), cut: false };
       if (bytes + value.byteLength > MAX) {
         reader.cancel().catch(() => {});
@@ -229,7 +236,7 @@ export class EvidenceRecorder {
 
   private constructor(context: BrowserContext, opts: RecorderOptions) {
     this.context = context;
-    this.maxBody = opts.maxBodyBytes ?? 1024 * 1024;
+    this.maxBody = Math.max(0, opts.maxBodyBytes ?? 1024 * 1024);
     this.bodyTimeout = opts.bodyTimeoutMs ?? 3000;
     context.on('request', (req) => this.onRequest(req));
     context.on('response', (resp) => this.track(this.onResponse(resp.request())));
@@ -342,8 +349,8 @@ export class EvidenceRecorder {
       return g;
     };
     for (const e of this.entries) {
-      // Failed requests have no response, so no tapped body belongs to them.
-      if (BODY_RESOURCE_TYPES.has(e.resourceType) && e.failure === undefined)
+      // A request that failed before a response has no tapped body to pair with.
+      if (BODY_RESOURCE_TYPES.has(e.resourceType) && !(e.failure !== undefined && e.status === null))
         group(this.frameOf.get(e), e.method, e.url).entries.push(e);
     }
     for (const t of this.tapped) group(t.frame, t.method, t.url).taps.push(t);
