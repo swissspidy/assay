@@ -50,13 +50,23 @@ function pick(headers: Record<string, string>, keep: string[]): Record<string, s
   return out;
 }
 
+/**
+ * The first `max` UTF-8 bytes of `text`, cut at a character boundary, or undefined
+ * when it fits. (A streaming decode drops an incomplete trailing character.)
+ */
+export function cutUtf8(text: string, max: number): string | undefined {
+  const bytes = Buffer.from(text, 'utf8');
+  return bytes.length > max ? new TextDecoder().decode(bytes.subarray(0, max), { stream: true }) : undefined;
+}
+
 /** @internal Exported for tests. */
 export function decodeBody(
   text: string,
   contentType: string | undefined,
   max: number,
 ): { body: Json; truncated: boolean } {
-  if (text.length > max) return { body: text.slice(0, max), truncated: true };
+  const cut = cutUtf8(text, max);
+  if (cut !== undefined) return { body: cut, truncated: true };
   if (contentType && /\bjson\b/i.test(contentType)) {
     try {
       return { body: JSON.parse(text) as Json, truncated: false };
@@ -108,21 +118,35 @@ function pageTap(bindingName: string, token: string, max: number): string {
   if (typeof send !== 'function') return;
   const T = ${JSON.stringify(token)}, MAX = ${max};
   const textual = (ct) => /json|text[/]|xml|javascript|x-www-form-urlencoded/i.test(ct || '') && !/event-stream/i.test(ct || '');
-  const post = (method, url, status, ct, text, cut) => {
-    try { send({ token: T, method: String(method).toUpperCase(), url: String(url), status, contentType: ct || '', body: text.slice(0, MAX), truncated: !!cut || text.length > MAX }); } catch {}
+  // MAX counts UTF-8 bytes; cuts fall on character boundaries (a streaming decode
+  // drops an incomplete trailing character).
+  const enc = new TextEncoder();
+  const capBytes = (text) => {
+    const bytes = enc.encode(text);
+    return bytes.length > MAX ? { text: new TextDecoder().decode(bytes.subarray(0, MAX), { stream: true }), cut: true } : { text, cut: false };
+  };
+  const post = (method, url, status, ct, raw, wasCut) => {
+    try {
+      const { text, cut } = capBytes(raw);
+      send({ token: T, method: String(method).toUpperCase(), url: String(url), status, contentType: ct || '', body: text, truncated: !!wasCut || cut });
+    } catch {}
   };
   // Captured now, so page scripts that replace timers cannot stall the tap.
   const later = window.setTimeout.bind(window);
   const WAIT = 500;
-  // Reads at most MAX characters of a body, then stops (streams may never end).
+  // Reads at most MAX bytes of a body, then stops (streams may never end).
   const readCapped = async (body) => {
     const reader = body.getReader(), dec = new TextDecoder();
-    let text = '';
+    let text = '', bytes = 0;
     for (;;) {
       const { done, value } = await reader.read();
       if (done) return { text: text + dec.decode(), cut: false };
+      if (bytes + value.byteLength > MAX) {
+        reader.cancel().catch(() => {});
+        return { text: text + dec.decode(value.subarray(0, MAX - bytes), { stream: true }), cut: true };
+      }
+      bytes += value.byteLength;
       text += dec.decode(value, { stream: true });
-      if (text.length > MAX) { reader.cancel().catch(() => {}); return { text, cut: true }; }
     }
   };
   const origFetch = window.fetch;
