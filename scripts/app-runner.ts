@@ -27,37 +27,45 @@ async function waitFor(url: string, ms = 10_000): Promise<boolean> {
 }
 
 /** Which app and version answers on a port, if any (see release() in examples/lib/kit.mjs). */
-async function identify(baseURL: string): Promise<{ app: string; version: number } | null> {
+async function identify(baseURL: string): Promise<{ app: string; releases: number[] } | null> {
   try {
     const r = await fetch(`${baseURL}/__assay/version`, { redirect: 'manual' });
-    return r.ok ? ((await r.json()) as { app: string; version: number }) : null;
+    return r.ok ? ((await r.json()) as { app: string; releases: number[] }) : null;
   } catch {
     return null;
   }
 }
 
-export async function startApp(app: AppDef, opts: { version?: number; port?: number } = {}): Promise<AppRunner> {
-  const version = opts.version ?? 1;
-  // Each version gets its own port, so versions never collide.
-  const port = opts.port ?? app.port + (version - 1) * 100;
+/**
+ * Starts an app with the given releases applied (default: none, the app as
+ * recorded). `slot` picks the port (app.port + 100 × slot) so variants never collide.
+ */
+export async function startApp(
+  app: AppDef,
+  opts: { releases?: number[]; slot?: number; port?: number } = {},
+): Promise<AppRunner> {
+  const releases = opts.releases ?? [];
+  const port = opts.port ?? app.port + (opts.slot ?? 0) * 100;
   const baseURL = `http://localhost:${port}`;
+  const label = `${app.name} [${releases.join(',') || 'as recorded'}]`;
+  const same = (x: { app: string; releases: number[] } | null) =>
+    x?.app === app.name && x.releases.join(',') === releases.join(',');
   let server: ChildProcess | undefined;
   const running = await identify(baseURL);
-  if (running && (running.app !== app.name || running.version !== version)) {
-    throw new Error(`${baseURL} serves ${running.app} v${running.version}, not ${app.name} v${version}`);
+  if (running && !same(running)) {
+    throw new Error(`${baseURL} serves ${running.app} [${running.releases.join(',')}], not ${label}`);
   }
   if (!running) {
-    if (await waitFor(`${baseURL}/`, 200)) throw new Error(`${baseURL} is taken by something other than ${app.name}`);
+    if (await waitFor(`${baseURL}/`, 200)) throw new Error(`${baseURL} is taken by something other than ${label}`);
     const script = fileURLToPath(new URL('server.mjs', app.dir));
     server = spawn(process.execPath, [script], {
-      env: { ...process.env, PORT: String(port), APP_VERSION: String(version) },
+      env: { ...process.env, PORT: String(port), APP_RELEASES: releases.join(',') },
       stdio: 'ignore',
     });
-    if (!(await waitFor(`${baseURL}/`))) throw new Error(`${app.name} did not start at ${baseURL}`);
-    const started = await identify(baseURL);
-    if (started?.app !== app.name || started.version !== version) {
+    if (!(await waitFor(`${baseURL}/`))) throw new Error(`${label} did not start at ${baseURL}`);
+    if (!same(await identify(baseURL))) {
       server.kill();
-      throw new Error(`${baseURL} did not identify as ${app.name} v${version}`);
+      throw new Error(`${baseURL} did not identify as ${label}`);
     }
   }
   const browser: Browser = await chromium.launch();

@@ -43,24 +43,30 @@ export const esc = (s) =>
 
 /**
  * Simulated releases for the stability run (see docs/adr/0005). APP_VERSION=N
- * applies releases 2..N from the app's releases.json, cumulatively: markup and
+ * applies releases 2..N from the app's releases.json, cumulatively, or APP_RELEASES
+ * names them ("5" applies only release 5): markup and
  * copy replacements (also applied to served scripts), and named behaviour flags
  * that the server checks with `has()`. Version 1 is the app as recorded.
  */
 export function release(app, releases) {
+  // APP_RELEASES (e.g. "5") picks releases explicitly, so a regression can be applied on its own.
+  const picked = process.env.APP_RELEASES?.split(',').filter(Boolean).map(Number);
   const version = Number(process.env.APP_VERSION ?? 1);
-  const active = releases.filter((r) => r.version <= version);
+  const active = picked
+    ? releases.filter((r) => picked.includes(r.version))
+    : releases.filter((r) => r.version <= version);
   const replacements = active.flatMap((r) => r.html ?? []);
   const flags = new Set(active.flatMap((r) => r.flags ?? []));
+  const ids = active.map((r) => r.version);
   return {
     app,
-    version,
+    releases: ids,
     has: (flag) => flags.has(flag),
     rewrite: (text) => replacements.reduce((t, [from, to]) => t.split(from).join(to), text),
     /** GET /__assay/version, so a runner can tell which app and version answers on a port. */
     meta(req, res) {
       if (req.url !== '/__assay/version') return false;
-      json(res, 200, { app, version });
+      json(res, 200, { app, releases: ids });
       return true;
     },
     /** Release flag "api:extra-fields": every record in a JSON response gains fields nobody asked for. */

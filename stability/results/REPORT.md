@@ -1,16 +1,17 @@
 # Stability run
 
-Generated 2026-11-03T02:05:50.077Z · check sets: **handwritten** (written for v1) · 123 scenarios per version.
+Generated 2026-11-03T02:17:49.284Z · check sets: **handwritten** (written for v1) · 123 scenarios per variant.
 
 Correct = the expected verdict for that version. Abstain = the checks could not decide and would escalate (safe). Broken = a wrong decided verdict. Agent error = the scripted agent could not finish on that UI, so nothing was judged.
 
-| Version | Release | Correct | Abstain | Broken | Agent error | Runs with anchor drift | Regression runs caught |
+| Variant | Releases | Correct | Abstain | Broken | Agent error | Runs with anchor drift | Regression runs caught |
 |---|---|---|---|---|---|---|---|
 | v1 | as recorded | 123/123 | 0 | 0 | 0 | 0 | – |
 | v2 | copy | 116/123 | 7 | 0 | 0 | 11 | – |
 | v3 | layout | 116/123 | 7 | 0 | 0 | 11 | – |
 | v4 | api | 116/123 | 7 | 0 | 0 | 11 | – |
-| v5 | regression | 116/123 | 7 | 0 | 0 | 11 | 4/6 |
+| v5 | regression | 118/123 | 5 | 0 | 0 | 11 | 6/6 |
+| regression | regression only (on v1) | 123/123 | 0 | 0 | 0 | 0 | 6/6 |
 
 ## Releases
 
@@ -20,38 +21,38 @@ Correct = the expected verdict for that version. Abstain = the checks could not 
 
 ## Per task
 
-| Task | v1 | v2 | v3 | v4 | v5 |
-|---|---|---|---|---|---|
-| tiny-shop/01-newsletter | 4/4 | 2/4 (2 abstain) | 2/4 (2 abstain) | 2/4 (2 abstain) | 2/4 (2 abstain) |
-| tiny-shop/02-add-blue-mug | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 |
-| tiny-shop/03-cart-two-mugs | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 |
-| tiny-shop/04-remove-red-mug | 4/4 | 2/4 (2 abstain) | 2/4 (2 abstain) | 2/4 (2 abstain) | 2/4 (2 abstain) |
-| tiny-shop/05-set-quantity | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 |
-| tiny-shop/06-cart-total | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 |
-| tiny-shop/07-express-order | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
-| tiny-shop/08-delivery-date | 4/4 | 1/4 (3 abstain) | 1/4 (3 abstain) | 1/4 (3 abstain) | 1/4 (3 abstain) |
-| tiny-shop/09-gift-wrap | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
-| tiny-shop/10-dark-german | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
-| tiny-tracker/01-create-bug | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
-| tiny-tracker/02-create-high-priority | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
-| tiny-tracker/03-close-issue | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
-| tiny-tracker/04-reopen-issue | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
-| tiny-tracker/05-assign-bob | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
-| tiny-tracker/06-add-feature-label | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
-| tiny-tracker/07-comment | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
-| tiny-tracker/08-rename | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
-| tiny-tracker/09-unassign | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
-| tiny-tracker/10-filter-open-bugs | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
-| tiny-calendar/01-lunch | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
-| tiny-calendar/02-reminder | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
-| tiny-calendar/03-rsvp | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
-| tiny-calendar/04-move-dentist | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
-| tiny-calendar/05-delete-standup | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
-| tiny-calendar/06-location | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
-| tiny-calendar/07-timezone | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
-| tiny-calendar/08-week-start | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
-| tiny-calendar/09-rename-dentist | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
-| tiny-calendar/10-workshop | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| Task | v1 | v2 | v3 | v4 | v5 | regression |
+|---|---|---|---|---|---|---|
+| tiny-shop/01-newsletter | 4/4 | 2/4 (2 abstain) | 2/4 (2 abstain) | 2/4 (2 abstain) | 4/4 | 4/4 |
+| tiny-shop/02-add-blue-mug | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 |
+| tiny-shop/03-cart-two-mugs | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 |
+| tiny-shop/04-remove-red-mug | 4/4 | 2/4 (2 abstain) | 2/4 (2 abstain) | 2/4 (2 abstain) | 2/4 (2 abstain) | 4/4 |
+| tiny-shop/05-set-quantity | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 |
+| tiny-shop/06-cart-total | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 |
+| tiny-shop/07-express-order | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
+| tiny-shop/08-delivery-date | 4/4 | 1/4 (3 abstain) | 1/4 (3 abstain) | 1/4 (3 abstain) | 1/4 (3 abstain) | 4/4 |
+| tiny-shop/09-gift-wrap | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| tiny-shop/10-dark-german | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| tiny-tracker/01-create-bug | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
+| tiny-tracker/02-create-high-priority | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| tiny-tracker/03-close-issue | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
+| tiny-tracker/04-reopen-issue | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| tiny-tracker/05-assign-bob | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| tiny-tracker/06-add-feature-label | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| tiny-tracker/07-comment | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
+| tiny-tracker/08-rename | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| tiny-tracker/09-unassign | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| tiny-tracker/10-filter-open-bugs | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
+| tiny-calendar/01-lunch | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
+| tiny-calendar/02-reminder | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| tiny-calendar/03-rsvp | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| tiny-calendar/04-move-dentist | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| tiny-calendar/05-delete-standup | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
+| tiny-calendar/06-location | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| tiny-calendar/07-timezone | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| tiny-calendar/08-week-start | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| tiny-calendar/09-rename-dentist | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
+| tiny-calendar/10-workshop | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
 
 ## Not correct
 
@@ -76,8 +77,6 @@ Correct = the expected verdict for that version. Abstain = the checks could not 
 - v4 tiny-shop/08-delivery-date/express-order: expected success, got abstain
 - v4 tiny-shop/08-delivery-date/express-two-items: expected success, got abstain
 - v4 tiny-shop/08-delivery-date/standard-order: expected fail, got abstain
-- v5 tiny-shop/01-newsletter/subscribed: expected fail (regression), got abstain
-- v5 tiny-shop/01-newsletter/subscribed-and-dark-theme: expected fail (regression), got abstain
 - v5 tiny-shop/04-remove-red-mug/removed-red-mug: expected success, got abstain
 - v5 tiny-shop/04-remove-red-mug/removed-red-mug-keeping-teapot: expected success, got abstain
 - v5 tiny-shop/08-delivery-date/express-order: expected success, got abstain

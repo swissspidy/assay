@@ -164,6 +164,102 @@ async function modelRun(system: string, r: Run): Promise<ModelOutcome> {
   };
 }
 
+// --- report ----------------------------------------------------------------------
+
+const fmt = (x: number, digits = 3) => (Number.isNaN(x) ? 'n/a' : x.toFixed(digits));
+const ms = (x: number) =>
+  Number.isNaN(x)
+    ? 'n/a (replayed)'
+    : x < 1
+      ? `${(x * 1000).toFixed(0)} µs`
+      : x < 1000
+        ? `${x.toFixed(1)} ms`
+        : `${(x / 1000).toFixed(1)} s`;
+
+const table = (m: Record<string, Metrics | null>) => [
+  '| System | Balanced accuracy | TPR | TNR | Abstain rate | Cost / run | Latency (median / p95) |',
+  '|---|---|---|---|---|---|---|',
+  ...Object.entries(m).map(([sys, x]) =>
+    x
+      ? `| ${sys} | ${fmt(x.balancedAccuracy)} | ${fmt(x.tpr)} | ${fmt(x.tnr)} | ${fmt(x.abstainRate)} | $${fmt(x.costUsdPerRun, 4)} | ${ms(x.msPerRunMedian)} / ${ms(x.msPerRunP95)}${x.msMeasured < x.n ? ` (${x.msMeasured} of ${x.n} runs timed)` : ''} |`
+      : `| ${sys} | not measured | | | | | |`,
+  ),
+];
+
+function writeReport(): string {
+  const all = Object.fromEntries(Object.entries(results).map(([k, v]) => [k, v.measured ? metrics(v.rows) : null]));
+  const kinds = [...new Set(runs.map((r) => r.kind))];
+  const byKind = kinds.map((k) => {
+    const cells = Object.entries(results).map(([, v]) => {
+      if (!v.measured) return 'n/a';
+      const rows = v.rows.filter((r) => r.kind === k);
+      const correct = rows.filter((r) =>
+        r.expected === 'success' ? r.verdict === 'success' : r.verdict !== 'success',
+      ).length;
+      return `${correct}/${rows.length}`;
+    });
+    return `| ${k} | ${runs.filter((r) => r.kind === k).length} | ${cells.join(' | ')} |`;
+  });
+  const wrong = (results.checks?.rows ?? []).filter((r) =>
+    r.expected === 'success' ? r.verdict !== 'success' : r.verdict === 'success',
+  );
+  const measuredSystems = Object.entries(results)
+    .filter(([, v]) => v.measured)
+    .map(([k]) => k);
+  const md = [
+    `# Evaluation: ${CHECKS} checks${measuredSystems.some((x) => x !== 'checks' && x !== 'checks+escalation') ? ' vs. model baselines' : ' (model baselines not measured yet)'}`,
+    '',
+    `Generated ${new Date().toISOString()} · check sets: **${CHECKS}** · ${runs.length} labelled runs over ${new Set(runs.map((r) => `${r.app}/${r.task}`)).size} tasks (${runs.filter((r) => r.expected === 'success').length} correct, ${runs.filter((r) => r.expected === 'fail').length} incorrect) in ${APPS.length} apps.`,
+    '',
+    'Positive = the run really completed the task. TPR = correct runs judged success; TNR = incorrect runs judged not success (an abstain counts as not success). The agent always reports success, as agents usually do.',
+    '',
+    ...table(all),
+    '',
+    '## Correct verdicts by run kind',
+    '',
+    `| Kind | Runs | ${Object.keys(results).join(' | ')} |`,
+    `|---|---|${Object.keys(results)
+      .map(() => '---')
+      .join('|')}|`,
+    ...byKind,
+    '',
+    '## Notes',
+    '',
+    ...Object.entries(results)
+      .filter(([, v]) => !v.measured)
+      .map(([k, v]) => `- **${k}**: not measured (${v.reason}).`),
+    ...Object.entries(results)
+      .filter(([, v]) => v.model)
+      .map(([k, v]) => `- **${k}** used ${v.model}.`),
+    CHECKS === 'handwritten'
+      ? `- **Caveat:** these are the handwritten check sets, written by the same author as the labelled runs, so the checks rows are an upper bound and partly circular. The real measure is \`--checks compiled\` (checks compiled by the model from one correct run per task; all other runs held out).`
+      : `- Compiled check sets: each was compiled from one correct run per task. Those ${trainingRuns.length} runs are left out for every system, so all scored runs are held out.`,
+    `- The LLM judge is shown the agent's report, as typical LLM judges are; Assay's checks never see it, and the agentic verifier gets it marked as context, not evidence.`,
+    ...Object.entries(results)
+      .map(([k, v]) => [k, v.rows.filter((r) => r.note).length] as const)
+      .filter(([, c]) => c > 0)
+      .map(
+        ([k, c]) =>
+          `- **${k}**: ${c} runs ended in a model error (counted as abstain; the API client retries transient errors twice first).`,
+      ),
+    `- Model latency is only measured when recording; replayed runs show none.`,
+    `- Checks-only latency is in-process evaluation of a captured snapshot (no model). Capture itself takes about 20-60 ms per page and is shared by every system.`,
+    `- The LLM judge sees the final page as an accessibility outline plus visible text (no screenshots, no network or backend access).`,
+    `- The agentic verifier explores the captured snapshot (accessibility tree, network log, storage, probe results) without live access.`,
+    wrong.length
+      ? `- Checks wrong on: ${wrong.map((r) => `${r.app}/${r.task}/${r.scenario} (${r.verdict})`).join(', ')}.`
+      : '- Checks gave the labelled verdict on every run.',
+    '',
+  ].join('\n');
+  mkdirSync(new URL('results/', root), { recursive: true });
+  writeFileSync(new URL('results/REPORT.md', root), md);
+  writeFileSync(
+    new URL('results/results.json', root),
+    JSON.stringify({ generatedAt: new Date().toISOString(), checks: CHECKS, results }, null, 1) + '\n',
+  );
+  return md;
+}
+
 for (const system of SYSTEMS) {
   const rows: Row[] = [];
   let measured = runs.length > 0;
@@ -216,93 +312,11 @@ for (const system of SYSTEMS) {
     ? { rows, measured, ...(model ? { model } : {}) }
     : { rows: [], measured, reason: reason || 'no runs' };
   console.warn(`${system}: ${measured ? `${rows.length} runs` : 'not measured'}`);
+  // Written after every system, so a long live run that is stopped keeps what it finished.
+  writeReport();
 }
 
-// --- report ----------------------------------------------------------------------
-
-const fmt = (x: number, digits = 3) => (Number.isNaN(x) ? 'n/a' : x.toFixed(digits));
-const ms = (x: number) =>
-  Number.isNaN(x)
-    ? 'n/a (replayed)'
-    : x < 1
-      ? `${(x * 1000).toFixed(0)} µs`
-      : x < 1000
-        ? `${x.toFixed(1)} ms`
-        : `${(x / 1000).toFixed(1)} s`;
-const table = (m: Record<string, Metrics | null>) => [
-  '| System | Balanced accuracy | TPR | TNR | Abstain rate | Cost / run | Latency (median / p95) |',
-  '|---|---|---|---|---|---|---|',
-  ...Object.entries(m).map(([sys, x]) =>
-    x
-      ? `| ${sys} | ${fmt(x.balancedAccuracy)} | ${fmt(x.tpr)} | ${fmt(x.tnr)} | ${fmt(x.abstainRate)} | $${fmt(x.costUsdPerRun, 4)} | ${ms(x.msPerRunMedian)} / ${ms(x.msPerRunP95)}${x.msMeasured < x.n ? ` (${x.msMeasured} of ${x.n} runs timed)` : ''} |`
-      : `| ${sys} | not measured | | | | | |`,
-  ),
-];
-const all = Object.fromEntries(Object.entries(results).map(([k, v]) => [k, v.measured ? metrics(v.rows) : null]));
-const kinds = [...new Set(runs.map((r) => r.kind))];
-const byKind = kinds.map((k) => {
-  const cells = Object.entries(results).map(([, v]) => {
-    if (!v.measured) return 'n/a';
-    const rows = v.rows.filter((r) => r.kind === k);
-    const correct = rows.filter((r) =>
-      r.expected === 'success' ? r.verdict === 'success' : r.verdict !== 'success',
-    ).length;
-    return `${correct}/${rows.length}`;
-  });
-  return `| ${k} | ${runs.filter((r) => r.kind === k).length} | ${cells.join(' | ')} |`;
-});
-const wrong = (results.checks?.rows ?? []).filter((r) =>
-  r.expected === 'success' ? r.verdict !== 'success' : r.verdict === 'success',
-);
-const measuredSystems = Object.entries(results)
-  .filter(([, v]) => v.measured)
-  .map(([k]) => k);
-const noted = Object.values(results).flatMap((v) => v.rows.filter((r) => r.note));
-const md = [
-  `# Evaluation: ${CHECKS} checks${measuredSystems.some((x) => x !== 'checks' && x !== 'checks+escalation') ? ' vs. model baselines' : ' (model baselines not measured yet)'}`,
-  '',
-  `Generated ${new Date().toISOString()} · check sets: **${CHECKS}** · ${runs.length} labelled runs over ${new Set(runs.map((r) => `${r.app}/${r.task}`)).size} tasks (${runs.filter((r) => r.expected === 'success').length} correct, ${runs.filter((r) => r.expected === 'fail').length} incorrect) in ${APPS.length} apps.`,
-  '',
-  'Positive = the run really completed the task. TPR = correct runs judged success; TNR = incorrect runs judged not success (an abstain counts as not success). The agent always reports success, as agents usually do.',
-  '',
-  ...table(all),
-  '',
-  '## Correct verdicts by run kind',
-  '',
-  `| Kind | Runs | ${Object.keys(results).join(' | ')} |`,
-  `|---|---|${Object.keys(results)
-    .map(() => '---')
-    .join('|')}|`,
-  ...byKind,
-  '',
-  '## Notes',
-  '',
-  ...Object.entries(results)
-    .filter(([, v]) => !v.measured)
-    .map(([k, v]) => `- **${k}**: not measured (${v.reason}).`),
-  ...Object.entries(results)
-    .filter(([, v]) => v.model)
-    .map(([k, v]) => `- **${k}** used ${v.model}.`),
-  CHECKS === 'handwritten'
-    ? `- **Caveat:** these are the handwritten check sets, written by the same author as the labelled runs, so the checks rows are an upper bound and partly circular. The real measure is \`--checks compiled\` (checks compiled by the model from one correct run per task; all other runs held out).`
-    : `- Compiled check sets: each was compiled from one correct run per task. Those ${trainingRuns.length} runs are left out for every system, so all scored runs are held out.`,
-  `- The LLM judge is shown the agent's report, as typical LLM judges are; Assay's checks never see it, and the agentic verifier gets it marked as context, not evidence.`,
-  ...(noted.length ? [`- Runs with a model error (counted as abstain): ${noted.length}.`] : []),
-  `- Model latency is only measured when recording; replayed runs show none.`,
-  `- Checks-only latency is in-process evaluation of a captured snapshot (no model). Capture itself takes about 20-60 ms per page and is shared by every system.`,
-  `- The LLM judge sees the final page as an accessibility outline plus visible text (no screenshots, no network or backend access).`,
-  `- The agentic verifier explores the captured snapshot (accessibility tree, network log, storage, probe results) without live access.`,
-  wrong.length
-    ? `- Checks wrong on: ${wrong.map((r) => `${r.app}/${r.task}/${r.scenario} (${r.verdict})`).join(', ')}.`
-    : '- Checks gave the labelled verdict on every run.',
-  '',
-].join('\n');
-mkdirSync(new URL('results/', root), { recursive: true });
-writeFileSync(new URL('results/REPORT.md', root), md);
-writeFileSync(
-  new URL('results/results.json', root),
-  JSON.stringify({ generatedAt: new Date().toISOString(), checks: CHECKS, results }, null, 1) + '\n',
-);
+const md = writeReport();
 console.warn(md.split('\n').slice(0, 14).join('\n'));
 if (runs.length === 0) {
   console.error(`No labelled runs with ${CHECKS} check sets: nothing was evaluated.`);

@@ -78,7 +78,9 @@ Apps that never change cannot show whether checks stay correct, and a weekly re-
 | v4      | api         | every API record gains `updatedAt` and `etag`                                                                                                             |
 | v5      | regression  | a real bug per app: the newsletter choice is echoed but not stored; the feature label is dropped on save; a new event's reminder is echoed but not stored |
 
-The checks are written for v1. Every scenario runs against every version.
+A sixth variant, **regression only**, applies just the v5 bug on top of v1. Releases are cumulative, so in v5 a regression can land on a check that already abstains because of an earlier copy change. That would hide whether the checks can detect the bug at all. The regression-only variant measures that directly.
+
+The checks are written for v1, and every scenario runs against every variant.
 
 - The expected verdict is the scenario's label, except where a release breaks a task (`breaks` in `releases.json`). There, the correct runs must now fail.
 - Each run gets one of four results:
@@ -89,7 +91,7 @@ The checks are written for v1. Every scenario runs against every version.
 - Anchor drift is counted separately.
 - The run fails (exit code 1) if any run is broken.
 
-The run is deterministic and takes about two minutes, so it runs in CI on every change (`ci.yml`, job "Stability"). Each app also answers `GET /__assay/version`, so the runner never silently reuses some other server that happens to be on the port.
+The run is deterministic and takes under three minutes, so it runs in CI on every change (`ci.yml`, job "Stability"). Each app also answers `GET /__assay/version`, so the runner never silently reuses some other server that happens to be on the port.
 
 ### What runs weekly (`model-baselines.yml`)
 
@@ -102,17 +104,19 @@ With the handwritten checks and no model (the model rows wait for an API key):
 - **Eval:** checks reached balanced accuracy 1.000 on 123 runs (TPR 1.000, TNR 1.000), with a median latency of about 0.1 ms per run after capture.
 - **Stability:**
 
-| Version       | Correct | Abstain | Broken | Agent error | Regression runs caught |
-| ------------- | ------- | ------- | ------ | ----------- | ---------------------- |
-| v1            | 123/123 | 0       | 0      | 0           | –                      |
-| v2 copy       | 116/123 | 7       | 0      | 0           | –                      |
-| v3 layout     | 116/123 | 7       | 0      | 0           | –                      |
-| v4 api        | 116/123 | 7       | 0      | 0           | –                      |
-| v5 regression | 116/123 | 7       | 0      | 0           | 4/6                    |
+| Variant         | Correct | Abstain | Broken | Agent error | Regression runs caught |
+| --------------- | ------- | ------- | ------ | ----------- | ---------------------- |
+| v1              | 123/123 | 0       | 0      | 0           | –                      |
+| v2 copy         | 116/123 | 7       | 0      | 0           | –                      |
+| v3 layout       | 116/123 | 7       | 0      | 0           | –                      |
+| v4 api          | 116/123 | 7       | 0      | 0           | –                      |
+| v5 regression   | 118/123 | 5       | 0      | 0           | 6/6                    |
+| regression only | 123/123 | 0       | 0      | 0           | 6/6                    |
 
-- The seven abstains are all Tiny Shop checks anchored on the renamed newsletter label, cart region or delivery text. They escalate instead of guessing.
+- The abstains are Tiny Shop checks anchored on renamed text (newsletter label, cart region, delivery text). They escalate instead of guessing.
 - The look-alike content in v3 and the extra API fields in v4 changed no verdict.
-- In v5, the tracker and calendar regressions were caught: the correct runs now fail. The Tiny Shop newsletter regression lands on checks that already abstain since v2, so those two runs escalate rather than fail.
+- Every regression run is caught, in v5 and on its own.
+- The regression-only variant first exposed a weak check. The Tiny Shop newsletter checks read the PUT response and the checkbox, and the bug echoes the choice in the response while the page keeps the box checked, so those checks passed. They now also read the stored setting through a `settings` probe.
 
 ## Consequences
 

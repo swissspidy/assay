@@ -84,5 +84,9 @@ export function shopProbes(page: Page): Record<string, Probe> {
     if (!r.ok()) throw new Error(`${path} → ${r.status()}`);
     return r.json();
   };
-  return { cart: () => get('/api/cart'), latestOrder: () => get('/api/orders/latest') };
+  return {
+    cart: () => get('/api/cart'),
+    latestOrder: () => get('/api/orders/latest'),
+    settings: () => get('/api/settings'),
+  };
 }

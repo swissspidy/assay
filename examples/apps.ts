@@ -35,11 +35,18 @@ const releases = (dir: string): Release[] =>
   (JSON.parse(readFileSync(new URL(`./${dir}/releases.json`, import.meta.url), 'utf8')) as { releases: Release[] })
     .releases;
 
-/** The task's expected verdict for a scenario in a given app version (a regression breaks correct runs). */
-export const expectedIn = (app: AppDef, version: number, taskId: string, expected: 'success' | 'fail') =>
-  expected === 'success' && app.releases.some((r) => r.version <= version && r.breaks?.includes(taskId))
+/** The task's expected verdict for a scenario with these releases applied (a regression breaks correct runs). */
+export const expectedIn = (app: AppDef, applied: number[], taskId: string, expected: 'success' | 'fail') =>
+  expected === 'success' && app.releases.some((r) => applied.includes(r.version) && r.breaks?.includes(taskId))
     ? 'fail'
     : expected;
+
+/** Releases 2..version, the cumulative state of an app at that version. */
+export const upTo = (app: AppDef, version: number) =>
+  app.releases.filter((r) => r.version <= version).map((r) => r.version);
+
+/** The releases that introduce a regression (they have `breaks`). */
+export const regressions = (app: AppDef) => app.releases.filter((r) => r.breaks?.length).map((r) => r.version);
 
 /** Highest version any app has. */
 export const latestVersion = (app: AppDef) => Math.max(1, ...app.releases.map((r) => r.version));

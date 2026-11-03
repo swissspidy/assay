@@ -43,26 +43,43 @@ test.describe('01 newsletter (state with redundant anchors, last response value)
   test('subscribed → success', async ({ page }) => {
     await openSettings(page);
     await setNewsletter(page, true);
-    await expectOutcome(page, checks);
-    const { outcome } = await judge(page, checks);
+    await expectOutcome(page, checks, { probes: shopProbes(page) });
+    const { outcome } = await judge(page, checks, { probes: shopProbes(page) });
     expect(outcome.verdict).toBe('success');
     expect(outcome.drift).toEqual([]);
   });
 
   test('never subscribed → fail', async ({ page }) => {
     await openSettings(page);
-    const { outcome } = await judge(page, checks);
+    const { outcome } = await judge(page, checks, { probes: shopProbes(page) });
     expect(outcome.verdict).toBe('fail');
     expect(byId(outcome, 'C1').status).toBe('fail'); // no PUT at all
     expect(byId(outcome, 'C2')).toMatchObject({ status: 'abstain', reason: 'value_unavailable' });
     expect(byId(outcome, 'C3').status).toBe('fail');
+    expect(byId(outcome, 'C4').status).toBe('fail');
+  });
+
+  test('saved response says subscribed, but the backend did not store it → fail', async ({ page }) => {
+    // The release-5 regression of the stability run: the PUT echoes newsletter=true and the
+    // checkbox stays checked, but the stored settings are unchanged. Only the probe sees it.
+    await page.route('**/api/settings', async (route) => {
+      if (route.request().method() !== 'PUT') return route.continue();
+      await route.fulfill({ json: { ...route.request().postDataJSON(), stored: false } });
+    });
+    await openSettings(page);
+    await setNewsletter(page, true);
+    const { outcome } = await judge(page, checks, { probes: shopProbes(page) });
+    expect(byId(outcome, 'C2').status).toBe('pass');
+    expect(byId(outcome, 'C3').status).toBe('pass');
+    expect(byId(outcome, 'C4').status).toBe('fail');
+    expect(outcome.verdict).toBe('fail');
   });
 
   test('subscribed then unsubscribed (final state matters) → fail', async ({ page }) => {
     await openSettings(page);
     await setNewsletter(page, true);
     await setNewsletter(page, false);
-    const { outcome } = await judge(page, checks);
+    const { outcome } = await judge(page, checks, { probes: shopProbes(page) });
     expect(outcome.verdict).toBe('fail');
     expect(byId(outcome, 'C2').status).toBe('fail');
   });
@@ -74,7 +91,7 @@ test.describe('01 newsletter (state with redundant anchors, last response value)
       document.querySelector('form')!.setAttribute('aria-label', 'Options');
       document.getElementById('newsletter')!.setAttribute('aria-label', 'Send me updates');
     });
-    const { outcome } = await judge(page, checks);
+    const { outcome } = await judge(page, checks, { probes: shopProbes(page) });
     expect(req(outcome, 'R1').status).toBe('pass');
     expect(byId(outcome, 'C3')).toMatchObject({ status: 'abstain', reason: 'anchor_missing' });
     expect(outcome.verdict).toBe('abstain');
@@ -84,7 +101,7 @@ test.describe('01 newsletter (state with redundant anchors, last response value)
     await openSettings(page);
     await setNewsletter(page, true);
     await strip(page, '#newsletter', { 'aria-label': 'Newsletter by email' });
-    const { outcome } = await judge(page, checks);
+    const { outcome } = await judge(page, checks, { probes: shopProbes(page) });
     expect(outcome.verdict).toBe('success');
     expect(outcome.drift).toEqual([{ check: 'C3', locator: 'checkbox named "Email me the newsletter"' }]);
   });

@@ -41,7 +41,7 @@ const spoofOrder = async (page: Page) => {
 export const TASKS: TaskDef[] = [
   {
     id: '01-newsletter',
-    probes: [],
+    probes: ['settings'],
     scenarios: [
       ok('subscribed', async (p) => {
         await openSettings(p);

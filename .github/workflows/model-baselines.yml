@@ -27,7 +27,7 @@ concurrency:
 jobs:
   baselines:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 300
     env:
       CHECKS: ${{ inputs.checks || 'handwritten' }}
       HAS_KEY: ${{ secrets.ANTHROPIC_API_KEY != '' }}
