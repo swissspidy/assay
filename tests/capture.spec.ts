@@ -3,6 +3,7 @@ import type { AddressInfo } from 'node:net';
 import { expect } from '@playwright/test';
 import { test } from '../src/playwright/index.ts';
 import { captureSnapshot, evaluate, type CheckSet, type EvidenceSnapshot } from '../src/index.ts';
+import { cutUtf8 } from '../src/snapshot/capture.ts';
 import { addToCart, ready } from './helpers.ts';
 
 test('XHR and fetch response bodies survive an immediate navigation', async ({ page }) => {
@@ -294,4 +295,34 @@ test('a reused XHR reports each response once, so its failed first request gets 
       expect(items[1]).toMatchObject({ status: 200, responseBody: { n: 2 } });
     },
   );
+});
+
+test('cutUtf8 counts bytes and never splits a character', () => {
+  expect(cutUtf8('abc', 3)).toBeUndefined();
+  expect(cutUtf8('aé', 2)).toBe('a'); // é is two bytes: half of it is dropped
+  expect(cutUtf8('ééé', 4)).toBe('éé');
+  expect(cutUtf8('😀x', 3)).toBe('');
+});
+
+test.describe('body limit', () => {
+  test.use({ evidenceOptions: { maxBodyBytes: 10 } });
+
+  test('is counted in UTF-8 bytes, for protocol reads and the page tap', async ({ page }) => {
+    await withServer(
+      (req, res) => {
+        if (req.url !== '/text') return false;
+        res.writeHead(200, { 'content-type': 'text/plain; charset=utf-8' });
+        res.end('é'.repeat(7)); // 14 bytes, 7 characters
+        return true;
+      },
+      async (origin) => {
+        await page.goto(`${origin}/`);
+        await page.evaluate(() => fetch('/text').then((r) => r.text()));
+        const s = await captureSnapshot(page);
+        const e = s.network!.find((x) => x.url.endsWith('/text'))!;
+        expect(e.responseBody).toBe('ééééé'); // 10 bytes
+        expect(e.bodyTruncated).toBe(true);
+      },
+    );
+  });
 });
