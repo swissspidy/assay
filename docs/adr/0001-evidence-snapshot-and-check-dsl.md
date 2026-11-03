@@ -408,15 +408,15 @@ that the agent failed, and an LLM judge or human should look at it.
 
 Each comparison object has exactly one operator:
 
-| operator                     | applies to          | semantics                                                     |
-| ---------------------------- | ------------------- | ------------------------------------------------------------- |
-| `equals`                     | any                 | deep equality; strings are canonicalized as in 2.3            |
-| `oneOf`                      | any                 | equals one of the listed values                               |
-| `contains`, `regex`          | string              | on canonical text                                             |
-| `approx {value, abs?, rel?}` | number, money, date | `                                                             | a-b | <= max(abs, rel· | b   | )`. For money the currency must also be equal. For dates `abs` is in days |
-| `gt` / `gte` / `lt` / `lte`  | number, money, date | ranges can combine bounds in one object                       |
-| `schema`                     | Json                | validates against a JSON Schema                               |
-| `exists`                     | any                 | the value was read and normalized and is not the empty string |
+| operator                     | applies to          | semantics                                                                                               |
+| ---------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------- |
+| `equals`                     | any                 | deep equality; strings are canonicalized as in 2.3                                                      |
+| `oneOf`                      | any                 | equals one of the listed values                                                                         |
+| `contains`, `regex`          | string              | on canonical text                                                                                       |
+| `approx {value, abs?, rel?}` | number, money, date | `\|a-b\| <= max(abs, rel·\|b\|)`. For money the currency must also be equal. For dates `abs` is in days |
+| `gt` / `gte` / `lt` / `lte`  | number, money, date | ranges can combine bounds in one object                                                                 |
+| `schema`                     | Json                | validates against a JSON Schema                                                                         |
+| `exists`                     | any                 | the value was read and normalized and is not the empty string                                           |
 
 If the value's type doesn't match the operator (for example `approx` on an
 un-normalized string), the check abstains with `type_mismatch`. The
