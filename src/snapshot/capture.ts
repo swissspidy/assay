@@ -92,15 +92,30 @@ function pageTap(bindingName: string, token: string, max: number): string {
   if (typeof send !== 'function') return;
   const T = ${JSON.stringify(token)}, MAX = ${max};
   const textual = (ct) => /json|text[/]|xml|javascript|x-www-form-urlencoded/i.test(ct || '') && !/event-stream/i.test(ct || '');
-  const post = (method, url, status, ct, text) => {
-    try { send({ token: T, method: String(method).toUpperCase(), url: String(url), status, contentType: ct || '', body: text.slice(0, MAX), truncated: text.length > MAX }); } catch {}
+  const post = (method, url, status, ct, text, cut) => {
+    try { send({ token: T, method: String(method).toUpperCase(), url: String(url), status, contentType: ct || '', body: text.slice(0, MAX), truncated: !!cut || text.length > MAX }); } catch {}
+  };
+  // Captured now, so page scripts that replace timers cannot stall the tap.
+  const later = window.setTimeout.bind(window);
+  const WAIT = 500;
+  // Reads at most MAX characters of a body, then stops (streams may never end).
+  const readCapped = async (body) => {
+    const reader = body.getReader(), dec = new TextDecoder();
+    let text = '';
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) return { text: text + dec.decode(), cut: false };
+      text += dec.decode(value, { stream: true });
+      if (text.length > MAX) { reader.cancel().catch(() => {}); return { text, cut: true }; }
+    }
   };
   const origFetch = window.fetch;
   if (origFetch) {
-    // The page receives the response only after the tap has read (a clone of) its body
-    // and reported it. Reading concurrently would race the page: an app that navigates
-    // as soon as it has the data (POST, then location.href = ...) can unload before a
-    // concurrent read finishes. Streaming and oversized responses pass through untouched.
+    // The page receives the response once the tap has read (a clone of) its body and
+    // reported it, or after WAIT ms, whichever comes first. Reading concurrently would
+    // race the page: an app that navigates as soon as it has the data (POST, then
+    // location.href = ...) can unload before a concurrent read finishes. The bound keeps
+    // streaming responses from being held up; their read continues in the background.
     window.fetch = function (input, init) {
       const p = origFetch.apply(this, arguments);
       let method = 'GET';
@@ -110,9 +125,12 @@ function pageTap(bindingName: string, token: string, max: number): string {
       return p.then((res) => {
         try {
           const ct = res.headers.get('content-type');
-          const len = Number(res.headers.get('content-length') || 0);
-          if (!textual(ct) || len > MAX) return res;
-          return res.clone().text().then((t) => { post(method, res.url, res.status, ct, t); return res; }, () => res);
+          if (!textual(ct) || !res.body) return res;
+          const reported = readCapped(res.clone().body).then(
+            ({ text, cut }) => post(method, res.url, res.status, ct, text, cut),
+            () => {},
+          );
+          return Promise.race([reported, new Promise((r) => later(r, WAIT))]).then(() => res, () => res);
         } catch {
           return res;
         }
@@ -125,7 +143,10 @@ function pageTap(bindingName: string, token: string, max: number): string {
     X.open = function (method) { this.__assayMethod = method; return open.apply(this, arguments); };
     X.send = function () {
       try {
-        this.addEventListener('load', () => {
+        // Once per XHR object: a reused XHR must not report each response twice.
+        if (!this.__assayTapped) {
+          this.__assayTapped = true;
+          this.addEventListener('load', () => {
           try {
             const ct = this.getResponseHeader('content-type');
             if (!textual(ct)) return;
@@ -135,7 +156,8 @@ function pageTap(bindingName: string, token: string, max: number): string {
             else return;
             post(this.__assayMethod || 'GET', this.responseURL, this.status, ct, t);
           } catch {}
-        });
+          });
+        }
       } catch {}
       return sendX.apply(this, arguments);
     };
@@ -290,7 +312,9 @@ export class EvidenceRecorder {
         x.status === t.status && x.contentType === t.contentType && x.body === t.body && x.truncated === t.truncated;
       if (!rest.every(same)) continue;
       for (const e of entries) {
-        if (e.responseBody !== undefined || (e.status !== null && e.status !== t.status)) continue;
+        // A failed request has no response, so it never gets a body.
+        if (e.responseBody !== undefined || e.failure !== undefined || (e.status !== null && e.status !== t.status))
+          continue;
         const { body, truncated } = decodeBody(t.body, t.contentType, this.maxBody);
         e.responseBody = body;
         if (truncated || t.truncated) e.bodyTruncated = true;

@@ -158,9 +158,13 @@ bodies (`Response.clone()`) to a Playwright binding. Integrity rules:
   that frame match the tapped bodies one to one (equal counts), and those
   bodies are identical. Otherwise the bodies stay unavailable, so a request
   never shows another request's body.
-- For `fetch`, the page receives the response only after the tap has read
-  and reported its body, so an app that navigates right after the response
-  cannot unload the page mid-read.
+- For `fetch`, the page receives the response once the tap has read and
+  reported its body, or after 500 ms, whichever comes first. So an app that
+  navigates right after the response cannot unload the page mid-read, and a
+  streaming response is held up by at most 500 ms. The tap reads at most the
+  body size limit.
+- A failed request never receives a tapped body, and a reused `XMLHttpRequest`
+  reports each response once.
 - If neither path produced a body that should exist, the entry is marked
   `bodyUnavailable`.
 
