@@ -25,7 +25,13 @@ import {
   type Reference,
   type TaskInput,
 } from '../../src/index.ts';
-import { clauseCovered, hasOptionalWording, wholeQuoteOptional } from '../../src/compiler/compile.ts';
+import {
+  clauseCovered,
+  containsClause,
+  hasOptionalWording,
+  partOfClause,
+  wholeQuoteOptional,
+} from '../../src/compiler/compile.ts';
 import { networkLog } from '../../src/compiler/explore.ts';
 
 const ref = (task: string, name: string): EvidenceSnapshot =>
@@ -760,6 +766,14 @@ test.describe('review hardening (milestone 2)', () => {
     expect(checkRubric(task, [hard, instr('express shipping is not optional', 'soft', 'R2')], []).join()).toContain(
       'make it hard',
     );
+  });
+
+  test('a clause is contained in a quote only at word boundaries', () => {
+    expect(containsClause('repay the invoice', 'pay')).toBe(false);
+    expect(containsClause('then pay the invoice', 'pay')).toBe(true);
+    expect(partOfClause('pay', 'repay the invoice')).toBe(false);
+    expect(partOfClause('the invoice', 'repay the invoice')).toBe(true);
+    expect(containsClause('pay.', 'pay')).toBe(true);
   });
 
   test('a hard quote may not include optional wording', () => {

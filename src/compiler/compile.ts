@@ -144,16 +144,26 @@ export function wholeQuoteOptional(quote: string): boolean {
 }
 const WORD = /[\p{L}\p{N}]/u;
 
-/** Whether `quote` contains the whole clause. */
-export function containsClause(quote: string, clause: string): boolean {
-  const q = fold(quote);
-  return q.length > 0 && q.includes(fold(clause));
+/** Whether `needle` occurs in `hay` at word boundaries ("pay" is not in "repay"). */
+function includesWords(hay: string, needle: string): boolean {
+  if (!needle) return false;
+  for (let i = hay.indexOf(needle); i !== -1; i = hay.indexOf(needle, i + 1)) {
+    const before = hay.slice(0, i).slice(-1);
+    const after = hay.slice(i + needle.length).slice(0, 1);
+    const edge = (ch: string, inner: string) => !ch || !WORD.test(ch) || !WORD.test(inner);
+    if (edge(before, needle[0]!) && edge(after, needle.at(-1)!)) return true;
+  }
+  return false;
 }
 
-/** Whether `quote` is a part of the clause (possibly all of it). */
+/** Whether `quote` contains the whole clause, at word boundaries. */
+export function containsClause(quote: string, clause: string): boolean {
+  return includesWords(fold(quote), fold(clause));
+}
+
+/** Whether `quote` is a part of the clause (possibly all of it), at word boundaries. */
 export function partOfClause(quote: string, clause: string): boolean {
-  const q = fold(quote);
-  return q.length > 0 && fold(clause).includes(q);
+  return includesWords(fold(clause), fold(quote));
 }
 
 /**
