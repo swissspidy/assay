@@ -179,10 +179,13 @@ export function checkRubric(task: TaskInput, reqs: Requirement[], clauses: Claus
       errors.push(
         `${r.id}: ${JSON.stringify(r.source.quote)} is marked soft, but the quoted words do not say it is optional; make it hard.`,
       );
-    } else if (r.kind === 'soft' && !OPTIONAL_EDGE.test(canonical(r.source.quote))) {
+    } else if (OPTIONAL.test(r.source.quote) && (r.kind === 'hard' || !OPTIONAL_EDGE.test(canonical(r.source.quote)))) {
       // "ships express, ideally with a receipt": the optional word covers only what follows it.
+      // As soft, the mandatory part could never fail a run; as hard, the optional part could.
       errors.push(
-        `${r.id}: ${JSON.stringify(r.source.quote)} mixes a mandatory and an optional part; quote the mandatory part as a hard requirement and only the optional part (with its optional wording) as soft.`,
+        r.kind === 'hard' && OPTIONAL_EDGE.test(canonical(r.source.quote))
+          ? `${r.id}: ${JSON.stringify(r.source.quote)} says it is optional; make it soft.`
+          : `${r.id}: ${JSON.stringify(r.source.quote)} mixes a mandatory and an optional part; quote the mandatory part as a hard requirement and only the optional part (with its optional wording) as soft.`,
       );
     }
     if (r.source.field !== 'outcomes') continue;
@@ -444,9 +447,10 @@ function discoveryTools(
           method: { type: 'string' },
           pathContains: { type: 'string' },
           allTypes: { type: 'boolean' },
+          offset: { type: 'integer', minimum: 0, description: 'Skip this many matching rows (for paging).' },
         }),
       },
-      run: (i: In<{ method?: string; pathContains?: string; allTypes?: boolean }>) => ({
+      run: (i: In<{ method?: string; pathContains?: string; allTypes?: boolean; offset?: number }>) => ({
         content: networkLog(pickRef(i.reference).snapshot, i),
       }),
     },

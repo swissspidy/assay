@@ -719,6 +719,17 @@ test.describe('review hardening (milestone 2)', () => {
     ).toEqual([]);
   });
 
+  test('a hard quote may not include optional wording', () => {
+    const task = { id: 't', instruction: 'Order it; the order ships express, ideally with a receipt.' };
+    const hard = instr('Order it');
+    expect(
+      checkRubric(task, [hard, instr('the order ships express, ideally with a receipt', 'hard', 'R2')], []).join(),
+    ).toContain('mixes a mandatory and an optional part');
+    expect(checkRubric(task, [hard, instr('ideally with a receipt', 'hard', 'R2')], []).join()).toContain(
+      'make it soft',
+    );
+  });
+
   test('duplicate reference names are rejected up front', async () => {
     const snap = ref('01-newsletter', 'subscribed');
     await expect(
@@ -742,5 +753,11 @@ test.describe('review hardening (milestone 2)', () => {
     const out = networkLog(many, { allTypes: true }, 2);
     expect(out.split('\n').filter((l) => l.startsWith('#'))).toHaveLength(2);
     expect(out).toContain('… 3 more');
+    const page2 = networkLog(many, { allTypes: true, offset: 2 }, 2);
+    expect(page2).toMatch(/^#2 /);
+    expect(page2).toContain('… 1 more');
+    expect(page2).toContain('offset 4');
+    expect(networkLog(many, { allTypes: true, offset: 4 }, 2)).not.toContain('more');
+    expect(networkLog(many, { allTypes: true, offset: 9 }, 2)).toContain('5 requests match');
   });
 });

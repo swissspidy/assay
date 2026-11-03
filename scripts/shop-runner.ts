@@ -57,8 +57,11 @@ export async function startShop(port = Number(process.env.TINY_SHOP_PORT ?? 4173
       }
     },
     async close() {
-      await browser.close();
-      server?.kill();
+      try {
+        await browser.close();
+      } finally {
+        server?.kill();
+      }
     },
   };
 }
