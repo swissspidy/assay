@@ -21,7 +21,8 @@ test('XHR and fetch response bodies survive an immediate navigation', async ({ p
     // A URL only this request uses: bodies of repeated same-URL requests are only
     // filled from the page tap when the pairing is unambiguous (see settle()).
     await fetch('/api/cart?after=post');
-    location.href = '/cart';
+    // Navigate one task later, so this evaluate returns before the page unloads.
+    setTimeout(() => (location.href = '/cart'), 0);
   });
   await page.waitForURL('**/cart');
   const s = await captureSnapshot(page);
