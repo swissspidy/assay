@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { applyNormalizers, parseCurrency, parseDate, parseLocaleNumber, NormalizeError } from '../../src/index.js';
+import { applyNormalizers, parseCurrency, parseDate, parseLocaleNumber, NormalizeError } from '../../src/index.ts';
 
 const reason = (fn: () => unknown) => {
   try {

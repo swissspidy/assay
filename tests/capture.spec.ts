@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
-import { test } from '../src/playwright/index.js';
-import { captureSnapshot, evaluate, type CheckSet, type EvidenceSnapshot } from '../src/index.js';
-import { addToCart, ready } from './helpers.js';
+import { test } from '../src/playwright/index.ts';
+import { captureSnapshot, evaluate, type CheckSet, type EvidenceSnapshot } from '../src/index.ts';
+import { addToCart, ready } from './helpers.ts';
 
 test('XHR and fetch response bodies survive an immediate navigation', async ({ page }) => {
   await page.goto('/');

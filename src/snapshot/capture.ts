@@ -7,8 +7,8 @@ import {
   type NetworkEntry,
   type ProbeResult,
   type StorageRecord,
-} from '../types.js';
-import { parseAriaSnapshot } from './aria.js';
+} from '../types.ts';
+import { parseAriaSnapshot } from './aria.ts';
 import { randomUUID } from 'node:crypto';
 
 export const CAPTURER = 'assay/0.1.0';
@@ -130,10 +130,10 @@ export class EvidenceRecorder {
   private readonly maxBody: number;
   private readonly token = randomUUID();
 
-  private constructor(
-    readonly context: BrowserContext,
-    opts: RecorderOptions,
-  ) {
+  readonly context: BrowserContext;
+
+  private constructor(context: BrowserContext, opts: RecorderOptions) {
+    this.context = context;
     this.maxBody = opts.maxBodyBytes ?? 1024 * 1024;
     context.on('request', (req) => this.onRequest(req));
     context.on('response', (resp) => this.track(this.onResponse(resp.request())));

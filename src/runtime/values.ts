@@ -1,5 +1,5 @@
-import type { Json, Money, Normalizer } from '../types.js';
-import { canonical, stripGlobal } from '../text.js';
+import type { Json, Money, Normalizer } from '../types.ts';
+import { canonical, stripGlobal } from '../text.ts';
 
 /** A typed value flowing through the normalizer pipeline. */
 export type TypedValue =
@@ -11,11 +11,10 @@ export type TypedValue =
   | { type: 'json'; value: Json }; // null, objects, arrays
 
 export class NormalizeError extends Error {
-  constructor(
-    message: string,
-    readonly reason: 'normalize_failed' | 'type_mismatch',
-  ) {
+  readonly reason: 'normalize_failed' | 'type_mismatch';
+  constructor(message: string, reason: 'normalize_failed' | 'type_mismatch') {
     super(message);
+    this.reason = reason;
   }
 }
 

@@ -1,9 +1,9 @@
 import { test as base, type Page } from '@playwright/test';
-import type { CheckSet, EvidenceSnapshot, Outcome, Verdict } from '../types.js';
-import { EvidenceRecorder, captureSnapshot, type CaptureOptions } from '../snapshot/capture.js';
-import { assertValidCheckSet } from '../dsl/validate.js';
-import { evaluate } from '../runtime/evaluate.js';
-import { formatOutcome } from '../report.js';
+import type { CheckSet, EvidenceSnapshot, Outcome, Verdict } from '../types.ts';
+import { EvidenceRecorder, captureSnapshot, type CaptureOptions } from '../snapshot/capture.ts';
+import { assertValidCheckSet } from '../dsl/validate.ts';
+import { evaluate } from '../runtime/evaluate.ts';
+import { formatOutcome } from '../report.ts';
 
 /**
  * Playwright `test` with an auto fixture that records the network log of every
@@ -30,12 +30,12 @@ export interface ExpectOutcomeOptions extends CaptureOptions {
 }
 
 export class OutcomeError extends Error {
-  constructor(
-    message: string,
-    readonly outcome: Outcome,
-    readonly snapshot: EvidenceSnapshot,
-  ) {
+  readonly outcome: Outcome;
+  readonly snapshot: EvidenceSnapshot;
+  constructor(message: string, outcome: Outcome, snapshot: EvidenceSnapshot) {
     super(message);
+    this.outcome = outcome;
+    this.snapshot = snapshot;
     this.name = 'OutcomeError';
   }
 }

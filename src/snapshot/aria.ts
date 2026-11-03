@@ -1,5 +1,5 @@
 import { parse } from 'yaml';
-import type { AXNode, AXStates } from '../types.js';
+import type { AXNode, AXStates } from '../types.ts';
 
 /** Roles whose inline `: value` in an aria snapshot is the control's value, not text content. */
 const VALUE_ROLES = new Set(['textbox', 'searchbox', 'spinbutton', 'slider', 'combobox']);

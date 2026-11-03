@@ -6,8 +6,8 @@
  *   - removing anchors / evidence channels → abstain (live DOM edits and snapshot edits)
  */
 import { expect, type Page } from '@playwright/test';
-import { test, expectOutcome } from '../src/playwright/index.js';
-import { evaluate, editNodes, removeNodes, type EvidenceSnapshot, type Outcome } from '../src/index.js';
+import { test, expectOutcome } from '../src/playwright/index.ts';
+import { evaluate, editNodes, removeNodes, type EvidenceSnapshot, type Outcome } from '../src/index.ts';
 import {
   addToCart,
   checkout,
@@ -18,7 +18,7 @@ import {
   ready,
   setNewsletter,
   shopProbes,
-} from './helpers.js';
+} from './helpers.ts';
 
 const byId = (o: Outcome, id: string) => o.checks.find((c) => c.check === id)!;
 const req = (o: Outcome, id: string) => o.requirements.find((r) => r.requirement === id)!;

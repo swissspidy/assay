@@ -1,5 +1,5 @@
-import type { AXNode, EvidenceSnapshot, Locator } from '../types.js';
-import { AXIndex } from '../runtime/axindex.js';
+import type { AXNode, EvidenceSnapshot, Locator } from '../types.ts';
+import { AXIndex } from '../runtime/axindex.ts';
 
 /**
  * Immutable snapshot edits. These are the building blocks for mutants and

@@ -13,14 +13,14 @@ import type {
   Status,
   Target,
   ValueSource,
-} from '../types.js';
-import { CHANNEL_TRUST } from '../types.js';
-import { describeTextMatch, matchText, stripGlobal } from '../text.js';
-import { checkSetDigest, snapshotDigest } from '../snapshot/digest.js';
-import { AXIndex, describeLocator, resolveTarget, type INode } from './axindex.js';
-import { compare, compareNumber, describeNumberCompare, jsonPointer } from './compare.js';
-import { NormalizeError, applyNormalizers, fromJson, toJson, type TypedValue } from './values.js';
-import { describeRequestMatch, describeUrlMatch, matchRequest, matchUrl } from './network.js';
+} from '../types.ts';
+import { CHANNEL_TRUST } from '../types.ts';
+import { describeTextMatch, matchText, stripGlobal } from '../text.ts';
+import { checkSetDigest, snapshotDigest } from '../snapshot/digest.ts';
+import { AXIndex, describeLocator, resolveTarget, type INode } from './axindex.ts';
+import { compare, compareNumber, describeNumberCompare, jsonPointer } from './compare.ts';
+import { NormalizeError, applyNormalizers, fromJson, toJson, type TypedValue } from './values.ts';
+import { describeRequestMatch, describeUrlMatch, matchRequest, matchUrl } from './network.ts';
 
 interface Ctx {
   snapshot: EvidenceSnapshot;

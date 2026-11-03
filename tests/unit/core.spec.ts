@@ -11,8 +11,8 @@ import {
   type Assertion,
   type CheckSet,
   type EvidenceSnapshot,
-} from '../../src/index.js';
-import { AXIndex, resolveTarget } from '../../src/runtime/axindex.js';
+} from '../../src/index.ts';
+import { AXIndex, resolveTarget } from '../../src/runtime/axindex.ts';
 
 const YAML = `
 - banner:

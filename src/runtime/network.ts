@@ -1,6 +1,6 @@
-import type { NetworkEntry, RequestMatch, UrlMatch } from '../types.js';
-import { matchText, describeTextMatch } from '../text.js';
-import { compareNumber, compileSchema, describeNumberCompare } from './compare.js';
+import type { NetworkEntry, RequestMatch, UrlMatch } from '../types.ts';
+import { matchText, describeTextMatch } from '../text.ts';
+import { compareNumber, compileSchema, describeNumberCompare } from './compare.ts';
 
 function normPath(p: string): string {
   return p.length > 1 ? p.replace(/\/+$/, '') : p;

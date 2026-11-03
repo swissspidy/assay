@@ -1,9 +1,9 @@
 import type { Page } from '@playwright/test';
-import type { CheckSet, EvidenceSnapshot, Outcome } from '../types.js';
-import { SNAPSHOT_SCHEMA } from '../types.js';
-import { captureSnapshot, type CaptureOptions } from '../snapshot/capture.js';
-import { assertValidCheckSet } from '../dsl/validate.js';
-import { evaluate } from './evaluate.js';
+import type { CheckSet, EvidenceSnapshot, Outcome } from '../types.ts';
+import { SNAPSHOT_SCHEMA } from '../types.ts';
+import { captureSnapshot, type CaptureOptions } from '../snapshot/capture.ts';
+import { assertValidCheckSet } from '../dsl/validate.ts';
+import { evaluate } from './evaluate.ts';
 
 export interface VerifyResult {
   outcome: Outcome;

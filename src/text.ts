@@ -1,4 +1,4 @@
-import type { TextMatch } from './types.js';
+import type { TextMatch } from './types.ts';
 
 /** Canonical text form used for all text matching: NFC, collapsed whitespace, trimmed. */
 export function canonical(s: string): string {

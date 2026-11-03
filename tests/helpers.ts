@@ -9,7 +9,7 @@ import {
   type EvidenceSnapshot,
   type Outcome,
   type Probe,
-} from '../src/index.js';
+} from '../src/index.ts';
 
 export function loadChecks(name: string): CheckSet {
   return JSON.parse(

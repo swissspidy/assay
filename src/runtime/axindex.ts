@@ -1,6 +1,6 @@
-import type { AXNode, Locator, Target, AbstainReason } from '../types.js';
-import { LANDMARK_ROLES } from '../types.js';
-import { describeTextMatch, matchText } from '../text.js';
+import type { AXNode, Locator, Target, AbstainReason } from '../types.ts';
+import { LANDMARK_ROLES } from '../types.ts';
+import { describeTextMatch, matchText } from '../text.ts';
 
 const LANDMARKS = new Set<string>(LANDMARK_ROLES);
 

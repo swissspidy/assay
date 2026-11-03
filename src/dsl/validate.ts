@@ -9,9 +9,9 @@ import type {
   Target,
   TextMatch,
   ValueSource,
-} from '../types.js';
-import { canonical } from '../text.js';
-import { checkSetSchema } from './schema.js';
+} from '../types.ts';
+import { canonical } from '../text.ts';
+import { checkSetSchema } from './schema.ts';
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 const validateShape = ajv.compile(checkSetSchema);
@@ -24,8 +24,10 @@ export interface ValidationReport {
 }
 
 export class CheckSetError extends Error {
-  constructor(readonly report: ValidationReport) {
+  readonly report: ValidationReport;
+  constructor(report: ValidationReport) {
     super(`Invalid check set:\n  - ${report.errors.join('\n  - ')}`);
+    this.report = report;
   }
 }
 

@@ -1,4 +1,4 @@
-import type { Outcome } from './types.js';
+import type { Outcome } from './types.ts';
 
 const ICON = { pass: '✔', fail: '✘', abstain: '?' } as const;
 

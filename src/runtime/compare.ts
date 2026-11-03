@@ -1,8 +1,8 @@
 import { Ajv, type ValidateFunction } from 'ajv';
-import type { Comparison, Json, JsonSchema, Money } from '../types.js';
-import { canonical, stripGlobal } from '../text.js';
-import { canonicalJson } from '../snapshot/digest.js';
-import { NormalizeError, daysBetween, describeValue, type TypedValue } from './values.js';
+import type { Comparison, Json, JsonSchema, Money } from '../types.ts';
+import { canonical, stripGlobal } from '../text.ts';
+import { canonicalJson } from '../snapshot/digest.ts';
+import { NormalizeError, daysBetween, describeValue, type TypedValue } from './values.ts';
 
 const ajv = new Ajv({ allErrors: false, strict: false, validateFormats: false });
 const schemaCache = new Map<string, ValidateFunction>();
@@ -65,11 +65,12 @@ function scalar(v: TypedValue, bound: unknown, op: string): [number, number] {
 }
 
 class CurrencyMismatch extends Error {
-  constructor(
-    readonly actual: string,
-    readonly expected: string,
-  ) {
+  readonly actual: string;
+  readonly expected: string;
+  constructor(actual: string, expected: string) {
     super(`currency ${actual} ≠ ${expected}`);
+    this.actual = actual;
+    this.expected = expected;
   }
 }
 
