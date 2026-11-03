@@ -50,6 +50,7 @@ for (const def of TASKS) {
   // One failing task (no cassette, API error) must not stop the others; a live
   // recording is saved after every turn, so nothing already paid for is lost.
   let result: Awaited<ReturnType<typeof compileTask>>;
+  let mode: string;
   try {
     const env = await modelFromEnv(new URL(`${def.id}.cassette.json`, out).pathname);
     result = await compileTask(task, [{ name: reference.name, kind: 'success', snapshot: reference.snapshot }], {
@@ -57,6 +58,7 @@ for (const def of TASKS) {
       log: (m) => console.warn(m),
     });
     env.save();
+    mode = env.mode;
     console.warn(`${def.id}: model ${env.mode}`);
   } catch (e) {
     failures++;
@@ -81,7 +83,7 @@ for (const def of TASKS) {
     `| ${def.id} | ${checkSet.requirements.length} | ${checkSet.checks.length} | ${report.coverage.map((c) => `${c.requirement}:${c.channels.join('+')}`).join(', ')} | ${heldOut.length - wrong.length}/${heldOut.length}${wrong.length ? ` (wrong: ${wrong.map((w) => w.name).join(', ')})` : ''} |`,
   );
   console.warn(
-    `${def.id}: ${checkSet.checks.length} checks (${env.mode}), held-out ${heldOut.length - wrong.length}/${heldOut.length}`,
+    `${def.id}: ${checkSet.checks.length} checks (${mode}), held-out ${heldOut.length - wrong.length}/${heldOut.length}`,
   );
 }
 
