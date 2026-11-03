@@ -130,7 +130,7 @@ export const hasOptionalWording = (quote: string) => {
 export function wholeQuoteOptional(quote: string): boolean {
   if (!hasOptionalWording(quote)) return false;
   const q = canonical(quote)
-    .replace(/[.!]+$/, '')
+    .replace(/[.!?]+$/, '')
     .trimEnd();
   const lead = LEADING_OPTIONAL.exec(q);
   if (lead) return !SEPARATOR.test(q.slice(lead[0].length).replace(/^[\s,:–—-]+/, ''));
