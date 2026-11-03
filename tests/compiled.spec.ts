@@ -21,11 +21,10 @@ for (const f of files) {
   test(`compiled ${id}: valid, traceable, correct on all labelled runs`, () => {
     const cs = JSON.parse(readFileSync(new URL(f, dir), 'utf8')) as CheckSet;
     expect(validateCheckSet(cs).errors).toEqual([]);
-    const fold = (s: string) => canonical(s).toLowerCase();
     for (const c of cs.checks) {
       const r = cs.requirements.find((x) => x.id === c.requirement)!;
       const src = r.source.field === 'instruction' ? cs.task.instruction : cs.task.outcomes!;
-      expect(fold(src), `${c.id} → ${r.id} quote`).toContain(fold(r.source.quote));
+      expect(canonical(src), `${c.id} → ${r.id} quote`).toContain(canonical(r.source.quote));
     }
     const refDir = new URL(`references/${id}/`, root);
     for (const rf of readdirSync(refDir)) {

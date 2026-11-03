@@ -66,6 +66,7 @@ export function findNodes(
 export function networkLog(
   snapshot: EvidenceSnapshot,
   q: { method?: string; pathContains?: string; allTypes?: boolean },
+  limit = 100,
 ): string {
   if (!snapshot.network) return 'The network log was not recorded for this snapshot.';
   const rows = snapshot.network.filter(
@@ -75,12 +76,16 @@ export function networkLog(
       (!q.pathContains || e.url.includes(q.pathContains)),
   );
   if (!rows.length) return 'No matching requests.';
-  return rows
-    .map(
-      (e) =>
-        `#${e.seq} ${e.method} ${e.url} → ${e.status ?? e.failure ?? 'pending'} (${e.resourceType}${e.requestBody !== undefined ? ', has request body' : ''}${e.responseBody !== undefined ? ', has response body' : ''})`,
-    )
-    .join('\n');
+  const more = rows.length > limit ? `\n… ${rows.length - limit} more; narrow with method or pathContains` : '';
+  return (
+    rows
+      .slice(0, limit)
+      .map(
+        (e) =>
+          `#${e.seq} ${e.method} ${e.url} → ${e.status ?? e.failure ?? 'pending'} (${e.resourceType}${e.requestBody !== undefined ? ', has request body' : ''}${e.responseBody !== undefined ? ', has response body' : ''})`,
+      )
+      .join('\n') + more
+  );
 }
 
 const body = (b: Json | undefined) =>
@@ -113,11 +118,15 @@ export function storageView(snapshot: EvidenceSnapshot): string {
     ),
     'localStorage:',
     ...Object.entries(s.local).flatMap(([o, kv]) =>
-      Object.entries(kv).map(([k, v]) => `  ${o} ${k} = ${JSON.stringify(clip(v, 200))}`),
+      Object.entries(kv).map(
+        ([k, v]) => `  ${o} ${k} = ${typeof v === 'string' ? JSON.stringify(clip(v, 200)) : '(redacted)'}`,
+      ),
     ),
     'sessionStorage:',
     ...Object.entries(s.session).flatMap(([o, kv]) =>
-      Object.entries(kv).map(([k, v]) => `  ${o} ${k} = ${JSON.stringify(clip(v, 200))}`),
+      Object.entries(kv).map(
+        ([k, v]) => `  ${o} ${k} = ${typeof v === 'string' ? JSON.stringify(clip(v, 200)) : '(redacted)'}`,
+      ),
     ),
   ].join('\n');
 }

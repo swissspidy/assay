@@ -3,7 +3,7 @@
 export const RUBRIC_SYSTEM = `You extract the requirements a web task's outcome must meet, for an outcome verifier.
 
 Rules:
-- One requirement per independently checkable outcome. Do not merge two outcomes, do not split one.
+- One requirement per independently checkable outcome. Do not merge two outcomes, and do not split one, except into a mandatory part (hard) and an optional part (soft), quoting the optional part together with its optional wording (e.g. "ideally with a receipt").
 - Every requirement quotes the exact words it comes from ("quote"), copied verbatim from the task instruction or from the expected outcomes. Set "field" to where the quote is.
 - Never add a condition the text does not state. If the text says "add a mug", do not require "exactly one mug", a particular page, or a success message. Implied preservation ("keep everything else") counts only when it is written.
 - "hard": the task fails without it. This includes anything the task asks to see or be shown (e.g. "show me the confirmation").
