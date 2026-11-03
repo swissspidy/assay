@@ -99,8 +99,8 @@ for typechecking and builds, [oxlint](https://oxc.rs/docs/guide/usage/linter) an
 
 ```sh
 npm install
-npx playwright install chromium
-npm run check        # format:check + lint + typecheck + test (what CI runs)
+npx playwright install --with-deps chromium
+npm run check        # format:check + lint + typecheck + build + test (what CI runs)
 npm test             # unit tests + live tests against the Tiny Shop demo app (auto-started)
 npm run format       # oxfmt --write
 npm run build        # tsrs -> dist/

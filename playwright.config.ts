@@ -9,7 +9,7 @@ export default defineConfig({
   // Verification must be deterministic: no retries to hide flakiness.
   retries: 0,
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : [['list']],
-  use: { baseURL: `http://localhost:${PORT}` },
+  use: { baseURL: `http://localhost:${PORT}`, trace: 'retain-on-failure' },
   webServer: {
     command: `node examples/tiny-shop/server.mjs`,
     env: { PORT: String(PORT) },
