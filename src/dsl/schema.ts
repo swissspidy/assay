@@ -81,6 +81,16 @@ export const checkSetSchema = {
     },
     requirements: { type: 'array', minItems: 1, items: { $ref: '#/definitions/requirement' } },
     checks: { type: 'array', items: { $ref: '#/definitions/check' } },
+    locked: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['by', 'at', 'digest'],
+      properties: {
+        by: { type: 'string', minLength: 1 },
+        at: { type: 'string', minLength: 1 },
+        digest: { type: 'string', pattern: '^sha256:[0-9a-f]{64}$' },
+      },
+    },
   },
   definitions: {
     textMatch,

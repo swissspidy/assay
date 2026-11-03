@@ -4,6 +4,9 @@ import { EvidenceRecorder, captureSnapshot, type CaptureOptions } from '../snaps
 import { assertValidCheckSet } from '../dsl/validate.ts';
 import { evaluate } from '../runtime/evaluate.ts';
 import { formatOutcome } from '../report.ts';
+import { verifyWithEscalation, type VerifyOptions } from '../verifier/escalate.ts';
+import { writeOutcomeRecord, type OutcomeRecord } from '../verifier/record.ts';
+import type { Json } from '../types.ts';
 
 /**
  * Playwright `test` with an auto fixture that records the network log of every
@@ -27,6 +30,13 @@ export interface ExpectOutcomeOptions extends CaptureOptions {
   interval?: number;
   /** Attach the snapshot and outcome to the Playwright report (default true). */
   attach?: boolean;
+  /**
+   * Escalate requirements the checks cannot decide to the agentic verifier
+   * (needs `escalate.verifier`). The verifier gets read-only live access to the page.
+   */
+  escalate?: Omit<VerifyOptions, 'page' | 'probes'>;
+  /** Write an outcome record (and the snapshot) under this directory. */
+  recordDir?: string;
 }
 
 export class OutcomeError extends Error {
@@ -65,6 +75,20 @@ export async function expectOutcome(
     await page.waitForTimeout(interval);
   }
 
+  // Escalation only after polling settled: the checks had every chance to decide.
+  let record: OutcomeRecord | undefined;
+  if (opts.escalate?.verifier || opts.recordDir) {
+    const res = await verifyWithEscalation(cs, snapshot, {
+      ...opts.escalate,
+      page,
+      ...(opts.probes ? { probes: opts.probes } : {}),
+      ...(opts.escalate?.verifier && outcome.verdict !== want ? {} : { verifier: undefined }),
+    });
+    outcome = res.outcome;
+    record = res.record;
+    if (opts.recordDir) writeOutcomeRecord(opts.recordDir, record, snapshot, res.proposal as unknown as Json);
+  }
+
   if (opts.attach !== false) {
     try {
       const info = base.info();
@@ -76,6 +100,12 @@ export async function expectOutcome(
         body: JSON.stringify(snapshot),
         contentType: 'application/json',
       });
+      if (record) {
+        await info.attach(`assay-record-${cs.id.replace(/[^\w.-]+/g, '_')}.json`, {
+          body: JSON.stringify(record, null, 2),
+          contentType: 'application/json',
+        });
+      }
     } catch {
       /* not running inside a Playwright test */
     }

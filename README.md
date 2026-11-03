@@ -115,6 +115,24 @@ console.log(formatStressReport(report)); // acceptance/rejection rates, over-con
 
 The stress test edits correct snapshots into valid variants (reordered rows, unrelated content, extra JSON fields, other number, money and date formats, network noise) and into near-miss mutants (flipped states, missing items, perturbed values, failed or missing requests, pages that only claim success). A check that rejects a valid variant is flagged as over-constrained, and the compiler sends that back to the model as an error. See [ADR 0003](docs/adr/0003-stress-testing.md). `npm run stress:tiny-shop` writes `examples/tiny-shop/stress/handwritten/REPORT.md`.
 
+## Escalation, records and locking (milestone 4)
+
+```ts
+import { anthropicModel, lockCheckSet, reviewSheet, verifyWithEscalation, writeOutcomeRecord } from 'assay';
+
+console.log(reviewSheet(checkSet)); // plain-language review for a human
+const locked = lockCheckSet(checkSet, 'reviewer@example.com'); // tamper-evident
+
+const { outcome, record, proposal } = await verifyWithEscalation(locked, snapshot, {
+  verifier: await anthropicModel(), // decides only what the checks abstained on
+  requireLocked: true,
+  agentReport: 'I placed the order.', // recorded as agent-claimed, never evidence
+});
+writeOutcomeRecord('assay-records', record, snapshot, proposal);
+```
+
+In Playwright: `await expectOutcome(page, locked, { escalate: { verifier }, recordDir: 'assay-records' })`. See [ADR 0004](docs/adr/0004-escalation-and-records.md).
+
 ## Development
 
 Requires **Node.js 24+** (see `.nvmrc`). Tooling: [tsrs](https://github.com/oxc-project/tsrs)

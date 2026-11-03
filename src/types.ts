@@ -238,6 +238,8 @@ export interface CheckSet {
   task: { instruction: string; outcomes?: string };
   requirements: Requirement[];
   checks: Check[];
+  /** Set by human confirmation (lockCheckSet); the digest covers everything else in the set. */
+  locked?: { by: string; at: string; digest: string };
 }
 
 // ---------------------------------------------------------------------------
