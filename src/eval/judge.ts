@@ -1,5 +1,6 @@
 /**
- * LLM-judge baseline (milestone 5): one model call per trajectory that sees what a
+ * LLM-judge baseline (milestone 5): one judgment per trajectory (a call, retried only for an
+ * invalid reply) that sees what a
  * typical judge sees — the task, the final page (accessibility outline, text, URL)
  * and the agent's own report — and returns success or fail. It does not explore.
  */

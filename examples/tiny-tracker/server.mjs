@@ -133,7 +133,7 @@ const server = createServer(async (req, res) => {
     if (p === '/issues/new' && req.method === 'GET') return html(200, newForm());
     if (p === '/issues' && req.method === 'POST') {
       const b = await readBody(req);
-      if (!b.title?.trim()) return html(422, newForm('Title is required', b));
+      if (typeof b.title !== 'string' || !b.title.trim()) return html(422, newForm('Title is required', b));
       const issue = {
         id: s.nextId++,
         title: b.title.trim(),
@@ -160,7 +160,7 @@ const server = createServer(async (req, res) => {
           // Release 5 regression: the feature label is silently dropped.
           if (rel.has('bug:feature-label-dropped')) i.labels = i.labels.filter((l) => l !== 'feature');
         }
-        if (m[2] === 'rename' && b.title?.trim()) i.title = b.title.trim();
+        if (m[2] === 'rename' && typeof b.title === 'string' && b.title.trim()) i.title = b.title.trim();
         if (m[2] === 'state' && ['open', 'closed'].includes(b.status)) i.status = b.status;
         if (m[2] === 'comments' && b.text?.trim()) i.comments.push({ author: 'you', text: b.text.trim() });
         return redirect(res, `/issues/${i.id}`);
