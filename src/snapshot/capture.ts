@@ -259,7 +259,9 @@ export class EvidenceRecorder {
           BODY_RESOURCE_TYPES.has(x.resourceType) &&
           x.method === t.method &&
           x.url === t.url &&
-          (x.status === null || x.status === t.status),
+          // Only entries whose response arrived: an entry without one (timed out or
+          // failed) could otherwise take the body of another request to the same URL.
+          x.status === t.status,
       );
       if (!e) continue;
       used.add(e);

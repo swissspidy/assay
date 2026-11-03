@@ -1,6 +1,6 @@
 import { test as base, type Page } from '@playwright/test';
 import type { CheckSet, EvidenceSnapshot, Outcome, Verdict } from '../types.ts';
-import { EvidenceRecorder, captureSnapshot, type CaptureOptions } from '../snapshot/capture.ts';
+import { EvidenceRecorder, captureSnapshot, type CaptureOptions, type RecorderOptions } from '../snapshot/capture.ts';
 import { assertValidCheckSet } from '../dsl/validate.ts';
 import { evaluate } from '../runtime/evaluate.ts';
 import { formatOutcome } from '../report.ts';
@@ -8,11 +8,14 @@ import { formatOutcome } from '../report.ts';
 /**
  * Playwright `test` with an auto fixture that records the network log of every
  * test's browser context from its start, so network checks have evidence.
+ * Configure the recorder with `test.use({ evidenceOptions: { bodyTimeoutMs: 10_000 } })`;
+ * it is attached once per context, so later `EvidenceRecorder.attach` options are ignored.
  */
-export const test = base.extend<{ evidence: EvidenceRecorder }>({
+export const test = base.extend<{ evidence: EvidenceRecorder; evidenceOptions: RecorderOptions }>({
+  evidenceOptions: [{}, { option: true }],
   evidence: [
-    async ({ context }, use) => {
-      await use(await EvidenceRecorder.attach(context));
+    async ({ context, evidenceOptions }, use) => {
+      await use(await EvidenceRecorder.attach(context, evidenceOptions));
     },
     { auto: true },
   ],
