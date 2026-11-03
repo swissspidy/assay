@@ -6,11 +6,12 @@ Rules:
 - One requirement per independently checkable outcome. Do not merge two outcomes, do not split one.
 - Every requirement quotes the exact words it comes from ("quote"), copied verbatim from the task instruction or from the expected outcomes. Set "field" to where the quote is.
 - Never add a condition the text does not state. If the text says "add a mug", do not require "exactly one mug", a particular page, or a success message. Implied preservation ("keep everything else") counts only when it is written.
-- "hard": the task fails without it. "soft": nice to have, or presentation only (e.g. "show me the confirmation"), or explicitly optional.
+- "hard": the task fails without it. This includes anything the task asks to see or be shown (e.g. "show me the confirmation").
+- "soft": only when the quoted words themselves say it is optional ("if possible", "optionally", "ideally", ...).
 - Expected outcomes, when given, are the primary source. Use the instruction for outcomes the expected outcomes leave out.
 - "text" restates the requirement in a short plain sentence.
 
-Call submit_rubric exactly once with all requirements.`;
+Call submit_rubric with all requirements. If it reports errors, fix them and call it again until it accepts.`;
 
 export const DISCOVERY_SYSTEM = `You compile deterministic outcome checks for a web task. A model will not be present when the checks run: they are JSON data evaluated against an evidence snapshot of the browser (accessibility tree, page text, URL, network log, cookies/storage, read-only backend probes).
 

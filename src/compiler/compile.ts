@@ -151,9 +151,9 @@ export function coversClause(quote: string, clause: string): boolean {
 
 /**
  * Errors that make a rubric unusable: empty or untraceable quotes, duplicate
- * ids, one requirement merging several outcome clauses, an expected outcome
- * marked soft although its quote does not say it is optional, outcome clauses
- * whose words are not all quoted.
+ * ids, one requirement merging several outcome clauses, a requirement marked
+ * soft although its quote does not say it is optional, outcome clauses whose
+ * words are not all quoted.
  */
 export function checkRubric(task: TaskInput, reqs: Requirement[], clauses: Clause[]): string[] {
   const errors: string[] = [];
@@ -175,6 +175,12 @@ export function checkRubric(task: TaskInput, reqs: Requirement[], clauses: Claus
       errors.push(`${r.id}: quote ${JSON.stringify(r.source.quote)} is not verbatim in the ${r.source.field}.`);
       continue;
     }
+    // Soft requirements never fail a run, so only text that says it is optional may be soft.
+    if (r.kind === 'soft' && !OPTIONAL.test(r.source.quote)) {
+      errors.push(
+        `${r.id}: ${JSON.stringify(r.source.quote)} is marked soft, but the quoted words do not say it is optional; make it hard.`,
+      );
+    }
     if (r.source.field !== 'outcomes') continue;
     // Clauses this quote merges; a clause nested inside another merged clause does not count separately.
     const merged = unique.filter((c) => containsClause(r.source.quote, c.text));
@@ -182,12 +188,6 @@ export function checkRubric(task: TaskInput, reqs: Requirement[], clauses: Claus
     if (outer.length > 1) {
       errors.push(`${r.id}: its quote spans ${outer.length} expected outcomes; make one requirement per outcome.`);
       continue;
-    }
-    const touched = unique.some((c) => containsClause(r.source.quote, c.text) || partOfClause(r.source.quote, c.text));
-    if (touched && r.kind === 'soft' && !OPTIONAL.test(r.source.quote)) {
-      errors.push(
-        `${r.id}: ${JSON.stringify(r.source.quote)} is (part of) an expected outcome and must be hard unless the quoted words say it is optional.`,
-      );
     }
   }
   const quotes = reqs

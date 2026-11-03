@@ -34,15 +34,18 @@ export async function removeFromCart(page: Page, product: string): Promise<void>
   await page.getByRole('row', { name: new RegExp(product) }).waitFor({ state: 'detached' });
 }
 
+const money = (n: number) => `$${n.toFixed(2)}`;
+
 export async function setQuantity(page: Page, product: string, qty: number): Promise<void> {
   const saved = page.waitForResponse((r) => r.request().method() === 'PATCH');
   saved.catch(() => {});
   await page.getByRole('spinbutton', { name: `Quantity for ${product}` }).fill(String(qty));
   await page.keyboard.press('Tab');
-  await saved;
+  const { total } = (await (await saved).json()) as { total: number };
+  // Wait until the page shows the total this PATCH returned, not just any total.
   await page
     .getByRole('status', { name: /Cart total|Order total/ })
-    .filter({ hasNotText: /^$/ })
+    .filter({ hasText: money(total) })
     .waitFor();
 }
 

@@ -42,6 +42,14 @@ test.describe('outcome parsing', () => {
     expect(c.map((x) => x.text)).toEqual(['the subscription is saved', 'a confirmation is shown']);
     for (const x of c) expect(text.slice(x.start, x.end)).toBe(x.text);
   });
+  test('a continuation line keeps the inner punctuation, so the clause stays verbatim and quotable', () => {
+    const text = '- The order is placed.\n  A receipt is shown';
+    const [c] = parseOutcomes(text);
+    expect(c!.text).toBe('The order is placed. A receipt is shown');
+    expect(text.replace(/\s+/g, ' ')).toContain(c!.text);
+    const rubric = rubricFromClauses({ id: 't', instruction: 'Order it.', outcomes: text });
+    expect(checkRubric({ id: 't', instruction: 'Order it.', outcomes: text }, rubric, parseOutcomes(text))).toEqual([]);
+  });
   test('markdown list and plain lines', () => {
     expect(parseOutcomes('# Outcomes\n- the cart has a mug\n2. Then the total is $12')).toEqual([
       expect.objectContaining({ text: 'the cart has a mug' }),
@@ -320,6 +328,24 @@ test.describe('rubric hardening', () => {
     );
     expect(merged.join()).toContain('spans 2 expected outcomes');
   });
+  test('an instruction quote cannot be soft unless it says it is optional', () => {
+    const task = { id: 't', instruction: 'Place an order and show me the confirmation.' };
+    const soft = (quote: string) => ({
+      id: 'R2',
+      kind: 'soft' as const,
+      text: 'x',
+      source: { field: 'instruction' as const, quote },
+    });
+    const hard = {
+      id: 'R1',
+      kind: 'hard' as const,
+      text: 'x',
+      source: { field: 'instruction' as const, quote: 'Place an order' },
+    };
+    expect(checkRubric(task, [hard, soft('show me the confirmation')], []).join()).toContain('make it hard');
+    const optional = { id: 't', instruction: 'Place an order and, if possible, show me the confirmation.' };
+    expect(checkRubric(optional, [hard, soft('if possible, show me the confirmation')], [])).toEqual([]);
+  });
   test('an expected outcome cannot be soft unless it says it is optional', () => {
     const errs = checkRubric(
       NEWSLETTER,
@@ -329,7 +355,7 @@ test.describe('rubric hardening', () => {
       ],
       clauses,
     );
-    expect(errs.join()).toContain('must be hard');
+    expect(errs.join()).toContain('make it hard');
     const optional = {
       id: 'o',
       instruction: 'Order it.',

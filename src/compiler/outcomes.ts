@@ -53,11 +53,11 @@ function isGherkin(ls: Line[]): boolean {
 
 const trimEnd = (t: string) => t.replace(/[.;]\s*$/, '');
 
-/** Extend a clause with a continuation line (dropping the clause's trailing period). */
+/** Extend a clause with a continuation line. The text stays verbatim (inner punctuation included) so it can be quoted. */
 function extend(src: string, clause: Clause, l: Line): void {
   const body = trimEnd(l.text);
   clause.end = l.start + body.length;
-  clause.text = canonical(src.slice(clause.start, clause.end).replace(/[.;](\s+)/g, '$1'));
+  clause.text = canonical(src.slice(clause.start, clause.end));
 }
 
 export function parseOutcomesDetailed(text: string | undefined): ParsedOutcomes {

@@ -62,13 +62,23 @@ export async function startApp(
       env: { ...process.env, PORT: String(port), APP_RELEASES: releases.join(',') },
       stdio: 'ignore',
     });
-    if (!(await waitFor(`${baseURL}/`))) throw new Error(`${label} did not start at ${baseURL}`);
+    if (!(await waitFor(`${baseURL}/`))) {
+      server.kill();
+      throw new Error(`${label} did not start at ${baseURL}`);
+    }
     if (!same(await identify(baseURL))) {
       server.kill();
       throw new Error(`${baseURL} did not identify as ${label}`);
     }
   }
-  const browser: Browser = await chromium.launch();
+  let browser: Browser;
+  try {
+    browser = await chromium.launch();
+  } catch (e) {
+    // No runner is returned, so nobody else could stop the server started here.
+    server?.kill();
+    throw e;
+  }
   return {
     baseURL,
     async capture(scenario) {
