@@ -2,6 +2,7 @@ import { createServer, type IncomingMessage, type ServerResponse } from 'node:ht
 import type { AddressInfo } from 'node:net';
 import { expect } from '@playwright/test';
 import { test } from '../src/playwright/index.ts';
+import { EvidenceRecorder } from '../src/snapshot/capture.ts';
 import { captureSnapshot, evaluate, type CheckSet, type EvidenceSnapshot } from '../src/index.ts';
 import { cutUtf8 } from '../src/snapshot/capture.ts';
 import { addToCart, ready } from './helpers.ts';
@@ -244,7 +245,8 @@ test('a streaming response without a length is not held up by the tap', async ({
         if (!first.value) throw new Error('no first chunk');
         return performance.now() - t0;
       });
-      expect(ms).toBeLessThan(2000);
+      // The tap holds a response for at most 500 ms (WAIT in pageTap); the rest is overhead.
+      expect(ms).toBeLessThan(1500);
       await captureSnapshot(page); // and capture still completes
     },
   );
@@ -287,6 +289,8 @@ test('a reused XHR reports each response once, so its failed first request gets 
             x.send();
           }),
       );
+      // Exactly one tapped body: the reused XHR reported its one response once.
+      await expect.poll(() => EvidenceRecorder.for(page.context())?.tappedCount()).toBe(1);
       const s = await captureSnapshot(page);
       const items = s.network!.filter((e) => e.url.endsWith('/item'));
       expect(items).toHaveLength(2);
@@ -302,15 +306,17 @@ test('cutUtf8 counts bytes and never splits a character', () => {
   expect(cutUtf8('aé', 2)).toBe('a'); // é is two bytes: half of it is dropped
   expect(cutUtf8('ééé', 4)).toBe('éé');
   expect(cutUtf8('😀x', 3)).toBe('');
+  expect(cutUtf8('ab', -5)).toBe(''); // a negative limit keeps nothing
 });
 
 test.describe('body limit', () => {
   test.use({ evidenceOptions: { maxBodyBytes: 10 } });
 
-  test('is counted in UTF-8 bytes, for protocol reads and the page tap', async ({ page }) => {
+  test('is counted in UTF-8 bytes for request and response bodies', async ({ page }) => {
     await withServer(
       (req, res) => {
         if (req.url !== '/text') return false;
+        req.resume();
         res.writeHead(200, { 'content-type': 'text/plain; charset=utf-8' });
         res.end('é'.repeat(7)); // 14 bytes, 7 characters
         return true;
@@ -318,10 +324,15 @@ test.describe('body limit', () => {
       async (origin) => {
         await page.goto(`${origin}/`);
         await page.evaluate(() => fetch('/text').then((r) => r.text()));
+        await page.evaluate(() =>
+          fetch('/text', { method: 'POST', headers: { 'content-type': 'text/plain' }, body: 'ü'.repeat(6) }),
+        );
         const s = await captureSnapshot(page);
-        const e = s.network!.find((x) => x.url.endsWith('/text'))!;
-        expect(e.responseBody).toBe('ééééé'); // 10 bytes
-        expect(e.bodyTruncated).toBe(true);
+        const [get, post] = s.network!.filter((x) => x.url.endsWith('/text'));
+        expect(get!.responseBody).toBe('ééééé'); // 10 bytes
+        expect(get!.bodyTruncated).toBe(true);
+        expect(post!.requestBody).toBe('üüüüü'); // 12 bytes sent, 10 kept
+        expect(post!.bodyTruncated).toBe(true);
       },
     );
   });
