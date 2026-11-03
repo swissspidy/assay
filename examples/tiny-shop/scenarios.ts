@@ -38,6 +38,8 @@ export interface TaskDef {
   id: string;
   /** Probes the task's checks may use. */
   probes: ('cart' | 'latestOrder')[];
+  /** Generic stress variants that do not apply to this task (see src/stress/variants.ts). */
+  skipVariants?: string[];
   scenarios: Scenario[];
 }
 

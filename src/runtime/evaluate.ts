@@ -15,7 +15,7 @@ import type {
   ValueSource,
 } from '../types.ts';
 import { CHANNEL_TRUST } from '../types.ts';
-import { describeTextMatch, matchText, stripGlobal } from '../text.ts';
+import { canonical, describeTextMatch, matchText, stripGlobal } from '../text.ts';
 import { checkSetDigest, snapshotDigest } from '../snapshot/digest.ts';
 import { AXIndex, describeLocator, resolveTarget, type INode } from './axindex.ts';
 import { compare, compareNumber, describeNumberCompare, jsonPointer } from './compare.ts';
@@ -99,7 +99,10 @@ function readSource(ctx: Ctx, src: ValueSource): Read {
       const r = resolve(ctx, src.target);
       if (isResult(r)) return r;
       const n = r.node.node;
-      const raw = src.field === 'text' ? ctx.index.text(r.node) : n[src.field];
+      const read = src.field === 'text' ? ctx.index.text(r.node) : n[src.field];
+      // Accessible names and text are whitespace-normalized by definition (ADR 0001 §2.3);
+      // control values and URLs are kept verbatim.
+      const raw = read !== undefined && (src.field === 'name' || src.field === 'text') ? canonical(read) : read;
       const locator = ctx.index.path(r.node);
       if (raw === undefined)
         return abstain('value_unavailable', `${locator} has no ${src.field}`, [ev('a11y', { locator })], r.drift);

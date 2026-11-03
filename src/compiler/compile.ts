@@ -19,6 +19,7 @@ import { canonical } from '../text.ts';
 import { runAgent, type AgentTool, type AgentRun } from '../model/agent.ts';
 import type { ModelClient } from '../model/types.ts';
 import { parseOutcomes, parseOutcomesDetailed, type Clause } from './outcomes.ts';
+import { stressTest } from '../stress/stress.ts';
 import { findNodes, networkEntry, networkLog, outline, probesView, storageView, summary } from './explore.ts';
 import { DISCOVERY_NUDGE, DISCOVERY_SYSTEM, RUBRIC_SYSTEM } from './prompts.ts';
 
@@ -297,7 +298,13 @@ interface Verification {
 }
 
 /** Validate a candidate check set and run it against every reference. */
-export function verifyCandidate(cs: CheckSet, refs: Reference[]): Verification {
+/**
+ * Validate a candidate check set, run it against every reference and (unless
+ * `stress` is false) stress-test it on the correct references: rejecting a valid
+ * variant is an error (over-constrained); fragile anchors, weak checks and
+ * missed mutants are warnings.
+ */
+export function verifyCandidate(cs: CheckSet, refs: Reference[], stress = true): Verification {
   const v = validateCheckSet(cs);
   const errors = [...v.errors];
   const warnings = [...v.warnings];
@@ -328,6 +335,30 @@ export function verifyCandidate(cs: CheckSet, refs: Reference[]): Verification {
   for (const cov of coverage(cs)) {
     if (cov.trust === 'freetext')
       warnings.push(`Requirement ${cov.requirement} is covered only by free page text, which a page can spoof.`);
+  }
+  const ok = refs.filter((r) => r.kind === 'success');
+  if (stress && errors.length === 0 && ok.length) {
+    const r = stressTest(
+      cs,
+      ok.map((x) => ({ name: x.name, snapshot: x.snapshot })),
+    );
+    const describe = (id: string) => {
+      const [ref, vid] = id.split('/');
+      return r.variants.find((x) => x.reference === ref && x.id === vid)?.description ?? id;
+    };
+    for (const o of r.overConstrained) {
+      errors.push(
+        `${o.check} is over-constrained: it rejects valid variants of a correct run (${o.variants.map(describe).join('; ')}). Test only what the requirement states.`,
+      );
+    }
+    for (const f of r.fragile)
+      warnings.push(
+        `${f.check} abstains on valid variants (${f.variants.map(describe).join('; ')}); consider more robust anchors.`,
+      );
+    for (const w of r.weak)
+      warnings.push(`${w.check} still passes when its own evidence is broken (${w.mutants.join(', ')}).`);
+    if (r.missed.length) warnings.push(`Near-miss runs accepted as success: ${r.missed.join(', ')}.`);
+    for (const a of r.advisories) warnings.push(`Advisory: ${a}`);
   }
   return { errors, warnings, references };
 }
