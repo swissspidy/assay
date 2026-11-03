@@ -238,6 +238,8 @@ export interface CheckSet {
   task: { instruction: string; outcomes?: string };
   requirements: Requirement[];
   checks: Check[];
+  /** Set by human confirmation (lockCheckSet); the digest covers everything else in the set. */
+  locked?: { by: string; at: string; digest: string };
 }
 
 // ---------------------------------------------------------------------------
@@ -257,7 +259,9 @@ export type AbstainReason =
   | 'normalize_failed'
   | 'type_mismatch'
   | 'uncovered'
-  | 'subcheck_abstained';
+  | 'subcheck_abstained'
+  /** The agentic verifier could not observe enough to decide (escalation). */
+  | 'verifier_unknown';
 
 export type Channel = 'a11y' | 'text' | 'url' | 'network' | 'storage' | 'probe';
 export type Trust = 'structured' | 'semantic' | 'freetext';
@@ -301,6 +305,10 @@ export interface RequirementResult {
   status: Status;
   reason?: AbstainReason;
   checks: string[];
+  /** Set after escalation: who decided this requirement. */
+  decidedBy?: 'checks' | 'verifier';
+  /** Observations the verifier cited when it decided this requirement. */
+  verifierEvidence?: string[];
 }
 
 export type Verdict = 'success' | 'fail' | 'abstain';

@@ -3,6 +3,7 @@ import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { AnthropicError } from '@anthropic-ai/sdk';
+import { call, lastResults, scripted } from '../support/scripted.ts';
 import {
   anthropicModel,
   canonical,
@@ -19,9 +20,6 @@ import {
   runAgent,
   type Check,
   type EvidenceSnapshot,
-  type ModelClient,
-  type ModelRequest,
-  type ModelTurn,
   type Reference,
   type TaskInput,
 } from '../../src/index.ts';
@@ -37,39 +35,6 @@ import { networkLog } from '../../src/compiler/explore.ts';
 const ref = (task: string, name: string): EvidenceSnapshot =>
   JSON.parse(readFileSync(new URL(`../../examples/tiny-shop/references/${task}/${name}.json`, import.meta.url), 'utf8'))
     .snapshot;
-
-/** A fake model that plays a fixed script; each step sees the request (to inspect tool results). */
-function scripted(steps: ((req: ModelRequest) => Partial<ModelTurn>)[]): ModelClient & { requests: ModelRequest[] } {
-  const requests: ModelRequest[] = [];
-  let i = 0;
-  return {
-    id: 'scripted:test',
-    requests,
-    async turn(req) {
-      requests.push(structuredClone(req));
-      const step = steps[i++];
-      if (!step) throw new Error('script exhausted');
-      const t = step(req);
-      const toolCalls = t.toolCalls ?? [];
-      return {
-        stop: t.stop ?? (toolCalls.length ? 'tool_use' : 'end_turn'),
-        text: t.text ?? '',
-        toolCalls,
-        raw: t.raw ?? [{ type: 'scripted', n: i }],
-        usage: { inputTokens: 10, outputTokens: 5 },
-        model: 'scripted:test',
-      };
-    },
-  };
-}
-
-const call = (name: string, input: unknown, id = `${name}-${Math.random().toString(36).slice(2, 8)}`) => ({
-  toolCalls: [{ id, name, input }],
-});
-const lastResults = (req: ModelRequest) => {
-  const m = req.messages.at(-1)!;
-  return m.role === 'user' ? (m.toolResults ?? []) : [];
-};
 
 const NEWSLETTER: TaskInput = {
   id: 'tiny-shop/newsletter',

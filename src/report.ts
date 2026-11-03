@@ -9,7 +9,9 @@ export function formatOutcome(o: Outcome): string {
     `Verdict: ${o.verdict.toUpperCase()}  (${o.checkSet.id} v${o.checkSet.version}, snapshot ${o.snapshot.digest.slice(0, 19)}…)`,
   );
   for (const r of o.requirements) {
-    lines.push(`${ICON[r.status]} [${r.kind}] ${r.requirement}: ${r.text}${r.reason ? `  (${r.reason})` : ''}`);
+    const by = r.decidedBy === 'verifier' ? '  — decided by the agentic verifier' : '';
+    lines.push(`${ICON[r.status]} [${r.kind}] ${r.requirement}: ${r.text}${r.reason ? `  (${r.reason})` : ''}${by}`);
+    for (const e of r.verifierEvidence ?? []) lines.push(`    evidence [verifier-cited] ${truncate(e, 200)}`);
     for (const id of r.checks) {
       const c = o.checks.find((x) => x.check === id)!;
       lines.push(`    ${ICON[c.status]} ${c.check}: ${c.description}`);
