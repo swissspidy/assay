@@ -28,14 +28,21 @@ async function waitFor(url: string, ms = 10_000): Promise<void> {
 export async function startShop(port = Number(process.env.TINY_SHOP_PORT ?? 4173)): Promise<ShopRunner> {
   const baseURL = `http://localhost:${port}`;
   let server: ChildProcess | undefined;
+  let browser: Browser;
   try {
-    await waitFor(`${baseURL}/api/products`, 200);
-  } catch {
-    const script = fileURLToPath(new URL('../examples/tiny-shop/server.mjs', import.meta.url));
-    server = spawn(process.execPath, [script], { env: { ...process.env, PORT: String(port) }, stdio: 'ignore' });
-    await waitFor(`${baseURL}/api/products`);
+    try {
+      await waitFor(`${baseURL}/api/products`, 200);
+    } catch {
+      const script = fileURLToPath(new URL('../examples/tiny-shop/server.mjs', import.meta.url));
+      server = spawn(process.execPath, [script], { env: { ...process.env, PORT: String(port) }, stdio: 'ignore' });
+      await waitFor(`${baseURL}/api/products`);
+    }
+    browser = await chromium.launch();
+  } catch (e) {
+    // No runner is returned, so nobody else could stop the server started here.
+    server?.kill();
+    throw e;
   }
-  const browser: Browser = await chromium.launch();
   return {
     baseURL,
     async capture(scenario) {
