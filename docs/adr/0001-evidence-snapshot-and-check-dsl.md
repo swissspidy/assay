@@ -177,8 +177,10 @@ still in flight. A `request` check knows the true count lies in
 and abstains otherwise. A missing body therefore never turns into a false
 `fail`, and never into a false `pass` for absence checks.
 
-**Storage.** By default, values of `httpOnly` cookies are replaced with
-`{"redacted": true}` and listed in `meta.redacted`. Snapshots end up in audit
+**Storage.** By default, values of `httpOnly` cookies, and of cookies and
+web storage keys whose names look like credentials (token, secret, password,
+session, auth, JWT, API key), are replaced with `{"redacted": true}` and
+listed in `meta.redacted` (`keepCookies` / `keepStorage` keep named ones). Snapshots end up in audit
 records, and session tokens don't belong there. A check that reads a redacted
 value abstains (`evidence_unavailable`).
 
