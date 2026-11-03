@@ -11,6 +11,7 @@ import {
   type CheckSet,
   type EvidenceSnapshot,
   type StressReference,
+  type AXNode,
 } from '../src/index.ts';
 import { schemaViolations } from '../src/stress/mutants.ts';
 import { TASKS } from '../examples/tiny-shop/scenarios.ts';
@@ -74,7 +75,7 @@ test('over-constrained checks are flagged: exact row count and exact price text'
   const r = stressTest(flawed, successRefs('03-cart-two-mugs'));
   expect(r.overConstrained.map((o) => o.check)).toEqual(['C9']);
   // a generated variant and a held-out correct run (with an extra teapot) both expose it
-  expect(r.overConstrained[0]!.variants).toEqual(
+  expect(r.overConstrained[0]!.variants.map((v) => `${v.reference}/${v.id}`)).toEqual(
     expect.arrayContaining(['both-mugs/extra-row', 'both-mugs-and-teapot/reference']),
   );
   expect(r.rates.variantsAccepted).toBeLessThan(r.rates.variantsTotal);
@@ -151,7 +152,7 @@ test('relying on page content alone raises an advisory', () => {
     },
   ]);
   const r = stressTest(pageOnly, successRefs('07-express-order'));
-  expect(r.advisories.join('\n')).toContain('claims-only');
+  expect(r.advisories.map((a) => a.id)).toContain('claims-only');
 });
 
 test('schema violations: pinned values, required and forbidden items', () => {
@@ -175,4 +176,154 @@ test('schema violations: pinned values, required and forbidden items', () => {
       { name: 'Tea' },
     ]),
   ).toEqual([{ what: 'required item missing', value: [{ name: 'Tea' }] }]);
+});
+
+// ---------------------------------------------------------------------------
+// Review cases: generators must follow what each check compares
+// ---------------------------------------------------------------------------
+
+const snap = (children: AXNode[], extra: Partial<EvidenceSnapshot> = {}): EvidenceSnapshot => ({
+  schema: 'assay.snapshot/v1',
+  capturedAt: '',
+  page: { url: 'https://shop.test/orders/A1', title: '' },
+  a11y: { role: 'document', children: [{ role: 'main', children }] },
+  text: '',
+  network: [],
+  storage: { cookies: [], local: {}, session: {} },
+  probes: {},
+  meta: { capturer: 't', redacted: [] },
+  ...extra,
+});
+const one = (assert: Check['assert'], kind: 'hard' | 'soft' = 'hard'): CheckSet => ({
+  schema: 'assay.checks/v1',
+  id: 't',
+  version: '1',
+  task: { instruction: 'Do the thing.' },
+  requirements: [{ id: 'R1', kind, text: 't', source: { field: 'instruction', quote: 'do the thing' } }],
+  checks: [{ id: 'C1', requirement: 'R1', description: 'd', assert }],
+});
+const run = (cs: CheckSet, s: EvidenceSnapshot) => stressTest(cs, [{ name: 'ref', snapshot: s }]);
+
+test('ids are not re-formatted with digit grouping; record-like JSON gets no extra keys', () => {
+  const ids = run(
+    one({
+      kind: 'value',
+      source: { from: 'node', target: { role: 'paragraph' }, field: 'text' },
+      normalize: [
+        { op: 'extract', regex: 'Order number: (\\d+)' },
+        { op: 'number', locale: 'en-US' },
+      ],
+      expect: { equals: 10234 },
+    }),
+    snap([{ role: 'paragraph', children: [{ role: 'text', name: 'Order number: 10234' }] }]),
+  );
+  expect(ids.overConstrained).toEqual([]);
+  const map = run(
+    one({
+      kind: 'value',
+      source: { from: 'probe', probe: 'stock' },
+      expect: { schema: { type: 'object', additionalProperties: { type: 'integer' } } },
+    }),
+    snap([], { probes: { stock: { ok: true, value: { 'MUG-BLUE': 1, 'MUG-RED': 0 } } } }),
+  );
+  expect(map.overConstrained).toEqual([]);
+});
+
+test('range and contains comparisons get violating mutants, not values that still satisfy them', () => {
+  const total = snap([{ role: 'status', name: 'Total', children: [{ role: 'text', name: '$12.00' }] }]);
+  const range = run(
+    one({
+      kind: 'value',
+      source: { from: 'node', target: { role: 'status', name: 'Total' }, field: 'text' },
+      normalize: [{ op: 'currency', locale: 'en-US', currency: 'USD' }],
+      expect: { gte: 10 },
+    }),
+    total,
+  );
+  expect(range.weak).toEqual([]);
+  expect(range.rates.mutantsRejected).toBe(range.rates.mutantsTotal);
+  expect(range.rates.mutantsTotal).toBeGreaterThan(0);
+  const named = run(
+    one({ kind: 'state', target: { role: 'heading' }, expect: { name: { contains: 'Order' } } }),
+    snap([{ role: 'heading', name: 'Order confirmed', level: 1 }]),
+  );
+  expect(named.weak).toEqual([]);
+  expect(named.untested).toEqual([]);
+});
+
+test('url fields, enums, upper bounds and forbidden requests have effective mutants', () => {
+  const link = run(
+    one({
+      kind: 'value',
+      source: { from: 'node', target: { role: 'link' }, field: 'url' },
+      expect: { equals: '/cart' },
+    }),
+    snap([{ role: 'link', name: 'Cart', url: '/cart' }]),
+  );
+  expect(link.weak).toEqual([]);
+  expect(link.untested).toEqual([]);
+  const enumCheck = run(
+    one({ kind: 'value', source: { from: 'probe', probe: 'p', pointer: '/v' }, expect: { schema: { enum: [1, 2] } } }),
+    snap([], { probes: { p: { ok: true, value: { v: 1 } } } }),
+  );
+  expect(enumCheck.weak).toEqual([]);
+  expect(enumCheck.untested).toEqual([]);
+  const atMost = run(
+    one({ kind: 'contains', scope: { role: 'main' }, match: { role: 'listitem' }, count: { lte: 1 } }),
+    snap([{ role: 'listitem', name: 'a' }]),
+  );
+  expect(atMost.weak).toEqual([]);
+  expect(atMost.mutants.some((m) => m.id.includes('contains:extra') && m.rejected)).toBe(true);
+  const forbidden = run(
+    one({ kind: 'request', match: { method: 'DELETE', url: { path: '/api/cart' } }, count: { eq: 0 } }),
+    snap([]),
+  );
+  expect(forbidden.untested).toEqual([]);
+  expect(forbidden.missed).toEqual([]);
+});
+
+test('wrong-item mutants: the state moves to another node; a sibling value replaces the expected one', () => {
+  const boxes = snap([
+    { role: 'checkbox', name: 'Gift wrap', states: { checked: true } },
+    { role: 'checkbox', name: 'Insurance' },
+  ]);
+  const r = run(
+    one({ kind: 'state', target: { role: 'checkbox', name: 'Gift wrap' }, expect: { checked: true } }),
+    boxes,
+  );
+  expect(r.mutants.some((m) => m.id === 'C1:state:wrong-target' && m.rejected)).toBe(true);
+  const items = run(
+    one({
+      kind: 'value',
+      source: { from: 'probe', probe: 'cart', pointer: '/items/0/name' },
+      expect: { equals: 'Blue Mug' },
+    }),
+    snap([], { probes: { cart: { ok: true, value: { items: [{ name: 'Blue Mug' }, { name: 'Red Mug' }] } } } }),
+  );
+  expect(items.mutants.some((m) => m.description.includes('"Red Mug"') && m.rejected)).toBe(true);
+});
+
+test('accounting: success-claim copies are separate; checks already failing on the reference are not flagged', () => {
+  const r = stressTest(checks('07-express-order'), successRefs('07-express-order'));
+  expect(r.rates.claimMutantsTotal).toBe(r.rates.mutantsRejected);
+  const soft = one({ kind: 'contains', scope: { role: 'main' }, match: { role: 'heading', name: 'Nope' } }, 'soft');
+  const cs: CheckSet = {
+    ...soft,
+    requirements: [
+      ...soft.requirements,
+      { id: 'R2', kind: 'hard', text: 'x', source: { field: 'instruction', quote: 'the thing' } },
+    ],
+    checks: [
+      ...soft.checks,
+      {
+        id: 'C2',
+        requirement: 'R2',
+        description: 'd',
+        assert: { kind: 'contains', scope: { role: 'main' }, match: { role: 'paragraph' } },
+      },
+    ],
+  };
+  const res = run(cs, snap([{ role: 'paragraph', name: 'p' }]));
+  expect(res.overConstrained).toEqual([]);
+  expect(res.fragile).toEqual([]);
 });

@@ -47,7 +47,17 @@ function lines(src: string): Line[] {
 function isGherkin(ls: Line[]): boolean {
   const content = ls.filter((l) => l.text);
   if (content.some((l) => /^(given|when)\s/i.test(l.text) || SECTION.test(l.text))) return true;
-  return content.length > 0 && content.every((l) => STEP.test(l.text));
+  // All lines are steps and one of them is a Then step ("* a\n* b" alone is a bullet list).
+  return content.length > 0 && content.every((l) => STEP.test(l.text)) && content.some((l) => /^then\s/i.test(l.text));
+}
+
+const trimEnd = (t: string) => t.replace(/[.;]\s*$/, '');
+
+/** Extend a clause with a continuation line (dropping the clause's trailing period). */
+function extend(src: string, clause: Clause, l: Line): void {
+  const body = trimEnd(l.text);
+  clause.end = l.start + body.length;
+  clause.text = canonical(src.slice(clause.start, clause.end).replace(/[.;](\s+)/g, '$1'));
 }
 
 export function parseOutcomesDetailed(text: string | undefined): ParsedOutcomes {
@@ -60,8 +70,7 @@ export function parseOutcomesDetailed(text: string | undefined): ParsedOutcomes 
   let last: { clause: Clause; lead: number } | undefined;
 
   const push = (l: Line, skip: number) => {
-    let body = l.text.slice(skip);
-    body = body.replace(/[.;]\s*$/, '');
+    const body = trimEnd(l.text.slice(skip));
     if (!canonical(body)) return;
     const start = l.start + skip;
     const clause = { text: canonical(body), start, end: start + body.length };
@@ -84,11 +93,8 @@ export function parseOutcomesDetailed(text: string | undefined): ParsedOutcomes 
       const m = STEP.exec(l.text);
       if (!m) {
         // Indented continuation of the previous Then step.
-        if (last && l.lead > last.lead) {
-          const body = l.text.replace(/[.;]\s*$/, '');
-          last.clause.end = l.start + body.length;
-          last.clause.text = canonical(text.slice(last.clause.start, last.clause.end));
-        } else ignored.push(l.text);
+        if (last && l.lead > last.lead) extend(text, last.clause, l);
+        else ignored.push(l.text);
         continue;
       }
       const kw = m[1]!.toLowerCase();
@@ -103,14 +109,21 @@ export function parseOutcomesDetailed(text: string | undefined): ParsedOutcomes 
       continue;
     }
     // Markdown or plain lines.
-    if (l.text.startsWith('#') || /:\s*$/.test(l.text)) {
+    let skip = LIST_ITEM.exec(l.text)?.[0].length ?? 0;
+    const then = THEN_PREFIX.exec(l.text.slice(skip));
+    if (then) skip += then[0].length;
+    const isItem = skip > 0;
+    // An indented line under a list item continues it.
+    if (!isItem && last && l.lead > last.lead) {
+      extend(text, last.clause, l);
+      continue;
+    }
+    // Headings and header-like lines ("Expected outcomes:") are not outcomes; items ending in ":" still are.
+    if (l.text.startsWith('#') || (!isItem && /:\s*$/.test(l.text))) {
       ignored.push(l.text);
       last = undefined;
       continue;
     }
-    let skip = LIST_ITEM.exec(l.text)?.[0].length ?? 0;
-    const then = THEN_PREFIX.exec(l.text.slice(skip));
-    if (then) skip += then[0].length;
     push(l, skip);
   }
   return { clauses, ignored };

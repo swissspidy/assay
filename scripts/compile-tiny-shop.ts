@@ -56,6 +56,7 @@ for (const def of TASKS) {
       model: env.model,
       log: (m) => console.warn(m),
     });
+    env.save();
     console.warn(`${def.id}: model ${env.mode}`);
   } catch (e) {
     failures++;

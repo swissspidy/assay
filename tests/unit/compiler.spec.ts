@@ -67,7 +67,7 @@ test.describe('rubric', () => {
       parseOutcomes(NEWSLETTER.outcomes),
     );
     expect(errs.join('\n')).toContain('not verbatim');
-    expect(errs.join('\n')).toContain('has no requirement quoting it');
+    expect(errs.join('\n')).toContain('not fully quoted');
   });
 });
 
@@ -310,7 +310,9 @@ test.describe('rubric hardening', () => {
   });
   test('a stray word does not cover clauses; one quote cannot merge two outcomes', () => {
     expect(coversClause('the', 'the newsletter subscription is saved')).toBe(false);
-    expect(coversClause('newsletter subscription is saved', 'the newsletter subscription is saved')).toBe(true);
+    expect(coversClause('the newsletter subscription is saved', 'the newsletter subscription is saved')).toBe(true);
+    // a partial quote that drops the decisive word does not cover the clause
+    expect(coversClause('the order ships', 'the order ships express')).toBe(false);
     const merged = checkRubric(
       NEWSLETTER,
       [req('the newsletter subscription is saved\nThen the newsletter checkbox in the preferences is checked')],
@@ -534,6 +536,90 @@ test.describe('Anthropic adapter (fake client)', () => {
       'after 3 attempts',
     );
   });
+});
+
+test.describe('rubric coverage (re-review)', () => {
+  const task = (outcomes: string) => ({ id: 't', instruction: 'Do it.', outcomes });
+  const r = (id: string, quote: string, kind: 'hard' | 'soft' = 'hard') => ({
+    id,
+    kind,
+    text: quote,
+    source: { field: 'outcomes' as const, quote },
+  });
+  test('a quote dropping a word is uncovered unless another requirement quotes the rest', () => {
+    const t = task('Then the order ships express');
+    const cl = parseOutcomes(t.outcomes);
+    expect(checkRubric(t, [r('R1', 'the order ships')], cl).join()).toContain('not fully quoted');
+    expect(checkRubric(t, [r('R1', 'the order ships'), r('R2', 'express')], cl)).toEqual([]);
+  });
+  test('duplicate and nested clauses do not make rubrics impossible', () => {
+    const dup = task('Then a b c\nThen a b c');
+    expect(checkRubric(dup, [r('R1', 'a b c')], parseOutcomes(dup.outcomes))).toEqual([]);
+    const nested = task('Then the order is placed\nThen the order is placed with express shipping');
+    expect(
+      checkRubric(nested, [r('R1', 'the order is placed with express shipping')], parseOutcomes(nested.outcomes)),
+    ).toEqual([]);
+  });
+  test('a clause can be split into a hard part and an optional soft part', () => {
+    const t = task('Then the confirmation is shown, ideally with a delivery date');
+    const cl = parseOutcomes(t.outcomes);
+    expect(
+      checkRubric(t, [r('R1', 'the confirmation is shown'), r('R2', 'ideally with a delivery date', 'soft')], cl),
+    ).toEqual([]);
+    // the non-optional part cannot be soft just because the clause mentions "ideally"
+    expect(
+      checkRubric(
+        t,
+        [r('R1', 'the confirmation is shown', 'soft'), r('R2', 'ideally with a delivery date', 'soft')],
+        cl,
+      ).join(),
+    ).toContain('must be hard');
+  });
+  test('a bullet list with * is a list, not Gherkin', () => {
+    expect(parseOutcomes('* the cart has a mug\n* the total is $12').map((c) => c.text)).toEqual([
+      'the cart has a mug',
+      'the total is $12',
+    ]);
+  });
+  test('outcomes that parse to nothing fail the compile with a reason', async () => {
+    const { report } = await compileTask(
+      { id: 't', instruction: 'Do it.', outcomes: 'Given a cart\nWhen I pay' },
+      [{ name: 'r', kind: 'success', snapshot: ref('01-newsletter', 'subscribed') }],
+      { model: scripted([]) },
+    );
+    expect(report.status).toBe('failed');
+    expect(report.reason).toContain('no outcome clause');
+    expect(report.warnings.join()).toContain('When I pay');
+  });
+});
+
+test('adapter aborts the failed stream before retrying', async () => {
+  let aborted = 0;
+  let calls = 0;
+  const client = {
+    beta: {
+      messages: {
+        stream() {
+          calls++;
+          return {
+            abort: () => aborted++,
+            finalMessage: async () => {
+              if (calls === 1) throw new AnthropicError('Unable to parse tool parameter JSON from model.');
+              return {
+                model: 'claude-opus-5-5',
+                content: [{ type: 'text', text: 'ok' }],
+                stop_reason: 'end_turn',
+                usage: { input_tokens: 1, output_tokens: 1 },
+              } as never;
+            },
+          };
+        },
+      },
+    },
+  };
+  const m = await anthropicModel({ client });
+  expect((await m.turn({ system: 's', messages: [{ role: 'user', text: 'x' }], tools: [] })).text).toBe('ok');
+  expect(aborted).toBe(1);
 });
 
 test('compileTask rejects over-constrained checks found by stress testing, then accepts the fix', async () => {

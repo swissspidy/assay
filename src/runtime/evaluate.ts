@@ -15,9 +15,9 @@ import type {
   ValueSource,
 } from '../types.ts';
 import { CHANNEL_TRUST } from '../types.ts';
-import { canonical, describeTextMatch, matchText, stripGlobal } from '../text.ts';
+import { describeTextMatch, matchText, stripGlobal } from '../text.ts';
 import { checkSetDigest, snapshotDigest } from '../snapshot/digest.ts';
-import { AXIndex, describeLocator, resolveTarget, type INode } from './axindex.ts';
+import { AXIndex, describeLocator, readNodeField, resolveTarget, type INode } from './axindex.ts';
 import { compare, compareNumber, describeNumberCompare, jsonPointer } from './compare.ts';
 import { NormalizeError, applyNormalizers, fromJson, toJson, type TypedValue } from './values.ts';
 import { describeRequestMatch, describeUrlMatch, matchRequest, matchUrl } from './network.ts';
@@ -98,11 +98,7 @@ function readSource(ctx: Ctx, src: ValueSource): Read {
     case 'node': {
       const r = resolve(ctx, src.target);
       if (isResult(r)) return r;
-      const n = r.node.node;
-      const read = src.field === 'text' ? ctx.index.text(r.node) : n[src.field];
-      // Accessible names and text are whitespace-normalized by definition (ADR 0001 §2.3);
-      // control values and URLs are kept verbatim.
-      const raw = read !== undefined && (src.field === 'name' || src.field === 'text') ? canonical(read) : read;
+      const raw = readNodeField(ctx.index, r.node, src.field);
       const locator = ctx.index.path(r.node);
       if (raw === undefined)
         return abstain('value_unavailable', `${locator} has no ${src.field}`, [ev('a11y', { locator })], r.drift);
@@ -406,7 +402,12 @@ export function evaluateAssertion(ctx: Ctx, a: Assertion): AssertionResult {
 // Check sets
 // ---------------------------------------------------------------------------
 
-export function evaluate(checkSet: CheckSet, snapshot: EvidenceSnapshot): Outcome {
+export interface EvaluateOptions {
+  /** Compute snapshot and check-set digests (default true). Stress testing skips them for speed. */
+  digests?: boolean;
+}
+
+export function evaluate(checkSet: CheckSet, snapshot: EvidenceSnapshot, opts: EvaluateOptions = {}): Outcome {
   const ctx: Ctx = { snapshot, index: new AXIndex(snapshot.a11y) };
 
   const checks: CheckResult[] = checkSet.checks.map((c) => {
@@ -435,8 +436,16 @@ export function evaluate(checkSet: CheckSet, snapshot: EvidenceSnapshot): Outcom
 
   return {
     verdict,
-    checkSet: { id: checkSet.id, version: checkSet.version, digest: checkSetDigest(checkSet) },
-    snapshot: { digest: snapshotDigest(snapshot), url: snapshot.page.url, capturedAt: snapshot.capturedAt },
+    checkSet: {
+      id: checkSet.id,
+      version: checkSet.version,
+      digest: opts.digests === false ? '' : checkSetDigest(checkSet),
+    },
+    snapshot: {
+      digest: opts.digests === false ? '' : snapshotDigest(snapshot),
+      url: snapshot.page.url,
+      capturedAt: snapshot.capturedAt,
+    },
     requirements,
     checks,
     drift: checks.flatMap((c) => [...new Set(c.drift)].map((locator) => ({ check: c.check, locator }))),

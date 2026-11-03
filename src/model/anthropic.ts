@@ -11,7 +11,7 @@ type StreamParams = Parameters<Anthropic['beta']['messages']['stream']>[0];
 
 /** The subset of the SDK client the adapter uses (injectable for tests). */
 export interface AnthropicLike {
-  beta: { messages: { stream(params: StreamParams): { finalMessage(): Promise<BetaMessage> } } };
+  beta: { messages: { stream(params: StreamParams): { finalMessage(): Promise<BetaMessage>; abort?(): void } } };
 }
 
 export interface AnthropicOptions {
@@ -127,9 +127,12 @@ export async function anthropicModel(opts: AnthropicOptions = {}): Promise<Model
         ...(useFallbacks ? { betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' as const } : {}),
       };
       for (let attempt = 0; ; attempt++) {
+        const stream = client.beta.messages.stream(params);
         try {
-          return fromAnthropicMessage(await client.beta.messages.stream(params).finalMessage());
+          return fromAnthropicMessage(await stream.finalMessage());
         } catch (e) {
+          // Stop the failed stream so it is not billed alongside a retry.
+          stream.abort?.();
           if (e instanceof sdk.APIError) throw new ModelError(`Anthropic API error ${e.status ?? ''}: ${e.message}`);
           // A tool input that streamed as invalid JSON is a client-side SDK error, not an
           // API error: re-issue the identical request a bounded number of times.
