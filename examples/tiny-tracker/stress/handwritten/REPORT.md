@@ -11,8 +11,8 @@
 | tiny-tracker/comment | 20/20 | 2/2 (2 / 0) | – | – | 0 |
 | tiny-tracker/rename | 20/20 | 2/2 (2 / 0) | – | – | 0 |
 | tiny-tracker/unassign | 20/20 | 2/2 (2 / 0) | – | – | 0 |
-| tiny-tracker/filter-open-bugs | 20/20 | 10/10 (10 / 0) | – | – | 0 |
-| **tiny-tracker** | **200/200** | **42/42** (42 / 0) | | | 0 |
+| tiny-tracker/filter-open-bugs | 20/20 | 12/12 (12 / 0) | – | – | 0 |
+| **tiny-tracker** | **200/200** | **44/44** (44 / 0) | | | 0 |
 
 ## tiny-tracker/create-bug v1
 
@@ -62,8 +62,8 @@
 ## tiny-tracker/filter-open-bugs v1
 
 - Valid variants accepted: **20/20** (100%)
-- Mutants rejected: **10/10** (100%; 10 by fail, 0 by abstain)
-- Mutants with a success claim added still rejected: 10/10
+- Mutants rejected: **12/12** (100%; 12 by fail, 0 by abstain)
+- Mutants with a success claim added still rejected: 12/12
 
 **Advisories**
 - filtered-by-url/claims-only (the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable)

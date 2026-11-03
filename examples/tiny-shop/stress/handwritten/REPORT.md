@@ -2,7 +2,7 @@
 
 | Task | Variants accepted | Mutants rejected (fail / abstain) | Over-constrained | Weak | Missed |
 |---|---|---|---|---|---|
-| tiny-shop/newsletter | 18/18 | 8/8 (8 / 0) | – | – | 0 |
+| tiny-shop/newsletter | 18/18 | 10/10 (10 / 0) | – | – | 0 |
 | tiny-shop/add-blue-mug | 22/22 | 2/2 (2 / 0) | – | – | 0 |
 | tiny-shop/cart-two-mugs | 24/24 | 8/8 (8 / 0) | – | – | 0 |
 | tiny-shop/remove-red-mug | 23/23 | 6/6 (6 / 0) | – | – | 0 |
@@ -12,13 +12,13 @@
 | tiny-shop/delivery-date | 28/28 | 8/8 (8 / 0) | – | – | 0 |
 | tiny-shop/gift-wrap | 20/20 | 10/10 (10 / 0) | – | – | 0 |
 | tiny-shop/dark-german | 16/16 | 10/10 (10 / 0) | – | – | 0 |
-| **tiny-shop** | **223/223** | **86/86** (86 / 0) | | | 0 |
+| **tiny-shop** | **223/223** | **88/88** (88 / 0) | | | 0 |
 
 ## tiny-shop/newsletter v1
 
 - Valid variants accepted: **18/18** (100%)
-- Mutants rejected: **8/8** (100%; 8 by fail, 0 by abstain)
-- Mutants with a success claim added still rejected: 8/8
+- Mutants rejected: **10/10** (100%; 10 by fail, 0 by abstain)
+- Mutants with a success claim added still rejected: 10/10
 ## tiny-shop/add-blue-mug v1
 
 - Valid variants accepted: **22/22** (100%)
