@@ -162,7 +162,8 @@ bodies to a Playwright binding. For `fetch`, the page receives the response only
   reported its body, or after 500 ms, whichever comes first. So an app that
   navigates right after the response cannot unload the page mid-read, and a
   streaming response is held up by at most 500 ms. The tap reads at most the
-  body size limit.
+  body size limit, and stops a body still open after 10 s, keeping what it has
+  read as a truncated body.
 - A failed request never receives a tapped body, and a reused `XMLHttpRequest`
   reports each response once.
 - If neither path produced a body that should exist, the entry is marked
