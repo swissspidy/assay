@@ -1,0 +1,39 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-calendar/week-start",
+  "version": "1",
+  "task": {
+    "instruction": "Make my week start on Monday.",
+    "outcomes": "Then the week starts on Monday"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The week starts on Monday",
+      "source": {
+        "field": "outcomes",
+        "quote": "the week starts on Monday"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "localStorage weekStart is monday.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "storage",
+          "area": "local",
+          "key": "weekStart"
+        },
+        "normalize": ["trim", "lowercase"],
+        "expect": {
+          "equals": "monday"
+        }
+      }
+    }
+  ]
+}

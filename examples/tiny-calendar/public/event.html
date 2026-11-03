@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Event · Tiny Calendar</title>
+  </head>
+  <body>
+    <div id="h"></div>
+    <main>
+      <h1 id="title"></h1>
+      <dl aria-label="Event details" id="details"></dl>
+      <fieldset>
+        <legend>RSVP</legend>
+        <label><input type="radio" name="rsvp" value="yes" /> Going</label>
+        <label><input type="radio" name="rsvp" value="maybe" /> Maybe</label>
+        <label><input type="radio" name="rsvp" value="no" /> Not going</label>
+      </fieldset>
+      <form aria-label="Edit event" id="edit">
+        <p>
+          <label>Title <input name="title" /></label>
+        </p>
+        <p>
+          <label>Date <input type="date" name="date" /></label>
+        </p>
+        <p>
+          <label>Start time <input type="time" name="time" /></label>
+        </p>
+        <p>
+          <label>Location <input name="location" /></label>
+        </p>
+        <button>Save changes</button>
+      </form>
+      <button id="del">Delete event</button>
+      <p role="status" id="msg"></p>
+    </main>
+    <script type="module">
+      import { api, esc, fmtLongDate, fmtTime, header } from '/app.js';
+      document.getElementById('h').outerHTML = header;
+      const id = location.pathname.split('/').pop();
+      const msg = document.getElementById('msg');
+      function render(e) {
+        document.getElementById('title').textContent = e.title;
+        document.title = e.title + ' · Tiny Calendar';
+        const dur =
+          e.duration % 60 === 0 ? `${e.duration / 60} hour${e.duration === 60 ? '' : 's'}` : `${e.duration} minutes`;
+        document.getElementById('details').innerHTML =
+          `<dt>When</dt><dd>${fmtLongDate(e.date)}, ${fmtTime(e.date, e.time)}</dd>
+      <dt>Duration</dt><dd>${dur}</dd><dt>Location</dt><dd>${esc(e.location) || '—'}</dd><dt>Reminder</dt><dd>${e.reminder ? '30 minutes before' : 'None'}</dd>`;
+        for (const r of document.querySelectorAll('input[name=rsvp]')) r.checked = r.value === e.rsvp;
+        const f = document.getElementById('edit');
+        f.title.value = e.title;
+        f.date.value = e.date;
+        f.time.value = e.time;
+        f.location.value = e.location;
+      }
+      render(await api('GET', '/api/events/' + id));
+      for (const r of document.querySelectorAll('input[name=rsvp]')) {
+        r.onchange = async () => {
+          render(await api('PUT', `/api/events/${id}/rsvp`, { rsvp: r.value }));
+          msg.textContent = 'RSVP saved';
+        };
+      }
+      document.getElementById('edit').onsubmit = async (ev) => {
+        ev.preventDefault();
+        const f = ev.target;
+        try {
+          render(
+            await api('PATCH', '/api/events/' + id, {
+              title: f.title.value,
+              date: f.date.value,
+              time: f.time.value,
+              location: f.location.value,
+            }),
+          );
+          msg.textContent = 'Changes saved';
+        } catch (err) {
+          msg.textContent = 'Could not save: ' + err.message;
+        }
+      };
+      document.getElementById('del').onclick = async () => {
+        if (!confirm('Delete this event?')) return;
+        await api('DELETE', '/api/events/' + id);
+        location.href = '/calendar';
+      };
+      document.body.dataset.ready = '1';
+    </script>
+  </body>
+</html>

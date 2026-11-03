@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>New event · Tiny Calendar</title>
+  </head>
+  <body>
+    <div id="h"></div>
+    <main>
+      <h1>New event</h1>
+      <form aria-label="New event" id="f">
+        <p>
+          <label>Title <input name="title" /></label>
+        </p>
+        <p>
+          <label>Date <input type="date" name="date" /></label>
+        </p>
+        <p>
+          <label>Start time <input type="time" name="time" /></label>
+        </p>
+        <p>
+          <label
+            >Duration
+            <select name="duration">
+              <option value="30">30 minutes</option>
+              <option value="60" selected>1 hour</option>
+              <option value="90">1.5 hours</option>
+              <option value="120">2 hours</option>
+            </select></label
+          >
+        </p>
+        <p>
+          <label>Location <input name="location" /></label>
+        </p>
+        <p>
+          <label><input type="checkbox" name="reminder" /> Remind me 30 minutes before</label>
+        </p>
+        <button>Create event</button>
+      </form>
+      <div role="alert" id="err"></div>
+    </main>
+    <script type="module">
+      import { api, header } from '/app.js';
+      document.getElementById('h').outerHTML = header;
+      const f = document.getElementById('f');
+      f.onsubmit = async (e) => {
+        e.preventDefault();
+        const d = new FormData(f);
+        try {
+          const ev = await api('POST', '/api/events', {
+            title: d.get('title'),
+            date: d.get('date'),
+            time: d.get('time'),
+            duration: Number(d.get('duration')),
+            location: d.get('location'),
+            reminder: d.get('reminder') === 'on',
+          });
+          location.href = '/events/' + ev.id;
+        } catch (err) {
+          document.getElementById('err').textContent = 'Could not create event: ' + err.message;
+        }
+      };
+      document.body.dataset.ready = '1';
+    </script>
+  </body>
+</html>

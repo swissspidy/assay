@@ -59,6 +59,16 @@ function decodeBody(text: string, contentType: string | undefined, max: number):
       /* fall through to text */
     }
   }
+  if (contentType && /application\/x-www-form-urlencoded/i.test(contentType)) {
+    // HTML form posts become objects (repeated fields become arrays), so checks can
+    // match them with JSON Schema like JSON bodies.
+    const form: Record<string, Json> = {};
+    for (const [k, v] of new URLSearchParams(text)) {
+      const prev = form[k];
+      form[k] = prev === undefined ? v : Array.isArray(prev) ? [...prev, v] : [prev, v];
+    }
+    return { body: form, truncated: false };
+  }
   return { body: text, truncated: false };
 }
 

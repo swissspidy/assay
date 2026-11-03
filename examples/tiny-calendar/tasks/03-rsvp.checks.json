@@ -1,0 +1,51 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-calendar/rsvp",
+  "version": "1",
+  "task": {
+    "instruction": "RSVP that I'm going to the Book club.",
+    "outcomes": "Then my RSVP for Book club is going"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "My RSVP for Book club is going",
+      "source": {
+        "field": "outcomes",
+        "quote": "my RSVP for Book club is going"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "The backend records RSVP yes for Book club.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "events"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["title", "rsvp"],
+              "properties": {
+                "title": {
+                  "const": "Book club"
+                },
+                "rsvp": {
+                  "const": "yes"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

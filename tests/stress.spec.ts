@@ -14,11 +14,12 @@ import {
   type AXNode,
 } from '../src/index.ts';
 import { schemaViolations } from '../src/stress/mutants.ts';
-import { TASKS } from '../examples/tiny-shop/scenarios.ts';
+import { APPS, app as appByName } from '../examples/apps.ts';
 
-const root = new URL('../examples/tiny-shop/', import.meta.url);
-const checks = (id: string) => JSON.parse(readFileSync(new URL(`tasks/${id}.checks.json`, root), 'utf8')) as CheckSet;
-const successRefs = (id: string): StressReference[] => {
+const shop = appByName('tiny-shop').dir;
+const checks = (id: string, root: URL = shop) =>
+  JSON.parse(readFileSync(new URL(`tasks/${id}.checks.json`, root), 'utf8')) as CheckSet;
+const successRefs = (id: string, root: URL = shop): StressReference[] => {
   const dir = new URL(`references/${id}/`, root);
   return readdirSync(dir)
     .map((f) => ({ f, j: JSON.parse(readFileSync(new URL(f, dir), 'utf8')) }))
@@ -27,9 +28,11 @@ const successRefs = (id: string): StressReference[] => {
 };
 
 test.describe('handwritten check sets survive stress testing', () => {
-  for (const t of TASKS) {
-    test(t.id, () => {
-      const r = stressTest(checks(t.id), successRefs(t.id), { skipVariants: t.skipVariants ?? [] });
+  for (const t of APPS.flatMap((a) => a.tasks.map((task) => ({ ...task, app: a })))) {
+    test(`${t.app.name}/${t.id}`, () => {
+      const r = stressTest(checks(t.id, t.app.dir), successRefs(t.id, t.app.dir), {
+        skipVariants: t.skipVariants ?? [],
+      });
       expect(r.rates.variantsTotal).toBeGreaterThan(4);
       expect(r.rates.mutantsTotal).toBeGreaterThan(0);
       expect(r.overConstrained, formatStressReport(r)).toEqual([]);

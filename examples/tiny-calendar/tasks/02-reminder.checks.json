@@ -1,0 +1,86 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-calendar/reminder",
+  "version": "1",
+  "task": {
+    "instruction": "Add a \"Yoga\" event on November 7, 2026 at 08:00 with a reminder.",
+    "outcomes": "Then an event \"Yoga\" exists\nThen the event has a reminder"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "An event \"Yoga\" exists",
+      "source": {
+        "field": "outcomes",
+        "quote": "an event \"Yoga\" exists"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The event has a reminder",
+      "source": {
+        "field": "outcomes",
+        "quote": "the event has a reminder"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "The backend has an event \"Yoga\".",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "events"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["title"],
+              "properties": {
+                "title": {
+                  "const": "Yoga"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "C2",
+      "requirement": "R2",
+      "description": "That event has a reminder.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "events"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["title", "reminder"],
+              "properties": {
+                "title": {
+                  "const": "Yoga"
+                },
+                "reminder": {
+                  "const": true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

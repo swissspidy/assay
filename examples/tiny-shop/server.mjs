@@ -5,6 +5,7 @@ import { readFile } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { redesign } from '../lib/kit.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT ?? 4173);
@@ -16,6 +17,19 @@ export const PRODUCTS = [
 ];
 // Fixed, deterministic delivery estimates.
 const DELIVERY = { standard: '2026-11-12', express: '2026-11-05' };
+
+// The deliberate UI change for the stability run (UI_VARIANT=redesign).
+const rewrite = redesign([
+  ['aria-label="Cart"', 'aria-label="Shopping basket"'],
+  ['<h1>Your cart</h1>', '<h1>Basket</h1>'],
+  ['aria-label="Cart total"', 'aria-label="Order total"'],
+  ['>Place order<', '>Buy now<'],
+  ['aria-label="Order summary"', 'aria-label="Your order"'],
+  ['Email me the newsletter', 'Send me news by email'],
+  ['Estimated delivery:', 'Arrives:'],
+  ['<main>', '<main><div class="container">'],
+  ['</main>', '</div></main>'],
+]);
 
 const sessions = new Map();
 function session(req, res) {
@@ -117,9 +131,9 @@ const server = createServer(async (req, res) => {
 
     const file = PAGES[p] ?? (/^\/orders\/[\w-]+$/.test(p) ? 'order.html' : p === '/app.js' ? 'app.js' : null);
     if (file) {
-      const body = await readFile(join(here, 'public', file));
+      const body = await readFile(join(here, 'public', file), 'utf8');
       res.writeHead(200, { 'content-type': file.endsWith('.js') ? 'text/javascript' : 'text/html; charset=utf-8' });
-      return res.end(body);
+      return res.end(rewrite(body));
     }
     res.writeHead(404, { 'content-type': 'text/plain' });
     res.end('not found');

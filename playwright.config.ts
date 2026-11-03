@@ -1,6 +1,12 @@
 import { defineConfig } from '@playwright/test';
 
 const PORT = Number(process.env.TINY_SHOP_PORT ?? 4173);
+const server = (dir: string, port: number) => ({
+  command: `node examples/${dir}/server.mjs`,
+  env: { PORT: String(port) },
+  url: `http://localhost:${port}/`,
+  reuseExistingServer: !process.env.CI,
+});
 
 export default defineConfig({
   testDir: 'tests',
@@ -10,10 +16,5 @@ export default defineConfig({
   retries: 0,
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : [['list']],
   use: { baseURL: `http://localhost:${PORT}`, trace: 'retain-on-failure' },
-  webServer: {
-    command: `node examples/tiny-shop/server.mjs`,
-    env: { PORT: String(PORT) },
-    url: `http://localhost:${PORT}/api/products`,
-    reuseExistingServer: !process.env.CI,
-  },
+  webServer: [server('tiny-shop', PORT), server('tiny-tracker', 4174), server('tiny-calendar', 4175)],
 });

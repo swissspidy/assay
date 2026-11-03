@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Calendar · Tiny Calendar</title>
+  </head>
+  <body>
+    <div id="h"></div>
+    <main>
+      <h1>Upcoming events</h1>
+      <table aria-label="Upcoming events">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Location</th>
+            <th>RSVP</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </main>
+    <script type="module">
+      import { api, esc, fmtDate, fmtTime, header } from '/app.js';
+      document.getElementById('h').outerHTML = header;
+      const rows = document.getElementById('rows');
+      for (const e of await api('GET', '/api/events')) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td><a href="/events/${e.id}">${esc(e.title)}</a></td><td>${fmtDate(e.date)}</td><td>${fmtTime(e.date, e.time)}</td><td>${esc(e.location)}</td><td>${e.rsvp ? e.rsvp[0].toUpperCase() + e.rsvp.slice(1) : '—'}</td>`;
+        rows.append(tr);
+      }
+      document.body.dataset.ready = '1';
+    </script>
+  </body>
+</html>

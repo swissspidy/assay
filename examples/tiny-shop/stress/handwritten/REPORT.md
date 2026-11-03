@@ -1,4 +1,4 @@
-# Stress test: handwritten Tiny Shop checks
+# Stress test: handwritten tiny-shop checks
 
 | Task | Variants accepted | Mutants rejected (fail / abstain) | Over-constrained | Weak | Missed |
 |---|---|---|---|---|---|
@@ -12,7 +12,7 @@
 | tiny-shop/delivery-date | 28/28 | 8/8 (8 / 0) | – | – | 0 |
 | tiny-shop/gift-wrap | 20/20 | 10/10 (10 / 0) | – | – | 0 |
 | tiny-shop/dark-german | 16/16 | 10/10 (10 / 0) | – | – | 0 |
-| **Total** | **223/223** | **86/86** (86 / 0) | | | |
+| **tiny-shop** | **223/223** | **86/86** (86 / 0) | | | 0 |
 
 ## tiny-shop/newsletter v1
 

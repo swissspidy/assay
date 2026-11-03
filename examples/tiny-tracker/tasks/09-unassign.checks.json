@@ -1,0 +1,51 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/unassign",
+  "version": "1",
+  "task": {
+    "instruction": "Remove the assignee from issue #2.",
+    "outcomes": "Then issue #2 is unassigned"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Issue #2 is unassigned",
+      "source": {
+        "field": "outcomes",
+        "quote": "issue #2 is unassigned"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "The backend reports issue 2 without an assignee.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["id", "assignee"],
+              "properties": {
+                "id": {
+                  "const": 2
+                },
+                "assignee": {
+                  "const": null
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

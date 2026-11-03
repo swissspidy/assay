@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Settings · Tiny Calendar</title>
+  </head>
+  <body>
+    <div id="h"></div>
+    <main>
+      <h1>Settings</h1>
+      <form aria-label="Calendar settings" onsubmit="return false;">
+        <p>
+          <label
+            >Time zone
+            <select id="tz">
+              <option value="UTC">UTC</option>
+              <option value="Europe/Berlin">Berlin</option>
+              <option value="America/New_York">New York</option>
+            </select></label
+          >
+        </p>
+        <p>
+          <label
+            >Week starts on
+            <select id="week">
+              <option value="sunday">Sunday</option>
+              <option value="monday">Monday</option>
+            </select></label
+          >
+        </p>
+      </form>
+      <p role="status" id="msg"></p>
+    </main>
+    <script type="module">
+      import { api, header } from '/app.js';
+      document.getElementById('h').outerHTML = header;
+      const tz = document.getElementById('tz');
+      const week = document.getElementById('week');
+      tz.value = (await api('GET', '/api/settings')).timezone;
+      week.value = localStorage.getItem('weekStart') ?? 'sunday';
+      const msg = document.getElementById('msg');
+      tz.onchange = async () => {
+        await api('PUT', '/api/settings', { timezone: tz.value });
+        msg.textContent = 'Settings saved';
+      };
+      week.onchange = () => {
+        localStorage.setItem('weekStart', week.value);
+        msg.textContent = 'Settings saved';
+      };
+      document.body.dataset.ready = '1';
+    </script>
+  </body>
+</html>

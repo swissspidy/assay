@@ -1,0 +1,92 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/filter-open-bugs",
+  "version": "1",
+  "task": {
+    "instruction": "Show me only the open bugs in the issue list.",
+    "outcomes": "Then the list shows only open issues\nThen the list shows only issues labelled bug"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The list shows only open issues",
+      "source": {
+        "field": "outcomes",
+        "quote": "the list shows only open issues"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The list shows only issues labelled bug",
+      "source": {
+        "field": "outcomes",
+        "quote": "the list shows only issues labelled bug"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "The list is filtered by status open.",
+      "assert": {
+        "kind": "url",
+        "match": {
+          "path": "/issues",
+          "query": {
+            "status": "open"
+          }
+        }
+      }
+    },
+    {
+      "id": "C2",
+      "requirement": "R1",
+      "description": "The Issues table shows no closed issue.",
+      "assert": {
+        "kind": "contains",
+        "scope": {
+          "anchors": [
+            {
+              "role": "table",
+              "name": "Issues"
+            },
+            {
+              "role": "table",
+              "landmark": {
+                "role": "main"
+              }
+            }
+          ]
+        },
+        "witness": {
+          "role": "columnheader",
+          "name": "Status"
+        },
+        "match": {
+          "role": "cell",
+          "name": "Closed"
+        },
+        "count": {
+          "eq": 0
+        }
+      }
+    },
+    {
+      "id": "C3",
+      "requirement": "R2",
+      "description": "The list is filtered by the bug label.",
+      "assert": {
+        "kind": "url",
+        "match": {
+          "path": "/issues",
+          "query": {
+            "label": "bug"
+          }
+        }
+      }
+    }
+  ]
+}

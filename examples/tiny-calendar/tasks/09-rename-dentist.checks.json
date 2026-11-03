@@ -1,0 +1,51 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-calendar/rename-dentist",
+  "version": "1",
+  "task": {
+    "instruction": "Rename the Dentist event to \"Dentist (Dr. Lee)\".",
+    "outcomes": "Then the Dentist event is called \"Dentist (Dr. Lee)\""
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The Dentist event is called \"Dentist (Dr. Lee)\"",
+      "source": {
+        "field": "outcomes",
+        "quote": "the Dentist event is called \"Dentist (Dr. Lee)\""
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "The backend has the Dentist event (id 2) titled \"Dentist (Dr. Lee)\".",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "events"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["id", "title"],
+              "properties": {
+                "id": {
+                  "const": 2
+                },
+                "title": {
+                  "const": "Dentist (Dr. Lee)"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

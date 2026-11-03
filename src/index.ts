@@ -36,3 +36,4 @@ export { replayModel, recordingModel, requestKey, type Cassette } from './model/
 export * from './model/types.ts';
 export * from './stress/index.ts';
 export * from './verifier/index.ts';
+export * from './eval/index.ts';

@@ -1,0 +1,86 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-calendar/workshop",
+  "version": "1",
+  "task": {
+    "instruction": "Schedule a 90-minute \"Workshop\" on November 12, 2026 at 10:00.",
+    "outcomes": "Then an event \"Workshop\" exists\nThen the workshop lasts 90 minutes"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "An event \"Workshop\" exists",
+      "source": {
+        "field": "outcomes",
+        "quote": "an event \"Workshop\" exists"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The workshop lasts 90 minutes",
+      "source": {
+        "field": "outcomes",
+        "quote": "the workshop lasts 90 minutes"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "The backend has an event \"Workshop\".",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "events"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["title"],
+              "properties": {
+                "title": {
+                  "const": "Workshop"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "C2",
+      "requirement": "R2",
+      "description": "That event lasts 90 minutes.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "events"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["title", "duration"],
+              "properties": {
+                "title": {
+                  "const": "Workshop"
+                },
+                "duration": {
+                  "const": 90
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -103,7 +103,7 @@ const { checkSet, report } = await compileTask(
 );
 ```
 
-The compiler writes a rubric of requirements, each quoting the task text. An agent then explores the reference snapshots and submits checks, which are accepted only once they validate and pass on every correct reference. See [ADR 0002](docs/adr/0002-compiler.md). `npm run compile:tiny-shop` compiles the 10 Tiny Shop tasks from one correct run each and judges the held-out runs. It needs `ANTHROPIC_API_KEY` to record and replays the recorded cassettes without one.
+The compiler writes a rubric of requirements, each quoting the task text. An agent then explores the reference snapshots and submits checks, which are accepted only once they validate and pass on every correct reference. See [ADR 0002](docs/adr/0002-compiler.md). `npm run compile:examples` compiles the 30 example tasks from one correct run each and judges the held-out runs. It needs `ANTHROPIC_API_KEY` to record and replays the recorded cassettes without one.
 
 ## Stress testing (milestone 3)
 
@@ -113,7 +113,7 @@ const report = stressTest(checkSet, [{ name: 'reference', snapshot }]);
 console.log(formatStressReport(report)); // acceptance/rejection rates, over-constrained, fragile and weak checks
 ```
 
-The stress test edits correct snapshots into valid variants (reordered rows, unrelated content, extra JSON fields, other number, money and date formats, network noise) and into near-miss mutants (flipped states, missing items, perturbed values, failed or missing requests, pages that only claim success). A check that rejects a valid variant is flagged as over-constrained, and the compiler sends that back to the model as an error. See [ADR 0003](docs/adr/0003-stress-testing.md). `npm run stress:tiny-shop` writes `examples/tiny-shop/stress/handwritten/REPORT.md`.
+The stress test edits correct snapshots into valid variants (reordered rows, unrelated content, extra JSON fields, other number, money and date formats, network noise) and into near-miss mutants (flipped states, missing items, perturbed values, failed or missing requests, pages that only claim success). A check that rejects a valid variant is flagged as over-constrained, and the compiler sends that back to the model as an error. See [ADR 0003](docs/adr/0003-stress-testing.md). `npm run stress` writes `examples/<app>/stress/handwritten/REPORT.md` for each app.
 
 ## Escalation, records and locking (milestone 4)
 
@@ -132,6 +132,16 @@ writeOutcomeRecord('assay-records', record, snapshot, proposal);
 ```
 
 In Playwright: `await expectOutcome(page, locked, { escalate: { verifier }, recordDir: 'assay-records' })`. See [ADR 0004](docs/adr/0004-escalation-and-records.md).
+
+## Evaluation and stability (milestone 5)
+
+Three small apps (`examples/tiny-shop`, `examples/tiny-tracker`, `examples/tiny-calendar`) provide 30 tasks and 123 labelled runs (correct, wrong item, partial, undone, over-completion, adversarial pages that only claim success).
+
+- `npm run eval` compares checks, checks with escalation, an LLM judge and the agentic verifier on balanced accuracy, TPR, TNR, cost and latency. Results go to `eval/results/REPORT.md`. Add `-- --checks compiled` to use the compiled check sets.
+- `npm run stability` judges every run against the app as recorded and against a redesigned UI. Results go to `stability/results/REPORT.md`.
+- A weekly workflow runs both.
+
+Model rows are recorded to cassettes when `ANTHROPIC_API_KEY` is set and replayed otherwise. See [ADR 0005](docs/adr/0005-evaluation-and-stability.md).
 
 ## Development
 

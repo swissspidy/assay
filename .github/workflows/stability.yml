@@ -1,0 +1,60 @@
+name: Stability
+
+# Weekly re-run of every scripted scenario against the example apps, in their
+# normal and deliberately redesigned UIs, plus the evaluation report. Results are
+# kept as artifacts (90 days) so successive weeks can be compared.
+on:
+  schedule:
+    - cron: '17 4 * * 1' # Mondays 04:17 UTC
+  workflow_dispatch:
+    inputs:
+      checks:
+        description: 'Check sets to run (handwritten or compiled)'
+        default: handwritten
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stability
+  cancel-in-progress: false
+
+jobs:
+  stability:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CHECKS: ${{ github.event.inputs.checks || 'handwritten' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Stability run (baseline and redesigned UI)
+        run: node scripts/stability.ts --checks "$CHECKS" --out "stability/results/$(date -u +%Y-%m-%d)"
+      - name: Evaluation
+        # Model-based systems replay committed cassettes; with ANTHROPIC_API_KEY set
+        # as a repository secret they run live instead.
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ASSAY_MODEL_MODE: replay
+        run: node scripts/eval.ts --checks "$CHECKS"
+      - name: Summary
+        if: always()
+        run: |
+          cat stability/results/*/REPORT.md >> "$GITHUB_STEP_SUMMARY" || true
+          cat eval/results/REPORT.md >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: stability-${{ github.run_id }}
+          path: |
+            stability/results/
+            eval/results/
+          retention-days: 90

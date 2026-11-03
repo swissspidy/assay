@@ -1,0 +1,86 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/create-high-priority",
+  "version": "1",
+  "task": {
+    "instruction": "File a new issue \"Add CSV export\" with high priority.",
+    "outcomes": "Then an issue \"Add CSV export\" exists\nThen its priority is high"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "An issue \"Add CSV export\" exists",
+      "source": {
+        "field": "outcomes",
+        "quote": "an issue \"Add CSV export\" exists"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "Its priority is high",
+      "source": {
+        "field": "outcomes",
+        "quote": "its priority is high"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "The backend has an issue titled \"Add CSV export\".",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["title"],
+              "properties": {
+                "title": {
+                  "const": "Add CSV export"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "C2",
+      "requirement": "R2",
+      "description": "That issue has priority high.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["title", "priority"],
+              "properties": {
+                "title": {
+                  "const": "Add CSV export"
+                },
+                "priority": {
+                  "const": "high"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

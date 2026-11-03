@@ -79,7 +79,7 @@ export interface CompileReport {
   model: string;
   modelsUsed: string[];
   turns: { rubric: number; discovery: number };
-  usage: { inputTokens: number; outputTokens: number };
+  usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number; cacheWriteTokens: number };
   coverage: RequirementCoverage[];
   warnings: string[];
   references: { name: string; kind: Reference['kind']; verdict: string }[];
@@ -540,7 +540,7 @@ function discoveryTools(
 
 export async function compileTask(task: TaskInput, refs: Reference[], opts: CompileOptions): Promise<CompileResult> {
   const log = opts.log ?? (() => {});
-  const usage = { inputTokens: 0, outputTokens: 0 };
+  const usage = { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheWriteTokens: 0 };
   const models = new Set<string>();
   const report: CompileReport = {
     task: task.id,
@@ -556,6 +556,8 @@ export async function compileTask(task: TaskInput, refs: Reference[], opts: Comp
   const add = (run: AgentRun<unknown>) => {
     usage.inputTokens += run.usage.inputTokens;
     usage.outputTokens += run.usage.outputTokens;
+    usage.cacheReadTokens += run.usage.cacheReadTokens;
+    usage.cacheWriteTokens += run.usage.cacheWriteTokens;
     run.models.forEach((m) => models.add(m));
     report.modelsUsed = [...models];
   };

@@ -226,7 +226,7 @@ export async function verifyWithEscalation(
             ...(verifierError !== undefined ? { error: verifierError } : {}),
             verdicts: verifier?.verdicts ?? [],
             observations: verifier?.observations ?? [],
-            usage: verifier?.usage ?? { inputTokens: 0, outputTokens: 0 },
+            usage: verifier?.usage ?? { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheWriteTokens: 0 },
             turns: verifier?.turns ?? 0,
           },
         }
