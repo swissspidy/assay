@@ -33,8 +33,6 @@ export class CheckSetError extends Error {
 
 type VType = 'string' | 'number' | 'money' | 'date' | 'boolean' | 'unknown';
 
-const fold = (s: string) => canonical(s).toLowerCase();
-
 export function validateCheckSet(input: unknown): ValidationReport {
   const errors: string[] = [];
   const warnings: string[] = [];
@@ -52,8 +50,9 @@ export function validateCheckSet(input: unknown): ValidationReport {
     if (reqIds.has(r.id)) errors.push(`duplicate requirement id ${r.id}`);
     reqIds.add(r.id);
     const sourceText = r.source.field === 'instruction' ? cs.task.instruction : cs.task.outcomes;
-    if (sourceText === undefined) errors.push(`requirement ${r.id}: source field "${r.source.field}" is empty`);
-    else if (!fold(sourceText).includes(fold(r.source.quote)))
+    if (!canonical(r.source.quote)) errors.push(`requirement ${r.id}: quote is blank`);
+    else if (sourceText === undefined) errors.push(`requirement ${r.id}: source field "${r.source.field}" is empty`);
+    else if (!canonical(sourceText).includes(canonical(r.source.quote)))
       errors.push(
         `requirement ${r.id}: quote ${JSON.stringify(r.source.quote)} does not appear in task.${r.source.field}`,
       );

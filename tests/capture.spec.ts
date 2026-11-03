@@ -338,3 +338,48 @@ test.describe('body limit', () => {
     );
   });
 });
+
+test('credential-like storage keys and cookie names are redacted; checks on them abstain', async ({ page }) => {
+  await page.goto('/');
+  await ready(page);
+  await page.evaluate(() => {
+    localStorage.setItem('authToken', 'eyJhbGciOi.secret');
+    sessionStorage.setItem('sessionToken', 'sess.secret');
+    localStorage.setItem('theme', 'dark');
+    document.cookie = 'session_id=abc123; path=/';
+  });
+  const s = await captureSnapshot(page);
+  const local = Object.values(s.storage!.local)[0]!;
+  expect(local.authToken).toEqual({ redacted: true });
+  expect(local.theme).toBe('dark');
+  expect(s.storage!.cookies.find((c) => c.name === 'session_id')!.value).toEqual({ redacted: true });
+  expect(Object.values(s.storage!.session)[0]!.sessionToken).toEqual({ redacted: true });
+  expect(s.meta.redacted).toEqual(
+    expect.arrayContaining(['localStorage:authToken', 'sessionStorage:sessionToken', 'cookie:session_id']),
+  );
+  expect(JSON.stringify(s)).not.toContain('sess.secret');
+  expect(JSON.stringify(s)).not.toContain('eyJhbGciOi');
+  const check = (key: string): CheckSet => ({
+    schema: 'assay.checks/v1',
+    id: 't',
+    version: '1',
+    task: { instruction: 'Set it.' },
+    requirements: [{ id: 'R1', kind: 'hard', text: 'set', source: { field: 'instruction', quote: 'Set it' } }],
+    checks: [
+      {
+        id: 'C1',
+        requirement: 'R1',
+        description: key,
+        assert: { kind: 'value', source: { from: 'storage', area: 'local', key }, expect: { equals: 'dark' } },
+      },
+    ],
+  });
+  expect(evaluate(check('theme'), s).verdict).toBe('success');
+  expect(evaluate(check('authToken'), s).checks[0]).toMatchObject({
+    status: 'abstain',
+    reason: 'evidence_unavailable',
+  });
+  // keepStorage keeps a named key readable.
+  const kept = await captureSnapshot(page, { keepStorage: ['authToken'] });
+  expect(Object.values(kept.storage!.local)[0]!.authToken).toBe('eyJhbGciOi.secret');
+});

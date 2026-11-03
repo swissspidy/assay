@@ -8,7 +8,6 @@ import {
   type CheckSet,
   type EvidenceSnapshot,
   type Outcome,
-  type Probe,
 } from '../src/index.ts';
 
 export function loadChecks(name: string): CheckSet {
@@ -17,17 +16,7 @@ export function loadChecks(name: string): CheckSet {
   ) as CheckSet;
 }
 
-/** Read-only backend probes for Tiny Shop (they share the browser context's session cookie). */
-export function shopProbes(page: Page): Record<string, Probe> {
-  const get = async (path: string) => {
-    const r = await page.request.get(path);
-    if (!r.ok()) throw new Error(`${path} → ${r.status()}`);
-    return r.json();
-  };
-  return { cart: () => get('/api/cart'), latestOrder: () => get('/api/orders/latest') };
-}
-
-export const ready = (page: Page) => page.locator('body[data-ready]').waitFor();
+export { ready, shopProbes } from '../examples/tiny-shop/agent.ts';
 
 const statuses = (o: Outcome) => o.checks.map((c) => `${c.check}:${c.status}${c.reason ? '/' + c.reason : ''}`);
 
@@ -48,45 +37,14 @@ export async function judge(
   return { outcome, snapshot };
 }
 
-// --- "Agent" actions on Tiny Shop -------------------------------------------
-
-export async function addToCart(page: Page, product: string): Promise<void> {
-  if (!page.url().endsWith('/')) {
-    await page.goto('/');
-    await ready(page);
-  }
-  const done = page.waitForResponse((r) => r.url().endsWith('/api/cart/items') && r.request().method() === 'POST');
-  await page.getByRole('button', { name: `Add ${product} to cart` }).click();
-  await done;
-  await expect(page.getByRole('status')).toHaveText(`${product} added to cart`);
-}
-
-export async function openCart(page: Page): Promise<void> {
-  await page.goto('/cart');
-  await ready(page);
-}
-
-export async function checkout(
-  page: Page,
-  opts: { name?: string; shipping?: 'standard' | 'express'; giftWrap?: boolean },
-): Promise<void> {
-  await page.goto('/checkout');
-  await ready(page);
-  if (opts.name) await page.getByLabel('Full name').fill(opts.name);
-  if (opts.shipping === 'express') await page.getByRole('radio', { name: 'Express' }).check();
-  if (opts.giftWrap) await page.getByRole('checkbox', { name: 'Gift wrap' }).check();
-  await page.getByRole('button', { name: 'Place order' }).click();
-  await page.waitForURL(/\/orders\/\w+$/);
-  await ready(page);
-}
-
-export async function openSettings(page: Page): Promise<void> {
-  await page.goto('/settings');
-  await ready(page);
-}
-
-export async function setNewsletter(page: Page, on: boolean): Promise<void> {
-  const saved = page.waitForResponse((r) => r.url().endsWith('/api/settings') && r.request().method() === 'PUT');
-  await page.getByRole('checkbox', { name: 'Email me the newsletter' }).setChecked(on);
-  await saved;
-}
+// Scripted agent actions live with the example app so scripts can reuse them.
+export {
+  addToCart,
+  checkout,
+  choose,
+  openCart,
+  openSettings,
+  removeFromCart,
+  setNewsletter,
+  setQuantity,
+} from '../examples/tiny-shop/agent.ts';

@@ -219,6 +219,10 @@ function readSource(ctx: Ctx, src: ValueSource): Read {
       if (!area || !Object.prototype.hasOwnProperty.call(area, src.key))
         return { value: ABSENT, evidence: ev('storage', { locator, value: null }), drift: [], absent: true };
       const value = area[src.key]!;
+      if (typeof value !== 'string')
+        return abstain('evidence_unavailable', `${src.area}Storage ${src.key} was redacted at capture time`, [
+          ev('storage', { locator }),
+        ]);
       return { value: { type: 'string', value }, evidence: ev('storage', { locator, value }), drift: [] };
     }
     case 'probe': {

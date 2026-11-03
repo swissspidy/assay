@@ -7,6 +7,7 @@ import {
   type NetworkEntry,
   type ProbeResult,
   type StorageRecord,
+  type Redacted,
 } from '../types.ts';
 import { parseAriaSnapshot } from './aria.ts';
 import { randomUUID } from 'node:crypto';
@@ -394,9 +395,18 @@ export interface CaptureOptions {
   probes?: Record<string, Probe>;
   /** Capture cookies and web storage (default true). */
   storage?: boolean;
-  /** Cookie names whose values are kept even if httpOnly. */
+  /** Cookie names whose values are kept even if httpOnly or credential-like. */
   keepCookies?: string[];
+  /** Web storage keys whose values are kept even if they look like credentials. */
+  keepStorage?: string[];
 }
+
+/**
+ * Names that usually hold credentials. Values under these names, and httpOnly cookie
+ * values, are redacted at capture time. Redaction goes by name only: a secret stored
+ * under another name (e.g. `sid`) is kept. Pass keepCookies/keepStorage to keep one.
+ */
+export const CREDENTIAL_NAME = /token|secret|passw(or)?d|session|auth|jwt|bearer|api[-_]?key|credential/i;
 
 export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Promise<EvidenceSnapshot> {
   const recorder = opts.recorder === undefined ? EvidenceRecorder.for(page.context()) : opts.recorder;
@@ -434,7 +444,7 @@ export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Pr
   if (opts.storage !== false) {
     const keep = new Set(opts.keepCookies ?? []);
     const cookies: CookieRecord[] = (await page.context().cookies()).map((c) => {
-      const hide = c.httpOnly && !keep.has(c.name);
+      const hide = (c.httpOnly || CREDENTIAL_NAME.test(c.name)) && !keep.has(c.name);
       if (hide) redacted.push(`cookie:${c.name}`);
       return {
         name: c.name,
@@ -445,24 +455,36 @@ export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Pr
         secure: c.secure,
       };
     });
+    const keepKeys = new Set(opts.keepStorage ?? []);
+    const scrub = (area: 'local' | 'session', kv: Record<string, string>) =>
+      Object.fromEntries(
+        Object.entries(kv).map(([k, v]): [string, string | Redacted] => {
+          if (!CREDENTIAL_NAME.test(k) || keepKeys.has(k)) return [k, v];
+          redacted.push(`${area}Storage:${k}`);
+          return [k, { redacted: true }];
+        }),
+      );
     storage = {
       cookies,
-      local: domState.origin !== 'null' ? { [domState.origin]: domState.local } : {},
-      session: domState.origin !== 'null' ? { [domState.origin]: domState.session } : {},
+      local: domState.origin !== 'null' ? { [domState.origin]: scrub('local', domState.local) } : {},
+      session: domState.origin !== 'null' ? { [domState.origin]: scrub('session', domState.session) } : {},
     };
   }
 
-  const probes: Record<string, ProbeResult> = {};
-  await Promise.all(
-    Object.entries(opts.probes ?? {}).map(async ([name, probe]) => {
+  // Run probes concurrently but record them in declaration order, so snapshots are reproducible.
+  const probeEntries = Object.entries(opts.probes ?? {});
+  const probeResults = await Promise.all(
+    probeEntries.map(async ([, probe]): Promise<ProbeResult> => {
       try {
         const value = await probe();
-        probes[name] = { ok: true, value: JSON.parse(JSON.stringify(value ?? null)) as Json };
+        return { ok: true, value: JSON.parse(JSON.stringify(value ?? null)) as Json };
       } catch (e) {
-        probes[name] = { ok: false, error: e instanceof Error ? e.message : String(e) };
+        return { ok: false, error: e instanceof Error ? e.message : String(e) };
       }
     }),
   );
+  const probes: Record<string, ProbeResult> = {};
+  probeEntries.forEach(([name], i) => (probes[name] = probeResults[i]!));
 
   let network: NetworkEntry[] | null = null;
   if (recorder) {

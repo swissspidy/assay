@@ -144,7 +144,7 @@ soon as the page navigates. A common flow is "POST /api/orders, then
 `location.href = '/orders/A1'`", and in that flow the protocol-level read
 (`response.body()`) fails. Milestone 1 tests hit this. The recorder
 therefore also installs an init script that tees `fetch` and `XHR` response
-bodies (`Response.clone()`) to a Playwright binding. Integrity rules:
+bodies to a Playwright binding. For `fetch`, the page receives the response only after the tap has read a clone of its body and reported it. A concurrent read would race an app that navigates the moment it has its data. Streaming (`text/event-stream`) and oversized responses pass through unchanged. Integrity rules:
 
 - Every tap message carries a random token that lives only in the init
   script's closure. Page scripts can find the binding, but they can't forge
@@ -177,8 +177,10 @@ still in flight. A `request` check knows the true count lies in
 and abstains otherwise. A missing body therefore never turns into a false
 `fail`, and never into a false `pass` for absence checks.
 
-**Storage.** By default, values of `httpOnly` cookies are replaced with
-`{"redacted": true}` and listed in `meta.redacted`. Snapshots end up in audit
+**Storage.** By default, values of `httpOnly` cookies, and of cookies and
+web storage keys whose names look like credentials (token, secret, password,
+session, auth, JWT, API key), are replaced with `{"redacted": true}` and
+listed in `meta.redacted` (`keepCookies` / `keepStorage` keep named ones). Snapshots end up in audit
 records, and session tokens don't belong there. A check that reads a redacted
 value abstains (`evidence_unavailable`).
 
