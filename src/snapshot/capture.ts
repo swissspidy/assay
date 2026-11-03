@@ -1,4 +1,4 @@
-import type { BrowserContext, Page, Request } from '@playwright/test';
+import type { BrowserContext, Frame, Page, Request } from '@playwright/test';
 import {
   SNAPSHOT_SCHEMA,
   type CookieRecord,
@@ -169,7 +169,11 @@ export class EvidenceRecorder {
   private readonly entries: NetworkEntry[] = [];
   private readonly byRequest = new Map<Request, NetworkEntry>();
   private readonly pending = new Set<Promise<void>>();
-  private readonly tapped: TappedBody[] = [];
+  private readonly tapped: (TappedBody & { frame: Frame | undefined })[] = [];
+  /** The frame that issued each entry's request, to group it with bodies tapped in that frame. */
+  private readonly frameOf = new WeakMap<NetworkEntry, Frame>();
+  private readonly frameIds = new WeakMap<Frame, number>();
+  private frameCount = 0;
   private seq = 0;
   private readonly maxBody: number;
   private readonly bodyTimeout: number;
@@ -206,10 +210,10 @@ export class EvidenceRecorder {
 
   private async install(): Promise<void> {
     const name = `__assay_${this.token.replace(/-/g, '').slice(0, 12)}`;
-    await this.context.exposeBinding(name, (_source, payload: TappedBody & { token?: string }) => {
+    await this.context.exposeBinding(name, (source, payload: TappedBody & { token?: string }) => {
       if (!payload || payload.token !== this.token) return;
       const { token: _t, ...body } = payload;
-      this.tapped.push(body);
+      this.tapped.push({ ...body, frame: source.frame });
     });
     await this.context.addInitScript({ content: pageTap(name, this.token, this.maxBody) });
   }
@@ -238,6 +242,11 @@ export class EvidenceRecorder {
     }
     this.entries.push(entry);
     this.byRequest.set(req, entry);
+    try {
+      this.frameOf.set(entry, req.frame());
+    } catch {
+      /* service worker requests have no frame */
+    }
   }
 
   private async onResponse(req: Request): Promise<void> {
@@ -274,24 +283,34 @@ export class EvidenceRecorder {
   /** Wait until bodies of finished requests have been read, then fill gaps from the page tap. */
   async settle(): Promise<void> {
     while (this.pending.size) await Promise.allSettled(this.pending);
-    const used = new Set<NetworkEntry>();
-    for (const t of this.tapped) {
-      const e = this.entries.find(
-        (x) =>
-          !used.has(x) &&
-          BODY_RESOURCE_TYPES.has(x.resourceType) &&
-          x.method === t.method &&
-          x.url === t.url &&
-          // Only entries whose response arrived: an entry without one (timed out or
-          // failed) could otherwise take the body of another request to the same URL.
-          x.status === t.status,
-      );
-      if (!e) continue;
-      used.add(e);
-      if (e.responseBody !== undefined) continue;
-      const { body, truncated } = decodeBody(t.body, t.contentType, this.maxBody);
-      e.responseBody = body;
-      if (truncated || t.truncated) e.bodyTruncated = true;
+    // Tapped bodies carry no request identity, only frame, method, URL and status.
+    // A body fills a request only when no other assignment could differ: the requests
+    // to that method and URL from that frame pair one to one with the tapped bodies
+    // (equal counts), and those bodies are all identical. Anything ambiguous stays
+    // unavailable, so checks on it abstain instead of reading another request's body.
+    const groups = new Map<string, { entries: NetworkEntry[]; taps: TappedBody[] }>();
+    const group = (frame: Frame | undefined, method: string, url: string) => {
+      const key = `${frame ? this.frameId(frame) : '-'} ${method} ${url}`;
+      let g = groups.get(key);
+      if (!g) groups.set(key, (g = { entries: [], taps: [] }));
+      return g;
+    };
+    for (const e of this.entries) {
+      if (BODY_RESOURCE_TYPES.has(e.resourceType)) group(this.frameOf.get(e), e.method, e.url).entries.push(e);
+    }
+    for (const t of this.tapped) group(t.frame, t.method, t.url).taps.push(t);
+    for (const { entries, taps } of groups.values()) {
+      const [t, ...rest] = taps;
+      if (!t || entries.length !== taps.length) continue;
+      const same = (x: TappedBody) =>
+        x.status === t.status && x.contentType === t.contentType && x.body === t.body && x.truncated === t.truncated;
+      if (!rest.every(same)) continue;
+      for (const e of entries) {
+        if (e.responseBody !== undefined || (e.status !== null && e.status !== t.status)) continue;
+        const { body, truncated } = decodeBody(t.body, t.contentType, this.maxBody);
+        e.responseBody = body;
+        if (truncated || t.truncated) e.bodyTruncated = true;
+      }
     }
     for (const e of this.entries) {
       const ct = e.responseHeaders['content-type'];
@@ -303,6 +322,20 @@ export class EvidenceRecorder {
       if (expected && e.responseBody === undefined) e.bodyUnavailable = true;
       else delete e.bodyUnavailable;
     }
+  }
+
+  private frameId(f: Frame): number {
+    let id = this.frameIds.get(f);
+    if (id === undefined) {
+      id = ++this.frameCount;
+      this.frameIds.set(f, id);
+    }
+    return id;
+  }
+
+  /** @internal Bodies the page tap has reported so far (for tests). */
+  tappedCount(): number {
+    return this.tapped.length;
   }
 
   /** A deep copy of the log so far. */

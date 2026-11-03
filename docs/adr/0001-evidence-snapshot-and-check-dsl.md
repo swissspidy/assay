@@ -152,6 +152,15 @@ bodies to a Playwright binding. For `fetch`, the page receives the response only
 - The tap **only fills in bodies** of entries the browser itself reported.
   It never creates entries, so a page can't invent a request.
 - A protocol-read body takes precedence over a tapped one.
+- A tapped message names only its frame, method, URL and status, not the
+  request it belongs to. A tapped body therefore fills a request only when
+  no other pairing could differ: the requests to that method and URL from
+  that frame match the tapped bodies one to one (equal counts), and those
+  bodies are identical. Otherwise the bodies stay unavailable, so a request
+  never shows another request's body.
+- For `fetch`, the page receives the response only after the tap has read
+  and reported its body, so an app that navigates right after the response
+  cannot unload the page mid-read.
 - If neither path produced a body that should exist, the entry is marked
   `bodyUnavailable`.
 
