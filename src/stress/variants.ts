@@ -201,8 +201,25 @@ function retry(s: EvidenceSnapshot): EvidenceSnapshot | null {
   return changed ? { ...s, network: out } : null;
 }
 
-function extraStorage(s: EvidenceSnapshot): EvidenceSnapshot | null {
+/** Storage keys some check reads; an unrelated-storage variant must not write them. */
+function readKeys(cs: CheckSet): Set<string> {
+  const keys = new Set<string>();
+  const walk = (x: unknown): void => {
+    if (Array.isArray(x)) x.forEach(walk);
+    else if (x && typeof x === 'object') {
+      const o = x as Record<string, unknown>;
+      if (o.from === 'storage' && typeof o.key === 'string') keys.add(o.key);
+      Object.values(o).forEach(walk);
+    }
+  };
+  walk(cs.checks);
+  return keys;
+}
+
+function extraStorage(s: EvidenceSnapshot, cs: CheckSet): EvidenceSnapshot | null {
   if (!s.storage) return null;
+  const read = readKeys(cs);
+  if (['_ga', 'consent', 'scrollY'].some((k) => read.has(k))) return null;
   let u: URL;
   try {
     u = new URL(s.page.url);
@@ -339,7 +356,7 @@ export function generateVariants(cs: CheckSet, s: EvidenceSnapshot): Variant[] {
     ['json-array-order', 'arrays in JSON bodies and probe results in reverse order', mapBodies(s, reverseArrays)],
     ['network-noise', 'an analytics beacon and repeated GET requests', networkNoise(s)],
     ['retry', 'each state-changing request first failed with HTTP 503 and was retried', retry(s)],
-    ['extra-storage', 'unrelated cookies and storage keys', extraStorage(s)],
+    ['extra-storage', 'unrelated cookies and storage keys', extraStorage(s, cs)],
     [
       'url-decoration',
       'a tracking query parameter on the page URL',

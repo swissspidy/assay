@@ -483,3 +483,62 @@ test('a positive replacement of a negative amount drops the minus sign', () => {
   expect(r.untested).toEqual([]);
   expect(r.mutants.some((m) => m.description.includes('"$1.00"') && m.rejected)).toBe(true);
 });
+
+test('only a minus next to the number is its sign', () => {
+  const num = (value: number) => ({ type: 'number' as const, value });
+  expect(renderLike('Ref X-Y: 12', num(12), num(-3), 'en-US')).toBe('Ref X-Y: -3');
+  expect(renderLike('12-', num(-12), num(-3), 'en-US')).toBe('3-');
+  expect(renderLike('12-', num(-12), num(4), 'en-US')).toBe('4');
+});
+
+test('count bounds use the strongest of gte/gt and lte/lt', () => {
+  const posts = [post(0), post(1)];
+  const r = run(
+    one({ kind: 'request', match: { method: 'POST', url: { path: '/api/orders' } }, count: { gte: 1, gt: 1 } }),
+    snap([], { network: posts }),
+  );
+  expect(
+    r.mutants.some((m) => m.id === 'C1:request:one-fewer' && m.rejected),
+    formatStressReport(r),
+  ).toBe(true);
+  const lt = run(
+    one({ kind: 'request', match: { method: 'POST', url: { path: '/api/orders' } }, count: { lte: 2, lt: 2 } }),
+    snap([], { network: [post(0)] }),
+  );
+  expect(lt.missed, formatStressReport(lt)).toEqual([]);
+  expect(lt.weak).toEqual([]);
+});
+
+test('a forbidden request the synthesizer cannot match is not reported as weak', () => {
+  const r = run(
+    one({
+      kind: 'request',
+      match: { method: 'POST', url: { path: '/api/orders', query: { coupon: 'SAVE' } } },
+      count: { eq: 0 },
+    }),
+    snap([]),
+  );
+  expect(r.weak, formatStressReport(r)).toEqual([]);
+  const body = run(
+    one({
+      kind: 'request',
+      match: {
+        method: 'POST',
+        url: { path: '/api/orders' },
+        requestBody: { type: 'object', required: ['note'], properties: { note: { type: 'string' } } },
+      },
+      count: { eq: 0 },
+    }),
+    snap([]),
+  );
+  expect(body.missed, formatStressReport(body)).toEqual([]);
+  expect(body.untested).toEqual([]);
+});
+
+test('extra-storage is skipped when a check reads one of its keys', () => {
+  const s = snap([], { storage: { cookies: [], local: {}, session: {} } });
+  const reads = (key: string) =>
+    one({ kind: 'value', source: { from: 'storage', area: 'local', key }, expect: { exists: true } });
+  expect(generateVariants(reads('cart'), s).map((v) => v.id)).toContain('extra-storage');
+  expect(generateVariants(reads('consent'), s).map((v) => v.id)).not.toContain('extra-storage');
+});

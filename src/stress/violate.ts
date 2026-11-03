@@ -204,11 +204,17 @@ export function renderLike(
     }
     const m = NUMBER_IN_TEXT.exec(span);
     if (!m) return undefined;
+    // Only a minus next to the number, past spaces and currency symbols ("-12", "-$12",
+    // "12-"), is its sign; a hyphen elsewhere in the span ("Order A-7: 12") is not.
     let prefix = span.slice(0, m.index);
+    let suffix = span.slice(m.index + m[0].length);
+    const leading = /[-−](?=[\s\p{Sc}]*$)/u.exec(prefix);
+    const trailing = /^[\s\p{Sc}]*[-−]/u.exec(suffix);
     let sign = '';
-    if (amount < 0) sign = !span.includes('-') && !span.includes('−') ? '-' : '';
-    else prefix = prefix.replace(/[-−](?=[^-−]*$)/u, ''); // a non-negative value drops the source's minus
-    return prefix + sign + formatLike(m[0], amount, loc) + span.slice(m.index + m[0].length);
+    if (amount < 0) sign = leading || trailing ? '' : '-';
+    else if (leading) prefix = prefix.slice(0, leading.index) + prefix.slice(leading.index + 1);
+    else if (trailing) suffix = suffix.slice(0, trailing[0].length - 1) + suffix.slice(trailing[0].length);
+    return prefix + sign + formatLike(m[0], amount, loc) + suffix;
   }
   if (next.type === 'date' && prev.type === 'date') return dateLike(span, prev.value, next.value, loc);
   if (next.type === 'boolean') {

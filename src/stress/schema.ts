@@ -11,6 +11,8 @@ export function exampleOf(schema: unknown): Json | undefined {
   const sc = schema as Schema;
   if ('const' in sc) return sc.const as Json;
   if (Array.isArray(sc.enum) && sc.enum.length) return sc.enum[0] as Json;
+  if (sc.type === 'string' && sc.pattern === undefined && sc.format === undefined)
+    return 'x'.repeat(typeof sc.minLength === 'number' ? Math.max(1, sc.minLength) : 1);
   const props = sc.properties as Record<string, unknown> | undefined;
   if (props) {
     const o: Record<string, Json> = {};
@@ -25,7 +27,8 @@ export function exampleOf(schema: unknown): Json | undefined {
 
 /** A value outside an enum/const set, near the current one. */
 function outside(set: Json[], current: Json): Json | undefined {
-  const inSet = (x: Json) => set.some((s) => JSON.stringify(s) === JSON.stringify(x));
+  const members = new Set(set.map((s) => JSON.stringify(s)));
+  const inSet = (x: Json) => members.has(JSON.stringify(x));
   let v: Json | undefined = current;
   // One more step than the set has members, so integer near misses always leave it.
   for (let i = 0; i < Math.max(5, set.length + 1) && v !== undefined; i++) {

@@ -12,6 +12,7 @@ import type {
   EvidenceSnapshot,
   Json,
   Locator,
+  NumberCompare,
   NetworkEntry,
   Normalizer,
   RequestMatch,
@@ -394,6 +395,17 @@ function valueMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, {
 
 // --- requests ------------------------------------------------------------------
 
+/** The effective integer bounds of a count: the strongest of eq/gte/gt and eq/lte/lt. */
+function countBounds(count: NumberCompare): { lower?: number; upper?: number } {
+  if (count.eq !== undefined) return { lower: count.eq, upper: count.eq };
+  const lows = [count.gte, count.gt !== undefined ? count.gt + 1 : undefined].filter((x) => x !== undefined);
+  const highs = [count.lte, count.lt !== undefined ? count.lt - 1 : undefined].filter((x) => x !== undefined);
+  return {
+    ...(lows.length ? { lower: Math.max(...lows) } : {}),
+    ...(highs.length ? { upper: Math.min(...highs) } : {}),
+  };
+}
+
 function exampleUrl(s: EvidenceSnapshot, m: RequestMatch): string {
   let origin = 'http://localhost';
   try {
@@ -460,8 +472,7 @@ function requestMutants(s: EvidenceSnapshot, a: Extract<Assertion, { kind: 'requ
   const hits = net.filter((e) => matchRequest(a.match, e) === 'yes').map((e) => e.seq);
   const count = a.count ?? { gte: 1 };
   const nextSeq = Math.max(-1, ...net.map((e) => e.seq)) + 1;
-  const lower = count.eq ?? count.gte ?? (count.gt !== undefined ? count.gt + 1 : undefined);
-  const upper = count.eq ?? count.lte ?? (count.lt !== undefined ? count.lt - 1 : undefined);
+  const { lower, upper } = countBounds(count);
   const out: M[] = [];
   if (upper !== undefined) {
     // Enough extra requests to exceed the upper bound.
@@ -469,13 +480,15 @@ function requestMutants(s: EvidenceSnapshot, a: Extract<Assertion, { kind: 'requ
     const proto = hits.length ? net.find((e) => e.seq === hits[0])! : synthesizeRequest(s, a.match, nextSeq);
     const extras = Array.from({ length: n }, (_, i) => ({ ...clone(proto), seq: nextSeq + i }));
     const times = n > 1 ? ` ${hits.length + n} times` : hits.length ? ' twice' : '';
-    out.push({
-      id: 'request:extra',
-      description: hits.length
-        ? `the request was sent${times}`
-        : `a forbidden ${proto.method} ${proto.url} was sent${times}`,
-      snapshot: { ...s, network: [...net, ...extras] },
-    });
+    // A synthesized request the matcher does not accept (e.g. a required query) is no near miss.
+    if (matchRequest(a.match, proto) === 'yes')
+      out.push({
+        id: 'request:extra',
+        description: hits.length
+          ? `the request was sent${times}`
+          : `a forbidden ${proto.method} ${proto.url} was sent${times}`,
+        snapshot: { ...s, network: [...net, ...extras] },
+      });
   }
   // Removing or breaking matches only violates a lower bound.
   if (hits.length && lower !== undefined && lower > 0) {
@@ -587,8 +600,7 @@ function containsMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion
   const hits = idx.find(a.match, scope);
   const ids = new Set(hits.map((n) => n.id));
   const count = a.count ?? { gte: 1 };
-  const lower = count.eq ?? count.gte ?? (count.gt !== undefined ? count.gt + 1 : undefined);
-  const upper = count.eq ?? count.lte ?? (count.lt !== undefined ? count.lt - 1 : undefined);
+  const { lower, upper } = countBounds(count);
   const out: M[] = [];
   if (lower !== undefined && lower > 0 && hits.length) {
     out.push({
@@ -635,7 +647,7 @@ function containsMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion
         : editById(s, (n, id) =>
             id === scopeId ? { ...n, children: [...(n.children ?? []), ...copies()] } : undefined,
           );
-      if (treeChanged(s, snap)) {
+      if (treeChanged(s, snap) && noneHolds(snap, [a])) {
         out.push({
           id: 'contains:extra',
           description:
@@ -707,6 +719,7 @@ function assertionMutants(s: EvidenceSnapshot, idx: AXIndex, a: Assertion): M[] 
       let snap = s;
       const parts: string[] = [];
       for (const [i, sub] of a.of.entries()) {
+        if (noneHolds(snap, [sub])) continue;
         const next = assertionMutants(snap, new AXIndex(snap.a11y), sub).find((m) =>
           noneHolds(m.snapshot, a.of.slice(0, i + 1)),
         );
