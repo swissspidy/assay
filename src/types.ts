@@ -62,8 +62,8 @@ export interface CookieRecord {
 export interface StorageRecord {
   cookies: CookieRecord[];
   /** origin -> key -> value */
-  local: Record<string, Record<string, string>>;
-  session: Record<string, Record<string, string>>;
+  local: Record<string, Record<string, string | Redacted>>;
+  session: Record<string, Record<string, string | Redacted>>;
 }
 
 export type ProbeResult = { ok: true; value: Json } | { ok: false; error: string };

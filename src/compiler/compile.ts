@@ -107,6 +107,9 @@ export function rubricFromClauses(task: TaskInput): Requirement[] {
 }
 
 const OPTIONAL = /\b(optional(ly)?|if possible|ideally|nice to have|if you can|bonus)\b/i;
+/** The optional wording opens or closes a soft quote, so it qualifies the whole quote. */
+const OPTIONAL_EDGE =
+  /^(?:(?:then|and|but)\s+)?(?:optional(?:ly)?|if possible|ideally|nice to have|if you can|bonus)\b|\b(?:optional(?:ly)?|if possible|ideally|nice to have|if you can|bonus)[.!]?$/i;
 const WORD = /[\p{L}\p{N}]/u;
 
 /** Whether `quote` contains the whole clause. */
@@ -136,7 +139,13 @@ export function clauseCovered(quotes: string[], clause: string): boolean {
     if (!fq) continue;
     for (let i = c.indexOf(fq); i !== -1; i = c.indexOf(fq, i + 1)) mask.fill(true, i, i + fq.length);
   }
-  return [...c].every((ch, i) => mask[i] || !WORD.test(ch));
+  // The mask uses UTF-16 offsets (indexOf); step through code points but index by offset.
+  let offset = 0;
+  return [...c].every((ch) => {
+    const covered = mask[offset] || !WORD.test(ch);
+    offset += ch.length;
+    return covered;
+  });
 }
 
 /** True when the quote alone covers every word of the clause. */
@@ -166,7 +175,8 @@ export function checkRubric(task: TaskInput, reqs: Requirement[], clauses: Claus
       continue;
     }
     const src = r.source.field === 'instruction' ? task.instruction : (task.outcomes ?? '');
-    if (!fold(src).includes(fold(r.source.quote))) {
+    // Verbatim: only whitespace and Unicode form are normalized, never case.
+    if (!canonical(src).includes(canonical(r.source.quote))) {
       errors.push(`${r.id}: quote ${JSON.stringify(r.source.quote)} is not verbatim in the ${r.source.field}.`);
       continue;
     }
@@ -174,6 +184,11 @@ export function checkRubric(task: TaskInput, reqs: Requirement[], clauses: Claus
     if (r.kind === 'soft' && !OPTIONAL.test(r.source.quote)) {
       errors.push(
         `${r.id}: ${JSON.stringify(r.source.quote)} is marked soft, but the quoted words do not say it is optional; make it hard.`,
+      );
+    } else if (r.kind === 'soft' && !OPTIONAL_EDGE.test(canonical(r.source.quote))) {
+      // "ships express, ideally with a receipt": the optional word covers only what follows it.
+      errors.push(
+        `${r.id}: ${JSON.stringify(r.source.quote)} mixes a mandatory and an optional part; quote the mandatory part as a hard requirement and only the optional part (with its optional wording) as soft.`,
       );
     }
     if (r.source.field !== 'outcomes') continue;
@@ -534,6 +549,13 @@ function discoveryTools(
 }
 
 export async function compileTask(task: TaskInput, refs: Reference[], opts: CompileOptions): Promise<CompileResult> {
+  // Tools select references by name (an enum in their schemas), so names must be unique.
+  const seen = new Set<string>();
+  for (const r of refs) {
+    if (seen.has(r.name))
+      throw new Error(`Duplicate reference name ${JSON.stringify(r.name)}; reference names must be unique.`);
+    seen.add(r.name);
+  }
   const log = opts.log ?? (() => {});
   const usage = { inputTokens: 0, outputTokens: 0 };
   const models = new Set<string>();

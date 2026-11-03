@@ -232,7 +232,8 @@ function readable(s: EvidenceSnapshot, idx: AXIndex, src: ValueSource): Readable
       const which: 'local' | 'session' = src.area;
       const area = st[which][origin];
       const raw = area?.[src.key];
-      if (raw === undefined) return undefined;
+      // Absent, or redacted at capture (nothing to perturb).
+      if (typeof raw !== 'string') return undefined;
       return {
         raw,
         what: `${which}Storage ${src.key}`,
