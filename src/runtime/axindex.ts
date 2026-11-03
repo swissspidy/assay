@@ -1,6 +1,6 @@
 import type { AXNode, Locator, Target, AbstainReason } from '../types.ts';
 import { LANDMARK_ROLES } from '../types.ts';
-import { describeTextMatch, matchText } from '../text.ts';
+import { canonical, describeTextMatch, matchText } from '../text.ts';
 
 const LANDMARKS = new Set<string>(LANDMARK_ROLES);
 
@@ -106,6 +106,16 @@ function label(node: AXNode): string {
   if (!node.name) return node.role;
   const name = node.name.length > 60 ? node.name.slice(0, 57) + '…' : node.name;
   return `${node.role} ${JSON.stringify(name)}`;
+}
+
+/**
+ * The value a node-derived source reads. Accessible names and text are
+ * whitespace-normalized by definition (ADR 0001 §2.3); control values and URLs
+ * are kept verbatim. Shared by the evaluator and the stress generators.
+ */
+export function readNodeField(index: AXIndex, n: INode, field: 'name' | 'value' | 'text' | 'url'): string | undefined {
+  const raw = field === 'text' ? index.text(n) : n.node[field];
+  return raw !== undefined && (field === 'name' || field === 'text') ? canonical(raw) : raw;
 }
 
 export function describeLocator(loc: Locator): string {

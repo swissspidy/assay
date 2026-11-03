@@ -19,6 +19,7 @@ import { canonical } from '../text.ts';
 import { runAgent, type AgentTool, type AgentRun } from '../model/agent.ts';
 import type { ModelClient } from '../model/types.ts';
 import { parseOutcomes, parseOutcomesDetailed, type Clause } from './outcomes.ts';
+import { stressTest, type FindingRef } from '../stress/stress.ts';
 import { findNodes, networkEntry, networkLog, outline, probesView, storageView, summary } from './explore.ts';
 import { DISCOVERY_NUDGE, DISCOVERY_SYSTEM, RUBRIC_SYSTEM } from './prompts.ts';
 
@@ -27,6 +28,11 @@ export interface TaskInput {
   instruction: string;
   /** Expected outcomes: Gherkin "Then" clauses, a Markdown list, or plain lines. */
   outcomes?: string;
+  /**
+   * Generic stress variants that are not valid for this task, e.g. "extra-row"
+   * when the task fixes the number of items, "reorder" when it asks for an order.
+   */
+  skipVariants?: string[];
 }
 
 export interface Reference {
@@ -398,7 +404,13 @@ interface Verification {
 }
 
 /** Validate a candidate check set and run it against every reference. */
-export function verifyCandidate(cs: CheckSet, refs: Reference[]): Verification {
+/**
+ * Validate a candidate check set, run it against every reference and (unless
+ * `stress` is false) stress-test it on the correct references: rejecting a valid
+ * variant is an error (over-constrained); fragile anchors, weak checks and
+ * missed mutants are warnings.
+ */
+export function verifyCandidate(cs: CheckSet, refs: Reference[], stress = true, skipVariants?: string[]): Verification {
   const v = validateCheckSet(cs);
   const errors = [...v.errors];
   const warnings = [...v.warnings];
@@ -430,6 +442,28 @@ export function verifyCandidate(cs: CheckSet, refs: Reference[]): Verification {
     if (cov.trust === 'freetext')
       warnings.push(`Requirement ${cov.requirement} is covered only by free page text, which a page can spoof.`);
   }
+  const ok = refs.filter((r) => r.kind === 'success');
+  if (stress && errors.length === 0 && ok.length) {
+    const r = stressTest(
+      cs,
+      ok.map((x) => ({ name: x.name, snapshot: x.snapshot })),
+      { skipVariants: skipVariants ?? [] },
+    );
+    for (const o of r.overConstrained) {
+      errors.push(
+        `${o.check} is over-constrained: it rejects valid variants of a correct run (${o.variants.map(show).join('; ')}). Test only what the requirement states.`,
+      );
+    }
+    for (const f of r.fragile) {
+      warnings.push(
+        `${f.check} abstains on valid variants (${f.variants.map(show).join('; ')}); consider more robust anchors.`,
+      );
+    }
+    for (const w of r.weak)
+      warnings.push(`${w.check} still passes when its own evidence is broken (${w.mutants.map(show).join('; ')}).`);
+    if (r.missed.length) warnings.push(`Near-miss runs accepted as success: ${r.missed.map(show).join('; ')}.`);
+    for (const a of r.advisories) warnings.push(`Advisory: ${show(a)}`);
+  }
   return { errors, warnings, references };
 }
 
@@ -448,6 +482,8 @@ const ASSERT_TOOL_SCHEMA = {
   properties: { assert: { $ref: '#/definitions/assertion' } },
   definitions: checkSetSchema.definitions,
 };
+
+const show = (f: FindingRef) => `${f.description} [${f.reference}/${f.id}]`;
 
 const obj = (props: Record<string, unknown>, required: string[] = []) => ({
   type: 'object',
@@ -554,7 +590,7 @@ function discoveryTools(
           requirements,
           checks: i.checks,
         };
-        const v = verifyCandidate(cs, refs);
+        const v = verifyCandidate(cs, refs, true, task.skipVariants);
         if (v.errors.length) {
           return {
             content: `Not accepted. Fix these and resubmit all checks:\n- ${v.errors.join('\n- ')}${v.warnings.length ? `\nWarnings:\n- ${v.warnings.join('\n- ')}` : ''}`,

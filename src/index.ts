@@ -34,3 +34,4 @@ export {
 } from './model/anthropic.ts';
 export { replayModel, recordingModel, requestKey, type Cassette } from './model/replay.ts';
 export * from './model/types.ts';
+export * from './stress/index.ts';

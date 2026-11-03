@@ -105,6 +105,16 @@ const { checkSet, report } = await compileTask(
 
 The compiler writes a rubric of requirements, each quoting the task text. An agent then explores the reference snapshots and submits checks, which are accepted only once they validate and pass on every correct reference. See [ADR 0002](docs/adr/0002-compiler.md). `npm run compile:tiny-shop` compiles the 10 Tiny Shop tasks from one correct run each and judges the held-out runs. It needs `ANTHROPIC_API_KEY` to record and replays the recorded cassettes without one.
 
+## Stress testing (milestone 3)
+
+```ts
+import { stressTest, formatStressReport } from 'assay';
+const report = stressTest(checkSet, [{ name: 'reference', snapshot }]);
+console.log(formatStressReport(report)); // acceptance/rejection rates, over-constrained, fragile and weak checks
+```
+
+The stress test edits correct snapshots into valid variants (reordered rows, unrelated content, extra JSON fields, other number, money and date formats, network noise) and into near-miss mutants (flipped states, missing items, perturbed values, failed or missing requests, pages that only claim success). A check that rejects a valid variant is flagged as over-constrained, and the compiler sends that back to the model as an error. See [ADR 0003](docs/adr/0003-stress-testing.md). `npm run stress:tiny-shop` writes `examples/tiny-shop/stress/handwritten/REPORT.md`.
+
 ## Development
 
 Requires **Node.js 24+** (see `.nvmrc`). Tooling: [tsrs](https://github.com/oxc-project/tsrs)

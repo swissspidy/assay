@@ -1,0 +1,85 @@
+# ADR 0003: Stress testing compiled checks
+
+- Status: Accepted
+- Date: 2026-11-03
+- Scope: Milestone 3
+
+## Context
+
+A check that passes on one correct run can still be wrong in two ways:
+
+- **Over-constrained:** it rejects other correct outcomes. This is the main VerifierBench failure.
+- **Under-constrained (weak):** it accepts near misses.
+
+Snapshots are plain data and evaluation is pure (ADR 0001), so both can be probed without a browser by editing snapshots.
+
+## Decision
+
+`stressTest(checkSet, correctReferences)` builds two edit families from each correct reference and evaluates the check set on every edit.
+
+### Valid variants (must be accepted)
+
+Generic, task-independent presentation changes:
+
+- `reorder`: list items and table rows reversed; header rows stay first.
+- `extra-content`: unrelated content, a promotional status message mentioning money, and the same text appended to the page text.
+- `extra-row`: an unrelated table row.
+- `wrap-main`: main content wrapped in an extra region.
+- `spacing`: non-breaking and doubled spaces.
+- `extra-json-fields`: extra fields in JSON objects that are records. Map-like objects whose keys are data (`{"MUG-BLUE": 1}`) are left alone.
+- `json-array-order`: JSON arrays in reverse order.
+- `network-noise`: an analytics beacon and repeated GET requests.
+- `retry`: each state-changing request first fails with HTTP 503 and is retried.
+- `extra-storage`: unrelated cookies and storage keys.
+- `url-decoration`: a tracking query parameter on the page URL.
+- `url-hash`: a fragment on the page URL.
+
+Value-specific formatting is also generated. For each `value` check that reads money or a date from the page, the same value is re-rendered in other formats of the check's locale, for example `$21.50` → `USD 21.50`, `21.50 USD`, `$21.5`; dates in full, long, medium, short and ISO style. Numbers are re-formatted only when the page already shows grouping or decimals, so IDs, years and codes don't gain separators. An edit that can't be applied faithfully (a value spread over several text runs) is dropped rather than counted.
+
+A correct reference that the check set rejects is also recorded, as variant `reference`. That is the strongest evidence of over-constraint.
+
+Some generic variants don't apply to some tasks: `extra-row` when the task fixes the number of items, `reorder` or `json-array-order` when it asks for an order. Tasks list those in `skipVariants` (`TaskInput.skipVariants` for the compiler). Skipping is visible in the task definition and is a decision for the human reviewer.
+
+### Mutants (must be rejected)
+
+Mutants are derived from each check's own evidence and **from what the check compares**, and every mutant is labelled with the check it attacks:
+
+| Check                                                     | Mutants                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `value`                                                   | Replacement values that **violate the comparison**: past a bound or tolerance, outside an `oneOf` set, inside the matched substring of `contains`/`regex`, schema violations. Every candidate is verified with the real comparison. Point comparisons (`equals`, `approx`, `oneOf`) also get generic near misses (+1, ×10, +1 cent, +1 day, one character changed); a check that accepts one of those is lenient, which is how an over-wide tolerance shows up as weak. **Wrong item:** the value of a sibling (another row's cell, another array element's field). Values are written back in the page's own format (decimals, grouping, symbols, date style), then re-read through the check's normalizers, and dropped unless they read back as the intended value. Storage keys are also unset. |
+| JSON Schema (`schema` comparisons, request body matchers) | Schema-derived violations, each verified against the schema: const/enum values replaced by values outside the set, required properties removed, bounds crossed, patterns broken, required array items removed (`contains`), one fewer (`minContains`), forbidden items inserted (`not.contains`). Recurses into `properties`, `items`, `allOf`, `anyOf`, `oneOf`.                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `state`                                                   | Each asserted state flipped. **Wrong item:** the state set on another node of the same role instead. Asserted name, value or text changed to a violating string. Level changed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `contains`                                                | Lower bounds: all matches removed; one fewer (partial completion); **wrong item** (a non-matching sibling of the same role in its place). Upper bounds and absence: matching items inserted, copied from the page or synthesized with their `within`/landmark context.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `request`                                                 | Never sent; failing with HTTP 500; one fewer; schema violations of the matched bodies. For upper bounds and `eq`: a duplicate submission, or a synthesized forbidden request.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `url`                                                     | The browser ending elsewhere; a constrained query parameter changed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `anyOf`                                                   | Every alternative broken at once.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+
+Edits that don't change the snapshot are dropped, so a "weak" flag always means the check accepted evidence that was really broken.
+
+Two set-level edits:
+
+- **`+claim`:** every rejected mutant is re-run with a success message added to the page (in `main`, or at the root). It must still be rejected, which tests that page claims never decide. These copies are reported separately and don't inflate the rejection rate.
+- **`claims-only` (advisory):** the page looks exactly like success, but no state-changing request was sent, storage is empty and probes fail. Accepting it is reported, not failed, because some outcomes are legitimately visible only in the UI (a filled cart page).
+
+### Reported results
+
+- **Rates:** valid variants accepted; definite mutants rejected, split by fail vs. abstain; success-claim copies rejected, reported separately.
+  - A variant is accepted when no check's status is worse than on the reference itself.
+  - A mutant is rejected when the overall verdict isn't success, or when the requirement it attacks no longer passes (this matters for soft requirements).
+- **Over-constrained:** a check that gets worse and _fails_ on a valid variant, or fails on a correct reference.
+- **Fragile:** a check that gets worse and _abstains_ on a valid variant (brittle anchors).
+- **Weak:** a check that still _passes_ when its own evidence was broken.
+- **Missed:** a definite mutant (or success-claim copy) that wasn't rejected.
+- **Untested:** checks the generator found no way to break.
+
+Checks that already fail or abstain on the reference (e.g. a soft requirement) are not flagged again.
+
+### Integration with the compiler
+
+`verifyCandidate` (ADR 0002) runs the stress test on every submission that otherwise passes. Over-constraint is a submission error, so the agent must fix it. Fragile, weak, missed and advisory findings are warnings in the compile report. The cheapest place to remove an unstated condition is the repair loop, before a human ever sees the check.
+
+## Consequences
+
+- The ten handwritten Tiny Shop check sets, on 20 correct reference runs, accept 223/223 valid variants and reject 86/86 definite mutants (plus 86/86 success-claim copies). The stress run also found one real runtime issue: text read from the accessibility tree wasn't whitespace-normalized before the extract regex ran, so a page rendering non-breaking spaces abstained. That text is now canonicalized, as ADR 0001 §2.3 intends.
+- The generators are heuristic. A missing variant type means an over-constraint goes unnoticed, and an inapplicable one means a false flag. Both are bounded by human confirmation (milestone 4/5) and by the `skipVariants` escape hatch.
+- Mutation operators exist only for evidence types the DSL supports. A new assertion kind needs a mutation operator, or its checks show up as untested.

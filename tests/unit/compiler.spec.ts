@@ -691,6 +691,82 @@ test('adapter aborts the failed stream before retrying', async () => {
   expect(aborted).toBe(1);
 });
 
+test('compileTask rejects over-constrained checks found by stress testing, then accepts the fix', async () => {
+  const task: TaskInput = {
+    id: 'tiny-shop/cart-two-mugs',
+    instruction: 'Put a Blue Mug and a Red Mug in my cart and show me the cart.',
+    outcomes: 'Then the cart page lists a Blue Mug\nThen the cart page lists a Red Mug',
+  };
+  const row = (id: string, req: string, product: string): Check => ({
+    id,
+    requirement: req,
+    description: `The Cart table lists ${product}.`,
+    assert: {
+      kind: 'contains',
+      scope: { role: 'table', name: 'Cart' },
+      match: { role: 'row', name: { contains: product } },
+    },
+  });
+  const exactCount: Check = {
+    id: 'C3',
+    requirement: 'R1',
+    description: 'Exactly three rows.',
+    assert: { kind: 'contains', scope: { role: 'table', name: 'Cart' }, match: { role: 'row' }, count: { eq: 3 } },
+  };
+  const model = scripted([
+    () => call('submit_checks', { checks: [row('C1', 'R1', 'Blue Mug'), row('C2', 'R2', 'Red Mug'), exactCount] }),
+    (req) => {
+      const r = lastResults(req)[0]!;
+      expect(r.isError).toBe(true);
+      expect(r.content).toContain('C3 is over-constrained');
+      expect(r.content).toContain('an unrelated extra row in each table');
+      return call('submit_checks', { checks: [row('C1', 'R1', 'Blue Mug'), row('C2', 'R2', 'Red Mug')] });
+    },
+  ]);
+  const { checkSet, report } = await compileTask(
+    task,
+    [{ name: 'both-mugs', kind: 'success', snapshot: ref('03-cart-two-mugs', 'both-mugs') }],
+    { model, rubric: 'deterministic' },
+  );
+  expect(report.status).toBe('compiled');
+  expect(checkSet!.checks).toHaveLength(2);
+});
+
+test('compileTask forwards skipVariants to stress testing: an exact row count passes when extra-row is skipped', async () => {
+  const task: TaskInput = {
+    id: 'tiny-shop/cart-two-mugs',
+    instruction: 'Put a Blue Mug and a Red Mug in my cart and show me the cart.',
+    outcomes: 'Then the cart page lists a Blue Mug\nThen the cart page lists a Red Mug',
+    skipVariants: ['extra-row'],
+  };
+  const row = (id: string, req: string, product: string): Check => ({
+    id,
+    requirement: req,
+    description: `The Cart table lists ${product}.`,
+    assert: {
+      kind: 'contains',
+      scope: { role: 'table', name: 'Cart' },
+      match: { role: 'row', name: { contains: product } },
+    },
+  });
+  const exactCount: Check = {
+    id: 'C3',
+    requirement: 'R1',
+    description: 'Exactly three rows.',
+    assert: { kind: 'contains', scope: { role: 'table', name: 'Cart' }, match: { role: 'row' }, count: { eq: 3 } },
+  };
+  const model = scripted([
+    () => call('submit_checks', { checks: [row('C1', 'R1', 'Blue Mug'), row('C2', 'R2', 'Red Mug'), exactCount] }),
+  ]);
+  const { checkSet, report } = await compileTask(
+    task,
+    [{ name: 'both-mugs', kind: 'success', snapshot: ref('03-cart-two-mugs', 'both-mugs') }],
+    { model, rubric: 'deterministic' },
+  );
+  expect(report.status).toBe('compiled');
+  expect(checkSet!.checks.map((c) => c.id)).toEqual(['C1', 'C2', 'C3']);
+});
+
 test.describe('review hardening (milestone 2)', () => {
   const instr = (quote: string, kind: 'hard' | 'soft' = 'hard', id = 'R1') => ({
     id,
@@ -774,6 +850,7 @@ test.describe('review hardening (milestone 2)', () => {
     expect(partOfClause('pay', 'repay the invoice')).toBe(false);
     expect(containsClause('payment', 'pay')).toBe(false);
     expect(containsClause('pay\u{20000} now', 'pay')).toBe(false);
+    expect(containsClause('\u{20000}pay', 'pay')).toBe(false);
     expect(containsClause('नामांकन', 'नाम')).toBe(false);
     expect(containsClause('नाम दर्ज', 'नाम')).toBe(true);
     expect(partOfClause('the invoice', 'repay the invoice')).toBe(true);

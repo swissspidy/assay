@@ -55,6 +55,8 @@ Assertions:
 - {kind:"allOf"|"anyOf", of:[...]} — three-valued: anyOf passes if any branch passes.
 Check: {id, requirement, description, assert}. description is one plain-language sentence a reviewer can confirm.
 
+Your submission is also stress-tested: it must accept valid variants of the correct runs (reordered rows, unrelated extra content, extra JSON fields, other number/money/date formats, extra GET requests, a tracking query parameter). A check that rejects one is over-constrained and the submission is refused.
+
 Explore before writing. Prefer few, strong checks over many weak ones. Every requirement needs at least one check.`;
 
 export const DISCOVERY_NUDGE =
