@@ -105,9 +105,9 @@ const MARKER = '(?:optional(?:ly)?|if possible|ideally|nice to have|if you can|b
 const LEADING_OPTIONAL = new RegExp(`^(?:(?:then|and|but)\\s+)?${MARKER}\\b`, 'i');
 const TRAILING_OPTIONAL = new RegExp(`\\b${MARKER}[.!]?$`, 'i');
 /** Anything that can join two parts of a quote: punctuation, a spaced dash, a sentence end, a conjunction. */
-const SEPARATOR = /[,;:.!?]|\s[–—-]\s|\b(?:and|but|then)\b/i;
+const SEPARATOR = /[,;:.!?]|\s[–—-]\s|\b(?:and|but|then|while|whereas|although|though|whilst|unless|except)\b/i;
 /** Any negation. Near optional wording it may mean the opposite ("not just optional"), so it never relaxes. */
-const NEGATION = /\b(?:not|never|no longer|neither|nor)\b|n't\b/i;
+const NEGATION = /\b(?:not|never|no longer|neither|nor)\b|n['’]t\b/i;
 
 /**
  * Whether the quote says something is optional. This is deliberately conservative:
