@@ -25,7 +25,7 @@ import {
   type Reference,
   type TaskInput,
 } from '../../src/index.ts';
-import { clauseCovered } from '../../src/compiler/compile.ts';
+import { clauseCovered, wholeQuoteOptional } from '../../src/compiler/compile.ts';
 import { networkLog } from '../../src/compiler/explore.ts';
 
 const ref = (task: string, name: string): EvidenceSnapshot =>
@@ -719,6 +719,23 @@ test.describe('review hardening (milestone 2)', () => {
     ).toEqual([]);
   });
 
+  test('trailing optional wording qualifies the whole quote only when nothing else precedes it unseparated', () => {
+    expect(wholeQuoteOptional('ideally, gift wrap it')).toBe(true);
+    expect(wholeQuoteOptional('ships express, if possible')).toBe(true);
+    expect(wholeQuoteOptional('add a gift note if possible')).toBe(true);
+    expect(wholeQuoteOptional('the order ships express; receipt optional')).toBe(false);
+    expect(wholeQuoteOptional('ships express and a receipt is optional')).toBe(false);
+    expect(wholeQuoteOptional('ships express, ideally with a receipt')).toBe(false);
+    const task = { id: 't', instruction: 'Order it; the order ships express; receipt optional.' };
+    expect(
+      checkRubric(
+        task,
+        [instr('Order it'), instr('the order ships express; receipt optional', 'soft', 'R2')],
+        [],
+      ).join(),
+    ).toContain('mixes a mandatory and an optional part');
+  });
+
   test('a hard quote may not include optional wording', () => {
     const task = { id: 't', instruction: 'Order it; the order ships express, ideally with a receipt.' };
     const hard = instr('Order it');
@@ -757,7 +774,9 @@ test.describe('review hardening (milestone 2)', () => {
     expect(page2).toMatch(/^#2 /);
     expect(page2).toContain('… 1 more');
     expect(page2).toContain('offset 4');
-    expect(networkLog(many, { allTypes: true, offset: 4 }, 2)).not.toContain('more');
+    const page3 = networkLog(many, { allTypes: true, offset: 4 }, 2);
+    expect(page3).toMatch(/^#4 /);
+    expect(page3).not.toContain('more');
     expect(networkLog(many, { allTypes: true, offset: 9 }, 2)).toContain('5 requests match');
   });
 });
