@@ -342,7 +342,9 @@ export class EvidenceRecorder {
       return g;
     };
     for (const e of this.entries) {
-      if (BODY_RESOURCE_TYPES.has(e.resourceType)) group(this.frameOf.get(e), e.method, e.url).entries.push(e);
+      // Failed requests have no response, so no tapped body belongs to them.
+      if (BODY_RESOURCE_TYPES.has(e.resourceType) && e.failure === undefined)
+        group(this.frameOf.get(e), e.method, e.url).entries.push(e);
     }
     for (const t of this.tapped) group(t.frame, t.method, t.url).taps.push(t);
     for (const { entries, taps } of groups.values()) {
