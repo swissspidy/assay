@@ -8,7 +8,12 @@ export {
   type VerifierStatus,
   type Observation,
 } from './verifier.ts';
-export { verifyWithEscalation, type EscalationPolicy, type VerifyOptions, type VerifyResult } from './escalate.ts';
+export {
+  verifyWithEscalation,
+  type EscalationPolicy,
+  type VerifyOptions,
+  type VerifyResult as EscalationResult,
+} from './escalate.ts';
 export {
   writeOutcomeRecord,
   newRecordId,

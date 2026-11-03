@@ -124,6 +124,17 @@ class LiveViews {
       const browser = this.page.context().browser();
       if (!browser) throw new Error('Live access needs a browser-backed context.');
       const ctx = await browser.newContext({ storageState: await this.page.context().storageState() });
+      // storageState() has cookies and localStorage only; copy this origin's sessionStorage too.
+      const session = await this.page
+        .evaluate((origin) => (location.origin === origin ? Object.entries(sessionStorage) : []), this.origin)
+        .catch(() => [] as [string, string][]);
+      await ctx.addInitScript(
+        ({ origin, entries }) => {
+          if (location.origin !== origin) return;
+          for (const [k, v] of entries) sessionStorage.setItem(k, v);
+        },
+        { origin: this.origin, entries: session },
+      );
       await ctx.route('**/*', (route) => {
         const req = route.request();
         let same = false;
@@ -178,9 +189,10 @@ export async function runVerifier(model: ModelClient, input: VerifierInput, maxT
           method: { type: 'string' },
           pathContains: { type: 'string' },
           allTypes: { type: 'boolean' },
+          offset: { type: 'integer', minimum: 0, description: 'Skip this many matching rows (for paging).' },
         }),
       },
-      run: (i: { method?: string; pathContains?: string; allTypes?: boolean }) =>
+      run: (i: { method?: string; pathContains?: string; allTypes?: boolean; offset?: number }) =>
         observe('network_log', i, networkLog(snap, i)),
     },
     {
@@ -256,6 +268,7 @@ export async function runVerifier(model: ModelClient, input: VerifierInput, maxT
               );
             }
             const body = await r.text();
+            await r.dispose(); // the body lives on in the observation; free Playwright's copy
             let shown = body;
             try {
               shown = JSON.stringify(JSON.parse(body), null, 1);

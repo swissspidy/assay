@@ -91,7 +91,7 @@ export function describeAssertion(a: Assertion): string {
     case 'contains':
       return `${a.scope ? target(a.scope) : 'the page'} contains ${describeNumberCompare(a.count ?? { gte: 1 })} ${loc(a.match)}${a.witness ? ` (witness: ${loc(a.witness)} must exist)` : ''}`;
     case 'value':
-      return `${source(a.source)}${a.normalize?.length ? `, normalized by ${a.normalize.map((n) => (typeof n === 'string' ? n : n.op)).join(' → ')}` : ''}, ${JSON.stringify(a.expect)}`;
+      return `${source(a.source)}${a.normalize?.length ? `, normalized by ${a.normalize.map((n) => (typeof n === 'string' ? n : JSON.stringify(n))).join(' → ')}` : ''}, ${JSON.stringify(a.expect)}`;
     case 'url':
       return `the page URL matches ${describeUrlMatch(a.match)}`;
     case 'request':
@@ -111,7 +111,9 @@ export function reviewSheet(cs: CheckSet): string {
   for (const r of cs.requirements) {
     lines.push('', `## ${r.id} (${r.kind}): "${r.source.quote}"`);
     for (const c of cs.checks.filter((x) => x.requirement === r.id)) {
-      lines.push(`- **${c.id}** ${c.description}`, `  - tests: ${describeAssertion(c.assert)}`);
+      // One line per description: a line break could forge a heading or another check's entry.
+      const description = c.description.replace(/\s*[\r\n\u2028\u2029]+\s*/g, ' ');
+      lines.push(`- **${c.id}** ${description}`, `  - tests: ${describeAssertion(c.assert)}`);
     }
   }
   const lock = (cs as CheckSet & { locked?: Lock }).locked;

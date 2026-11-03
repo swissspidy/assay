@@ -128,7 +128,7 @@ const { outcome, record, proposal } = await verifyWithEscalation(locked, snapsho
   requireLocked: true,
   agentReport: 'I placed the order.', // recorded as agent-claimed, never evidence
 });
-writeOutcomeRecord('assay-records', record, snapshot, proposal);
+writeOutcomeRecord('assay-records', record, snapshot, locked, proposal);
 ```
 
 In Playwright: `await expectOutcome(page, locked, { escalate: { verifier }, recordDir: 'assay-records' })`. See [ADR 0004](docs/adr/0004-escalation-and-records.md).
