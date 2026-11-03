@@ -1,12 +1,14 @@
 /**
  * Outcome records (milestone 4): one auditable JSON document per verification,
- * written next to a content-addressed copy of the evidence snapshot.
+ * written next to content-addressed copies of the evidence snapshot, the check
+ * set and every observation the verifier made.
  */
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
-import type { AbstainReason, Evidence, EvidenceSnapshot, Json, Status, Verdict } from '../types.ts';
-import type { RequirementVerdict, VerifierResult } from './verifier.ts';
+import type { AbstainReason, CheckSet, Evidence, EvidenceSnapshot, Json, Status, Verdict } from '../types.ts';
+import { checkSetDigest, sha256, snapshotDigest } from '../snapshot/digest.ts';
+import type { Observation, RequirementVerdict, VerifierResult } from './verifier.ts';
 
 export const RECORD_SCHEMA = 'assay.record/v1' as const;
 
@@ -18,8 +20,18 @@ export interface RecordedRequirement {
   /** Who decided: the locked checks, the agentic verifier, or nobody (abstain). */
   decidedBy: 'checks' | 'verifier' | 'none';
   reason?: AbstainReason | string;
-  /** Observed evidence only. */
-  evidence: (Evidence | { origin: 'observed'; channel: 'verifier'; observation: string })[];
+  /**
+   * What decided it: observed check evidence, or the tool outputs the verifier
+   * cited (labelled verifier-cited). Never the model's prose or the agent's claims.
+   */
+  evidence: (Evidence | { origin: 'verifier-cited'; channel: 'verifier'; observation: string })[];
+}
+
+export interface RecordedObservation extends Omit<Observation, 'output'> {
+  /** First characters of the output; the full output is stored content-addressed. */
+  excerpt: string;
+  outputDigest: string;
+  file?: string;
 }
 
 export interface OutcomeRecord {
@@ -27,7 +39,15 @@ export interface OutcomeRecord {
   id: string;
   createdAt: string;
   task: { id: string; instruction: string; outcomes?: string };
-  checkSet: { id: string; version: string; digest: string; locked: { by: string; at: string } | null };
+  checkSet: {
+    id: string;
+    version: string;
+    digest: string;
+    locked: { by: string; at: string } | null;
+    /** A lock is present but no longer matches the content. */
+    lockBroken: boolean;
+    file?: string;
+  };
   snapshot: { digest: string; url: string; capturedAt: string; file?: string };
   verdict: Verdict;
   requirements: RecordedRequirement[];
@@ -38,9 +58,11 @@ export interface OutcomeRecord {
     requirements: string[];
     model: string;
     modelsUsed: string[];
-    status: VerifierResult['status'];
+    status: VerifierResult['status'] | 'error';
+    error?: string;
+    /** The verifier's verdicts, including its reasoning (notes, not evidence). */
     verdicts: RequirementVerdict[];
-    observations: VerifierResult['observations'];
+    observations: (Observation | RecordedObservation)[];
     usage: VerifierResult['usage'];
     turns: number;
   };
@@ -50,7 +72,16 @@ export interface OutcomeRecord {
    */
   agentClaims?: { origin: 'agent-claimed'; text: string };
   /** A recompiled check set proposed after escalation; it needs human approval before use. */
-  proposal?: { status: 'pending-approval'; checkSetDigest: string; checks: number; file?: string; reason: string };
+  proposal?:
+    | {
+        status: 'pending-approval';
+        version: string;
+        checkSetDigest: string;
+        checks: number;
+        file?: string;
+        reason: string;
+      }
+    | { status: 'failed'; error: string; reason: string };
   timings: { checksMs: number; escalationMs?: number; proposalMs?: number };
 }
 
@@ -61,36 +92,68 @@ export function newRecordId(): string {
 export interface WrittenRecord {
   recordFile: string;
   snapshotFile: string;
+  checkSetFile: string;
   proposalFile?: string;
 }
 
+const hex = (digest: string) => digest.replace('sha256:', '');
+
+function writeOnce(file: string, content: string): void {
+  if (!existsSync(file)) writeFileSync(file, content);
+}
+
 /**
- * Write a record to `<dir>/records/<createdAt>-<id>.json` and the snapshot to
- * `<dir>/snapshots/<digest>.json` (deduplicated by digest).
+ * Write the record to `<dir>/records/<createdAt>-<id>.json` with content-addressed
+ * copies under `snapshots/`, `checksets/`, `observations/` and `proposals/`.
+ * The snapshot and check-set digests are recomputed, not trusted from the record.
  */
 export function writeOutcomeRecord(
   dir: string,
   record: OutcomeRecord,
   snapshot: EvidenceSnapshot,
-  proposal?: Json,
+  checkSet: CheckSet,
+  proposal?: CheckSet,
 ): WrittenRecord {
-  const snapDir = join(dir, 'snapshots');
-  const recDir = join(dir, 'records');
-  mkdirSync(snapDir, { recursive: true });
-  mkdirSync(recDir, { recursive: true });
-  const snapshotFile = join(snapDir, `${record.snapshot.digest.replace('sha256:', '')}.json`);
-  if (!existsSync(snapshotFile)) writeFileSync(snapshotFile, JSON.stringify(snapshot) + '\n');
-  const stamp = record.createdAt.replace(/[:.]/g, '-');
+  const snapDigest = snapshotDigest(snapshot);
+  if (snapDigest !== record.snapshot.digest)
+    throw new Error(`Snapshot digest ${snapDigest} does not match the record (${record.snapshot.digest}).`);
+  const csDigest = checkSetDigest(checkSet);
+  if (csDigest !== record.checkSet.digest)
+    throw new Error(`Check set digest ${csDigest} does not match the record (${record.checkSet.digest}).`);
+  for (const sub of ['records', 'snapshots', 'checksets', 'observations'])
+    mkdirSync(join(dir, sub), { recursive: true });
+
+  const snapshotFile = join(dir, 'snapshots', `${hex(snapDigest)}.json`);
+  writeOnce(snapshotFile, JSON.stringify(snapshot) + '\n');
+  const checkSetFile = join(dir, 'checksets', `${hex(csDigest)}.json`);
+  writeOnce(checkSetFile, JSON.stringify(checkSet, null, 2) + '\n');
+
+  const out: OutcomeRecord = {
+    ...record,
+    snapshot: { ...record.snapshot, file: snapshotFile },
+    checkSet: { ...record.checkSet, file: checkSetFile },
+  };
+  if (record.escalation) {
+    out.escalation = {
+      ...record.escalation,
+      observations: record.escalation.observations.map((o) => {
+        if (!('output' in o)) return o;
+        const digest = sha256(o.output);
+        const file = join(dir, 'observations', `${hex(digest)}.txt`);
+        writeOnce(file, o.output);
+        const { output, ...rest } = o;
+        return { ...rest, excerpt: output.slice(0, 300), outputDigest: digest, file };
+      }),
+    };
+  }
   let proposalFile: string | undefined;
-  const out: OutcomeRecord = { ...record, snapshot: { ...record.snapshot, file: snapshotFile } };
-  if (proposal !== undefined && record.proposal) {
-    const propDir = join(dir, 'proposals');
-    mkdirSync(propDir, { recursive: true });
-    proposalFile = join(propDir, `${record.proposal.checkSetDigest.replace('sha256:', '')}.checks.json`);
-    writeFileSync(proposalFile, JSON.stringify(proposal, null, 2) + '\n');
+  if (proposal && record.proposal?.status === 'pending-approval') {
+    mkdirSync(join(dir, 'proposals'), { recursive: true });
+    proposalFile = join(dir, 'proposals', `${hex(record.proposal.checkSetDigest)}.checks.json`);
+    writeFileSync(proposalFile, JSON.stringify(proposal as unknown as Json, null, 2) + '\n');
     out.proposal = { ...record.proposal, file: proposalFile };
   }
-  const recordFile = join(recDir, `${stamp}-${record.id}.json`);
+  const recordFile = join(dir, 'records', `${record.createdAt.replace(/[:.]/g, '-')}-${record.id}.json`);
   writeFileSync(recordFile, JSON.stringify(out, null, 2) + '\n');
-  return { recordFile, snapshotFile, ...(proposalFile ? { proposalFile } : {}) };
+  return { recordFile, snapshotFile, checkSetFile, ...(proposalFile ? { proposalFile } : {}) };
 }

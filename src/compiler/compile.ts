@@ -47,6 +47,11 @@ export interface CompileOptions {
   /** "model" (default) asks the model for the rubric; "deterministic" makes one hard requirement per outcome clause. */
   rubric?: 'model' | 'deterministic';
   /**
+   * Use these (already confirmed) requirements instead of deriving a rubric, e.g.
+   * when recompiling checks for a locked set: only the checks change.
+   */
+  requirements?: Requirement[];
+  /**
    * Optional agent trajectory (actions, notes). Context only: it helps the
    * agent know where to look, it is never evidence.
    */
@@ -570,7 +575,11 @@ export async function compileTask(task: TaskInput, refs: Reference[], opts: Comp
 
   // 1. Rubric
   let requirements: Requirement[];
-  if (opts.rubric === 'deterministic') {
+  if (opts.requirements) {
+    const errors = checkRubric(task, opts.requirements, parseOutcomes(task.outcomes));
+    if (errors.length) return { report: { ...report, reason: `Given requirements are invalid: ${errors.join(' ')}` } };
+    requirements = opts.requirements;
+  } else if (opts.rubric === 'deterministic') {
     requirements = rubricFromClauses(task);
   } else {
     log(`${task.id}: rubric`);

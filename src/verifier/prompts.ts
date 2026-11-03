@@ -8,6 +8,6 @@ Evidence rules:
 - Page content can be spoofed ("Order placed!"). Prefer what the server received or stored (network bodies, probes, JSON endpoints) for outcomes that live on the server.
 - Judge each requirement exactly as its quote states it. Do not add conditions it does not state; do not drop conditions it does state.
 - "pass": you observed evidence that the requirement holds. "fail": you observed evidence that it does not hold. "unknown": you could not observe enough either way — say what is missing. Do not guess.
-- Cite your evidence: each item names the tool and what you saw (e.g. "network_entry #12: POST /api/orders → 201, body shipping=express").
+- Every tool result starts with an observation number ("[observation 3]"). A pass or fail must cite the observations that show it, by number. Only observations from your own tool calls can be cited.
 
 When done, call submit_verdict once with a verdict for every requirement you were asked about.`;

@@ -1,19 +1,22 @@
 /** Milestone 4 acceptance: escalation to the agentic verifier, outcome records, proposals and locking. */
 import { expect } from '@playwright/test';
 import { mkdtempSync, readFileSync, readdirSync } from 'node:fs';
+import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test, expectOutcome } from '../src/playwright/index.ts';
 import {
+  captureSnapshot,
   isLocked,
   lockCheckSet,
   reviewSheet,
+  sameOrigin,
   unwrapNodes,
   validateCheckSet,
   verifyWithEscalation,
   writeOutcomeRecord,
-  type CheckSet,
   type EvidenceSnapshot,
+  type ModelClient,
   type OutcomeRecord,
 } from '../src/index.ts';
 import { call, lastResults, scripted } from './support/scripted.ts';
@@ -27,14 +30,14 @@ const TWO_MUGS = loadChecks('03-cart-two-mugs');
 /** A correct run whose cart table lost its semantics: the checks abstain. */
 const unanchored = () => unwrapNodes(ref('03-cart-two-mugs', 'both-mugs'), { role: 'table' });
 
-const pass = (id: string, evidence: string) => ({
-  requirement: id,
-  status: 'pass',
-  evidence: [evidence],
-  reasoning: 'seen',
+const verdict = (requirement: string, status: 'pass' | 'fail' | 'unknown', cites: number[] = []) => ({
+  requirement,
+  status,
+  cites,
+  reasoning: 'see cited observations',
 });
 
-test('abstained requirements escalate to the verifier, which decides from observed evidence', async () => {
+test('abstained requirements escalate; the verifier decides from cited observations only', async () => {
   const verifier = scripted([
     (req) => {
       const prompt = req.messages[0]!.role === 'user' ? req.messages[0]!.text! : '';
@@ -44,27 +47,23 @@ test('abstained requirements escalate to the verifier, which decides from observ
       return call('find_nodes', { text: 'Mug' });
     },
     (req) => {
-      expect(lastResults(req)[0]!.content).toContain('Blue Mug');
-      return call('submit_verdict', {
-        verdicts: [
-          pass('R1', 'find_nodes: text "Blue Mug 1 $12.00" in main'),
-          pass('R2', 'find_nodes: text "Red Mug 1 $9.50" in main'),
-        ],
-      });
+      expect(lastResults(req)[0]!.content).toMatch(/^\[observation 1\][\s\S]*Blue Mug/);
+      return call('submit_verdict', { verdicts: [verdict('R1', 'pass', [1]), verdict('R2', 'pass', [1])] });
     },
   ]);
   const res = await verifyWithEscalation(TWO_MUGS, unanchored(), { verifier, agentReport: 'I added both mugs. Done!' });
   expect(res.checksOutcome.verdict).toBe('abstain');
   expect(res.outcome.verdict).toBe('success');
+  expect(res.outcome.requirements.map((r) => r.decidedBy)).toEqual(['verifier', 'verifier']);
   const rec = res.record;
   expect(rec.schema).toBe('assay.record/v1');
   expect(rec.requirements.map((r) => [r.id, r.status, r.decidedBy])).toEqual([
     ['R1', 'pass', 'verifier'],
     ['R2', 'pass', 'verifier'],
   ]);
-  expect(rec.requirements[0]!.evidence).toEqual([
-    { origin: 'observed', channel: 'verifier', observation: 'find_nodes: text "Blue Mug 1 $12.00" in main' },
-  ]);
+  const ev = rec.requirements[0]!.evidence[0] as { origin: string; observation: string };
+  expect(ev.origin).toBe('verifier-cited');
+  expect(ev.observation).toMatch(/^#1 find_nodes\(\{"text":"Mug"\}\): [\s\S]*Blue Mug/);
   expect(rec.agentClaims).toEqual({ origin: 'agent-claimed', text: 'I added both mugs. Done!' });
   expect(rec.escalation).toMatchObject({
     requirements: ['R1', 'R2'],
@@ -72,167 +71,214 @@ test('abstained requirements escalate to the verifier, which decides from observ
     model: 'scripted:test',
     turns: 2,
   });
-  expect(rec.escalation!.observations.map((o) => o.tool)).toEqual(['find_nodes']);
   expect(rec.checks.map((c) => c.status)).toEqual(['abstain', 'abstain']);
 });
 
-test('decided requirements are never escalated; failures escalate only when the policy says so', async () => {
+test('a verdict cannot rest on nothing: uncited, made-up citations and duplicate verdicts are rejected', async () => {
+  const verifier = scripted([
+    () => call('submit_verdict', { verdicts: [verdict('R1', 'pass'), verdict('R2', 'pass', [3])] }),
+    (req) => {
+      const r = lastResults(req)[0]!;
+      expect(r.isError).toBe(true);
+      expect(r.content).toContain('without cited observations for R1');
+      expect(r.content).toContain('observations that do not exist: R2→3');
+      return call('submit_verdict', { verdicts: [verdict('R1', 'unknown'), verdict('R1', 'unknown')] });
+    },
+    (req) => {
+      expect(lastResults(req)[0]!.content).toContain('duplicate verdicts for R1');
+      return call('submit_verdict', { verdicts: [verdict('R1', 'unknown'), verdict('R2', 'unknown')] });
+    },
+  ]);
+  const res = await verifyWithEscalation(TWO_MUGS, unanchored(), { verifier, agentReport: 'agent_report: all done' });
+  expect(res.outcome.verdict).toBe('abstain');
+  expect(res.record.requirements.map((r) => [r.status, r.decidedBy, r.reason])).toEqual([
+    ['abstain', 'none', 'verifier_unknown'],
+    ['abstain', 'none', 'verifier_unknown'],
+  ]);
+  expect(res.record.requirements.every((r) => r.evidence.length === 0)).toBe(true);
+});
+
+test("decided requirements stay decided; failures escalate only by policy, and 'unknown' keeps the checks' fail", async () => {
   const partial = ref('03-cart-two-mugs', 'only-blue-mug');
   const never = scripted([]); // throws if called
   const res = await verifyWithEscalation(TWO_MUGS, partial, { verifier: never });
   expect(res.outcome.verdict).toBe('fail');
   expect(res.record.escalation).toBeUndefined();
   expect(res.record.requirements.map((r) => r.decidedBy)).toEqual(['checks', 'checks']);
+  expect(res.record.requirements[1]!.evidence.length).toBeGreaterThan(0);
 
-  const verifier = scripted([
-    () =>
-      call('submit_verdict', {
-        verdicts: [
-          {
-            requirement: 'R2',
-            status: 'fail',
-            evidence: ['page_outline: only a Blue Mug row'],
-            reasoning: 'no red mug',
-          },
-        ],
-      }),
+  const sure = scripted([
+    () => call('page_outline', {}),
+    () => call('submit_verdict', { verdicts: [verdict('R2', 'fail', [1])] }),
   ]);
-  const res2 = await verifyWithEscalation(TWO_MUGS, partial, { verifier, policy: { on: ['abstain', 'fail'] } });
+  const res2 = await verifyWithEscalation(TWO_MUGS, partial, { verifier: sure, policy: { on: ['abstain', 'fail'] } });
   expect(res2.record.escalation!.requirements).toEqual(['R2']);
   expect(res2.record.requirements.find((r) => r.id === 'R2')).toMatchObject({ status: 'fail', decidedBy: 'verifier' });
-  expect(res2.outcome.verdict).toBe('fail');
+
+  const unsure = scripted([() => call('submit_verdict', { verdicts: [verdict('R2', 'unknown')] })]);
+  const res3 = await verifyWithEscalation(TWO_MUGS, partial, { verifier: unsure, policy: { on: ['fail'] } });
+  expect(res3.outcome.verdict).toBe('fail');
+  expect(res3.record.requirements.find((r) => r.id === 'R2')).toMatchObject({ status: 'fail', decidedBy: 'checks' });
 });
 
-test('verdicts need cited evidence; "unknown" stays abstain', async () => {
-  const verifier = scripted([
-    () =>
-      call('submit_verdict', {
-        verdicts: [
-          { requirement: 'R1', status: 'pass', evidence: [], reasoning: 'the agent said so' },
-          pass('R2', 'x'),
-        ],
-      }),
-    (req) => {
-      expect(lastResults(req)[0]).toMatchObject({
-        isError: true,
-        content: expect.stringContaining('without cited evidence for R1'),
-      });
-      return call('submit_verdict', {
-        verdicts: [
-          { requirement: 'R1', status: 'unknown', evidence: [], reasoning: 'cannot see the cart' },
-          pass('R2', 'find_nodes: Red Mug row'),
-        ],
-      });
+test("a model error keeps the checks' outcome and is recorded", async () => {
+  const broken: ModelClient = {
+    id: 'broken',
+    turn: async () => {
+      throw new Error('529 overloaded');
     },
-  ]);
-  const res = await verifyWithEscalation(TWO_MUGS, unanchored(), { verifier });
-  expect(res.record.requirements.map((r) => [r.status, r.decidedBy])).toEqual([
-    ['abstain', 'none'],
-    ['pass', 'verifier'],
-  ]);
+  };
+  const res = await verifyWithEscalation(TWO_MUGS, unanchored(), { verifier: broken, proposer: broken });
   expect(res.outcome.verdict).toBe('abstain');
+  expect(res.record.escalation).toMatchObject({ status: 'error', error: '529 overloaded' });
+  expect(res.record.proposal).toBeUndefined(); // nothing was rescued
 });
 
-test('a rescued run yields a recompiled proposal pending approval; records and snapshots are written', async () => {
+test('a rescued run yields a proposal that keeps the confirmed requirements; records are written content-addressed', async () => {
   const verifier = scripted([
-    () =>
-      call('submit_verdict', {
-        verdicts: [pass('R1', 'find_nodes: Blue Mug row'), pass('R2', 'find_nodes: Red Mug row')],
-      }),
+    () => call('find_nodes', { text: 'Mug' }),
+    () => call('submit_verdict', { verdicts: [verdict('R1', 'pass', [1]), verdict('R2', 'pass', [1])] }),
   ]);
   const proposer = scripted([
-    () =>
-      call('submit_rubric', {
-        requirements: [
-          {
-            id: 'R1',
-            kind: 'hard',
-            text: 'Blue Mug listed',
-            field: 'outcomes',
-            quote: 'the cart page lists a Blue Mug',
-          },
-          { id: 'R2', kind: 'hard', text: 'Red Mug listed', field: 'outcomes', quote: 'the cart page lists a Red Mug' },
-        ],
-      }),
-    () =>
-      call('submit_checks', {
+    (req) => {
+      // No rubric step: the confirmed requirements are reused.
+      expect(req.tools.map((t) => t.name)).toContain('submit_checks');
+      return call('submit_checks', {
         checks: ['Blue Mug', 'Red Mug'].map((p, i) => ({
           id: `C${i + 1}`,
           requirement: `R${i + 1}`,
           description: `The main content shows a ${p}.`,
           assert: { kind: 'contains', scope: { role: 'main' }, match: { role: 'row', name: { contains: p } } },
         })),
-      }),
+      });
+    },
   ]);
   const snapshot = unanchored();
   const res = await verifyWithEscalation(TWO_MUGS, snapshot, { verifier, proposer });
-  expect(res.proposal?.version).toBe('1+proposal');
-  expect(res.record.proposal).toMatchObject({ status: 'pending-approval', checks: 2 });
+  expect(res.proposal?.version).toMatch(/^1\+proposal\.[0-9a-f]{8}$/);
+  expect(res.proposal?.requirements).toEqual(TWO_MUGS.requirements);
+  expect(res.record.proposal).toMatchObject({ status: 'pending-approval', checks: 2, version: res.proposal!.version });
   expect(isLocked(res.proposal!)).toBe(false);
 
   const dir = mkdtempSync(join(tmpdir(), 'assay-records-'));
-  const w1 = writeOutcomeRecord(dir, res.record, snapshot, res.proposal as never);
-  const w2 = writeOutcomeRecord(dir, { ...res.record, id: 'second' }, snapshot);
+  const w1 = writeOutcomeRecord(dir, res.record, snapshot, TWO_MUGS, res.proposal);
+  const w2 = writeOutcomeRecord(dir, { ...res.record, id: 'second' }, snapshot, TWO_MUGS);
   expect(w1.snapshotFile).toBe(w2.snapshotFile); // content-addressed, written once
   expect(readdirSync(join(dir, 'records'))).toHaveLength(2);
   const saved = JSON.parse(readFileSync(w1.recordFile, 'utf8')) as OutcomeRecord;
   expect(saved.snapshot.file).toBe(w1.snapshotFile);
-  expect(saved.proposal!.file).toBe(w1.proposalFile);
-  expect(JSON.parse(readFileSync(w1.proposalFile!, 'utf8')).checks).toHaveLength(2);
+  expect(saved.checkSet.file).toBe(w1.checkSetFile);
+  expect(JSON.parse(readFileSync(w1.checkSetFile, 'utf8')).id).toBe(TWO_MUGS.id);
+  const obs = saved.escalation!.observations[0]! as { outputDigest: string; file: string };
+  expect(readFileSync(obs.file, 'utf8')).toContain('Blue Mug'); // the full output is kept for audit
+  expect(saved.proposal?.status === 'pending-approval' && saved.proposal.file).toBe(w1.proposalFile);
+  // the writer recomputes digests instead of trusting the record
+  expect(() => writeOutcomeRecord(dir, res.record, ref('03-cart-two-mugs', 'both-mugs'), TWO_MUGS)).toThrow(
+    'does not match',
+  );
 });
 
-test('locking: confirmed sets are tamper-evident, and can be required', async () => {
+test('no proposal when the verifier only decided a failure-escalated requirement', async () => {
+  const proposer = scripted([]); // throws if called
+  const sure = scripted([
+    () => call('page_outline', {}),
+    () => call('submit_verdict', { verdicts: [verdict('R2', 'pass', [1])] }),
+  ]);
+  const res = await verifyWithEscalation(TWO_MUGS, ref('03-cart-two-mugs', 'only-blue-mug'), {
+    verifier: sure,
+    proposer,
+    policy: { on: ['fail'] },
+  });
+  expect(res.outcome.verdict).toBe('success');
+  expect(res.record.proposal).toBeUndefined();
+});
+
+test('locking covers content, author and time; it can be required', async () => {
   const locked = lockCheckSet(TWO_MUGS, 'reviewer@example.com', '2026-11-03T00:00:00.000Z');
   expect(isLocked(locked)).toBe(true);
   expect(validateCheckSet(locked).errors).toEqual([]);
-  const edited: CheckSet = { ...locked, checks: locked.checks.slice(0, 1) };
-  expect(isLocked(edited)).toBe(false);
+  expect(isLocked({ ...locked, checks: locked.checks.slice(0, 1) })).toBe(false);
+  expect(isLocked({ ...locked, locked: { ...locked.locked, by: 'mallory' } })).toBe(false);
+  expect(isLocked({ ...locked, locked: { ...locked.locked, at: '2030-01-01T00:00:00.000Z' } })).toBe(false);
   await expect(
     verifyWithEscalation(TWO_MUGS, ref('03-cart-two-mugs', 'both-mugs'), { requireLocked: true }),
   ).rejects.toThrow('not locked');
   const res = await verifyWithEscalation(locked, ref('03-cart-two-mugs', 'both-mugs'), { requireLocked: true });
-  expect(res.record.checkSet.locked).toEqual({ by: 'reviewer@example.com', at: '2026-11-03T00:00:00.000Z' });
+  expect(res.record.checkSet).toMatchObject({
+    locked: { by: 'reviewer@example.com', at: '2026-11-03T00:00:00.000Z' },
+    lockBroken: false,
+  });
+  const tampered = await verifyWithEscalation({ ...locked, version: '2' }, ref('03-cart-two-mugs', 'both-mugs'));
+  expect(tampered.record.checkSet).toMatchObject({ locked: null, lockBroken: true });
   const sheet = reviewSheet(locked);
   expect(sheet).toContain('## R1 (hard): "the cart page lists a Blue Mug"');
   expect(sheet).toContain(
     'tests: table named "Cart" (or table in main) contains at least 1 row named containing "Blue Mug"',
   );
   expect(sheet).toContain('Locked by reviewer@example.com');
-  expect(reviewSheet(edited)).toContain('BROKEN');
 });
 
-test('live: expectOutcome escalates with read-only page access and writes a record', async ({ page }) => {
-  await addToCart(page, 'Blue Mug');
-  await addToCart(page, 'Red Mug');
+test('origin checks: only same-origin http(s) targets of an http(s) page', () => {
+  expect(sameOrigin('http://shop.test/a', '/cart').toString()).toBe('http://shop.test/cart');
+  for (const bad of [
+    'https://evil.example/',
+    '//evil.example/x',
+    'javascript:alert(1)',
+    'data:text/html,x',
+    'http://shop.test@evil.example/',
+  ]) {
+    expect(() => sameOrigin('http://shop.test/a', bad), bad).toThrow();
+  }
+  expect(() => sameOrigin('file:///tmp/page.html', 'file:///etc/passwd')).toThrow('http(s) page');
+});
+
+test('live: isolated read-only access — no redirects out, no leaks into the evidence log', async ({ page }) => {
+  // A second origin the verifier must never reach.
+  const other = createServer((_, res) => res.end('{"secret":"internal"}'));
+  await new Promise<void>((r) => other.listen(0, r));
+  const otherPort = (other.address() as { port: number }).port;
+  try {
+    await addToCart(page, 'Blue Mug');
+    await addToCart(page, 'Red Mug');
+    await openCart(page);
+    await page.evaluate(() => {
+      const t = document.querySelector('table')!;
+      t.removeAttribute('aria-label');
+      t.setAttribute('role', 'presentation');
+    });
+    await page
+      .context()
+      .route('**/redir', (r) => r.fulfill({ status: 302, headers: { location: `http://localhost:${otherPort}/` } }));
+    const verifier = scripted([
+      () => call('fetch_json', { url: '/redir' }),
+      (req) => {
+        expect(lastResults(req)[0]!.content).not.toContain('secret');
+        return call('fetch_json', { url: '/api/cart' });
+      },
+      (req) => {
+        expect(lastResults(req)[0]!.content).toContain('"name": "Red Mug"');
+        return call('submit_verdict', { verdicts: [verdict('R1', 'pass', [2]), verdict('R2', 'pass', [2])] });
+      },
+    ]);
+    const dir = mkdtempSync(join(tmpdir(), 'assay-live-'));
+    const outcome = await expectOutcome(page, TWO_MUGS, { timeout: 0, escalate: { verifier }, recordDir: dir });
+    expect(outcome.verdict).toBe('success');
+    const [file] = readdirSync(join(dir, 'records'));
+    const rec = JSON.parse(readFileSync(join(dir, 'records', file!), 'utf8')) as OutcomeRecord;
+    expect(rec.requirements.every((r) => r.decidedBy === 'verifier')).toBe(true);
+    // The verifier's browsing ran in its own context: none of it is in the run's evidence.
+    const after = await captureSnapshot(page);
+    expect(after.network!.some((e) => e.url.endsWith('/api/cart') && e.resourceType !== 'fetch')).toBe(false);
+    expect(after.network!.some((e) => e.url.includes('/redir'))).toBe(false);
+  } finally {
+    other.close();
+  }
+});
+
+test('expectOutcome: requireLocked is checked before polling; an expected fail is not escalated', async ({ page }) => {
   await openCart(page);
-  // The table loses its semantics (no name, presentational): both anchors are gone.
-  await page.evaluate(() => {
-    const t = document.querySelector('table')!;
-    t.removeAttribute('aria-label');
-    t.setAttribute('role', 'presentation');
-  });
-  const verifier = scripted([
-    (req) => {
-      expect(req.tools.map((t) => t.name)).toEqual(expect.arrayContaining(['open_page', 'fetch_json']));
-      return call('fetch_json', { url: 'https://evil.example/api/cart' });
-    },
-    (req) => {
-      expect(lastResults(req)[0]).toMatchObject({ isError: true, content: expect.stringContaining('same-origin') });
-      return call('fetch_json', { url: '/api/cart' });
-    },
-    (req) => {
-      expect(lastResults(req)[0]!.content).toContain('"name": "Red Mug"');
-      return call('submit_verdict', {
-        verdicts: [pass('R1', 'fetch_json /api/cart: Blue Mug ×1'), pass('R2', 'fetch_json /api/cart: Red Mug ×1')],
-      });
-    },
-  ]);
-  const dir = mkdtempSync(join(tmpdir(), 'assay-live-'));
-  const outcome = await expectOutcome(page, TWO_MUGS, { timeout: 0, escalate: { verifier }, recordDir: dir });
-  expect(outcome.verdict).toBe('success');
-  const [file] = readdirSync(join(dir, 'records'));
-  const rec = JSON.parse(readFileSync(join(dir, 'records', file!), 'utf8')) as OutcomeRecord;
-  expect(rec.requirements.every((r) => r.decidedBy === 'verifier')).toBe(true);
-  // the refused cross-origin call is not an observation
-  expect(rec.escalation!.observations.map((o) => o.tool)).toEqual(['fetch_json']);
+  await expect(expectOutcome(page, TWO_MUGS, { requireLocked: true, timeout: 0 })).rejects.toThrow('not locked');
+  const never = scripted([]);
+  const outcome = await expectOutcome(page, TWO_MUGS, { verdict: 'fail', timeout: 0, escalate: { verifier: never } });
+  expect(outcome.verdict).toBe('fail');
 });

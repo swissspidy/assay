@@ -6,7 +6,7 @@ import { evaluate } from '../runtime/evaluate.ts';
 import { formatOutcome } from '../report.ts';
 import { verifyWithEscalation, type VerifyOptions } from '../verifier/escalate.ts';
 import { writeOutcomeRecord, type OutcomeRecord } from '../verifier/record.ts';
-import type { Json } from '../types.ts';
+import { isLocked } from '../verifier/lock.ts';
 
 /**
  * Playwright `test` with an auto fixture that records the network log of every
@@ -37,6 +37,8 @@ export interface ExpectOutcomeOptions extends CaptureOptions {
   escalate?: Omit<VerifyOptions, 'page' | 'probes'>;
   /** Write an outcome record (and the snapshot) under this directory. */
   recordDir?: string;
+  /** Refuse to run a check set that is not locked (or was edited after locking). Checked before polling. */
+  requireLocked?: boolean;
 }
 
 export class OutcomeError extends Error {
@@ -61,6 +63,9 @@ export async function expectOutcome(
   opts: ExpectOutcomeOptions = {},
 ): Promise<Outcome> {
   const cs = assertValidCheckSet(checks);
+  if ((opts.requireLocked || opts.escalate?.requireLocked) && !isLocked(cs)) {
+    throw new Error(`Check set ${cs.id} v${cs.version} is not locked (or was edited after locking).`);
+  }
   const want = opts.verdict ?? 'success';
   const timeout = opts.timeout ?? 5000;
   const interval = opts.interval ?? 250;
@@ -86,7 +91,7 @@ export async function expectOutcome(
     });
     outcome = res.outcome;
     record = res.record;
-    if (opts.recordDir) writeOutcomeRecord(opts.recordDir, record, snapshot, res.proposal as unknown as Json);
+    if (opts.recordDir) writeOutcomeRecord(opts.recordDir, record, snapshot, cs, res.proposal);
   }
 
   if (opts.attach !== false) {

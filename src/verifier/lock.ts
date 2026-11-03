@@ -13,6 +13,7 @@ import { describeRequestMatch, describeUrlMatch } from '../runtime/network.ts';
 export interface Lock {
   by: string;
   at: string;
+  /** Digest of the set's content together with `by` and `at`. */
   digest: string;
 }
 
@@ -23,15 +24,32 @@ function unlocked(cs: CheckSet): CheckSet {
   return rest;
 }
 
-export function lockCheckSet(cs: CheckSet, by: string, at = new Date().toISOString()): LockedCheckSet {
-  const base = unlocked(cs);
-  return { ...base, locked: { by, at, digest: checkSetDigest(base) } };
+/** The digest covers the content and who locked it when, so neither can be edited silently. */
+function lockDigest(base: CheckSet, by: string, at: string): string {
+  return checkSetDigest({ ...base, locked: { by, at } });
 }
 
-/** True when the set carries a lock whose digest still matches its content. */
+/**
+ * Lock a reviewed check set. The digest is unkeyed: it makes accidental or
+ * careless edits evident, but anyone can re-lock an edited file. Where locks must
+ * prove who confirmed what, keep a registry of digests outside the file or sign them.
+ */
+export function lockCheckSet(cs: CheckSet, by: string, at = new Date().toISOString()): LockedCheckSet {
+  const base = unlocked(cs);
+  return { ...base, locked: { by, at, digest: lockDigest(base, by, at) } };
+}
+
+/** True when the set carries a lock whose digest still matches its content, author and time. */
 export function isLocked(cs: CheckSet): cs is LockedCheckSet {
   const lock = (cs as CheckSet & { locked?: Lock }).locked;
-  return !!lock && lock.digest === checkSetDigest(unlocked(cs));
+  return !!lock && lock.digest === lockDigest(unlocked(cs), lock.by, lock.at);
+}
+
+/** For records: the valid lock (if any) and whether a lock is present but broken. */
+export function lockState(cs: CheckSet): { locked: { by: string; at: string } | null; broken: boolean } {
+  const lock = (cs as CheckSet & { locked?: Lock }).locked;
+  if (!lock) return { locked: null, broken: false };
+  return isLocked(cs) ? { locked: { by: lock.by, at: lock.at }, broken: false } : { locked: null, broken: true };
 }
 
 const target = (t: Target) =>
