@@ -135,13 +135,15 @@ In Playwright: `await expectOutcome(page, locked, { escalate: { verifier }, reco
 
 ## Evaluation and stability (milestone 5)
 
-Three small apps (`examples/tiny-shop`, `examples/tiny-tracker`, `examples/tiny-calendar`) provide 30 tasks and 123 labelled runs (correct, wrong item, partial, undone, over-completion, adversarial pages that only claim success).
+Three small apps (`examples/tiny-shop`, `examples/tiny-tracker`, `examples/tiny-calendar`) provide 30 tasks and 123 labelled runs. The runs are correct, wrong item, partial, undone, over-completion, or adversarial pages that only claim success.
 
-- `npm run eval` compares checks, checks with escalation, an LLM judge and the agentic verifier on balanced accuracy, TPR, TNR, cost and latency. Results go to `eval/results/REPORT.md`. Add `-- --checks compiled` to use the compiled check sets.
-- `npm run stability` judges every run against the app as recorded and against a redesigned UI. Results go to `stability/results/REPORT.md`.
-- A weekly workflow runs both.
+- `npm run eval` compares checks, checks with escalation, an LLM judge and the agentic verifier on balanced accuracy, TPR, TNR, cost and latency. Results go to `eval/results/REPORT.md`.
+  - Add `-- --checks compiled` to use the compiled check sets. The run each set was compiled from is then left out.
+  - Model rows are recorded to cassettes when `ANTHROPIC_API_KEY` is set and replayed otherwise.
+- `npm run stability` judges every run against five releases of each app (renamed copy, new layout with look-alike content, extra API fields, and a real regression), with checks written for the first. Results go to `stability/results/REPORT.md`. CI runs it on every change and fails on any wrong verdict.
+- A weekly workflow measures the model baselines live, when the API key secret is set.
 
-Model rows are recorded to cassettes when `ANTHROPIC_API_KEY` is set and replayed otherwise. See [ADR 0005](docs/adr/0005-evaluation-and-stability.md).
+See [ADR 0005](docs/adr/0005-evaluation-and-stability.md).
 
 ## Development
 

@@ -1,4 +1,4 @@
-/** Starts an example app (optionally in its redesigned UI variant) and runs scripted scenarios in fresh contexts. */
+/** Starts an example app at a given simulated release and runs scripted scenarios in fresh contexts. */
 import { spawn, type ChildProcess } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { chromium, type Browser } from '@playwright/test';
@@ -26,22 +26,39 @@ async function waitFor(url: string, ms = 10_000): Promise<boolean> {
   return false;
 }
 
-export async function startApp(
-  app: AppDef,
-  opts: { variant?: 'baseline' | 'redesign'; port?: number } = {},
-): Promise<AppRunner> {
-  const variant = opts.variant ?? 'baseline';
-  // The redesign variant runs on its own port so it never collides with a baseline server.
-  const port = opts.port ?? (variant === 'redesign' ? app.port + 100 : app.port);
+/** Which app and version answers on a port, if any (see release() in examples/lib/kit.mjs). */
+async function identify(baseURL: string): Promise<{ app: string; version: number } | null> {
+  try {
+    const r = await fetch(`${baseURL}/__assay/version`, { redirect: 'manual' });
+    return r.ok ? ((await r.json()) as { app: string; version: number }) : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function startApp(app: AppDef, opts: { version?: number; port?: number } = {}): Promise<AppRunner> {
+  const version = opts.version ?? 1;
+  // Each version gets its own port, so versions never collide.
+  const port = opts.port ?? app.port + (version - 1) * 100;
   const baseURL = `http://localhost:${port}`;
   let server: ChildProcess | undefined;
-  if (!(await waitFor(`${baseURL}/`, 200))) {
+  const running = await identify(baseURL);
+  if (running && (running.app !== app.name || running.version !== version)) {
+    throw new Error(`${baseURL} serves ${running.app} v${running.version}, not ${app.name} v${version}`);
+  }
+  if (!running) {
+    if (await waitFor(`${baseURL}/`, 200)) throw new Error(`${baseURL} is taken by something other than ${app.name}`);
     const script = fileURLToPath(new URL('server.mjs', app.dir));
     server = spawn(process.execPath, [script], {
-      env: { ...process.env, PORT: String(port), UI_VARIANT: variant },
+      env: { ...process.env, PORT: String(port), APP_VERSION: String(version) },
       stdio: 'ignore',
     });
     if (!(await waitFor(`${baseURL}/`))) throw new Error(`${app.name} did not start at ${baseURL}`);
+    const started = await identify(baseURL);
+    if (started?.app !== app.name || started.version !== version) {
+      server.kill();
+      throw new Error(`${baseURL} did not identify as ${app.name} v${version}`);
+    }
   }
   const browser: Browser = await chromium.launch();
   return {

@@ -24,6 +24,15 @@
         "field": "outcomes",
         "quote": "the list shows only issues labelled bug"
       }
+    },
+    {
+      "id": "R3",
+      "kind": "hard",
+      "text": "The open bugs are shown",
+      "source": {
+        "field": "instruction",
+        "quote": "Show me only the open bugs"
+      }
     }
   ],
   "checks": [
@@ -85,6 +94,35 @@
           "query": {
             "label": "bug"
           }
+        }
+      }
+    },
+    {
+      "id": "C4",
+      "requirement": "R3",
+      "description": "The Issues table lists the open bug, issue #1.",
+      "assert": {
+        "kind": "contains",
+        "scope": {
+          "anchors": [
+            {
+              "role": "table",
+              "name": "Issues"
+            },
+            {
+              "role": "table",
+              "landmark": {
+                "role": "main"
+              }
+            }
+          ]
+        },
+        "match": {
+          "role": "link",
+          "name": "Login button misaligned"
+        },
+        "count": {
+          "gte": 1
         }
       }
     }

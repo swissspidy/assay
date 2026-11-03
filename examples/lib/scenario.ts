@@ -39,3 +39,13 @@ export const bad = (name: string, kind: ScenarioKind, run: (page: Page) => Promi
   kind,
   run,
 });
+
+/**
+ * The one correct run a task's checks are compiled from (milestone 2). The
+ * evaluation of compiled checks leaves it out, so every scored run is held out.
+ */
+export const compileReference = (def: TaskDef): Scenario => {
+  const s = def.scenarios.find((x) => x.expected === 'success');
+  if (!s) throw new Error(`task ${def.id} has no correct scenario`);
+  return s;
+};

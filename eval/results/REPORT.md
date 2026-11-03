@@ -1,13 +1,13 @@
-# Evaluation: compiled checks vs. LLM judge vs. agentic verifier
+# Evaluation: handwritten checks (model baselines not measured yet)
 
-Generated 2026-11-03T01:50:06.537Z · check sets: **handwritten** · 123 labelled runs over 30 tasks (60 correct, 63 incorrect) in 3 apps.
+Generated 2026-11-03T02:07:17.493Z · check sets: **handwritten** · 123 labelled runs over 30 tasks (60 correct, 63 incorrect) in 3 apps.
 
 Positive = the run really completed the task. TPR = correct runs judged success; TNR = incorrect runs judged not success (an abstain counts as not success). The agent always reports success, as agents usually do.
 
 | System | Balanced accuracy | TPR | TNR | Abstain rate | Cost / run | Latency (median / p95) |
 |---|---|---|---|---|---|---|
-| checks | 1.000 | 1.000 | 1.000 | 0.000 | $0.0000 | 122 µs / 1.8 ms |
-| checks+escalation | 1.000 | 1.000 | 1.000 | 0.000 | $0.0000 | 62 µs / 144 µs |
+| checks | 1.000 | 1.000 | 1.000 | 0.000 | $0.0000 | 144 µs / 2.7 ms |
+| checks+escalation | 1.000 | 1.000 | 1.000 | 0.000 | $0.0000 | 72 µs / 195 µs |
 | llm-judge | not measured | | | | | |
 | agentic-verifier | not measured | | | | | |
 
@@ -25,9 +25,10 @@ Positive = the run really completed the task. TPR = correct runs judged success;
 
 ## Notes
 
-- **llm-judge**: not measured (no ANTHROPIC_API_KEY and no recorded cassettes).
-- **agentic-verifier**: not measured (no ANTHROPIC_API_KEY and no recorded cassettes).
+- **llm-judge**: not measured (123/123 runs: no recorded cassette).
+- **agentic-verifier**: not measured (123/123 runs: no recorded cassette).
 - **Caveat:** these are the handwritten check sets, written by the same author as the labelled runs, so the checks rows are an upper bound and partly circular. The real measure is `--checks compiled` (checks compiled by the model from one correct run per task; all other runs held out).
+- The LLM judge is shown the agent's report, as typical LLM judges are; Assay's checks never see it, and the agentic verifier gets it marked as context, not evidence.
 - Model latency is only measured when recording; replayed runs show none.
 - Checks-only latency is in-process evaluation of a captured snapshot (no model). Capture itself takes about 20-60 ms per page and is shared by every system.
 - The LLM judge sees the final page as an accessibility outline plus visible text (no screenshots, no network or backend access).

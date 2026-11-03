@@ -21,8 +21,7 @@ export const TASKS: TaskDef[] = [
         createIssue(p, {
           title: 'Checkout fails on Safari',
           body: 'Payment button does nothing.',
-          priority: 'High',
-          labels: ['bug', 'feature'],
+          labels: ['bug'],
         }),
       ),
       bad('created-without-label', 'partial', (p) => createIssue(p, { title: 'Checkout fails on Safari' })),
@@ -99,7 +98,11 @@ export const TASKS: TaskDef[] = [
     probes: ['issues'],
     scenarios: [
       ok('bug-and-feature', (p) => setLabels(p, 1, ['bug', 'feature'])),
-      ok('bug-feature-docs', (p) => setLabels(p, 1, ['bug', 'feature', 'docs'])),
+      // Harmless detour: first ticks the wrong label, then fixes it.
+      ok('feature-after-correction', async (p) => {
+        await setLabels(p, 1, ['bug', 'docs']);
+        await setLabels(p, 1, ['bug', 'feature']);
+      }),
       bad('replaced-bug', 'over-completion', (p) => setLabels(p, 1, ['feature'])),
       bad('labelled-wrong-issue', 'wrong-item', (p) => setLabels(p, 3, ['docs', 'feature'])),
     ],
@@ -123,9 +126,9 @@ export const TASKS: TaskDef[] = [
     probes: ['issues'],
     scenarios: [
       ok('renamed', (p) => rename(p, 3, 'Fix typo in README')),
-      ok('renamed-and-reopened', async (p) => {
+      ok('renamed-after-typo', async (p) => {
+        await rename(p, 3, 'Fix typo in READNE');
         await rename(p, 3, 'Fix typo in README');
-        await setState(p, 3, 'open');
       }),
       bad('renamed-wrong-issue', 'wrong-item', (p) => rename(p, 1, 'Fix typo in README')),
       bad('renamed-typo', 'wrong-item', (p) => rename(p, 3, 'Fix typo in READNE')),

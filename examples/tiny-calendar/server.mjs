@@ -3,7 +3,7 @@ import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { json, readBody, redesign, sendHtml, sessions } from '../lib/kit.mjs';
+import { json as sendJson, loadReleases, readBody, release, sendHtml, sessions } from '../lib/kit.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT ?? 4175);
@@ -47,16 +47,10 @@ const session = sessions(() => ({
   ],
 }));
 
-const rewrite = redesign([
-  ['aria-label="Upcoming events"', 'aria-label="Your schedule"'],
-  ['<h1>Upcoming events</h1>', '<h1>Your schedule</h1>'],
-  ['>Save changes<', '>Update event<'],
-  ['>Create event<', '>Add to calendar<'],
-  ['aria-label="Event details"', 'aria-label="Details"'],
-  ["const LOCALE = 'en-US'", "const LOCALE = 'en-GB'"],
-  ['<main>', '<main><div class="wrap">'],
-  ['</main>', '</div></main>'],
-]);
+// Simulated releases for the stability run (APP_VERSION, see releases.json).
+const rel = release('tiny-calendar', loadReleases(new URL('./releases.json', import.meta.url)));
+const rewrite = rel.rewrite;
+const json = (res, status, body) => sendJson(res, status, rel.shape(body));
 
 const valid = (b, partial = false) => {
   const errors = [];
@@ -72,6 +66,7 @@ const PAGES = { '/calendar': 'calendar.html', '/events/new': 'new.html', '/setti
 
 const server = createServer(async (req, res) => {
   try {
+    if (rel.meta(req, res)) return;
     const url = new URL(req.url, `http://${req.headers.host}`);
     const s = session(req, res);
     const p = url.pathname;
@@ -99,7 +94,8 @@ const server = createServer(async (req, res) => {
         reminder: !!b.reminder,
         rsvp: 'yes',
       };
-      s.events.push(ev);
+      // Release 5 regression: the response echoes the reminder, but it is not stored.
+      s.events.push(rel.has('bug:reminder-not-saved') ? { ...ev, reminder: false } : ev);
       return json(res, 201, ev);
     }
     let m = /^\/api\/events\/(\d+)(\/rsvp)?$/.exec(p);

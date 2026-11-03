@@ -3,6 +3,7 @@ import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { costUsd, llmJudge, metrics, PRICING, type EvidenceSnapshot, type Prediction } from '../../src/index.ts';
 import { call, scripted } from '../support/scripted.ts';
+import { decodeBody } from '../../src/snapshot/capture.ts';
 
 const p = (expected: Prediction['expected'], verdict: Prediction['verdict'], ms = 1, usd = 0): Prediction => ({
   expected,
@@ -29,6 +30,19 @@ test('metrics: abstain counts as not-success; decided rates exclude abstains', (
   expect(m.costUsdPerRun).toBeCloseTo(0.01);
   expect(m.msPerRunMedian).toBe(4);
   expect(m.msPerRunP95).toBe(6);
+});
+
+test('metrics: latency quantiles ignore unmeasured (NaN) runs and say how many were timed', () => {
+  const m = metrics([
+    p('success', 'success', NaN),
+    p('success', 'success', 5000),
+    p('fail', 'fail', 6000),
+    p('fail', 'fail', 0.1),
+    p('fail', 'fail', NaN),
+  ]);
+  expect(m.msPerRunMedian).toBe(5000);
+  expect(m.msPerRunP95).toBe(6000);
+  expect(m.msMeasured).toBe(3);
 });
 
 test('metrics: empty classes give NaN, not a misleading 0 or 1', () => {
@@ -84,4 +98,17 @@ test('llmJudge: an invalid verdict is rejected by schema validation and the mode
   const r = await llmJudge(model, { task: { instruction: 'x' }, snapshot: ref.snapshot });
   expect(r.verdict).toBe('fail');
   expect(model.requests).toHaveLength(2);
+});
+
+test('form bodies: field names that are Object.prototype members stay plain fields', () => {
+  const { body } = decodeBody(
+    'constructor=x&__proto__=y&toString=a&toString=b',
+    'application/x-www-form-urlencoded',
+    1e6,
+  );
+  const plain = JSON.parse(JSON.stringify(body)) as Record<string, unknown>;
+  expect(Object.keys(plain).toSorted()).toEqual(['__proto__', 'constructor', 'toString']);
+  expect(Object.getOwnPropertyDescriptor(plain, '__proto__')?.value).toBe('y');
+  expect(plain.constructor).toBe('x');
+  expect(plain.toString).toEqual(['a', 'b']);
 });

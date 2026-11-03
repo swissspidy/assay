@@ -11,6 +11,7 @@
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { compileTask, evaluate, type CheckSet, type EvidenceSnapshot } from '../src/index.ts';
 import { APPS } from '../examples/apps.ts';
+import { compileReference } from '../examples/lib/scenario.ts';
 import { modelFromEnv } from './model-from-env.ts';
 
 const [onlyApp, ...onlyTasks] = process.argv.slice(2);
@@ -43,17 +44,19 @@ for (const app of APPS) {
     if (only.size && !only.has(def.id)) continue;
     const handwritten = JSON.parse(readFileSync(new URL(`tasks/${def.id}.checks.json`, root), 'utf8')) as CheckSet;
     const task = {
-      id: `tiny-shop/${def.id}`,
+      id: `${app.name}/${def.id}`,
       instruction: handwritten.task.instruction,
-      outcomes: handwritten.task.outcomes,
+      ...(handwritten.task.outcomes !== undefined ? { outcomes: handwritten.task.outcomes } : {}),
+      ...(def.skipVariants ? { skipVariants: def.skipVariants } : {}),
     };
-    const runs = references(def.id);
-    const firstOk = def.scenarios.find((s) => s.expected === 'success')!;
+    const runs = references(root, def.id);
+    const firstOk = compileReference(def);
     const reference = runs.find((r) => r.name === firstOk.name)!;
 
     // One failing task (no cassette, API error) must not stop the others; a live
     // recording is saved after every turn, so nothing already paid for is lost.
     let result: Awaited<ReturnType<typeof compileTask>>;
+    let mode: string;
     try {
       const env = await modelFromEnv(new URL(`${def.id}.cassette.json`, out).pathname);
       result = await compileTask(task, [{ name: reference.name, kind: 'success', snapshot: reference.snapshot }], {
@@ -61,6 +64,7 @@ for (const app of APPS) {
         log: (m) => console.warn(m),
       });
       env.save();
+      mode = env.mode;
       console.warn(`${def.id}: model ${env.mode}`);
     } catch (e) {
       failures++;
@@ -85,7 +89,7 @@ for (const app of APPS) {
       `| ${def.id} | ${checkSet.requirements.length} | ${checkSet.checks.length} | ${report.coverage.map((c) => `${c.requirement}:${c.channels.join('+')}`).join(', ')} | ${heldOut.length - wrong.length}/${heldOut.length}${wrong.length ? ` (wrong: ${wrong.map((w) => w.name).join(', ')})` : ''} |`,
     );
     console.warn(
-      `${def.id}: ${checkSet.checks.length} checks (${env.mode}), held-out ${heldOut.length - wrong.length}/${heldOut.length}`,
+      `${def.id}: ${checkSet.checks.length} checks (${mode}), held-out ${heldOut.length - wrong.length}/${heldOut.length}`,
     );
   }
 

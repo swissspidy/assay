@@ -74,7 +74,7 @@
               "children": [
                 {
                   "role": "text",
-                  "name": "Saturday, November 7, 2026, 3:00 PM"
+                  "name": "Saturday, November 7, 2026, 2:30 PM"
                 }
               ]
             },
@@ -211,7 +211,7 @@
                     {
                       "role": "textbox",
                       "name": "Start time",
-                      "value": "15:00"
+                      "value": "14:30"
                     }
                   ]
                 },
@@ -252,7 +252,7 @@
         }
       ]
     },
-    "text": "Tiny Calendar\nCalendar · New event · Settings\nDentist\nWhen\nSaturday, November 7, 2026, 3:00 PM\nDuration\n1 hour\nLocation\nMain Street 5\nReminder\n30 minutes before\nRSVP\n Going  Maybe  Not going\n\nTitle \n\nDate \n\nStart time \n\nLocation \n\nSave changes\nDelete event\n\nChanges saved",
+    "text": "Tiny Calendar\nCalendar · New event · Settings\nDentist\nWhen\nSaturday, November 7, 2026, 2:30 PM\nDuration\n1 hour\nLocation\nMain Street 5\nReminder\n30 minutes before\nRSVP\n Going  Maybe  Not going\n\nTitle \n\nDate \n\nStart time \n\nLocation \n\nSave changes\nDelete event\n\nChanges saved",
     "network": [
       {
         "seq": 0,
@@ -376,15 +376,152 @@
         },
         "requestBody": {
           "title": "Dentist",
+          "date": "2026-11-08",
+          "time": "14:30",
+          "location": "Main Street 5"
+        },
+        "responseBody": {
+          "id": 2,
+          "title": "Dentist",
+          "date": "2026-11-08",
+          "time": "14:30",
+          "duration": 60,
+          "location": "Main Street 5",
+          "reminder": true,
+          "rsvp": "yes"
+        }
+      },
+      {
+        "seq": 7,
+        "method": "GET",
+        "url": "http://localhost:4175/calendar",
+        "resourceType": "document",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/html; charset=utf-8"
+        }
+      },
+      {
+        "seq": 8,
+        "method": "GET",
+        "url": "http://localhost:4175/app.js",
+        "resourceType": "script",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/javascript"
+        }
+      },
+      {
+        "seq": 9,
+        "method": "GET",
+        "url": "http://localhost:4175/api/events",
+        "resourceType": "fetch",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "application/json"
+        },
+        "responseBody": [
+          {
+            "id": 1,
+            "title": "Team standup",
+            "date": "2026-11-04",
+            "time": "09:00",
+            "duration": 30,
+            "location": "Room 1",
+            "reminder": false,
+            "rsvp": "yes"
+          },
+          {
+            "id": 2,
+            "title": "Dentist",
+            "date": "2026-11-08",
+            "time": "14:30",
+            "duration": 60,
+            "location": "Main Street 5",
+            "reminder": true,
+            "rsvp": "yes"
+          },
+          {
+            "id": 3,
+            "title": "Book club",
+            "date": "2026-11-10",
+            "time": "19:00",
+            "duration": 90,
+            "location": "Corner Cafe",
+            "reminder": false,
+            "rsvp": null
+          }
+        ]
+      },
+      {
+        "seq": 10,
+        "method": "GET",
+        "url": "http://localhost:4175/events/2",
+        "resourceType": "document",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/html; charset=utf-8"
+        }
+      },
+      {
+        "seq": 11,
+        "method": "GET",
+        "url": "http://localhost:4175/app.js",
+        "resourceType": "script",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/javascript"
+        }
+      },
+      {
+        "seq": 12,
+        "method": "GET",
+        "url": "http://localhost:4175/api/events/2",
+        "resourceType": "fetch",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "application/json"
+        },
+        "responseBody": {
+          "id": 2,
+          "title": "Dentist",
+          "date": "2026-11-08",
+          "time": "14:30",
+          "duration": 60,
+          "location": "Main Street 5",
+          "reminder": true,
+          "rsvp": "yes"
+        }
+      },
+      {
+        "seq": 13,
+        "method": "PATCH",
+        "url": "http://localhost:4175/api/events/2",
+        "resourceType": "fetch",
+        "status": 200,
+        "requestHeaders": {
+          "content-type": "application/json"
+        },
+        "responseHeaders": {
+          "content-type": "application/json"
+        },
+        "requestBody": {
+          "title": "Dentist",
           "date": "2026-11-07",
-          "time": "15:00",
+          "time": "14:30",
           "location": "Main Street 5"
         },
         "responseBody": {
           "id": 2,
           "title": "Dentist",
           "date": "2026-11-07",
-          "time": "15:00",
+          "time": "14:30",
           "duration": 60,
           "location": "Main Street 5",
           "reminder": true,
@@ -430,7 +567,7 @@
             "id": 2,
             "title": "Dentist",
             "date": "2026-11-07",
-            "time": "15:00",
+            "time": "14:30",
             "duration": 60,
             "location": "Main Street 5",
             "reminder": true,

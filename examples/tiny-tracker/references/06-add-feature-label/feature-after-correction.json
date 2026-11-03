@@ -119,7 +119,7 @@
               "children": [
                 {
                   "role": "text",
-                  "name": "bug, feature, docs"
+                  "name": "bug, feature"
                 }
               ]
             },
@@ -207,10 +207,7 @@
                     },
                     {
                       "role": "checkbox",
-                      "name": "docs",
-                      "states": {
-                        "checked": true
-                      }
+                      "name": "docs"
                     },
                     {
                       "role": "text",
@@ -289,7 +286,7 @@
         }
       ]
     },
-    "text": "Tiny Tracker\nIssues · New issue\n#1 Login button misaligned\nStatus\nOpen\nPriority\nNormal\nAssignee\nUnassigned\nLabels\nbug, feature, docs\n\nOn narrow screens.\n\nAssignee \nUnassigned\nalice\nbob\ncarol\n Save assignee\nLabels\n bug  feature  docs\nSave labels\nTitle  Rename\nClose issue\nComments\nComment text  Comment",
+    "text": "Tiny Tracker\nIssues · New issue\n#1 Login button misaligned\nStatus\nOpen\nPriority\nNormal\nAssignee\nUnassigned\nLabels\nbug, feature\n\nOn narrow screens.\n\nAssignee \nUnassigned\nalice\nbob\ncarol\n Save assignee\nLabels\n bug  feature  docs\nSave labels\nTitle  Rename\nClose issue\nComments\nComment text  Comment",
     "network": [
       {
         "seq": 0,
@@ -315,11 +312,51 @@
           "location": "/issues/1"
         },
         "requestBody": {
-          "labels": ["bug", "feature", "docs"]
+          "labels": ["bug", "docs"]
         }
       },
       {
         "seq": 2,
+        "method": "GET",
+        "url": "http://localhost:4174/issues/1",
+        "resourceType": "document",
+        "status": 200,
+        "requestHeaders": {
+          "content-type": "application/x-www-form-urlencoded"
+        },
+        "responseHeaders": {
+          "content-type": "text/html; charset=utf-8"
+        }
+      },
+      {
+        "seq": 3,
+        "method": "GET",
+        "url": "http://localhost:4174/issues/1",
+        "resourceType": "document",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/html; charset=utf-8"
+        }
+      },
+      {
+        "seq": 4,
+        "method": "POST",
+        "url": "http://localhost:4174/issues/1/labels",
+        "resourceType": "document",
+        "status": 303,
+        "requestHeaders": {
+          "content-type": "application/x-www-form-urlencoded"
+        },
+        "responseHeaders": {
+          "location": "/issues/1"
+        },
+        "requestBody": {
+          "labels": ["bug", "feature"]
+        }
+      },
+      {
+        "seq": 5,
         "method": "GET",
         "url": "http://localhost:4174/issues/1",
         "resourceType": "document",
@@ -363,7 +400,7 @@
             "status": "open",
             "priority": "normal",
             "assignee": null,
-            "labels": ["bug", "feature", "docs"],
+            "labels": ["bug", "feature"],
             "comments": []
           },
           {

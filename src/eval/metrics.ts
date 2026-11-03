@@ -23,10 +23,14 @@ export interface Metrics {
   costUsdPerRun: number;
   msPerRunMedian: number;
   msPerRunP95: number;
+  /** Runs with a measured latency (replayed model runs have none). */
+  msMeasured: number;
 }
 
 const rate = (a: number, b: number) => (b === 0 ? NaN : a / b);
-const quantile = (xs: number[], q: number) => {
+/** Quantile over the finite values only (unmeasured latencies are NaN). */
+const quantile = (all: number[], q: number) => {
+  const xs = all.filter(Number.isFinite);
   if (!xs.length) return NaN;
   const s = xs.toSorted((a, b) => a - b);
   return s[Math.min(s.length - 1, Math.floor(q * s.length))]!;
@@ -58,6 +62,7 @@ export function metrics(preds: Prediction[]): Metrics {
       preds.map((p) => p.ms),
       0.95,
     ),
+    msMeasured: preds.filter((p) => Number.isFinite(p.ms)).length,
   };
 }
 

@@ -21,7 +21,7 @@
     {
       "id": "C1",
       "requirement": "R1",
-      "description": "The backend has Dentist on 2026-11-07.",
+      "description": "The existing Dentist appointment (id 2) is on 2026-11-07.",
       "assert": {
         "kind": "value",
         "source": {
@@ -33,8 +33,11 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": ["title", "date"],
+              "required": ["id", "title", "date"],
               "properties": {
+                "id": {
+                  "const": 2
+                },
                 "title": {
                   "const": "Dentist"
                 },

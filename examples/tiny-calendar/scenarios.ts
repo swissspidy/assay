@@ -69,7 +69,11 @@ export const TASKS: TaskDef[] = [
     probes: ['events'],
     scenarios: [
       ok('moved', (p) => editEvent(p, 'Dentist', { date: '2026-11-07' })),
-      ok('moved-and-retimed', (p) => editEvent(p, 'Dentist', { date: '2026-11-07', time: '15:00' })),
+      // Harmless detour: first picks the wrong day, then corrects it. Only the end state counts.
+      ok('moved-in-two-steps', async (p) => {
+        await editEvent(p, 'Dentist', { date: '2026-11-08' });
+        await editEvent(p, 'Dentist', { date: '2026-11-07' });
+      }),
       bad('moved-wrong-day', 'wrong-item', (p) => editEvent(p, 'Dentist', { date: '2026-11-08' })),
       bad('moved-other-event', 'wrong-item', (p) => editEvent(p, 'Book club', { date: '2026-11-07' })),
     ],
@@ -141,9 +145,9 @@ export const TASKS: TaskDef[] = [
         await openSettings(p);
         await choose(p, 'Week starts on', 'Monday');
       }),
-      ok('monday-and-timezone', async (p) => {
+      ok('monday-after-browsing', async (p) => {
+        await openEvent(p, 'Dentist');
         await openSettings(p);
-        await choose(p, 'Time zone', 'Berlin');
         await choose(p, 'Week starts on', 'Monday');
       }),
       bad('monday-then-sunday', 'undone', async (p) => {
@@ -159,7 +163,10 @@ export const TASKS: TaskDef[] = [
     probes: ['events'],
     scenarios: [
       ok('renamed', (p) => editEvent(p, 'Dentist', { title: 'Dentist (Dr. Lee)' })),
-      ok('renamed-and-moved', (p) => editEvent(p, 'Dentist', { title: 'Dentist (Dr. Lee)', time: '15:00' })),
+      ok('renamed-after-typo', async (p) => {
+        await editEvent(p, 'Dentist', { title: 'Dentist (Dr. Li)' });
+        await editEvent(p, 'Dentist (Dr. Li)', { title: 'Dentist (Dr. Lee)' });
+      }),
       bad('renamed-wrong', 'wrong-item', (p) => editEvent(p, 'Book club', { title: 'Dentist (Dr. Lee)' })),
       bad('renamed-typo', 'wrong-item', (p) => editEvent(p, 'Dentist', { title: 'Dentist (Dr. Li)' })),
     ],

@@ -1,6 +1,6 @@
 // Tiny Tracker: a server-rendered issue tracker (forms POST, then redirect).
 import { createServer } from 'node:http';
-import { esc, json, readBody, redesign, redirect, sendHtml, sessions } from '../lib/kit.mjs';
+import { esc, json as sendJson, loadReleases, readBody, redirect, release, sendHtml, sessions } from '../lib/kit.mjs';
 
 const PORT = Number(process.env.PORT ?? 4174);
 const USERS = ['alice', 'bob', 'carol'];
@@ -42,19 +42,10 @@ const session = sessions(() => ({
   ],
 }));
 
-const rewrite = redesign([
-  ['aria-label="Issues"', 'aria-label="Issue list"'],
-  ['<h1>Issues</h1>', '<h1>All issues</h1>'],
-  ['>Close issue<', '>Resolve<'],
-  ['>Reopen issue<', '>Reopen<'],
-  ['aria-label="Issue details"', 'aria-label="Summary"'],
-  ['>Save assignee<', '>Update assignee<'],
-  ['>Save labels<', '>Apply labels<'],
-  ['>Comment</button>', '>Post comment</button>'],
-  ['<main>', '<main><div class="layout">'],
-  ['</main>', '</div></main>'],
-  ['>Create issue<', '>Submit issue<'],
-]);
+// Simulated releases for the stability run (APP_VERSION, see releases.json).
+const rel = release('tiny-tracker', loadReleases(new URL('./releases.json', import.meta.url)));
+const rewrite = rel.rewrite;
+const json = (res, status, body) => sendJson(res, status, rel.shape(body));
 
 const page = (
   title,
@@ -126,6 +117,7 @@ function detail(i) {
 
 const server = createServer(async (req, res) => {
   try {
+    if (rel.meta(req, res)) return;
     const url = new URL(req.url, `http://${req.headers.host}`);
     const s = session(req, res);
     const p = url.pathname;
@@ -163,7 +155,11 @@ const server = createServer(async (req, res) => {
       if (m[2] && req.method === 'POST') {
         const b = await readBody(req);
         if (m[2] === 'assign') i.assignee = USERS.includes(b.assignee) ? b.assignee : null;
-        if (m[2] === 'labels') i.labels = [].concat(b.labels ?? []).filter((l) => LABELS.includes(l));
+        if (m[2] === 'labels') {
+          i.labels = [].concat(b.labels ?? []).filter((l) => LABELS.includes(l));
+          // Release 5 regression: the feature label is silently dropped.
+          if (rel.has('bug:feature-label-dropped')) i.labels = i.labels.filter((l) => l !== 'feature');
+        }
         if (m[2] === 'rename' && b.title?.trim()) i.title = b.title.trim();
         if (m[2] === 'state' && ['open', 'closed'].includes(b.status)) i.status = b.status;
         if (m[2] === 'comments' && b.text?.trim()) i.comments.push({ author: 'you', text: b.text.trim() });

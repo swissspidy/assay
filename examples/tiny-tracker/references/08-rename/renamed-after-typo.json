@@ -65,7 +65,7 @@
               "children": [
                 {
                   "role": "text",
-                  "name": "Open"
+                  "name": "Closed"
                 }
               ]
             },
@@ -243,7 +243,7 @@
               "children": [
                 {
                   "role": "button",
-                  "name": "Close issue"
+                  "name": "Reopen issue"
                 }
               ]
             },
@@ -283,7 +283,7 @@
         }
       ]
     },
-    "text": "Tiny Tracker\nIssues · New issue\n#3 Fix typo in README\nStatus\nOpen\nPriority\nLow\nAssignee\nUnassigned\nLabels\ndocs\n\nREADME says \"teh\".\n\nAssignee \nUnassigned\nalice\nbob\ncarol\n Save assignee\nLabels\n bug  feature  docs\nSave labels\nTitle  Rename\nClose issue\nComments\nComment text  Comment",
+    "text": "Tiny Tracker\nIssues · New issue\n#3 Fix typo in README\nStatus\nClosed\nPriority\nLow\nAssignee\nUnassigned\nLabels\ndocs\n\nREADME says \"teh\".\n\nAssignee \nUnassigned\nalice\nbob\ncarol\n Save assignee\nLabels\n bug  feature  docs\nSave labels\nTitle  Rename\nReopen issue\nComments\nComment text  Comment",
     "network": [
       {
         "seq": 0,
@@ -309,7 +309,7 @@
           "location": "/issues/3"
         },
         "requestBody": {
-          "title": "Fix typo in README"
+          "title": "Fix typo in READNE"
         }
       },
       {
@@ -339,7 +339,7 @@
       {
         "seq": 4,
         "method": "POST",
-        "url": "http://localhost:4174/issues/3/state",
+        "url": "http://localhost:4174/issues/3/rename",
         "resourceType": "document",
         "status": 303,
         "requestHeaders": {
@@ -349,7 +349,7 @@
           "location": "/issues/3"
         },
         "requestBody": {
-          "status": "open"
+          "title": "Fix typo in README"
         }
       },
       {
@@ -414,7 +414,7 @@
             "id": 3,
             "title": "Fix typo in README",
             "body": "README says \"teh\".",
-            "status": "open",
+            "status": "closed",
             "priority": "low",
             "assignee": null,
             "labels": ["docs"],

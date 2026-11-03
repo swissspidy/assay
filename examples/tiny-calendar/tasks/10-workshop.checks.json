@@ -24,6 +24,15 @@
         "field": "outcomes",
         "quote": "the workshop lasts 90 minutes"
       }
+    },
+    {
+      "id": "R3",
+      "kind": "hard",
+      "text": "The workshop is on November 12, 2026 at 10:00",
+      "source": {
+        "field": "instruction",
+        "quote": "on November 12, 2026 at 10:00"
+      }
     }
   ],
   "checks": [
@@ -75,6 +84,38 @@
                 },
                 "duration": {
                   "const": 90
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "C3",
+      "requirement": "R3",
+      "description": "The Workshop is on 2026-11-12 at 10:00.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "events"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["title", "date", "time"],
+              "properties": {
+                "title": {
+                  "const": "Workshop"
+                },
+                "date": {
+                  "const": "2026-11-12"
+                },
+                "time": {
+                  "const": "10:00"
                 }
               }
             }

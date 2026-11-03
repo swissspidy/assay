@@ -6,19 +6,18 @@
 
 ## Context
 
-Assay claims that compiled checks verify outcomes about as well as a model, at a tiny fraction of the cost and latency, and that they stay correct as the UI changes. To support that claim we need:
+Assay claims two things:
 
-- labelled trajectories, both correct and incorrect;
-- the same trajectories judged by the alternatives;
-- a repeatable measurement over time.
+- compiled checks verify outcomes about as well as a model does, at a tiny fraction of the cost and latency;
+- they stay correct as the application changes.
 
-The trajectories must be reproducible offline and in CI, and no system may see the agent's own success report as evidence.
+Supporting the first claim takes labelled trajectories (correct and incorrect) and the same trajectories judged by the alternatives. Supporting the second takes applications that change in realistic ways, including changes that really break the feature under test.
+
+All of it must be reproducible offline and in CI. The agent's own success report is never evidence for Assay's checks.
 
 ## Decision
 
 ### Dataset: 30 tasks, 3 apps, 123 labelled runs
-
-The dataset uses three small, self-contained apps under `examples/`. All three can serve a deliberately redesigned variant (`UI_VARIANT=redesign`).
 
 | App           | Style                                        | Tasks                                                                        |
 | ------------- | -------------------------------------------- | ---------------------------------------------------------------------------- |
@@ -28,66 +27,95 @@ The dataset uses three small, self-contained apps under `examples/`. All three c
 
 - Every task has a scripted agent (`agent.ts`) and labelled scenarios (`scenarios.ts`).
 - Each scenario has a kind: `correct`, `no-op`, `undone`, `wrong-item`, `partial`, `over-completion` or `adversarial`. Adversarial runs make the page claim success without the underlying state changing.
-- Each label comes from the scenario definition, not from any verifier.
-- `npm run references` records the reference snapshots under `examples/<app>/references/`. Scenarios are replayed live in `tests/scenarios.spec.ts`.
+- The label comes from the scenario definition, not from any verifier.
+- A `correct` run does what was asked and nothing harmful besides. Harmless detours are allowed, such as browsing first or making a mistake and correcting it before the end. Unrequested changes to other data are not, so a run that also reopens an issue or moves an event's time is not labelled correct.
+- `npm run references` records the reference snapshots under `examples/<app>/references/`. `tests/scenarios.spec.ts` replays the scenarios live.
 
 ### Systems compared (`npm run eval`)
 
-All systems judge the same captured snapshot. The agent's report is always "I completed the task as requested.", because agents usually report success. Two systems show the report to the model as context; one ignores it.
+All systems judge the same captured snapshot. The agent's report is always "I completed the task as requested.", because agents usually report success.
 
-| System              | What decides                                                                                     | Sees the agent's report   |
-| ------------------- | ------------------------------------------------------------------------------------------------ | ------------------------- |
-| `checks`            | compiled (or handwritten) check set; abstain counts as "not success"                             | no                        |
-| `checks+escalation` | checks; abstained requirements go to the agentic verifier (ADR 0004), snapshot-only              | as labelled context       |
-| `llm-judge`         | one model call: task, accessibility outline (200 nodes), visible text (3,000 chars), URL, report | yes, as typical judges do |
-| `agentic-verifier`  | ADR 0004 verifier on every hard requirement, snapshot-only                                       | as labelled context       |
+| System              | What decides                                                                                     | Sees the agent's report            |
+| ------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------- |
+| `checks`            | the check set; abstain counts as "not success"                                                   | no                                 |
+| `checks+escalation` | checks; abstained requirements go to the agentic verifier (ADR 0004), snapshot-only              | as context, marked as not evidence |
+| `llm-judge`         | one model call: task, accessibility outline (200 nodes), visible text (3,000 chars), URL, report | yes, as typical LLM judges do      |
+| `agentic-verifier`  | the ADR 0004 verifier on every hard requirement, snapshot-only                                   | as context, marked as not evidence |
+
+The LLM judge seeing the report as a plain statement is deliberate. That is what the baseline being compared against does.
 
 Metrics (`src/eval/metrics.ts`):
 
 - Positive means the run really completed the task.
 - TPR, TNR and balanced accuracy count an abstain as "not success". The report also shows the abstain rate and the decided-only rates.
-- Cost uses list prices per token, with cache reads and writes priced separately.
-- Latency is the median and p95 per run.
+- Cost uses list prices per token, with cache reads and writes priced separately, at the model the run was configured with.
+- Latency is the median and p95 over runs with a measured time. Replayed model runs have none, and the report says how many runs were timed.
 - A model error counts as an abstain for that run and is recorded with a note.
+
+A system is either measured on every run or reported as "not measured" with the reason. It is never scored on a subset. Reasons include no cassette, a stale cassette (the prompt or inputs changed since recording), or an unavailable model.
 
 ### Handwritten vs. compiled checks
 
 - The handwritten check sets were written by the same author as the scenarios, so their row is circular and an upper bound. The report says so.
-- The real measure is `npm run eval -- --checks compiled`. It uses the check sets from `npm run compile:examples`, each compiled from the task text and one correct run, with all other runs held out.
+- The real measure is `npm run eval -- --checks compiled`. It uses the check sets from `npm run compile:examples`, each compiled from the task text and one correct run (`compileReference`).
+- In compiled mode, those 30 training runs are left out for every system, so every scored run is held out.
 
 ### Reproducibility
 
 - Model calls go through record/replay cassettes (`eval/cassettes/<system>/<app>/<task>/<scenario>.json`).
-- With `ANTHROPIC_API_KEY` set, missing cassettes are recorded. Without one, they are replayed, and systems with no recordings are reported as "not measured" rather than silently skipped.
-- Replayed runs carry no latency, so model latency is reported only from recording runs.
+- With `ANTHROPIC_API_KEY` set, missing cassettes are recorded. Without one, the recorded cassettes are replayed.
+- The scripts are typechecked with the rest of the code (`tsconfig.json` includes `scripts/`).
 
-### Stability (`npm run stability`, weekly workflow)
+### Stability: simulated releases (`npm run stability`, in CI)
 
-The stability run captures every scenario live against two UI variants and judges each run with the same check sets:
+Apps that never change cannot show whether checks stay correct, and a weekly re-run of the same apps would only re-test the same code. Instead, each app ships a series of releases (`examples/<app>/releases.json`). `APP_VERSION=N` serves version N, and the releases build on each other:
 
-- `baseline`, the app as recorded;
-- `redesign`: renamed landmarks and headings, relabelled controls ("Cart" becomes "Shopping basket", "Place order" becomes "Buy now"), extra wrappers, and a different date locale (en-US to en-GB).
+| Version | Release     | What changes                                                                                                                                              |
+| ------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| v1      | as recorded | nothing                                                                                                                                                   |
+| v2      | copy        | renamed labels, headings and buttons ("Cart" becomes "Shopping basket", "Close issue" becomes "Resolve")                                                  |
+| v3      | layout      | extra wrappers; look-alike content outside the main region (product prices, other issues, suggested events); British date format in the calendar          |
+| v4      | api         | every API record gains `updatedAt` and `etag`                                                                                                             |
+| v5      | regression  | a real bug per app: the newsletter choice is echoed but not stored; the feature label is dropped on save; a new event's reminder is echoed but not stored |
 
-Each run gets one of three results:
+The checks are written for v1. Every scenario runs against every version.
 
-- **correct**: the labelled verdict;
-- **abstain**: escalates, which is safe;
-- **broken**: the wrong decided verdict, which is the failure we must not have.
+- The expected verdict is the scenario's label, except where a release breaks a task (`breaks` in `releases.json`). There, the correct runs must now fail.
+- Each run gets one of four results:
+  - **correct**: the expected verdict for that version;
+  - **abstain**: escalates, which is safe;
+  - **broken**: a wrong decided verdict, the failure that must not happen;
+  - **agent error**: the scripted agent could not finish on that UI, so nothing was judged.
+- Anchor drift is counted separately.
+- The run fails (exit code 1) if any run is broken.
 
-Anchor drift is counted separately.
+The run is deterministic and takes about two minutes, so it runs in CI on every change (`ci.yml`, job "Stability"). Each app also answers `GET /__assay/version`, so the runner never silently reuses some other server that happens to be on the port.
 
-`.github/workflows/stability.yml` runs weekly (Mondays 04:17 UTC) and on demand. It writes the tables to the job summary and keeps the reports as artifacts for 90 days. Over four weeks, those runs make up the stability record.
+### What runs weekly (`model-baselines.yml`)
+
+The only thing that changes on its own is the model side: hosted models are updated. The weekly workflow therefore evaluates the LLM judge and the agentic verifier live, with fresh recordings, and keeps reports and cassettes as artifacts for 90 days so weeks can be compared. It needs the `ANTHROPIC_API_KEY` secret and does nothing without it.
 
 ## Results so far
 
 With the handwritten checks and no model (the model rows wait for an API key):
 
-- Eval: checks reached balanced accuracy 1.000 on 123 runs (TPR 1.000, TNR 1.000), with a median latency of about 0.1 ms per run after capture.
-- Stability, baseline: 123/123 correct.
-- Stability, redesign: 116/123 correct, 7 abstain, 0 broken, 11 runs with anchor drift. All seven abstains are Tiny Shop checks anchored on the renamed newsletter label, cart region or delivery text. They escalate instead of guessing.
+- **Eval:** checks reached balanced accuracy 1.000 on 123 runs (TPR 1.000, TNR 1.000), with a median latency of about 0.1 ms per run after capture.
+- **Stability:**
+
+| Version       | Correct | Abstain | Broken | Agent error | Regression runs caught |
+| ------------- | ------- | ------- | ------ | ----------- | ---------------------- |
+| v1            | 123/123 | 0       | 0      | 0           | –                      |
+| v2 copy       | 116/123 | 7       | 0      | 0           | –                      |
+| v3 layout     | 116/123 | 7       | 0      | 0           | –                      |
+| v4 api        | 116/123 | 7       | 0      | 0           | –                      |
+| v5 regression | 116/123 | 7       | 0      | 0           | 4/6                    |
+
+- The seven abstains are all Tiny Shop checks anchored on the renamed newsletter label, cart region or delivery text. They escalate instead of guessing.
+- The look-alike content in v3 and the extra API fields in v4 changed no verdict.
+- In v5, the tracker and calendar regressions were caught: the correct runs now fail. The Tiny Shop newsletter regression lands on checks that already abstain since v2, so those two runs escalate rather than fail.
 
 ## Consequences
 
-- The comparison is meaningful only once the model rows and the compiled checks are recorded. Until then the report states what was not measured.
-- Small first-party apps keep the dataset deterministic and free to run in CI. The cost is less visual and structural variety than real sites.
-- The redesign variant is a fixed edit set, so the stability run catches regressions in Assay and in the check sets. It does not stand in for drift in real third-party sites.
+- The comparison is only meaningful once the model rows and the compiled checks are recorded. Until then the report states what was not measured and why.
+- Small first-party apps keep the dataset deterministic and free to run in CI. The cost is less visual and structural variety than real sites. The releases are hand-written, so they test the kinds of change we thought of. Generated changes, for example by asking a model to restyle an app, would widen that.
+- API changes in v4 are additive only. Renaming a field that a probe reads changes the probe's contract, much like a breaking API change for any client, and is out of scope here.

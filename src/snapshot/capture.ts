@@ -50,7 +50,12 @@ function pick(headers: Record<string, string>, keep: string[]): Record<string, s
   return out;
 }
 
-function decodeBody(text: string, contentType: string | undefined, max: number): { body: Json; truncated: boolean } {
+/** @internal Exported for tests. */
+export function decodeBody(
+  text: string,
+  contentType: string | undefined,
+  max: number,
+): { body: Json; truncated: boolean } {
   if (text.length > max) return { body: text.slice(0, max), truncated: true };
   if (contentType && /\bjson\b/i.test(contentType)) {
     try {
@@ -62,9 +67,10 @@ function decodeBody(text: string, contentType: string | undefined, max: number):
   if (contentType && /application\/x-www-form-urlencoded/i.test(contentType)) {
     // HTML form posts become objects (repeated fields become arrays), so checks can
     // match them with JSON Schema like JSON bodies.
-    const form: Record<string, Json> = {};
+    // No prototype: field names like "constructor" or "__proto__" are plain keys.
+    const form = Object.create(null) as Record<string, Json>;
     for (const [k, v] of new URLSearchParams(text)) {
-      const prev = form[k];
+      const prev = Object.hasOwn(form, k) ? form[k] : undefined;
       form[k] = prev === undefined ? v : Array.isArray(prev) ? [...prev, v] : [prev, v];
     }
     return { body: form, truncated: false };

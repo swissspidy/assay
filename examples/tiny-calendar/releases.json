@@ -1,0 +1,43 @@
+{
+  "releases": [
+    {
+      "version": 2,
+      "name": "copy",
+      "summary": "Renamed headings and buttons: Upcoming events becomes Your schedule, Save changes becomes Update event.",
+      "html": [
+        ["aria-label=\"Upcoming events\"", "aria-label=\"Your schedule\""],
+        ["<h1>Upcoming events</h1>", "<h1>Your schedule</h1>"],
+        [">Save changes<", ">Update event<"],
+        [">Create event<", ">Add to calendar<"],
+        ["aria-label=\"Event details\"", "aria-label=\"Details\""]
+      ]
+    },
+    {
+      "version": 3,
+      "name": "layout",
+      "summary": "British date format (en-GB), an extra wrapper and a panel of suggested events outside the main content.",
+      "html": [
+        ["const LOCALE = 'en-US'", "const LOCALE = 'en-GB'"],
+        ["<main>", "<main><div class=\"wrap\">"],
+        ["</main>", "</div></main>"],
+        [
+          "</main>",
+          "</main><aside aria-label=\"Suggested\"><h2>Suggested</h2><ul><li>Yoga — 7 Nov 2026, 08:00</li><li>Workshop — 12 Nov 2026, 10:00 (90 min)</li></ul></aside>"
+        ]
+      ]
+    },
+    {
+      "version": 4,
+      "name": "api",
+      "summary": "Every record in API responses gains updatedAt and etag fields.",
+      "flags": ["api:extra-fields"]
+    },
+    {
+      "version": 5,
+      "name": "regression",
+      "summary": "Bug: creating an event echoes the reminder in the response but does not store it.",
+      "flags": ["bug:reminder-not-saved"],
+      "breaks": ["02-reminder"]
+    }
+  ]
+}

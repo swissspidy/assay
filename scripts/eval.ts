@@ -26,6 +26,7 @@ import {
   type Prediction,
 } from '../src/index.ts';
 import { APPS } from '../examples/apps.ts';
+import { compileReference } from '../examples/lib/scenario.ts';
 import { modelFromEnv } from './model-from-env.ts';
 
 const arg = (name: string, dflt: string) => {
@@ -47,8 +48,11 @@ interface Run {
 }
 
 const runs: Run[] = [];
+/** Compiled mode: the run each check set was compiled from is not scored (it is not held out). */
+const trainingRuns: string[] = [];
 for (const app of APPS) {
   for (const t of app.tasks) {
+    const training = CHECKS === 'compiled' ? compileReference(t).name : undefined;
     const csFile =
       CHECKS === 'compiled'
         ? new URL(`compiled/${t.id}.checks.json`, app.dir)
@@ -60,6 +64,10 @@ for (const app of APPS) {
       .filter((x) => x.endsWith('.json'))
       .toSorted()) {
       const { label, snapshot } = JSON.parse(readFileSync(new URL(f, dir), 'utf8'));
+      if (f.replace(/\.json$/, '') === training) {
+        trainingRuns.push(`${app.name}/${t.id}/${training}`);
+        continue;
+      }
       runs.push({
         app: app.name,
         task: t.id,
@@ -85,13 +93,21 @@ const priceOf = (modelId: string) =>
 type Row = Prediction & { app: string; task: string; scenario: string; kind: string; note?: string };
 const results: Record<string, { rows: Row[]; measured: boolean; reason?: string; model?: string }> = {};
 
-async function modelRun(system: string, r: Run): Promise<{ row: Row; model: string } | null> {
+type ModelOutcome = { row: Row; model: string } | { unavailable: string };
+
+const errorText = (e: unknown) => (e instanceof Error ? e.message : String(e));
+/** A replayed request that the cassette has no recording for: the inputs changed since recording. */
+const isStale = (msg: string | undefined) => !!msg && msg.includes('has no recording for this request');
+
+async function modelRun(system: string, r: Run): Promise<ModelOutcome> {
   const cassette = new URL(`cassettes/${system}/${r.app}/${r.task}/${r.scenario}.json`, root).pathname;
   let env;
   try {
     env = await modelFromEnv(cassette);
-  } catch {
-    return null; // no key and no recording
+  } catch (e) {
+    return {
+      unavailable: process.env.ANTHROPIC_API_KEY ? `model unavailable: ${errorText(e)}` : 'no recorded cassette',
+    };
   }
   const base = { app: r.app, task: r.task, scenario: r.scenario, kind: r.kind, expected: r.expected };
   const t0 = performance.now();
@@ -103,6 +119,7 @@ async function modelRun(system: string, r: Run): Promise<{ row: Row; model: stri
       const j = await llmJudge(env.model, { task: r.checks.task, snapshot: r.snapshot, agentReport: AGENT_REPORT });
       verdict = j.verdict;
       usage = j.usage;
+      if (j.status === 'error') note = j.reasoning;
     } else if (system === 'agentic-verifier') {
       const v = await runVerifier(env.model, {
         task: r.checks.task,
@@ -123,11 +140,16 @@ async function modelRun(system: string, r: Run): Promise<{ row: Row; model: stri
       const res = await verifyWithEscalation(r.checks, r.snapshot, { verifier: env.model, agentReport: AGENT_REPORT });
       verdict = res.outcome.verdict;
       usage = res.verifier?.usage ?? { inputTokens: 0, outputTokens: 0 };
+      const err = res.record.escalation?.error;
+      if (err !== undefined) note = `model error: ${err}`;
     }
   } catch (e) {
     // A failed model call is a real outcome of that system: count it as abstain.
-    note = `model error: ${e instanceof Error ? e.message : String(e)}`;
+    note = `model error: ${errorText(e)}`;
   }
+  // In replay, a request the cassette never saw is a stale recording, not a model outcome.
+  if (env.mode === 'replay' && isStale(note))
+    return { unavailable: 'stale cassette (re-record with ANTHROPIC_API_KEY)' };
   const ms = performance.now() - t0;
   env.save();
   return {
@@ -144,8 +166,9 @@ async function modelRun(system: string, r: Run): Promise<{ row: Row; model: stri
 
 for (const system of SYSTEMS) {
   const rows: Row[] = [];
-  let measured = true;
+  let measured = runs.length > 0;
   let model: string | undefined;
+  const unavailable = new Map<string, number>();
   for (const r of runs) {
     if (system === 'checks') {
       const t0 = performance.now();
@@ -179,16 +202,19 @@ for (const system of SYSTEMS) {
       continue;
     }
     const out = await modelRun(system, r);
-    if (!out) {
-      measured = false;
-      break;
+    if ('unavailable' in out) {
+      unavailable.set(out.unavailable, (unavailable.get(out.unavailable) ?? 0) + 1);
+      continue;
     }
     model = out.model;
     rows.push(out.row);
   }
+  // Metrics over a subset would not be comparable with the other systems: all runs or nothing.
+  if (unavailable.size) measured = false;
+  const reason = [...unavailable].map(([why, n]) => `${n}/${runs.length} runs: ${why}`).join('; ');
   results[system] = measured
     ? { rows, measured, ...(model ? { model } : {}) }
-    : { rows: [], measured, reason: 'no ANTHROPIC_API_KEY and no recorded cassettes' };
+    : { rows: [], measured, reason: reason || 'no runs' };
   console.warn(`${system}: ${measured ? `${rows.length} runs` : 'not measured'}`);
 }
 
@@ -208,7 +234,7 @@ const table = (m: Record<string, Metrics | null>) => [
   '|---|---|---|---|---|---|---|',
   ...Object.entries(m).map(([sys, x]) =>
     x
-      ? `| ${sys} | ${fmt(x.balancedAccuracy)} | ${fmt(x.tpr)} | ${fmt(x.tnr)} | ${fmt(x.abstainRate)} | $${fmt(x.costUsdPerRun, 4)} | ${ms(x.msPerRunMedian)} / ${ms(x.msPerRunP95)} |`
+      ? `| ${sys} | ${fmt(x.balancedAccuracy)} | ${fmt(x.tpr)} | ${fmt(x.tnr)} | ${fmt(x.abstainRate)} | $${fmt(x.costUsdPerRun, 4)} | ${ms(x.msPerRunMedian)} / ${ms(x.msPerRunP95)}${x.msMeasured < x.n ? ` (${x.msMeasured} of ${x.n} runs timed)` : ''} |`
       : `| ${sys} | not measured | | | | | |`,
   ),
 ];
@@ -228,8 +254,12 @@ const byKind = kinds.map((k) => {
 const wrong = (results.checks?.rows ?? []).filter((r) =>
   r.expected === 'success' ? r.verdict !== 'success' : r.verdict === 'success',
 );
+const measuredSystems = Object.entries(results)
+  .filter(([, v]) => v.measured)
+  .map(([k]) => k);
+const noted = Object.values(results).flatMap((v) => v.rows.filter((r) => r.note));
 const md = [
-  '# Evaluation: compiled checks vs. LLM judge vs. agentic verifier',
+  `# Evaluation: ${CHECKS} checks${measuredSystems.some((x) => x !== 'checks' && x !== 'checks+escalation') ? ' vs. model baselines' : ' (model baselines not measured yet)'}`,
   '',
   `Generated ${new Date().toISOString()} · check sets: **${CHECKS}** · ${runs.length} labelled runs over ${new Set(runs.map((r) => `${r.app}/${r.task}`)).size} tasks (${runs.filter((r) => r.expected === 'success').length} correct, ${runs.filter((r) => r.expected === 'fail').length} incorrect) in ${APPS.length} apps.`,
   '',
@@ -255,7 +285,9 @@ const md = [
     .map(([k, v]) => `- **${k}** used ${v.model}.`),
   CHECKS === 'handwritten'
     ? `- **Caveat:** these are the handwritten check sets, written by the same author as the labelled runs, so the checks rows are an upper bound and partly circular. The real measure is \`--checks compiled\` (checks compiled by the model from one correct run per task; all other runs held out).`
-    : `- Compiled check sets: each was compiled from one correct run per task; all other runs are held out.`,
+    : `- Compiled check sets: each was compiled from one correct run per task. Those ${trainingRuns.length} runs are left out for every system, so all scored runs are held out.`,
+  `- The LLM judge is shown the agent's report, as typical LLM judges are; Assay's checks never see it, and the agentic verifier gets it marked as context, not evidence.`,
+  ...(noted.length ? [`- Runs with a model error (counted as abstain): ${noted.length}.`] : []),
   `- Model latency is only measured when recording; replayed runs show none.`,
   `- Checks-only latency is in-process evaluation of a captured snapshot (no model). Capture itself takes about 20-60 ms per page and is shared by every system.`,
   `- The LLM judge sees the final page as an accessibility outline plus visible text (no screenshots, no network or backend access).`,
@@ -272,3 +304,7 @@ writeFileSync(
   JSON.stringify({ generatedAt: new Date().toISOString(), checks: CHECKS, results }, null, 1) + '\n',
 );
 console.warn(md.split('\n').slice(0, 14).join('\n'));
+if (runs.length === 0) {
+  console.error(`No labelled runs with ${CHECKS} check sets: nothing was evaluated.`);
+  process.exitCode = 1;
+}
