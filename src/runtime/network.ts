@@ -53,7 +53,8 @@ export function describeUrlMatch(m: UrlMatch): string {
   if (m.origin) parts.push(m.origin);
   if (m.path) parts.push(`path ${m.path}`);
   if (m.regex) parts.push(`/${m.regex}/`);
-  for (const [k, v] of Object.entries(m.query ?? {})) parts.push(v === null ? `no ?${k}` : `?${k} ${describeTextMatch(v)}`);
+  for (const [k, v] of Object.entries(m.query ?? {}))
+    parts.push(v === null ? `no ?${k}` : `?${k} ${describeTextMatch(v)}`);
   return parts.join(', ') || 'any URL';
 }
 
@@ -95,7 +96,8 @@ export function describeRequestMatch(m: RequestMatch): string {
   const parts: string[] = [];
   parts.push(m.method ? (Array.isArray(m.method) ? m.method.join('|') : m.method) : 'any method');
   if (m.url) parts.push(describeUrlMatch(m.url));
-  if (m.status !== undefined) parts.push(typeof m.status === 'number' ? `status ${m.status}` : `status ${describeNumberCompare(m.status)}`);
+  if (m.status !== undefined)
+    parts.push(typeof m.status === 'number' ? `status ${m.status}` : `status ${describeNumberCompare(m.status)}`);
   if (m.requestBody !== undefined) parts.push('request body matching schema');
   if (m.responseBody !== undefined) parts.push('response body matching schema');
   return parts.join(', ');

@@ -1,38 +1,59 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><title>Cart · Tiny Shop</title></head>
-<body>
-<header><a href="/">Tiny Shop</a><nav aria-label="Primary"><a href="/">Products</a> · <a href="/cart">Cart</a> · <a href="/settings">Settings</a></nav></header>
-<main>
-  <h1>Your cart</h1>
-  <table aria-label="Cart">
-    <thead><tr><th>Product</th><th>Quantity</th><th>Price</th><th><span hidden>Actions</span></th></tr></thead>
-    <tbody id="rows"></tbody>
-  </table>
-  <section aria-label="Cart summary">
-    <p>Total: <output aria-label="Cart total" id="total"></output></p>
-  </section>
-  <p><a href="/checkout">Proceed to checkout</a></p>
-</main>
-<script type="module">
-  import { api, money, el, esc } from '/app.js';
-  const rows = document.getElementById('rows');
-  function render(cart) {
-    rows.replaceChildren();
-    for (const it of cart.items) {
-      const tr = el(`<table><tbody><tr>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Cart · Tiny Shop</title>
+  </head>
+  <body>
+    <header>
+      <a href="/">Tiny Shop</a>
+      <nav aria-label="Primary">
+        <a href="/">Products</a> · <a href="/cart">Cart</a> · <a href="/settings">Settings</a>
+      </nav>
+    </header>
+    <main>
+      <h1>Your cart</h1>
+      <table aria-label="Cart">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th><span hidden>Actions</span></th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <section aria-label="Cart summary">
+        <p>Total: <output aria-label="Cart total" id="total"></output></p>
+      </section>
+      <p><a href="/checkout">Proceed to checkout</a></p>
+    </main>
+    <script type="module">
+      import { api, money, el, esc } from '/app.js';
+      const rows = document.getElementById('rows');
+      function render(cart) {
+        rows.replaceChildren();
+        for (const it of cart.items) {
+          const tr = el(`<table><tbody><tr>
         <td>${esc(it.name)}</td>
         <td><input type="number" min="1" value="${it.qty}" aria-label="Quantity for ${esc(it.name)}"></td>
         <td>${money(it.lineTotal)}</td>
         <td><button aria-label="Remove ${esc(it.name)}">Remove</button></td>
       </tr></tbody></table>`).querySelector('tr');
-      tr.querySelector('input').onchange = async (e) => render(await api('PATCH', '/api/cart/items/' + it.sku, { qty: Number(e.target.value) }));
-      tr.querySelector('button').onclick = async () => render(await api('DELETE', '/api/cart/items/' + it.sku));
-      rows.append(tr);
-    }
-    if (!cart.items.length) rows.append(el('<table><tbody><tr><td colspan="4">Your cart is empty</td></tr></tbody></table>').querySelector('tr'));
-    document.getElementById('total').textContent = money(cart.total);
-  }
-  render(await api('GET', '/api/cart'));
-  document.body.dataset.ready = '1';
-</script>
-</body></html>
+          tr.querySelector('input').onchange = async (e) =>
+            render(await api('PATCH', '/api/cart/items/' + it.sku, { qty: Number(e.target.value) }));
+          tr.querySelector('button').onclick = async () => render(await api('DELETE', '/api/cart/items/' + it.sku));
+          rows.append(tr);
+        }
+        if (!cart.items.length)
+          rows.append(
+            el('<table><tbody><tr><td colspan="4">Your cart is empty</td></tr></tbody></table>').querySelector('tr'),
+          );
+        document.getElementById('total').textContent = money(cart.total);
+      }
+      render(await api('GET', '/api/cart'));
+      document.body.dataset.ready = '1';
+    </script>
+  </body>
+</html>

@@ -5,7 +5,9 @@ const ICON = { pass: '✔', fail: '✘', abstain: '?' } as const;
 /** Plain-text report of an outcome, grouped by requirement. */
 export function formatOutcome(o: Outcome): string {
   const lines: string[] = [];
-  lines.push(`Verdict: ${o.verdict.toUpperCase()}  (${o.checkSet.id} v${o.checkSet.version}, snapshot ${o.snapshot.digest.slice(0, 19)}…)`);
+  lines.push(
+    `Verdict: ${o.verdict.toUpperCase()}  (${o.checkSet.id} v${o.checkSet.version}, snapshot ${o.snapshot.digest.slice(0, 19)}…)`,
+  );
   for (const r of o.requirements) {
     lines.push(`${ICON[r.status]} [${r.kind}] ${r.requirement}: ${r.text}${r.reason ? `  (${r.reason})` : ''}`);
     for (const id of r.checks) {

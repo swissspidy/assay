@@ -9,7 +9,7 @@ function sortKeys(v: unknown): unknown {
   if (Array.isArray(v)) return v.map(sortKeys);
   if (v && typeof v === 'object') {
     const out: Record<string, unknown> = {};
-    for (const k of Object.keys(v).sort()) {
+    for (const k of Object.keys(v).toSorted()) {
       const x = (v as Record<string, unknown>)[k];
       if (x !== undefined) out[k] = sortKeys(x);
     }

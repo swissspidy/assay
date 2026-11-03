@@ -130,7 +130,10 @@ export class EvidenceRecorder {
   private readonly maxBody: number;
   private readonly token = randomUUID();
 
-  private constructor(readonly context: BrowserContext, opts: RecorderOptions) {
+  private constructor(
+    readonly context: BrowserContext,
+    opts: RecorderOptions,
+  ) {
     this.maxBody = opts.maxBodyBytes ?? 1024 * 1024;
     context.on('request', (req) => this.onRequest(req));
     context.on('response', (resp) => this.track(this.onResponse(resp.request())));
@@ -219,11 +222,16 @@ export class EvidenceRecorder {
 
   /** Wait until bodies of finished requests have been read, then fill gaps from the page tap. */
   async settle(): Promise<void> {
-    while (this.pending.size) await Promise.allSettled([...this.pending]);
+    while (this.pending.size) await Promise.allSettled(this.pending);
     const used = new Set<NetworkEntry>();
     for (const t of this.tapped) {
       const e = this.entries.find(
-        (x) => !used.has(x) && BODY_RESOURCE_TYPES.has(x.resourceType) && x.method === t.method && x.url === t.url && (x.status === null || x.status === t.status),
+        (x) =>
+          !used.has(x) &&
+          BODY_RESOURCE_TYPES.has(x.resourceType) &&
+          x.method === t.method &&
+          x.url === t.url &&
+          (x.status === null || x.status === t.status),
       );
       if (!e) continue;
       used.add(e);
@@ -234,7 +242,11 @@ export class EvidenceRecorder {
     }
     for (const e of this.entries) {
       const ct = e.responseHeaders['content-type'];
-      const expected = BODY_RESOURCE_TYPES.has(e.resourceType) && e.status !== null && (e.status < 300 || e.status >= 400) && isTextual(ct);
+      const expected =
+        BODY_RESOURCE_TYPES.has(e.resourceType) &&
+        e.status !== null &&
+        (e.status < 300 || e.status >= 400) &&
+        isTextual(ct);
       if (expected && e.responseBody === undefined) e.bodyUnavailable = true;
       else delete e.bodyUnavailable;
     }
@@ -265,6 +277,7 @@ export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Pr
 
   const ariaYaml = await page.locator('body').ariaSnapshot();
   const domState = await page.evaluate(() => {
+    // oxlint-disable-next-line unicorn/consistent-function-scoping -- runs in the page, must be self-contained
     const dump = (s: Storage) => {
       const o: Record<string, string> = {};
       for (let i = 0; i < s.length; i++) {
@@ -339,6 +352,6 @@ export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Pr
     network,
     storage,
     probes,
-    meta: { capturer: CAPTURER, redacted: redacted.sort() },
+    meta: { capturer: CAPTURER, redacted: redacted.toSorted() },
   };
 }

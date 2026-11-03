@@ -1,22 +1,37 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><title>Order · Tiny Shop</title></head>
-<body>
-<header><a href="/">Tiny Shop</a><nav aria-label="Primary"><a href="/">Products</a> · <a href="/cart">Cart</a> · <a href="/settings">Settings</a></nav></header>
-<main>
-  <h1>Order confirmed</h1>
-  <section aria-label="Order summary" id="summary"></section>
-</main>
-<script type="module">
-  import { api, money, esc } from '/app.js';
-  const id = location.pathname.split('/').pop();
-  const o = await api('GET', '/api/orders/' + id);
-  const date = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(o.estimatedDelivery));
-  document.getElementById('summary').innerHTML = `
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Order · Tiny Shop</title>
+  </head>
+  <body>
+    <header>
+      <a href="/">Tiny Shop</a>
+      <nav aria-label="Primary">
+        <a href="/">Products</a> · <a href="/cart">Cart</a> · <a href="/settings">Settings</a>
+      </nav>
+    </header>
+    <main>
+      <h1>Order confirmed</h1>
+      <section aria-label="Order summary" id="summary"></section>
+    </main>
+    <script type="module">
+      import { api, money, esc } from '/app.js';
+      const id = location.pathname.split('/').pop();
+      const o = await api('GET', '/api/orders/' + id);
+      const date = new Intl.DateTimeFormat('en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        timeZone: 'UTC',
+      }).format(new Date(o.estimatedDelivery));
+      document.getElementById('summary').innerHTML = `
     <p>Order number: ${esc(o.id)}</p>
     <p>Shipping: ${o.shipping === 'express' ? 'Express' : 'Standard'}${o.giftWrap ? ', gift wrapped' : ''}</p>
     <p>Estimated delivery: ${date}</p>
     <p>Total: ${money(o.total)}</p>`;
-  document.title = 'Order ' + o.id + ' · Tiny Shop';
-  document.body.dataset.ready = '1';
-</script>
-</body></html>
+      document.title = 'Order ' + o.id + ' · Tiny Shop';
+      document.body.dataset.ready = '1';
+    </script>
+  </body>
+</html>

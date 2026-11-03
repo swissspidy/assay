@@ -7,7 +7,10 @@ import { AXIndex } from '../runtime/axindex.js';
  */
 
 /** Return a copy of the snapshot with `fn` applied to every a11y node (post-order). Returning null removes the node. */
-export function mapA11y(snapshot: EvidenceSnapshot, fn: (node: AXNode, path: AXNode[]) => AXNode | null): EvidenceSnapshot {
+export function mapA11y(
+  snapshot: EvidenceSnapshot,
+  fn: (node: AXNode, path: AXNode[]) => AXNode | null,
+): EvidenceSnapshot {
   const walk = (node: AXNode, path: AXNode[]): AXNode | null => {
     const children = node.children?.map((c) => walk(c, [...path, node])).filter((c): c is AXNode => c !== null);
     const copy: AXNode = { ...node };
@@ -20,7 +23,11 @@ export function mapA11y(snapshot: EvidenceSnapshot, fn: (node: AXNode, path: AXN
 }
 
 /** Apply `fn` to every node matched by the locator (evaluated on the original snapshot). */
-export function editNodes(snapshot: EvidenceSnapshot, locator: Locator, fn: (node: AXNode) => AXNode | null): EvidenceSnapshot {
+export function editNodes(
+  snapshot: EvidenceSnapshot,
+  locator: Locator,
+  fn: (node: AXNode) => AXNode | null,
+): EvidenceSnapshot {
   const index = new AXIndex(snapshot.a11y);
   const targets = new Set(index.find(locator).map((n) => n.id));
   // Node ids follow pre-order; recompute them during the walk.

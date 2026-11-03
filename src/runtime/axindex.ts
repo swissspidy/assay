@@ -33,7 +33,11 @@ export class AXIndex {
     if (cached !== undefined) return cached;
     let t: string;
     if (n.node.role === 'text') t = n.node.name ?? '';
-    else if (n.children.length) t = n.children.map((c) => this.text(c)).filter(Boolean).join(' ');
+    else if (n.children.length)
+      t = n.children
+        .map((c) => this.text(c))
+        .filter(Boolean)
+        .join(' ');
     else t = n.node.name ?? '';
     this.textCache.set(n, t);
     return t;
@@ -62,7 +66,11 @@ export class AXIndex {
       const lm = loc.landmark;
       let found = false;
       for (let a = n.parent; a; a = a.parent) {
-        if (LANDMARKS.has(a.node.role) && a.node.role === lm.role && (lm.name === undefined || matchText(lm.name, a.node.name))) {
+        if (
+          LANDMARKS.has(a.node.role) &&
+          a.node.role === lm.role &&
+          (lm.name === undefined || matchText(lm.name, a.node.name))
+        ) {
           found = true;
           break;
         }
@@ -105,7 +113,8 @@ export function describeLocator(loc: Locator): string {
   if (loc.name !== undefined) s += ` named ${describeTextMatch(loc.name)}`;
   if (loc.text !== undefined) s += ` with text ${describeTextMatch(loc.text)}`;
   if (loc.level !== undefined) s += ` (level ${loc.level})`;
-  if (loc.landmark) s += ` in ${loc.landmark.role}${loc.landmark.name !== undefined ? ' ' + describeTextMatch(loc.landmark.name) : ''}`;
+  if (loc.landmark)
+    s += ` in ${loc.landmark.role}${loc.landmark.name !== undefined ? ' ' + describeTextMatch(loc.landmark.name) : ''}`;
   if (loc.within) s += ` within ${describeLocator(loc.within)}`;
   return s;
 }
@@ -116,7 +125,12 @@ export function targetLocators(t: Target): Locator[] {
 
 export type Resolution =
   | { ok: true; node: INode; drift: string[] }
-  | { ok: false; reason: Extract<AbstainReason, 'anchor_missing' | 'anchor_ambiguous' | 'anchor_conflict'>; message: string; drift: string[] };
+  | {
+      ok: false;
+      reason: Extract<AbstainReason, 'anchor_missing' | 'anchor_ambiguous' | 'anchor_conflict'>;
+      message: string;
+      drift: string[];
+    };
 
 /**
  * Resolve a target with redundant-anchor consensus (ADR 0001, §2.2).

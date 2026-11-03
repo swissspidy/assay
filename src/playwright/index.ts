@@ -45,7 +45,11 @@ export class OutcomeError extends Error {
  * the locked check set, polling like Playwright's web-first assertions. Returns
  * the final outcome; throws OutcomeError if the expected verdict is not reached.
  */
-export async function expectOutcome(page: Page, checks: CheckSet | unknown, opts: ExpectOutcomeOptions = {}): Promise<Outcome> {
+export async function expectOutcome(
+  page: Page,
+  checks: CheckSet | unknown,
+  opts: ExpectOutcomeOptions = {},
+): Promise<Outcome> {
   const cs = assertValidCheckSet(checks);
   const want = opts.verdict ?? 'success';
   const timeout = opts.timeout ?? 5000;
@@ -64,15 +68,25 @@ export async function expectOutcome(page: Page, checks: CheckSet | unknown, opts
   if (opts.attach !== false) {
     try {
       const info = base.info();
-      await info.attach(`assay-outcome-${cs.id.replace(/[^\w.-]+/g, '_')}.json`, { body: JSON.stringify(outcome, null, 2), contentType: 'application/json' });
-      await info.attach(`assay-snapshot-${cs.id.replace(/[^\w.-]+/g, '_')}.json`, { body: JSON.stringify(snapshot), contentType: 'application/json' });
+      await info.attach(`assay-outcome-${cs.id.replace(/[^\w.-]+/g, '_')}.json`, {
+        body: JSON.stringify(outcome, null, 2),
+        contentType: 'application/json',
+      });
+      await info.attach(`assay-snapshot-${cs.id.replace(/[^\w.-]+/g, '_')}.json`, {
+        body: JSON.stringify(snapshot),
+        contentType: 'application/json',
+      });
     } catch {
       /* not running inside a Playwright test */
     }
   }
 
   if (outcome.verdict !== want) {
-    throw new OutcomeError(`Expected verdict ${want.toUpperCase()}, got ${outcome.verdict.toUpperCase()}\n\n${formatOutcome(outcome)}`, outcome, snapshot);
+    throw new OutcomeError(
+      `Expected verdict ${want.toUpperCase()}, got ${outcome.verdict.toUpperCase()}\n\n${formatOutcome(outcome)}`,
+      outcome,
+      snapshot,
+    );
   }
   return outcome;
 }

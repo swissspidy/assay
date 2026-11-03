@@ -34,9 +34,24 @@ const ev = (channel: Channel, extra: Partial<Evidence> = {}): Evidence => ({
   ...extra,
 });
 
-const pass = (message: string, evidence: Evidence[] = [], drift: string[] = []): AssertionResult => ({ status: 'pass', message, evidence, drift });
-const fail = (message: string, evidence: Evidence[] = [], drift: string[] = []): AssertionResult => ({ status: 'fail', message, evidence, drift });
-const abstain = (reason: AbstainReason, message: string, evidence: Evidence[] = [], drift: string[] = []): AssertionResult => ({
+const pass = (message: string, evidence: Evidence[] = [], drift: string[] = []): AssertionResult => ({
+  status: 'pass',
+  message,
+  evidence,
+  drift,
+});
+const fail = (message: string, evidence: Evidence[] = [], drift: string[] = []): AssertionResult => ({
+  status: 'fail',
+  message,
+  evidence,
+  drift,
+});
+const abstain = (
+  reason: AbstainReason,
+  message: string,
+  evidence: Evidence[] = [],
+  drift: string[] = [],
+): AssertionResult => ({
   status: 'abstain',
   reason,
   message,
@@ -86,7 +101,8 @@ function readSource(ctx: Ctx, src: ValueSource): Read {
       const n = r.node.node;
       const raw = src.field === 'text' ? ctx.index.text(r.node) : n[src.field];
       const locator = ctx.index.path(r.node);
-      if (raw === undefined) return abstain('value_unavailable', `${locator} has no ${src.field}`, [ev('a11y', { locator })], r.drift);
+      if (raw === undefined)
+        return abstain('value_unavailable', `${locator} has no ${src.field}`, [ev('a11y', { locator })], r.drift);
       return { value: { type: 'string', value: raw }, evidence: ev('a11y', { locator, value: raw }), drift: r.drift };
     }
     case 'text': {
@@ -103,10 +119,22 @@ function readSource(ctx: Ctx, src: ValueSource): Read {
         channel = 'a11y';
       }
       const m = new RegExp(src.pattern, stripGlobal(src.flags)).exec(src.scope ? text : text.replace(/[^\S\n]+/g, ' '));
-      if (!m) return abstain('value_unavailable', `/${src.pattern}/ not found in ${locator}`, [ev(channel, { locator })], drift);
+      if (!m)
+        return abstain(
+          'value_unavailable',
+          `/${src.pattern}/ not found in ${locator}`,
+          [ev(channel, { locator })],
+          drift,
+        );
       const g = src.group ?? (m.length > 1 ? 1 : 0);
       const v = typeof g === 'number' ? m[g] : m.groups?.[g];
-      if (v === undefined) return abstain('value_unavailable', `group ${g} of /${src.pattern}/ did not match`, [ev(channel, { locator })], drift);
+      if (v === undefined)
+        return abstain(
+          'value_unavailable',
+          `group ${g} of /${src.pattern}/ did not match`,
+          [ev(channel, { locator })],
+          drift,
+        );
       // Free page text is the weakest channel even when scoped by an a11y anchor.
       return { value: { type: 'string', value: v }, evidence: ev('text', { locator, value: v }), drift };
     }
@@ -131,16 +159,28 @@ function readSource(ctx: Ctx, src: ValueSource): Read {
       const hits = results.filter(([, r]) => r === 'yes').map(([e]) => e);
       const unknown = results.filter(([, r]) => r === 'unknown').length;
       const desc = describeRequestMatch(src.match);
-      if (unknown > 0) return abstain('value_unavailable', `${unknown} candidate request(s) for ${desc} could not be fully read`, [ev('network')]);
+      if (unknown > 0)
+        return abstain('value_unavailable', `${unknown} candidate request(s) for ${desc} could not be fully read`, [
+          ev('network'),
+        ]);
       if (hits.length === 0) return abstain('value_unavailable', `no request matches ${desc}`, [ev('network')]);
       const pick = src.pick ?? 'only';
-      if (pick === 'only' && hits.length > 1) return abstain('value_ambiguous', `${hits.length} requests match ${desc}; use pick "first" or "last"`, [ev('network')]);
+      if (pick === 'only' && hits.length > 1)
+        return abstain('value_ambiguous', `${hits.length} requests match ${desc}; use pick "first" or "last"`, [
+          ev('network'),
+        ]);
       const e = pick === 'last' ? hits[hits.length - 1]! : hits[0]!;
       const body = src.from === 'request' ? e.requestBody : e.responseBody;
       const locator = `${src.from} body of #${e.seq} ${e.method} ${e.url}${src.pointer ? ' at ' + src.pointer : ''}`;
-      if (body === undefined || e.bodyTruncated) return abstain('value_unavailable', `${src.from} body of #${e.seq} was not captured`, [ev('network', { locator })]);
+      if (body === undefined || e.bodyTruncated)
+        return abstain('value_unavailable', `${src.from} body of #${e.seq} was not captured`, [
+          ev('network', { locator }),
+        ]);
       const v = jsonPointer(body, src.pointer);
-      if (v === undefined) return abstain('value_unavailable', `${src.pointer} not present in ${src.from} body of #${e.seq}`, [ev('network', { locator })]);
+      if (v === undefined)
+        return abstain('value_unavailable', `${src.pointer} not present in ${src.from} body of #${e.seq}`, [
+          ev('network', { locator }),
+        ]);
       return { value: fromJson(v), evidence: ev('network', { locator, value: v }), drift: [] };
     }
     case 'storage': {
@@ -148,28 +188,50 @@ function readSource(ctx: Ctx, src: ValueSource): Read {
       const pageOrigin = safeOrigin(snap.page.url);
       if (src.area === 'cookie') {
         const host = safeHost(src.origin ?? snap.page.url);
-        const c = snap.storage.cookies.filter((c) => c.name === src.key && (!host || domainMatches(host, c.domain)));
-        if (c.length === 0) return { value: ABSENT, evidence: ev('storage', { locator: `cookie ${src.key}`, value: null }), drift: [], absent: true };
+        const c = snap.storage.cookies.filter(
+          (cookie) => cookie.name === src.key && (!host || domainMatches(host, cookie.domain)),
+        );
+        if (c.length === 0)
+          return {
+            value: ABSENT,
+            evidence: ev('storage', { locator: `cookie ${src.key}`, value: null }),
+            drift: [],
+            absent: true,
+          };
         if (c.length > 1 && new Set(c.map((x) => JSON.stringify(x.value))).size > 1)
-          return abstain('value_ambiguous', `cookie ${src.key} has ${c.length} different values`, [ev('storage', { locator: `cookie ${src.key}` })]);
+          return abstain('value_ambiguous', `cookie ${src.key} has ${c.length} different values`, [
+            ev('storage', { locator: `cookie ${src.key}` }),
+          ]);
         const value = c[0]!.value;
-        if (typeof value !== 'string') return abstain('evidence_unavailable', `cookie ${src.key} was redacted at capture time`, [ev('storage', { locator: `cookie ${src.key}` })]);
-        return { value: { type: 'string', value }, evidence: ev('storage', { locator: `cookie ${src.key}`, value }), drift: [] };
+        if (typeof value !== 'string')
+          return abstain('evidence_unavailable', `cookie ${src.key} was redacted at capture time`, [
+            ev('storage', { locator: `cookie ${src.key}` }),
+          ]);
+        return {
+          value: { type: 'string', value },
+          evidence: ev('storage', { locator: `cookie ${src.key}`, value }),
+          drift: [],
+        };
       }
       const origin = src.origin ? safeOrigin(src.origin) : pageOrigin;
       const area = snap.storage[src.area][origin ?? ''];
       const locator = `${src.area}Storage[${JSON.stringify(src.key)}] @ ${origin}`;
-      if (!area || !Object.prototype.hasOwnProperty.call(area, src.key)) return { value: ABSENT, evidence: ev('storage', { locator, value: null }), drift: [], absent: true };
+      if (!area || !Object.prototype.hasOwnProperty.call(area, src.key))
+        return { value: ABSENT, evidence: ev('storage', { locator, value: null }), drift: [], absent: true };
       const value = area[src.key]!;
       return { value: { type: 'string', value }, evidence: ev('storage', { locator, value }), drift: [] };
     }
     case 'probe': {
       const p = snap.probes[src.probe];
       if (!p) return abstain('evidence_unavailable', `probe ${src.probe} was not run`);
-      if (!p.ok) return abstain('probe_error', `probe ${src.probe} failed: ${p.error}`, [ev('probe', { locator: src.probe })]);
+      if (!p.ok)
+        return abstain('probe_error', `probe ${src.probe} failed: ${p.error}`, [ev('probe', { locator: src.probe })]);
       const v = jsonPointer(p.value, src.pointer);
       const locator = `probe ${src.probe}${src.pointer ? ' at ' + src.pointer : ''}`;
-      if (v === undefined) return abstain('value_unavailable', `${src.pointer} not present in result of probe ${src.probe}`, [ev('probe', { locator })]);
+      if (v === undefined)
+        return abstain('value_unavailable', `${src.pointer} not present in result of probe ${src.probe}`, [
+          ev('probe', { locator }),
+        ]);
       return { value: fromJson(v), evidence: ev('probe', { locator, value: v }), drift: [] };
     }
   }
@@ -211,7 +273,8 @@ export function evaluateAssertion(ctx: Ctx, a: Assertion): AssertionResult {
         if (a.expect[k] === undefined) continue;
         const actual = n.states?.[k] ?? false;
         observed[k] = actual;
-        if (actual !== a.expect[k]) problems.push(`${k} is ${JSON.stringify(actual)}, expected ${JSON.stringify(a.expect[k])}`);
+        if (actual !== a.expect[k])
+          problems.push(`${k} is ${JSON.stringify(actual)}, expected ${JSON.stringify(a.expect[k])}`);
       }
       if (a.expect.level !== undefined) {
         observed.level = n.level ?? null;
@@ -222,10 +285,13 @@ export function evaluateAssertion(ctx: Ctx, a: Assertion): AssertionResult {
         if (m === undefined) continue;
         const actual = k === 'text' ? ctx.index.text(r.node) : n[k];
         observed[k] = actual ?? null;
-        if (!matchText(m, actual)) problems.push(`${k} is ${JSON.stringify(actual ?? null)}, expected ${describeTextMatch(m)}`);
+        if (!matchText(m, actual))
+          problems.push(`${k} is ${JSON.stringify(actual ?? null)}, expected ${describeTextMatch(m)}`);
       }
       const evidence = [ev('a11y', { locator, value: observed })];
-      return problems.length ? fail(`${locator}: ${problems.join('; ')}`, evidence, r.drift) : pass(`${locator} has the expected state`, evidence, r.drift);
+      return problems.length
+        ? fail(`${locator}: ${problems.join('; ')}`, evidence, r.drift)
+        : pass(`${locator} has the expected state`, evidence, r.drift);
     }
     case 'contains': {
       let scope = ctx.index.root;
@@ -237,7 +303,12 @@ export function evaluateAssertion(ctx: Ctx, a: Assertion): AssertionResult {
         drift = r.drift;
       }
       if (a.witness && ctx.index.find(a.witness, scope).length === 0) {
-        return abstain('anchor_missing', `Witness ${describeLocator(a.witness)} not found in ${ctx.index.path(scope)}; its content no longer has the expected structure`, [], drift);
+        return abstain(
+          'anchor_missing',
+          `Witness ${describeLocator(a.witness)} not found in ${ctx.index.path(scope)}; its content no longer has the expected structure`,
+          [],
+          drift,
+        );
       }
       const hits = ctx.index.find(a.match, scope);
       const count = a.count ?? { gte: 1 };
@@ -264,7 +335,8 @@ export function evaluateAssertion(ctx: Ctx, a: Assertion): AssertionResult {
         throw e;
       }
       const evidence = [{ ...read.evidence, value: toJson(v) }];
-      if (a.normalize?.length) evidence[0]!.locator = `${read.evidence.locator ?? ''} (raw ${JSON.stringify(read.evidence.value)})`.trim();
+      if (a.normalize?.length)
+        evidence[0]!.locator = `${read.evidence.locator ?? ''} (raw ${JSON.stringify(read.evidence.value)})`.trim();
       try {
         const c = compare(v, a.expect);
         return c.ok ? pass(c.message, evidence, read.drift) : fail(c.message, evidence, read.drift);
@@ -287,12 +359,22 @@ export function evaluateAssertion(ctx: Ctx, a: Assertion): AssertionResult {
       const unknown = results.filter(([, r]) => r === 'unknown').length;
       const count = a.count ?? { gte: 1 };
       const desc = describeRequestMatch(a.match);
-      const evidence = [ev('network', { locator: desc, value: hits.slice(0, 10).map((e) => `#${e.seq} ${e.method} ${e.url} → ${e.status ?? e.failure ?? 'pending'}`) })];
+      const evidence = [
+        ev('network', {
+          locator: desc,
+          value: hits.slice(0, 10).map((e) => `#${e.seq} ${e.method} ${e.url} → ${e.status ?? e.failure ?? 'pending'}`),
+        }),
+      ];
       const lo = compareNumber(hits.length, count);
       // The true count lies in [hits, hits + unknown]; decide only if both ends agree.
       if (unknown > 0 && lo !== compareNumber(hits.length + unknown, count))
-        return abstain('value_unavailable', `${hits.length} request(s) match ${desc} and ${unknown} could not be fully read (expected ${describeNumberCompare(count)})`, evidence);
-      if (!lo) return fail(`${hits.length} request(s) match ${desc} (expected ${describeNumberCompare(count)})`, evidence);
+        return abstain(
+          'value_unavailable',
+          `${hits.length} request(s) match ${desc} and ${unknown} could not be fully read (expected ${describeNumberCompare(count)})`,
+          evidence,
+        );
+      if (!lo)
+        return fail(`${hits.length} request(s) match ${desc} (expected ${describeNumberCompare(count)})`, evidence);
       return pass(`${hits.length} request(s) match ${desc}`, evidence);
     }
     case 'allOf':
@@ -305,7 +387,12 @@ export function evaluateAssertion(ctx: Ctx, a: Assertion): AssertionResult {
       const message = `${a.kind}: ${subs.map((s) => `[${s.status}] ${s.message}`).join(' | ')}`;
       if (status === 'abstain') {
         const reasons = [...new Set(subs.filter((s) => s.status === 'abstain').map((s) => s.reason))];
-        return abstain(reasons.length === 1 && reasons[0] ? reasons[0] : 'subcheck_abstained', message, evidence, drift);
+        return abstain(
+          reasons.length === 1 && reasons[0] ? reasons[0] : 'subcheck_abstained',
+          message,
+          evidence,
+          drift,
+        );
       }
       return { status, message, evidence, drift };
     }
