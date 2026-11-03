@@ -18,7 +18,7 @@ import { AXIndex } from '../runtime/axindex.ts';
 import { canonical } from '../text.ts';
 import { runAgent, type AgentTool, type AgentRun } from '../model/agent.ts';
 import type { ModelClient } from '../model/types.ts';
-import { parseOutcomes, type Clause } from './outcomes.ts';
+import { parseOutcomes, parseOutcomesDetailed, type Clause } from './outcomes.ts';
 import { findNodes, networkEntry, networkLog, outline, probesView, storageView, summary } from './explore.ts';
 import { DISCOVERY_NUDGE, DISCOVERY_SYSTEM, RUBRIC_SYSTEM } from './prompts.ts';
 
@@ -54,8 +54,11 @@ export interface RequirementCoverage {
   quote: string;
   checks: string[];
   channels: Channel[];
-  /** Weakest-link trust is reported; "freetext" only coverage is flagged. */
-  strongestTrust: Trust | null;
+  /**
+   * How hard the requirement is to fake: the strongest of its checks, where an
+   * anyOf counts as its weakest branch. "freetext" coverage is flagged.
+   */
+  trust: Trust | null;
 }
 
 export interface CompileReport {
@@ -97,7 +100,32 @@ export function rubricFromClauses(task: TaskInput): Requirement[] {
   }));
 }
 
-/** Errors that make a rubric unusable: untraceable quotes, duplicate ids, uncovered outcome clauses. */
+const OPTIONAL = /\b(optional(ly)?|if possible|ideally|nice to have|if you can|may)\b/i;
+const tokens = (t: string) =>
+  fold(t)
+    .split(/[^\p{L}\p{N}$€£¥]+/u)
+    .filter(Boolean);
+
+/**
+ * Whether a quote covers an outcome clause: it contains the whole clause, or it
+ * is a substantial part of it (at least 60% of the clause's words, and two or
+ * more words). A stray word such as "the" covers nothing.
+ */
+export function coversClause(quote: string, clause: string): boolean {
+  const q = fold(quote);
+  const c = fold(clause);
+  if (!q) return false;
+  if (q.includes(c)) return true;
+  if (!c.includes(q)) return false;
+  const qt = tokens(quote).length;
+  return qt >= Math.max(2, Math.ceil(0.6 * tokens(clause).length));
+}
+
+/**
+ * Errors that make a rubric unusable: empty or untraceable quotes, duplicate
+ * ids, one requirement merging several outcome clauses, an expected outcome
+ * marked soft without saying it is optional, uncovered outcome clauses.
+ */
 export function checkRubric(task: TaskInput, reqs: Requirement[], clauses: Clause[]): string[] {
   const errors: string[] = [];
   const ids = new Set<string>();
@@ -106,17 +134,29 @@ export function checkRubric(task: TaskInput, reqs: Requirement[], clauses: Claus
   for (const r of reqs) {
     if (ids.has(r.id)) errors.push(`Duplicate requirement id ${r.id}.`);
     ids.add(r.id);
+    if (!canonical(r.text)) errors.push(`${r.id}: text is empty.`);
+    if (!canonical(r.source.quote)) {
+      errors.push(`${r.id}: quote is empty.`);
+      continue;
+    }
     const src = r.source.field === 'instruction' ? task.instruction : (task.outcomes ?? '');
-    if (!fold(src).includes(fold(r.source.quote)))
+    if (!fold(src).includes(fold(r.source.quote))) {
       errors.push(`${r.id}: quote ${JSON.stringify(r.source.quote)} is not verbatim in the ${r.source.field}.`);
+      continue;
+    }
+    if (r.source.field !== 'outcomes') continue;
+    const covered = clauses.filter((c) => coversClause(r.source.quote, c.text));
+    if (covered.length > 1) {
+      errors.push(`${r.id}: its quote spans ${covered.length} expected outcomes; make one requirement per outcome.`);
+    } else if (covered.length === 1 && r.kind === 'soft' && !OPTIONAL.test(covered[0]!.text)) {
+      errors.push(
+        `${r.id}: ${JSON.stringify(covered[0]!.text)} is an expected outcome and must be hard (it does not say it is optional).`,
+      );
+    }
   }
   for (const c of clauses) {
-    const covered = reqs.some(
-      (r) =>
-        r.source.field === 'outcomes' &&
-        (fold(c.text).includes(fold(r.source.quote)) || fold(r.source.quote).includes(fold(c.text))),
-    );
-    if (!covered) errors.push(`Expected outcome ${JSON.stringify(c.text)} has no requirement quoting it.`);
+    if (!reqs.some((r) => r.source.field === 'outcomes' && coversClause(r.source.quote, c.text)))
+      errors.push(`Expected outcome ${JSON.stringify(c.text)} has no requirement quoting it.`);
   }
   return errors;
 }
@@ -136,9 +176,9 @@ const RUBRIC_TOOL_SCHEMA = {
         properties: {
           id: { type: 'string', pattern: '^R[0-9]+$' },
           kind: { type: 'string', enum: ['hard', 'soft'] },
-          text: { type: 'string' },
+          text: { type: 'string', minLength: 1 },
           field: { type: 'string', enum: ['instruction', 'outcomes'] },
-          quote: { type: 'string' },
+          quote: { type: 'string', minLength: 1 },
         },
       },
     },
@@ -196,6 +236,9 @@ async function modelRubric(
 // Discovery and compilation
 // ---------------------------------------------------------------------------
 
+const TRUST_RANK: Record<Trust, number> = { freetext: 1, semantic: 2, structured: 3 };
+const RANK_TRUST: Trust[] = ['freetext', 'freetext', 'semantic', 'structured'];
+
 function sourceChannels(a: Assertion): Channel[] {
   switch (a.kind) {
     case 'state':
@@ -215,20 +258,34 @@ function sourceChannels(a: Assertion): Channel[] {
   }
 }
 
-const TRUST_RANK: Record<Trust, number> = { structured: 3, semantic: 2, freetext: 1 };
+/**
+ * How hard an assertion is to satisfy by faking page content. `anyOf` is as weak
+ * as its weakest branch (that branch alone can pass); `allOf` as strong as its
+ * strongest part (every part must pass).
+ */
+export function assertionTrust(a: Assertion): number {
+  switch (a.kind) {
+    case 'anyOf':
+      return Math.min(...a.of.map(assertionTrust));
+    case 'allOf':
+      return Math.max(...a.of.map(assertionTrust));
+    default:
+      return TRUST_RANK[CHANNEL_TRUST[sourceChannels(a)[0]!]];
+  }
+}
 
+/** Per requirement: its checks, channels, and trust (all checks must pass, so the strongest check counts). */
 export function coverage(cs: CheckSet): RequirementCoverage[] {
   return cs.requirements.map((r) => {
     const checks = cs.checks.filter((c) => c.requirement === r.id);
     const channels = [...new Set(checks.flatMap((c) => sourceChannels(c.assert)))];
-    const strongest =
-      channels.map((c) => CHANNEL_TRUST[c]).toSorted((a, b) => TRUST_RANK[b] - TRUST_RANK[a])[0] ?? null;
+    const rank = checks.length ? Math.max(...checks.map((c) => assertionTrust(c.assert))) : 0;
     return {
       requirement: r.id,
       quote: r.source.quote,
       checks: checks.map((c) => c.id),
       channels,
-      strongestTrust: strongest,
+      trust: rank ? RANK_TRUST[rank]! : null,
     };
   });
 }
@@ -269,7 +326,7 @@ export function verifyCandidate(cs: CheckSet, refs: Reference[]): Verification {
     }
   }
   for (const cov of coverage(cs)) {
-    if (cov.strongestTrust === 'freetext')
+    if (cov.trust === 'freetext')
       warnings.push(`Requirement ${cov.requirement} is covered only by free page text, which a page can spoof.`);
   }
   return { errors, warnings, references };
@@ -335,10 +392,16 @@ function discoveryTools(
     {
       spec: {
         name: 'network_log',
-        description: 'List recorded document/fetch/XHR requests, optionally filtered by method or a URL substring.',
-        inputSchema: obj({ ...refProp, method: { type: 'string' }, pathContains: { type: 'string' } }),
+        description:
+          'List recorded requests (document/fetch/XHR by default; allTypes adds scripts, images, …), optionally filtered by method or a URL substring. Request checks match every type.',
+        inputSchema: obj({
+          ...refProp,
+          method: { type: 'string' },
+          pathContains: { type: 'string' },
+          allTypes: { type: 'boolean' },
+        }),
       },
-      run: (i: In<{ method?: string; pathContains?: string }>) => ({
+      run: (i: In<{ method?: string; pathContains?: string; allTypes?: boolean }>) => ({
         content: networkLog(pickRef(i.reference).snapshot, i),
       }),
     },
@@ -425,6 +488,10 @@ export async function compileTask(task: TaskInput, refs: Reference[], opts: Comp
     run.models.forEach((m) => models.add(m));
     report.modelsUsed = [...models];
   };
+  const ignored = parseOutcomesDetailed(task.outcomes).ignored;
+  const outcomeWarnings = ignored.length
+    ? [`Lines in the expected outcomes not read as outcomes: ${ignored.map((l) => JSON.stringify(l)).join(', ')}`]
+    : [];
   if (!refs.some((r) => r.kind === 'success')) {
     return { report: { ...report, reason: 'At least one successful reference snapshot is required.' } };
   }
@@ -450,7 +517,7 @@ export async function compileTask(task: TaskInput, refs: Reference[], opts: Comp
     `Task id: ${task.id}`,
     `Instruction:\n<instruction>\n${task.instruction}\n</instruction>`,
     task.outcomes ? `Expected outcomes:\n<outcomes>\n${task.outcomes}\n</outcomes>` : '',
-    `Requirements (each check must name one):\n${requirements.map((r) => `- ${r.id} [${r.kind}] ${r.text} (quote: ${JSON.stringify(r.source.quote)})`).join('\n')}`,
+    `Requirements (each check must name one; a requirement means exactly what its quote says, the summary is only a label):\n${requirements.map((r) => `- ${r.id} [${r.kind}] ${JSON.stringify(r.source.quote)} (summary: ${r.text})`).join('\n')}`,
     `Reference snapshots:\n${refs.map((r) => `- ${r.name} (${r.kind === 'success' ? 'correct run' : 'incorrect run'}): ${summary(r.snapshot)}`).join('\n')}`,
     opts.trajectory
       ? `Agent trajectory of the first correct run. Context only — it tells you where to look; it is never evidence and checks must not rely on it:\n<trajectory>\n${opts.trajectory}\n</trajectory>`
@@ -477,7 +544,7 @@ export async function compileTask(task: TaskInput, refs: Reference[], opts: Comp
       ...report,
       status: 'compiled',
       coverage: coverage(checkSet),
-      warnings: (accepted as Verification).warnings,
+      warnings: [...outcomeWarnings, ...(accepted as Verification).warnings],
       references: (accepted as Verification).references,
     },
   };

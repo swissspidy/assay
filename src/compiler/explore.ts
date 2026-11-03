@@ -21,13 +21,17 @@ function header(n: AXNode): string {
 /** Indented outline of the accessibility tree, ariaSnapshot-like. */
 export function outline(snapshot: EvidenceSnapshot, maxLines = 300): string {
   const lines: string[] = [];
+  let truncated = false;
   const walk = (n: AXNode, depth: number) => {
-    if (lines.length >= maxLines) return;
+    if (lines.length >= maxLines) {
+      truncated = true;
+      return;
+    }
     lines.push(`${'  '.repeat(depth)}- ${n.role === 'text' ? `text: ${JSON.stringify(n.name ?? '')}` : header(n)}`);
     for (const c of n.children ?? []) walk(c, depth + 1);
   };
   for (const c of snapshot.a11y.children ?? []) walk(c, 0);
-  if (lines.length >= maxLines) lines.push(`… (truncated at ${maxLines} lines)`);
+  if (truncated) lines.push(`… (truncated at ${maxLines} lines; use find_nodes to search)`);
   return lines.join('\n');
 }
 
@@ -53,17 +57,20 @@ export function findNodes(
       .slice(0, limit)
       .map(
         (n) =>
-          `${idx.path(n)}${n.node.value !== undefined ? ` = ${JSON.stringify(n.node.value)}` : ''}  | text: ${JSON.stringify(clip(idx.text(n), 120))}`,
+          `${n.parent && n.parent.parent ? idx.path(n.parent) + ' › ' : ''}${header(n.node)}  | text: ${JSON.stringify(clip(idx.text(n), 120))}`,
       )
       .join('\n') + (hits.length > limit ? `\n… ${hits.length - limit} more` : '')
   );
 }
 
-export function networkLog(snapshot: EvidenceSnapshot, q: { method?: string; pathContains?: string }): string {
+export function networkLog(
+  snapshot: EvidenceSnapshot,
+  q: { method?: string; pathContains?: string; allTypes?: boolean },
+): string {
   if (!snapshot.network) return 'The network log was not recorded for this snapshot.';
   const rows = snapshot.network.filter(
     (e) =>
-      ['fetch', 'xhr', 'document'].includes(e.resourceType) &&
+      (q.allTypes || ['fetch', 'xhr', 'document'].includes(e.resourceType)) &&
       (!q.method || e.method.toUpperCase() === q.method.toUpperCase()) &&
       (!q.pathContains || e.url.includes(q.pathContains)),
   );

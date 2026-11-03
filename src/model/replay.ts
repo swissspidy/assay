@@ -16,8 +16,9 @@ export interface Cassette {
   turns: Record<string, ModelTurn>;
 }
 
-export function requestKey(req: ModelRequest): string {
-  return sha256(canonicalJson(req));
+/** Digest of a request for a given model id (changing the model or its effort invalidates replays). */
+export function requestKey(req: ModelRequest, model: string): string {
+  return sha256(canonicalJson({ model, request: req }));
 }
 
 function load(path: string): Cassette | null {
@@ -31,7 +32,7 @@ export function replayModel(path: string): ModelClient {
   return {
     id: `${cassette.model} (replay)`,
     async turn(req) {
-      const hit = cassette.turns[requestKey(req)];
+      const hit = cassette.turns[requestKey(req, cassette.model)];
       if (!hit) {
         throw new ModelError(
           `Cassette ${path} has no recording for this request; the prompt, tools or inputs changed. Re-record with ANTHROPIC_API_KEY set.`,
@@ -42,19 +43,25 @@ export function replayModel(path: string): ModelClient {
   };
 }
 
-/** Wraps a live model and writes every turn to the cassette (replacing it). */
+/**
+ * Wraps a live model and records every turn into a fresh cassette at `path`.
+ * The file is rewritten after each turn, so a crash keeps what was already paid for.
+ */
 export function recordingModel(inner: ModelClient, path: string): ModelClient & { save(): void } {
   const cassette: Cassette = { schema: 'assay.cassette/v1', model: inner.id, turns: {} };
+  const save = () => {
+    mkdirSync(dirname(path), { recursive: true });
+    writeFileSync(path, JSON.stringify(cassette, null, 1) + '\n');
+  };
   return {
     id: inner.id,
     async turn(req) {
+      const key = requestKey(req, inner.id);
       const out = await inner.turn(req);
-      cassette.turns[requestKey(req)] = out;
+      cassette.turns[key] = out;
+      save();
       return out;
     },
-    save() {
-      mkdirSync(dirname(path), { recursive: true });
-      writeFileSync(path, JSON.stringify(cassette, null, 1) + '\n');
-    },
+    save,
   };
 }

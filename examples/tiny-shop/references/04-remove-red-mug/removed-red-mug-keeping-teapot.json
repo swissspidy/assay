@@ -1,0 +1,524 @@
+{
+  "label": {
+    "expected": "success",
+    "kind": "correct"
+  },
+  "snapshot": {
+    "schema": "assay.snapshot/v1",
+    "capturedAt": "1970-01-01T00:00:00.000Z",
+    "page": {
+      "url": "http://localhost:4173/cart",
+      "title": "Cart · Tiny Shop"
+    },
+    "a11y": {
+      "role": "document",
+      "children": [
+        {
+          "role": "banner",
+          "children": [
+            {
+              "role": "link",
+              "name": "Tiny Shop",
+              "url": "/"
+            },
+            {
+              "role": "navigation",
+              "name": "Primary",
+              "children": [
+                {
+                  "role": "link",
+                  "name": "Products",
+                  "url": "/"
+                },
+                {
+                  "role": "text",
+                  "name": "·"
+                },
+                {
+                  "role": "link",
+                  "name": "Cart",
+                  "url": "/cart"
+                },
+                {
+                  "role": "text",
+                  "name": "·"
+                },
+                {
+                  "role": "link",
+                  "name": "Settings",
+                  "url": "/settings"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "main",
+          "children": [
+            {
+              "role": "heading",
+              "name": "Your cart",
+              "level": 1
+            },
+            {
+              "role": "table",
+              "name": "Cart",
+              "children": [
+                {
+                  "role": "rowgroup",
+                  "children": [
+                    {
+                      "role": "row",
+                      "name": "Product Quantity Price",
+                      "children": [
+                        {
+                          "role": "columnheader",
+                          "name": "Product"
+                        },
+                        {
+                          "role": "columnheader",
+                          "name": "Quantity"
+                        },
+                        {
+                          "role": "columnheader",
+                          "name": "Price"
+                        },
+                        {
+                          "role": "columnheader"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "role": "rowgroup",
+                  "children": [
+                    {
+                      "role": "row",
+                      "name": "Green Teapot 1 $27.00 Remove Green Teapot",
+                      "children": [
+                        {
+                          "role": "cell",
+                          "name": "Green Teapot"
+                        },
+                        {
+                          "role": "cell",
+                          "name": "1",
+                          "children": [
+                            {
+                              "role": "spinbutton",
+                              "name": "Quantity for Green Teapot",
+                              "value": "1"
+                            }
+                          ]
+                        },
+                        {
+                          "role": "cell",
+                          "name": "$27.00"
+                        },
+                        {
+                          "role": "cell",
+                          "name": "Remove Green Teapot",
+                          "children": [
+                            {
+                              "role": "button",
+                              "name": "Remove Green Teapot",
+                              "children": [
+                                {
+                                  "role": "text",
+                                  "name": "Remove"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "role": "row",
+                      "name": "Blue Mug 1 $12.00 Remove Blue Mug",
+                      "children": [
+                        {
+                          "role": "cell",
+                          "name": "Blue Mug"
+                        },
+                        {
+                          "role": "cell",
+                          "name": "1",
+                          "children": [
+                            {
+                              "role": "spinbutton",
+                              "name": "Quantity for Blue Mug",
+                              "value": "1"
+                            }
+                          ]
+                        },
+                        {
+                          "role": "cell",
+                          "name": "$12.00"
+                        },
+                        {
+                          "role": "cell",
+                          "name": "Remove Blue Mug",
+                          "children": [
+                            {
+                              "role": "button",
+                              "name": "Remove Blue Mug",
+                              "children": [
+                                {
+                                  "role": "text",
+                                  "name": "Remove"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "role": "region",
+              "name": "Cart summary",
+              "children": [
+                {
+                  "role": "paragraph",
+                  "children": [
+                    {
+                      "role": "text",
+                      "name": "Total:"
+                    },
+                    {
+                      "role": "status",
+                      "name": "Cart total",
+                      "children": [
+                        {
+                          "role": "text",
+                          "name": "$39.00"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "role": "paragraph",
+              "children": [
+                {
+                  "role": "link",
+                  "name": "Proceed to checkout",
+                  "url": "/checkout"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "text": "Tiny Shop\nProducts · Cart · Settings\nYour cart\nProduct\tQuantity\tPrice\t\nGreen Teapot\t\t$27.00\tRemove\nBlue Mug\t\t$12.00\tRemove\n\nTotal: $39.00\n\nProceed to checkout",
+    "network": [
+      {
+        "seq": 0,
+        "method": "GET",
+        "url": "http://localhost:4173/",
+        "resourceType": "document",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/html; charset=utf-8"
+        }
+      },
+      {
+        "seq": 1,
+        "method": "GET",
+        "url": "http://localhost:4173/app.js",
+        "resourceType": "script",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/javascript"
+        }
+      },
+      {
+        "seq": 2,
+        "method": "GET",
+        "url": "http://localhost:4173/api/products",
+        "resourceType": "fetch",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "application/json"
+        },
+        "responseBody": [
+          {
+            "sku": "MUG-BLUE",
+            "name": "Blue Mug",
+            "price": 12
+          },
+          {
+            "sku": "MUG-RED",
+            "name": "Red Mug",
+            "price": 9.5
+          },
+          {
+            "sku": "POT-GREEN",
+            "name": "Green Teapot",
+            "price": 27
+          }
+        ]
+      },
+      {
+        "seq": 3,
+        "method": "POST",
+        "url": "http://localhost:4173/api/cart/items",
+        "resourceType": "fetch",
+        "status": 200,
+        "requestHeaders": {
+          "content-type": "application/json"
+        },
+        "responseHeaders": {
+          "content-type": "application/json"
+        },
+        "requestBody": {
+          "sku": "POT-GREEN",
+          "qty": 1
+        },
+        "responseBody": {
+          "items": [
+            {
+              "sku": "POT-GREEN",
+              "name": "Green Teapot",
+              "qty": 1,
+              "price": 27,
+              "lineTotal": 27
+            }
+          ],
+          "total": 27
+        }
+      },
+      {
+        "seq": 4,
+        "method": "POST",
+        "url": "http://localhost:4173/api/cart/items",
+        "resourceType": "fetch",
+        "status": 200,
+        "requestHeaders": {
+          "content-type": "application/json"
+        },
+        "responseHeaders": {
+          "content-type": "application/json"
+        },
+        "requestBody": {
+          "sku": "MUG-BLUE",
+          "qty": 1
+        },
+        "responseBody": {
+          "items": [
+            {
+              "sku": "POT-GREEN",
+              "name": "Green Teapot",
+              "qty": 1,
+              "price": 27,
+              "lineTotal": 27
+            },
+            {
+              "sku": "MUG-BLUE",
+              "name": "Blue Mug",
+              "qty": 1,
+              "price": 12,
+              "lineTotal": 12
+            }
+          ],
+          "total": 39
+        }
+      },
+      {
+        "seq": 5,
+        "method": "POST",
+        "url": "http://localhost:4173/api/cart/items",
+        "resourceType": "fetch",
+        "status": 200,
+        "requestHeaders": {
+          "content-type": "application/json"
+        },
+        "responseHeaders": {
+          "content-type": "application/json"
+        },
+        "requestBody": {
+          "sku": "MUG-RED",
+          "qty": 1
+        },
+        "responseBody": {
+          "items": [
+            {
+              "sku": "POT-GREEN",
+              "name": "Green Teapot",
+              "qty": 1,
+              "price": 27,
+              "lineTotal": 27
+            },
+            {
+              "sku": "MUG-BLUE",
+              "name": "Blue Mug",
+              "qty": 1,
+              "price": 12,
+              "lineTotal": 12
+            },
+            {
+              "sku": "MUG-RED",
+              "name": "Red Mug",
+              "qty": 1,
+              "price": 9.5,
+              "lineTotal": 9.5
+            }
+          ],
+          "total": 48.5
+        }
+      },
+      {
+        "seq": 6,
+        "method": "GET",
+        "url": "http://localhost:4173/cart",
+        "resourceType": "document",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/html; charset=utf-8"
+        }
+      },
+      {
+        "seq": 7,
+        "method": "GET",
+        "url": "http://localhost:4173/app.js",
+        "resourceType": "script",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/javascript"
+        }
+      },
+      {
+        "seq": 8,
+        "method": "GET",
+        "url": "http://localhost:4173/api/cart",
+        "resourceType": "fetch",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "application/json"
+        },
+        "responseBody": {
+          "items": [
+            {
+              "sku": "POT-GREEN",
+              "name": "Green Teapot",
+              "qty": 1,
+              "price": 27,
+              "lineTotal": 27
+            },
+            {
+              "sku": "MUG-BLUE",
+              "name": "Blue Mug",
+              "qty": 1,
+              "price": 12,
+              "lineTotal": 12
+            },
+            {
+              "sku": "MUG-RED",
+              "name": "Red Mug",
+              "qty": 1,
+              "price": 9.5,
+              "lineTotal": 9.5
+            }
+          ],
+          "total": 48.5
+        }
+      },
+      {
+        "seq": 9,
+        "method": "DELETE",
+        "url": "http://localhost:4173/api/cart/items/MUG-RED",
+        "resourceType": "fetch",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "application/json"
+        },
+        "responseBody": {
+          "items": [
+            {
+              "sku": "POT-GREEN",
+              "name": "Green Teapot",
+              "qty": 1,
+              "price": 27,
+              "lineTotal": 27
+            },
+            {
+              "sku": "MUG-BLUE",
+              "name": "Blue Mug",
+              "qty": 1,
+              "price": 12,
+              "lineTotal": 12
+            }
+          ],
+          "total": 39
+        }
+      }
+    ],
+    "storage": {
+      "cookies": [
+        {
+          "name": "sid",
+          "value": {
+            "redacted": true
+          },
+          "domain": "localhost",
+          "path": "/",
+          "httpOnly": true,
+          "secure": false
+        }
+      ],
+      "local": {
+        "http://localhost:4173": {}
+      },
+      "session": {
+        "http://localhost:4173": {}
+      }
+    },
+    "probes": {
+      "cart": {
+        "ok": true,
+        "value": {
+          "items": [
+            {
+              "sku": "POT-GREEN",
+              "name": "Green Teapot",
+              "qty": 1,
+              "price": 27,
+              "lineTotal": 27
+            },
+            {
+              "sku": "MUG-BLUE",
+              "name": "Blue Mug",
+              "qty": 1,
+              "price": 12,
+              "lineTotal": 12
+            }
+          ],
+          "total": 39
+        }
+      },
+      "latestOrder": {
+        "ok": false,
+        "error": "/api/orders/latest → 404"
+      }
+    },
+    "meta": {
+      "capturer": "assay/0.1.0",
+      "redacted": ["cookie:sid"]
+    }
+  }
+}

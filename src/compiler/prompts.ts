@@ -23,9 +23,10 @@ A check abstains when it cannot find or read its evidence, and fails only when i
 - "cart contains Blue Mug" = contains with scope table "Cart" (anchor) and match row containing "Blue Mug" (assertion).
 
 ## Evidence preference (most to least trustworthy)
-1. probe and network (request/response bodies, statuses) and storage — structured; a page cannot fake them.
-2. url and the accessibility tree (roles, names, states, values) — semantic.
-3. free page text (value source "text") — easiest to spoof. Avoid it unless nothing else exists.
+1. probe (backend reads) and network (request/response bodies, statuses) — a page cannot fake what the server received or stored.
+2. url, httpOnly cookies; then localStorage, sessionStorage and other cookies — structured, but page scripts can write them, so use them for outcomes that live there (e.g. a client-side preference).
+3. the accessibility tree (roles, names, states, values) — semantic.
+4. free page text (value source "text") — easiest to spoof. Avoid it unless nothing else exists.
 Page content can lie ("Order placed!" on a page that placed nothing). When a requirement is about something the backend did, use network or probe evidence.
 
 ## Never over-constrain
@@ -36,19 +37,21 @@ Every check belongs to exactly one requirement and may only test what that requi
 If a valid alternative way to complete the task exists, use anyOf.
 
 ## DSL (assay.checks/v1)
-Locator: {role, name?, text?, level?, landmark?: {role, name?}, within?: Locator}. TextMatch: "exact" | {equals, ignoreCase?} | {contains, ignoreCase?} | {regex, flags?}. Never match by position; ambiguous locators abstain.
+Locator: {role, name?, text?, level?, landmark?: {role: banner|complementary|contentinfo|form|main|navigation|region|search, name?}, within?: Locator}. "text" is the node's descendant text. Never match by position; a locator matching several nodes makes the check abstain.
+TextMatch: "exact" | {equals, ignoreCase?} | {contains, ignoreCase?} | {regex, flags?}. Both sides are compared after NFC and whitespace collapsing; case folding only with ignoreCase.
 Target: Locator or {anchors: [Locator, ...]} — redundant anchors; give 2 independent ones (e.g. by name, and by role within a landmark) for important targets.
 Assertions:
-- {kind:"state", target, expect:{checked?, pressed?, selected?, expanded?, disabled?, level?, name?, value?, text?}}
-- {kind:"contains", scope?: Target, witness?: Locator, match: Locator, count?: {eq|gt|gte|lt|lte}} — default count {gte:1}. For absence (count {eq:0}) always give a witness: a node that exists inside the scope regardless of outcome (e.g. a column header).
+- {kind:"state", target, expect:{checked?, pressed?, selected?, expanded?, disabled?, level?, name?, value?, text?}} — an unset state counts as false.
+- {kind:"contains", scope?: Target, witness?: Locator, match: Locator, count?: {eq|gt|gte|lt|lte}} — default count {gte:1}. Always scope it to a landmark or container: without a scope it can never abstain, so an unrelated UI change makes it fail. For absence (count {eq:0}) always give a witness: a node that exists inside the scope regardless of outcome (e.g. a column header).
 - {kind:"value", source, normalize?: [...], expect: Comparison}
-  sources: {from:"node", target, field:"name"|"value"|"text"|"url"} | {from:"text", scope?, pattern, group?} | {from:"url", part:"pathname"|"search"|"hash"|"origin"|"href"|{param}} | {from:"request"|"response", match: RequestMatch, pointer?: "/json/pointer", pick?: "only"|"first"|"last"} | {from:"storage", area:"cookie"|"local"|"session", key} | {from:"probe", probe, pointer?}
-  normalizers: "trim" "collapseWhitespace" "lowercase" "uppercase" "nfkc" "stripDiacritics" "json" "boolean" | {op:"extract", regex, group?} | {op:"replace", regex, with} | {op:"number", locale} | {op:"currency", locale, currency?} | {op:"date", locale, timezone?}
-  comparisons (exactly one operator): {equals} {oneOf} {contains} {regex} {approx:{value, abs?, rel?}} {gt/gte/lt/lte} {schema} {exists:true}. Money values are {amount, currency}; dates are "YYYY-MM-DD".
+  sources: {from:"node", target, field:"name"|"value"|"text"|"url"} | {from:"text", scope?, pattern, flags?, group?} | {from:"url", part:"pathname"|"search"|"hash"|"origin"|"href"|{param}} | {from:"request"|"response", match: RequestMatch, pointer?: "/json/pointer", pick?: "only"|"first"|"last"} | {from:"storage", area:"cookie"|"local"|"session", key, origin?} | {from:"probe", probe, pointer?}
+  normalizers (in order): "trim" "collapseWhitespace" "lowercase" "uppercase" "nfkc" "stripDiacritics" "json" "boolean" | {op:"extract", regex, flags?, group?} | {op:"replace", regex, flags?, with} | {op:"number", locale} | {op:"currency", locale, currency?} | {op:"date", locale, timezone?}. Locale is required for number/currency/date; a value they cannot parse makes the check abstain.
+  comparisons: {equals} {oneOf} {contains, ignoreCase?} {regex, flags?} {approx:{value, abs?, rel?}} {schema} {exists:true}, or bounds {gt?, gte?, lt?, lte?} (several bounds may be combined in one object). Money values are {amount, currency}; dates are "YYYY-MM-DD" and approx on dates is in days. Prefer approx over equals for numbers and money.
+  Reading semantics: a value that cannot be read (missing anchor, no matching request, missing JSON path) abstains. A storage key or cookie that is not set is an observed absence and FAILS (unless the check expects null).
   A value check abstains when no request matches; if the requirement needs the request to have happened, add a "request" check to the same requirement so a missing request fails. Use pick "last" when the final saved state matters.
 - {kind:"url", match: UrlMatch}
-- {kind:"request", match: RequestMatch, count?} — RequestMatch {method?, url?: UrlMatch, status?, requestBody?: JSONSchema, responseBody?: JSONSchema}; UrlMatch {path?: "/orders/:id" ("*" one segment, trailing "**"), regex?, origin?, query?}.
-- {kind:"allOf"|"anyOf", of:[...]}
+- {kind:"request", match: RequestMatch, count?} — RequestMatch {method?, url?: UrlMatch, status?: number|{gte,…}, requestBody?: JSONSchema, responseBody?: JSONSchema}; UrlMatch {path?: "/orders/:id" ("*" one segment, trailing "**" any suffix), regex?, origin?, query?: {name: TextMatch | null}} where null means the parameter must be absent.
+- {kind:"allOf"|"anyOf", of:[...]} — three-valued: anyOf passes if any branch passes.
 Check: {id, requirement, description, assert}. description is one plain-language sentence a reviewer can confirm.
 
 Explore before writing. Prefer few, strong checks over many weak ones. Every requirement needs at least one check.`;

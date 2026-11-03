@@ -47,16 +47,24 @@ for (const def of TASKS) {
   const firstOk = def.scenarios.find((s) => s.expected === 'success')!;
   const reference = runs.find((r) => r.name === firstOk.name)!;
 
-  const env = await modelFromEnv(new URL(`${def.id}.cassette.json`, out).pathname);
-  const { checkSet, report } = await compileTask(
-    task,
-    [{ name: reference.name, kind: 'success', snapshot: reference.snapshot }],
-    {
+  // One failing task (no cassette, API error) must not stop the others; a live
+  // recording is saved after every turn, so nothing already paid for is lost.
+  let result: Awaited<ReturnType<typeof compileTask>>;
+  try {
+    const env = await modelFromEnv(new URL(`${def.id}.cassette.json`, out).pathname);
+    result = await compileTask(task, [{ name: reference.name, kind: 'success', snapshot: reference.snapshot }], {
       model: env.model,
       log: (m) => console.warn(m),
-    },
-  );
-  env.save();
+    });
+    console.warn(`${def.id}: model ${env.mode}`);
+  } catch (e) {
+    failures++;
+    const reason = e instanceof Error ? e.message : String(e);
+    rows.push(`| ${def.id} | not compiled: ${reason.replace(/\|/g, '\\|')} | | | |`);
+    console.warn(`${def.id}: ${reason}`);
+    continue;
+  }
+  const { checkSet, report } = result;
   writeFileSync(new URL(`${def.id}.report.json`, out), JSON.stringify(report, null, 2) + '\n');
   if (!checkSet) {
     failures++;

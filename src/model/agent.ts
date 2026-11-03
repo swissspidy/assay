@@ -65,7 +65,9 @@ export async function runAgent<R>(opts: AgentOptions<R>): Promise<AgentRun<R>> {
     // Check the stop reason before running any tool.
     if (turn.stop === 'refusal') return finish('refusal', i + 1);
     if (turn.stop === 'max_tokens') return finish('max_tokens', i + 1);
-    messages.push({ role: 'assistant', text: turn.text, toolCalls: turn.toolCalls, raw: turn.raw });
+    const empty = !turn.text && turn.toolCalls.length === 0 && Array.isArray(turn.raw) && turn.raw.length === 0;
+    // An empty assistant turn cannot be sent back (providers reject empty content).
+    if (!empty) messages.push({ role: 'assistant', text: turn.text, toolCalls: turn.toolCalls, raw: turn.raw });
 
     if (turn.toolCalls.length === 0) {
       if (nudges-- <= 0) return finish('gave_up', i + 1);
@@ -76,9 +78,19 @@ export async function runAgent<R>(opts: AgentOptions<R>): Promise<AgentRun<R>> {
     const results: ToolResult[] = [];
     let done: { value: R } | undefined;
     for (const call of turn.toolCalls) {
+      if (done) {
+        // The task already finished in this turn; later calls do not run, so their
+        // side effects cannot disagree with the accepted result.
+        results.push({
+          toolCallId: call.id,
+          content: 'Not run: an earlier call in this turn finished the task.',
+          isError: true,
+        });
+        continue;
+      }
       const out = await runTool(call, byName, validators);
       results.push({ toolCallId: call.id, content: out.content, ...(out.isError ? { isError: true } : {}) });
-      if (out.done !== undefined && !done) done = { value: out.done };
+      if (out.done !== undefined) done = { value: out.done };
     }
     messages.push({ role: 'user', toolResults: results });
     if (done) return finish('done', i + 1, done.value);

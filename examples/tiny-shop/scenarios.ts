@@ -81,6 +81,11 @@ export const TASKS: TaskDef[] = [
         await openSettings(p);
         await setNewsletter(p, true);
       }),
+      ok('subscribed-and-dark-theme', async (p) => {
+        await openSettings(p);
+        await choose(p, 'Theme', 'Dark');
+        await setNewsletter(p, true);
+      }),
       bad('never-subscribed', 'no-op', openSettings),
       bad('subscribed-then-unsubscribed', 'undone', async (p) => {
         await openSettings(p);
@@ -94,6 +99,10 @@ export const TASKS: TaskDef[] = [
     probes: ['cart'],
     scenarios: [
       ok('added-blue-mug', (p) => addToCart(p, 'Blue Mug')),
+      ok('added-blue-and-red-mug', async (p) => {
+        await addToCart(p, 'Red Mug');
+        await addToCart(p, 'Blue Mug');
+      }),
       bad('added-red-mug', 'wrong-item', (p) => addToCart(p, 'Red Mug')),
     ],
   },
@@ -122,6 +131,11 @@ export const TASKS: TaskDef[] = [
         await twoMugsInCart(p);
         await removeFromCart(p, 'Red Mug');
       }),
+      ok('removed-red-mug-keeping-teapot', async (p) => {
+        await addToCart(p, 'Green Teapot');
+        await twoMugsInCart(p);
+        await removeFromCart(p, 'Red Mug');
+      }),
       bad('removed-blue-mug', 'wrong-item', async (p) => {
         await twoMugsInCart(p);
         await removeFromCart(p, 'Blue Mug');
@@ -142,6 +156,12 @@ export const TASKS: TaskDef[] = [
         await openCart(p);
         await setQuantity(p, 'Blue Mug', 3);
       }),
+      ok('quantity-2-then-3', async (p) => {
+        await addToCart(p, 'Blue Mug');
+        await openCart(p);
+        await setQuantity(p, 'Blue Mug', 2);
+        await setQuantity(p, 'Blue Mug', 3);
+      }),
       bad('quantity-2', 'wrong-item', async (p) => {
         await addToCart(p, 'Blue Mug');
         await openCart(p);
@@ -154,6 +174,11 @@ export const TASKS: TaskDef[] = [
     probes: [],
     scenarios: [
       ok('blue-and-red', twoMugsInCart),
+      ok('red-then-blue', async (p) => {
+        await addToCart(p, 'Red Mug');
+        await addToCart(p, 'Blue Mug');
+        await openCart(p);
+      }),
       bad('blue-and-teapot', 'wrong-item', async (p) => {
         await addToCart(p, 'Blue Mug');
         await addToCart(p, 'Green Teapot');
@@ -168,6 +193,10 @@ export const TASKS: TaskDef[] = [
       ok('express-order', async (p) => {
         await addToCart(p, 'Blue Mug');
         await checkout(p, { name: 'Ada Lovelace', shipping: 'express' });
+      }),
+      ok('express-gift-wrapped', async (p) => {
+        await addToCart(p, 'Blue Mug');
+        await checkout(p, { name: 'Ada Lovelace', shipping: 'express', giftWrap: true });
       }),
       bad('standard-order', 'wrong-item', async (p) => {
         await addToCart(p, 'Blue Mug');
@@ -192,6 +221,11 @@ export const TASKS: TaskDef[] = [
         await addToCart(p, 'Red Mug');
         await checkout(p, { name: 'Grace Hopper', shipping: 'express' });
       }),
+      ok('express-two-items', async (p) => {
+        await addToCart(p, 'Red Mug');
+        await addToCart(p, 'Green Teapot');
+        await checkout(p, { name: 'Grace Hopper', shipping: 'express' });
+      }),
       bad('standard-order', 'wrong-item', async (p) => {
         await addToCart(p, 'Red Mug');
         await checkout(p, { name: 'Grace Hopper', shipping: 'standard' });
@@ -206,6 +240,10 @@ export const TASKS: TaskDef[] = [
       ok('gift-wrapped', async (p) => {
         await addToCart(p, 'Green Teapot');
         await checkout(p, { name: 'Alan Turing', giftWrap: true });
+      }),
+      ok('gift-wrapped-express', async (p) => {
+        await addToCart(p, 'Green Teapot');
+        await checkout(p, { name: 'Alan Turing', giftWrap: true, shipping: 'express' });
       }),
       bad('not-gift-wrapped', 'partial', async (p) => {
         await addToCart(p, 'Green Teapot');
@@ -222,6 +260,11 @@ export const TASKS: TaskDef[] = [
         await openSettings(p);
         await choose(p, 'Theme', 'Dark');
         await choose(p, 'Language', 'Deutsch');
+      }),
+      ok('german-then-dark', async (p) => {
+        await openSettings(p);
+        await choose(p, 'Language', 'Deutsch');
+        await choose(p, 'Theme', 'Dark');
       }),
       bad('only-dark', 'partial', async (p) => {
         await openSettings(p);

@@ -52,7 +52,11 @@ export interface ModelTurn {
   toolCalls: ToolCall[];
   /** Provider-native assistant content to append unchanged on the next request. */
   raw: unknown;
-  usage: { inputTokens: number; outputTokens: number };
+  /**
+   * Token usage. `inputTokens` counts every input token (uncached, cache reads and
+   * cache writes); the cache fields break it down where the provider reports it.
+   */
+  usage: { inputTokens: number; outputTokens: number; cacheReadTokens?: number; cacheWriteTokens?: number };
   /** The model that actually produced the turn (may differ after a server-side fallback). */
   model: string;
 }

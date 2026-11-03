@@ -25,6 +25,12 @@ export { formatOutcome } from './report.ts';
 export { mapA11y, editNodes, removeNodes, unwrapNodes } from './snapshot/edit.ts';
 export * from './compiler/index.ts';
 export { runAgent, type AgentTool, type AgentRun, type AgentOptions, type ToolOutcome } from './model/agent.ts';
-export { anthropicModel, type AnthropicOptions } from './model/anthropic.ts';
+export {
+  anthropicModel,
+  toAnthropicMessages,
+  fromAnthropicMessage,
+  type AnthropicOptions,
+  type AnthropicLike,
+} from './model/anthropic.ts';
 export { replayModel, recordingModel, requestKey, type Cassette } from './model/replay.ts';
 export * from './model/types.ts';

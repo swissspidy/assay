@@ -2,10 +2,17 @@ import { test, expect } from '@playwright/test';
 import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { AnthropicError } from '@anthropic-ai/sdk';
 import {
+  anthropicModel,
+  canonical,
   checkRubric,
   compileTask,
+  coversClause,
+  coverage,
   parseOutcomes,
+  parseOutcomesDetailed,
+  validateCheckSet,
   recordingModel,
   replayModel,
   rubricFromClauses,
@@ -231,14 +238,14 @@ test('compileTask: rubric, exploration, repair until the checks pass on the refe
       quote: 'the newsletter subscription is saved',
       checks: ['C1', 'C2'],
       channels: ['network'],
-      strongestTrust: 'structured',
+      trust: 'structured',
     },
     {
       requirement: 'R2',
       quote: 'the newsletter checkbox in the preferences is checked',
       checks: ['C3'],
       channels: ['a11y'],
-      strongestTrust: 'semantic',
+      trust: 'semantic',
     },
   ]);
   // the trajectory is never part of the prompt unless given
@@ -288,4 +295,278 @@ test('cassettes: a recorded compile replays identically without a model; changed
       model: replayModel(path),
     }),
   ).rejects.toThrow('no recording for this request');
+});
+
+// ---------------------------------------------------------------------------
+// Review fixes
+// ---------------------------------------------------------------------------
+
+test.describe('outcome parsing edge cases', () => {
+  test('a single Then line does not switch plain text to Gherkin', () => {
+    expect(parseOutcomes('The cart shows 2 items\nThen the total updates').map((c) => c.text)).toEqual([
+      'The cart shows 2 items',
+      'the total updates',
+    ]);
+  });
+  test('Gherkin: * steps, Scenario resets, continuation lines, ignored lines reported', () => {
+    const text =
+      'Scenario: a\n  When I pay\n  Then the order is placed\n    with a confirmation number\n  * a receipt is shown\nScenario: b\n  And this is not an outcome';
+    const p = parseOutcomesDetailed(text);
+    expect(p.clauses.map((c) => c.text)).toEqual([
+      'the order is placed with a confirmation number',
+      'a receipt is shown',
+    ]);
+    for (const c of p.clauses) expect(canonical(text.slice(c.start, c.end))).toBe(c.text);
+    expect(p.ignored).toEqual(['Scenario: a', 'When I pay', 'Scenario: b', 'And this is not an outcome']);
+  });
+  test('Markdown checkboxes, bold Then and header lines', () => {
+    const p = parseOutcomesDetailed(
+      'Expected outcomes:\n- [ ] **Then** the mug is in the cart\n- [x] Then: the total is $12',
+    );
+    expect(p.clauses.map((c) => c.text)).toEqual(['the mug is in the cart', 'the total is $12']);
+    expect(p.ignored).toEqual(['Expected outcomes:']);
+  });
+});
+
+test.describe('rubric hardening', () => {
+  const clauses = parseOutcomes(NEWSLETTER.outcomes);
+  const req = (quote: string, kind: 'hard' | 'soft' = 'hard', text = 'x') => ({
+    id: 'R1',
+    kind,
+    text,
+    source: { field: 'outcomes' as const, quote },
+  });
+  test('empty or blank quotes and texts are rejected', () => {
+    expect(checkRubric(NEWSLETTER, [req('')], clauses).join()).toContain('quote is empty');
+    expect(checkRubric(NEWSLETTER, [req('   ')], clauses).join()).toContain('quote is empty');
+    expect(
+      checkRubric(NEWSLETTER, [req('the newsletter subscription is saved', 'hard', ' ')], clauses).join(),
+    ).toContain('text is empty');
+  });
+  test('a stray word does not cover clauses; one quote cannot merge two outcomes', () => {
+    expect(coversClause('the', 'the newsletter subscription is saved')).toBe(false);
+    expect(coversClause('newsletter subscription is saved', 'the newsletter subscription is saved')).toBe(true);
+    const merged = checkRubric(
+      NEWSLETTER,
+      [req('the newsletter subscription is saved\nThen the newsletter checkbox in the preferences is checked')],
+      clauses,
+    );
+    expect(merged.join()).toContain('spans 2 expected outcomes');
+  });
+  test('an expected outcome cannot be soft unless it says it is optional', () => {
+    const errs = checkRubric(
+      NEWSLETTER,
+      [
+        req('the newsletter subscription is saved'),
+        { ...req('the newsletter checkbox in the preferences is checked', 'soft'), id: 'R2' },
+      ],
+      clauses,
+    );
+    expect(errs.join()).toContain('must be hard');
+    const optional = {
+      id: 'o',
+      instruction: 'Order it.',
+      outcomes: 'Then the order is placed\nThen ideally a receipt is shown',
+    };
+    expect(
+      checkRubric(
+        optional,
+        [
+          { id: 'R1', kind: 'hard', text: 'x', source: { field: 'outcomes', quote: 'the order is placed' } },
+          { id: 'R2', kind: 'soft', text: 'y', source: { field: 'outcomes', quote: 'ideally a receipt is shown' } },
+        ],
+        parseOutcomes(optional.outcomes),
+      ),
+    ).toEqual([]);
+  });
+  test('the validator also rejects blank quotes', () => {
+    const cs = {
+      schema: 'assay.checks/v1',
+      id: 'x',
+      version: '1',
+      task: { instruction: 'Do it.' },
+      requirements: [{ id: 'R1', kind: 'hard', text: 't', source: { field: 'instruction', quote: '   ' } }],
+      checks: [],
+    };
+    expect(validateCheckSet(cs).errors.join()).toContain('quote is blank');
+  });
+});
+
+test('trust: anyOf is as weak as its weakest branch', () => {
+  const cs = {
+    schema: 'assay.checks/v1' as const,
+    id: 'x',
+    version: '1',
+    task: { instruction: 'Place an order.' },
+    requirements: [
+      {
+        id: 'R1',
+        kind: 'hard' as const,
+        text: 't',
+        source: { field: 'instruction' as const, quote: 'place an order' },
+      },
+    ],
+    checks: [
+      {
+        id: 'C1',
+        requirement: 'R1',
+        description: 'd',
+        assert: {
+          kind: 'anyOf' as const,
+          of: [
+            {
+              kind: 'value' as const,
+              source: { from: 'text' as const, pattern: 'Order #(\\d+)' },
+              expect: { exists: true as const },
+            },
+            { kind: 'request' as const, match: { method: 'POST' } },
+          ],
+        },
+      },
+    ],
+  };
+  expect(coverage(cs)[0]!.trust).toBe('freetext');
+  expect(
+    coverage({ ...cs, checks: [{ ...cs.checks[0]!, assert: { kind: 'allOf', of: cs.checks[0]!.assert.of } }] })[0]!
+      .trust,
+  ).toBe('structured');
+});
+
+test.describe('agent loop', () => {
+  const tool = (name: string, done?: boolean) => ({
+    spec: { name, description: '', inputSchema: { type: 'object', properties: {} } },
+    run: () => ({ content: `${name} ran`, ...(done ? { done: name } : {}) }),
+  });
+  test('max_tokens and refusal stop the loop before any tool runs', async () => {
+    let ran = false;
+    for (const stop of ['max_tokens', 'refusal'] as const) {
+      const run = await runAgent({
+        model: scripted([() => ({ stop, ...call('t', {}) })]),
+        system: 's',
+        prompt: 'p',
+        tools: [{ ...tool('t'), run: () => ((ran = true), { content: '' }) }],
+      });
+      expect(run.status).toBe(stop);
+    }
+    expect(ran).toBe(false);
+  });
+  test('all results of a turn go back in one message; calls after a finishing call do not run', async () => {
+    const ran: string[] = [];
+    const t = (name: string, done?: boolean) => ({
+      ...tool(name, done),
+      run: () => (ran.push(name), { content: 'ok', ...(done ? { done: name } : {}) }),
+    });
+    const model = scripted([
+      () => ({
+        toolCalls: [
+          { id: '1', name: 'a', input: {} },
+          { id: '2', name: 'b', input: {} },
+        ],
+      }),
+      () => ({
+        toolCalls: [
+          { id: '3', name: 'finish', input: {} },
+          { id: '4', name: 'a', input: {} },
+        ],
+      }),
+    ]);
+    const run = await runAgent({ model, system: 's', prompt: 'p', tools: [t('a'), t('b'), t('finish', true)] });
+    expect(run.status).toBe('done');
+    expect(run.result).toBe('finish');
+    expect(ran).toEqual(['a', 'b', 'finish']);
+    expect(model.requests[1]!.messages.at(-1)).toMatchObject({
+      role: 'user',
+      toolResults: [{ toolCallId: '1' }, { toolCallId: '2' }],
+    });
+    expect(run.transcript.at(-1)).toMatchObject({
+      toolResults: [{ toolCallId: '3' }, { toolCallId: '4', isError: true }],
+    });
+  });
+  test('empty assistant turns are not sent back; nudges are bounded', async () => {
+    const model = scripted([() => ({ raw: [] }), () => ({ raw: [] }), () => ({ raw: [] })]);
+    const run = await runAgent({ model, system: 's', prompt: 'p', tools: [tool('t')], maxNudges: 2 });
+    expect(run.status).toBe('gave_up');
+    expect(model.requests).toHaveLength(3);
+    expect(model.requests[2]!.messages.some((m) => m.role === 'assistant')).toBe(false);
+  });
+});
+
+test.describe('Anthropic adapter (fake client)', () => {
+  const message = (content: unknown[], stop = 'end_turn') =>
+    ({
+      id: 'm',
+      type: 'message',
+      role: 'assistant',
+      model: 'claude-opus-5-5',
+      content,
+      stop_reason: stop,
+      usage: { input_tokens: 10, output_tokens: 5, cache_read_input_tokens: 100, cache_creation_input_tokens: 20 },
+    }) as never;
+  const fake = (results: (() => unknown)[]) => {
+    const params: unknown[] = [];
+    let i = 0;
+    return {
+      params,
+      client: {
+        beta: {
+          messages: {
+            stream(p: unknown) {
+              params.push(p);
+              const r = results[i++]!;
+              return { finalMessage: async () => r() as never };
+            },
+          },
+        },
+      },
+    };
+  };
+  test('request shape, tool results, caching, fallbacks and usage', async () => {
+    const f = fake([() => message([{ type: 'tool_use', id: 'tu1', name: 't', input: { a: 1 } }], 'tool_use')]);
+    const m = await anthropicModel({ client: f.client });
+    expect(m.id).toBe('anthropic:claude-opus-5-5@high');
+    const turn = await m.turn({
+      system: 'sys',
+      tools: [{ name: 't', description: 'd', inputSchema: { type: 'object' }, strict: true }],
+      messages: [
+        { role: 'user', text: 'hi' },
+        { role: 'assistant', text: '', toolCalls: [], raw: [{ type: 'text', text: 'prev' }] },
+        { role: 'user', toolResults: [{ toolCallId: 'x', content: 'r', isError: true }], text: 'more' },
+      ],
+    });
+    expect(turn).toMatchObject({ stop: 'tool_use', toolCalls: [{ id: 'tu1', name: 't', input: { a: 1 } }] });
+    expect(turn.usage).toEqual({ inputTokens: 130, outputTokens: 5, cacheReadTokens: 100, cacheWriteTokens: 20 });
+    expect(f.params[0]).toMatchObject({
+      model: 'claude-opus-5-5',
+      cache_control: { type: 'ephemeral' },
+      output_config: { effort: 'high' },
+      betas: ['server-side-fallback-2026-07-01'],
+      fallbacks: 'default',
+      tools: [{ name: 't', strict: true, eager_input_streaming: true }],
+      messages: [
+        { role: 'user', content: [{ type: 'text', text: 'hi' }] },
+        { role: 'assistant', content: [{ type: 'text', text: 'prev' }] },
+        {
+          role: 'user',
+          content: [
+            { type: 'tool_result', tool_use_id: 'x', content: 'r', is_error: true },
+            { type: 'text', text: 'more' },
+          ],
+        },
+      ],
+    });
+    expect(JSON.stringify(f.params[0])).not.toContain('thinking');
+  });
+  test('a tool input that streamed as invalid JSON is retried; persistent failure becomes ModelError', async () => {
+    const parseError = () => {
+      throw new AnthropicError('Unable to parse tool parameter JSON from model.');
+    };
+    const ok = await anthropicModel({
+      client: fake([parseError, () => message([{ type: 'text', text: 'done' }])]).client,
+    });
+    expect((await ok.turn({ system: 's', messages: [{ role: 'user', text: 'x' }], tools: [] })).text).toBe('done');
+    const bad = await anthropicModel({ client: fake([parseError, parseError, parseError]).client });
+    await expect(bad.turn({ system: 's', messages: [{ role: 'user', text: 'x' }], tools: [] })).rejects.toThrow(
+      'after 3 attempts',
+    );
+  });
 });

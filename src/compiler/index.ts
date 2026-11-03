@@ -1,4 +1,12 @@
-export { compileTask, rubricFromClauses, checkRubric, verifyCandidate, coverage } from './compile.ts';
+export {
+  compileTask,
+  rubricFromClauses,
+  checkRubric,
+  coversClause,
+  verifyCandidate,
+  coverage,
+  assertionTrust,
+} from './compile.ts';
 export type {
   TaskInput,
   Reference,
@@ -7,4 +15,4 @@ export type {
   CompileReport,
   RequirementCoverage,
 } from './compile.ts';
-export { parseOutcomes, type Clause } from './outcomes.ts';
+export { parseOutcomes, parseOutcomesDetailed, type Clause, type ParsedOutcomes } from './outcomes.ts';
