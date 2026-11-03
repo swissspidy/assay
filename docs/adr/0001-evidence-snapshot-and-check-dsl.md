@@ -144,7 +144,7 @@ soon as the page navigates. A common flow is "POST /api/orders, then
 `location.href = '/orders/A1'`", and in that flow the protocol-level read
 (`response.body()`) fails. Milestone 1 tests hit this. The recorder
 therefore also installs an init script that tees `fetch` and `XHR` response
-bodies (`Response.clone()`) to a Playwright binding. Integrity rules:
+bodies to a Playwright binding. For `fetch`, the page receives the response only after the tap has read a clone of its body and reported it. A concurrent read would race an app that navigates the moment it has its data. Streaming (`text/event-stream`) and oversized responses pass through unchanged. Integrity rules:
 
 - Every tap message carries a random token that lives only in the init
   script's closure. Page scripts can find the binding, but they can't forge

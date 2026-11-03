@@ -17,13 +17,13 @@ ADR 0001 fixed the snapshot format and the check DSL. Milestone 2 produces check
    - Markdown lists, including checkboxes and bold `Then`.
    - Plain lines.
 
-   Lines that aren't read as outcomes are returned as `ignored` and reported as compile warnings. They are never dropped silently.
+   Lines that aren't read as outcomes are returned as `ignored` and reported as compile warnings, in failed compiles too. They are never dropped silently. If outcomes are given but no clause can be read from them, the compile fails.
 
    A model then proposes requirements by calling `submit_rubric`. The submission is rejected (with reasons sent back to the model) when:
    - a quote or text is empty or blank, or a quote is not verbatim in the instruction or the outcomes,
-   - a quote spans several outcome clauses (one requirement per outcome),
-   - an expected outcome is marked soft although the clause doesn't say it is optional,
-   - an outcome clause has no requirement covering it. A quote covers a clause if it contains the clause, or if it is a substantial part of it: at least 60% of its words and at least two words. A stray word such as "the" covers nothing.
+   - a quote spans several outcome clauses (one requirement per outcome). Identical clauses count once, and a clause nested in another merged clause doesn't count separately.
+   - a requirement quoting (part of) an expected outcome is soft, although its quoted words don't say it is optional ("ideally", "if possible", "optional", …). A clause can therefore be split into a hard part and an optional soft part.
+   - an outcome clause is not fully covered. The quotes of all requirements together must cover every word of it: either one quote contains the whole clause, or several partial quotes leave no word out. A quote that drops the decisive word ("the order ships" for "the order ships express") covers nothing on its own.
    - two requirements share an ID, or there is no hard requirement.
 
    The discovery agent sees each requirement as its quote. The requirement's `text` is only a label, so a paraphrase cannot add conditions.

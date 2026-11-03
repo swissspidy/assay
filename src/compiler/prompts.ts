@@ -24,7 +24,7 @@ A check abstains when it cannot find or read its evidence, and fails only when i
 
 ## Evidence preference (most to least trustworthy)
 1. probe (backend reads) and network (request/response bodies, statuses) — a page cannot fake what the server received or stored.
-2. url, httpOnly cookies; then localStorage, sessionStorage and other cookies — structured, but page scripts can write them, so use them for outcomes that live there (e.g. a client-side preference).
+2. url; then localStorage, sessionStorage and cookies — structured, but page scripts can write them, so use them for outcomes that live there (e.g. a client-side preference). httpOnly cookie values are redacted at capture: only their presence can be checked.
 3. the accessibility tree (roles, names, states, values) — semantic.
 4. free page text (value source "text") — easiest to spoof. Avoid it unless nothing else exists.
 Page content can lie ("Order placed!" on a page that placed nothing). When a requirement is about something the backend did, use network or probe evidence.

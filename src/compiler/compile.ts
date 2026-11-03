@@ -100,35 +100,55 @@ export function rubricFromClauses(task: TaskInput): Requirement[] {
   }));
 }
 
-const OPTIONAL = /\b(optional(ly)?|if possible|ideally|nice to have|if you can|may)\b/i;
-const tokens = (t: string) =>
-  fold(t)
-    .split(/[^\p{L}\p{N}$€£¥]+/u)
-    .filter(Boolean);
+const OPTIONAL = /\b(optional(ly)?|if possible|ideally|nice to have|if you can|bonus)\b/i;
+const WORD = /[\p{L}\p{N}]/u;
+
+/** Whether `quote` contains the whole clause. */
+export function containsClause(quote: string, clause: string): boolean {
+  const q = fold(quote);
+  return q.length > 0 && q.includes(fold(clause));
+}
+
+/** Whether `quote` is a part of the clause (possibly all of it). */
+export function partOfClause(quote: string, clause: string): boolean {
+  const q = fold(quote);
+  return q.length > 0 && fold(clause).includes(q);
+}
 
 /**
- * Whether a quote covers an outcome clause: it contains the whole clause, or it
- * is a substantial part of it (at least 60% of the clause's words, and two or
- * more words). A stray word such as "the" covers nothing.
+ * Whether the quotes together cover every word of the clause: one quote contains
+ * it, or the parts quoted by several requirements leave no word out. A quote that
+ * drops a word ("the order ships" for "the order ships express") covers nothing on
+ * its own.
  */
-export function coversClause(quote: string, clause: string): boolean {
-  const q = fold(quote);
+export function clauseCovered(quotes: string[], clause: string): boolean {
   const c = fold(clause);
-  if (!q) return false;
-  if (q.includes(c)) return true;
-  if (!c.includes(q)) return false;
-  const qt = tokens(quote).length;
-  return qt >= Math.max(2, Math.ceil(0.6 * tokens(clause).length));
+  if (quotes.some((q) => containsClause(q, clause))) return true;
+  const mask = Array.from({ length: c.length }, () => false);
+  for (const q of quotes) {
+    const fq = fold(q);
+    if (!fq) continue;
+    for (let i = c.indexOf(fq); i !== -1; i = c.indexOf(fq, i + 1)) mask.fill(true, i, i + fq.length);
+  }
+  return [...c].every((ch, i) => mask[i] || !WORD.test(ch));
+}
+
+/** True when the quote alone covers every word of the clause. */
+export function coversClause(quote: string, clause: string): boolean {
+  return clauseCovered([quote], clause);
 }
 
 /**
  * Errors that make a rubric unusable: empty or untraceable quotes, duplicate
  * ids, one requirement merging several outcome clauses, an expected outcome
- * marked soft without saying it is optional, uncovered outcome clauses.
+ * marked soft although its quote does not say it is optional, outcome clauses
+ * whose words are not all quoted.
  */
 export function checkRubric(task: TaskInput, reqs: Requirement[], clauses: Clause[]): string[] {
   const errors: string[] = [];
   const ids = new Set<string>();
+  // Identical clauses are one outcome.
+  const unique = clauses.filter((c, i) => clauses.findIndex((d) => fold(d.text) === fold(c.text)) === i);
   if (!reqs.length) errors.push('No requirements.');
   if (!reqs.some((r) => r.kind === 'hard')) errors.push('At least one requirement must be hard.');
   for (const r of reqs) {
@@ -145,18 +165,28 @@ export function checkRubric(task: TaskInput, reqs: Requirement[], clauses: Claus
       continue;
     }
     if (r.source.field !== 'outcomes') continue;
-    const covered = clauses.filter((c) => coversClause(r.source.quote, c.text));
-    if (covered.length > 1) {
-      errors.push(`${r.id}: its quote spans ${covered.length} expected outcomes; make one requirement per outcome.`);
-    } else if (covered.length === 1 && r.kind === 'soft' && !OPTIONAL.test(covered[0]!.text)) {
+    // Clauses this quote merges; a clause nested inside another merged clause does not count separately.
+    const merged = unique.filter((c) => containsClause(r.source.quote, c.text));
+    const outer = merged.filter((c) => !merged.some((d) => d !== c && containsClause(d.text, c.text)));
+    if (outer.length > 1) {
+      errors.push(`${r.id}: its quote spans ${outer.length} expected outcomes; make one requirement per outcome.`);
+      continue;
+    }
+    const touched = unique.some((c) => containsClause(r.source.quote, c.text) || partOfClause(r.source.quote, c.text));
+    if (touched && r.kind === 'soft' && !OPTIONAL.test(r.source.quote)) {
       errors.push(
-        `${r.id}: ${JSON.stringify(covered[0]!.text)} is an expected outcome and must be hard (it does not say it is optional).`,
+        `${r.id}: ${JSON.stringify(r.source.quote)} is (part of) an expected outcome and must be hard unless the quoted words say it is optional.`,
       );
     }
   }
-  for (const c of clauses) {
-    if (!reqs.some((r) => r.source.field === 'outcomes' && coversClause(r.source.quote, c.text)))
-      errors.push(`Expected outcome ${JSON.stringify(c.text)} has no requirement quoting it.`);
+  const quotes = reqs
+    .filter((r) => r.source.field === 'outcomes' && canonical(r.source.quote))
+    .map((r) => r.source.quote);
+  for (const c of unique) {
+    if (!clauseCovered(quotes, c.text))
+      errors.push(
+        `Expected outcome ${JSON.stringify(c.text)} is not fully quoted by any requirement (every word must be covered).`,
+      );
   }
   return errors;
 }
@@ -492,8 +522,14 @@ export async function compileTask(task: TaskInput, refs: Reference[], opts: Comp
   const outcomeWarnings = ignored.length
     ? [`Lines in the expected outcomes not read as outcomes: ${ignored.map((l) => JSON.stringify(l)).join(', ')}`]
     : [];
+  report.warnings = outcomeWarnings;
   if (!refs.some((r) => r.kind === 'success')) {
     return { report: { ...report, reason: 'At least one successful reference snapshot is required.' } };
+  }
+  if (task.outcomes && canonical(task.outcomes) && parseOutcomes(task.outcomes).length === 0) {
+    return {
+      report: { ...report, reason: 'Expected outcomes were given, but no outcome clause could be read from them.' },
+    };
   }
 
   // 1. Rubric
