@@ -772,6 +772,10 @@ test.describe('review hardening (milestone 2)', () => {
     expect(containsClause('repay the invoice', 'pay')).toBe(false);
     expect(containsClause('then pay the invoice', 'pay')).toBe(true);
     expect(partOfClause('pay', 'repay the invoice')).toBe(false);
+    expect(containsClause('payment', 'pay')).toBe(false);
+    expect(containsClause('pay\u{20000} now', 'pay')).toBe(false);
+    expect(containsClause('नामांकन', 'नाम')).toBe(false);
+    expect(containsClause('नाम दर्ज', 'नाम')).toBe(true);
     expect(partOfClause('the invoice', 'repay the invoice')).toBe(true);
     expect(containsClause('pay.', 'pay')).toBe(true);
   });

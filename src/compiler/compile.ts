@@ -142,16 +142,21 @@ export function wholeQuoteOptional(quote: string): boolean {
     .replace(/\s*[,–—-]$/, '');
   return !SEPARATOR.test(before);
 }
-const WORD = /[\p{L}\p{N}]/u;
+/** Letters, digits and combining marks (a vowel sign continues its word). */
+const WORD = /[\p{L}\p{N}\p{M}]/u;
 
 /** Whether `needle` occurs in `hay` at word boundaries ("pay" is not in "repay"). */
 function includesWords(hay: string, needle: string): boolean {
   if (!needle) return false;
+  // Compare whole code points: an astral letter is two UTF-16 units, neither a WORD on its own.
+  const chars = [...needle];
+  const first = chars[0]!;
+  const last = chars.at(-1)!;
   for (let i = hay.indexOf(needle); i !== -1; i = hay.indexOf(needle, i + 1)) {
-    const before = hay.slice(0, i).slice(-1);
-    const after = hay.slice(i + needle.length).slice(0, 1);
+    const before = Array.from(hay.slice(Math.max(0, i - 2), i)).at(-1) ?? '';
+    const after = Array.from(hay.slice(i + needle.length, i + needle.length + 2))[0] ?? '';
     const edge = (ch: string, inner: string) => !ch || !WORD.test(ch) || !WORD.test(inner);
-    if (edge(before, needle[0]!) && edge(after, needle.at(-1)!)) return true;
+    if (edge(before, first) && edge(after, last)) return true;
   }
   return false;
 }
