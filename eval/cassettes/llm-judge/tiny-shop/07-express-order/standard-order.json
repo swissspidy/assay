@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:23:45.659Z",
+ "turns": {
+  "sha256:76d8aef68abbfaec81c58eceb6559d8c79f8f586a95ca7e50afe1ae25958e16c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KMKieZ8hyVkMGrtu3F3zao",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The order was placed and the confirmation page appears (Order A1001, \"Order confirmed\"). But the order summary says \"Shipping: Standard\", and the task asked for express shipping. So the outcome \"the order ships express\" was not met. The page also doesn't show the customer name, so nothing confirms the order is under Ada Lovelace. Because the shipping method is wrong, the task failed, even though the agent said it was done."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01KMKieZ8hyVkMGrtu3F3zao",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The order was placed and the confirmation page appears (Order A1001, \"Order confirmed\"). But the order summary says \"Shipping: Standard\", and the task asked for express shipping. So the outcome \"the order ships express\" was not met. The page also doesn't show the customer name, so nothing confirms the order is under Ada Lovelace. Because the shipping method is wrong, the task failed, even though the agent said it was done."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 901,
+    "outputTokens": 209,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 897
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:23:52.188Z",
+ "turns": {
+  "sha256:377483cf3ab77746135ab059561759de9fac8af49ba0787fef48ebee2fbbe244": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01BexmA9XEttdo34GA5x7s1p",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The order was not placed. The agent is still on the checkout page, and the \"Full name\" field is empty. An alert says \"Could not place order: name is required.\" Express shipping was selected, but the order failed, so no order exists and no confirmation is shown. The agent said it completed the task, but the page shows otherwise."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01BexmA9XEttdo34GA5x7s1p",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The order was not placed. The agent is still on the checkout page, and the \"Full name\" field is empty. An alert says \"Could not place order: name is required.\" Express shipping was selected, but the order failed, so no order exists and no confirmation is shown. The agent said it completed the task, but the page shows otherwise."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 962,
+    "outputTokens": 172,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 958
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

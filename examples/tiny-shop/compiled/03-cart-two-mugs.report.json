@@ -1,0 +1,63 @@
+{
+  "task": "tiny-shop/03-cart-two-mugs",
+  "status": "compiled",
+  "model": "anthropic:claude-opus-5-5@high",
+  "modelsUsed": [
+    "claude-opus-5-5"
+  ],
+  "turns": {
+    "rubric": 1,
+    "discovery": 2
+  },
+  "usage": {
+    "inputTokens": 30335,
+    "outputTokens": 1224,
+    "cacheReadTokens": 14048,
+    "cacheWriteTokens": 16277
+  },
+  "coverage": [
+    {
+      "requirement": "R1",
+      "quote": "Then the cart page lists a Blue Mug",
+      "checks": [
+        "R1-blue-mug-listed"
+      ],
+      "channels": [
+        "probe",
+        "a11y"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R2",
+      "quote": "Then the cart page lists a Red Mug",
+      "checks": [
+        "R2-red-mug-listed"
+      ],
+      "channels": [
+        "probe",
+        "a11y"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R3",
+      "quote": "show me the cart",
+      "checks": [
+        "R3-cart-shown"
+      ],
+      "channels": [
+        "url"
+      ],
+      "trust": "structured"
+    }
+  ],
+  "warnings": [],
+  "references": [
+    {
+      "name": "both-mugs",
+      "kind": "success",
+      "verdict": "success"
+    }
+  ]
+}

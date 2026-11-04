@@ -1,0 +1,62 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/05-assign-bob",
+  "version": "1",
+  "task": {
+    "instruction": "Assign issue #1 to bob.",
+    "outcomes": "Then issue #1 is assigned to bob"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Issue #1 is assigned to bob.",
+      "source": {
+        "field": "outcomes",
+        "quote": "issue #1 is assigned to bob"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "issue1-assignee-bob-probe",
+      "requirement": "R1",
+      "description": "The backend issues list contains issue id 1 with assignee 'bob'.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "id",
+                "assignee"
+              ],
+              "properties": {
+                "id": {
+                  "const": 1
+                },
+                "assignee": {
+                  "const": "bob"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T10:10:05.410Z"
+  }
+}

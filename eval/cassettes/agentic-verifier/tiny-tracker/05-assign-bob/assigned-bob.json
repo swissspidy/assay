@@ -1,0 +1,136 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:40:11.853Z",
+ "turns": {
+  "sha256:5239123a0da20e61c2d9ac32427a2882fd81c990c7edcaf3563387a1b5bea5a5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01ELiJ5cH5QLFZyLwBAsuyL5",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_014566q3YtZv5bmMR8hW8nQF",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01ELiJ5cH5QLFZyLwBAsuyL5",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_014566q3YtZv5bmMR8hW8nQF",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1838,
+    "outputTokens": 48,
+    "cacheReadTokens": 1834,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:7e1e06df0db42537e20c251d64238a08f2b884d422bb013812a408e449f11e8e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011H5xUSPVoy8kjfRr9NCXfb",
+     "name": "network_entry",
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_011H5xUSPVoy8kjfRr9NCXfb",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2321,
+    "outputTokens": 49,
+    "cacheReadTokens": 1834,
+    "cacheWriteTokens": 485
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:4ff6070d222acae77734d8a94c555497f1128a9302173ec5bc77520da4290c1c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_013d1Fwk61UzTWy7gsf7EKr6",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server-side probe shows issue 1 has assignee \"bob\". The network log also records a POST to /issues/1/assign with the body assignee=bob, and the server answered with a 303 redirect."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_013d1Fwk61UzTWy7gsf7EKr6",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server-side probe shows issue 1 has assignee \"bob\". The network log also records a POST to /issues/1/assign with the body assignee=bob, and the server answered with a 303 redirect."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2479,
+    "outputTokens": 150,
+    "cacheReadTokens": 2319,
+    "cacheWriteTokens": 158
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

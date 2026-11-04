@@ -1,0 +1,62 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/08-rename",
+  "version": "1",
+  "task": {
+    "instruction": "Rename issue #3 to \"Fix typo in README\".",
+    "outcomes": "Then issue #3 is titled \"Fix typo in README\""
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Issue #3's title is \"Fix typo in README\".",
+      "source": {
+        "field": "outcomes",
+        "quote": "issue #3 is titled \"Fix typo in README\""
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "issue3-title-backend",
+      "requirement": "R1",
+      "description": "The backend issues probe shows issue with id 3 having title exactly \"Fix typo in README\".",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "id",
+                "title"
+              ],
+              "properties": {
+                "id": {
+                  "const": 3
+                },
+                "title": {
+                  "const": "Fix typo in README"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T10:10:40.335Z"
+  }
+}

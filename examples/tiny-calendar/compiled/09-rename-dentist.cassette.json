@@ -1,0 +1,219 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T10:10:59.988Z",
+ "turns": {
+  "sha256:66a05c7441ee8f58428d0776c59271753090005beca2842d97ffb4dbf1e056d0": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01E4iw34i3dZymTSFR7jFTx2",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The Dentist event's title is now \"Dentist (Dr. Lee)\".",
+        "field": "outcomes",
+        "quote": "the Dentist event is called \"Dentist (Dr. Lee)\""
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01E4iw34i3dZymTSFR7jFTx2",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The Dentist event's title is now \"Dentist (Dr. Lee)\".",
+        "field": "outcomes",
+        "quote": "the Dentist event is called \"Dentist (Dr. Lee)\""
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1141,
+    "outputTokens": 137,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1137
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:be636c8246de1264ed213676f1bc24bd7627eff40447a0ebf6763f7820755501": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018mwFa99fstRpyrbwM7EG8E",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01BHfadYyLWytkPBHteWrjhT",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_018mwFa99fstRpyrbwM7EG8E",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01BHfadYyLWytkPBHteWrjhT",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 13983,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 13979
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:990405c864e34f4901fbee7fd4a1f10458a8a1617866c67b7931c773e2cca013": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0157gq4XzNUjjhmhv9Gd171c",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "R1-probe-title",
+        "requirement": "R1",
+        "description": "The backend events list contains the Dentist event (id 2, on 2026-11-06 at 14:30) with title exactly \"Dentist (Dr. Lee)\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "events"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "title",
+             "date",
+             "time"
+            ],
+            "properties": {
+             "id": {
+              "const": 2
+             },
+             "title": {
+              "const": "Dentist (Dr. Lee)"
+             },
+             "date": {
+              "const": "2026-11-06"
+             },
+             "time": {
+              "const": "14:30"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSsQgKEAgTGAI4AUIIdGhpbmtpbmcSDFGKJkfQSHH+KHJGExoMCp2/S0KyZUpNv8eMIjAIk0cdflnJh/iNgTu9ooeleHh/kla3spPMTzkgiF2JFjRijfLPJca44JAvqJ/VWDIqzge5mE+WXyWksbDDrePu73vpD5h42TvThui4Q2aaCxaxfMTkhHrGTXXmpDmn22RD2nRyYb4855LsdhzQM1narjNrRf2NBSigjorWGZ91PH/nUqEivwYEyVz4h5YcNFBnv5Ca9vd4A1xVd3S1qH10ygwNY/ehTXJe3iqVuxkCKbuLrwpVN3TmwDnaVNDMkOVo/314SCpgQ4izGN6Efqs1BJmJ/86ay9Pghfcz8DgvHwlOiUq8dXvRFS3pahcXoFexUmtYoMfnO4t/JEytUVcR7+Hx/ZAY0QY4dtAx7i6xRNQPCb/LqGYYhECFci/QG6QYkNXQukrlEpQ/NJnK3tMZmuBgzb8rokFUbIAi0asQlnUMopczn0yK3UybYLpR0hXos4P2m8PnL+nGkmerfdjmfAZ8KCYTEZ18H+94VDinArYyclEQX5X+znmO0pWZu722oTePNxxs+Gv9+VYqqCsZ7Ady5nRAtpQqh7p7JkUMpWfkGqtLNeBi9GjGRvF6R895PHO0M+XrTbgN+JHBXZ9zAujNwJNYOaeZXEic2rTbvlMlgSlbYPdTJpp6YGJjKRwG/D56JH3rXK34DOkfSQH+BWjEGFnmJYFVM0pM6FB0zDEEn/8qrB3Pr8LTZ08n/uOrJupnCNiMs/J4L9MUOvec85liBulsagv/Zbm+YxxVia8PspSbVKEN/Q1DZWHpp8EawJWMT+aLzKC26WvveMEI6nllf8FB2+Hmaoxa+1IC7j3bRgySuZAwCvtKiip6eQPtMqa4XHIgjySvf0cTzmbWyiBYbumxj0gucnIODXwSEsrVbsCfmukR4e/Z5C/XIyWvrVVB29POJgYR9MlUJ1kJX5WFFk+Z1pL5bHHI/0NXVB2tGtIbvKqnF6V4c21wnAPUkm070p4BQ7E4DhLFlfwNf07eLs27gr6OTVGtHLmGI9Inm2c+B/Zo03snIheT9mJUVpmWpZ6+EGB3Uqg79n97WTGltqhdIwAl35exx/vgLAOtpFOnjDIdHc953dqBP4VPNHrbjb1IQJbjLiAWGUK+DU4HveJvwQ+y7StxLBKZq0uuveOaaHF9YvQqQ5CyihOymyl207OdvA+PoFZEzojN+dHCfzIFc3iaxX/RbMlNJW/vLrvIfG2vkPfkIZXA4A6n8u1T13CFoCYJXrLUrKB1uEF9wopEnO9h5ckg7Tm7IDjijvlS1R58BFOrZ2kZFK1lLwc3FGYZEQtkwMMD75ONAS+AQ9tYb1adiEPoqzFSe0mLPw2+oS/c17HMXklBwzXEktBsLx1MQnnHeEatyqU4ExgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_0157gq4XzNUjjhmhv9Gd171c",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "R1-probe-title",
+        "requirement": "R1",
+        "description": "The backend events list contains the Dentist event (id 2, on 2026-11-06 at 14:30) with title exactly \"Dentist (Dr. Lee)\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "events"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "title",
+             "date",
+             "time"
+            ],
+            "properties": {
+             "id": {
+              "const": 2
+             },
+             "title": {
+              "const": "Dentist (Dr. Lee)"
+             },
+             "date": {
+              "const": "2026-11-06"
+             },
+             "time": {
+              "const": "14:30"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 14542,
+    "outputTokens": 439,
+    "cacheReadTokens": 13979,
+    "cacheWriteTokens": 561
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

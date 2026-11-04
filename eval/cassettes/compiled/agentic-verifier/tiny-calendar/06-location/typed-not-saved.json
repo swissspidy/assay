@@ -1,0 +1,198 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T10:23:47.943Z",
+ "turns": {
+  "sha256:2857806bbbd976e14c140675088add1d3737035662a01dc67a9b1f78d38a648f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01PcTgXKeGX1GW8EJ6VVaAoJ",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01JWEPnUHiSVq5whd7BHrP6H",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01PcTgXKeGX1GW8EJ6VVaAoJ",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01JWEPnUHiSVq5whd7BHrP6H",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1829,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1825
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:4537b44c5af0189a8329ad3a5bec3bbc489961ae1a60f16814e584ad92d2e016": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CCu4SVH9bZjdtCi6wYxQe7",
+     "name": "find_nodes",
+     "input": {
+      "text": "Library"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSvwUKEAgTGAI4AUIIdGhpbmtpbmcSDNoyN8/9Q/aSRJznEBoM5uMxsgYJus/2IXiaIjDbaLgMWoHcnsHCBfnxE+DvcrCII5hU9OgRbwXu5R85QUnSvR7caCE4izRrbfJIARYq3AQ+mONevIq4B9LsaPcj/T0IGQAJDKCBxkx0aEMisI7IfQDjWz02sTOr7wKN8wwu3WbWyr5HRuWvhhimqOpzGY7zslzRtpSEGnBzq3fkwABbRP8bwfSwG2GBrK6MwBsnTjN4pZ1cDwJmXRg6KDytdOZNpz5w3df54do/XFHea3lJaIKrqxNpU2gU1QhpObfT/+k8rxleRCGiN+Yi7w0H4M8IFWrryj77ZRb3wwh/xL45ukSVGZFiFsW4oxC4pa8n377RDj12YB1P19s/nEOxqqlwoOYzMCD/oiiKe0J56SzBJUyDu+Q0sx+XaPJJ/RO2sLmAJxEykiVIS2rUfAIeC4MwdC58U6opu/ENyifzjwilBtBRk4NXtnkF8N3b9nLbJpJHDo8Qczw2e94bK07cpJZUJAfis2c2BeQqq5saLzXUOUlbdbuHtxdpUJlZHnowXIthsBWA6MHNsrYiJCDkXqMR1mu0jOM3WCqT1aBhaXMnCgchHsbB660+sOs43RTpaTi210bemGB6wwMFMLtiGUsb4FpGjjpTN+uQ/A9lUHk/OG9povrvn5k2Z4HvssdHig5/bJUv8t9GkcRc3uxH0yB+jf+il1AGIFvOuLfu2Ub5pX6etYwpzS0QnsLLx6/Zy+JBollWOFboyf1KVHNoYrvc1kPqPWDfRpHdIVNtyAZG4CYwniYwNzBfB+jLp6TRqQyDFzzGzGyuePIgNdMJbnKBJV1vbO/ZolnPlArIOfYNx0OTpAOUQuKIElss1vT0m13HFzvZjeSJYk4UZm1cbWPyCgfBab4M9N29B4q6GAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01CCu4SVH9bZjdtCi6wYxQe7",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "text": "Library"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2353,
+    "outputTokens": 78,
+    "cacheReadTokens": 1825,
+    "cacheWriteTokens": 526
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:898394110726b698450f5b22e1899f4378ad045d53e9a9826a2a1a65d4840f27": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01N6VfoN5Js8nC3NrELkvibn",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Book club takes place at City Library",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "According to the server-side events probe, Book club (id 3) still has the location \"Corner Cafe\". The network log has only GET requests, with no update sent. The page doesn't show \"City Library\" anywhere."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01N6VfoN5Js8nC3NrELkvibn",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Book club takes place at City Library",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "According to the server-side events probe, Book club (id 3) still has the location \"Corner Cafe\". The network log has only GET requests, with no update sent. The page doesn't show \"City Library\" anywhere."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2450,
+    "outputTokens": 164,
+    "cacheReadTokens": 2351,
+    "cacheWriteTokens": 97
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:b2a62a63d89a5359e996578406143527101277d5e4e3eedccd3d0431c94e849a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01DfAv6AgUnZKQcfEeXw4r9L",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "According to the server-side events probe, Book club (id 3) still has the location \"Corner Cafe\". The network log has only GET requests, with no update sent. The page doesn't show \"City Library\" anywhere."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01DfAv6AgUnZKQcfEeXw4r9L",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "According to the server-side events probe, Book club (id 3) still has the location \"Corner Cafe\". The network log has only GET requests, with no update sent. The page doesn't show \"City Library\" anywhere."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2663,
+    "outputTokens": 160,
+    "cacheReadTokens": 2448,
+    "cacheWriteTokens": 213
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

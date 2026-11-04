@@ -1,0 +1,51 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:22:25.482Z",
+ "turns": {
+  "sha256:526f8f0bed5cb0c7f0a64f3643e76eae2e54c903e88bd68b24f28bdc2a07f8cf": {
+   "stop": "tool_use",
+   "text": "I'm judging this a success, though one point can't be confirmed from the final page. The page is the cart (/cart, \"Your cart\"), and its table has a \"Blue Mug\" row (quantity 1, $12.00) and a \"Red Mug\" row (quantity 1, $9.50), so both expected outcomes are met. The cart also holds a Green Teapot ($27.00), which the user didn't ask for. The page doesn't show whether it was already in the cart or the agent added it by mistake. Since the user said \"my cart,\" it may have been there before, and its presence doesn't stop either required item from being listed. The agent's \"I completed the task as requested\" is vague, but the page state backs it up.",
+   "toolCalls": [
+    {
+     "id": "toolu_019pM6F4tnQESnfN51yiUP3J",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "success",
+      "reasoning": "The final page is the cart (/cart, \"Your cart\"), and its table has a \"Blue Mug\" row (quantity 1, $12.00) and a \"Red Mug\" row (quantity 1, $9.50), so both expected outcomes are met. The cart also holds a Green Teapot ($27.00), which the user didn't ask for. The page doesn't show whether it was already in the cart or the agent added it by mistake. Since the user said \"my cart,\" it may have been there before, and its presence doesn't stop either required item from being listed. The agent's \"I completed the task as requested\" is vague, but the page state backs it up."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSoQoKEAgTGAI4AUIIdGhpbmtpbmcSDDkOaf9BA32GuDHUSBoMrUdMa1jYJwEzwMb2IjCSyPzUCfv8zAHJxbcw8tikfgs/a0IWE4tz9btfdkyae879uMR/6nCJQVwfTR7pxEcqvgnslKnTazAHZ8mOGs55AlSYhgv5lWbVr/P8IgtPh9CytsUK4zqFNs7JZwEtvVJR1UmlVGAkFrGeVBKEoDqqvp7Tcb3UVbVDbx+FhBJ43xZLd9DI7fGX3VRqmnSYFY5IO3Vb0SLE3/ROhCLKrr6Uo4nLaDQO1d7gC8jEVxKzLe2ZWaGSxzBkmnmkh5+9Lt8bt4e5ayPa83R5S+q3g1An7NWbeqV4Rd9xq8BgrHy/5l6WyZ5rJXdrYayD4gx+tJS/uPPH0iwtnKFS2BeUhUM1N4+upLd27/wXV+sAVnO/Hu4HkMvTYDPeZMq7rVnEjhy1AFHo0oeBPcQ8Q1Aur2ZMBb9gSDkWzU6wwYsKbw41gdYW0SK00x7DOJllu27aSR0LSX6CAioRye7c9ilOqrXDcLOvMbRJqwFBsG/rk3ZOYy5skysoPl1F5rnCRFalhBsPfx2Tk5xRQgwMvJIG8niCwxG0Eb3tcOHFawdz4j2A6g8uja0ZUy6PlKMhnPN1PWm5LP/Jnnw6Qi/60lQY6e2YXCzg9L8rpUdOLEM2rMBnDi5L1CTrSGXM0y/sgb61XFgNW4QsQglL25lvW3U1Kxv7UKi9y7/zM5518Vr/JQhbeZPscn8cypNPJEdJjvBKRe2puyIu/knZd66Cxh2fcyIHEWnA87DEm78OvrEJDKoMznrGHs2S2q7zL/oWsEJpHQwC9Xa4IB2d9oNBgkRd3DbDmbI2+MlctAXBUvjglX/I1ZjbBxHTVuTrSHUXL3yeGE8ckqfXdAqBy1SNjgWbyzzSq77b2npzszG6/1YIFYbWdGPHT0PO7ff+usF4BsYgHjBiHTsJlCYN8cA9D5fBuqKDRp6rnWr9dnMxpsqlStd7JnSG2FAy+Xs9uP27mkK/fOCGTRAZNH5Hv9XYUY74pKSltAYM3qJSXJiwuD3Tz2Z2JfNHcF8oS2t+IjpeRfbD3AAhSJyM7esScQ4rwrusjN7XZV48D+3L98i0WBIPMVNbOI3dm9tXDeoTB/6YxKcK150KyWdLB7Wah/VGKt3n7CQO8kRhKZYcgWXG3bfSeEvwaOxm8vNHiTcoTNXWv/CL/WFHzEjdeqM8Up7D+huJS8QPORl0Jbtr7hUGs/hmlQMayNtL7XIro579Thf+y0W6zGXZneD6z15fcq6wskZAFdjlZUqhzV2HouhTZJy7GcOS4FUR1YCEAN9VRjr2CHYKdhjHCSCQImniXm7cq1oxx1/fVU63zF1lO97JOkzyI97jqsQKQGnmhaDdiQgAvVfKlN+NHXtKCCj6+5nWcsJUF6I6erBReGCPKf+WU7OlU0A/eNtRoozn2KPvF+imejK4QA7ognpPB5ULclsuDM8MdmDSWIcw3PL/yFk9v7O35ia/xiwqdOqdgYeKTGHvppwXs6TwFYprqsMl16ecVOnWldY405CD9AU/xETrmxX5V1YzuyB1rIRUGcywFc4R+gNTwbJRCKkk6npFNbIwxdB9uOy7J8JLe8qNqsYtAaDz2n6k5lHsZ7yeHvNmgsoefd3MVW+qSZyHsbnmwJi78FxO/tVqD9jG7ougEbvsi59A+uSc26N2SPxcg/ZMPg2uIcsAcMG2Dx+5dFkabwi6HXmPMOyIGxgB"
+    },
+    {
+     "type": "text",
+     "text": "I'm judging this a success, though one point can't be confirmed from the final page. The page is the cart (/cart, \"Your cart\"), and its table has a \"Blue Mug\" row (quantity 1, $12.00) and a \"Red Mug\" row (quantity 1, $9.50), so both expected outcomes are met. The cart also holds a Green Teapot ($27.00), which the user didn't ask for. The page doesn't show whether it was already in the cart or the agent added it by mistake. Since the user said \"my cart,\" it may have been there before, and its presence doesn't stop either required item from being listed. The agent's \"I completed the task as requested\" is vague, but the page state backs it up."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_019pM6F4tnQESnfN51yiUP3J",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "success",
+      "reasoning": "The final page is the cart (/cart, \"Your cart\"), and its table has a \"Blue Mug\" row (quantity 1, $12.00) and a \"Red Mug\" row (quantity 1, $9.50), so both expected outcomes are met. The cart also holds a Green Teapot ($27.00), which the user didn't ask for. The page doesn't show whether it was already in the cart or the agent added it by mistake. Since the user said \"my cart,\" it may have been there before, and its presence doesn't stop either required item from being listed. The agent's \"I completed the task as requested\" is vague, but the page state backs it up."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1357,
+    "outputTokens": 741,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1353
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

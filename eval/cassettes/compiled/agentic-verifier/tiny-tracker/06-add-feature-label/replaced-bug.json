@@ -1,0 +1,234 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T10:18:58.966Z",
+ "turns": {
+  "sha256:120c85ae395e40e49572f9dd7ffb9aa52e13e5b803f755ea0606fac40494ab1f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_012rAxzQT668yycuQDQAmXit",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_015tiiD7tqjjjKzyBkUC5BEy",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_012rAxzQT668yycuQDQAmXit",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_015tiiD7tqjjjKzyBkUC5BEy",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1879,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1875
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:d103f08dd166f32062dd476d68573a331a3346c6319b093b9d958e550dbd66db": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LAkAo75mSRXT4R8ovip7V2",
+     "name": "network_entry",
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01LAkAo75mSRXT4R8ovip7V2",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2360,
+    "outputTokens": 49,
+    "cacheReadTokens": 1875,
+    "cacheWriteTokens": 483
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:1f09dfa49363eb0495a34cd2620fe7cf08e507c9d8ca4398addcb2959f6ca962": {
+   "stop": "tool_use",
+   "text": "I've checked the server-side record of the issues and the request the agent sent. The agent added the feature label to issue #1 but removed the bug label, so the task wasn't completed as asked.",
+   "toolCalls": [
+    {
+     "id": "toolu_012yByHmGyG82VdrX3ceLvRx",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 has the feature label",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The issues probe shows issue #1 with labels [\"feature\"], and the POST to /issues/1/labels sent labels=feature."
+       },
+       {
+        "requirement": "issue #1 still has the bug label",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Issue #1's labels are now only [\"feature\"] with no bug label. The POST sent labels=feature by itself, which replaced the existing labels."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSwwYKEAgTGAI4AUIIdGhpbmtpbmcSDFfQl4Pda4pLxqrP5hoMu+cmsduklejVjNpcIjAQLU43+jAyIkvHC5UTmDjeYhRi9p3xY+SL9CcAQaRSNJoFly3AOped73xNiFOSiNwq4AWXFOeJPiZCupvonSLtIFqssLevlIjxbqe2uUwePcebWED6CJsQ3Ze9xhPdwSjVcVanRWia0j5J5j/gZD8I9sC7QTy+j9jc1Nrh4AqRyuzBfSsI2gEWE4PFvivB6XtH5d5W7oYKmbmenNSuXNMagszZFx8hk6OFdT5fJMMdvd6g9uA6mSb9hlZWDpDFLqBuC+QnotwSQ3vIWPxoo+cRcrULxHGyp8qKQit3wjidMEXhFPtizvJfcnSZqz3iTNJOVhS++TSgQbsjvemfsiIIapge9xAYuMn+EA0nahGpxm8ZHdQjvLbobgz6aoJIVVZ4cmN9mohq8bN/DIz4JAwR3byKEbRKoDhPi9D2Wrth0o72wFyeQ+GfE/siclnXEwjOSbs4+/4rT16QPbjJGX39rdMKAEFRc2GVTEotMldLa5oO0KwT4JEJsIJlpIStR3B75q+ieDcy92Y2bE0dBSV/gm0ScKHkKion7MTX3+ZYpHqyaeFWSya1+cvKCIqo2rnae93Y8UtX7Ffd08xnKDoOUNJ8ENmEVICvuQ2xJ3SuamvEle88IsaMist/fRBa3meMImWSepXXnUj+w1FqPb8/lpcCamzD1RhJXCcz2kAAwyzJWTZmw6VyPMs8zEV9MUmARuPR2GuLlPH8LWXW8K8yxmTZC5Opqvfm2QGkJlpse5trxGGOjA90QZyuaLejO8Hpqz8E+sQgRIZ0soKDpx0d9N+SaIzlVYZr/GUV9kHk20t/ANmsuBKty111OWP6xBMYzKZ1m6klbp/eOWJ7KSaKNpCk0qcHiBArZQRrXEWS4ejLWAcXjlqCoHbMElyFm0h5lol1Lhu2EN1FtgByJr+/4xc7qVSwHGsxRbiizDw+uMbHXbRb7bBsujCwjLDhecJGwwtPL/SB/uZMJICLRWLaME8PtXkrLB71GbUbsRcZ96XqoWndJX892fKu5k7dTK03rDd4TW5elD/C/qnF08sTAzftGAE="
+    },
+    {
+     "type": "text",
+     "text": "I've checked the server-side record of the issues and the request the agent sent. The agent added the feature label to issue #1 but removed the bug label, so the task wasn't completed as asked."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_012yByHmGyG82VdrX3ceLvRx",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 has the feature label",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The issues probe shows issue #1 with labels [\"feature\"], and the POST to /issues/1/labels sent labels=feature."
+       },
+       {
+        "requirement": "issue #1 still has the bug label",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Issue #1's labels are now only [\"feature\"] with no bug label. The POST sent labels=feature by itself, which replaced the existing labels."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2517,
+    "outputTokens": 348,
+    "cacheReadTokens": 2358,
+    "cacheWriteTokens": 157
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:80a1cd52d63673f8b9c88d55182da26d30b9d5987bfea5c5ad98277b8b82daf5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LVxKyJz9HLHGMJTUs3D9Bh",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The issues probe shows issue #1 with labels [\"feature\"], and the POST to /issues/1/labels sent labels=feature."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Issue #1's labels are now only [\"feature\"] with no bug label. The POST sent labels=feature by itself, which replaced the existing labels."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01LVxKyJz9HLHGMJTUs3D9Bh",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The issues probe shows issue #1 with labels [\"feature\"], and the POST to /issues/1/labels sent labels=feature."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Issue #1's labels are now only [\"feature\"] with no bug label. The POST sent labels=feature by itself, which replaced the existing labels."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2932,
+    "outputTokens": 218,
+    "cacheReadTokens": 2515,
+    "cacheWriteTokens": 415
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

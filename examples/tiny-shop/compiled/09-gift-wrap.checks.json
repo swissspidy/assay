@@ -1,0 +1,138 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/09-gift-wrap",
+  "version": "1",
+  "task": {
+    "instruction": "Check out my cart as a gift: it must be gift wrapped.",
+    "outcomes": "Then the order is gift wrapped"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The order is gift wrapped.",
+      "source": {
+        "field": "outcomes",
+        "quote": "the order is gift wrapped"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The cart is checked out, so an order is placed.",
+      "source": {
+        "field": "instruction",
+        "quote": "Check out my cart"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R2-order-request",
+      "requirement": "R2",
+      "description": "A POST to /api/orders succeeded, placing an order.",
+      "assert": {
+        "kind": "request",
+        "match": {
+          "method": "POST",
+          "url": {
+            "path": "/api/orders"
+          },
+          "status": {
+            "gte": 200,
+            "lt": 300
+          }
+        }
+      }
+    },
+    {
+      "id": "R2-order-placed-probe",
+      "requirement": "R2",
+      "description": "The backend's latest order exists with status placed.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "latestOrder"
+        },
+        "expect": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "id",
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": "placed"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R1-giftwrap-probe",
+      "requirement": "R1",
+      "description": "The backend's latest placed order has giftWrap set to true.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "latestOrder"
+        },
+        "expect": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "giftWrap",
+              "status"
+            ],
+            "properties": {
+              "giftWrap": {
+                "const": true
+              },
+              "status": {
+                "const": "placed"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R1-giftwrap-response",
+      "requirement": "R1",
+      "description": "The last successful order creation response shows giftWrap true.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "response",
+          "match": {
+            "method": "POST",
+            "url": {
+              "path": "/api/orders"
+            },
+            "status": {
+              "gte": 200,
+              "lt": 300
+            }
+          },
+          "pick": "last",
+          "pointer": "/giftWrap"
+        },
+        "expect": {
+          "equals": true
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T10:11:29.804Z"
+  }
+}

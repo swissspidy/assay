@@ -1,0 +1,319 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T10:22:01.735Z",
+ "turns": {
+  "sha256:fbd190475f6e660615eae6701a1ef29c7a0a245f99ff15d58ba6abe67b546a03": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01XxHg5sTbMU6HzMuf4nLPUM",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_016d5Vfma5KrPXQ9hSmLUwX1",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01XxHg5sTbMU6HzMuf4nLPUM",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_016d5Vfma5KrPXQ9hSmLUwX1",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1917,
+    "outputTokens": 48,
+    "cacheReadTokens": 1913,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:1a7e158fd381871f83f5c19f5bbd9a3f9c3a660c9b6d1635457abdf6428990b0": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01VQJosMTEMVgWcciVe8uv6C",
+     "name": "network_entry",
+     "input": {
+      "seq": 2
+     }
+    },
+    {
+     "id": "toolu_01WyjCh2ELLB5cPyaiZ7pmCa",
+     "name": "network_entry",
+     "input": {
+      "seq": 5
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01VQJosMTEMVgWcciVe8uv6C",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 2
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01WyjCh2ELLB5cPyaiZ7pmCa",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 5
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2530,
+    "outputTokens": 95,
+    "cacheReadTokens": 1913,
+    "cacheWriteTokens": 615
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:b0f7c291b48788814894f034e0e1c0b0820b1cfc98b64b89bdaaadfce30c525b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0141iuyEq5CHnKhHCgisnjxw",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Then an event \"Yoga\" exists",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Event id 4 titled \"Yoga\" was created (POST returned 201) and it shows up in the events probe."
+       },
+       {
+        "requirement": "Then the event has a reminder",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The Yoga event has reminder: false in the POST body, the server response and the events probe. No later update turned the reminder on."
+       },
+       {
+        "requirement": "on November 7, 2026",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event's date is 2026-11-07."
+       },
+       {
+        "requirement": "at 08:00",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event's time is 08:00."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_0141iuyEq5CHnKhHCgisnjxw",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Then an event \"Yoga\" exists",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Event id 4 titled \"Yoga\" was created (POST returned 201) and it shows up in the events probe."
+       },
+       {
+        "requirement": "Then the event has a reminder",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The Yoga event has reminder: false in the POST body, the server response and the events probe. No later update turned the reminder on."
+       },
+       {
+        "requirement": "on November 7, 2026",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event's date is 2026-11-07."
+       },
+       {
+        "requirement": "at 08:00",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event's time is 08:00."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3054,
+    "outputTokens": 310,
+    "cacheReadTokens": 2528,
+    "cacheWriteTokens": 524
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:df59e6386c52c4f40d77e10a61c8a595341f36db1b18af6fe009c3b512df9a14": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018U49wS7KSbxvwQ47QfXE7L",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Event id 4 titled \"Yoga\" was created (POST returned 201) and it shows up in the events probe."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The Yoga event has reminder: false in the POST body, the server response and the events probe. No later update turned the reminder on."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event's date is 2026-11-07."
+       },
+       {
+        "requirement": "R4",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event's time is 08:00."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_018U49wS7KSbxvwQ47QfXE7L",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Event id 4 titled \"Yoga\" was created (POST returned 201) and it shows up in the events probe."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The Yoga event has reminder: false in the POST body, the server response and the events probe. No later update turned the reminder on."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event's date is 2026-11-07."
+       },
+       {
+        "requirement": "R4",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event's time is 08:00."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3461,
+    "outputTokens": 298,
+    "cacheReadTokens": 3052,
+    "cacheWriteTokens": 407
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

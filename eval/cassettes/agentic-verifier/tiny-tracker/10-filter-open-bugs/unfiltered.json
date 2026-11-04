@@ -1,0 +1,252 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:43:07.667Z",
+ "turns": {
+  "sha256:84d85efbd16215d23e604f91352a5846c5297daa7414245fb99b3d32f92ac189": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011DVqWPBpCGQBwMQdVwDmz2",
+     "name": "page_outline",
+     "input": {}
+    },
+    {
+     "id": "toolu_013csvGejLETgMKiKH5EPLYz",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01MPbDiZGeeiCjjmHwDTUbHy",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_011DVqWPBpCGQBwMQdVwDmz2",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_013csvGejLETgMKiKH5EPLYz",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01MPbDiZGeeiCjjmHwDTUbHy",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1881,
+    "outputTokens": 72,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1877
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:46d1df21c43dde28ae548fe180263f75e2def741c56f7c8d54357d9a8e40fafa": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01RrbjUnETSPVMf3VifQXxjC",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the list shows only open issues",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Status filter still 'All'; list includes closed issue #3 'Typo in docs'. Only the initial document request was made."
+       },
+       {
+        "requirement": "the list shows only issues labelled bug",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "Label filter still 'Any'; list includes #2 (feature) and #3 (docs)."
+       },
+       {
+        "requirement": "Show me only the open bugs",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The list shows all 3 issues unfiltered rather than only open bug #1; no filter request was issued."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSzQUKEAgTGAI4AUIIdGhpbmtpbmcSDFPpBOyH0fKQQrWWchoMhjYIoR8NA6tYrSm2IjAbNOM+v4UopchcnPRrDMfUQvnnwi9MLdha9EPRH1hWMFmesQ9+wliaTeyr/1JE1SMq6gTb846yMVLp9cK3tMf+Cp2RNbFcD9XyuKNPFEfSmeRYx1qto6msEoiprkwfYDJkSecsqckdKzYYzz1WkdldykMb9moh4BxGWV8zYjLYXYREgudZB7vl/YmsaubxS9oS03xRgtu3aOEtY+F+aIxfLMBuMOpdPU3v7qL9ltLefoPUNK+/XEgGbC1R4LghTJGAxQrSwbmPvy9FKlK8DCvvd65+rynBcZxd5KvSQZZ77M+co412KGR4LaXslRvmDgYz7okUvA8INxXJIb25gqw+oHvqKFDqlyQDurU/ZgvTFwPxTCngqMZ0zBY/0j87NG1BDuaTDoLfIUYnsHhgzVyx5Fcx8GntU3Y5t1ehlnndfC96LGz/3j1cj2ShIR0yAYuG/SkLt4W3d7rsiTz4TfQrlTummM/bBnT7ZMp2I84TEZqx7oQ4SxfAug5xK5NltAtGN3W7QF+x2WjCsifbpMMahHegmEm6uDFU/TAtGwt4eQhqR81Bvd7f43gNev4cRWVO918DkEeX2RaliCRNuhfbP0l73W4tVJD7AMSxwaZRiMANNT2tnCul7ATzwKHs5vBw+Rm5xkp8ohwCELSYqzsxHKdq8Hg+PJ3iCqszAq8lfrMKmXxkqV/Ees/EC+pXr9OmZuGkfWuYTVl41hyEHuBwHJjr+WwuoFQ3hPO7+7SEBy0UVd6SLE4+puJWe9LEtJWy5k1IM5QEYzSKIWezkhQy84pqueSJVPhr+mrdGaQJZggC7x2nFILJUNFDbkgRTBQJktndN/aEUgFnE4EY90qK0hR+stakgam8YhkCSvCpLO0hJ+cfmY4quozD97AYAQ=="
+    },
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSmgwKEQgTGAI4AUIJbmFycmF0aW9uEgxMIYppC4H1KJL2AcMaDFIug8eKkswH9+cBEyIweNdfmm8HUAEKl4j6j5Na8M+agNJY3kbHRcfv8GSOFE9ndTcvQXIYr9zgnX5ZiMeMKrYLrOOCrz3dun8KF6JrYQCqobZ/8LlY9MZ4RqWGPgwA64PN2pJD3imftrZFBTcdAKU3cOh1tlTbkWvEtUwWWj2aEpCt9Sff0cSoVNj40r5MFPx9EGXQxMmagYOmBudnoiSUuzJUlC0190vI4D4/oRdY/CHBj28/YUjaeJXUPXQcOXkjCM4F3yKS7ukRgXBnzU9f0oZo/gh+Q4WwNAsBtEjEDot0ZWSykTFUy54h5UGyyHcf04pe2liCN92RILzUYWpu8vSn2O4lgd0+IJjHwRHHAFY4ziDnbfCkJDXmdBViL+FHi2sLhd1ZLO2rZhRLViUVKizFmZ7M7rtEciNJxDxlwrJAHbjDIoDbHGDDBRX06XHq1UEnfHkPBhGx5QLSVLgnaAC84sXdo998NQ5d2d4SirpaHb4vtmJgua0bc3/Lv25sDTfD5tmnNpi8WVj/xNR3vCnfg/hSaaQuL/BXMLQdV8oYuDxe6PS5qhJWK6lVPBLA47vZFFOoM9AP6kgB4uD0Gv0CVT/mQJbj3O2myBKukI/PRTmnWNoRuffWN+Qr1Z9pmwy419mxSCunYxU71KGtTs3LKMy2y1J4A4IqNgHWvlBUkchjYDd8PYbIFbU1WbdJM94nkTpOKmP+8Pf+RqkScZHNi7f7Rstpg2OinbsC0wwJksY0A+xK3ACey2+TES+WYxUHceX2FvktFARWcdIIThl6HEGvOrGGKu55OAjwLK/o2Ds6t66me+fZq5n1vAAzT4SHuniDvavb/fSyaqMJQiVTvscKmYimI/fXU+Vvje1zdUIihsU5/cNcG+H9njiZtfM52gla2ExBzjtG86ONnpvBcrMWT9Bvo1WbQcP1MV3lDqt7jp1fdsss42EzqpAbEmTHuNDueJaqlLVFyOj3TxUaun7zPjkcVk1OuPBiFKEXhTDkB86zAKnrrlrnrr4uloDh5SfQvPDevoZ+5iZpSNdrjGihGlxYpo9nDRgHemz1/MjYzltZOAyCOOas3WbQnO0tjbaiW1wa1NdlfbbUDjCHdHJnacXdBBxgZvs5iu0NYuF/cQeb18OoP1jxPN8vRaJYmDXBxM0xS7B0iDoVLnLT8nwDo+3WzvruFvMiXRN8mjuvSnpi+gDi3AcYHpmzzp90NKQyyCgzWLbeV+vioLbHWO/x7ActecKXuQbeqbmxY/cpsLDr21UIYazaUgOuXdwuAFprvAZEcaBK8tGKRXJV4gtpqWi6gL7T/qHzbDSvUXYJNqYo7waSDglTpauZm14a4l6PQXqdYZlpUUJ1SMflx3HvqdnSa/4WqzO/s32M1ZVZ8WcJWdUsGm9j/+QlYUK0nvt3d28BI5JhcauzNDlsT1uFo1pS/8mJTwhylnVr7URM6xMj9dk4/X+X6pBi+/hQvyt/LN6lPH0ezj+GO1e3CKfMJbybDgKokZyq1wjzjti31BVs3f/rbWVdpbeLQN1ePox8iNow25ZFAEVw4MP+qeiH21LiXW+W6Iju/NP0veZ1781I5mHOQOLX9rTJ5BRBZD2J5snMFFUtlHwUEYZ1/dJBwSwWtEyGgcWzNib4mJWyu9CyxByiUa0mR6CIU6Vcoao1ykZgLr+Yi1lHrJsiH9KlzgARERTAEswotUFywECGyzVv4iYSqgm+bn0UIuqXmV4s+bdjNRUj7LPMQmQbufOXRqGln4gbmOrBKNmssso1bWgyCJv4gsvl+Fn+iHaMmy51AwcFGVEipODNYPlm+MBJbrydx3ZcYf2eFUAMaRJzBLLhSwS7cb+0LfPBfAZYkqFvRbecIRBfW6N4QTEDJICiu3jTJ0Y0Cp/CN2BBVPO/MekXd1AysqTO0xxIroZsNWXKSVKUSOyVI98ZIN3KwdzMjpaEbxrUK0xGSzpo2LSuQ3w7NVCGDUaRTq/ytTM1bgJtb1/YDGYHIeDcQuZuZik4RYxc78g0E6qTUOGZXGW9yBgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01RrbjUnETSPVMf3VifQXxjC",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the list shows only open issues",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Status filter still 'All'; list includes closed issue #3 'Typo in docs'. Only the initial document request was made."
+       },
+       {
+        "requirement": "the list shows only issues labelled bug",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "Label filter still 'Any'; list includes #2 (feature) and #3 (docs)."
+       },
+       {
+        "requirement": "Show me only the open bugs",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The list shows all 3 issues unfiltered rather than only open bug #1; no filter request was issued."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3034,
+    "outputTokens": 592,
+    "cacheReadTokens": 1877,
+    "cacheWriteTokens": 1155
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:7e135ebea1e650bda2d502bcef37ef43fe22ca69c4e3466db7948ed33136e2e9": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_013Qpw4rfj54afDt9bgACJz6",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Status filter still 'All'; list includes closed issue #3 'Typo in docs'. Only the initial document request was made."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "Label filter still 'Any'; list includes #2 (feature) and #3 (docs)."
+       },
+       {
+        "requirement": "R3",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The list shows all 3 issues unfiltered rather than only open bug #1; no filter request was issued."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_013Qpw4rfj54afDt9bgACJz6",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Status filter still 'All'; list includes closed issue #3 'Typo in docs'. Only the initial document request was made."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "Label filter still 'Any'; list includes #2 (feature) and #3 (docs)."
+       },
+       {
+        "requirement": "R3",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The list shows all 3 issues unfiltered rather than only open bug #1; no filter request was issued."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3709,
+    "outputTokens": 263,
+    "cacheReadTokens": 3032,
+    "cacheWriteTokens": 675
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

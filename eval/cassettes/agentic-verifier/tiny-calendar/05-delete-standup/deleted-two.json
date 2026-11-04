@@ -1,0 +1,180 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:45:34.945Z",
+ "turns": {
+  "sha256:de0405a7cd134499e0d2ca69afbcb828baaa855bda89c50eca87af74d676081d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_012FnzgG1T8JQGFv1bHRhfuu",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01Gpjsce6BTgk9mPbYtVx9NS",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_012FnzgG1T8JQGFv1bHRhfuu",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Gpjsce6BTgk9mPbYtVx9NS",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1856,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1852
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:f295284ca15b55bf053856a25e3f99d0095a86c4e43092165fbb63f06a25fa09": {
+   "stop": "tool_use",
+   "text": "Two deletes. Let me check which was Team standup.",
+   "toolCalls": [
+    {
+     "id": "toolu_01YbVxoh9WU5efuQQywhSQdy",
+     "name": "network_entry",
+     "input": {
+      "seq": 2
+     }
+    },
+    {
+     "id": "toolu_01K54F3SbSS3WEVuQ2xkhSHa",
+     "name": "network_entry",
+     "input": {
+      "seq": 16
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "text",
+     "text": "Two deletes. Let me check which was Team standup."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01YbVxoh9WU5efuQQywhSQdy",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 2
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01K54F3SbSS3WEVuQ2xkhSHa",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 16
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2500,
+    "outputTokens": 113,
+    "cacheReadTokens": 1852,
+    "cacheWriteTokens": 646
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:aeb5b845b4611fa831abda07eef2031a360253a4f64c9d973635e763b5aca955": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KrVnLXSxnYxFQZSnZN94Gj",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "Team standup was id 1 (observation 3). The agent sent DELETE /api/events/1 (observation 2), and the final events probe no longer lists it (observation 1)."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "Dentist (id 2) was deleted as well: DELETE /api/events/2 returned deleted:2 (observation 4). The final probe shows only Book club left (observation 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01KrVnLXSxnYxFQZSnZN94Gj",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "Team standup was id 1 (observation 3). The agent sent DELETE /api/events/1 (observation 2), and the final events probe no longer lists it (observation 1)."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "Dentist (id 2) was deleted as well: DELETE /api/events/2 returned deleted:2 (observation 4). The final probe shows only Book club left (observation 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3095,
+    "outputTokens": 237,
+    "cacheReadTokens": 2498,
+    "cacheWriteTokens": 595
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

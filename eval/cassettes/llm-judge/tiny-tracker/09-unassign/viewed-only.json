@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:28:15.008Z",
+ "turns": {
+  "sha256:cdd8645a4692d0500a7be4befb8678960115a712c979677d4c90f27838f8fef2": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01AWVFS7w327WekbVTYMf1C5",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to make issue #2 unassigned, and the final page shows it is still assigned. The issue details list \"Assignee: alice\", and in the Assignee form the dropdown still has \"alice\" selected, not \"Unassigned\". Nothing on the page shows the assignee was changed and saved, so the agent's claim that it finished the task doesn't match what the page shows."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01AWVFS7w327WekbVTYMf1C5",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to make issue #2 unassigned, and the final page shows it is still assigned. The issue details list \"Assignee: alice\", and in the Assignee form the dropdown still has \"alice\" selected, not \"Unassigned\". Nothing on the page shows the assignee was changed and saved, so the agent's claim that it finished the task doesn't match what the page shows."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1259,
+    "outputTokens": 192,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1255
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

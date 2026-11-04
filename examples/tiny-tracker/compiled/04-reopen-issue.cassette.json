@@ -1,0 +1,236 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T10:09:55.735Z",
+ "turns": {
+  "sha256:634cb3e747b8d36f92560ff5c66b078610448de11c8e7c1de9bd6ca84a273b4b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018gAfmFnta6h8BKNDzZfmgm",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "Issue #3 is in the open state again.",
+        "field": "outcomes",
+        "quote": "issue #3 is open again"
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_018gAfmFnta6h8BKNDzZfmgm",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "Issue #3 is in the open state again.",
+        "field": "outcomes",
+        "quote": "issue #3 is open again"
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1095,
+    "outputTokens": 107,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1091
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:2884c78bb0c8fde79dc9c8c77abdefe4cb017a61c04c0ff7a1db159277c8199c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_016goWKtKRfvrbsiJnEvw9vL",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_015QqJkPDsKu4tTNYKsT46QQ",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_016goWKtKRfvrbsiJnEvw9vL",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_015QqJkPDsKu4tTNYKsT46QQ",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 13933,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 13929
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:e30428bfd67dfb7569349d3dd9ab3d987e4e9cc4ccd05f9a23bdb2c95a6d0794": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01G49jS9Tb22nrCrddmHsnha",
+     "name": "network_entry",
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01G49jS9Tb22nrCrddmHsnha",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 14398,
+    "outputTokens": 49,
+    "cacheReadTokens": 13929,
+    "cacheWriteTokens": 467
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:d34b7f21cdc554ff9bd442e0d19c341cc0a2c7aa47f6a18a7b6991fb583fe572": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01GE4NrwXwV3w8kkMXfSj8ax",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "issue3-open-probe",
+        "requirement": "R1",
+        "description": "The backend issues probe shows issue #3 with status 'open'.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "status"
+            ],
+            "properties": {
+             "id": {
+              "const": 3
+             },
+             "status": {
+              "const": "open"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS3wUKEAgTGAI4AUIIdGhpbmtpbmcSDJqRtUlmsU8lO9iXGRoMg8Lb7stIpkwqaZ+uIjALpusovjdMLMngh2y0WA8yJ6Ui3gepxL6C+uAY8NaDof888dhQiDzo3iZgqZJ+8DUq/AQJLTVsZlDnwXYV95O7R5ODDIwhanJaAOKtBGBQnOdgjEOedWeeLGyafej7lDqKaTBTRtP4Npv6tPs0oShr7Zx7aiC2XI7Medc4ZlzhLihAXGikpg8sJ9ryCESih8iFvKnHufUV9SbQyAYSKRuzeRMG8p6Wwj4c2Ptk0PfvsuHHsTf5S2Cp3OhGALhegZms4f3/SKh2aBmvZeMKMzCJahjnBp8VcbSI5e0n9C+/ybXLd5myYX9YaJk0MQJlwDYckxmBEaRSduM9fVhv6X0GeM7USoytgVmb3KKaD9PaXryAboGHeB3WOQdVPVAF8rB058WZLoK/o3mRpwI1jwhAkrddvDt3mw7pSGT8+8tejoK/Grn8eZ56wR0IQRaCg/Tv6OT2xUmO8JXR3LHbNUCXkPiaV1nMYkcpYUaoYcngZu6Hg2EL+dQf06aHIbdNcBc2vEEGlnKq2cc0h6uSGc70eN1Abc2aY9N/IEGifwS4Sdte8qegDBeUqlMUTCRqEfWCgdGU7N0t5OmbI8bWYEgj6REXleDbP7Dmu7qr+WLWKQaQ3MdNGjYwO2D3ncSFjX0y6WaG6MgM7hEnl3Ix/7e/qD96SX+jBHtzcTaXeNsS2aV4Q4+ebT08jLJElaa4HngCk7XGsBkaYDRMC94VHrZW04M51vkCmoNCxnZqmTwpHg7ItuykfC92/IWPAyEc5oM0TvRmbkA3DQUHe3m+srTW9OlmLGpMRTgEi3cxjw33ZPXsouUnzdF1tMliau7hkYqAhAG1iJTYxTznVB/3QVEgAUvYCyYdviouzPSdHGVPbM4kCF5RY4SaRE4zhHh4UJJL9Qnu6V5yraBWXe3E+9MYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01GE4NrwXwV3w8kkMXfSj8ax",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "issue3-open-probe",
+        "requirement": "R1",
+        "description": "The backend issues probe shows issue #3 with status 'open'.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "status"
+            ],
+            "properties": {
+             "id": {
+              "const": 3
+             },
+             "status": {
+              "const": "open"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 14545,
+    "outputTokens": 221,
+    "cacheReadTokens": 14396,
+    "cacheWriteTokens": 147
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

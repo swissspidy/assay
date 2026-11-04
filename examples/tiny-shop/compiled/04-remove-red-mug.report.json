@@ -1,0 +1,52 @@
+{
+  "task": "tiny-shop/04-remove-red-mug",
+  "status": "compiled",
+  "model": "anthropic:claude-opus-5-5@high",
+  "modelsUsed": [
+    "claude-opus-5-5"
+  ],
+  "turns": {
+    "rubric": 1,
+    "discovery": 3
+  },
+  "usage": {
+    "inputTokens": 45636,
+    "outputTokens": 1281,
+    "cacheReadTokens": 28959,
+    "cacheWriteTokens": 16665
+  },
+  "coverage": [
+    {
+      "requirement": "R1",
+      "quote": "the cart no longer contains a Red Mug",
+      "checks": [
+        "r1-probe-no-red-mug",
+        "r1-ui-no-red-mug-row"
+      ],
+      "channels": [
+        "probe",
+        "a11y"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R2",
+      "quote": "the other items stay in the cart",
+      "checks": [
+        "r2-probe-blue-mug-kept"
+      ],
+      "channels": [
+        "probe"
+      ],
+      "trust": "structured"
+    }
+  ],
+  "warnings": [],
+  "references": [
+    {
+      "name": "removed-red-mug",
+      "kind": "success",
+      "verdict": "success"
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-calendar/01-lunch",
+  "version": "1",
+  "task": {
+    "instruction": "Add \"Lunch with Sam\" to my calendar on November 5, 2026 at 12:30.",
+    "outcomes": "Then an event \"Lunch with Sam\" exists on November 5, 2026 at 12:30\nThen the event page shows the date November 5, 2026"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "An event named \"Lunch with Sam\" exists on November 5, 2026 at 12:30.",
+      "source": {
+        "field": "outcomes",
+        "quote": "an event \"Lunch with Sam\" exists on November 5, 2026 at 12:30"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The event page displays the date November 5, 2026.",
+      "source": {
+        "field": "outcomes",
+        "quote": "the event page shows the date November 5, 2026"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-event-stored",
+      "requirement": "R1",
+      "description": "The backend events list contains an event titled \"Lunch with Sam\" on 2026-11-05 at 12:30.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "events"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "title",
+                "date",
+                "time"
+              ],
+              "properties": {
+                "title": {
+                  "const": "Lunch with Sam"
+                },
+                "date": {
+                  "const": "2026-11-05"
+                },
+                "time": {
+                  "pattern": "^12:30"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R2-event-page-date",
+      "requirement": "R2",
+      "description": "The browser is on an event page whose details show the date November 5, 2026.",
+      "assert": {
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "url",
+            "match": {
+              "path": "/events/*"
+            }
+          },
+          {
+            "kind": "contains",
+            "scope": {
+              "role": "main"
+            },
+            "match": {
+              "role": "definition",
+              "text": {
+                "regex": "(November|Nov\\.?)\\s+0?5(th)?,?\\s+2026|0?5(th)?\\s+(of\\s+)?(November|Nov\\.?),?\\s+2026|2026-11-05|11/0?5/2026",
+                "flags": "i"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T10:09:26.856Z"
+  }
+}

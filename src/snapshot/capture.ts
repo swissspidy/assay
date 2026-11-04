@@ -11,10 +11,10 @@ import {
 } from '../types.ts';
 import { parseAriaSnapshot } from './aria.ts';
 import { randomUUID } from 'node:crypto';
-import { createRequire } from 'node:module';
+import { ASSAY_VERSION } from '../version.ts';
 
-/** Names the capturing package and its version (from package.json, so a release bump keeps it current). */
-export const CAPTURER = `assay/${(createRequire(import.meta.url)('../../package.json') as { version: string }).version}`;
+/** Names the capturing package and its version. */
+export const CAPTURER = ASSAY_VERSION;
 
 const KEEP_REQUEST_HEADERS = ['content-type', 'accept'];
 const KEEP_RESPONSE_HEADERS = ['content-type', 'location'];

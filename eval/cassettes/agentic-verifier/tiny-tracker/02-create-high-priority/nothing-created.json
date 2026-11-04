@@ -1,0 +1,230 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:38:28.759Z",
+ "turns": {
+  "sha256:827746628235c005d7ee0fdeb05c5b39d294ccf860a9462ed21e92b0a87b20cb": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CEwTWC2uQEWb99T7s3Ufvr",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01QWt3WtG9qte6iwbbkrc68Z",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01CEwTWC2uQEWb99T7s3Ufvr",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01QWt3WtG9qte6iwbbkrc68Z",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1862,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1858
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:732bd645dd373c2ead987e485b868c34b5dbc56932b5a46d3500c7a99dcddd2a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01WkS3BTtR46RfNaZ2VKTDPV",
+     "name": "find_nodes",
+     "input": {
+      "text": "CSV"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSowUKEAgTGAI4AUIIdGhpbmtpbmcSDFq0eysb7TMmt3Y0phoMK+vzqqGR4oDu+FSkIjAdwzDMtpC8ES9Gy/QK22BN0dVM3enggugMrrh6/YJ3o+bgX4on0qoCqJJMISqW9okqwASTUi448sOcLVPx6Y9d0GXXt4VQiB7LeBDCiHcYfNNIK3SwWVgQVxc6VQwSY7saP8WhgWvRaI622i8X12cNuIKlDCIrIob4p+wkBRDWuKR3g/CDk/glAyh60EFvDqhtimzvrlcs9s9Qo8Kk27RXZwRyKUsHhP0nKU9y1dc8EGikUyjaO35pMyWw6DXNCzee+RVd2sXLNJ1VL5fZgRgf6wXKTZ/zvOmoYEg0M4vKqsfQ6WqOOzLUyrf5Ie4ps/oflzqLXSvqrfe5KUC6izWPYhg5NCrAY4Az0X8qecXgsMOHZlOHXa293AD45kutezWGGqOm+Tx6QCP2sqRf2MP1eCNxQVXG2uXQ/UdRiMFnvKfWYgy9gNN1r9nQVJDMPFY3/zE0EQItIYCLGnjm/hxk4IubZ0uaF/RuqaUoPbMdGHOJyuo/nfwX62HOlazLsp8vwnKQGvHVKSB4M6xU1J/6WSYtXxGhSoR824KwJIX6xUeQbuQh1s2MDBkiAZUFsQkPamySrlce4WAOX0Y1l6iSGVtUrq0ENyxgI4yLzCSs15bFb9uLl8SNc9Lb7oUMnPiv+0KRPgKfN1AU8j7ZtUpYY4x84if+us5Zo6f7bpMAld4owsrwaj1/7M6IvT6atKBvKM9Rqpxd/kUD/Lx4wIDxqZa2e01klKEMiVPq3dR9NVYbHmx0uEe/1/Hih52u+mUNfZTm5LxH1Q0OLPVqE2Ey19Z58QVO5CaiPktOuv12jCZDRSW89mY1zDzqNm1AZPw2s6gYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01WkS3BTtR46RfNaZ2VKTDPV",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "text": "CSV"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2280,
+    "outputTokens": 65,
+    "cacheReadTokens": 1858,
+    "cacheWriteTokens": 420
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:7014f34c069ba755dfcf872f408ed3571b4258bcde650c64bd560d121e47fec4": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01XFTZMapmMtrt4yPsgbKQL2",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "an issue \"Add CSV export\" exists",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The issues probe shows only three issues: Login button misaligned, Add dark mode, and Typo in docs. None is called \"Add CSV export\". The network log has just one GET and no create request, and the page has no text matching \"CSV\"."
+       },
+       {
+        "requirement": "its priority is high",
+        "status": "fail",
+        "cites": [
+         1
+        ],
+        "reasoning": "No \"Add CSV export\" issue exists, so it cannot have high priority. None of the stored issues has high priority."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01XFTZMapmMtrt4yPsgbKQL2",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "an issue \"Add CSV export\" exists",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The issues probe shows only three issues: Login button misaligned, Add dark mode, and Typo in docs. None is called \"Add CSV export\". The network log has just one GET and no create request, and the page has no text matching \"CSV\"."
+       },
+       {
+        "requirement": "its priority is high",
+        "status": "fail",
+        "cites": [
+         1
+        ],
+        "reasoning": "No \"Add CSV export\" issue exists, so it cannot have high priority. None of the stored issues has high priority."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2364,
+    "outputTokens": 249,
+    "cacheReadTokens": 2278,
+    "cacheWriteTokens": 84
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:5f32fd597663eff504a4982bab6ce2d5bde2ef23d65a5363c093b9cccf61e0ca": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01UTtWHVS5r6iogyjR99pNnL",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The issues probe shows only three issues: Login button misaligned, Add dark mode, and Typo in docs. None is called \"Add CSV export\". The network log has just one GET and no create request, and the page has no text matching \"CSV\"."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1
+        ],
+        "reasoning": "No \"Add CSV export\" issue exists, so it cannot have high priority. None of the stored issues has high priority."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01UTtWHVS5r6iogyjR99pNnL",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The issues probe shows only three issues: Login button misaligned, Add dark mode, and Typo in docs. None is called \"Add CSV export\". The network log has just one GET and no create request, and the page has no text matching \"CSV\"."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1
+        ],
+        "reasoning": "No \"Add CSV export\" issue exists, so it cannot have high priority. None of the stored issues has high priority."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2677,
+    "outputTokens": 240,
+    "cacheReadTokens": 2362,
+    "cacheWriteTokens": 313
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

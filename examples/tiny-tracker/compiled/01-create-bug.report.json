@@ -1,0 +1,51 @@
+{
+  "task": "tiny-tracker/01-create-bug",
+  "status": "compiled",
+  "model": "anthropic:claude-opus-5-5@high",
+  "modelsUsed": [
+    "claude-opus-5-5"
+  ],
+  "turns": {
+    "rubric": 1,
+    "discovery": 3
+  },
+  "usage": {
+    "inputTokens": 44712,
+    "outputTokens": 1029,
+    "cacheReadTokens": 28652,
+    "cacheWriteTokens": 16048
+  },
+  "coverage": [
+    {
+      "requirement": "R1",
+      "quote": "a new issue titled \"Checkout fails on Safari\" exists",
+      "checks": [
+        "R1-issue-exists"
+      ],
+      "channels": [
+        "probe",
+        "network"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R2",
+      "quote": "the new issue has the bug label",
+      "checks": [
+        "R2-bug-label"
+      ],
+      "channels": [
+        "probe"
+      ],
+      "trust": "structured"
+    }
+  ],
+  "warnings": [],
+  "references": [
+    {
+      "name": "created-with-bug-label",
+      "kind": "success",
+      "verdict": "success"
+    }
+  ]
+}

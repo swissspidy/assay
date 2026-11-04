@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:30:39.466Z",
+ "turns": {
+  "sha256:5353d0718510aca6e20a17f5e654db8d27c84dc90ac601a5d199d7934d090773": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_013wPW9DhRsq9B4KE56MUdkh",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The edit form's Location textbox holds \"City Library\", but the saved event details still show \"Location: Corner Cafe\", and the status region is empty with no confirmation that anything was saved. It looks like the agent typed the new value but never submitted it with \"Save changes\", or the save didn't go through. Book club is still set at Corner Cafe, so the change wasn't made, and the agent's claim that it finished is wrong."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_013wPW9DhRsq9B4KE56MUdkh",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The edit form's Location textbox holds \"City Library\", but the saved event details still show \"Location: Corner Cafe\", and the status region is empty with no confirmation that anything was saved. It looks like the agent typed the new value but never submitted it with \"Save changes\", or the save didn't go through. Book club is still set at Corner Cafe, so the change wasn't made, and the agent's claim that it finished is wrong."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1209,
+    "outputTokens": 207,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1205
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

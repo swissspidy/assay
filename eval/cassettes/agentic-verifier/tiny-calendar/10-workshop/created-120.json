@@ -1,0 +1,261 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:48:24.073Z",
+ "turns": {
+  "sha256:3789ac8319dd467513374253f7208be868ed39fece407a218064e3e76970ddb7": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01TcMNir1iPsP9ybwpX6rfYs",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01GMB5DkCLU7bqW4yGvP3J5A",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01TcMNir1iPsP9ybwpX6rfYs",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01GMB5DkCLU7bqW4yGvP3J5A",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1915,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1911
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:1c553686811e05a5735c93805ed58d82155be01e041fd57b4db67e50e5fbc78c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Ec8bXkTdSxifXS1CtKb6WM",
+     "name": "network_entry",
+     "input": {
+      "seq": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Ec8bXkTdSxifXS1CtKb6WM",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 2
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2528,
+    "outputTokens": 49,
+    "cacheReadTokens": 1911,
+    "cacheWriteTokens": 615
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:71a3f9e99895c3bf038471adefb3297c06cb185c35305857e97c9d42062fdac1": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01TiWm2iygehNdFuWja4q1kd",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "an event \"Workshop\" exists",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The events probe shows event id 4 titled \"Workshop\", and the server answered the POST with 201."
+       },
+       {
+        "requirement": "the workshop lasts 90 minutes",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The Workshop was saved with duration 120, not 90. This shows in both the POST body and the stored event."
+       },
+       {
+        "requirement": "on November 12, 2026 at 10:00",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored event has date 2026-11-12 and time 10:00."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01TiWm2iygehNdFuWja4q1kd",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "an event \"Workshop\" exists",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The events probe shows event id 4 titled \"Workshop\", and the server answered the POST with 201."
+       },
+       {
+        "requirement": "the workshop lasts 90 minutes",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The Workshop was saved with duration 120, not 90. This shows in both the POST body and the stored event."
+       },
+       {
+        "requirement": "on November 12, 2026 at 10:00",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored event has date 2026-11-12 and time 10:00."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2800,
+    "outputTokens": 270,
+    "cacheReadTokens": 2526,
+    "cacheWriteTokens": 272
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:cf94c4f159b44eebbd10454e4a495c6a04cb78fe278f73e8560f009cda66c04f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Jusm8UEixMt68MuHeEoBbm",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The events probe shows event id 4 titled \"Workshop\", and the server answered the POST with 201."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The Workshop was saved with duration 120, not 90. This shows in both the POST body and the stored event."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored event has date 2026-11-12 and time 10:00."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Jusm8UEixMt68MuHeEoBbm",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The events probe shows event id 4 titled \"Workshop\", and the server answered the POST with 201."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The Workshop was saved with duration 120, not 90. This shows in both the POST body and the stored event."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored event has date 2026-11-12 and time 10:00."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3161,
+    "outputTokens": 248,
+    "cacheReadTokens": 2798,
+    "cacheWriteTokens": 361
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

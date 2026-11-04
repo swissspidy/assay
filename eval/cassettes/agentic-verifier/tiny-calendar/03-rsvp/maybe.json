@@ -1,0 +1,154 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:44:52.685Z",
+ "turns": {
+  "sha256:88b2a209d7f48d213d524821f6785b76b9c04d825823e17c3cb307b4b1e0a698": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011X5c1Zw41iPzGstYBaJu6x",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01MUq97SeVfeF1poEhnGEe2x",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_011X5c1Zw41iPzGstYBaJu6x",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01MUq97SeVfeF1poEhnGEe2x",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1833,
+    "outputTokens": 48,
+    "cacheReadTokens": 1829,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:b2eba524ca5769bea2fb9af6a35fb75074fbce3bf60a89f96deee92a6711b7e6": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017qU67bQCPdyWZJMbaBgXbd",
+     "name": "network_entry",
+     "input": {
+      "seq": 6
+     }
+    },
+    {
+     "id": "toolu_01A26MvfYka3BaREKHBe3x5b",
+     "name": "find_nodes",
+     "input": {
+      "text": "rsvp"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_017qU67bQCPdyWZJMbaBgXbd",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 6
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01A26MvfYka3BaREKHBe3x5b",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "text": "rsvp"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2404,
+    "outputTokens": 98,
+    "cacheReadTokens": 1829,
+    "cacheWriteTokens": 573
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:51973e1fcb6de8bb4acc4f694df65270c01606ecae97be9f925ec1de56b77ec3": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01VQ5txs6Zi8NSCzgisTwUGq",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server got PUT /api/events/3/rsvp with body {\"rsvp\":\"maybe\"} and stored rsvp \"maybe\". The events probe also shows rsvp \"maybe\" for Book club, not going/yes."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01VQ5txs6Zi8NSCzgisTwUGq",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server got PUT /api/events/3/rsvp with body {\"rsvp\":\"maybe\"} and stored rsvp \"maybe\". The events probe also shows rsvp \"maybe\" for Book club, not going/yes."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2928,
+    "outputTokens": 165,
+    "cacheReadTokens": 2402,
+    "cacheWriteTokens": 524
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

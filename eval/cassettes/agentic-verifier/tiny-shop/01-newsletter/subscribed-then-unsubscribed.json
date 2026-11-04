@@ -1,0 +1,289 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:32:06.771Z",
+ "turns": {
+  "sha256:4fbf9187e62c7dceeb05b1618985f67f0122b852790f67d94cd23d9716fb95cd": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KmTNnd6ixosJxqnqjN9ymf",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01QLCdqPQraJwqMFUETaN9Lw",
+     "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_01C4cVp46dCq2Lu9bFoCqiaV",
+     "name": "find_nodes",
+     "input": {
+      "name": "newsletter"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01KmTNnd6ixosJxqnqjN9ymf",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01QLCdqPQraJwqMFUETaN9Lw",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01C4cVp46dCq2Lu9bFoCqiaV",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "name": "newsletter"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1890,
+    "outputTokens": 97,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1886
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:800b22f3c245356ef12553356c3a7902740ce758ed80fce54f29eb08015987d6": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01JCweDtXVLbbffZjZHcSYGC",
+     "name": "network_entry",
+     "input": {
+      "seq": 3
+     }
+    },
+    {
+     "id": "toolu_01Hezf52YSYuTvjTZwW5EQkr",
+     "name": "network_entry",
+     "input": {
+      "seq": 4
+     }
+    },
+    {
+     "id": "toolu_01PGZqfkvxq3DEyYcZ18qns4",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01JCweDtXVLbbffZjZHcSYGC",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 3
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Hezf52YSYuTvjTZwW5EQkr",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 4
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01PGZqfkvxq3DEyYcZ18qns4",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 2361,
+    "outputTokens": 119,
+    "cacheReadTokens": 1886,
+    "cacheWriteTokens": 473
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:45e77cb1fcbd5956aa81c1b3c45f58d491b38fa33f7258fd97a74396170ea751": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01UcgNGqG9SuQXBJKL5AYDP3",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the newsletter subscription is saved",
+        "status": "fail",
+        "cites": [
+         1,
+         4,
+         5
+        ],
+        "reasoning": "Although PUT #3 set newsletter:true, a subsequent PUT #4 set newsletter:false, and the settings probe shows newsletter:false at capture time."
+       },
+       {
+        "requirement": "the newsletter checkbox in the preferences is checked",
+        "status": "fail",
+        "cites": [
+         3,
+         6
+        ],
+        "reasoning": "The 'Email me the newsletter' checkbox appears without a checked state in the final accessibility tree (other controls show state like [selected]), consistent with the server's newsletter:false."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSnAYKEAgTGAI4AUIIdGhpbmtpbmcSDDIX8WMHg3lKJVcVERoMvcQl392z6GtpuMepIjCIdOVFy0RQ/iAdyozcdiyAA8+IfmtMLOPOH94973VhctBdtKaADVunZ+82i0grGH0quQWRatU6AFmCNP0gqkrjr09ywOG84GNs2OTJpAqDktyLLSeJrU9CXZ/jllZaVIC9EBFOABM98t4iGEquxNsiE8bMZiQyjkNPc+0BMMSB+9yTWLKjcMBxkO+8W4elec0BHx4sHHGXrC1LhhFfTTMZH+6vBrMi0B2m0rR6LGg8do53oi5Y6Pq381sp3LjmUFEJ6PbwvMwfkdkfLox5EqF7hpXaWxph7XhRdaQHLlUL2iCJlvX/wqW3RpeUQPok30VGHRm3z9kUfj9rNvxOVYn21pTTRlgfCFpCYkQgC+kiqxV5I/f+NfjXcJ8OXOCfJyVXikzMSWNKoLfe4lHsgZnKEKrrs9m4fezoje0zcCK+scxZxjMGRDwfUW9in2ObFaZwIewEmKAAEe+KL/nRGzxMzYcLG6peWW8lcXPUtKRcvxqskWqXiLewcumwVPFNKoolTkJG36XSVpUOq+vQNZNNVwcKGxhhuN8IZ2aEE16N5JKA3pjvgT46BAUVuO5Zh6BFaXOIilQ77r3a7hltr/xON72g8ByzD8HhnBpTBrj8L9xDZ2x9Gj8Y1E0sNx2RzJp8kjj1My8spvqUKnsGEU8F4u+HbjJjIZsGj2jtRbhnp2coNDO+T+xt8M9C/+tpTaqdh5rFZNKtI3NpBLOQtJCNWsCCUUKOHCeKtDDSrGhXXQlZhJyg3QsB9UnJ/3CCCBw4JSKDkyepsKZLhojN8myLIod3OyNOtBDuxHI2x2/idSAXuGqdlBUZSaN6Dtcz61CrN8oR2Op725UtM4Rvk194gXPueJz9WuLcYB9zoqJUB9EnbTRyZ911EKtMaaki3+DBLvtK3IqpOuDWvsWrAeW5jz+zLZlYFpnp/MHAmDjxKwc0o2A5FKdBV/88YFjmetDQPa652SwGC+x6bmgYmcrs6xZOYTjzRHXg0TmIGAE="
+    },
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "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"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01UcgNGqG9SuQXBJKL5AYDP3",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the newsletter subscription is saved",
+        "status": "fail",
+        "cites": [
+         1,
+         4,
+         5
+        ],
+        "reasoning": "Although PUT #3 set newsletter:true, a subsequent PUT #4 set newsletter:false, and the settings probe shows newsletter:false at capture time."
+       },
+       {
+        "requirement": "the newsletter checkbox in the preferences is checked",
+        "status": "fail",
+        "cites": [
+         3,
+         6
+        ],
+        "reasoning": "The 'Email me the newsletter' checkbox appears without a checked state in the final accessibility tree (other controls show state like [selected]), consistent with the server's newsletter:false."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3098,
+    "outputTokens": 564,
+    "cacheReadTokens": 2359,
+    "cacheWriteTokens": 737
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:ea25c871646e3edacfe2fd10706bd6cf03750e932a85af478b1c141c4a15c61a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Kb3tbJzjE2MzrM5ykqQYw1",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         4,
+         5
+        ],
+        "reasoning": "Although PUT #3 set newsletter:true, a subsequent PUT #4 set newsletter:false, and the settings probe shows newsletter:false at capture time."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         3,
+         6
+        ],
+        "reasoning": "The 'Email me the newsletter' checkbox appears without a checked state in the final accessibility tree (other controls show state like [selected]), consistent with the server's newsletter:false."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Kb3tbJzjE2MzrM5ykqQYw1",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         4,
+         5
+        ],
+        "reasoning": "Although PUT #3 set newsletter:true, a subsequent PUT #4 set newsletter:false, and the settings probe shows newsletter:false at capture time."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         3,
+         6
+        ],
+        "reasoning": "The 'Email me the newsletter' checkbox appears without a checked state in the final accessibility tree (other controls show state like [selected]), consistent with the server's newsletter:false."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3737,
+    "outputTokens": 240,
+    "cacheReadTokens": 3096,
+    "cacheWriteTokens": 639
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

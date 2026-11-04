@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:28:41.681Z",
+ "turns": {
+  "sha256:1f06973ee199e04008f11c7ccca1d7099be0dd6cba7eda33ab5f3b9bbd065997": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01PdiVt33keGzdDt8mrcgJYT",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The agent applied only half of the filter. The URL is /issues?status=open&label=&q=, so the Status filter is set to \"Open\" but the Label filter is empty, still on \"Any\". The list shows two issues: \"Login button misaligned\" (bug) and \"Add dark mode\" (feature). The first expected outcome, only open issues, is met. The second, only issues labelled bug, is not, because a feature issue is still listed. The agent's claim that it completed the task does not match what the page shows."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01PdiVt33keGzdDt8mrcgJYT",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The agent applied only half of the filter. The URL is /issues?status=open&label=&q=, so the Status filter is set to \"Open\" but the Label filter is empty, still on \"Any\". The list shows two issues: \"Login button misaligned\" (bug) and \"Add dark mode\" (feature). The first expected outcome, only open issues, is met. The second, only issues labelled bug, is not, because a feature issue is still listed. The agent's claim that it completed the task does not match what the page shows."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1265,
+    "outputTokens": 232,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1261
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

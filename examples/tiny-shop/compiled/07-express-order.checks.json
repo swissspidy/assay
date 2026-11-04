@@ -1,0 +1,265 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/07-express-order",
+  "version": "1",
+  "task": {
+    "instruction": "Order what is in my cart with express shipping, in the name of Ada Lovelace.",
+    "outcomes": "Then an order is placed\nThen the order ships express\nThen the order confirmation is shown"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "An order is placed.",
+      "source": {
+        "field": "outcomes",
+        "quote": "Then an order is placed"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The order uses express shipping.",
+      "source": {
+        "field": "outcomes",
+        "quote": "Then the order ships express"
+      }
+    },
+    {
+      "id": "R3",
+      "kind": "hard",
+      "text": "The order confirmation is shown.",
+      "source": {
+        "field": "outcomes",
+        "quote": "Then the order confirmation is shown"
+      }
+    },
+    {
+      "id": "R4",
+      "kind": "hard",
+      "text": "The order contains the items in the user's cart.",
+      "source": {
+        "field": "instruction",
+        "quote": "Order what is in my cart"
+      }
+    },
+    {
+      "id": "R5",
+      "kind": "hard",
+      "text": "The order is placed in the name of Ada Lovelace.",
+      "source": {
+        "field": "instruction",
+        "quote": "in the name of Ada Lovelace"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1.order-post",
+      "requirement": "R1",
+      "description": "A POST to /api/orders succeeded and returned a placed order.",
+      "assert": {
+        "kind": "request",
+        "match": {
+          "method": "POST",
+          "url": {
+            "path": "/api/orders"
+          },
+          "status": {
+            "gte": 200,
+            "lt": 300
+          },
+          "responseBody": {
+            "type": "object",
+            "required": [
+              "id",
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": "placed"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R1.probe-placed",
+      "requirement": "R1",
+      "description": "The backend's latest order has status placed.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "latestOrder"
+        },
+        "expect": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "id",
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": "placed"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R2.probe-express",
+      "requirement": "R2",
+      "description": "The backend's latest placed order for Ada Lovelace uses express shipping.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "latestOrder"
+        },
+        "expect": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "shipping",
+              "name",
+              "status"
+            ],
+            "properties": {
+              "shipping": {
+                "const": "express"
+              },
+              "status": {
+                "const": "placed"
+              },
+              "name": {
+                "type": "string",
+                "pattern": "^\\s*Ada Lovelace\\s*$"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R3.url",
+      "requirement": "R3",
+      "description": "The browser ends on an order confirmation page /orders/<id>.",
+      "assert": {
+        "kind": "url",
+        "match": {
+          "path": "/orders/*"
+        }
+      }
+    },
+    {
+      "id": "R3.heading",
+      "requirement": "R3",
+      "description": "The main area shows an 'Order confirmed' heading.",
+      "assert": {
+        "kind": "contains",
+        "scope": {
+          "role": "main"
+        },
+        "match": {
+          "role": "heading",
+          "name": {
+            "contains": "Order confirmed",
+            "ignoreCase": true
+          }
+        }
+      }
+    },
+    {
+      "id": "R4.probe-items",
+      "requirement": "R4",
+      "description": "The latest placed order for Ada Lovelace contains the cart item Blue Mug (MUG-BLUE, qty 1).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "latestOrder"
+        },
+        "expect": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "items",
+              "name",
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": "placed"
+              },
+              "name": {
+                "type": "string",
+                "pattern": "^\\s*Ada Lovelace\\s*$"
+              },
+              "items": {
+                "type": "array",
+                "minItems": 1,
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "sku",
+                    "qty"
+                  ],
+                  "properties": {
+                    "sku": {
+                      "const": "MUG-BLUE"
+                    },
+                    "qty": {
+                      "const": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R5.probe-name",
+      "requirement": "R5",
+      "description": "The latest placed order is in the name of Ada Lovelace.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "latestOrder"
+        },
+        "expect": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "name",
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": "placed"
+              },
+              "name": {
+                "type": "string",
+                "pattern": "^\\s*Ada Lovelace\\s*$"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T10:10:40.774Z"
+  }
+}

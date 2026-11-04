@@ -1,0 +1,161 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:44:58.097Z",
+ "turns": {
+  "sha256:c55ad64a1bfed0fe91c15cf2596d1bb71770983de12580ba0410d5860e013448": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Uu5yUzATh2N8AeAAZESahs",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01HDfQhariesaLyv8yyqYyg7",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Uu5yUzATh2N8AeAAZESahs",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01HDfQhariesaLyv8yyqYyg7",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1834,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1830
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:42652038bcb57ce06927fe7b291d895ddff2a0d1cf7753aa6d80fdcc1ee7a0e6": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Rcxno2RJjUiTNvaWcaVfbc",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "my RSVP for Book club is going",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The events probe shows Book club (id 3) has rsvp: null, not 'yes'. The network log has only GET requests and no RSVP write. The agent opened the Dentist event (id 2), not Book club."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS5QUKEAgTGAI4AUIIdGhpbmtpbmcSDH2iL9H4aPIvKA7eQxoMAaKr4pyXYi+tP1lXIjCN2sBcpPnhtc2kVYOnoFsD8txJRoXuJ/PpT7rmWGkgoB/2ZGzUFeMY6K+5nEJGOTkqggWeFRPxkkp8M1gVVIbCxTWgZS1d9u3zzo2RZ1V03/2wfIrvfJeGSgGVHPgMbKeubz0+KK6RlLuK/5mb/3lK9No7mg6QgasGVcqfJr21rXZQ2JFnvoY8Ec7nesznviFMMoUk6AwRUG/SS9iuSfF7MeYsTqP5om57Fo3C7VFVbnROCq5swkJTFCUlfY3Ii8GBunPm/LDDmEvgQFjvE4hQCFz+egaYh8WaJE+tzSWfq3e7HsCFIq7hJdT/vHcTpq8KoQyWJf1RUxi84PMqP9CEjb4HJ0cvVFSB945rY7Wm2ImBzJsW7IkCNW0nHR/BTsX9tYSfKgPOEaJcGnHoGmflekuLfxihskYghT5NzoaUpqqTdtBe2R/w8yJZukj4cKUygdFqdiR42HfXYkZsZBuVlyRB5hFUOL2+AbPaJhToSQDd4CAyyXnZ27vWB1vSEa9gyLLWg69EIkvL+k4DZKWIgeLcInw985JdgwJSBET5rqWLsn0h105HetPArOFToSvc4IVRbZik1m32nZlvj5FXQOh7839LauBmjlFcVzXE6p20N6/teNaxKw6QnSSAAMX0jxLovby/Z6TW7yfCA5x1ahrC1sGf8W9z78HD8Ek2aIau9EnhdN4HzpPZ+S8LvQwHUrFfksYBfJoOxQeBTZJ/eLNw2s08WOoypi2PZ25CN1ydRt/uiFjvATfzp83yIGwj00Z+t147jeJejzR+HyDmCDAEn7Rhz8zGyxRuBEBnUJvSk+1OxnQxcu5apwua/QrGFA4URzzSZcN+UChbmy9nfzdFAdkiNUfB/kFuLJfpbj1L0Vc+pUSs4K02jbGQgjCQrj2EEUQyyLhAlcuOOx5XFQ3uoLoYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Rcxno2RJjUiTNvaWcaVfbc",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "my RSVP for Book club is going",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The events probe shows Book club (id 3) has rsvp: null, not 'yes'. The network log has only GET requests and no RSVP write. The agent opened the Dentist event (id 2), not Book club."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2358,
+    "outputTokens": 211,
+    "cacheReadTokens": 1830,
+    "cacheWriteTokens": 526
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:22ccefbae3e6335aa3c9a1cf7a5993d0e7fc49ec5ce1548b11638dcc9498ee88": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01YUs7NPMeNth83g5UuFzrGB",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The events probe shows Book club (id 3) has rsvp: null, not 'yes'. The network log has only GET requests and no RSVP write. The agent opened the Dentist event (id 2), not Book club."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01YUs7NPMeNth83g5UuFzrGB",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The events probe shows Book club (id 3) has rsvp: null, not 'yes'. The network log has only GET requests and no RSVP write. The agent opened the Dentist event (id 2), not Book club."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2618,
+    "outputTokens": 156,
+    "cacheReadTokens": 2356,
+    "cacheWriteTokens": 260
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

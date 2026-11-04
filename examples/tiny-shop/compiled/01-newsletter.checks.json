@@ -1,0 +1,91 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/01-newsletter",
+  "version": "1",
+  "task": {
+    "instruction": "Subscribe me to the Tiny Shop newsletter.",
+    "outcomes": "Then the newsletter subscription is saved\nThen the newsletter checkbox in the preferences is checked"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The newsletter subscription is saved.",
+      "source": {
+        "field": "outcomes",
+        "quote": "the newsletter subscription is saved"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The newsletter checkbox in the preferences is checked.",
+      "source": {
+        "field": "outcomes",
+        "quote": "the newsletter checkbox in the preferences is checked"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "r1-settings-probe",
+      "requirement": "R1",
+      "description": "The backend settings probe reports newsletter set to true.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "settings",
+          "pointer": "/newsletter"
+        },
+        "expect": {
+          "equals": true
+        }
+      }
+    },
+    {
+      "id": "r2-checkbox-checked",
+      "requirement": "R2",
+      "description": "The 'Email me the newsletter' checkbox in the Preferences form is checked.",
+      "assert": {
+        "kind": "state",
+        "target": {
+          "anchors": [
+            {
+              "role": "checkbox",
+              "name": {
+                "contains": "newsletter",
+                "ignoreCase": true
+              },
+              "landmark": {
+                "role": "form",
+                "name": "Preferences"
+              }
+            },
+            {
+              "role": "checkbox",
+              "name": {
+                "contains": "newsletter",
+                "ignoreCase": true
+              },
+              "landmark": {
+                "role": "main"
+              }
+            }
+          ]
+        },
+        "expect": {
+          "checked": true
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T10:09:26.843Z"
+  }
+}

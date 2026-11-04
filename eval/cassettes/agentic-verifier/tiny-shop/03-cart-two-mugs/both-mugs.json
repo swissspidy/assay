@@ -1,0 +1,206 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:32:51.901Z",
+ "turns": {
+  "sha256:8a3a40f1b24773bb584d4d141088723b23243bfd31f6b51a00ba625941338035": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0167asxVJTanFxrBFtrUztDE",
+     "name": "page_outline",
+     "input": {}
+    },
+    {
+     "id": "toolu_016H6d1uMwcRXcGBnorGQpGS",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01RbKpttjhbZtsGauvmnEUcX",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_0167asxVJTanFxrBFtrUztDE",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_016H6d1uMwcRXcGBnorGQpGS",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01RbKpttjhbZtsGauvmnEUcX",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1888,
+    "outputTokens": 72,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1884
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:04d745461dbd9a8245a3e98267b56ec017704ad1c4f1e866e65983feb4cfca29": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KrNP9pAaMsd8T2X3Vz99K6",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the cart page lists a Blue Mug",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The /cart page has a row for Blue Mug (qty 1, $12.00). The server-side cart probe also shows MUG-BLUE in the cart."
+       },
+       {
+        "requirement": "the cart page lists a Red Mug",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The /cart page has a row for Red Mug (qty 1, $9.50). The server-side cart probe also shows MUG-RED in the cart."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01KrNP9pAaMsd8T2X3Vz99K6",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the cart page lists a Blue Mug",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The /cart page has a row for Blue Mug (qty 1, $12.00). The server-side cart probe also shows MUG-BLUE in the cart."
+       },
+       {
+        "requirement": "the cart page lists a Red Mug",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The /cart page has a row for Red Mug (qty 1, $9.50). The server-side cart probe also shows MUG-RED in the cart."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2988,
+    "outputTokens": 236,
+    "cacheReadTokens": 1884,
+    "cacheWriteTokens": 1102
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:5c3b7cdb374cfcf7342dfb447940c06fa95d9472f5f65eb50b806f8a99a6a6ab": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01WvR8vwik6wJgSZWFcfyWen",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The /cart page has a row for Blue Mug (qty 1, $12.00). The server-side cart probe also shows MUG-BLUE in the cart."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The /cart page has a row for Red Mug (qty 1, $9.50). The server-side cart probe also shows MUG-RED in the cart."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01WvR8vwik6wJgSZWFcfyWen",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The /cart page has a row for Blue Mug (qty 1, $12.00). The server-side cart probe also shows MUG-BLUE in the cart."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The /cart page has a row for Red Mug (qty 1, $9.50). The server-side cart probe also shows MUG-RED in the cart."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3295,
+    "outputTokens": 222,
+    "cacheReadTokens": 2986,
+    "cacheWriteTokens": 307
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

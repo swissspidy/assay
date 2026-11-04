@@ -1,0 +1,62 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/04-reopen-issue",
+  "version": "1",
+  "task": {
+    "instruction": "Reopen issue #3.",
+    "outcomes": "Then issue #3 is open again"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Issue #3 is in the open state again.",
+      "source": {
+        "field": "outcomes",
+        "quote": "issue #3 is open again"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "issue3-open-probe",
+      "requirement": "R1",
+      "description": "The backend issues probe shows issue #3 with status 'open'.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "id",
+                "status"
+              ],
+              "properties": {
+                "id": {
+                  "const": 3
+                },
+                "status": {
+                  "const": "open"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T10:09:55.735Z"
+  }
+}

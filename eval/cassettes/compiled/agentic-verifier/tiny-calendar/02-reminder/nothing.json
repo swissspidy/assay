@@ -1,0 +1,298 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T10:22:12.552Z",
+ "turns": {
+  "sha256:04dfc01b0f48680436db43602f484a058e976effac165575087c68040031740c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CN2kLZBRXsaYkDKFU2VvgH",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_018BSE2EacehvkEPLRicmHuV",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01CN2kLZBRXsaYkDKFU2VvgH",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_018BSE2EacehvkEPLRicmHuV",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1916,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1912
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:c330ea723613b01212d4a24975157a412871022fed0d093c0292cefa7f85314d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_016Rmedk5M7Sp4wHHKtRK774",
+     "name": "find_nodes",
+     "input": {
+      "text": "Yoga"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSoQUKEAgTGAI4AUIIdGhpbmtpbmcSDLyjYBnkn4wBeJVTYxoMxFOKZXCqujRsOZCEIjCMuol2qBOP0H+xeyyWE68yxn9v1PtquaeLZbwAi/h5kDyBYsgu8eb1yiT+hF/bfv4qvgSQMwmM2bMiPMmgC2HO63lMIBMQv8t0F39IANpnXSIcV5HMk5LMpsuXrrvTgtTRT1IaROa7rYAmvTq7eNH0W8LGAtecPLihsSMA9xYhLFp3f50ZLM95TxHSsiEvznE7MbyNB9a/JK0wm35wObs1dk1/Qel2fZtHBLxt4JunZzuovBsZI+c/ZwY00vLU3f1hhE4VZr/qVz8s5566d30azkHP7CIcGuNWURWNpvX+i3JElvgaXLD6Uv923Bur9Jj1LgXa7eJbxdsIQyaWK78jT0toqnbQ2d1stM3eTfCgqlquE+MEX5Xh8KoB8UtMcUBMsuAePl/1MauPWnhMXHy2UBQZI0lk9NTMy5+05kmtK4e8Xpb5hxJlZ+hmh0oYsHMJPoImzq+82wSu1Ku3MRBp+pjZHxEyECL4aXxohUCQnVaXONxUqEJJlMKlKc/OVhonlC6Cgm8jfyxuObDDNy8jInsuHxhDlHRZPgW6oTZ/HhESQ3mBzO7GF8SkWaPLXKwxAKMWSORONKf0GGbcx1Szg7sQuhHOpNRDZgPecTsAOGRRakZxSJSfWe5ObZWuLI3S+nsLvsInmB8e57c0xkeHBnkQVukWbcfxCfvF8yn6OIFJ3oe1cwl3TTTEt89/SM16Bc2zZI3UbdHS6FXza9KAYbtHuVQfvPWOlhrTLeoVN9ktvA/20z3JnzfUETv4Dyo+V2ptSfbHztHuiD2QfBtml2lkrbyLBi/4eZ/oouifLfBBoFj6UUSfVPVD4kN9PKJAGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_016Rmedk5M7Sp4wHHKtRK774",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "text": "Yoga"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2380,
+    "outputTokens": 67,
+    "cacheReadTokens": 1912,
+    "cacheWriteTokens": 466
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:312648c5e83837b247a45768dc217741022cdf52404b4c841a741ab2cd3ac1dd": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Tbt5a8RARgDJyydQWGUuGs",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Then an event \"Yoga\" exists",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The events probe lists only Team standup, Dentist and Book club. No create request was sent, and the page has no 'Yoga' text."
+       },
+       {
+        "requirement": "Then the event has a reminder",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "There is no Yoga event, so it cannot have a reminder."
+       },
+       {
+        "requirement": "on November 7, 2026",
+        "status": "fail",
+        "cites": [
+         1
+        ],
+        "reasoning": "No event exists on 2026-11-07, and no Yoga event exists."
+       },
+       {
+        "requirement": "at 08:00",
+        "status": "fail",
+        "cites": [
+         1
+        ],
+        "reasoning": "No event is set for 08:00, and no Yoga event exists."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Tbt5a8RARgDJyydQWGUuGs",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Then an event \"Yoga\" exists",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The events probe lists only Team standup, Dentist and Book club. No create request was sent, and the page has no 'Yoga' text."
+       },
+       {
+        "requirement": "Then the event has a reminder",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "There is no Yoga event, so it cannot have a reminder."
+       },
+       {
+        "requirement": "on November 7, 2026",
+        "status": "fail",
+        "cites": [
+         1
+        ],
+        "reasoning": "No event exists on 2026-11-07, and no Yoga event exists."
+       },
+       {
+        "requirement": "at 08:00",
+        "status": "fail",
+        "cites": [
+         1
+        ],
+        "reasoning": "No event is set for 08:00, and no Yoga event exists."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2466,
+    "outputTokens": 313,
+    "cacheReadTokens": 2378,
+    "cacheWriteTokens": 86
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:3994e517a7c0574a4b4be14325f6d99c235ef32d22ca2daef77b6aafeb214118": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01WB5RfrnnPu9gFkNGakG5rF",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The events probe lists only Team standup, Dentist and Book club. No create request was sent, and the page has no 'Yoga' text."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "There is no Yoga event, so it cannot have a reminder."
+       },
+       {
+        "requirement": "R3",
+        "status": "fail",
+        "cites": [
+         1
+        ],
+        "reasoning": "No event exists on 2026-11-07, and no Yoga event exists."
+       },
+       {
+        "requirement": "R4",
+        "status": "fail",
+        "cites": [
+         1
+        ],
+        "reasoning": "No event is set for 08:00, and no Yoga event exists."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01WB5RfrnnPu9gFkNGakG5rF",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The events probe lists only Team standup, Dentist and Book club. No create request was sent, and the page has no 'Yoga' text."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "There is no Yoga event, so it cannot have a reminder."
+       },
+       {
+        "requirement": "R3",
+        "status": "fail",
+        "cites": [
+         1
+        ],
+        "reasoning": "No event exists on 2026-11-07, and no Yoga event exists."
+       },
+       {
+        "requirement": "R4",
+        "status": "fail",
+        "cites": [
+         1
+        ],
+        "reasoning": "No event is set for 08:00, and no Yoga event exists."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2874,
+    "outputTokens": 299,
+    "cacheReadTokens": 2464,
+    "cacheWriteTokens": 408
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

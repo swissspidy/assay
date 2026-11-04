@@ -1,0 +1,63 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-calendar/06-location",
+  "version": "1",
+  "task": {
+    "instruction": "Change the Book club location to \"City Library\".",
+    "outcomes": "Then Book club takes place at City Library"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The Book club's location is set to City Library.",
+      "source": {
+        "field": "outcomes",
+        "quote": "Book club takes place at City Library"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "book-club-location-probe",
+      "requirement": "R1",
+      "description": "The backend events store has the Book club event with location City Library.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "events"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "title",
+                "location"
+              ],
+              "properties": {
+                "title": {
+                  "const": "Book club"
+                },
+                "location": {
+                  "type": "string",
+                  "pattern": "^\\s*City Library\\s*$"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T10:10:37.403Z"
+  }
+}

@@ -1,0 +1,262 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:40:46.013Z",
+ "turns": {
+  "sha256:120c85ae395e40e49572f9dd7ffb9aa52e13e5b803f755ea0606fac40494ab1f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01XcPpsbfPmf6Ek7mm9Jp6Ln",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01QQPbQJUUHMApiCor6pAXeq",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01XcPpsbfPmf6Ek7mm9Jp6Ln",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01QQPbQJUUHMApiCor6pAXeq",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1879,
+    "outputTokens": 48,
+    "cacheReadTokens": 1875,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:5346357b8ba1f4637144f01826051ab73981751cee8f29ce3b487edee1d024c9": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_016g5x2ShNfky9GM78RPFxtA",
+     "name": "network_entry",
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_016g5x2ShNfky9GM78RPFxtA",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2360,
+    "outputTokens": 49,
+    "cacheReadTokens": 1875,
+    "cacheWriteTokens": 483
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:7ca9524609a3c1185ada496716a270a3796b43aca8dd1ce5b45767d7152090b1": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01DAmuJShjqzwrGxVpnQksQR",
+     "name": "find_nodes",
+     "input": {
+      "text": "bug"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01DAmuJShjqzwrGxVpnQksQR",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "text": "bug"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2517,
+    "outputTokens": 50,
+    "cacheReadTokens": 2358,
+    "cacheWriteTokens": 157
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:46eea9bedc629b6b40c17231287d40abb51f7530d67129b631f9f87da3e0a755": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01QkLEepx2i1EUFviyfgMzkw",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 has the feature label",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Server-side issue #1 labels are [\"feature\"]. The POST sent labels=feature."
+       },
+       {
+        "requirement": "issue #1 still has the bug label",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The POST sent only labels=feature, which replaced the existing labels. The probe shows issue #1 now has only [\"feature\"], and the page lists Labels: feature. The bug label is gone."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01QkLEepx2i1EUFviyfgMzkw",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 has the feature label",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Server-side issue #1 labels are [\"feature\"]. The POST sent labels=feature."
+       },
+       {
+        "requirement": "issue #1 still has the bug label",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The POST sent only labels=feature, which replaced the existing labels. The probe shows issue #1 now has only [\"feature\"], and the page lists Labels: feature. The bug label is gone."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2767,
+    "outputTokens": 232,
+    "cacheReadTokens": 2515,
+    "cacheWriteTokens": 250
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:c0cd208186f7c62d5c72d597331fb825f184bc6ffdb269926c71080742521146": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01VJEJ3QqoL3EWtKfAgDRoYg",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Server-side issue #1 labels are [\"feature\"]. The POST sent labels=feature."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The POST sent only labels=feature, which replaced the existing labels. The probe shows issue #1 now has only [\"feature\"], and the page lists Labels: feature. The bug label is gone."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01VJEJ3QqoL3EWtKfAgDRoYg",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Server-side issue #1 labels are [\"feature\"]. The POST sent labels=feature."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The POST sent only labels=feature, which replaced the existing labels. The probe shows issue #1 now has only [\"feature\"], and the page lists Labels: feature. The bug label is gone."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3067,
+    "outputTokens": 223,
+    "cacheReadTokens": 2765,
+    "cacheWriteTokens": 300
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

@@ -16,6 +16,7 @@ import { validateCheckSet } from '../dsl/validate.ts';
 import { evaluate, evaluateAssertion } from '../runtime/evaluate.ts';
 import { AXIndex } from '../runtime/axindex.ts';
 import { canonical } from '../text.ts';
+import { ASSAY_VERSION } from '../version.ts';
 import { runAgent, type AgentTool, type AgentRun } from '../model/agent.ts';
 import type { ModelClient } from '../model/types.ts';
 import { parseOutcomes, parseOutcomesDetailed, type Clause } from './outcomes.ts';
@@ -58,6 +59,11 @@ export interface CompileOptions {
   trajectory?: string;
   maxTurns?: number;
   log?: (msg: string) => void;
+  /**
+   * Provenance written to the compiled set (`compiled`). `model` defaults to the
+   * model client's id and `at` to now; a replayed compile passes the recording's.
+   */
+  provenance?: { model?: string; at?: string };
 }
 
 export interface RequirementCoverage {
@@ -415,6 +421,38 @@ interface Verification {
  * variant is an error (over-constrained); fragile anchors, weak checks and
  * missed mutants are warnings.
  */
+/**
+ * anyOf branches that abstain on every correct reference. Such a branch was never
+ * seen to read its evidence, and on an incorrect run it turns the check's fail
+ * into an abstain (fail OR abstain is abstain), so it is refused.
+ */
+export function unreadableBranches(cs: CheckSet, refs: Reference[]): string[] {
+  const ctxs = refs
+    .filter((r) => r.kind === 'success')
+    .map((r) => ({ snapshot: r.snapshot, index: new AXIndex(r.snapshot.a11y) }));
+  if (!ctxs.length) return [];
+  const errors: string[] = [];
+  const walk = (check: string, a: Assertion, path: string) => {
+    if (a.kind !== 'anyOf' && a.kind !== 'allOf') return;
+    a.of.forEach((b, i) => {
+      const at = `${path}.of[${i}]`;
+      if (a.kind === 'anyOf') {
+        const results = ctxs.map((ctx) => evaluateAssertion(ctx, b));
+        if (results.every((r) => r.status === 'abstain')) {
+          const reasons = [...new Set(results.map((r) => r.reason ?? r.message))].join(', ');
+          errors.push(
+            `${check}: anyOf branch ${at} abstains on every correct run (${reasons}). A branch whose evidence never exists turns a fail into an abstain; remove it or point it at evidence the correct runs have.`,
+          );
+          return;
+        }
+      }
+      walk(check, b, at);
+    });
+  };
+  for (const c of cs.checks) walk(c.id, c.assert, 'assert');
+  return errors;
+}
+
 export function verifyCandidate(cs: CheckSet, refs: Reference[], stress = true, skipVariants?: string[]): Verification {
   const v = validateCheckSet(cs);
   const errors = [...v.errors];
@@ -443,6 +481,7 @@ export function verifyCandidate(cs: CheckSet, refs: Reference[], stress = true, 
       warnings.push(`On incorrect run "${ref.name}" the verdict is abstain rather than fail.`);
     }
   }
+  errors.push(...unreadableBranches(cs, refs));
   for (const cov of coverage(cs)) {
     if (cov.trust === 'freetext')
       warnings.push(`Requirement ${cov.requirement} is covered only by free page text, which a page can spoof.`);
@@ -699,7 +738,15 @@ export async function compileTask(task: TaskInput, refs: Reference[], opts: Comp
   report.turns.discovery = run.turns;
   if (!run.result || !accepted) return { report: { ...report, reason: `Discovery ended with ${run.status}.` } };
 
-  const checkSet = run.result;
+  const checkSet: CheckSet = {
+    ...run.result,
+    compiled: {
+      compiler: ASSAY_VERSION,
+      model: opts.provenance?.model ?? opts.model.id,
+      modelsUsed: [...models],
+      at: opts.provenance?.at ?? new Date().toISOString(),
+    },
+  };
   return {
     checkSet,
     report: {

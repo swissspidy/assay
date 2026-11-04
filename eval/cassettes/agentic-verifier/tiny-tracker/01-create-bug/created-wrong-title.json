@@ -1,0 +1,230 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:37:40.727Z",
+ "turns": {
+  "sha256:a0267d2656c3ef576a99525e8be684021f9de28fbd418f0291db038f8c3ead05": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Kjhn94n7EKaxjwrdQE8VEu",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01YDAeifHzHbj5Q5fyt2cH6Q",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Kjhn94n7EKaxjwrdQE8VEu",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01YDAeifHzHbj5Q5fyt2cH6Q",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1907,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1903
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:b140d6a0f4825586e8fd0065e241cd1794c37a3a5ff2cdcf366f2a29fa31d575": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01PCNvkHkxheBMmP2hcyGLSX",
+     "name": "network_entry",
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01PCNvkHkxheBMmP2hcyGLSX",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2472,
+    "outputTokens": 49,
+    "cacheReadTokens": 1903,
+    "cacheWriteTokens": 567
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:5a68434c09f5642a67d37ae753f0907dd0bd22c57e234869bd7a73a9bb855b67": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_014atnhXzwVQgxxtw3c2Zum1",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "a new issue titled \"Checkout fails on Safari\" exists",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The only issue created (#4) is titled \"Checkout fails on Chrome\", according to both the POST body and the issues probe. No issue is titled \"Checkout fails on Safari\"."
+       },
+       {
+        "requirement": "the new issue has the bug label",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "\"The new issue\" means the one titled \"Checkout fails on Safari\", and that issue does not exist. Issue #4, which the agent created, does have the bug label, but its title is wrong (\"Checkout fails on Chrome\"), so the requirement is not met."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQShAcKEAgTGAI4AUIIdGhpbmtpbmcSDPCuMG/2ZT5KgRfDpxoMT/2CAprhj8Ja5Yd0IjCMC3OLxE6GH8jInTfJbIZ/I7WYxc11/RxKth4tIsCdB+7swhizahpZsiQSd3h26tIqoQaBSVDzcN7kB8ZmSlf8ZmWCxgwgwNiwGZQ1fwd+5SNcBqpukuLDRGPNmykQiKb7ocO2Gl2GHJWhCVfcOMwAWn+DfH2qs9pDjJTYXJxAuwmsenkQxO1ZeaAb3i1IDBFstrfBTHk7ryHO8mzk8ywNsEykj2wn0WCNbL2EShIZXc+XGWeQJjbHyiiVBu1FoBwt+HX7joAu/EmJg0nFJLUTNR7u/3ywp+0NUQ9spsdjVvScDqjGK/Gx2rN/9JWvkbdIo9y7VW598iQtTe23qV1+fkhoPPtVZH/4kxe1ilYizrky3SO7vTM+MQgLAL3oQPwxDhTOsPSk5MV3Ib8eCiyCKkZIr1+GYIHdFeLnBKtPCr+VJu73rZGy49vd+C+NhfE9OwdYtEvqIzUGeXWO77qEzOLiI95j2dSF82RebSuwlzQpfcabLfDIF+WUFiwRUAgByzMPrBOkVjpHaS/PeQgCPkNxCbRZ4o3ba9Ao71EbAK1PMrkJLYesnws5fQuMS97VNp8GkSlrVC8uyEQt7rfeffCYuozu/lQQLMpjJsFzC5dm1FuirVyGRxJOfrhKhhtcItqBvhQcrGD4MFVpd8IflMaN+jh/fSpLwau5jfIh+GorsHK9+zdagekP5GuluHyxVIvLj4ozPbmjw+OBp9gbFH0InIOVI/LzDsE3qBfIWdE+gUPuROOYpGPMLlLQn44T26nVIQEvmpM8DfUx18lO44uiom7/XJ/noo2qZg707RFoNl/iJe5AUc9KhoZJqm9WQpZT/6xK4YJMSn649N07tQMpX/heNJr+KdU1rOKN3+n12m0vkgk2nv4+uiD7ojz6ALc6gIZrHKWxsPY5ZGnutqfER60i9fplq0JXbpDCtygYeO4hyU4jvvMtpMnE1Rh8UHmOXU6gkNExQz7Cdw7MfsOGdc8WtT2B4egWb1spK+ANFL5Lhl9/3h/eTfRxHDDNNqD2n66vxd3bwt1FdfUG5IzQYSZaNEu2nGpTENDpTlkHOxgDckpAxUA+xc+GQxMGIXHOXmiOkCX2w12+hA8OAJfdCnpwAIhbIsoo6jwj29vtii8YAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_014atnhXzwVQgxxtw3c2Zum1",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "a new issue titled \"Checkout fails on Safari\" exists",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The only issue created (#4) is titled \"Checkout fails on Chrome\", according to both the POST body and the issues probe. No issue is titled \"Checkout fails on Safari\"."
+       },
+       {
+        "requirement": "the new issue has the bug label",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "\"The new issue\" means the one titled \"Checkout fails on Safari\", and that issue does not exist. Issue #4, which the agent created, does have the bug label, but its title is wrong (\"Checkout fails on Chrome\"), so the requirement is not met."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2659,
+    "outputTokens": 390,
+    "cacheReadTokens": 2470,
+    "cacheWriteTokens": 187
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:9a27eeeac57a30f158ae95da4ab2f6403bb823bae473739b4e0847ec3889d488": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01QRCBzirNniV67YhCGxvQSs",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The only issue created (#4) is titled \"Checkout fails on Chrome\", according to both the POST body and the issues probe. No issue is titled \"Checkout fails on Safari\"."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "\"The new issue\" means the one titled \"Checkout fails on Safari\", and that issue does not exist. Issue #4, which the agent created, does have the bug label, but its title is wrong (\"Checkout fails on Chrome\"), so the requirement is not met."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01QRCBzirNniV67YhCGxvQSs",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The only issue created (#4) is titled \"Checkout fails on Chrome\", according to both the POST body and the issues probe. No issue is titled \"Checkout fails on Safari\"."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "\"The new issue\" means the one titled \"Checkout fails on Safari\", and that issue does not exist. Issue #4, which the agent created, does have the bug label, but its title is wrong (\"Checkout fails on Chrome\"), so the requirement is not met."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3124,
+    "outputTokens": 275,
+    "cacheReadTokens": 2657,
+    "cacheWriteTokens": 465
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

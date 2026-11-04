@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:25:46.567Z",
+ "turns": {
+  "sha256:622119f1c707a1a7a85933915434ebc523f016dcd0590688526a8f9694343225": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01SCg9vQ2ocF9YYdGAPLsmPi",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The page contradicts itself. A status message says \"Issue #1 is now closed.\", but the issue's Status field still reads \"Open\", and the issue-state form still offers a \"Close issue\" button rather than a reopen option. The issue's actual state matters more than a flash message, and here that state is still open. So the expected outcome, issue #1 being closed, is not shown on the final page. The agent's general claim that it finished does not override what the page shows."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01SCg9vQ2ocF9YYdGAPLsmPi",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The page contradicts itself. A status message says \"Issue #1 is now closed.\", but the issue's Status field still reads \"Open\", and the issue-state form still offers a \"Close issue\" button rather than a reopen option. The issue's actual state matters more than a flash message, and here that state is still open. So the expected outcome, issue #1 being closed, is not shown on the final page. The agent's general claim that it finished does not override what the page shows."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1317,
+    "outputTokens": 214,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1313
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

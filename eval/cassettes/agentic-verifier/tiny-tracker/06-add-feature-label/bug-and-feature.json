@@ -1,0 +1,225 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:40:22.690Z",
+ "turns": {
+  "sha256:120c85ae395e40e49572f9dd7ffb9aa52e13e5b803f755ea0606fac40494ab1f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01XvqEMbij2cVzUcEQESX3eM",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_019mJ2ivhv7gfZvekmTk2kvk",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01XvqEMbij2cVzUcEQESX3eM",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_019mJ2ivhv7gfZvekmTk2kvk",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1879,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1875
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:3808a61db38c4daf2f83a437b0cdd920246e27942826ea402bdf5bf8d7e71d5f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018b98qwTPji5vP69CFSVb5o",
+     "name": "network_entry",
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_018b98qwTPji5vP69CFSVb5o",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2366,
+    "outputTokens": 49,
+    "cacheReadTokens": 1875,
+    "cacheWriteTokens": 489
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:3803a856c47b9d226ad0faa92a736885fad07b4970244d86728ddf24f86d6576": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01TfbJKgRvpL6YKZcAXv9Z3K",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 has the feature label",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The issues probe shows issue #1 with labels [\"bug\",\"feature\"]. The POST to /issues/1/labels sent bug and feature."
+       },
+       {
+        "requirement": "issue #1 still has the bug label",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The probe shows issue #1 still has the bug label. The POST kept bug in the label set."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01TfbJKgRvpL6YKZcAXv9Z3K",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 has the feature label",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The issues probe shows issue #1 with labels [\"bug\",\"feature\"]. The POST to /issues/1/labels sent bug and feature."
+       },
+       {
+        "requirement": "issue #1 still has the bug label",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The probe shows issue #1 still has the bug label. The POST kept bug in the label set."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2536,
+    "outputTokens": 214,
+    "cacheReadTokens": 2364,
+    "cacheWriteTokens": 170
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:57d076e6e7d00359e0ca5f30c88f9f110b7917dcefc148d2d9f038e2b2745403": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Vo3kKVcwjtAjeKsxyAm8hZ",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The issues probe shows issue #1 with labels [\"bug\",\"feature\"]. The POST to /issues/1/labels sent bug and feature."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The probe shows issue #1 still has the bug label. The POST kept bug in the label set."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Vo3kKVcwjtAjeKsxyAm8hZ",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The issues probe shows issue #1 with labels [\"bug\",\"feature\"]. The POST to /issues/1/labels sent bug and feature."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The probe shows issue #1 still has the bug label. The POST kept bug in the label set."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2817,
+    "outputTokens": 204,
+    "cacheReadTokens": 2534,
+    "cacheWriteTokens": 281
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

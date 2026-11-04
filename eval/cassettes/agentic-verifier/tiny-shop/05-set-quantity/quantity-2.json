@@ -1,0 +1,211 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:33:53.394Z",
+ "turns": {
+  "sha256:ff9551a8410cd2208b9c8a8acf4d3258aaa1ca0c5cff9836c362e496e518c940": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0195T297SfPixXN65Y3unxjc",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_0146gmZdbZHSSnVP2mZkdbPm",
+     "name": "find_nodes",
+     "input": {
+      "text": "Blue Mug"
+     }
+    },
+    {
+     "id": "toolu_01KYocekx5sfjPWBe3GjXGKJ",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_0195T297SfPixXN65Y3unxjc",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_0146gmZdbZHSSnVP2mZkdbPm",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "text": "Blue Mug"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01KYocekx5sfjPWBe3GjXGKJ",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1852,
+    "outputTokens": 99,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1848
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:639edb18bd1fabc55d4b36e3adcb3c25ce5a7ca89a85e4f68173429484939a4d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01X4fzZhGBECiJxR8W8pG7oo",
+     "name": "network_entry",
+     "input": {
+      "seq": 7
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01X4fzZhGBECiJxR8W8pG7oo",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 7
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2803,
+    "outputTokens": 49,
+    "cacheReadTokens": 1848,
+    "cacheWriteTokens": 953
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:2e676acc9781fb0838bdbb4ff53f756a7adb1f0fe1bcd2046f61576999d899ac": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01JgMJDpPkTPac5jQwXuSpuq",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "quantity of the Blue Mug in my cart to 3",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         4
+        ],
+        "reasoning": "The server cart probe shows Blue Mug qty 2 with a $24 total. The agent's PATCH sent qty 2, not 3, and the cart page's quantity field shows 2."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01JgMJDpPkTPac5jQwXuSpuq",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "quantity of the Blue Mug in my cart to 3",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         4
+        ],
+        "reasoning": "The server cart probe shows Blue Mug qty 2 with a $24 total. The agent's PATCH sent qty 2, not 3, and the cart page's quantity field shows 2."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3040,
+    "outputTokens": 164,
+    "cacheReadTokens": 2801,
+    "cacheWriteTokens": 237
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:aeb609a8aa01db90e852a9aa7425b23dc8e5739cb1a8bfa66dbe64bd351f688c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FirM5ZCnfexjDqv23W2HMt",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         4
+        ],
+        "reasoning": "The server cart probe shows Blue Mug qty 2 with a $24 total. The agent's PATCH sent qty 2, not 3, and the cart page's quantity field shows 2."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01FirM5ZCnfexjDqv23W2HMt",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         4
+        ],
+        "reasoning": "The server cart probe shows Blue Mug qty 2 with a $24 total. The agent's PATCH sent qty 2, not 3, and the cart page's quantity field shows 2."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3261,
+    "outputTokens": 152,
+    "cacheReadTokens": 3038,
+    "cacheWriteTokens": 221
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

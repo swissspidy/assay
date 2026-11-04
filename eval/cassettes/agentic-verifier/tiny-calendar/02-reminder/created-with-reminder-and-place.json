@@ -1,0 +1,271 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:43:59.849Z",
+ "turns": {
+  "sha256:bf8ad3a34861b9323b6c1c84f992fcd4b1d992a1f9e574ff5f1c4203feae7ab8": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01TpqsAQaKw413HX6rf4miZ7",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01RvgVkdH981LmkXMBxNFhsw",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01TpqsAQaKw413HX6rf4miZ7",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01RvgVkdH981LmkXMBxNFhsw",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1903,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1899
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:93afcead1f05b52376761dd9cd950be668a9b7c5b51f065ef5dda24513a3de3d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017fNCrF1VgBfA6VfNG9yteF",
+     "name": "network_entry",
+     "input": {
+      "seq": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSzgUKEAgTGAI4AUIIdGhpbmtpbmcSDIU8dVA8t35/hj0VGhoMXm74w1SqciR7dcJIIjC12csKr1gazKXpkibajvKhS59e3IiQe9yMV5PzgCHBIPSFocf+jtLR3N992IIB1l8q6wTVb0Cx4I7K+uf0jSRJbe7RCRQkRLghoGLQSm5MlQ60tsyrUjqe5au/KkuqAbcxDamqlqYtrjC16Jv3M2EaGxdAjGbTi2VimDEiBF7Pba/9G/dqCjK+YTKOD5ZbVK7rnhDQEPEXoAnD1anjwVR7ewypr2UXpYRC9yltPGMPJXGN0t80/Zfq6dcn85C2MvVgDx80OS7FTIzyNPnxk33nuJas++QosQUQxlmwPm8LYWl725IyOvbuz1swuHBbgl+ZXP5lL29Z+JtYYAlQukN05MM24QA+reBvEiaScUX7A+YLFW2lst/3k5/ZgmRQdRmcmPSuS/LndLr1UgzzJn4je+Md1dHaJBDcqqSBLMPYKUdqQqQ/M3B+hQ5xEKPvXthIcMaopS1hZtRc2udibix/iUI/A4MuQy1nuEH8LsuwnntM0oAUIAh6xpADQkcJ0i8CG8UoMaE7HStyUpYY2fPsY/l/+L/v6EbpCb69LPAp3ijCNJgIK6/TLDQXwIP2VVTG8s9PxwSX5jCpbl0VbCKZ2tlfFrMd84yoX4GayJ+PSW/ubQCyM3FcNAMcfjpCrkE/0ufheSVNq0qRJHp+CQbaGafpcwuOUNaeEO+ACvVrUa97PhUQNpI6Wb5QVcPAtTXX7uNWt1YQ3Yps7oFUzGcXLkJnxmLm1aLTO5k8OhURWIqhIaSQC3llGzMfgYrlDOzweqOG2oyDbY08xo09hVHSO6AjSepdjLsYsElhLbhJtZgbxeJi5bXkm3a1UKMywoMapyQJOhxZAepIHaa2iycMBAbxCeT1MA/nBjcadtOKUS2yJodlyYxL657ENw0aGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_017fNCrF1VgBfA6VfNG9yteF",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 2
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2521,
+    "outputTokens": 79,
+    "cacheReadTokens": 1899,
+    "cacheWriteTokens": 620
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:ac26a35910dec142138a9af2098e6e8d3cde7141b9755fe16c977c07620973be": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01XCRHyqK8iTyse2KKvk3TuJ",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "an event \"Yoga\" exists",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The app sent POST /api/events with title Yoga and the server replied 201 with id 4. The events probe lists Yoga (id 4)."
+       },
+       {
+        "requirement": "the event has a reminder",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored Yoga event has reminder: true. The create request and the server's reply also both show reminder true."
+       },
+       {
+        "requirement": "on November 7, 2026 at 08:00",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored event has date 2026-11-07 and time 08:00, which matches the create request."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "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"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01XCRHyqK8iTyse2KKvk3TuJ",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "an event \"Yoga\" exists",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The app sent POST /api/events with title Yoga and the server replied 201 with id 4. The events probe lists Yoga (id 4)."
+       },
+       {
+        "requirement": "the event has a reminder",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored Yoga event has reminder: true. The create request and the server's reply also both show reminder true."
+       },
+       {
+        "requirement": "on November 7, 2026 at 08:00",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored event has date 2026-11-07 and time 08:00, which matches the create request."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2833,
+    "outputTokens": 557,
+    "cacheReadTokens": 2519,
+    "cacheWriteTokens": 312
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:e70f274b89dc42619d57be290e8a5f1b0a08687f70a1eb8615cba41b0e28dc5d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HwhDPZJxHbDQYchyyeVWQV",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The app sent POST /api/events with title Yoga and the server replied 201 with id 4. The events probe lists Yoga (id 4)."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored Yoga event has reminder: true. The create request and the server's reply also both show reminder true."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored event has date 2026-11-07 and time 08:00, which matches the create request."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01HwhDPZJxHbDQYchyyeVWQV",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The app sent POST /api/events with title Yoga and the server replied 201 with id 4. The events probe lists Yoga (id 4)."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored Yoga event has reminder: true. The create request and the server's reply also both show reminder true."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored event has date 2026-11-07 and time 08:00, which matches the create request."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3475,
+    "outputTokens": 266,
+    "cacheReadTokens": 2831,
+    "cacheWriteTokens": 642
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

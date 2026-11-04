@@ -1,0 +1,239 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:32:00.412Z",
+ "turns": {
+  "sha256:84d2165bae002083161a9645ace456031d4a2d364ee178ea2e4c32112d4e5e4e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01EC6jbTxHt6AKYsfas2bGSh",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01PRgEfNMWLgbYYKuLN7XWff",
+     "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_014PiwSXD59e8815pdkrxV8A",
+     "name": "find_nodes",
+     "input": {
+      "name": "newsletter"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01EC6jbTxHt6AKYsfas2bGSh",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01PRgEfNMWLgbYYKuLN7XWff",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_014PiwSXD59e8815pdkrxV8A",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "name": "newsletter"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1890,
+    "outputTokens": 97,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1886
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:b98f583f6f0b0afe81d7d4787a9a58b9022c88923c052eb7129096c64d0a611e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CVhgE52N1vfRBwf8Yf9ZC3",
+     "name": "network_entry",
+     "input": {
+      "seq": 3
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01CVhgE52N1vfRBwf8Yf9ZC3",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 3
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2328,
+    "outputTokens": 49,
+    "cacheReadTokens": 1886,
+    "cacheWriteTokens": 440
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a8ae79443006dbb7b0574c3d0c4d3c4b4d34887997d2db0f5d61d819faf60be2": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LuE5D2efhu19JuAeS8EwkT",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the newsletter subscription is saved",
+        "status": "pass",
+        "cites": [
+         1,
+         4
+        ],
+        "reasoning": "The PUT /api/settings request sent {newsletter:true} and the server returned 200. The settings probe also reads newsletter:true."
+       },
+       {
+        "requirement": "the newsletter checkbox in the preferences is checked",
+        "status": "pass",
+        "cites": [
+         3
+        ],
+        "reasoning": "In the Preferences form, the checkbox 'Email me the newsletter' is shown as checked."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01LuE5D2efhu19JuAeS8EwkT",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the newsletter subscription is saved",
+        "status": "pass",
+        "cites": [
+         1,
+         4
+        ],
+        "reasoning": "The PUT /api/settings request sent {newsletter:true} and the server returned 200. The settings probe also reads newsletter:true."
+       },
+       {
+        "requirement": "the newsletter checkbox in the preferences is checked",
+        "status": "pass",
+        "cites": [
+         3
+        ],
+        "reasoning": "In the Preferences form, the checkbox 'Email me the newsletter' is shown as checked."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2483,
+    "outputTokens": 214,
+    "cacheReadTokens": 2326,
+    "cacheWriteTokens": 155
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:0e923fbfa9578e36f08a3b72dc1f28ef7533c265ce7e2735cd6b35921c0a9f87": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01U8kKZaTYMqZnEU8djQfUaP",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         4
+        ],
+        "reasoning": "The PUT /api/settings request sent {newsletter:true} and the server returned 200. The settings probe also reads newsletter:true."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         3
+        ],
+        "reasoning": "In the Preferences form, the checkbox 'Email me the newsletter' is shown as checked."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01U8kKZaTYMqZnEU8djQfUaP",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         4
+        ],
+        "reasoning": "The PUT /api/settings request sent {newsletter:true} and the server returned 200. The settings probe also reads newsletter:true."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         3
+        ],
+        "reasoning": "In the Preferences form, the checkbox 'Email me the newsletter' is shown as checked."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2770,
+    "outputTokens": 196,
+    "cacheReadTokens": 2481,
+    "cacheWriteTokens": 287
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

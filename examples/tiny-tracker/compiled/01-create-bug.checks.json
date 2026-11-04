@@ -1,0 +1,122 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/01-create-bug",
+  "version": "1",
+  "task": {
+    "instruction": "Create an issue titled \"Checkout fails on Safari\" and label it as a bug.",
+    "outcomes": "Then a new issue titled \"Checkout fails on Safari\" exists\nThen the new issue has the bug label"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "A new issue titled \"Checkout fails on Safari\" exists.",
+      "source": {
+        "field": "outcomes",
+        "quote": "a new issue titled \"Checkout fails on Safari\" exists"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The new issue has the bug label.",
+      "source": {
+        "field": "outcomes",
+        "quote": "the new issue has the bug label"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-issue-exists",
+      "requirement": "R1",
+      "description": "The backend issues list contains an issue titled \"Checkout fails on Safari\", and a POST creating an issue succeeded.",
+      "assert": {
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "issues"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "title"
+                  ],
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "pattern": "^\\s*Checkout fails on Safari\\s*$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "kind": "request",
+            "match": {
+              "method": "POST",
+              "url": {
+                "path": "/issues"
+              },
+              "status": {
+                "lt": 400
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "R2-bug-label",
+      "requirement": "R2",
+      "description": "The backend issue titled \"Checkout fails on Safari\" has the \"bug\" label.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "title",
+                "labels"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "pattern": "^\\s*Checkout fails on Safari\\s*$"
+                },
+                "labels": {
+                  "type": "array",
+                  "contains": {
+                    "type": "string",
+                    "pattern": "^\\s*[Bb]ug\\s*$"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T10:09:26.778Z"
+  }
+}

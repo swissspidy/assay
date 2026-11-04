@@ -1,0 +1,161 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:41:49.318Z",
+ "turns": {
+  "sha256:8041e385cea59e23c889bacd8f4579eb469321dd128b15c1c81d13d25a40595b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_014Vds4SbJPcrg7sW3bdvWvV",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01GEZ6Z8hwXEUSaHzR5MZDiY",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS5QUKEAgTGAI4AUIIdGhpbmtpbmcSDGNcuDHkL5TijSMUfBoMv34D56CgS8i6kPwfIjDZ1n6HDQwxytNOn/fNx0T4LrzsqkoN7LyO5bIE4WhdmG5snpjLbq1BaQ6Oa4ItgawqggVgnrdqt/rGolwE+cwIUhBSeAJ8M1/F3vuQUeN+yY0t0OKGcgqiNaGlf6pjhnqj+Xq2UT6fIsuXB5+cxbVC4rS7DhhBbYu6ryOPriXwV24WNk6ca4mVUmPdqiUwrlA03iH2H0x6lleFHHO1gCl6Rt+RvWjQeo8Rj4c9aLX/7a6sia0/allygfoaH7+JsawDwkBzBGIS8HivKVhksAhuZC5cax4+YZdavCytWVB7x8YdDeTsPi5mW1AlhB1Po016kysascoFWoB46SjxU9xaWc4Afv6c2tUii0XKHiaSTHRi5Dlh/53Z5Mwcias6P7IE8GjND8H7q1bVkf5eWlmHYepkjo2pDkBmtJ6L9TtrMs7W+kUwYUL0hshugv7jBOoJjvnefsqYJRrZG4XpD8OrG2fhMNiBf4ejUlhRZgYQHg+qARL7dFDpi4uZ9Da4Rdb85mY0LW9/TBew70dUaHEJxNhuFUWoJy77zXpc//z4eCj80G2zfzaMhJKCdCr1r2c/RUisoB+jh21U4h4LKj9c0Tmve6ZSj9S7pRkFELQETZZ0sVPFR0o+WJMPxVqEDTCtfn6WfIvzrInCAokTFd5F42vZFFpFGrf2g1iXZ4NZSjqK+5DkI6GtI7mbY90arKGj9U8QahSx0b+XTq3UYHn8K8umaSB6JZaybDYbrM64c7NRM77Ip0uHvqFsgJ7jhOoIGIdAW9tSqxapqYrTzOLx0MKO/C7EMIzeV4Cid/VKPMt2t20QJfTvj5x0rkNRaUoU85nYlQIAKsAPT5UEc39LBhBQB9XWB0fYD9noOihCDMSnmzz84ouTQHlH5YHOST6vvXx5bQMqihveBwtdTTFZkJ9MVS4YAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_014Vds4SbJPcrg7sW3bdvWvV",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01GEZ6Z8hwXEUSaHzR5MZDiY",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1855,
+    "outputTokens": 96,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1851
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:9714da72af7a155b177a6672d97bd53543e9e05e25b155432ba9c1d9b6542271": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017svrGqJKnFpnoQU7xPBL43",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #3 is titled \"Fix typo in README\"",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The server-side probe shows issue #3 is still titled \"Typo in docs\". Issue #1 got the title \"Fix typo in README\" instead. The network log shows the rename POST went to /issues/1/rename, so the agent renamed the wrong issue."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_017svrGqJKnFpnoQU7xPBL43",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #3 is titled \"Fix typo in README\"",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The server-side probe shows issue #3 is still titled \"Typo in docs\". Issue #1 got the title \"Fix typo in README\" instead. The network log shows the rename POST went to /issues/1/rename, so the agent renamed the wrong issue."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2384,
+    "outputTokens": 188,
+    "cacheReadTokens": 1851,
+    "cacheWriteTokens": 531
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:2e1f51aed6d28a172094f3243c52e0bf0375ac9d5f2cdf561278916bf3015764": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01S1PNgTTRowr8obmhdRmCt5",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The server-side probe shows issue #3 is still titled \"Typo in docs\". Issue #1 got the title \"Fix typo in README\" instead. The network log shows the rename POST went to /issues/1/rename, so the agent renamed the wrong issue."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01S1PNgTTRowr8obmhdRmCt5",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The server-side probe shows issue #3 is still titled \"Typo in docs\". Issue #1 got the title \"Fix typo in README\" instead. The network log shows the rename POST went to /issues/1/rename, so the agent renamed the wrong issue."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2626,
+    "outputTokens": 174,
+    "cacheReadTokens": 2382,
+    "cacheWriteTokens": 242
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

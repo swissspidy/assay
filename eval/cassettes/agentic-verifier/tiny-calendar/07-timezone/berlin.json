@@ -1,0 +1,193 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:46:35.828Z",
+ "turns": {
+  "sha256:61d542210157b1276f8c0e923fafeab66aeee4d0cf20fb1d791b46a9b5709f56": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01MNCcfzEF9pmb5SgBVtQZbY",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01FkkvxhhdkbsXzhXy89amQ4",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01MNCcfzEF9pmb5SgBVtQZbY",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01FkkvxhhdkbsXzhXy89amQ4",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1832,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1828
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:7cb54d3e9db0c8ac908f7c26bbb7327b7f4d80b3315b3a61d15677b23faa0191": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01TCjmkz6cPaTYogdnL5JwJE",
+     "name": "network_entry",
+     "input": {
+      "seq": 3
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01TCjmkz6cPaTYogdnL5JwJE",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 3
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2338,
+    "outputTokens": 49,
+    "cacheReadTokens": 1828,
+    "cacheWriteTokens": 508
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:3749ed984219d373ff4d4ff7570a4de71ce7b98c39decfd0fcd620822a979d0d": {
+   "stop": "tool_use",
+   "text": "The time zone is now set to Berlin.",
+   "toolCalls": [
+    {
+     "id": "toolu_01YPimxrWkcuN4sydZoWT4hx",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the time zone setting is Berlin",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server settings probe shows timezone \"Europe/Berlin\". The PUT /api/settings request sent timezone Europe/Berlin and the server answered 200 with the same value."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "text",
+     "text": "The time zone is now set to Berlin."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01YPimxrWkcuN4sydZoWT4hx",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the time zone setting is Berlin",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server settings probe shows timezone \"Europe/Berlin\". The PUT /api/settings request sent timezone Europe/Berlin and the server answered 200 with the same value."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2509,
+    "outputTokens": 168,
+    "cacheReadTokens": 2336,
+    "cacheWriteTokens": 171
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:119d272ed2f877a23e73eb49fe6824707a640832d0ae408d608b45775f6a9388": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_016vuPcd2PXtBP44Ka4ggqpc",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server settings probe shows timezone \"Europe/Berlin\". The PUT /api/settings request sent timezone Europe/Berlin and the server answered 200 with the same value."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_016vuPcd2PXtBP44Ka4ggqpc",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server settings probe shows timezone \"Europe/Berlin\". The PUT /api/settings request sent timezone Europe/Berlin and the server answered 200 with the same value."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2726,
+    "outputTokens": 148,
+    "cacheReadTokens": 2507,
+    "cacheWriteTokens": 217
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

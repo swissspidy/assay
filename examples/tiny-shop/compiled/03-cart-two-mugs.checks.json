@@ -1,0 +1,183 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/03-cart-two-mugs",
+  "version": "1",
+  "task": {
+    "instruction": "Put a Blue Mug and a Red Mug in my cart and show me the cart.",
+    "outcomes": "Then the cart page lists a Blue Mug\nThen the cart page lists a Red Mug"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The cart page lists a Blue Mug.",
+      "source": {
+        "field": "outcomes",
+        "quote": "Then the cart page lists a Blue Mug"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The cart page lists a Red Mug.",
+      "source": {
+        "field": "outcomes",
+        "quote": "Then the cart page lists a Red Mug"
+      }
+    },
+    {
+      "id": "R3",
+      "kind": "hard",
+      "text": "The cart is shown to the user at the end.",
+      "source": {
+        "field": "instruction",
+        "quote": "show me the cart"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-blue-mug-listed",
+      "requirement": "R1",
+      "description": "The backend cart contains a Blue Mug and the cart page's Cart table has a row for Blue Mug.",
+      "assert": {
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "cart",
+              "pointer": "/items"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "qty"
+                  ],
+                  "properties": {
+                    "name": {
+                      "const": "Blue Mug"
+                    },
+                    "qty": {
+                      "type": "number",
+                      "minimum": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "kind": "contains",
+            "scope": {
+              "anchors": [
+                {
+                  "role": "table",
+                  "name": "Cart"
+                },
+                {
+                  "role": "table",
+                  "landmark": {
+                    "role": "main"
+                  }
+                }
+              ]
+            },
+            "match": {
+              "role": "row",
+              "text": {
+                "contains": "Blue Mug"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "R2-red-mug-listed",
+      "requirement": "R2",
+      "description": "The backend cart contains a Red Mug and the cart page's Cart table has a row for Red Mug.",
+      "assert": {
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "cart",
+              "pointer": "/items"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "qty"
+                  ],
+                  "properties": {
+                    "name": {
+                      "const": "Red Mug"
+                    },
+                    "qty": {
+                      "type": "number",
+                      "minimum": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "kind": "contains",
+            "scope": {
+              "anchors": [
+                {
+                  "role": "table",
+                  "name": "Cart"
+                },
+                {
+                  "role": "table",
+                  "landmark": {
+                    "role": "main"
+                  }
+                }
+              ]
+            },
+            "match": {
+              "role": "row",
+              "text": {
+                "contains": "Red Mug"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "R3-cart-shown",
+      "requirement": "R3",
+      "description": "The browser ends on the cart page (/cart).",
+      "assert": {
+        "kind": "url",
+        "match": {
+          "path": "/cart"
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T10:09:50.943Z"
+  }
+}

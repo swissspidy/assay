@@ -1,0 +1,74 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/07-comment",
+  "version": "1",
+  "task": {
+    "instruction": "Comment \"Working on it\" on issue #2.",
+    "outcomes": "Then issue #2 has a comment \"Working on it\""
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Issue #2 has a comment with the text \"Working on it\".",
+      "source": {
+        "field": "outcomes",
+        "quote": "issue #2 has a comment \"Working on it\""
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "issue2-comment-probe",
+      "requirement": "R1",
+      "description": "The backend's issue #2 has a comment whose text is \"Working on it\" (optionally followed by a period or exclamation mark).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "id",
+                "comments"
+              ],
+              "properties": {
+                "id": {
+                  "const": 2
+                },
+                "comments": {
+                  "type": "array",
+                  "contains": {
+                    "type": "object",
+                    "required": [
+                      "text"
+                    ],
+                    "properties": {
+                      "text": {
+                        "type": "string",
+                        "pattern": "^\\s*Working on it[.!]?\\s*$"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T10:10:32.012Z"
+  }
+}

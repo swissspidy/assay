@@ -1,0 +1,266 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:36:33.516Z",
+ "turns": {
+  "sha256:656f9e2b90da4c13a83fcd98a4df552b857bd19c80f8db7861d3afdb4ca544c8": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01YCzsgWeiaBvxrkwzQqghux",
+     "name": "storage",
+     "input": {}
+    },
+    {
+     "id": "toolu_012T5TvkC33cugV8QkUrwtAX",
+     "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_01Vx7qb2ZmciwvJqpEWnWmmb",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01YCzsgWeiaBvxrkwzQqghux",
+     "name": "storage",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_012T5TvkC33cugV8QkUrwtAX",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Vx7qb2ZmciwvJqpEWnWmmb",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1852,
+    "outputTokens": 72,
+    "cacheReadTokens": 1848,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:b4be5ae63d6af787a32642e5461c25f76dac340ed7e834aa2e057ae4e0544335": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01AGaP4h12SAso1tLprDgxRc",
+     "name": "network_entry",
+     "input": {
+      "seq": 2
+     }
+    },
+    {
+     "id": "toolu_01E4sjgkxMhczdquervoiMEx",
+     "name": "network_log",
+     "input": {
+      "allTypes": true
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01AGaP4h12SAso1tLprDgxRc",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 2
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01E4sjgkxMhczdquervoiMEx",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "allTypes": true
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2453,
+    "outputTokens": 96,
+    "cacheReadTokens": 1848,
+    "cacheWriteTokens": 603
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:b3df56c4c20df7a53730c38ed0cd0960e0ac847bc1a9618286a718a0ca944c07": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01GP6haJCqG9Uty2m2HFLWrG",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1 \"the dark theme\"",
+        "status": "fail",
+        "cites": [
+         3,
+         1,
+         4
+        ],
+        "reasoning": "The captured Settings page still shows \"Light\" selected in the Theme box, and \"Dark\" is not selected. Storage has no dark theme value (only the cookies sid and lang=de, and localStorage is empty). The /api/settings response only contains newsletter:false. Nothing shows the theme was set to dark."
+       },
+       {
+        "requirement": "R2 \"to German\"",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The cookie lang=\"de\" is stored, which is the saved language preference, and the Language box shows \"Deutsch\" selected."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS/gcKEAgTGAI4AUIIdGhpbmtpbmcSDIcjKJ4FDGeAlCrZJRoMr4V+KvnwwiONeVcqIjBr0Kx52tVwt5gkJxdHUvuDmN+p52UNaW4QcIq6OQVDZjnSQAGwCXcq+krWBoodtc0qmwdz+1KTmZiOVWFBO8sABTn3pbztXBzRyAQOLfnp+Z6gEMw+7JtX6G6niwi6yXAO7khdaP0AUyKfHr1gdlBiQ9iGGTwIW0ShbuJ2xKH8JC60jD3sur8xQ19FPax8ro9UmvkrCS5U7EyCTFlPfVeV14vZlq/KDTsmciLv5pWfwf9G4K7UjgmPhyqrPJ67fKEVAMI3CaqTKGooQog6zU2mXffCKVshVihdM7wELB+3qoZPDThqTQ2xJWYkxyDLd4dN9LnrJI2YgakNCVlLORfvasAcVHjV3tWBMrAnwYOlIi4AOgiJX6EZzkSj5RUte/GXKMgb1pOL/1oxN/lIwzl5rnRrpRsgtaIkulf5YufgYjH2/QLPltqNaYg30fVIrqAciulNKrr/SER7NKh7sIvcqwj1fjf/7CAST3dplfvpJgu8bgCwJoAg+8hcP90Q2j7m02ygCO1M0IQsJfT+B+8uGBCFw1/iuIlZlR/SLEy18bhiplWkWbGdGeT1V9UHizfs5/LCp8QwKqO8bfs3Ca0NMlyKvIV5uNkEtdou7/lapiTYNxNx0jqi+efrHLT8XulsTXlmQ6B0ykYSgcDW6mSwK3WgcdQMP5L5lKKu1jd61C1MryA6rXSQ6qbXh075W17z0pZYzS4llCeNKgGp7/SGG83+CM82VTkmOD1932KQ+MRkN4XCQSY27PJS8n1HEgOInF5+lxKNOnssFs7H9XN2hMGtpRKydA5TrfM7oFVpC7HNR/GEuNvLiJWjiBiKh9in0NXeXYGGthgW0CerXMEh9DJnCQeabP+RtaX/ajZvGy3CNwMj69q6s8mcyRffmgbdyU3LkdCPMbx/BKT6AorDpLDiwb7Wbvzu2uFJ9djyjDlwXPFGF7KmZMs2QkBdeYTOA6XOm7QADf82g9llOEGv1WzwQctJsk+5L+4FehCKobBDrr8XUp/CbRlQy/8WN/VeH98OPjTR9bsW+bNMIWiHDmsXpSz13Eh3JINDDgzYFAX44jLJDXzYkzejMXxHbav9ivjv65cz3oXLY4NPKt2ExdWVgVAjCwv2PPuRxsWePnUVLA2VTIkuMieus1ZBMMzFqscLNQzGs6mV1Mk4k4n/7IPvSlHQVwilGKgNauaE5DFkDLkbqaidqr3Gi2rNubA5FXZoUJobONPJa55mSkgyfvN/8/nm9cpZXRCmsrJF39hnxaKE30ot1z1LaTbEDDy/mfyTWiHMiiYUfI4EWxgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01GP6haJCqG9Uty2m2HFLWrG",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1 \"the dark theme\"",
+        "status": "fail",
+        "cites": [
+         3,
+         1,
+         4
+        ],
+        "reasoning": "The captured Settings page still shows \"Light\" selected in the Theme box, and \"Dark\" is not selected. Storage has no dark theme value (only the cookies sid and lang=de, and localStorage is empty). The /api/settings response only contains newsletter:false. Nothing shows the theme was set to dark."
+       },
+       {
+        "requirement": "R2 \"to German\"",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The cookie lang=\"de\" is stored, which is the saved language preference, and the Language box shows \"Deutsch\" selected."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2774,
+    "outputTokens": 417,
+    "cacheReadTokens": 2451,
+    "cacheWriteTokens": 321
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:27dd3e06828d196389de5ef62c2f91d08ba857c260eec8fe30bb33c6f26e88b5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01VQmgadCoK6HAcWXCLNQAoR",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         3,
+         1,
+         4
+        ],
+        "reasoning": "The captured Settings page still shows \"Light\" selected in the Theme box, and \"Dark\" is not selected. Storage has no dark theme value (only the cookies sid and lang=de, and localStorage is empty). The /api/settings response only contains newsletter:false. Nothing shows the theme was set to dark."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The cookie lang=\"de\" is stored, which is the saved language preference, and the Language box shows \"Deutsch\" selected."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01VQmgadCoK6HAcWXCLNQAoR",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         3,
+         1,
+         4
+        ],
+        "reasoning": "The captured Settings page still shows \"Light\" selected in the Theme box, and \"Dark\" is not selected. Storage has no dark theme value (only the cookies sid and lang=de, and localStorage is empty). The /api/settings response only contains newsletter:false. Nothing shows the theme was set to dark."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The cookie lang=\"de\" is stored, which is the saved language preference, and the Language box shows \"Deutsch\" selected."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3253,
+    "outputTokens": 275,
+    "cacheReadTokens": 2772,
+    "cacheWriteTokens": 479
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

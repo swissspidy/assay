@@ -1,0 +1,156 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:40:56.579Z",
+ "turns": {
+  "sha256:7b2ea1d1957f350dc6f537df28481b8f2e12c84227af053e0071a9170ec13b0e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01GGoW9ZV2k9dgvgSbkHireo",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01NnLtQ5hzg85s2AzKyz1hZt",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01GGoW9ZV2k9dgvgSbkHireo",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01NnLtQ5hzg85s2AzKyz1hZt",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1848,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1844
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:b31df117c464330cd56b5e97a084295ccc0d27c0a3cb921fa2f50cf0faed4f68": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01NewyurgUtbLULipapeM1i1",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #2 has a comment \"Working on it\"",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The probe shows issue #2 has no comments (comments: []). The \"Working on it\" comment is on issue #1, and the network log shows the POST went to /issues/1/comments, not issue #2."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01NewyurgUtbLULipapeM1i1",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #2 has a comment \"Working on it\"",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The probe shows issue #2 has no comments (comments: []). The \"Working on it\" comment is on issue #1, and the network log shows the POST went to /issues/1/comments, not issue #2."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2358,
+    "outputTokens": 165,
+    "cacheReadTokens": 1844,
+    "cacheWriteTokens": 512
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:6b9ffbb25fa84f724cb77c27ac5152b6bbae4377c5b122747928491c7b3efaca": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LYE5ATqsDxutLEg4ugn7bZ",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The probe shows issue #2 has no comments (comments: []). The \"Working on it\" comment is on issue #1, and the network log shows the POST went to /issues/1/comments, not issue #2."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01LYE5ATqsDxutLEg4ugn7bZ",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The probe shows issue #2 has no comments (comments: []). The \"Working on it\" comment is on issue #1, and the network log shows the POST went to /issues/1/comments, not issue #2."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2575,
+    "outputTokens": 153,
+    "cacheReadTokens": 2356,
+    "cacheWriteTokens": 217
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

@@ -1,0 +1,205 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T10:10:37.403Z",
+ "turns": {
+  "sha256:eacf63644527457e63499685cab63bbefc82204cbb23ce5f13902d768111aeed": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01U15yMrrT2w8MMkrSy4z9Bn",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The Book club's location is set to City Library.",
+        "field": "outcomes",
+        "quote": "Book club takes place at City Library"
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01U15yMrrT2w8MMkrSy4z9Bn",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The Book club's location is set to City Library.",
+        "field": "outcomes",
+        "quote": "Book club takes place at City Library"
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1103,
+    "outputTokens": 109,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1099
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a29f84c0d0bd28ba545b47854c4c2f7e73b454883888507b163789b0c227a87a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01K9Ayor2Se7vEDvHhPYdmhF",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01GGP9uo8piM9KwFhAHTcCyS",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01K9Ayor2Se7vEDvHhPYdmhF",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01GGP9uo8piM9KwFhAHTcCyS",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 13909,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 13905
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:70bfe4682169723083c7b174f45349c46b3b18bdd43e127fc1aea5f6a1b3ea7e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01QaDHhGeNsZPU6Ce4M6e2DX",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "book-club-location-probe",
+        "requirement": "R1",
+        "description": "The backend events store has the Book club event with location City Library.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "events"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "title",
+             "location"
+            ],
+            "properties": {
+             "title": {
+              "const": "Book club"
+             },
+             "location": {
+              "type": "string",
+              "pattern": "^\\s*City Library\\s*$"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSpAcKEAgTGAI4AUIIdGhpbmtpbmcSDCZ6UIzDFGY8JFCofhoM5ItdiqZJ8zVo8R3zIjCgXTxUZH2NgQ8RAufutDVPpjLDcFa3f0TE57NyiUwjuLbUo6i/402DmQeBoNOhyrIqwQZnzh4LZXwcdX56470Wnu78LJNND8tb0/qf8qYvIv32jd/Pf9Qdc6y+FZ6eFTtXlbZJoxv164g3yWGrm+7rFROb4KhsBFreuOgxarzZOQQRcPBpxsNvMltWxHLfwsQGzsgAJM4xNZcqAypeFZqX/Ts8xzQSDs+xQtCT4VXkMNaqBxM7+gUlwpB9QFn32UQvYFLlMngfKIq5yoTr7wvYTJc6mnuDqqzDn82yKqz1ZdOMTQ23zABkLr8pBdyI4PgVtHMCdKDzUbIWL6fvXDI2sRREggwBggC3O3b1Q86/B7WOD/gtOny1K1WIyjVWxA7pMNhOfoxRAbCQy785+64kKg2QuKBdtsZTscWKF00SEPEeF4y4GT/FElyrGvNTfIYyw64TwVtwPmHNXna5Z+uBtd+eEB+V07EWUzEFQWYlJhMv+5glrmE4ZyCUITzYepXD36sIXJLCtbg/ZbKniMepC3GQeMVJ/iju7thiqeE41mBjfvWSjXCfll+ofR/myOUkjY/g03f+7zIp45fZMKyWPKy1Nnnj0gp4A3gpNPrESmvXGR475W4roSEwRBzlG/Lw5v+Tt6wbmTEK6p3EhiUjQCPo9KlMa0h2pfl/hcaGIFMZ0ITpvp5RHSoSYzMI6MqvYxfQA2KUp9D4BTfSiGi7iXMc6U8mTxpL1Rlx4imtaSKDWZSj2gSfmU8uNzccvMU3XTmXpOUIsWqfIaA9hCI9WwGneiqaqJyhSzRQPwutFTnSDs3KCzP1uV/Ke6T7fx4QId6XjMGvcfJaYRrY6x97xnOlOjHrLqzKVvQ5LBPAU6Bloxq53Ryedrt2B1F/xLQxSPh48icFkFV9xR0OvRVCeK6/HENjW2O6cndHoMQk7SaOxwb8ZPG4p08iRkS+TQnzZRAc8J2RgT0nyyv4lcWtH5QcKTWBJvJEy19NFFheOeibTUAjoZul0FOfZvZJUdE+AfQ1NwdSmstbyT8F3Vy3/D3GpHYlwMuk5ttlMBm/5yCvWAWPIx6DI1puJ5Up2YUBbmzsIGpaapPrQrcumvW2Is6vB6LdZC3k6eiY/ABFrlAD8XlBnz6qBmZNTuMjvIdsvN72rq2kenhASVLx/dJTBWh19hgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01QaDHhGeNsZPU6Ce4M6e2DX",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "book-club-location-probe",
+        "requirement": "R1",
+        "description": "The backend events store has the Book club event with location City Library.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "events"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "title",
+             "location"
+            ],
+            "properties": {
+             "title": {
+              "const": "Book club"
+             },
+             "location": {
+              "type": "string",
+              "pattern": "^\\s*City Library\\s*$"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 14455,
+    "outputTokens": 306,
+    "cacheReadTokens": 13905,
+    "cacheWriteTokens": 548
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

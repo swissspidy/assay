@@ -1,0 +1,69 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/09-unassign",
+  "version": "1",
+  "task": {
+    "instruction": "Remove the assignee from issue #2.",
+    "outcomes": "Then issue #2 is unassigned"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Issue #2 has no assignee.",
+      "source": {
+        "field": "outcomes",
+        "quote": "issue #2 is unassigned"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "issue2-unassigned-probe",
+      "requirement": "R1",
+      "description": "Backend issues probe shows issue #2 with no assignee (null or empty).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "id",
+                "assignee"
+              ],
+              "properties": {
+                "id": {
+                  "const": 2
+                },
+                "assignee": {
+                  "anyOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "const": ""
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T10:10:50.757Z"
+  }
+}

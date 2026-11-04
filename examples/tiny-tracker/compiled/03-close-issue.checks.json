@@ -1,0 +1,62 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/03-close-issue",
+  "version": "1",
+  "task": {
+    "instruction": "Close issue #1.",
+    "outcomes": "Then issue #1 is closed"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Issue #1 is closed.",
+      "source": {
+        "field": "outcomes",
+        "quote": "issue #1 is closed"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "issue1-closed-probe",
+      "requirement": "R1",
+      "description": "Backend issues data shows issue with id 1 having status 'closed'.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "id",
+                "status"
+              ],
+              "properties": {
+                "id": {
+                  "const": 1
+                },
+                "status": {
+                  "const": "closed"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T10:09:47.823Z"
+  }
+}

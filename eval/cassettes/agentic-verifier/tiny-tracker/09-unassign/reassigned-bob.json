@@ -1,0 +1,221 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:42:05.755Z",
+ "turns": {
+  "sha256:27c69e9eba82a2f5ac9663b720ff3567c81dcbfa95452a1bb19430126c7aa1ba": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01NAYJajL8JCS8YoLRi2yBv4",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01YQLha8FP5uococJLFPRpa5",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01NAYJajL8JCS8YoLRi2yBv4",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01YQLha8FP5uococJLFPRpa5",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1834,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1830
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:1c1d83bfb291bc75b0c11fcadc66b6102f76d800c7b07a564fb39573113f6e9c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01SL4qq16i7zot25Nb2KfQtv",
+     "name": "network_entry",
+     "input": {
+      "seq": 1
+     }
+    },
+    {
+     "id": "toolu_01JEK114FjX2WLEDLP9586Yd",
+     "name": "find_nodes",
+     "input": {
+      "text": "assign"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01SL4qq16i7zot25Nb2KfQtv",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 1
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01JEK114FjX2WLEDLP9586Yd",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "text": "assign"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2315,
+    "outputTokens": 96,
+    "cacheReadTokens": 1830,
+    "cacheWriteTokens": 483
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a9169ec209ca29a68665dda13d75908990291639ea1ff3b417a3cf3793078e04": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LB3PeZuouaXasrnjeUxsn1",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #2 is unassigned",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The issues probe shows issue #2 still has assignee \"bob\". The only assign request sent assignee=bob, which did not clear the assignee, and the final page still shows 'Assignee bob'."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSqwUKEAgTGAI4AUIIdGhpbmtpbmcSDA2Amdo3Z3NacVqw6RoMzI975mfsk70BCPodIjBDGZGRWoXgOkKiCmYGiLsYecpmcJ0ptv9TBDs0cXTE7MI2AtLB5O7OB2FIPqxFxxkqyATlW/HE765ebtOeg+pMD2iGdwK/3VRY3kTb9gztGkbh2RjG9HhQAm3ikZ9j2WsKR+w+X08Co4t6upjST1v09usZSxoJb+16A4BWm5mOcx7qtX1DwBgTT9kU8JMr5x3MAOp+M0GxkQEMRD1ADz+sZWOqhJZTBVbYPt7NgwLWYhu7Xg9o7mIf2PwXBPgsBvjHC8gZFqixVrzYk5st7mTxceWYc0ZBS1rWkfHcRgoday42yNwltHC1AhIPQUtmMc+kHnSrPUQqwYyBmKqqwy30C6BdsV7Q+xQ4WCMXupml3QaP2FSOoa4/iAUdW5aDtwvcNUjvYQa1S6TPBVB6m48xdUbSjar8gG0K/SI/TxHaemjblL7BSaCYc+uoSmBBODpjSeezUC8sJBj9tRkzp55QOZ0uuc/WWy0tIgGY0dUk6DGrTeOj9CTsCaNL0qSEL5w4H0AtrTK0VtgCCmBC8eFUH6PZWjPdaJZXoMAfiPnU3QqoyVRCokB2wN01cEKAQ5k8yjeB74sZZhWyvmPyAnOdrmpKYef0TjIljY3+Drzj0HYzQ/8CR54wmZI8EU0MzeYV6+YMV7QdzobGXE73XnfL2JaKIuGfki7HkHZQ+c4GY5yR0Q9U/Ycib92kvPTjbI5ppYXDiYjm/mjJTrlE4t+yquXqbM8+mqq4m2+5vtJZkOikh21d8AcD45Jc3/8XpzLZTFsyMmGQE3lCtbs/SwniNJby3jyfvnQdu8TyPgmsnwA88n90jbH6/koadQvg5AQo26PlRp7pB3t4uhgB"
+    },
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQShgkKEQgTGAI4AUIJbmFycmF0aW9uEgypvULofGsLvLnxYYcaDNTstIRwWBrGBomUqyIwkUUsD3klKx76vnFsBNUj78DqbSaOLEQgOzKtwIyoTehtwDGRjjHhub0VkxEeCEb8KqIIym+W6fAIV15BmaEMEyfQfnsXhjmbl12Cidp1z5YJU5h1A3N6lBCE07S6zX9fix6RZI8wlGI0emXKLC8TuJFq9oOk61s1e57+Y0Le6QA0+Jidm90QAaKpVl6N5VQd4b2QW0dnhKv2BMAUbgMdDSrtMOtmpxIkb2rKL6dEkIo0YRtNurjmdOCPaOltort2XHCF9ROdiyw5Nme9bPmdcFSWyrr5uuPEOGD+pJL9sO0G/b8yyJqHj7kLLLhzh212V4VefGbgUFVSn8lYRJZ4PWjthmJ5CxVvpdzHAOULuHX/TbxGcSsCPu7feNvZsMhnzXOGJlU1/NJtlFbcX+kpo+l8OP/1tEPGI8exygwc+wl9Xor7OC/n5VLB7Kx40Wc1xgE1D8Ra4Sy9lrtJ10Mt45jDRhzRxib64Hh8l2BPBu3f9eJpda6WZRJBlIPiOSW4LmRUvQMXojgOGwyXZuvcPJzeDob2/hrOc78fPMih/Hf2gPHM7OJ0Rf1M64K/phf0RdgzrlmhEl2LDpNUBFkZ0msLJwrFB8pWP3pT13xgVAiNOpizimfiTttXYn0Ri7Qn/EAeDxIplF7kUQcqzEI8gfesIpAgLmLAxghQYEgmJ3a1EXE0MCUFF+LJF84TNchr9Hl5EdZqNYVE9iqF0mxuCygj+GNVAKhXnSMUxk1jO3mCW8OvexAm6FJXAGk1Odw5HR5RkuOVQe5pC7JAMYD7t/lt80e1dh4OssIbE7piHeiw1n6rrTxDyjgM7RflI3/AeXzF2l2RF2C8kn1w3RILJxu1+KowPgztxgQ5jjEg/6nFxIBWBZsZQkBD4I1UkkXKoIY/jN8vAG6fzFrDXo7M5lXI3+HKpPPf+q4UraG+hzi5BPt77gns5Y3HUxOpDGfqKdsKkvdxssxtYb8e5Q85UQkiBmHw5ALJ+hZGvRyW04Ysfh/uwYwIOtIqgH+rvcxekA4LhVgDSUFNWqGFW+tcU34r5BzmfnRc+JgRJx6zuhXJe8xd3r/cnEdZaWK6JaDrUuQ3eFKhXfLrwsuHZ30J2yYZNhD/p8OhCLatFMIFIhD7aJE0w7zSSL0PYYSJJjAB8D/ekYXH2ihs4Zu1t2raoyUNynAZFSVJOMhe4disTCrTa/spKuR6xHcJgPlaqlPCFlOzFV2vX6ke+O29D8BFgaWwF/XfSG3DjvoO2/4U62BZEqrPRZN8oZ+GGPxMGhSSYFn5nIs4QHDHSIXrp044eudiWalkyzsFSw690jlX0k3XsZYtYmZbvwxn8iILo7qqp0SZNvZuwhnsOP9AxEEvor1OKHUwT1Ub49IbyaYYgH6PQITEBcUTeFuFIi2UivDgVUSeD35G3W9rnL1Kwig7Wk1EMO0kU4yxt5TNMV8gv9BUNPCQO8TdkX8l5D1jFcVYhzyBVYsYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01LB3PeZuouaXasrnjeUxsn1",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #2 is unassigned",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The issues probe shows issue #2 still has assignee \"bob\". The only assign request sent assignee=bob, which did not clear the assignee, and the final page still shows 'Assignee bob'."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2845,
+    "outputTokens": 327,
+    "cacheReadTokens": 2313,
+    "cacheWriteTokens": 530
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:f0f4ea2d952243a050710e02c7ff8cd8f3574fbb1f668e6e76a0088b6d1cc14e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01SZb6d98HGt8qEaMCmEqdho",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The issues probe shows issue #2 still has assignee \"bob\". The only assign request sent assignee=bob, which did not clear the assignee, and the final page still shows 'Assignee bob'."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01SZb6d98HGt8qEaMCmEqdho",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The issues probe shows issue #2 still has assignee \"bob\". The only assign request sent assignee=bob, which did not clear the assignee, and the final page still shows 'Assignee bob'."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3221,
+    "outputTokens": 156,
+    "cacheReadTokens": 2843,
+    "cacheWriteTokens": 376
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

@@ -1,0 +1,158 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T10:17:33.416Z",
+ "turns": {
+  "sha256:2ed974870ecf0b14bbee1ceb4b5c60b7c8d984ae35faa42a716b090530fe5026": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01XCYYSTozud2Q6NkniuX4J2",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_018G5T2CADeWuwLDCoxP293D",
+     "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_01XNkMAkzV2ubGtFyHzhnEDd",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01XCYYSTozud2Q6NkniuX4J2",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_018G5T2CADeWuwLDCoxP293D",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01XNkMAkzV2ubGtFyHzhnEDd",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1825,
+    "outputTokens": 72,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1821
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:6720ffecd594f7728b40e3f1898f03e90193e37ee8b895f761fe308aae4c2011": {
+   "stop": "tool_use",
+   "text": "Toggled twice, likely. Let me confirm.",
+   "toolCalls": [
+    {
+     "id": "toolu_019Mfpi5UgkULBdQfwcXSe54",
+     "name": "network_entry",
+     "input": {
+      "seq": 4
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "text",
+     "text": "Toggled twice, likely. Let me confirm."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_019Mfpi5UgkULBdQfwcXSe54",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 4
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3063,
+    "outputTokens": 67,
+    "cacheReadTokens": 1821,
+    "cacheWriteTokens": 1240
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a68273e79f4f0a020ce60fd2529bf5e91ab7d0ebd8ac793584f39b428eaba404": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01DhL5ExTTTL78AfYucgCrr4",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3,
+         4
+        ],
+        "reasoning": "The server-side probe shows issue #1 with status \"open\" (observation 1), and the final page shows Status: Open with a \"Close issue\" button still there (observation 3). The network log has two POSTs to /issues/1/state (observation 2). The last one, #4, sent status=open (observation 4), so the issue was reopened after it was closed."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01DhL5ExTTTL78AfYucgCrr4",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3,
+         4
+        ],
+        "reasoning": "The server-side probe shows issue #1 with status \"open\" (observation 1), and the final page shows Status: Open with a \"Close issue\" button still there (observation 3). The network log has two POSTs to /issues/1/state (observation 2). The last one, #4, sent status=open (observation 4), so the issue was reopened after it was closed."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3235,
+    "outputTokens": 201,
+    "cacheReadTokens": 3061,
+    "cacheWriteTokens": 172
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

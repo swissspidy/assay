@@ -1,0 +1,198 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:41:39.725Z",
+ "turns": {
+  "sha256:af0695ea827e6f07f548f8c198fe975de5afe83c6933fdad74920f4986034dd4": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01WNfGk5UaSVXDu86r5RVh83",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01DcSXTH4vQysLbeXMSJrerK",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSswUKEAgTGAI4AUIIdGhpbmtpbmcSDLP8joHZ3zuD1ksW+hoMscCmAbbu3Oac5Hq9IjDibQDsrEBaaksTAWyH+NA7g6SYLh33MwY10LEw8oe0bjoiWBweRn8hDYcMEdjDvdIq0ASPrPkmoz8CJhJoWOOzi+byun9Be06juCC6MUqIssnd6+lrnJEeB05kE7pC+Zq6nWJry6ENlju2666y25H62NqAlFvdV27d2GIJ0GskpzFM+YhSn75Ja1+blfkEFlwqUkNTLii74xkEK5W1g8dUOU6ixL5zD3RBN22SbkK7+kCMIM39cW2cAQ/Fe62MyESju1Mj8L7SPT+ATEv/ujDLskoPlqqgUCp2h14a/jgDBF+AGmKe4PLdCppF1LOvEoZ6QgUoV7KkI41C24RO1gQG4lq//xViRpxceNlKHaCzgKvC0g4PVrgs2Unr89jZ7P1+SwXMAi40SlqBn6kViCxgyfj5+cThCUc+4q5lW4Jlgu3HvMEjUXWNYEFJa9xfmCBgYWmnuO+EkIv+Imh/Fvj0JKlN6rTXE4NOArJYaoPl2LTAEVnL4e2LwxIIvaQb3U+SgZ04mUK6jNtyAmV1DxOTYLoPmCUhHD2HPGxpY162CLG54LErzM8u8aw+QC6mQDbH+PeQefum+kuP5goln6aTD043qX66qH8ukkFJ4DQvTJMBW1H5qwOAZNnWnmuoZDcjXxwiQd9gQXtsEnTQ/ZMpwDMwxeazHS/ZqVk89JR7n6ErApfKddwsIA0LWEjwkoHmwvq0UjwATpYN4ZY5g1qxO6czYMeAi9mQyBNjDlu1cyLCW/tPctpNA7L6xyXtRlAjn6xxNXk+YNRw/7AnO5ar7wK7R+dcvl5Nm4TGwdpKl37Oqpz3NhwUsxOitb9/vi/BN0obUKgVukF9DTjyf3XhAouPGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01WNfGk5UaSVXDu86r5RVh83",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01DcSXTH4vQysLbeXMSJrerK",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1857,
+    "outputTokens": 73,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1853
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:76a3af9b4a2919f4d83817d49cec687e9b8ae90a0f53427cb0547a926cbb898a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01GMPCV2f7dvoTyker6eyipy",
+     "name": "network_entry",
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01GMPCV2f7dvoTyker6eyipy",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2366,
+    "outputTokens": 49,
+    "cacheReadTokens": 1853,
+    "cacheWriteTokens": 511
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:27f7fafbf4a5cd15a9539199e4a3ab72ac98b6d6e611177add8b694afdab4781": {
+   "stop": "tool_use",
+   "text": "Issue #3 was not renamed correctly. The agent submitted \"Fix typo in READNE\" (an N where the M should be) instead of \"Fix typo in README\", so the requirement fails.",
+   "toolCalls": [
+    {
+     "id": "toolu_01LeYeW5iqgMLZgRYhYsTZdF",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #3 is titled \"Fix typo in README\"",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The issues probe shows issue #3's stored title is \"Fix typo in READNE\", not \"Fix typo in README\". The rename POST body sent title \"Fix typo in READNE\", so the server holds the misspelled title."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "text",
+     "text": "Issue #3 was not renamed correctly. The agent submitted \"Fix typo in READNE\" (an N where the M should be) instead of \"Fix typo in README\", so the requirement fails."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01LeYeW5iqgMLZgRYhYsTZdF",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #3 is titled \"Fix typo in README\"",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The issues probe shows issue #3's stored title is \"Fix typo in READNE\", not \"Fix typo in README\". The rename POST body sent title \"Fix typo in READNE\", so the server holds the misspelled title."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2529,
+    "outputTokens": 240,
+    "cacheReadTokens": 2364,
+    "cacheWriteTokens": 163
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:368513aec5dbfebcd7e15fed9834c7c25704e315f40fa285c79a6e5d70b1c54c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_019aeYNJBng36MRLdsFKwNyg",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The issues probe shows issue #3's stored title is \"Fix typo in READNE\", not \"Fix typo in README\". The rename POST body sent title \"Fix typo in READNE\", so the server holds the misspelled title."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_019aeYNJBng36MRLdsFKwNyg",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The issues probe shows issue #3's stored title is \"Fix typo in READNE\", not \"Fix typo in README\". The rename POST body sent title \"Fix typo in READNE\", so the server holds the misspelled title."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2823,
+    "outputTokens": 164,
+    "cacheReadTokens": 2527,
+    "cacheWriteTokens": 294
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

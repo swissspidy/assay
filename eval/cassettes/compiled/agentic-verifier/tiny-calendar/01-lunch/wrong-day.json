@@ -1,0 +1,235 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T10:21:22.023Z",
+ "turns": {
+  "sha256:cb8b1f63478a5d50cbfeb69de6cb639d6c710aa99fa605c60848da93aa754d0c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_013dKRtWm8DkSS6BiSkTMJmP",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_016u2AKBoYer6avX3yZ63BBX",
+     "name": "page_outline",
+     "input": {}
+    },
+    {
+     "id": "toolu_01LfaQQToS5MTH7GPusgsTRA",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_013dKRtWm8DkSS6BiSkTMJmP",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_016u2AKBoYer6avX3yZ63BBX",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01LfaQQToS5MTH7GPusgsTRA",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1933,
+    "outputTokens": 72,
+    "cacheReadTokens": 1929,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:aba782d6f8111c95f0fd4eb49757576c1cd67d8d90fbc1f1b34e10a76efe6b2a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01BchHsuUz2q3EB4fgA5achM",
+     "name": "network_entry",
+     "input": {
+      "seq": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01BchHsuUz2q3EB4fgA5achM",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 2
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3163,
+    "outputTokens": 49,
+    "cacheReadTokens": 1929,
+    "cacheWriteTokens": 1232
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:685156453af92ef38fd0f54577148b104ed6efeb29a5e0c29f75cf6641a13d86": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FcoB49DbyGvMm7EDR4rLKX",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "an event \"Lunch with Sam\" exists on November 5, 2026 at 12:30",
+        "status": "fail",
+        "cites": [
+         1,
+         4
+        ],
+        "reasoning": "The stored event 'Lunch with Sam' (id 4) has date 2026-11-06, not 2026-11-05. The POST body also sent 2026-11-06. No event exists on Nov 5."
+       },
+       {
+        "requirement": "the event page shows the date November 5, 2026",
+        "status": "fail",
+        "cites": [
+         2
+        ],
+        "reasoning": "The event page says 'Friday, November 6, 2026, 12:30 PM', and its Date field shows 2026-11-06."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01FcoB49DbyGvMm7EDR4rLKX",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "an event \"Lunch with Sam\" exists on November 5, 2026 at 12:30",
+        "status": "fail",
+        "cites": [
+         1,
+         4
+        ],
+        "reasoning": "The stored event 'Lunch with Sam' (id 4) has date 2026-11-06, not 2026-11-05. The POST body also sent 2026-11-06. No event exists on Nov 5."
+       },
+       {
+        "requirement": "the event page shows the date November 5, 2026",
+        "status": "fail",
+        "cites": [
+         2
+        ],
+        "reasoning": "The event page says 'Friday, November 6, 2026, 12:30 PM', and its Date field shows 2026-11-06."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3443,
+    "outputTokens": 262,
+    "cacheReadTokens": 3161,
+    "cacheWriteTokens": 280
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:aaab1c478727e1ca578ffa8e5e872b1d9f3de610d474f0b9fcbc1ec622ca64f0": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Q7Bj2WtPtTyqwXq9HHaMhE",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         4
+        ],
+        "reasoning": "The stored event 'Lunch with Sam' (id 4) has date 2026-11-06, not 2026-11-05. The POST body also sent 2026-11-06. No event exists on Nov 5."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         2
+        ],
+        "reasoning": "The event page says 'Friday, November 6, 2026, 12:30 PM', and its Date field shows 2026-11-06."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Q7Bj2WtPtTyqwXq9HHaMhE",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         4
+        ],
+        "reasoning": "The stored event 'Lunch with Sam' (id 4) has date 2026-11-06, not 2026-11-05. The POST body also sent 2026-11-06. No event exists on Nov 5."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         2
+        ],
+        "reasoning": "The event page says 'Friday, November 6, 2026, 12:30 PM', and its Date field shows 2026-11-06."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3792,
+    "outputTokens": 228,
+    "cacheReadTokens": 3441,
+    "cacheWriteTokens": 349
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

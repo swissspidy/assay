@@ -1,0 +1,207 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T10:15:44.595Z",
+ "turns": {
+  "sha256:0c746bded0028643b574a362117f7a4f780bfae5cfc9b1fdb0487dff21be7e98": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01WRu32FqTFtwFYijqjinmhv",
+     "name": "storage",
+     "input": {}
+    },
+    {
+     "id": "toolu_01RApiYBjxHZyqnM9xfDfiXz",
+     "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_01RQFbWNiwUv59zy7sNXY2Qx",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01WRu32FqTFtwFYijqjinmhv",
+     "name": "storage",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01RApiYBjxHZyqnM9xfDfiXz",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01RQFbWNiwUv59zy7sNXY2Qx",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1859,
+    "outputTokens": 72,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1855
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:9e81c6fb2076498d39e2e97ab9d92cd1ab20c5db14b75a81892a3669494c5fd3": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01WdeodoY4zN3PH3WaVLu746",
+     "name": "network_entry",
+     "input": {
+      "seq": 2
+     }
+    },
+    {
+     "id": "toolu_014Yb22Mw5pMxQpjQF1L7Ktk",
+     "name": "network_log",
+     "input": {
+      "allTypes": true
+     }
+    },
+    {
+     "id": "toolu_011jkaxaRkoc2SZbmcfB41FE",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01WdeodoY4zN3PH3WaVLu746",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 2
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_014Yb22Mw5pMxQpjQF1L7Ktk",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "allTypes": true
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_011jkaxaRkoc2SZbmcfB41FE",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 2460,
+    "outputTokens": 118,
+    "cacheReadTokens": 1855,
+    "cacheWriteTokens": 603
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:f9ef2ec769067c99b6b78590664479f5fd7eba1b58a6442d04c4cf0818af20b7": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01UN34WtoQxFWJz3jvxm8khi",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The Theme combobox on the captured settings page still has \"Light\" selected. Neither the cookies nor localStorage hold a theme value, and the server settings response contains only {\"newsletter\": false}. Nothing shows dark being chosen."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "There is a cookie lang=\"de\", and the Language combobox has \"Deutsch\" selected. That means the language preference is German."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSiQYKEAgTGAI4AUIIdGhpbmtpbmcSDGJ5/fM321itQIGEbRoMyGHREMZD3CZtaj+iIjCq9ZQUQPbKn/ERoIPuXIGmy/TGgTkF6fAE24fRxB6To+/uBQ0TWLtAUCV+Y6IZynkqpgVLweUiqRetCibBYFryFrXXfnNbz7mUECZeJC9GpFSEbJfBaiWL2G5fUVG/obs/+bw4Uzv2MQDCdfaohPjdhEnTddK1D5eYtaEkC8WcGkjtYU2dWMnkVbpMPeL0vCjK7bf47WgFhtaKf1r18db3wADQQlII0BQNiVqemZaKLHhKjUs62+u6Ft4dzN0jvdLxGiTMsmE+Q9UMuqNU3Q63BInggS+bFU1fmlb+4HiFitP8g40YFOecZooS+dWXqjT1tQExSmYV9I4bcakg+G8Q/BTVF2kEMaMQ0HZqdnWviLb28/m0ohQgxi22VIbticvkZScm9cb3tpAnojJShibAZsiKAHQBEnk0cGCOr7eBM8N8xwg1EipLcHZ8IVuCN0OJ4E68rbsgN7Jr6mUS31qBHvgq6nnKpIgMGzOBlUJyAWC7c3YkjlWvBdpVPsGOR0PEfFbgVaNrQtrTF8blyW+Ige7o7ClDIHFDCRv1E6Vw5Bpb0R1r4o2H1kIiUx4jNTp0BhJr0C9KSiM1Im83HaIl/H60gvuEWxZnFyP8heoAF1plxXBOTkE450I+zngvqg5oMvSnMwPPww45dLmFVfVlJ9soE83elr7orCQRX3XupuZZJe5Bdnvb2c/eFSb4LlCGNBqDI9ecOtoMds4I8OvvPRHnhtZpr4iBSRVYeWHELfFHNr7sKeKzBtZ4W3UXQWrUxtd+X6wPt9RnafUTCtzK21qTxcCg/nzygEd7KY/L45TRdX3fb3mENLj8iXbnxKG7Z/cMcSN79S4dgo0IJK0W0+wWsqF/qAFqhCMMkN6va+h+W99Jj/yWFvuJYV9cyL4G/s5v2VmFQQ2q6+rzrSIGIOU3KjpiKRgy40cp+rQmBaSXsSTLqenuNUKtobf78pEJ00SmhJWacYEYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01UN34WtoQxFWJz3jvxm8khi",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The Theme combobox on the captured settings page still has \"Light\" selected. Neither the cookies nor localStorage hold a theme value, and the server settings response contains only {\"newsletter\": false}. Nothing shows dark being chosen."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "There is a cookie lang=\"de\", and the Language combobox has \"Deutsch\" selected. That means the language preference is German."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2876,
+    "outputTokens": 291,
+    "cacheReadTokens": 2458,
+    "cacheWriteTokens": 416
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

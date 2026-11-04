@@ -5,10 +5,10 @@
  *
  *   node scripts/eval.ts [--systems checks,checks+escalation,llm-judge,agentic-verifier] [--checks handwritten|compiled]
  *
- * Model-based systems run live with ANTHROPIC_API_KEY (recording cassettes under
- * eval/cassettes/) and replay those cassettes without a key; a system without
- * recordings is reported as not measured.
- * Writes eval/results/REPORT.md and eval/results/results.json.
+ * Model-based systems replay their cassettes under eval/cassettes/ and record the
+ * missing ones live when ANTHROPIC_API_KEY is set (ASSAY_MODEL_MODE=record
+ * re-records all); a system without recordings is reported as not measured.
+ * Writes eval/results/REPORT.md and results.json (compiled: eval/results/compiled/).
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import {
@@ -126,8 +126,14 @@ const errorText = (e: unknown) => (e instanceof Error ? e.message : String(e));
 /** A replayed request that the cassette has no recording for: the inputs changed since recording. */
 const isStale = (msg: string | undefined) => !!msg && msg.includes('has no recording for this request');
 
+/** The LLM judge never sees the check set, so its recordings serve both modes; the others are kept per mode. */
+const cassetteDir = (system: string) =>
+  CHECKS === 'compiled' && system !== 'llm-judge' ? `cassettes/compiled/${system}/` : `cassettes/${system}/`;
+/** Handwritten results stay at eval/results/ (what CI writes); compiled ones go next to them. */
+const resultsDir = CHECKS === 'compiled' ? 'results/compiled/' : 'results/';
+
 async function modelRun(system: string, r: Run): Promise<ModelOutcome> {
-  const cassette = new URL(`cassettes/${system}/${r.app}/${r.task}/${r.scenario}.json`, root).pathname;
+  const cassette = new URL(`${cassetteDir(system)}${r.app}/${r.task}/${r.scenario}.json`, root).pathname;
   let env;
   try {
     env = await modelFromEnv(cassette);
@@ -283,10 +289,10 @@ function writeReport(): string {
       : '- Checks gave the labelled verdict on every run.',
     '',
   ].join('\n');
-  mkdirSync(new URL('results/', root), { recursive: true });
-  writeFileSync(new URL('results/REPORT.md', root), md);
+  mkdirSync(new URL(resultsDir, root), { recursive: true });
+  writeFileSync(new URL(`${resultsDir}REPORT.md`, root), md);
   writeFileSync(
-    new URL('results/results.json', root),
+    new URL(`${resultsDir}results.json`, root),
     JSON.stringify({ generatedAt: new Date().toISOString(), checks: CHECKS, results }, null, 1) + '\n',
   );
   return md;

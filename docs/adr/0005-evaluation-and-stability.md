@@ -62,8 +62,9 @@ A system is either measured on every run or reported as "not measured" with the 
 
 ### Reproducibility
 
-- Model calls go through record/replay cassettes (`eval/cassettes/<system>/<app>/<task>/<scenario>.json`).
-- With `ANTHROPIC_API_KEY` set, missing cassettes are recorded. Without one, the recorded cassettes are replayed.
+- Model calls go through record/replay cassettes (`eval/cassettes/<system>/<app>/<task>/<scenario>.json`). The agentic verifier and escalation see the check set's requirements, so with compiled sets their cassettes are kept apart (`eval/cassettes/compiled/<system>/…`). The LLM judge sees only the task and the snapshot, so its recordings serve both modes.
+- Existing cassettes are replayed. With `ANTHROPIC_API_KEY` set, missing ones are recorded; `ASSAY_MODEL_MODE=record` re-records all of them, and `ASSAY_MODEL_MODE=replay` (CI) never calls the model.
+- Handwritten results go to `eval/results/`, compiled ones to `eval/results/compiled/`.
 - The scripts are typechecked with the rest of the code (`tsconfig.json` includes `scripts/`).
 
 ### Stability: simulated releases (`npm run stability`, in CI)
@@ -99,10 +100,23 @@ The apps and the check sets do not change on their own, and the model ID is pinn
 
 ## Results so far
 
-With the handwritten checks and no model (the model rows wait for an API key):
+Measured on 2026-11-04 with `claude-opus-5-5` at effort `high`, for the compiler, the LLM judge and the agentic verifier. Latency is per run after capture; model latency is from the live recordings.
 
-- **Eval:** checks reached balanced accuracy 1.000 on 123 runs (TPR 1.000, TNR 1.000), with a median latency of about 0.1 ms per run after capture.
-- **Stability:**
+- **Compiling:** all 30 tasks compile from one correct run each, and the compiled sets judge every held-out labelled run correctly (`examples/<app>/compiled/SUMMARY.md`). The first live compile missed three: an `anyOf` branch reading a probe field no snapshot had (failed runs abstained), an exact comment text that rejected a correct "Working on it." and row-only checks for a list filter that the seed data already satisfied without the filter. The compiler now refuses `anyOf` branches that no correct run can read, and the discovery prompt covers dictated messages and filter state. Review then found checks for one event's title, date and time that could each be met by a different event; the prompt now has every such check select the record by all the details the task states. The tasks were then re-recorded.
+- **Stress (compiled sets):** every near-miss mutant is rejected (284/284, all by fail) and every valid variant is accepted (625/625).
+- **Eval, compiled checks** (93 held-out runs: 30 correct, 63 incorrect):
+
+| System            | Balanced accuracy | TPR   | TNR   | Cost / run | Latency (median / p95) |
+| ----------------- | ----------------- | ----- | ----- | ---------- | ---------------------- |
+| checks            | 1.000             | 1.000 | 1.000 | $0         | 0.3 ms / 4.7 ms        |
+| checks+escalation | 1.000             | 1.000 | 1.000 | $0         | 0.2 ms / 0.6 ms        |
+| llm-judge         | 0.927             | 0.933 | 0.921 | $0.0119    | 4.3 s / 10.0 s         |
+| agentic-verifier  | 0.942             | 0.900 | 0.984 | $0.0273    | 8.3 s / 14.4 s         |
+
+- **Eval, handwritten checks** (all 123 runs): checks 1.000; LLM judge 0.944 ($0.0117 per run); agentic verifier 0.984 ($0.0244 per run). The checks row is circular here (see above).
+- No compiled check abstained on these runs, so escalation never called the model.
+- The LLM judge accepted three adversarial pages that only claim success (a spoofed delivery date, gift wrap and deletion), a wrong rename and the label-only filter, and rejected two correct runs. The agentic verifier, which reads probes and the network log, rejected every adversarial page. It shares two misses with the first compile: it rejected the comment ending in a period and accepted the label-only filter. With the compiled requirements it also rejected two correct orders that added gift wrap to an express order.
+- **Stability** (handwritten checks, no model):
 
 | Variant         | Correct | Abstain | Broken | Agent error | Regression runs caught |
 | --------------- | ------- | ------- | ------ | ----------- | ---------------------- |
@@ -120,6 +134,6 @@ With the handwritten checks and no model (the model rows wait for an API key):
 
 ## Consequences
 
-- The comparison is only meaningful once the model rows and the compiled checks are recorded. Until then the report states what was not measured and why.
+- The model rows and the compiled checks are recorded, and CI replays them without a key. A change to a prompt, the model or the adapter makes the affected cassettes stale; the report then says "not measured" until they are re-recorded.
 - Small first-party apps keep the dataset deterministic and free to run in CI. The cost is less visual and structural variety than real sites. The releases are hand-written, so they test the kinds of change we thought of. Generated changes, for example by asking a model to restyle an app, would widen that.
 - API changes in v4 are additive only. Renaming a field that a probe reads changes the probe's contract, much like a breaking API change for any client, and is out of scope here.

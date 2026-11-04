@@ -1,0 +1,229 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:38:10.944Z",
+ "turns": {
+  "sha256:42f7da87487ce1025a23485694e7de55b4d71a9ea6da4ffb1b4f071408320585": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01J4JXUNjdUTFsMcNajzXQCF",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01T56iSvStLSVMFoGugUL4ya",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01J4JXUNjdUTFsMcNajzXQCF",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01T56iSvStLSVMFoGugUL4ya",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1871,
+    "outputTokens": 48,
+    "cacheReadTokens": 1867,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:8e5011099311398f142f2873ce7d9c7a12e707b3c8424990ba5678a868d4a93c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01XxLVfDnk4cyvLgr6pMtfSX",
+     "name": "network_entry",
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01XxLVfDnk4cyvLgr6pMtfSX",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2421,
+    "outputTokens": 49,
+    "cacheReadTokens": 1867,
+    "cacheWriteTokens": 552
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:28c76f28d671843becfb7be0a5aeeb9f49df7a1967b560b9e939547ed6e7b186": {
+   "stop": "tool_use",
+   "text": "I checked both requirements against the server-side issues probe and the recorded form submission. Both pass.",
+   "toolCalls": [
+    {
+     "id": "toolu_01W1VGspmn5mG96Ewg32wtA4",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "an issue \"Add CSV export\" exists",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The issues probe lists issue #4 titled \"Add CSV export\". The form was sent as a POST to /issues with that title, and the server redirected to /issues/4."
+       },
+       {
+        "requirement": "its priority is high",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "In the probe, issue #4 has priority \"high\", and the POST request body also sent priority=high."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "text",
+     "text": "I checked both requirements against the server-side issues probe and the recorded form submission. Both pass."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01W1VGspmn5mG96Ewg32wtA4",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "an issue \"Add CSV export\" exists",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The issues probe lists issue #4 titled \"Add CSV export\". The form was sent as a POST to /issues with that title, and the server redirected to /issues/4."
+       },
+       {
+        "requirement": "its priority is high",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "In the probe, issue #4 has priority \"high\", and the POST request body also sent priority=high."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2592,
+    "outputTokens": 251,
+    "cacheReadTokens": 2419,
+    "cacheWriteTokens": 171
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:39e1f1056ab0a6b819dad5a436a9c0a56903fa757a8d1106a560df48cee77b4d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015DgX5gXdGsJxEpczFxsKJN",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The issues probe lists issue #4 titled \"Add CSV export\". The form was sent as a POST to /issues with that title, and the server redirected to /issues/4."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "In the probe, issue #4 has priority \"high\", and the POST request body also sent priority=high."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_015DgX5gXdGsJxEpczFxsKJN",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The issues probe lists issue #4 titled \"Add CSV export\". The form was sent as a POST to /issues with that title, and the server redirected to /issues/4."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "In the probe, issue #4 has priority \"high\", and the POST request body also sent priority=high."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2907,
+    "outputTokens": 211,
+    "cacheReadTokens": 2590,
+    "cacheWriteTokens": 315
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

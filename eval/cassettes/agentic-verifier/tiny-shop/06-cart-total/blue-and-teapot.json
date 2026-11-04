@@ -1,0 +1,107 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:34:19.009Z",
+ "turns": {
+  "sha256:1ad321174052b6e2dffed0aa745233ce133a7ec11e508488e65da15ba182239e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01JxUXU2VtZ1oQ1eQZavksww",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_013UUgsB1pkB7vf1ShkPZh7F",
+     "name": "find_nodes",
+     "input": {
+      "text": "total"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01JxUXU2VtZ1oQ1eQZavksww",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_013UUgsB1pkB7vf1ShkPZh7F",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "text": "total"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1841,
+    "outputTokens": 71,
+    "cacheReadTokens": 1837,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:071d8b1a47f16d813d1fcc7f3929e2ee1762fd4d6313cbe1f219c19857cdf096": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017em8q4PSswnoHxWizEHdMg",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The server cart probe shows a Blue Mug ($12) and a Green Teapot ($27), with no Red Mug, for a total of $39. The cart page also shows \"Total: $39.00\", not $21.50."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_017em8q4PSswnoHxWizEHdMg",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The server cart probe shows a Blue Mug ($12) and a Green Teapot ($27), with no Red Mug, for a total of $39. The cart page also shows \"Total: $39.00\", not $21.50."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2302,
+    "outputTokens": 156,
+    "cacheReadTokens": 1837,
+    "cacheWriteTokens": 463
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

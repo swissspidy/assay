@@ -125,7 +125,7 @@ jobs:
       # Every scenario against releases v1-v5 of each app; fails if any verdict is wrong.
       - name: Stability run
         run: node scripts/stability.ts --out ci-results/stability
-      # Model systems replay committed cassettes (none recorded yet: reported as not measured).
+      # Model systems replay the committed cassettes; a missing or stale one is reported as not measured.
       - name: Evaluation
         env:
           ASSAY_MODEL_MODE: replay

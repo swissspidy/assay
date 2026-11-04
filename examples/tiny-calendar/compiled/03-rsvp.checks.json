@@ -1,0 +1,110 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-calendar/03-rsvp",
+  "version": "1",
+  "task": {
+    "instruction": "RSVP that I'm going to the Book club.",
+    "outcomes": "Then my RSVP for Book club is going"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The user's RSVP for the Book club event is set to going.",
+      "source": {
+        "field": "outcomes",
+        "quote": "my RSVP for Book club is going"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-probe-bookclub-rsvp-yes",
+      "requirement": "R1",
+      "description": "The backend's stored Book club event has its RSVP set to yes (going).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "events"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "title",
+                "rsvp"
+              ],
+              "properties": {
+                "title": {
+                  "const": "Book club"
+                },
+                "rsvp": {
+                  "const": "yes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R1-request-rsvp-put",
+      "requirement": "R1",
+      "description": "A successful RSVP update request was sent with rsvp yes and the server returned the Book club event with rsvp yes.",
+      "assert": {
+        "kind": "request",
+        "match": {
+          "method": [
+            "PUT",
+            "POST",
+            "PATCH"
+          ],
+          "url": {
+            "path": "/api/events/*/rsvp"
+          },
+          "status": {
+            "gte": 200,
+            "lt": 300
+          },
+          "requestBody": {
+            "type": "object",
+            "required": [
+              "rsvp"
+            ],
+            "properties": {
+              "rsvp": {
+                "const": "yes"
+              }
+            }
+          },
+          "responseBody": {
+            "type": "object",
+            "required": [
+              "title",
+              "rsvp"
+            ],
+            "properties": {
+              "title": {
+                "const": "Book club"
+              },
+              "rsvp": {
+                "const": "yes"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T10:10:03.092Z"
+  }
+}

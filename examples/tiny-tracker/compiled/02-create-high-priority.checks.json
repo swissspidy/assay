@@ -1,0 +1,102 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/02-create-high-priority",
+  "version": "1",
+  "task": {
+    "instruction": "File a new issue \"Add CSV export\" with high priority.",
+    "outcomes": "Then an issue \"Add CSV export\" exists\nThen its priority is high"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "An issue titled \"Add CSV export\" exists.",
+      "source": {
+        "field": "outcomes",
+        "quote": "an issue \"Add CSV export\" exists"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The issue's priority is high.",
+      "source": {
+        "field": "outcomes",
+        "quote": "its priority is high"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "r1-issue-exists",
+      "requirement": "R1",
+      "description": "The backend issues list contains an issue titled \"Add CSV export\".",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "title"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "pattern": "^\\s*Add CSV export\\s*$"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r2-priority-high",
+      "requirement": "R2",
+      "description": "The backend issue titled \"Add CSV export\" has priority high.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "title",
+                "priority"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "pattern": "^\\s*Add CSV export\\s*$"
+                },
+                "priority": {
+                  "type": "string",
+                  "pattern": "^\\s*[Hh][Ii][Gg][Hh]\\s*$"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T10:09:39.138Z"
+  }
+}

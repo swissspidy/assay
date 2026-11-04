@@ -48,6 +48,8 @@ ADR 0001 fixed the snapshot format and the check DSL. Milestone 2 produces check
 
 The report lists, per requirement, the checks covering it, the evidence channels they use, and its trust: how hard it is to satisfy by faking page content. Every check must pass, so a requirement is as strong as its strongest check. An `anyOf` is as weak as its weakest branch, because that branch alone can pass; an `allOf` is as strong as its strongest part. Requirements covered only by free text are flagged.
 
+An accepted set carries its provenance in `compiled`: the compiler (`assay/<version>`), the model client it was given (`anthropic:claude-opus-5-5@high`, which includes the effort), the models that actually served the turns as the API reported them (a server-side fallback shows up here), and when the model ran. `compiled` is part of the set, so a lock (ADR 0004) covers it too. Handwritten sets have no `compiled`.
+
 ### Models
 
 - `ModelClient` is a small provider-neutral interface: one request in, one assistant turn out. Provider-native content (e.g. thinking blocks) is carried opaquely and sent back unchanged.
@@ -68,7 +70,7 @@ The report lists, per requirement, the checks covering it, the evidence channels
 
   Other providers implement the same interface.
 
-- **Cassettes** make model steps reproducible. A live run records each turn under a digest of the full request plus the model ID, which includes the effort. Later runs replay it without a key. The cassette is written after every turn, so an error mid-run keeps what was already paid for. Tools are deterministic (fixed snapshots, pure evaluation), so a replayed run issues exactly the recorded requests. If the prompt, tools or inputs change, the replay fails loudly instead of drifting.
+- **Cassettes** make model steps reproducible. A live run records each turn under a digest of the full request plus the model ID, which includes the effort. Later runs replay it without a key. The cassette is written after every turn, so an error mid-run keeps what was already paid for. Tools are deterministic (fixed snapshots, pure evaluation), so a replayed run issues exactly the recorded requests. If the prompt, tools or inputs change, the replay fails loudly instead of drifting. A cassette records when it was recorded, and a replayed compile writes that time, not the replay's, into `compiled.at`, so replaying reproduces the committed file byte for byte. The scripts replay an existing cassette and record only missing ones; `ASSAY_MODEL_MODE=record` re-records all of them, and `ASSAY_MODEL_MODE=replay` never calls the model.
 
 ### Trajectories
 

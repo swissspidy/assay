@@ -1,0 +1,279 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T10:09:39.138Z",
+ "turns": {
+  "sha256:9a0bc1631511e327acec954620cd2eadc2c745673edc070f3bd4ae2f3c38cbd9": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015oHKxZwHQW5J1HC7tzwC8M",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "An issue titled \"Add CSV export\" exists.",
+        "field": "outcomes",
+        "quote": "an issue \"Add CSV export\" exists"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
+        "text": "The issue's priority is high.",
+        "field": "outcomes",
+        "quote": "its priority is high"
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_015oHKxZwHQW5J1HC7tzwC8M",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "An issue titled \"Add CSV export\" exists.",
+        "field": "outcomes",
+        "quote": "an issue \"Add CSV export\" exists"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
+        "text": "The issue's priority is high.",
+        "field": "outcomes",
+        "quote": "its priority is high"
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1129,
+    "outputTokens": 166,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1125
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:10bc40bed70692113c4f034bbd38b69ebaabd34ecacd0b2fd330a96f789675bc": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01BpP89FNfVjbGvGcQ9jZH7U",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_015NrsDWLSNkaL7Y9dNtSiwj",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01BpP89FNfVjbGvGcQ9jZH7U",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_015NrsDWLSNkaL7Y9dNtSiwj",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 13980,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 13976
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:7928d02eb13e8041bae1d8cf3d0a165918124b770ba0300cd1c234346299c95f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FkddFwJ4gYs4MVjRt6WCGL",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "r1-issue-exists",
+        "requirement": "R1",
+        "description": "The backend issues list contains an issue titled \"Add CSV export\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "title"
+            ],
+            "properties": {
+             "title": {
+              "type": "string",
+              "pattern": "^\\s*Add CSV export\\s*$"
+             }
+            }
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r2-priority-high",
+        "requirement": "R2",
+        "description": "The backend issue titled \"Add CSV export\" has priority high.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "title",
+             "priority"
+            ],
+            "properties": {
+             "title": {
+              "type": "string",
+              "pattern": "^\\s*Add CSV export\\s*$"
+             },
+             "priority": {
+              "type": "string",
+              "pattern": "^\\s*[Hh][Ii][Gg][Hh]\\s*$"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS2gYKEAgTGAI4AUIIdGhpbmtpbmcSDBuqTnLoz2TI0kKsVBoMrYaiAoDQqaNHzlo2IjBA99Au/r7ORnRMM9kMSOuzEi2S+6gm+L1bhHvMXwO7hlqLpquRqMDGfP+UpB6qLaAq9wV38zQpKCK0n8qF19G4JNk9d6T+VF8bu2M/piGJZhOH2F1x/pHacGM9finK2bt9zJJHNWNKx2fIu3u8muU0bZdAw9LXAgjOx8qrtheAufNezgfg8ns76gqoIvl9+a0WjM6JRIQuOGNTukrTfWCU9e+1CRW3YR+NDcK5jbgOZeJ/J5oCYb1zlAZiMQRqBuxKPskB685tJUJlaqEtG4eV4ZHAqT+qiWBK81d1DdjfM7UmieE3RVOU4Il2JSpn/zLunMa99HIMEfPHqXp6bD0AbAx3sbwVyh8jrvzvUk6E/k0DQa4AQBSwqQ8Vbzi6si6n59548tqIcIeSud7GZPDZ1AMGtQWj1cXFXL5m6U84QSsCG28POV9k6oED+75Gr7gYgy9B8CXSB6tqBphnrksO1zx8hcihGyYptWFCZXY0AUABnsXLYzRzGCFfDZ6EkDX9WRpwHBmjuaDS9FNGR9GF/pK0QfLgqkKhRoDrXlPyJfuswALgIhHFkmufVdnuYbp5Tfp0jXKxxpQAr48GpU8j/54ItugurVODjF7HKyFhJc1xscaNHhQPqkQE2q/jO02lFjANtBL/UrYkehrAS1CZPTuZIXEWoQSn9py1/fylEo3LNDFGJtjJKwgoVwqivdH4JZIpyd8BDF5v7rn9pFjguW3+/bdabQVZvc8JaTiM5ydDHG+fs+olub24J131jYtY2IDM2hY6lXK8uN5UBk7ymUrXjtiad51XmnfkSZOIuPrX45v1cMiqv8OdaeF0LrVhwQ9Kn9pZ5d1pj4qOkh0DWIZcywZ3g8PwpCwKV/X8tX7nfCW2VEDZIRKpHJLS8wlsvTdEIHgL6YzJKCX6n/S5zsoME0TJ3CO65hfoujr6K8bAHTTlcBQjylyV5jsyXY6/v0p9QiRqrCASUf9vWNALhkvusA1fix0pD0FbeXARyMsI1fPxwI35VbtMb/WG7G4lHyUklE/4U86GO5pAFLK7TUVH+BLgmio4jA+vuOllvhM1SbC9MLq1hzMYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01FkddFwJ4gYs4MVjRt6WCGL",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "r1-issue-exists",
+        "requirement": "R1",
+        "description": "The backend issues list contains an issue titled \"Add CSV export\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "title"
+            ],
+            "properties": {
+             "title": {
+              "type": "string",
+              "pattern": "^\\s*Add CSV export\\s*$"
+             }
+            }
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r2-priority-high",
+        "requirement": "R2",
+        "description": "The backend issue titled \"Add CSV export\" has priority high.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "title",
+             "priority"
+            ],
+            "properties": {
+             "title": {
+              "type": "string",
+              "pattern": "^\\s*Add CSV export\\s*$"
+             },
+             "priority": {
+              "type": "string",
+              "pattern": "^\\s*[Hh][Ii][Gg][Hh]\\s*$"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 14516,
+    "outputTokens": 484,
+    "cacheReadTokens": 13976,
+    "cacheWriteTokens": 538
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

@@ -1,0 +1,139 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-calendar/05-delete-standup",
+  "version": "1",
+  "task": {
+    "instruction": "Delete the Team standup event, but nothing else.",
+    "outcomes": "Then the Team standup event is gone\nThen the other events are still there"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The Team standup event has been deleted.",
+      "source": {
+        "field": "outcomes",
+        "quote": "the Team standup event is gone"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "All other events remain in place.",
+      "source": {
+        "field": "outcomes",
+        "quote": "the other events are still there"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "r1-standup-gone",
+      "requirement": "R1",
+      "description": "The backend events list contains no event titled 'Team standup'.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "events"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "not": {
+              "contains": {
+                "type": "object",
+                "required": [
+                  "title"
+                ],
+                "properties": {
+                  "title": {
+                    "const": "Team standup"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r2-others-remain",
+      "requirement": "R2",
+      "description": "The backend events list still contains Dentist (2026-11-06) and Book club (2026-11-10).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "events"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "allOf": [
+              {
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "title",
+                    "date"
+                  ],
+                  "properties": {
+                    "title": {
+                      "const": "Dentist"
+                    },
+                    "date": {
+                      "const": "2026-11-06"
+                    }
+                  }
+                }
+              },
+              {
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "title",
+                    "date"
+                  ],
+                  "properties": {
+                    "title": {
+                      "const": "Book club"
+                    },
+                    "date": {
+                      "const": "2026-11-10"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "r2-no-other-deletes",
+      "requirement": "R2",
+      "description": "No DELETE request was sent for the Dentist (id 2) or Book club (id 3) events.",
+      "assert": {
+        "kind": "request",
+        "match": {
+          "method": "DELETE",
+          "url": {
+            "regex": "/api/events/(2|3)(\\D|$)"
+          }
+        },
+        "count": {
+          "eq": 0
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T10:10:25.831Z"
+  }
+}

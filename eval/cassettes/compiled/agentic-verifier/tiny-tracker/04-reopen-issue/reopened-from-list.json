@@ -1,0 +1,203 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T10:17:54.813Z",
+ "turns": {
+  "sha256:43a3e089319cbbf47943dab3f04457ee59367ba2c3bcb8148c630b1f3d882524": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015n9T9UVWFazMd5b3u71ifs",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01DTKCPzuxPoQPEMNQz7uiFN",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_015n9T9UVWFazMd5b3u71ifs",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01DTKCPzuxPoQPEMNQz7uiFN",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1826,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1822
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:225deffea1a46a8c57ecdbc9c56dd3e97241103e03469b71e0b690d99060b4ec": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01UeVV2V4VQzyfrUicyzm9ow",
+     "name": "network_entry",
+     "input": {
+      "seq": 3
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01UeVV2V4VQzyfrUicyzm9ow",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 3
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2364,
+    "outputTokens": 49,
+    "cacheReadTokens": 1822,
+    "cacheWriteTokens": 540
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:0c4f391c440bc67ef7ff953094310b5d0ae42449496f2e01424eda006b7a906f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01VreP2C1D7qpNRY2kCpyYy3",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #3 is open again",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The agent sent a POST to /issues/3/state with status=open and got a 303 redirect (obs 3). The issues probe now shows issue #3 with status 'open' (obs 1). The agent looked at the closed-issues list before opening #3 (obs 2), which fits #3 having been closed."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS4QUKEAgTGAI4AUIIdGhpbmtpbmcSDKE/svwjsuHtbFSe7hoM+VvO9n59R7PO9/kVIjCwdP4sL6wItPoI3fYBZiuH3/3NGaoLCp2wTl4OEJvEba61Zc8y693utfWUwgC0LWwq/gQpZ+Jr4dMZwwUo87ZOB9dNh/MSxUjZK5sv/7OCsWGlHFw2vglh5H/+eDCx76l9KurgfIaITMJcsK8SOCK5wZFMja8Xa/ZOL9yT5ByH/TaBZ6L8qr4g72wivQGVGx+PFd/3MXI2RchNTVO3ciapPsYWYpe80GdynLdN/UaBL/yFlPusPctf/l4kkNthv8ITJGrLDLpKAgKTZVnWFggLtDOcWHuRgKmuVtw2NcrKxTfXu9VnJbstjaiRNkwkZUueIHcqD0DcDqD4So8xlD6174StE7bJQbQViod9MymF+4c7D10f2lI4mAdXJ2Ws5HJ3Z+ylS6Ew8J5tA0/Z3iuiNJhdJJJis4RVojvwF1u8BggpNtCxSCUDGutJY/BY21CUAhqlwx8GYZZbqqTJNr067H1Ah7kRjnP9SZTGmpw72Edia/KU6a4MTphgoU2zoMh1UvWFEtG9Q8vXBmhBOoodbs+e8QzNwewNR9Qq0g60G/98X8jzPCOITDv9GmGjOBCfJ8Rbo2HHDC+JFBx/L4UYuOauOxNzKOtV8JoCXEGtOMyfTxvQeooS2v0B15d+h2iOiBy6xlHjEA5EWcT9H5qrcb+N/cUDRrmLHLMQBuvFGrrXiNaLPdlT/hF6gKhjGC2344ut67sGr98xtzI9vV64cLPcY073WHLitNqKjWsYU0k9mRK1I7JjmipNuBf+FtppWHkmJLPESlcwh2H8GeN9dbdQqKzXym3tC+tjLMMS643Sn+qCj6rG9By7RD77YRByAQejWdBDT2bsoNg1ViFxRlMXfkYZSNjHUuibHxvDPKxuNlrPzN8/z6vrVshcmuBELmBJVoH3s6OPp/bdit46FhgB"
+    },
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSgwoKEQgTGAI4AUIJbmFycmF0aW9uEgwPdfr+bi7L04qX0pQaDJ7+YuxIApM6zivgRCIwIffUVit+YxzeXfQorEnmOzNHdQxRkj+WHOQj0wIaeImtpBR0TC52o8Poi7N7k7tRKp8JaipWb1qoN1uUjt+ycMTGFZ0SF259JezHjmRj/4hKLdx87wft7fzrEARdBrIgwjV6YZxt7A5ZfU7nsUwU0C3qPqLVeGGTBtD+UxqSDj4szzUYUCLXDl0m3d6L0X5WnIp8dig7mOvn1fvHOUMsKDd/Frs5dKqY9+b9B1GlAfU1J2cnSR8NrJOmjQXWAOI/ysBiztVz63yKi0AQWMUphUGBM4y/QNyF+vi+wjUGutj1nelhhYkiY2cTA74Dug0pEI1D4tvPZIgO0zvtc/XsVmMKVvDOH83xIwcxdb8v6fzQHWgzpRzYQ+KUfR0VOuyb+446N8sxhIC0Q8Ir/uDfurAxpZia7zCnNDvxop34Tq4m8CHqqyRiuICDztPiCYHwSog6Az1vB4DMJoIZph1FPPQFijWyQWLFOIMgXwbl6bs2qFMTaqmEjW4zYbonTwJoaqkZ+MzdRPuDcxJRJ8jwMMeynuZLU0ZjaRBLNjifvFn/r5eQfwtyTedrKbVuYDlNNRGCY422ktyID2DkJYVzdFIe4ndLw1V1CCjqs3bgU/vOF2VIOQjIk5av+NmAb/BJznNXDr1kSjGArbD/1DLaL249ysYLfAQhlBtZYo0wr1G85DKTCFDmbrYZSqGEiXL1IiDGwioIUB6NSHYo04RWbWwa8VsFO+6Tqf2MT9tPrNsjwKM9ZByiuvZzIdYcDtXiinyFr87qDXiaWFyhXddXwJkHiCJe3BCawVEmlFHL1x0eWJXswrxJTaHCKMmkymqhKiX/N7iZ29T7zvig1Z7R7fpSNv28lat8YcAEmmT9l1Ej425Y4xkjzbBXHqKLDJo+VyTEZvweogJUzNA/OEDjCYkWf8QO+TWfAHkEuV5nsQfndUqexxGmHZ/WAa8shw7H3V2w39hG2zFwYBD+58CCBBs54hdOhHgQPK93osgZ8EPxxWHhB5h3OVReHZQ0zUO3fBVElSK+SwZK67hf4wKcxC1eOngd9oKj3DqNNNbh+9loTy89WBGbjzPV4mt0YPYaxqZb63M0rJtsX9mSWfxv/tsllQOTf0TtR29OnbHzZURqtUyq8VqUeFyU65URz2LPYUYS+uCbDs3gukhlKXmYayg+wsERgbDVt416RdDrn8Xu4ldKeyoToW6vX/scbLX9PSoLeSDik3LcJ+K0ryYOmEfhHDtb4Yfj8m1IkMTi22w5BUmqvMqOMi8mhlhnNV72OgfX+FlxP+lQYxXcux6EPc9Th3wTetow6OjiOg/J+xy7pVKKoJ4w/MYZkTuIu+t2RIRrR4v3yrMqWcSqXM542/P4+HqAxwCup6zTqN01+g7Bi3Y4bk4Q5WuyW+iR3d+Eiys02nVSaRIZT1F2Q/JTjuF4Mlti5R/ADj732+/Ad6IolQoXS0BwheuotOnu+A+gLo8jEZ9nWRchw2LyCIBZxA0GZ+f5V+2QKQpRnvBeuunX6Lr5fhv3UGmW8UkhyxYvnOhEBC4YoKJglM6DmMeoksv/kcKepC6HgZJ8xG1QtCJ1i1pp2zeJzXh8wkLr+C70hfQbddOnv0H1u8dwSokOZW0RMqY7syQIBBkw5nBtN8bnRBgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01VreP2C1D7qpNRY2kCpyYy3",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #3 is open again",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The agent sent a POST to /issues/3/state with status=open and got a 303 redirect (obs 3). The issues probe now shows issue #3 with status 'open' (obs 1). The agent looked at the closed-issues list before opening #3 (obs 2), which fits #3 having been closed."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2518,
+    "outputTokens": 414,
+    "cacheReadTokens": 2362,
+    "cacheWriteTokens": 154
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:48ff0cde0aa9798af055f67e67fbed5b85143c727e9d7617181c5aaadc109169": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01F9NhKLCtNyY63q7P26WXzB",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The agent sent a POST to /issues/3/state with status=open and got a 303 redirect (obs 3). The issues probe now shows issue #3 with status 'open' (obs 1). The agent looked at the closed-issues list before opening #3 (obs 2), which fits #3 having been closed."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01F9NhKLCtNyY63q7P26WXzB",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The agent sent a POST to /issues/3/state with status=open and got a 303 redirect (obs 3). The issues probe now shows issue #3 with status 'open' (obs 1). The agent looked at the closed-issues list before opening #3 (obs 2), which fits #3 having been closed."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2979,
+    "outputTokens": 188,
+    "cacheReadTokens": 2516,
+    "cacheWriteTokens": 461
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

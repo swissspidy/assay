@@ -1,0 +1,291 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T10:10:18.828Z",
+ "turns": {
+  "sha256:77749a43136ba4b74a146ba091731a7a0ea359b54464907cc88a39bb9f9d834c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_014asdPm3hCBQrEy4m3Pvzii",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The cart shows a quantity of 3 for the Blue Mug.",
+        "field": "outcomes",
+        "quote": "the cart shows 3 Blue Mugs"
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_014asdPm3hCBQrEy4m3Pvzii",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The cart shows a quantity of 3 for the Blue Mug.",
+        "field": "outcomes",
+        "quote": "the cart shows 3 Blue Mugs"
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1122,
+    "outputTokens": 123,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1118
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:cf6ab4cdc7e9431c1356673f617445a020a6a5bc7ad92b45c8d3aa0ccc1ea1b0": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011QuFcRnKtvfbY2e137UBnM",
+     "name": "page_outline",
+     "input": {}
+    },
+    {
+     "id": "toolu_01SGatz1WpJS1G1Ans1bNEBn",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01XW2NFH74bPF2zsDnagRCkb",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_011QuFcRnKtvfbY2e137UBnM",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01SGatz1WpJS1G1Ans1bNEBn",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01XW2NFH74bPF2zsDnagRCkb",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 13963,
+    "outputTokens": 72,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 13959
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:349cdb8359d9105dd6090cd7564f12578bcb1fe2ef67bc3b77b8e810017f2c0b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01JPmo38bxYvYgD9WZebPVzn",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "R1-probe-cart-blue-mug-qty-3",
+        "requirement": "R1",
+        "description": "The backend cart contains a Blue Mug line item with quantity 3.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/items"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "name": {
+              "const": "Blue Mug"
+             },
+             "qty": {
+              "const": 3
+             }
+            },
+            "required": [
+             "name",
+             "qty"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "R1-ui-blue-mug-qty-3",
+        "requirement": "R1",
+        "description": "The cart page's quantity input for Blue Mug shows 3.",
+        "assert": {
+         "kind": "state",
+         "target": {
+          "anchors": [
+           {
+            "role": "spinbutton",
+            "name": {
+             "contains": "Blue Mug"
+            },
+            "within": {
+             "role": "table",
+             "name": "Cart"
+            }
+           },
+           {
+            "role": "spinbutton",
+            "name": {
+             "contains": "Blue Mug"
+            },
+            "landmark": {
+             "role": "main"
+            }
+           }
+          ]
+         },
+         "expect": {
+          "value": {
+           "regex": "^\\s*3\\s*$"
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSvQcKEAgTGAI4AUIIdGhpbmtpbmcSDFwfZgqa90STbrlQMRoM+eyO98GA/FJllK6BIjBAgwDFSfgHtbEbHByNMAovrHuxeIoElSGegg324DQKLnvIZGNphpXTCCFabVQfzHsq2gb4BNInjJIWv0iiBhrA2b9gR7n1gaHkq04ZGeX9ipesC3bdsoxYP0aYJfA/R8omwUw9gIOu4XSUSInqnfOtGkhcZdvTIYpeGOhXvPvgyyJuhzuTq8M35GK5LVs8cQxsAaQkxP1BHohKF1Ps8Rc9IFS0ViGQnv+9lB17GcLLt+/Y/1F1qkICkMHt17LEhB7qghUhPFeugabZiKqcWAWF5uuX04vIQNCJ3PNWBjNFy5Arr2AkOEJE2Gywln1ga4F2JbSOns7nlbN9TwHe0QxH+CvGGWNkOeamKQZOrnheGkPibhO4zjXE1nIY01q7TmLGvKVhDrpeFnl47R6Jd7L41KVQUNlJp4c2Gk1Cmw/nKERvehY0YpnOsqQ7ABLK/TpCMbdJBnJ6PNIT3S1AgzyR67lTdG7PvtQzyPFZ3JdNmQfACDJjKT8FLat5sywopE9yPYPKuADNuASqfX8mXW5G/v0FgpnwdycGLz/S4jjveYUQJFvrCrhryZx2mA0x/tjL4TU6KtyVwt8v925Ju4IMBpjkejlxEeid3zhUTRpUwRgGb2qEYxeMw6BJ89RgKgs535PYGMNZGZ2au9CkkvDAQNIHnKoQO/Er1e4gRTgxLTIKM5Ue25uOGLJBfV3emFGur+EBH6jIfTTNBSTlZ3MDT1K91I/qUixZDft1s/Zf7LlrrfcGYf4V9/7egv+pTKHwETyIsc/A1Y/lzljRgareqhr80RWQ76MYWB128vTim72wwogGGMJb1NOCbPi5zYFo/O+cENMwBE3GcIBAPdhF+pe7VkoJSt5/4VjBsh89xnp7XJmvC1HMJ4sC0xvR2a6I/gIVB/urJmmxi0VVk3/o54jrzpJekh0sEL9nAYOf9UxOeOkiMdLjUKjQssS4Z4uU/nSiEZXsjGxuMN+VbwPVyKEhXYkz4ZvhfyKE2QRC3v2InoDw69nh7sHeyETPntg+47Xu4THVoaWlBx0APPgqZGhi2EpGn2LzvzxRrDVm+IwE+Ry18V3IRF89H9Xy6k9JrZ7WcWGU4pmBaJLKPPY4F1rV4dyeqOdTZlXVOhdEQcTAFDQnppuoFVc7I9IW4Ecfzbn1EcaGr0PIXwXk6ObLZD0oRms0q1Bo7A42xmE4fpv4xp0q2Lski2WDjCUYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01JPmo38bxYvYgD9WZebPVzn",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "R1-probe-cart-blue-mug-qty-3",
+        "requirement": "R1",
+        "description": "The backend cart contains a Blue Mug line item with quantity 3.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/items"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "name": {
+              "const": "Blue Mug"
+             },
+             "qty": {
+              "const": 3
+             }
+            },
+            "required": [
+             "name",
+             "qty"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "R1-ui-blue-mug-qty-3",
+        "requirement": "R1",
+        "description": "The cart page's quantity input for Blue Mug shows 3.",
+        "assert": {
+         "kind": "state",
+         "target": {
+          "anchors": [
+           {
+            "role": "spinbutton",
+            "name": {
+             "contains": "Blue Mug"
+            },
+            "within": {
+             "role": "table",
+             "name": "Cart"
+            }
+           },
+           {
+            "role": "spinbutton",
+            "name": {
+             "contains": "Blue Mug"
+            },
+            "landmark": {
+             "role": "main"
+            }
+           }
+          ]
+         },
+         "expect": {
+          "value": {
+           "regex": "^\\s*3\\s*$"
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 14866,
+    "outputTokens": 538,
+    "cacheReadTokens": 13959,
+    "cacheWriteTokens": 905
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

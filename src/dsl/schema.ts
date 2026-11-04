@@ -81,6 +81,17 @@ export const checkSetSchema = {
     },
     requirements: { type: 'array', minItems: 1, items: { $ref: '#/definitions/requirement' } },
     checks: { type: 'array', items: { $ref: '#/definitions/check' } },
+    compiled: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['compiler', 'model', 'modelsUsed', 'at'],
+      properties: {
+        compiler: { type: 'string', minLength: 1 },
+        model: { type: 'string', minLength: 1 },
+        modelsUsed: { type: 'array', items: { type: 'string', minLength: 1 } },
+        at: { type: 'string', minLength: 1 },
+      },
+    },
     locked: {
       type: 'object',
       additionalProperties: false,

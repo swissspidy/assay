@@ -1,0 +1,161 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T10:19:57.803Z",
+ "turns": {
+  "sha256:8041e385cea59e23c889bacd8f4579eb469321dd128b15c1c81d13d25a40595b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Jed1iorT5wsNL17UYQuApf",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_0137RSE4NLYsDBhUPNuTwh7D",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS+AUKEAgTGAI4AUIIdGhpbmtpbmcSDE26PmMxGWqk6FlgSBoMcBOaa4QJsEO6C78yIjCJNHjJUIHUUmw+jeSi+VsGzdvwKKkZPI4MPSdg8IBWK2lbNyiLfIsghGaqUl0DBDcqlQWhEgfwZ9rrvvfKpaIy0bcx5UhUjrARYXZhDhInfZkWNKlhfOu0UwrIqmX2BMMq68dJGwtAwvza9f9E6qEb6iz+1yHhI5Koer89zG30G1DAQO3zj0KZH8H28n616JstAlv7G9YylhkMamj0OqwCv0HzITzZ6UenEHwQucaKvUi9JoJzsevHSbsFQXYUpi/UD9DF0HNsNe3dHpCaC71t3nDfEuVoKpV1QmICBrV+k8uqvVoHGST3TR+a0R7yNmQveibpRzHGUHnYxHXpc6Vkxm1wGa/40uuPMsAA5BblpKfX2iVUxKhQjGWbweZSFIniXMylGMV8U7j9h/wrFTtWRI8CDAX090ptaCgM6uFcVrZM9injwIOiBGVqyZv3l3g7cMx3rmT88zFdijrdphEGjMsN25vdmBFQZigFzJA0AfGNzOlniUziiGfZgrFZBzoVs5kqPCcOX5SYZoMZc6T5ANJn6FmczGoQrFDVqq7prO26KH6NNZb5MElqKZuF5Lo+gigntOpedLdgg83UdVm1v0BE400GMcvF2jpzb26/69s2pdWYrvBn2AkgHFUYWhBA5LEiJUUffwwavq/QhyLCCiEx9A/gEWLkXEGVU6m4lk6fCNwlm9b8BQ1VDmrXpzoKJTgSM8GiMMufT77OnQWQULE801HsYbTdEDPD79VcKNv+Bf+yA5buxhmmZT+heUGgWL8tokfbamTO41qv+8t1kOG4viCdobaCt2i82VLRuf07DiIVa3ZPaAC3A/nn+pE1ZJW1cJjgZdqmZIR7I0maJQLyH1fCp6FNmcNVsFFUZer6gVqOWvBnrlG6BCeC/pp/j80VVa8NJXqn1JJApnjZMBFD1D1WuUPGbyiOFzoZFnaYicensKH0GAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Jed1iorT5wsNL17UYQuApf",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_0137RSE4NLYsDBhUPNuTwh7D",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1855,
+    "outputTokens": 102,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1851
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:aee2442cb9d7f376fce7fe4801f123a74c8c05d2b9957ad483e2a03b7bb7a47c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_013SN2A6ra1jAmNBssiAnDmN",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #3 is titled \"Fix typo in README\"",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "According to the server-side probe, issue #3 is still titled \"Typo in docs\". The rename was sent to /issues/1/rename, so issue #1 is the one now titled \"Fix typo in README\", not issue #3."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_013SN2A6ra1jAmNBssiAnDmN",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #3 is titled \"Fix typo in README\"",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "According to the server-side probe, issue #3 is still titled \"Typo in docs\". The rename was sent to /issues/1/rename, so issue #1 is the one now titled \"Fix typo in README\", not issue #3."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2390,
+    "outputTokens": 176,
+    "cacheReadTokens": 1851,
+    "cacheWriteTokens": 537
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:6a6ab0a902040d2509a7e15a2ac6e67e78a912e8482f7b208c96eafd7facdbed": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01PdNhbXEkdTHyvmY4PiPcJ8",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "According to the server-side probe, issue #3 is still titled \"Typo in docs\". The rename was sent to /issues/1/rename, so issue #1 is the one now titled \"Fix typo in README\", not issue #3."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01PdNhbXEkdTHyvmY4PiPcJ8",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "According to the server-side probe, issue #3 is still titled \"Typo in docs\". The rename was sent to /issues/1/rename, so issue #1 is the one now titled \"Fix typo in README\", not issue #3."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2620,
+    "outputTokens": 162,
+    "cacheReadTokens": 2388,
+    "cacheWriteTokens": 230
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

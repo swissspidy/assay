@@ -10,10 +10,12 @@ expensive verifier.
 
 > Status: all five milestones are in: snapshot format and check DSL, compiler,
 > stress testing, escalation and records, and the 30-task evaluation with
-> stability runs. Model baselines are measured once an API key is set.
+> stability runs. On the 93 held-out runs, the compiled checks judge every run
+> correctly (balanced accuracy 1.000, no model at run time); an LLM judge
+> reaches 0.927 and the agentic verifier 0.942 ([report](eval/results/compiled/REPORT.md)).
 
 - Design: [ADR 0001: Evidence snapshot format and check DSL](docs/adr/0001-evidence-snapshot-and-check-dsl.md)
-- Example check sets: [`examples/tiny-shop/tasks/`](examples/tiny-shop/tasks)
+- Example check sets: [`examples/tiny-shop/tasks/`](examples/tiny-shop/tasks) (handwritten) and [`examples/tiny-shop/compiled/`](examples/tiny-shop/compiled) (compiled)
 
 ## Install
 
@@ -117,7 +119,7 @@ const { checkSet, report } = await compileTask(
 );
 ```
 
-The compiler writes a rubric of requirements, each quoting the task text. An agent then explores the reference snapshots and submits checks, which are accepted only once they validate and pass on every correct reference. See [ADR 0002](docs/adr/0002-compiler.md). `npm run compile:examples` compiles the 30 example tasks from one correct run each and judges the held-out runs. It needs `ANTHROPIC_API_KEY` to record and replays the recorded cassettes without one.
+The compiler writes a rubric of requirements, each quoting the task text. An agent then explores the reference snapshots and submits checks, which are accepted only once they validate and pass on every correct reference. See [ADR 0002](docs/adr/0002-compiler.md). `npm run compile:examples` compiles the 30 example tasks from one correct run each and judges the held-out runs; all 30 compile and judge every held-out run correctly (`examples/<app>/compiled/SUMMARY.md`). It replays the committed cassettes and records missing ones when `ANTHROPIC_API_KEY` is set (`ASSAY_MODEL_MODE=record` re-records all). Every compiled set records its provenance in `compiled`: compiler version, model and date.
 
 ## Stress testing (milestone 3)
 
@@ -152,8 +154,17 @@ In Playwright: `await expectOutcome(page, locked, { escalate: { verifier }, reco
 Three small apps (`examples/tiny-shop`, `examples/tiny-tracker`, `examples/tiny-calendar`) provide 30 tasks and 123 labelled runs. The runs are correct, wrong item, partial, undone, over-completion, or adversarial pages that only claim success.
 
 - `npm run eval` compares checks, checks with escalation, an LLM judge and the agentic verifier on balanced accuracy, TPR, TNR, cost and latency. Results go to `eval/results/REPORT.md`.
-  - Add `-- --checks compiled` to use the compiled check sets. The run each set was compiled from is then left out.
-  - Model rows are recorded to cassettes when `ANTHROPIC_API_KEY` is set and replayed otherwise.
+  - Add `-- --checks compiled` to use the compiled check sets. The run each set was compiled from is then left out. Results go to `eval/results/compiled/REPORT.md`.
+  - Model rows replay the committed cassettes; missing ones are recorded when `ANTHROPIC_API_KEY` is set.
+
+| Held-out runs (compiled checks, 93 runs) | Balanced accuracy | TPR   | TNR   | Cost / run | Median latency |
+| ---------------------------------------- | ----------------- | ----- | ----- | ---------- | -------------- |
+| checks                                   | 1.000             | 1.000 | 1.000 | $0         | 0.3 ms         |
+| LLM judge (`claude-opus-5-5`)            | 0.927             | 0.933 | 0.921 | $0.0119    | 4.3 s          |
+| agentic verifier (`claude-opus-5-5`)     | 0.942             | 0.900 | 0.984 | $0.0273    | 8.3 s          |
+
+The LLM judge accepted 3 of 8 adversarial pages that only claim success; the checks and the verifier rejected all of them. The judge's latency is from the handwritten run, which recorded it.
+
 - `npm run stability` judges every run against five releases of each app, and against the regression alone, (renamed copy, new layout with look-alike content, extra API fields, and a real regression), with checks written for the first. Results go to `stability/results/REPORT.md`. CI runs it on every change and fails on any wrong verdict.
 - The Model baselines workflow (run by hand) measures the model rows live with fresh recordings, when the API key secret is set. Run it after changing the model, a prompt or the model adapter.
 

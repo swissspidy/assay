@@ -1,0 +1,122 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/10-filter-open-bugs",
+  "version": "1",
+  "task": {
+    "instruction": "Show me only the open bugs in the issue list.",
+    "outcomes": "Then the list shows only open issues\nThen the list shows only issues labelled bug"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The issue list shows only open issues.",
+      "source": {
+        "field": "outcomes",
+        "quote": "Then the list shows only open issues"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The issue list shows only issues labelled bug.",
+      "source": {
+        "field": "outcomes",
+        "quote": "Then the list shows only issues labelled bug"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-url-status-open",
+      "requirement": "R1",
+      "description": "The issue list URL has the status filter set to open.",
+      "assert": {
+        "kind": "url",
+        "match": {
+          "query": {
+            "status": {
+              "equals": "open",
+              "ignoreCase": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R1-no-closed-rows",
+      "requirement": "R1",
+      "description": "The Issues table contains no rows whose status cell is Closed.",
+      "assert": {
+        "kind": "contains",
+        "scope": {
+          "role": "table",
+          "name": "Issues"
+        },
+        "witness": {
+          "role": "columnheader",
+          "name": "Status"
+        },
+        "match": {
+          "role": "cell",
+          "name": {
+            "equals": "Closed",
+            "ignoreCase": true
+          }
+        },
+        "count": {
+          "eq": 0
+        }
+      }
+    },
+    {
+      "id": "R2-url-label-bug",
+      "requirement": "R2",
+      "description": "The issue list URL has the label filter set to bug.",
+      "assert": {
+        "kind": "url",
+        "match": {
+          "query": {
+            "label": {
+              "equals": "bug",
+              "ignoreCase": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R2-no-non-bug-rows",
+      "requirement": "R2",
+      "description": "The Issues table contains no issue rows that lack the bug label.",
+      "assert": {
+        "kind": "contains",
+        "scope": {
+          "role": "table",
+          "name": "Issues"
+        },
+        "witness": {
+          "role": "columnheader",
+          "name": "Labels"
+        },
+        "match": {
+          "role": "row",
+          "name": {
+            "regex": "^\\d+ (?!.*\\bbug\\b)"
+          }
+        },
+        "count": {
+          "eq": 0
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T10:10:58.719Z"
+  }
+}

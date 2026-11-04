@@ -1,0 +1,243 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T10:16:21.091Z",
+ "turns": {
+  "sha256:5ad1cab5185ae7b35589015160e82a1fa4a14eca153b48b7de370b47e08ae18d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Bq4f4T1tJ89Rcd1kHFksaV",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01DsZszU8fNvWWinQjH56urw",
+     "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_01VtS3Vy9CnsQjsZUNdypZoB",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Bq4f4T1tJ89Rcd1kHFksaV",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01DsZszU8fNvWWinQjH56urw",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01VtS3Vy9CnsQjsZUNdypZoB",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1906,
+    "outputTokens": 72,
+    "cacheReadTokens": 1902,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:2b6ad32fc9fbdb973f44a7a31b7613cb2a065f192bdbd52bb683470b019284c5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Hjo7aAC2qdAur6qDrZugk8",
+     "name": "network_entry",
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Hjo7aAC2qdAur6qDrZugk8",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3124,
+    "outputTokens": 49,
+    "cacheReadTokens": 1902,
+    "cacheWriteTokens": 1220
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:ea4f162441b2b79d1135e2ee7a670605df092bb7cf1c48884425bb5e5d2b57f3": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01NcoLETHLkB7F92pXqgN7H9",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "a new issue titled \"Checkout fails on Safari\" exists",
+        "status": "pass",
+        "cites": [
+         1,
+         4
+        ],
+        "reasoning": "The server-side probe lists issue #4 with the title \"Checkout fails on Safari\". The POST /issues request carrying that title returned a 303 redirect to /issues/4."
+       },
+       {
+        "requirement": "the new issue has the bug label",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The probe shows issue #4 with labels: [], and the page shows Labels: None. The creation POST sent no labels field, and no save-labels request appears in the network log."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01NcoLETHLkB7F92pXqgN7H9",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "a new issue titled \"Checkout fails on Safari\" exists",
+        "status": "pass",
+        "cites": [
+         1,
+         4
+        ],
+        "reasoning": "The server-side probe lists issue #4 with the title \"Checkout fails on Safari\". The POST /issues request carrying that title returned a 303 redirect to /issues/4."
+       },
+       {
+        "requirement": "the new issue has the bug label",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The probe shows issue #4 with labels: [], and the page shows Labels: None. The creation POST sent no labels field, and no save-labels request appears in the network log."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3300,
+    "outputTokens": 258,
+    "cacheReadTokens": 3122,
+    "cacheWriteTokens": 176
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:f42114efadacd937fc1010ff832361fe876066a4badd5ba53186eb01198a2b84": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011eEXw1povWTohargvas1tP",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         4
+        ],
+        "reasoning": "The server-side probe lists issue #4 with the title \"Checkout fails on Safari\". The POST /issues request carrying that title returned a 303 redirect to /issues/4."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The probe shows issue #4 with labels: [], and the page shows Labels: None. The creation POST sent no labels field, and no save-labels request appears in the network log."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_011eEXw1povWTohargvas1tP",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         4
+        ],
+        "reasoning": "The server-side probe lists issue #4 with the title \"Checkout fails on Safari\". The POST /issues request carrying that title returned a 303 redirect to /issues/4."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The probe shows issue #4 with labels: [], and the page shows Labels: None. The creation POST sent no labels field, and no save-labels request appears in the network log."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3634,
+    "outputTokens": 239,
+    "cacheReadTokens": 3298,
+    "cacheWriteTokens": 334
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

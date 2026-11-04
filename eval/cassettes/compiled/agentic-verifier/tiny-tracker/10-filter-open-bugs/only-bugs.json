@@ -1,0 +1,131 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T10:20:41.159Z",
+ "turns": {
+  "sha256:e3e268bb47024be0f2d7a9af1994b782f31680111cc63b531f7aa76456fdc790": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01JYpQmkDUntDgm8yKdTNWqM",
+     "name": "page_outline",
+     "input": {}
+    },
+    {
+     "id": "toolu_01V7WxxjQEutDakMHVqTUGAM",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSqgUKEAgTGAI4AUIIdGhpbmtpbmcSDN9BOmj8QBqACJKSqxoMtn+BfLG9XzRBhWyNIjCsYZ9XZJjWC0dRGeLLjEA4ezpVUohTFPnP5MixevozrGajsNAHsSxHFxXG1eFjyGYqxwTIWFpv+SCpU+045R/cpwZe/ZOjHfaHRaMuBpg6144y87aYU4jze4oQljN66tNM2EpJfYW7Wkgi357u86uRK+kr4gLwTr+lg0O4Zziz2TjaqqxaMM+Vj3h8QECBP8hliMbIV6q+mqzvsDWlWelXZ6HT5S5VNbhhHECJm9/XsJjfK3jGXGXkm95JdsWiHwSByCkCqPovgEUBIyrgK3e6AFYMK/HPqamboi51SNPN1LZ4HvDDNmawl0+Eryl1K4HrAytVMVdjHXfshJEW+AyTiwsNUAnhv329QJJ+d5CsPhq+bVKb5fIeChWnXL6IseFIOOKAr3wIUsLlXVKOS7APwX/lxLlDDqNNjd0b47bVuCjFexGCQL/FqFlIIRztWY/E4e8VkT+epHjPpt0H2Mzh5wG+rAohI79+9Ip1+4G7MCGX3O7vozANsnXD1T+kNbm5Q+8LNMvS3jNsXitMjM593G0hY514U/rzXelKsj0WO/2lR4rPW0wzitcAgXXwfaYW8U+jP02Z4sgq7Z3856aHF47XYcfNy+IslCXK3etPcW2/xcvxV9FY4zUH1ItAPr4GCtxTYoKigEq2zDDskp9TMA9aHN0O6SRgxlsa4U6wAVhb7T+e/8+TYm3q/RULGS8BzI/arAJ0CoGIF0bTmbPh3QhmeCE5Uqi84LwaUM4RMqDXBO1KLL9dp83EpBvk49J6SPI0eM/tdiSn3JBMNQZgonUMSccbj7+NcVErTwdRRXDjm7DBUSDQOWwR64FS5syDHLL58Zz/hoNwGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01JYpQmkDUntDgm8yKdTNWqM",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01V7WxxjQEutDakMHVqTUGAM",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1876,
+    "outputTokens": 73,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1872
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:0f2ffdd0f78bba376e31751df3523af709a3230a5ad68e6c9568fb215db06bf1": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_014tUquL8M1YEiEKwpQTrgTs",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The captured list shows exactly one row, #1 'Login button misaligned', with status Open (obs 1), and the probe confirms issue 1 has status 'open' (obs 2). The Status filter was left on 'All' (URL status=). The list still shows only open issues, because the only closed issue (#3) is labelled docs and the bug filter removes it. As literally stated, the requirement holds."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The Label filter is set to 'bug' (URL label=bug), and the only row shown, #1, is labelled 'bug' (obs 1). The probe confirms issue 1's labels are ['bug'], and the feature and docs issues are excluded (obs 2)."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS8wkKEAgTGAI4AUIIdGhpbmtpbmcSDF9B7RA+6N7Z4SltHxoMLWvmCfBLqEPmGyb5IjAEgPXl/moExRjEZA47WiNrDRnYrWIUJWyORbC9PLVStTcFRLSP4da+ZPey163BEBkqkAk7aOqVoa2qLowtcR0UKNFJda42PRiPWXQcUo/nj6EMTtvMZxp8j1JEPCkTZid6hQp/6H4/aYib9Y8x7UMlOPA8VV3w47IrPI5YBNI1do8w3bmqGoYzVJ4+410tiIeEXlIPFTRzokc8FZTjYB9n8VfxsGDPuGh59sqnxd0dKuZaXMZkSqezXR5DyKqGh3DGoIbFWhUzMGK790pzbpnOZI8KNMkK4zsdpTnnD4ztoc+h8VVhwtEDUa0O5JMAZ+oyd+Xj8DCPOjLibAB33gBWxxgEUlL6Z4BxcaVZHFDBJq40rUCMQzB//ybiq0Sf5SbdtlbQ0W+gBg8+sKVzxPy5eTUo1FTTo+JCPgPkUsXn1CeY5vUX+VE7/um/wXvj/MDVWNegWBbW9Uj9RuNv+pulpiriueVqvTSwJOQky4or2EDu4zCyyrLwNVofJ4zclWwEyYnbv4JhaKQmQ3KiShAPEIg8njJuZ13uQ1QrnY16Czh9XdrvxaZncJvLZJYWnyTUMZYXxzeUaMnOPE05e8lJG+swMSNGLaMIBhOLbzrFl4gHkW7SI1wCWiJxiLKs2WBWMkJhxCjLdgfzjusDwgdAvsMJ8vLitoqrvhb9B1jLjkmPxVmSoNckh3sna54qBpCnhkB2gFoub2k/KGFeIGzN0VJQW2hARsaEndkuEFjt0C6Pd4h/G5fU6XFHumgn7F8DzMNxCRJQCuKlWD03EDwVUso388M12YgJrzXgAlljRYztoJy5h65/7MRYV9soijNQuDyD1l27bnEQMA/+QCc3LMgu6nuW1ptbnVKNMU9B4PRRglGmmsd2oSJqVMe35d3Ekd7PfAdLJH5UFpJi7eC4bToHAdg3bZc4NQVEhBGwy1ZzhpFqTCeNcMRVmI6ZkqqsPEQUbUMtWovW1Aa4bgAbmvEGtPe2i/MhdXDs28tR9Dvt8N3JhwbkqF6pJ8GjLcA2eUidZicRSVIPKvWVen+FynvJjFaZm+dmcYFA7bKhPUFwULlhZnH8ONoHhVqj1A8ySLMsUvJ+n5ykR1Qn+8kFgzI8hmJxxRwCNUFQ7re97uGs3D+WnW961EhI9Fk3p9YzXhlQEh7KdQtVN+5i3nUVDB86UOKjQ/nStCQ/F7IviByUgR9JZwQ0nJ6797Y+0uOrSiHq7wwcjd2cvDUZQJ9uhlFR0ZT2Fh7/Pr3yqZXa7G5WKVbpZ4vsSAJzKLt2q1gehNcqqyS5LQs9If1NijayW7XUjuhjG6+z6ogcEHctCwwNcCL7PHYC2kOodj3v6ElCnirGT5FuTZqKBG6icMtfjN7WZE3gg6DJWmbJYGmWDuwSItPjc2HooQzeoCIoKWzcgNos96Hq/bWpEPgUi0yu+nQaJgEDJf2JU8E1l2zy5rlNdg0myz0Kv0X6qUMArhytOLPQ5p3P2hKznuP02PdR/B+bjVIDOmLxZg0wCE3lmQJEwJnlgh59NNxfRVlhIKKXvpYwCODdmTVixg1RdF71Heauuv9pRqWw13PPlBMUQY9ixk4rK3ZMoGLVM2dcMSE4eI6NqdnospGVJ/0lQoF/2nMRGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_014tUquL8M1YEiEKwpQTrgTs",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The captured list shows exactly one row, #1 'Login button misaligned', with status Open (obs 1), and the probe confirms issue 1 has status 'open' (obs 2). The Status filter was left on 'All' (URL status=). The list still shows only open issues, because the only closed issue (#3) is labelled docs and the bug filter removes it. As literally stated, the requirement holds."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The Label filter is set to 'bug' (URL label=bug), and the only row shown, #1, is labelled 'bug' (obs 1). The probe confirms issue 1's labels are ['bug'], and the feature and docs issues are excluded (obs 2)."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2802,
+    "outputTokens": 513,
+    "cacheReadTokens": 1872,
+    "cacheWriteTokens": 928
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

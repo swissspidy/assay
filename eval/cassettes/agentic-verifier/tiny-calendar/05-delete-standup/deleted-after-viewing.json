@@ -1,0 +1,185 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:45:28.989Z",
+ "turns": {
+  "sha256:b8204e18e15d765cc09acb856cf85a02421cc9b576e3a0f438bbbe7b4897b0c6": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Q1ghLRP8zSyhif4h598WCh",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01E14iaYWyp4enSzfwbakL5w",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Q1ghLRP8zSyhif4h598WCh",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01E14iaYWyp4enSzfwbakL5w",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1856,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1852
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:da0df5ce8eaffe0bdce8deff6aab552b786a628f6d26e1d970931cce5349adfd": {
+   "stop": "tool_use",
+   "text": "Let me check the original event list to see what existed beforehand.",
+   "toolCalls": [
+    {
+     "id": "toolu_017mB15sttheYERJM9D2NTBJ",
+     "name": "network_entry",
+     "input": {
+      "seq": 2
+     }
+    },
+    {
+     "id": "toolu_01HtEQHsz2djDtD2aK8LUdqt",
+     "name": "network_entry",
+     "input": {
+      "seq": 12
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "text",
+     "text": "Let me check the original event list to see what existed beforehand."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_017mB15sttheYERJM9D2NTBJ",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 2
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01HtEQHsz2djDtD2aK8LUdqt",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 12
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2499,
+    "outputTokens": 114,
+    "cacheReadTokens": 1852,
+    "cacheWriteTokens": 645
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:4d7336a03886b9638750403e4e657c2df4dc4d7ef027e3bb453959e861cb42e1": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KKh4ZKUtcX8oGp8TivaiWU",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The first event list showed Team standup as id 1 (obs 3). A DELETE request for /api/events/1 returned {deleted:1} (obs 4), and the final events probe no longer contains Team standup (obs 1)."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The final probe still holds Dentist (id 2) and Book club (id 3), and every field matches the original list (obs 1 vs obs 3). The only change request in the network log was the delete of id 1 (obs 2)."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSgQYKEAgTGAI4AUIIdGhpbmtpbmcSDBQwk68fPOw8fiG4EBoMGUy1DlrU9c1NBv8EIjCHsZeMOfZGBjfntyvrLqHRIkkbLRXmhBWYcuvM0x4IqwLssi8hvwSXWZEf5nufgK8qngXzji2v2yHQbCwvFv5MDGDoqfXu/TZsL6Bamy2vyOq2QYAXxWnksvv5gq9Wd/bst9HxeFiYWvv33ycILnIWWU7zH06NJpBw2cVHcUu8M3YKzDDSz1tw9tBaVZ2RyiOkbqk0vx5pqEz0GQnzY5ecuSon7bZCwLPZTLWbesV0LEsAtM8COj8888YflMSoo/f3JC2WLzR/Hw3Bu0rz9nKe4yeX6X2ZYNVXt82WjvB8lsgxgubvs9Nub8XWh3malrUWsUA99NoTAQnyls536N96rq7IyClDiSMr4gepNw//3AunoIQRyLPzz9WMZqlmYf7V74v0XXiMJmGcSs3U3bRDkp2Yyx3LVUzuyAkGajiA6uTh78yGIF7pTkz/mMT+hgeO9N151DvyCM3smkFuCzKrTOSgzLArgBuDA7qsHj93yPOnAQA1FAZNSvOIor343xI4jt2SamxB8mOBk7eIkq+cWq6wNQ1JOGlpvBXb7sCpWXYrFxdYQE9Ddlj+kyBO0sXZuJipk1Yi2xml6CTEaD7GpUOgvCGTviYsRsLuKC4Yp8lS3ZY2kQ+S762ysy0NDffgTUzzw4YpvNdeFdO7IT3meYXc1bagcoY03ICnYDw1QqdOzQcYRbXxls3M0WRv7pkmn65DPBh5N35L94mdEvkfFpU5kpXhgpjbrxHdOxaUpAx5hQppSPOAhvqCzxYiVrwNMAhYLJzNr8R++6wG3kDgWGbGuxAoiX17AK9mxz15IyR7lFf+mfHFWjBA+sq1WkF4LgIn2plI2BIrjDZ8S37sRpOlK/CPBcC68xEPcoZ8QXvS0sDfW6G5JueK5riT3COBap52Tk9pyomWHSpgs3G4NtmZPMxhZPzuFHbkGwA4h3g7YgU6HUhAgsYjAYqT5M09GAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01KKh4ZKUtcX8oGp8TivaiWU",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The first event list showed Team standup as id 1 (obs 3). A DELETE request for /api/events/1 returned {deleted:1} (obs 4), and the final events probe no longer contains Team standup (obs 1)."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The final probe still holds Dentist (id 2) and Book club (id 3), and every field matches the original list (obs 1 vs obs 3). The only change request in the network log was the delete of id 1 (obs 2)."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3095,
+    "outputTokens": 302,
+    "cacheReadTokens": 2497,
+    "cacheWriteTokens": 596
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}
