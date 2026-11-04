@@ -16,6 +16,7 @@ import { validateCheckSet } from '../dsl/validate.ts';
 import { evaluate, evaluateAssertion } from '../runtime/evaluate.ts';
 import { AXIndex } from '../runtime/axindex.ts';
 import { canonical } from '../text.ts';
+import { ASSAY_VERSION } from '../version.ts';
 import { runAgent, type AgentTool, type AgentRun } from '../model/agent.ts';
 import type { ModelClient } from '../model/types.ts';
 import { parseOutcomes, parseOutcomesDetailed, type Clause } from './outcomes.ts';
@@ -58,6 +59,11 @@ export interface CompileOptions {
   trajectory?: string;
   maxTurns?: number;
   log?: (msg: string) => void;
+  /**
+   * Provenance written to the compiled set (`compiled`). `model` defaults to the
+   * model client's id and `at` to now; a replayed compile passes the recording's.
+   */
+  provenance?: { model?: string; at?: string };
 }
 
 export interface RequirementCoverage {
@@ -699,7 +705,15 @@ export async function compileTask(task: TaskInput, refs: Reference[], opts: Comp
   report.turns.discovery = run.turns;
   if (!run.result || !accepted) return { report: { ...report, reason: `Discovery ended with ${run.status}.` } };
 
-  const checkSet = run.result;
+  const checkSet: CheckSet = {
+    ...run.result,
+    compiled: {
+      compiler: ASSAY_VERSION,
+      model: opts.provenance?.model ?? opts.model.id,
+      modelsUsed: [...models],
+      at: opts.provenance?.at ?? new Date().toISOString(),
+    },
+  };
   return {
     checkSet,
     report: {

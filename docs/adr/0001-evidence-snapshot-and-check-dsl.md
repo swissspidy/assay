@@ -568,6 +568,7 @@ in three places:
 
 - Bindings between checks, for example "the order ID on the page equals the
   ID in the POST response", via named captures.
-- An escalation policy per check (`onAbstain`, `onFail: "escalate"`) and
-  locking metadata (`locked: {by, at, digest}`), in milestone 4/5.
+- An escalation policy per check (`onAbstain`, `onFail: "escalate"`).
+  Locking metadata (`locked: {by, at, digest}`, ADR 0004) and compiler
+  provenance (`compiled: {compiler, model, modelsUsed, at}`, ADR 0002) are in.
 - Datetime comparisons with tolerance in minutes.

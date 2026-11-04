@@ -32,7 +32,7 @@ export {
   type AnthropicOptions,
   type AnthropicLike,
 } from './model/anthropic.ts';
-export { replayModel, recordingModel, requestKey, type Cassette } from './model/replay.ts';
+export { replayModel, recordingModel, requestKey, type Cassette, type ReplayModel } from './model/replay.ts';
 export * from './model/types.ts';
 export * from './stress/index.ts';
 export * from './verifier/index.ts';

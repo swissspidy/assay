@@ -51,12 +51,15 @@ jobs:
         if: env.HAS_KEY == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ASSAY_MODEL_MODE: record
         run: |
           rm -rf eval/cassettes
           node scripts/eval.ts --checks "$CHECKS"
       - name: Summary
         if: always() && env.HAS_KEY == 'true'
-        run: cat eval/results/REPORT.md >> "$GITHUB_STEP_SUMMARY" || true
+        run: |
+          if [ "$CHECKS" = compiled ]; then report=eval/results/compiled/REPORT.md; else report=eval/results/REPORT.md; fi
+          cat "$report" >> "$GITHUB_STEP_SUMMARY" || true
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always() && env.HAS_KEY == 'true'
         with:

@@ -231,6 +231,18 @@ export interface Check {
   assert: Assertion;
 }
 
+/** Provenance of a compiled check set. */
+export interface Provenance {
+  /** The compiler, as "assay/<version>". */
+  compiler: string;
+  /** The model client the compiler was given, e.g. "anthropic:claude-opus-5-5@high". */
+  model: string;
+  /** The models that actually served the turns, as the API reported them. */
+  modelsUsed: string[];
+  /** When the model was run (ISO 8601). A replayed compile keeps the recording's time. */
+  at: string;
+}
+
 export interface CheckSet {
   schema: typeof CHECKS_SCHEMA;
   id: string;
@@ -238,6 +250,8 @@ export interface CheckSet {
   task: { instruction: string; outcomes?: string };
   requirements: Requirement[];
   checks: Check[];
+  /** Where a compiled set came from; absent on handwritten sets. */
+  compiled?: Provenance;
   /** Set by human confirmation (lockCheckSet); the digest covers everything else in the set. */
   locked?: { by: string; at: string; digest: string };
 }

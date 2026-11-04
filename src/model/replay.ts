@@ -13,6 +13,8 @@ import { ModelError } from './types.ts';
 export interface Cassette {
   schema: 'assay.cassette/v1';
   model: string;
+  /** When the recording started (ISO 8601); absent on cassettes recorded before it was kept. */
+  recordedAt?: string;
   turns: Record<string, ModelTurn>;
 }
 
@@ -26,11 +28,17 @@ function load(path: string): Cassette | null {
   return JSON.parse(readFileSync(path, 'utf8')) as Cassette;
 }
 
-export function replayModel(path: string): ModelClient {
+/** A recording or replaying client also exposes what is recorded: the model and when. */
+export interface ReplayModel extends ModelClient {
+  readonly recorded: { model: string; at?: string };
+}
+
+export function replayModel(path: string): ReplayModel {
   const cassette = load(path);
   if (!cassette) throw new ModelError(`No cassette at ${path}. Set ANTHROPIC_API_KEY to record one.`);
   return {
     id: `${cassette.model} (replay)`,
+    recorded: { model: cassette.model, ...(cassette.recordedAt ? { at: cassette.recordedAt } : {}) },
     async turn(req) {
       const hit = cassette.turns[requestKey(req, cassette.model)];
       if (!hit) {
@@ -49,8 +57,13 @@ export function replayModel(path: string): ModelClient {
  * crash keeps what was already paid for without replacing a complete cassette);
  * `save()` moves it into place.
  */
-export function recordingModel(inner: ModelClient, path: string): ModelClient & { save(): void } {
-  const cassette: Cassette = { schema: 'assay.cassette/v1', model: inner.id, turns: {} };
+export function recordingModel(inner: ModelClient, path: string): ReplayModel & { save(): void } {
+  const cassette: Cassette = {
+    schema: 'assay.cassette/v1',
+    model: inner.id,
+    recordedAt: new Date().toISOString(),
+    turns: {},
+  };
   const partial = `${path}.partial`;
   const write = (file: string) => {
     mkdirSync(dirname(file), { recursive: true });
@@ -58,6 +71,7 @@ export function recordingModel(inner: ModelClient, path: string): ModelClient & 
   };
   return {
     id: inner.id,
+    recorded: { model: cassette.model, at: cassette.recordedAt! },
     async turn(req) {
       const key = requestKey(req, inner.id);
       const out = await inner.turn(req);

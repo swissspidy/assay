@@ -267,10 +267,19 @@ test('cassettes: a recorded compile replays identically without a model; changed
   const path = join(dir, 'newsletter.json');
   const refs: Reference[] = [{ name: 'subscribed', kind: 'success', snapshot: ref('01-newsletter', 'subscribed') }];
   const rec = recordingModel(newsletterScript(), path);
-  const first = await compileTask(NEWSLETTER, refs, { model: rec });
+  const first = await compileTask(NEWSLETTER, refs, { model: rec, provenance: rec.recorded });
   rec.save();
-  const second = await compileTask(NEWSLETTER, refs, { model: replayModel(path) });
+  const replay = replayModel(path);
+  const second = await compileTask(NEWSLETTER, refs, { model: replay, provenance: replay.recorded });
+  // Provenance included: a replay keeps the recorded model and time.
   expect(second.checkSet).toEqual(first.checkSet);
+  expect(first.checkSet?.compiled).toEqual({
+    compiler: expect.stringMatching(/^assay\/\d/),
+    model: rec.id,
+    modelsUsed: expect.any(Array),
+    at: rec.recorded.at,
+  });
+  expect(validateCheckSet(first.checkSet!).errors).toEqual([]);
   await expect(
     compileTask({ ...NEWSLETTER, instruction: 'Subscribe me to the newsletter, please.' }, refs, {
       model: replayModel(path),

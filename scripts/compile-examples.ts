@@ -68,6 +68,7 @@ for (const app of APPS) {
       const env = await modelFromEnv(new URL(`${def.id}.cassette.json`, out).pathname);
       result = await compileTask(task, [{ name: reference.name, kind: 'success', snapshot: reference.snapshot }], {
         model: env.model,
+        provenance: env.provenance,
         log: (m) => console.warn(m),
       });
       env.save();
