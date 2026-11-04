@@ -17,6 +17,7 @@ export {
   parseLocaleNumber,
   parseCurrency,
   parseDate,
+  parseDateTime,
   NormalizeError,
   type TypedValue,
 } from './runtime/values.ts';

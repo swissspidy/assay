@@ -1,5 +1,6 @@
 /** Low-level, immutable snapshot edits used by variant and mutant generators. */
 import type { AXNode, EvidenceSnapshot, Json } from '../types.ts';
+import { formatInstant } from '../runtime/values.ts';
 
 export const clone = <T>(x: T): T => structuredClone(x);
 
@@ -89,6 +90,11 @@ export function shiftDate(iso: string, days: number): string {
   const d = new Date(iso.slice(0, 10) + 'T00:00:00Z');
   d.setUTCDate(d.getUTCDate() + days);
   return d.toISOString().slice(0, 10) + iso.slice(10);
+}
+
+/** Shift an instant ("…Z") by whole minutes, keeping its canonical form. */
+export function shiftInstant(iso: string, minutes: number): string {
+  return formatInstant(Date.parse(iso) + minutes * 60_000);
 }
 
 /**

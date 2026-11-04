@@ -167,15 +167,23 @@ export type Normalizer =
   | { op: 'replace'; regex: string; flags?: string; with: string }
   | { op: 'number'; locale: string }
   | { op: 'currency'; locale: string; currency?: string }
-  | { op: 'date'; locale: string; timezone?: string };
+  | { op: 'date'; locale: string; timezone?: string }
+  | { op: 'datetime'; locale: string; timezone?: string };
 
 export interface Money {
   amount: number;
   currency: string;
 }
 
+/** The other side of a binding: a value read from another source and normalized on its own. */
+export interface Operand {
+  source: ValueSource;
+  normalize?: Normalizer[];
+}
+
 export type Comparison =
   | { equals: Json }
+  | { sameAs: Operand }
   | { oneOf: Json[] }
   | { contains: string; ignoreCase?: boolean }
   | { regex: string; flags?: string }

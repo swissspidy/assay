@@ -84,11 +84,13 @@ every requirement quotes the task text it comes from:
 
 Assertion kinds: `state`, `contains` (with an optional `witness`), `value`
 (read from `node`, `text`, `url`, `request`/`response`, `storage` or `probe`,
-then normalized, then compared), `url`, `request`, and `allOf`/`anyOf`
-(Kleene logic). The JSON Schema is exported as `checkSetSchema`, and
-`validateCheckSet` adds semantic checks: traceable quotes, requirement
-references, regex and schema compilation, and normalizer and comparison
-type flow.
+then normalized, then compared with a literal, or with a second source via
+`sameAs`), `url`, `request`, and `allOf`/`anyOf` (Kleene logic). Normalizers
+parse numbers, money, dates and date-times (`datetime`, compared as instants;
+`approx` on them is in minutes). The JSON Schema is exported as
+`checkSetSchema`, and `validateCheckSet` adds semantic checks: traceable
+quotes, requirement references, regex and schema compilation, and normalizer
+and comparison type flow.
 
 ## A report
 

@@ -2,7 +2,15 @@ import { Ajv, type ValidateFunction } from 'ajv';
 import type { Comparison, Json, JsonSchema, Money } from '../types.ts';
 import { canonical, stripGlobal } from '../text.ts';
 import { canonicalJson } from '../snapshot/digest.ts';
-import { NormalizeError, daysBetween, describeValue, type TypedValue } from './values.ts';
+import {
+  NormalizeError,
+  daysBetween,
+  describeValue,
+  instantOf,
+  minutesBetween,
+  toJson,
+  type TypedValue,
+} from './values.ts';
 
 const ajv = new Ajv({ allErrors: false, strict: false, validateFormats: false });
 const schemaCache = new Map<string, ValidateFunction>();
@@ -45,6 +53,8 @@ function deepEqual(actual: TypedValue, expected: Json): boolean {
       );
     case 'date':
       return typeof expected === 'string' && expected === actual.value;
+    case 'datetime':
+      return typeof expected === 'string' && instantOf(expected) === Date.parse(actual.value);
     default:
       return canonicalJson(actual.value) === canonicalJson(expected);
   }
@@ -61,6 +71,10 @@ function scalar(v: TypedValue, bound: unknown, op: string): [number, number] {
   if (v.type === 'date' && typeof bound === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(bound)) {
     return [Date.parse(v.value + 'T00:00:00Z'), Date.parse(bound + 'T00:00:00Z')];
   }
+  if (v.type === 'datetime' && typeof bound === 'string') {
+    const b = instantOf(bound);
+    if (b !== undefined) return [Date.parse(v.value), b];
+  }
   throw mismatch(op, v);
 }
 
@@ -75,12 +89,29 @@ class CurrencyMismatch extends Error {
 }
 
 /**
+ * Equality of two normalized values read from different sources (a `sameAs`
+ * binding). Both must have the same type; otherwise NormalizeError('type_mismatch').
+ */
+export function compareValues(a: TypedValue, b: TypedValue): CompareOutcome {
+  if (a.type !== b.type)
+    throw new NormalizeError(
+      `sameAs cannot compare a ${a.type} value (${describeValue(a)}) with a ${b.type} value (${describeValue(b)}); normalize both sides to the same type`,
+      'type_mismatch',
+    );
+  // deepEqual takes the other side as JSON: money as {amount, currency}, a datetime as its ISO string.
+  const ok = deepEqual(a, toJson(b));
+  return { ok, message: `${describeValue(a)} ${ok ? '=' : '≠'} ${describeValue(b)}` };
+}
+
+/**
  * Compare a normalized value. Throws NormalizeError('type_mismatch') when the
  * operator cannot apply to the value's type (=> abstain).
  */
 export function compare(v: TypedValue, cmp: Comparison): CompareOutcome {
   const shown = describeValue(v);
   try {
+    if ('sameAs' in cmp)
+      throw new NormalizeError('sameAs compares with a second source; the evaluator reads it', 'type_mismatch');
     if ('equals' in cmp) {
       const ok = deepEqual(v, cmp.equals);
       return { ok, message: `${shown} ${ok ? '=' : '≠'} ${JSON.stringify(cmp.equals)}` };
@@ -106,8 +137,12 @@ export function compare(v: TypedValue, cmp: Comparison): CompareOutcome {
       let diff: number;
       let ref: number;
       if (v.type === 'date') {
-        if (typeof target !== 'string') throw mismatch('approx', v);
+        if (typeof target !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(target)) throw mismatch('approx', v);
         diff = daysBetween(v.value, target);
+        ref = 0;
+      } else if (v.type === 'datetime') {
+        if (typeof target !== 'string' || instantOf(target) === undefined) throw mismatch('approx', v);
+        diff = minutesBetween(v.value, target);
         ref = 0;
       } else {
         const [a, b] = scalar(v, target, 'approx');
@@ -118,7 +153,7 @@ export function compare(v: TypedValue, cmp: Comparison): CompareOutcome {
       const ok = diff <= tol;
       return {
         ok,
-        message: `${shown} ${ok ? '≈' : '≉'} ${JSON.stringify(target)} (Δ=${+diff.toFixed(6)}, tolerance ${Math.max(abs, rel * ref)}${v.type === 'date' ? ' days' : ''})`,
+        message: `${shown} ${ok ? '≈' : '≉'} ${JSON.stringify(target)} (Δ=${+diff.toFixed(6)}, tolerance ${Math.max(abs, rel * ref)}${v.type === 'date' ? ' days' : v.type === 'datetime' ? ' minutes' : ''})`,
       };
     }
     if ('schema' in cmp) {

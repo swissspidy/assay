@@ -9,7 +9,16 @@
  *
  * Models run only here. The output is data that runs without one.
  */
-import type { Assertion, Check, CheckSet, EvidenceSnapshot, Requirement, Channel, Trust } from '../types.ts';
+import type {
+  Assertion,
+  Check,
+  CheckSet,
+  EvidenceSnapshot,
+  Requirement,
+  Channel,
+  Trust,
+  ValueSource,
+} from '../types.ts';
 import { CHECKS_SCHEMA, CHANNEL_TRUST } from '../types.ts';
 import { checkSetSchema } from '../dsl/schema.ts';
 import { validateCheckSet } from '../dsl/validate.ts';
@@ -357,6 +366,11 @@ async function modelRubric(
 const TRUST_RANK: Record<Trust, number> = { freetext: 1, semantic: 2, structured: 3 };
 const RANK_TRUST: Trust[] = ['freetext', 'freetext', 'semantic', 'structured'];
 
+function sourceChannel(src: ValueSource): Channel {
+  const f = src.from;
+  return f === 'node' ? 'a11y' : f === 'request' || f === 'response' ? 'network' : f === 'text' ? 'text' : f;
+}
+
 function sourceChannels(a: Assertion): Channel[] {
   switch (a.kind) {
     case 'state':
@@ -366,10 +380,8 @@ function sourceChannels(a: Assertion): Channel[] {
       return ['url'];
     case 'request':
       return ['network'];
-    case 'value': {
-      const f = a.source.from;
-      return [f === 'node' ? 'a11y' : f === 'request' || f === 'response' ? 'network' : f === 'text' ? 'text' : f];
-    }
+    case 'value':
+      return [...new Set([a.source, ...('sameAs' in a.expect ? [a.expect.sameAs.source] : [])].map(sourceChannel))];
     case 'allOf':
     case 'anyOf':
       return [...new Set(a.of.flatMap(sourceChannels))];
@@ -379,7 +391,7 @@ function sourceChannels(a: Assertion): Channel[] {
 /**
  * How hard an assertion is to satisfy by faking page content. `anyOf` is as weak
  * as its weakest branch (that branch alone can pass); `allOf` as strong as its
- * strongest part (every part must pass).
+ * strongest part (every part must pass); a `sameAs` binding as its weaker source.
  */
 export function assertionTrust(a: Assertion): number {
   switch (a.kind) {
@@ -388,7 +400,9 @@ export function assertionTrust(a: Assertion): number {
     case 'allOf':
       return Math.max(...a.of.map(assertionTrust));
     default:
-      return TRUST_RANK[CHANNEL_TRUST[sourceChannels(a)[0]!]];
+      // A sameAs binding passes when one side is made to show what the other holds, so
+      // faking the weaker side alone is enough: it counts as its weaker source.
+      return Math.min(...sourceChannels(a).map((c) => TRUST_RANK[CHANNEL_TRUST[c]]));
   }
 }
 

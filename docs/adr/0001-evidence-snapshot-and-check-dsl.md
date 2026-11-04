@@ -392,16 +392,17 @@ over-constraining.
 output of the previous one. Locale and timezone are **required** wherever
 parsing depends on them. Checks never read host settings.
 
-| op                                                                                | in → out                            | notes                                                                                                                                                                                                                                                           |
-| --------------------------------------------------------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `trim`, `collapseWhitespace`, `lowercase`, `uppercase`, `nfkc`, `stripDiacritics` | string → string                     |                                                                                                                                                                                                                                                                 |
-| `extract {regex, flags?, group?}`                                                 | string → string                     | no match ⇒ `normalize_failed`                                                                                                                                                                                                                                   |
-| `replace {regex, with}`                                                           | string → string                     |                                                                                                                                                                                                                                                                 |
-| `number {locale}`                                                                 | string → number                     | Separators come from `Intl` for that locale. The whole string must be a number: no stray text. Accepts `-`, `−`, `+` and accounting `(…)`                                                                                                                       |
-| `currency {locale, currency?}`                                                    | string → money `{amount, currency}` | Symbol or ISO code before or after the amount. An ambiguous symbol (`$`, `¥`, `kr`) resolves through `currency`. A symbol that contradicts it gives the symbol's currency, so the comparison fails. An ambiguous symbol without `currency` ⇒ `normalize_failed` |
-| `date {locale, timezone?}`                                                        | string → `"YYYY-MM-DD"`             | ISO dates, numeric dates in the locale's field order, and English or locale month names. Two-digit years, relative dates ("tomorrow") and invalid days ⇒ `normalize_failed`. An ISO datetime with an offset is converted to `timezone` (required in that case)  |
-| `json`                                                                            | string → Json                       | parse failure ⇒ `normalize_failed`                                                                                                                                                                                                                              |
-| `boolean`                                                                         | string → boolean                    | true/false/yes/no/on/off/1/0                                                                                                                                                                                                                                    |
+| op                                                                                | in → out                                  | notes                                                                                                                                                                                                                                                                                                                                                           |
+| --------------------------------------------------------------------------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `trim`, `collapseWhitespace`, `lowercase`, `uppercase`, `nfkc`, `stripDiacritics` | string → string                           |                                                                                                                                                                                                                                                                                                                                                                 |
+| `extract {regex, flags?, group?}`                                                 | string → string                           | no match ⇒ `normalize_failed`                                                                                                                                                                                                                                                                                                                                   |
+| `replace {regex, with}`                                                           | string → string                           |                                                                                                                                                                                                                                                                                                                                                                 |
+| `number {locale}`                                                                 | string → number                           | Separators come from `Intl` for that locale. The whole string must be a number: no stray text. Accepts `-`, `−`, `+` and accounting `(…)`                                                                                                                                                                                                                       |
+| `currency {locale, currency?}`                                                    | string → money `{amount, currency}`       | Symbol or ISO code before or after the amount. An ambiguous symbol (`$`, `¥`, `kr`) resolves through `currency`. A symbol that contradicts it gives the symbol's currency, so the comparison fails. An ambiguous symbol without `currency` ⇒ `normalize_failed`                                                                                                 |
+| `date {locale, timezone?}`                                                        | string → `"YYYY-MM-DD"`                   | ISO dates, numeric dates in the locale's field order, and English or locale month names. Two-digit years, relative dates ("tomorrow") and invalid days ⇒ `normalize_failed`. An ISO datetime with an offset is converted to `timezone` (required in that case)                                                                                                  |
+| `datetime {locale, timezone?}`                                                    | string → instant `"YYYY-MM-DDTHH:MM:SSZ"` | ISO date-times and the localized forms `date` accepts with a time of day (`14:30`, `2:30 PM`, seconds optional). An offset in the value (`Z`, `+01:00`, `UTC`, `GMT+1`) decides. Without one the wall time is read in `timezone`; no timezone, a time skipped or repeated by a DST change, a zone abbreviation (`CET`, `EST`) or two times ⇒ `normalize_failed` |
+| `json`                                                                            | string → Json                             | parse failure ⇒ `normalize_failed`                                                                                                                                                                                                                                                                                                                              |
+| `boolean`                                                                         | string → boolean                          | true/false/yes/no/on/off/1/0                                                                                                                                                                                                                                                                                                                                    |
 
 A parse failure **abstains** rather than fails. Seeing "N/A", "—" or a new
 date format means the check's model of the page is wrong. It does not show
@@ -411,19 +412,82 @@ that the agent failed, and an LLM judge or human should look at it.
 
 Each comparison object has exactly one operator:
 
-| operator                     | applies to          | semantics                                                                                               |
-| ---------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------- |
-| `equals`                     | any                 | deep equality; strings are canonicalized as in 2.3                                                      |
-| `oneOf`                      | any                 | equals one of the listed values                                                                         |
-| `contains`, `regex`          | string              | on canonical text                                                                                       |
-| `approx {value, abs?, rel?}` | number, money, date | `\|a-b\| <= max(abs, rel·\|b\|)`. For money the currency must also be equal. For dates `abs` is in days |
-| `gt` / `gte` / `lt` / `lte`  | number, money, date | ranges can combine bounds in one object                                                                 |
-| `schema`                     | Json                | validates against a JSON Schema                                                                         |
-| `exists`                     | any                 | the value was read and normalized and is not the empty string                                           |
+| operator                      | applies to                    | semantics                                                                                                                                                      |
+| ----------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `equals`                      | any                           | deep equality; strings are canonicalized as in 2.3                                                                                                             |
+| `oneOf`                       | any                           | equals one of the listed values                                                                                                                                |
+| `contains`, `regex`           | string                        | on canonical text                                                                                                                                              |
+| `approx {value, abs?, rel?}`  | number, money, date, datetime | `\|a-b\| <= max(abs, rel·\|b\|)`. For money the currency must also be equal. For dates `abs` is in days, for datetimes in minutes (`rel` is an error for both) |
+| `gt` / `gte` / `lt` / `lte`   | number, money, date, datetime | ranges can combine bounds in one object                                                                                                                        |
+| `sameAs {source, normalize?}` | any                           | equals a value read from a second source and normalized by its own pipeline (see 2.6.1)                                                                        |
+| `schema`                      | Json                          | validates against a JSON Schema                                                                                                                                |
+| `exists`                      | any                           | the value was read and normalized and is not the empty string                                                                                                  |
 
 If the value's type doesn't match the operator (for example `approx` on an
 un-normalized string), the check abstains with `type_mismatch`. The
 validator flags the obvious cases before the check runs.
+
+Literals for datetimes (`equals`, `approx.value`, bounds) are ISO 8601 with an
+offset, such as `"2026-11-05T14:30:00+01:00"`, so each names one instant. A
+datetime value is compared as an instant: `14:30+01:00` equals `13:30Z`. A date
+bound on a datetime, or the reverse, is a type mismatch. `datetime` is a
+separate normalizer, so `date` and the checks that use it are unchanged.
+
+##### 2.6.1 Bindings (`sameAs`)
+
+A literal can't say "the order number on the page is the order the backend
+created": the expected value is only known at run time. `sameAs` reads it from
+a second source:
+
+```jsonc
+{
+  "kind": "value",
+  "source": {
+    "from": "node",
+    "field": "text",
+    "target": { "role": "paragraph", "text": { "contains": "Order number" } },
+  },
+  "normalize": [{ "op": "extract", "regex": "Order number:\\s*(\\S+)" }],
+  "expect": { "sameAs": { "source": { "from": "probe", "probe": "latestOrder", "pointer": "/id" } } },
+}
+```
+
+A run that ends on an earlier order's confirmation page now fails: the page
+shows `A1000`, the probe says `A1001`.
+
+- Each side is read and normalized on its own (`sameAs.normalize` applies to
+  the second source only), then compared for equality: strings after
+  canonicalization (2.3), numbers exactly, money by amount and currency, dates
+  by day, datetimes by instant, JSON structurally.
+- Either side unreadable (missing anchor, no matching request, missing
+  pointer, parse failure) ⇒ abstain, with the second side's message prefixed
+  "the value to compare with could not be read". Both read and different ⇒
+  fail. Both sides of different types (a number and a string) ⇒ abstain with
+  `type_mismatch`; normalize both sides to the same type.
+- An observed absence (an unset storage key, see 2.4) on either side fails.
+  There is no value to be equal to, and two unset keys passing would be a
+  vacuous success.
+- The validator runs the full source and normalizer checks on both sides, and
+  rejects types that can't be equal and a side compared with itself.
+- The outcome's evidence lists both values (each with its raw value when
+  normalized).
+
+Why a comparison and not named captures between checks: a capture would make
+one check's result depend on another check's read, so checks would need an
+evaluation order and a way to report a capture that abstained. `sameAs` keeps
+each check self-contained and keeps the three-valued rules local to one
+assertion. It also goes through the same type flow as a literal comparison,
+and the mutation operator follows from it (ADR 0003): perturb either side as
+if the other side's value were an `equals` literal.
+
+The check is only as hard to fake as its weaker side, because making that side
+show what the other holds is enough to pass. Coverage (ADR 0002) therefore
+ranks a binding by its weaker source: page text bound to a probe is
+`freetext`. Pair it with a check on the stronger source when the requirement
+is about the backend state itself.
+
+Equality is the only operator. Tolerances across sources (a page that shows
+minutes and a probe with seconds) are left out until a task needs them.
 
 #### 2.7 Results and aggregation
 
@@ -566,9 +630,6 @@ in three places:
 
 ## Open questions (later milestones)
 
-- Bindings between checks, for example "the order ID on the page equals the
-  ID in the POST response", via named captures.
 - An escalation policy per check (`onAbstain`, `onFail: "escalate"`).
   Locking metadata (`locked: {by, at, digest}`, ADR 0004) and compiler
   provenance (`compiled: {compiler, model, modelsUsed, at}`, ADR 0002) are in.
-- Datetime comparisons with tolerance in minutes.
