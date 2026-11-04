@@ -329,10 +329,20 @@ function dateLocale(locale: string): DateLocale {
   return dl;
 }
 
+/**
+ * Date.UTC with the year taken literally: Date.UTC maps years 0-99 to 1900-1999.
+ * Month is 0-based; out-of-range fields roll over as in Date.UTC.
+ */
+export function utcTime(y: number, month0: number, d: number, h = 0, mi = 0, s = 0, ms = 0): number {
+  const t = new Date(Date.UTC(2000, 0, 1, h, mi, s, ms));
+  t.setUTCFullYear(y, month0, d);
+  return t.getTime();
+}
+
 function isoDate(y: number, m: number, d: number, raw: string): string {
   const fail = new NormalizeError(`date: invalid calendar date in ${JSON.stringify(raw)}`, 'normalize_failed');
   if (m < 1 || m > 12 || d < 1) throw fail;
-  const dim = new Date(Date.UTC(y, m, 0)).getUTCDate();
+  const dim = new Date(utcTime(y, m, 0)).getUTCDate();
   if (d > dim) throw fail;
   return `${String(y).padStart(4, '0')}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 }
@@ -432,12 +442,23 @@ export const ISO_INSTANT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(
 
 /** Milliseconds since the epoch of an ISO instant literal, or undefined if it is not one. */
 export function instantOf(s: string): number | undefined {
-  if (!ISO_INSTANT.test(s)) return undefined;
-  const t = Date.parse(s);
-  return Number.isNaN(t) ? undefined : t;
+  // Date.parse only checks the shape: it rolls "2026-02-30" into March and accepts "24:00".
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2})(\.\d+)?)?(?:Z|([+-])(\d{2}):(\d{2}))$/.exec(s);
+  if (!m) return undefined;
+  const [, y, mo, d, hh, mm, ss, frac, sign, oh, om] = m;
+  const day = Number(d);
+  if (Number(mo) < 1 || Number(mo) > 12 || day < 1) return undefined;
+  if (day > new Date(utcTime(Number(y), Number(mo), 0)).getUTCDate()) return undefined;
+  if (Number(hh) > 23 || Number(mm) > 59 || Number(ss ?? 0) > 59) return undefined;
+  const offset = sign ? offsetMinutes(sign, oh!, om) : 0;
+  if (Number.isNaN(offset)) return undefined;
+  const local = utcTime(Number(y), Number(mo) - 1, day, Number(hh), Number(mm), Number(ss ?? 0));
+  return local + (frac ? Math.round(Number(frac) * 1000) : 0) - offset * 60_000;
 }
 
-const offsetMinutes = (sign: string, hh: string, mm = '0') => (sign === '-' ? -1 : 1) * (Number(hh) * 60 + Number(mm));
+/** A UTC offset in minutes; NaN when out of range (hours above 23 or minutes above 59). */
+const offsetMinutes = (sign: string, hh: string, mm = '0') =>
+  Number(hh) > 23 || Number(mm) > 59 ? NaN : (sign === '-' ? -1 : 1) * (Number(hh) * 60 + Number(mm));
 
 /** Canonical form of an instant: UTC, milliseconds only when present. */
 export function formatInstant(t: number): string {
@@ -468,7 +489,7 @@ function zoneFormat(timezone: string): Intl.DateTimeFormat {
 export function zoneOffset(t: number, timezone: string): number {
   const parts = zoneFormat(timezone).formatToParts(new Date(t));
   const get = (type: string) => Number(parts.find((p) => p.type === type)!.value);
-  const local = Date.UTC(get('year'), get('month') - 1, get('day'), get('hour'), get('minute'), get('second'));
+  const local = utcTime(get('year'), get('month') - 1, get('day'), get('hour'), get('minute'), get('second'));
   return local - Math.floor(t / 1000) * 1000;
 }
 
@@ -518,7 +539,9 @@ export function parseDateTime(raw: string, locale: string, timezone?: string): s
       offset = z ? offsetMinutes(z[1]!, z[2]!, z[3]) : 0;
     }
   } else {
-    const times = [...s.matchAll(TIME_OF_DAY)];
+    // An ISO date and time followed by a textual zone ("2026-11-05T14:30 UTC"): read the T as a space.
+    const text = s.replace(/^(\d{4}-\d{2}-\d{2})T(?=\d)/i, '$1 ');
+    const times = [...text.matchAll(TIME_OF_DAY)];
     if (times.length === 0) throw fail('no time of day');
     if (times.length > 1) throw fail('more than one time of day');
     const t = times[0]!;
@@ -530,7 +553,7 @@ export function parseDateTime(raw: string, locale: string, timezone?: string): s
       if (hour < 1 || hour > 12) throw fail('invalid 12-hour time');
       hour = (hour % 12) + (half === 'p' ? 12 : 0);
     }
-    let rest = s.slice(0, t.index) + ' ' + s.slice(t.index + t[0].length);
+    let rest = text.slice(0, t.index) + ' ' + text.slice(t.index + t[0].length);
     const zones = [...rest.matchAll(ZONE)];
     if (zones.length > 1) throw fail('more than one UTC offset');
     if (zones[0]) {
@@ -541,8 +564,9 @@ export function parseDateTime(raw: string, locale: string, timezone?: string): s
     date = parseLocalDate(rest.replace(/[()]/g, ' '), raw, locale, TIME_FILLER, fail);
   }
   if (hour > 23 || minute > 59 || second > 59) throw fail('invalid time of day');
+  if (offset !== undefined && Number.isNaN(offset)) throw fail('invalid UTC offset');
   const [y, mo, d] = date.split('-').map(Number) as [number, number, number];
-  const local = Date.UTC(y, mo - 1, d, hour, minute, second, millis);
+  const local = utcTime(y, mo - 1, d, hour, minute, second, millis);
   if (offset !== undefined) return formatInstant(local - offset * 60_000);
   if (!timezone) throw fail('no UTC offset in the value and no timezone given');
   return formatInstant(zonedInstant(local, timezone, fail));

@@ -322,7 +322,7 @@ test.describe('datetime', () => {
   test('validation: literals must name their offset; rel and date bounds are rejected', () => {
     expect(validateCheckSet(one(pickup({ approx: { value: '2026-11-05T14:30:00+01:00', abs: 15 } }))).ok).toBe(true);
     expect(validateCheckSet(one(pickup({ equals: '2026-11-05T14:30' }))).errors.join()).toContain(
-      'needs an ISO date-time with an offset',
+      'needs a valid ISO date-time with an offset',
     );
     expect(
       validateCheckSet(one(pickup({ approx: { value: '2026-11-05T14:30:00Z', rel: 0.1 } }))).errors.join(),
@@ -396,5 +396,128 @@ test.describe('datetime', () => {
     expect(run(a, { ...s, probes: { slot: { ok: true, value: { at: '2026-11-05T14:30:00Z' } } } }).status).toBe('fail');
     expect(validateCheckSet(one(a)).ok).toBe(true);
     expect(stressTest(one(a), [{ name: 'ref', snapshot: s }]).missed).toEqual([]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Review fixes
+// ---------------------------------------------------------------------------
+
+test.describe('review fixes', () => {
+  const ZRH = 'Europe/Zurich';
+  const at = (cmp: Comparison): Assertion => ({
+    kind: 'value',
+    source: { from: 'node', target: { role: 'status', name: 'Pickup' }, field: 'text' },
+    normalize: [{ op: 'datetime', locale: 'en-GB', timezone: ZRH }],
+    expect: cmp,
+  });
+  const errors = (a: Assertion) => validateCheckSet(one(a)).errors.join('\n');
+
+  test('datetime bounds and approx values must be valid instants', () => {
+    expect(errors(at({ gte: '2026-11-05T25:00Z' }))).toContain('is not a valid ISO date-time');
+    expect(errors(at({ lt: '2026-02-30T13:30Z' }))).toContain('is not a valid ISO date-time');
+    expect(errors(at({ approx: { value: '2026-11-05T13:30+24:00', abs: 5 } }))).toContain('not a valid ISO date-time');
+    expect(errors(at({ gte: '2026-11-05T13:30Z', lt: '2026-11-05T14:30+01:00' }))).toBe('');
+  });
+
+  test('datetime oneOf entries must be instants with an offset; null stays allowed', () => {
+    expect(errors(at({ oneOf: ['2026-11-05T13:30Z', '2026-11-05T14:30'] }))).toContain(
+      'oneOf entry "2026-11-05T14:30" needs a valid ISO date-time with an offset',
+    );
+    expect(errors(at({ oneOf: ['2026-11-05T13:30Z', null] }))).toBe('');
+  });
+
+  test('self-comparison is found when one side writes a normalizer as shorthand', () => {
+    const a: Assertion = {
+      ...orderNumber,
+      normalize: ['trim'],
+      expect: { sameAs: { source: orderNumber.source, normalize: [{ op: 'trim' }] } },
+    };
+    expect(errors(a)).toContain('compares a value with itself');
+  });
+
+  test('instant literals are checked against the calendar, not rolled over', () => {
+    // Date.parse reads 2026-02-30 as 2026-03-02 and 24:00 as the next day.
+    expect(errors(at({ equals: '2026-02-30T13:30Z' }))).toContain('needs a valid ISO date-time');
+    expect(errors(at({ equals: '2026-11-05T24:00Z' }))).toContain('needs a valid ISO date-time');
+    const s = snap([{ role: 'status', name: 'Pickup', children: [{ role: 'text', name: '2026-03-02T13:30Z' }] }]);
+    expect(run(at({ equals: '2026-02-30T13:30Z' }), s).status).toBe('fail');
+    expect(run(at({ equals: '2026-03-02T13:30Z' }), s).status).toBe('pass');
+  });
+
+  test('an out-of-range UTC offset does not parse', () => {
+    const f = (raw: string) => reason(() => parseDateTime(raw, 'en-GB'));
+    expect(f('2026-11-05T14:30+25:00')).toBe('normalize_failed');
+    expect(f('2026-11-05T14:30+01:60')).toBe('normalize_failed');
+    expect(f('5 Nov 2026 14:30 UTC+25')).toBe('normalize_failed');
+    expect(parseDateTime('2026-11-05T14:30+14:00', 'en-GB')).toBe('2026-11-05T00:30:00Z');
+  });
+
+  test('an ISO date and time with a textual zone parses', () => {
+    expect(parseDateTime('2026-11-05T14:30 UTC', 'en-GB')).toBe('2026-11-05T14:30:00Z');
+    expect(parseDateTime('2026-11-05T14:30 GMT+1', 'en-GB')).toBe('2026-11-05T13:30:00Z');
+    expect(parseDateTime('2026-11-05t14:30:15 UTC', 'en-GB')).toBe('2026-11-05T14:30:15Z');
+  });
+
+  test('years below 100 are taken literally', () => {
+    expect(parseDateTime('0050-11-05T14:30Z', 'en-GB')).toBe('0050-11-05T14:30:00Z');
+    expect(parseDateTime('0004-02-29 12:00', 'en-GB', 'UTC')).toBe('0004-02-29T12:00:00Z');
+    expect(reason(() => parseDateTime('0100-02-29 12:00', 'en-GB', 'UTC'))).toBe('normalize_failed');
+  });
+
+  test('a sameAs operand with a JSON value and normalizers still gets mutants', () => {
+    const a: Assertion = {
+      kind: 'value',
+      source: { from: 'probe', probe: 'order', pointer: '/n' },
+      normalize: [{ op: 'number', locale: 'en-US' }],
+      expect: {
+        sameAs: {
+          source: { from: 'probe', probe: 'cart', pointer: '/n' },
+          normalize: [{ op: 'number', locale: 'en-US' }],
+        },
+      },
+    };
+    const s = snap([], { probes: { order: { ok: true, value: { n: 3 } }, cart: { ok: true, value: { n: 3 } } } });
+    expect(run(a, s).status).toBe('pass');
+    const ms = generateMutants(one(a), s).filter((m) => m.check === 'C1');
+    expect(ms.some((m) => m.id.startsWith('C1:value:'))).toBe(true);
+    expect(ms.some((m) => m.id.startsWith('C1:sameAs:value:'))).toBe(true);
+    const r = stressTest(one(a), [{ name: 'ref', snapshot: s }]);
+    expect(r.untested).toEqual([]);
+    expect(r.missed).toEqual([]);
+  });
+
+  test('the missing-request warning sees reads nested in allOf/anyOf and sameAs operands', () => {
+    const responseSource = {
+      from: 'response' as const,
+      match: { method: 'POST', url: { path: '/api/orders' } },
+      pointer: '/id',
+    };
+    const response: Assertion = { kind: 'value', source: responseSource, expect: { exists: true } };
+    const request: Assertion = { kind: 'request', match: { method: 'POST', url: { path: '/api/orders' } } };
+    const url: Assertion = { kind: 'url', match: { path: '/orders/:id' } };
+    const warns = (a: Assertion) => validateCheckSet(one(a)).warnings.join('\n');
+    const advice = 'add a "request" check';
+    expect(warns({ kind: 'allOf', of: [response, request] })).not.toContain(advice);
+    expect(warns({ kind: 'allOf', of: [response, url] })).not.toContain(advice);
+    // An anyOf branch that only reads the response abstains when the request is missing.
+    expect(warns({ kind: 'anyOf', of: [response, request] })).toContain(advice);
+    expect(warns({ kind: 'allOf', of: [{ kind: 'anyOf', of: [response, url] }] })).toContain(advice);
+    expect(warns({ kind: 'anyOf', of: [{ kind: 'allOf', of: [response, request] }, request] })).not.toContain(advice);
+    expect(warns({ ...orderNumber, expect: { sameAs: { source: responseSource } } })).toContain(advice);
+  });
+
+  test('datetime mutants keep a UTC or GMT label in the page format', () => {
+    const prev = { type: 'datetime' as const, value: '2026-11-05T13:30:00Z' };
+    const next = { type: 'datetime' as const, value: '2026-11-05T13:46:00Z' };
+    expect(renderLike('2026-11-05 13:30 UTC', prev, next, 'en-GB', ZRH)).toBe('2026-11-05 13:46 UTC');
+    expect(renderLike('2026-11-05 14:30 GMT+1', prev, next, 'en-GB', ZRH)).toBe('2026-11-05 14:46 GMT+1');
+    const cs = one(at({ approx: { value: '2026-11-05T13:30Z', abs: 10 } }));
+    const s = snap([{ role: 'status', name: 'Pickup', children: [{ role: 'text', name: '2026-11-05 13:30 UTC' }] }]);
+    const shown = generateMutants(cs, s).map((m) => m.description);
+    expect(shown.some((d) => d.includes('2026-11-05 13:41 UTC'))).toBe(true);
+    const r = stressTest(cs, [{ name: 'ref', snapshot: s }]);
+    expect(r.missed).toEqual([]);
+    expect(r.weak).toEqual([]);
   });
 });
