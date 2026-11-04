@@ -421,6 +421,38 @@ interface Verification {
  * variant is an error (over-constrained); fragile anchors, weak checks and
  * missed mutants are warnings.
  */
+/**
+ * anyOf branches that abstain on every correct reference. Such a branch was never
+ * seen to read its evidence, and on an incorrect run it turns the check's fail
+ * into an abstain (fail OR abstain is abstain), so it is refused.
+ */
+export function unreadableBranches(cs: CheckSet, refs: Reference[]): string[] {
+  const ctxs = refs
+    .filter((r) => r.kind === 'success')
+    .map((r) => ({ snapshot: r.snapshot, index: new AXIndex(r.snapshot.a11y) }));
+  if (!ctxs.length) return [];
+  const errors: string[] = [];
+  const walk = (check: string, a: Assertion, path: string) => {
+    if (a.kind !== 'anyOf' && a.kind !== 'allOf') return;
+    a.of.forEach((b, i) => {
+      const at = `${path}.of[${i}]`;
+      if (a.kind === 'anyOf') {
+        const results = ctxs.map((ctx) => evaluateAssertion(ctx, b));
+        if (results.every((r) => r.status === 'abstain')) {
+          const reasons = [...new Set(results.map((r) => r.reason ?? r.message))].join(', ');
+          errors.push(
+            `${check}: anyOf branch ${at} abstains on every correct run (${reasons}). A branch whose evidence never exists turns a fail into an abstain; remove it or point it at evidence the correct runs have.`,
+          );
+          return;
+        }
+      }
+      walk(check, b, at);
+    });
+  };
+  for (const c of cs.checks) walk(c.id, c.assert, 'assert');
+  return errors;
+}
+
 export function verifyCandidate(cs: CheckSet, refs: Reference[], stress = true, skipVariants?: string[]): Verification {
   const v = validateCheckSet(cs);
   const errors = [...v.errors];
@@ -449,6 +481,7 @@ export function verifyCandidate(cs: CheckSet, refs: Reference[], stress = true, 
       warnings.push(`On incorrect run "${ref.name}" the verdict is abstain rather than fail.`);
     }
   }
+  errors.push(...unreadableBranches(cs, refs));
   for (const cov of coverage(cs)) {
     if (cov.trust === 'freetext')
       warnings.push(`Requirement ${cov.requirement} is covered only by free page text, which a page can spoof.`);

@@ -28,6 +28,7 @@ import {
   containsClause,
   hasOptionalWording,
   partOfClause,
+  unreadableBranches,
   wholeQuoteOptional,
 } from '../../src/compiler/compile.ts';
 import { networkLog } from '../../src/compiler/explore.ts';
@@ -285,6 +286,39 @@ test('cassettes: a recorded compile replays identically without a model; changed
       model: replayModel(path),
     }),
   ).rejects.toThrow('no recording for this request');
+});
+
+test('an anyOf branch that abstains on every correct run is refused', () => {
+  const refs: Reference[] = [{ name: 'subscribed', kind: 'success', snapshot: ref('01-newsletter', 'subscribed') }];
+  const url = { kind: 'url', match: { regex: '.' } } as const;
+  const missing = { kind: 'value', source: { from: 'probe', probe: 'nope' }, expect: { equals: true } } as const;
+  const cs = {
+    ...rubricSet(),
+    checks: [
+      { id: 'C1', requirement: 'R1', description: 'x', assert: { kind: 'anyOf', of: [url, missing] } },
+      {
+        id: 'C2',
+        requirement: 'R1',
+        description: 'x',
+        assert: { kind: 'allOf', of: [url, { kind: 'anyOf', of: [missing, url] }] },
+      },
+      { id: 'C3', requirement: 'R1', description: 'x', assert: { kind: 'anyOf', of: [url, url] } },
+    ],
+  } as unknown as Parameters<typeof unreadableBranches>[0];
+  const errors = unreadableBranches(cs, refs);
+  expect(errors).toHaveLength(2);
+  expect(errors[0]).toContain('C1: anyOf branch assert.of[1] abstains on every correct run');
+  expect(errors[1]).toContain('C2: anyOf branch assert.of[1].of[0]');
+  // Without a correct reference there is nothing to judge readability by.
+  expect(unreadableBranches(cs, [])).toEqual([]);
+});
+
+const rubricSet = () => ({
+  schema: 'assay.checks/v1',
+  id: 't',
+  version: '1',
+  task: { instruction: NEWSLETTER.instruction },
+  requirements: [{ id: 'R1', kind: 'hard', text: 't', source: { field: 'instruction', quote: 'Subscribe me' } }],
 });
 
 // ---------------------------------------------------------------------------

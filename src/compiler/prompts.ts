@@ -35,7 +35,8 @@ Every check belongs to exactly one requirement and may only test what that requi
 - contains / { "contains": ... } instead of exact names where the name carries extra text,
 - explicit normalizers for numbers, money and dates (locale required), with approx tolerances for numbers and money,
 - JSON Schema with only the required properties for bodies (extra fields must still pass).
-If a valid alternative way to complete the task exists, use anyOf.
+- text the user dictates as a message (a comment, a note, a reply) is prose: accept a final period or exclamation mark and surrounding whitespace, unless the task asks for the exact text. Names and titles (of an issue, an event, a location) are compared as given.
+If a valid alternative way to complete the task exists, use anyOf. Every anyOf branch must read evidence that exists in the correct runs; a branch for evidence that is never there only turns failures into abstains, and is refused.
 
 ## DSL (assay.checks/v1)
 Locator: {role, name?, text?, level?, landmark?: {role: banner|complementary|contentinfo|form|main|navigation|region|search, name?}, within?: Locator}. "text" is the node's descendant text. Never match by position; a locator matching several nodes makes the check abstain.
