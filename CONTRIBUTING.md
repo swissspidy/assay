@@ -28,8 +28,9 @@ examples or scripts only needs none.
 The Release workflow gathers the changesets on `main` into a "Version packages" pull request. Merging
 it stages that version on npm with npm's trusted publishing and provenance, then tags it and creates
 its GitHub release. The version goes public once a maintainer approves the staged publish on
-npmjs.com. Any other push to `main` only updates the "Version packages" pull request
-([ADR 0006](docs/adr/0006-npm-package-and-releases.md)).
+npmjs.com. Any other push to `main` only updates the "Version packages" pull request. To reject a
+staged version, reject the stage on npm and delete its tag and GitHub release; the next push stages
+it again ([ADR 0006](docs/adr/0006-npm-package-and-releases.md)).
 
 ## Architecture decision records
 

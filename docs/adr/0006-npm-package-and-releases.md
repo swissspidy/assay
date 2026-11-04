@@ -30,26 +30,28 @@ on npm belongs to an unrelated package.
   - Pull requests that change what the package does add a changeset. On `main`, Changesets keeps a
     "Version packages" pull request that bumps `package.json` and writes `CHANGELOG.md`. Its pushes
     start no workflow, so the release workflow starts CI on that branch with `workflow_dispatch`.
-  - A push to `main` is a release when npm does not have the version in `package.json` (the version
-    pull request was just merged). Then the workflow builds and packs the package, tests the tarball
-    as installed, stages it on npm, and tags the version and creates its GitHub release from its
-    changelog section. Every other push only updates the version pull request.
+  - A push to `main` is a release when the version in `package.json` has no tag (the version pull
+    request was just merged). Then the workflow builds and packs the package, tests the tarball as
+    installed, stages it on npm, and tags the version and creates its GitHub release from its
+    changelog section. A version already on npm (published by hand) is only tagged. Every other push
+    only updates the version pull request.
+  - The tag decides, not npm: a staged version is not on npm until it is approved, and npm will not
+    stage the same version twice, so a gate on npm would retry staging, and fail, on every push
+    while a version waits for approval.
   - npm accepts the workflow's OIDC token, so the repository stores no npm token. The trusted
     publisher only allows staged publishes: a version goes public once a maintainer approves it with
     2FA, on npmjs.com (Staged Packages) or with `npm stage approve <stage-id>`.
-  - The tag and the GitHub release come with the stage, before the approval. Until a maintainer
-    approves it, every push to `main` stages the version again (npm still does not have it). A
-    rejected stage leaves its tag and release behind: delete both, or bump the version with a
-    changeset. An earlier version of this ADR held the release back as a draft until the approval;
-    that needed a state machine, a daily run to notice approvals, and a second job, for a case that
-    a maintainer handles by hand anyway.
+  - The tag and the GitHub release come with the stage, before the approval. To reject a staged
+    version, reject the stage and delete its tag and release; the next push stages it again. An
+    earlier version of this ADR held the release back as a draft until the approval; that needed a
+    state machine, a daily run to notice approvals, and a second job, for a case that a maintainer
+    handles by hand anyway.
 - **Only the publishing job can request that token, and it installs nothing.** It publishes the
   tarball that the pack job built, tested and packed, so no dependency's install script or test code
   runs where it could publish. The Changesets job, which can push and open pull requests, installs
   with `--ignore-scripts`. No release job uses a dependency or browser cache. The publishing job runs
   in the `npm` environment, which the trusted publisher names. It skips `npm stage publish` when the
-  version is already on npm, and the tag and release when the tag exists, so a run that failed
-  partway can be re-run. The release runs only the installed-package test before packing: CI already
+  version is already on npm, so a version published by hand only gets its tag and release. The release runs only the installed-package test before packing: CI already
   ran the full suite on the same commit.
 - **zizmor checks the workflows** (`.github/workflows/zizmor.yml`) on every change to `.github/`.
 
@@ -60,8 +62,8 @@ on npm belongs to an unrelated package.
     workflow `release.yml`, environment `npm`, staged publishes only.
   - In the repository settings, create the `npm` environment.
   - Allow GitHub Actions to create pull requests (Settings → Actions → General).
-- `0.1.0`, the version in `package.json` when this lands, is not on npm, so every push to `main`
-  tries to stage it until the setup is done. npm only lets a trusted publisher be added to a package
+- `0.1.0`, the version in `package.json` when this lands, has no tag, so every push to `main`
+  tries to release it until the setup is done. npm only lets a trusted publisher be added to a package
   that exists, so the first version is published by hand (`npm publish --access public`, without
   provenance); the next push then tags it and creates its release. Later versions come from
   changesets.

@@ -2,9 +2,9 @@
 # as in swissspidy/playwright-webmcp.
 #
 # On every push to main:
-# 1. version: Changesets opens or updates the "Version packages" pull request. When npm does not
-#    have main's version yet (that pull request was just merged), this push is a release. Any other
-#    push stops here.
+# 1. version: Changesets opens or updates the "Version packages" pull request. When main's version
+#    has no tag yet (that pull request was just merged), this push is a release. Any other push,
+#    including one while a staged version waits for approval (it is tagged), stops here.
 #    A push made with the workflow's GITHUB_TOKEN starts no workflow, so that pull request gets no
 #    CI. version-ci starts ci.yml on its branch with workflow_dispatch, which that token can (its
 #    only permission is actions: write). The results show in Actions and on the branch's head
@@ -43,7 +43,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          fetch-depth: 0 # Changesets' history
+          fetch-depth: 0 # tags, and Changesets' history
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -53,14 +53,17 @@ jobs:
       - run: npm ci --ignore-scripts
       # Before changesets/action, which leaves the checkout on its version branch with the
       # pending changesets applied: the check has to read main's version, not the next one.
-      - name: Does npm lack main's version?
+      # The tag, not npm: a staged version is not on npm until it is approved, and npm will not
+      # stage it twice. A version published by hand (the first one) is on npm but has no tag; the
+      # publish job then only tags it.
+      - name: Is main's version untagged?
         id: release
         run: |
-          spec="@swissspidy/assay@$(node -p 'require("./package.json").version')"
-          if npm view "$spec" version >/dev/null 2>&1; then
+          tag="v$(node -p 'require("./package.json").version')"
+          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
             echo "release=false" >> "$GITHUB_OUTPUT"
           else
-            echo "$spec is not on npm"
+            echo "$tag has no tag yet"
             echo "release=true" >> "$GITHUB_OUTPUT"
           fi
       - name: Create or update the "Version packages" pull request
@@ -151,10 +154,10 @@ jobs:
             if (a < 11 || (a === 11 && b < 15)) throw new Error(`npm ${process.argv[1]} cannot stage publishes (11.15.0 or later)`);
           ' "$npm_version"
       # A tarball (./: npm would read release/x as a GitHub repository): no install, no lifecycle
-      # scripts. A version already on npm is skipped, and an existing tag too, so a run that failed
-      # partway can be re-run. The stage ID goes in the job summary, for approving. A staged version
-      # is not on npm yet, and this job cannot list stages (that needs a maintainer's login), so
-      # approve or reject what a failed run staged before re-running it.
+      # scripts. A version already on npm is only tagged. The stage ID goes in the job summary, for
+      # approving. This job cannot list stages (that needs a maintainer's login), and npm will not
+      # stage a version twice: if a run staged but failed before tagging, approve or reject that
+      # stage first, then re-run it.
       - name: Stage, tag and create the GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -170,10 +173,6 @@ jobs:
             echo "Staged @swissspidy/assay@$version: approve it under Staged Packages on npmjs.com, or with \`npm stage approve ${stage_id:-<stage-id>}\`." >> "$GITHUB_STEP_SUMMARY"
           fi
           tag="v$version"
-          if git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null; then
-            echo "$tag is already tagged"
-            exit 0
-          fi
           # The version's section of CHANGELOG.md, or GitHub's generated notes without one.
           awk -v v="$version" '$0 == "## " v { on = 1; next } on && /^## / { exit } on' CHANGELOG.md 2>/dev/null > notes.md || true
           if [ -s notes.md ]; then notes=(--notes-file notes.md); else notes=(--generate-notes); fi
