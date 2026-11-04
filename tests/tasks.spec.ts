@@ -7,7 +7,8 @@
  */
 import { expect, type Page } from '@playwright/test';
 import { test, expectOutcome } from '../src/playwright/index.ts';
-import { evaluate, editNodes, removeNodes, type EvidenceSnapshot, type Outcome } from '../src/index.ts';
+import { evaluate, type EvidenceSnapshot, type Outcome } from '../src/index.ts';
+import { editNodes, removeNodes } from '../src/stress/index.ts';
 import {
   addToCart,
   checkout,

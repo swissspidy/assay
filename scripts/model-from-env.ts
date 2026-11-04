@@ -7,7 +7,7 @@
  * re-records every cassette (needs the key), e.g. after a prompt change.
  */
 import { existsSync } from 'node:fs';
-import { anthropicModel, recordingModel, replayModel, type ModelClient } from '../src/index.ts';
+import { anthropicModel, recordingModel, replayModel, type ModelClient } from '../src/model/index.ts';
 
 export interface EnvModel {
   model: ModelClient;

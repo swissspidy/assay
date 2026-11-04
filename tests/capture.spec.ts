@@ -1,9 +1,8 @@
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { expect } from '@playwright/test';
-import { test } from '../src/playwright/index.ts';
-import { EvidenceRecorder } from '../src/snapshot/capture.ts';
-import { captureSnapshot, evaluate, type CheckSet, type EvidenceSnapshot } from '../src/index.ts';
+import { captureSnapshot, EvidenceRecorder, test } from '../src/playwright/index.ts';
+import { evaluate, type CheckSet, type EvidenceSnapshot } from '../src/index.ts';
 import { cutUtf8 } from '../src/snapshot/capture.ts';
 import { addToCart, ready } from './helpers.ts';
 

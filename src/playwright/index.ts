@@ -4,8 +4,8 @@ import { EvidenceRecorder, captureSnapshot, type CaptureOptions, type RecorderOp
 import { assertValidCheckSet } from '../dsl/validate.ts';
 import { evaluate } from '../runtime/evaluate.ts';
 import { formatOutcome } from '../report.ts';
-import { verifyWithEscalation, type VerifyOptions } from '../verifier/escalate.ts';
-import { writeOutcomeRecord, type OutcomeRecord } from '../verifier/record.ts';
+import { verify, type VerifyOptions, type VerifyResult } from '../verifier/escalate.ts';
+import type { OutcomeRecord } from '../verifier/record.ts';
 import { isLocked } from '../verifier/lock.ts';
 
 /**
@@ -24,24 +24,37 @@ export const test = base.extend<{ evidence: EvidenceRecorder; evidenceOptions: R
   ],
 });
 
-export interface ExpectOutcomeOptions extends CaptureOptions {
+const notLocked = (cs: CheckSet) =>
+  new Error(`Check set ${cs.id} v${cs.version} is not locked (or was edited after locking).`);
+
+/** Capture and verification options for a live page. The verifier gets read-only live access to it. */
+export interface VerifyPageOptions extends CaptureOptions, Omit<VerifyOptions, 'page' | 'probes'> {}
+
+/**
+ * Capture a snapshot of the page and `verify` it: run the checks, escalate what
+ * they cannot decide to `verifier` (if given), and build the outcome record.
+ */
+export async function verifyPage(
+  page: Page,
+  checks: CheckSet | unknown,
+  opts: VerifyPageOptions = {},
+): Promise<VerifyResult> {
+  const cs = assertValidCheckSet(checks);
+  // Before capturing: an unlocked set must not run probes or touch the page.
+  if (opts.requireLocked && !isLocked(cs)) throw notLocked(cs);
+  const snapshot = await captureSnapshot(page, opts);
+  return verify(cs, snapshot, { ...opts, page });
+}
+
+export interface ExpectOutcomeOptions extends VerifyPageOptions {
   /** Verdict the test expects (default "success"). */
   verdict?: Verdict;
   /** Poll until the expected verdict is reached or this many ms elapse (default 5000). 0 = single evaluation. */
   timeout?: number;
   /** Poll interval in ms (default 250). */
   interval?: number;
-  /** Attach the snapshot and outcome to the Playwright report (default true). */
+  /** Attach the snapshot and outcome (and record) to the Playwright report (default true). */
   attach?: boolean;
-  /**
-   * Escalate requirements the checks cannot decide to the agentic verifier
-   * (needs `escalate.verifier`). The verifier gets read-only live access to the page.
-   */
-  escalate?: Omit<VerifyOptions, 'page' | 'probes'>;
-  /** Write an outcome record (and the snapshot) under this directory. */
-  recordDir?: string;
-  /** Refuse to run a check set that is not locked (or was edited after locking). Checked before polling. */
-  requireLocked?: boolean;
 }
 
 export class OutcomeError extends Error {
@@ -57,8 +70,10 @@ export class OutcomeError extends Error {
 
 /**
  * Assert the outcome of a task on a live page. Captures a snapshot and evaluates
- * the locked check set, polling like Playwright's web-first assertions. Returns
- * the final outcome; throws OutcomeError if the expected verdict is not reached.
+ * the check set, polling like Playwright's web-first assertions. With `verifier`,
+ * requirements the checks still cannot decide once polling settles escalate to
+ * the agentic verifier. Returns the final outcome; throws OutcomeError if the
+ * expected verdict is not reached.
  */
 export async function expectOutcome(
   page: Page,
@@ -66,9 +81,7 @@ export async function expectOutcome(
   opts: ExpectOutcomeOptions = {},
 ): Promise<Outcome> {
   const cs = assertValidCheckSet(checks);
-  if ((opts.requireLocked || opts.escalate?.requireLocked) && !isLocked(cs)) {
-    throw new Error(`Check set ${cs.id} v${cs.version} is not locked (or was edited after locking).`);
-  }
+  if (opts.requireLocked && !isLocked(cs)) throw notLocked(cs);
   const want = opts.verdict ?? 'success';
   const timeout = opts.timeout ?? 5000;
   const interval = opts.interval ?? 250;
@@ -85,16 +98,15 @@ export async function expectOutcome(
 
   // Escalation only after polling settled: the checks had every chance to decide.
   let record: OutcomeRecord | undefined;
-  if (opts.escalate?.verifier || opts.recordDir) {
-    const res = await verifyWithEscalation(cs, snapshot, {
-      ...opts.escalate,
+  if (opts.verifier || opts.recordDir) {
+    const res = await verify(cs, snapshot, {
+      ...opts,
       page,
-      ...(opts.probes ? { probes: opts.probes } : {}),
-      ...(opts.escalate?.verifier && outcome.verdict !== want ? {} : { verifier: undefined }),
+      // The checks already reached the expected verdict: nothing to escalate.
+      ...(opts.verifier && outcome.verdict !== want ? {} : { verifier: undefined }),
     });
     outcome = res.outcome;
     record = res.record;
-    if (opts.recordDir) writeOutcomeRecord(opts.recordDir, record, snapshot, cs, res.proposal);
   }
 
   if (opts.attach !== false) {
@@ -130,3 +142,4 @@ export async function expectOutcome(
 }
 
 export { EvidenceRecorder, captureSnapshot };
+export type { CaptureOptions, Probe, RecorderOptions } from '../snapshot/capture.ts';

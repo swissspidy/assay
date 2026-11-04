@@ -1,16 +1,7 @@
 /** sameAs bindings and datetime values: evaluation, validation, review text and stress generators. */
 import { test, expect } from '@playwright/test';
 import {
-  applyNormalizers,
-  assertionTrust,
-  coverage,
   describeAssertion,
-  evaluateAssertion,
-  generateMutants,
-  generateVariants,
-  NormalizeError,
-  parseDateTime,
-  stressTest,
   validateCheckSet,
   type Assertion,
   type AXNode,
@@ -18,6 +9,10 @@ import {
   type Comparison,
   type EvidenceSnapshot,
 } from '../../src/index.ts';
+import { assertionTrust, coverage } from '../../src/compiler/index.ts';
+import { generateMutants, generateVariants, stressTest } from '../../src/stress/index.ts';
+import { evaluateAssertion } from '../../src/runtime/evaluate.ts';
+import { applyNormalizers, NormalizeError, parseDateTime } from '../../src/runtime/values.ts';
 import { AXIndex } from '../../src/runtime/axindex.ts';
 import { renderLike } from '../../src/stress/violate.ts';
 

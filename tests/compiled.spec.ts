@@ -5,7 +5,9 @@
  */
 import { test, expect } from '@playwright/test';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { canonical, evaluate, parseOutcomes, validateCheckSet, type CheckSet } from '../src/index.ts';
+import { evaluate, validateCheckSet, type CheckSet } from '../src/index.ts';
+import { parseOutcomes } from '../src/compiler/index.ts';
+import { canonical } from '../src/text.ts';
 import { clauseCovered } from '../src/compiler/compile.ts';
 
 import { APPS } from '../examples/apps.ts';

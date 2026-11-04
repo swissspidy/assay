@@ -2,14 +2,54 @@
 
 ## Setup
 
-Node.js 24 or later (see `.nvmrc`).
+Node.js 24 or later (see `.nvmrc`). Tooling: [tsrs](https://github.com/oxc-project/tsrs) for
+typechecking and builds, [oxlint](https://oxc.rs/docs/guide/usage/linter) and
+[oxfmt](https://oxc.rs/docs/guide/usage/formatter) for linting and formatting.
 
 ```sh
 npm install
 npx playwright install --with-deps chromium
 npm run check        # format, lint, typecheck, build and tests: what CI runs
+npm test             # unit tests and live tests against the example apps (started automatically)
 npm run test:pack    # the package as installed (needs the npm registry)
+npm run format       # oxfmt --write
+npm run shop         # run the Tiny Shop demo app on :4173
 ```
+
+CI (`.github/workflows/ci.yml`) runs format, lint, typecheck and build, then the full test suite on
+Node 24 and the latest Node release, the stability run and the evaluation (replayed), and
+`npm run test:pack`, which packs the package, installs it into an empty project and uses every entry
+point from there.
+
+## Layout
+
+- `src/`: the library. Each entry point in `package.json` `exports` has an `index.ts` (the root,
+  `playwright/`, `compiler/`, `stress/`, `model/` for `/models`, `eval/`) or is a single module
+  (`model/ai-sdk.ts` for `/ai-sdk`).
+- `examples/`: three small apps (Tiny Shop, Tiny Tracker, Tiny Calendar) with 30 tasks, handwritten
+  and compiled check sets, and 123 labelled reference runs.
+- `tests/`: unit tests (`tests/unit/`), live acceptance tests against the example apps, and the
+  package test (`tests/pack/`). `tests/tasks.spec.ts` evaluates every Tiny Shop task live and on the
+  serialized snapshot and asserts both give identical results.
+- `scripts/`: the model-backed and long-running jobs below.
+- `eval/`, `stability/`: committed results and cassettes.
+
+## Model-backed scripts
+
+| Command                    | What it does                                                                                                                                                                   |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `npm run compile:examples` | Compiles the 30 example tasks from one correct run each and judges the held-out runs (`examples/<app>/compiled/`).                                                             |
+| `npm run stress`           | Stress-tests the handwritten check sets (`examples/<app>/stress/handwritten/REPORT.md`).                                                                                       |
+| `npm run eval`             | Compares checks, checks with escalation, an LLM judge and the agentic verifier (`eval/results/`). Add `-- --checks compiled` for the compiled sets (`eval/results/compiled/`). |
+| `npm run stability`        | Judges every run against five simulated releases of each app with checks written for the first (`stability/results/REPORT.md`).                                                |
+| `npm run references`       | Re-captures the labelled reference runs from the example apps.                                                                                                                 |
+
+Model steps replay the committed cassettes, so these run without an API key. A missing cassette is
+recorded when `ANTHROPIC_API_KEY` is set. `ASSAY_MODEL_MODE=replay` never calls a model;
+`ASSAY_MODEL_MODE=record` re-records every cassette. Cassettes are keyed by a digest of the full
+request and the model id, so any change to a prompt, a tool, the model or the Anthropic adapter's
+request makes the replays fail: re-record them, and re-run the Model baselines workflow (run by
+hand), which measures the model rows live with fresh recordings.
 
 ## Changesets
 
@@ -25,9 +65,11 @@ too. Then write the changelog entry for someone who uses the package: what chang
 Commit the file it writes in [`.changeset/`](.changeset/README.md). A change to tests, docs, CI,
 examples or scripts only needs none.
 
+## Releases
+
 The Release workflow gathers the changesets on `main` into a "Version packages" pull request. Merging
 it stages that version on npm with npm's trusted publishing and provenance, then tags it and creates
-its GitHub release. The version goes public once a maintainer approves the staged publish on
+its GitHub release. The version goes public once a maintainer approves the staged publish with 2FA on
 npmjs.com. Any other push to `main` only updates the "Version packages" pull request. To reject a
 staged version, reject the stage on npm and delete its tag and GitHub release; the next push stages
 it again ([ADR 0006](docs/adr/0006-npm-package-and-releases.md)).
@@ -36,4 +78,4 @@ it again ([ADR 0006](docs/adr/0006-npm-package-and-releases.md)).
 
 Write an ADR ([`docs/adr`](docs/adr)) when a change makes a decision someone would later ask "why?"
 about: a change to the check DSL or the snapshot or record formats, the trust boundary (what counts
-as evidence), escalation, or how releases work. Number it after the last one.
+as evidence), escalation, model providers, or how releases work. Number it after the last one.

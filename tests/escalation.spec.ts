@@ -4,22 +4,22 @@ import { mkdtempSync, readFileSync, readdirSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { test, expectOutcome } from '../src/playwright/index.ts';
+import { captureSnapshot, expectOutcome, test, verifyPage } from '../src/playwright/index.ts';
 import {
-  captureSnapshot,
+  CheckSetError,
   isLocked,
   lockCheckSet,
   reviewSheet,
   runVerifier,
-  sameOrigin,
-  unwrapNodes,
   validateCheckSet,
-  verifyWithEscalation,
+  verify,
   writeOutcomeRecord,
   type EvidenceSnapshot,
   type ModelClient,
   type OutcomeRecord,
 } from '../src/index.ts';
+import { unwrapNodes } from '../src/stress/index.ts';
+import { sameOrigin } from '../src/verifier/verifier.ts';
 import { call, lastResults, scripted } from './support/scripted.ts';
 import { addToCart, loadChecks, openCart } from './helpers.ts';
 
@@ -52,7 +52,7 @@ test('abstained requirements escalate; the verifier decides from cited observati
       return call('submit_verdict', { verdicts: [verdict('R1', 'pass', [1]), verdict('R2', 'pass', [1])] });
     },
   ]);
-  const res = await verifyWithEscalation(TWO_MUGS, unanchored(), { verifier, agentReport: 'I added both mugs. Done!' });
+  const res = await verify(TWO_MUGS, unanchored(), { verifier, agentReport: 'I added both mugs. Done!' });
   expect(res.checksOutcome.verdict).toBe('abstain');
   expect(res.outcome.verdict).toBe('success');
   expect(res.outcome.requirements.map((r) => r.decidedBy)).toEqual(['verifier', 'verifier']);
@@ -90,7 +90,7 @@ test('a verdict cannot rest on nothing: uncited, made-up citations and duplicate
       return call('submit_verdict', { verdicts: [verdict('R1', 'unknown'), verdict('R2', 'unknown')] });
     },
   ]);
-  const res = await verifyWithEscalation(TWO_MUGS, unanchored(), { verifier, agentReport: 'agent_report: all done' });
+  const res = await verify(TWO_MUGS, unanchored(), { verifier, agentReport: 'agent_report: all done' });
   expect(res.outcome.verdict).toBe('abstain');
   expect(res.record.requirements.map((r) => [r.status, r.decidedBy, r.reason])).toEqual([
     ['abstain', 'none', 'verifier_unknown'],
@@ -102,7 +102,7 @@ test('a verdict cannot rest on nothing: uncited, made-up citations and duplicate
 test("decided requirements stay decided; failures escalate only by policy, and 'unknown' keeps the checks' fail", async () => {
   const partial = ref('03-cart-two-mugs', 'only-blue-mug');
   const never = scripted([]); // throws if called
-  const res = await verifyWithEscalation(TWO_MUGS, partial, { verifier: never });
+  const res = await verify(TWO_MUGS, partial, { verifier: never });
   expect(res.outcome.verdict).toBe('fail');
   expect(res.record.escalation).toBeUndefined();
   expect(res.record.requirements.map((r) => r.decidedBy)).toEqual(['checks', 'checks']);
@@ -112,14 +112,25 @@ test("decided requirements stay decided; failures escalate only by policy, and '
     () => call('page_outline', {}),
     () => call('submit_verdict', { verdicts: [verdict('R2', 'fail', [1])] }),
   ]);
-  const res2 = await verifyWithEscalation(TWO_MUGS, partial, { verifier: sure, policy: { on: ['abstain', 'fail'] } });
+  const res2 = await verify(TWO_MUGS, partial, { verifier: sure, policy: { on: ['abstain', 'fail'] } });
   expect(res2.record.escalation!.requirements).toEqual(['R2']);
   expect(res2.record.requirements.find((r) => r.id === 'R2')).toMatchObject({ status: 'fail', decidedBy: 'verifier' });
 
   const unsure = scripted([() => call('submit_verdict', { verdicts: [verdict('R2', 'unknown')] })]);
-  const res3 = await verifyWithEscalation(TWO_MUGS, partial, { verifier: unsure, policy: { on: ['fail'] } });
+  const res3 = await verify(TWO_MUGS, partial, { verifier: unsure, policy: { on: ['fail'] } });
   expect(res3.outcome.verdict).toBe('fail');
   expect(res3.record.requirements.find((r) => r.id === 'R2')).toMatchObject({ status: 'fail', decidedBy: 'checks' });
+});
+
+test('without a verifier, verify only validates and runs the checks; recordDir writes the record', async () => {
+  await expect(verify({ id: 'not a check set' }, unanchored())).rejects.toThrow(CheckSetError);
+  const dir = mkdtempSync(join(tmpdir(), 'assay-verify-'));
+  const res = await verify(TWO_MUGS, ref('03-cart-two-mugs', 'both-mugs'), { recordDir: dir });
+  expect(res.outcome.verdict).toBe('success');
+  expect(res.outcome).toEqual(res.checksOutcome);
+  expect(res.record.escalation).toBeUndefined();
+  expect(res.written!.recordFile.startsWith(join(dir, 'records'))).toBe(true);
+  expect(JSON.parse(readFileSync(res.written!.recordFile, 'utf8')).snapshot.file).toBe(res.written!.snapshotFile);
 });
 
 test("a model error keeps the checks' outcome and is recorded", async () => {
@@ -129,7 +140,7 @@ test("a model error keeps the checks' outcome and is recorded", async () => {
       throw new Error('529 overloaded');
     },
   };
-  const res = await verifyWithEscalation(TWO_MUGS, unanchored(), { verifier: broken, proposer: broken });
+  const res = await verify(TWO_MUGS, unanchored(), { verifier: broken, proposer: broken });
   expect(res.outcome.verdict).toBe('abstain');
   expect(res.record.escalation).toMatchObject({ status: 'error', error: '529 overloaded' });
   expect(res.record.proposal).toBeUndefined(); // nothing was rescued
@@ -155,15 +166,15 @@ test('a rescued run yields a proposal that keeps the confirmed requirements; rec
     },
   ]);
   const snapshot = unanchored();
-  const res = await verifyWithEscalation(TWO_MUGS, snapshot, { verifier, proposer });
+  const res = await verify(TWO_MUGS, snapshot, { verifier, proposer });
   expect(res.proposal?.version).toMatch(/^1\+proposal\.[0-9a-f]{8}$/);
   expect(res.proposal?.requirements).toEqual(TWO_MUGS.requirements);
   expect(res.record.proposal).toMatchObject({ status: 'pending-approval', checks: 2, version: res.proposal!.version });
   expect(isLocked(res.proposal!)).toBe(false);
 
   const dir = mkdtempSync(join(tmpdir(), 'assay-records-'));
-  const w1 = writeOutcomeRecord(dir, res.record, snapshot, TWO_MUGS, res.proposal);
-  const w2 = writeOutcomeRecord(dir, { ...res.record, id: 'second' }, snapshot, TWO_MUGS);
+  const w1 = writeOutcomeRecord(dir, res);
+  const w2 = writeOutcomeRecord(dir, { ...res, record: { ...res.record, id: 'second' }, proposal: undefined });
   expect(w1.snapshotFile).toBe(w2.snapshotFile); // content-addressed, written once
   expect(readdirSync(join(dir, 'records'))).toHaveLength(2);
   const saved = JSON.parse(readFileSync(w1.recordFile, 'utf8')) as OutcomeRecord;
@@ -174,7 +185,7 @@ test('a rescued run yields a proposal that keeps the confirmed requirements; rec
   expect(readFileSync(obs.file, 'utf8')).toContain('Blue Mug'); // the full output is kept for audit
   expect(saved.proposal?.status === 'pending-approval' && saved.proposal.file).toBe(w1.proposalFile);
   // the writer recomputes digests instead of trusting the record
-  expect(() => writeOutcomeRecord(dir, res.record, ref('03-cart-two-mugs', 'both-mugs'), TWO_MUGS)).toThrow(
+  expect(() => writeOutcomeRecord(dir, { ...res, snapshot: ref('03-cart-two-mugs', 'both-mugs') })).toThrow(
     'does not match',
   );
 });
@@ -185,7 +196,7 @@ test('no proposal when the verifier only decided a failure-escalated requirement
     () => call('page_outline', {}),
     () => call('submit_verdict', { verdicts: [verdict('R2', 'pass', [1])] }),
   ]);
-  const res = await verifyWithEscalation(TWO_MUGS, ref('03-cart-two-mugs', 'only-blue-mug'), {
+  const res = await verify(TWO_MUGS, ref('03-cart-two-mugs', 'only-blue-mug'), {
     verifier: sure,
     proposer,
     policy: { on: ['fail'] },
@@ -201,15 +212,15 @@ test('locking covers content, author and time; it can be required', async () => 
   expect(isLocked({ ...locked, checks: locked.checks.slice(0, 1) })).toBe(false);
   expect(isLocked({ ...locked, locked: { ...locked.locked, by: 'mallory' } })).toBe(false);
   expect(isLocked({ ...locked, locked: { ...locked.locked, at: '2030-01-01T00:00:00.000Z' } })).toBe(false);
-  await expect(
-    verifyWithEscalation(TWO_MUGS, ref('03-cart-two-mugs', 'both-mugs'), { requireLocked: true }),
-  ).rejects.toThrow('not locked');
-  const res = await verifyWithEscalation(locked, ref('03-cart-two-mugs', 'both-mugs'), { requireLocked: true });
+  await expect(verify(TWO_MUGS, ref('03-cart-two-mugs', 'both-mugs'), { requireLocked: true })).rejects.toThrow(
+    'not locked',
+  );
+  const res = await verify(locked, ref('03-cart-two-mugs', 'both-mugs'), { requireLocked: true });
   expect(res.record.checkSet).toMatchObject({
     locked: { by: 'reviewer@example.com', at: '2026-11-03T00:00:00.000Z' },
     lockBroken: false,
   });
-  const tampered = await verifyWithEscalation({ ...locked, version: '2' }, ref('03-cart-two-mugs', 'both-mugs'));
+  const tampered = await verify({ ...locked, version: '2' }, ref('03-cart-two-mugs', 'both-mugs'));
   expect(tampered.record.checkSet).toMatchObject({ locked: null, lockBroken: true });
   const sheet = reviewSheet(locked);
   expect(sheet).toContain('## R1 (hard): "the cart page lists a Blue Mug"');
@@ -275,7 +286,7 @@ test('live: isolated read-only access — no leaks into the evidence log', async
     },
   ]);
   const dir = mkdtempSync(join(tmpdir(), 'assay-live-'));
-  const outcome = await expectOutcome(page, TWO_MUGS, { timeout: 0, escalate: { verifier }, recordDir: dir });
+  const outcome = await expectOutcome(page, TWO_MUGS, { timeout: 0, verifier, recordDir: dir });
   expect(outcome.verdict).toBe('success');
   // The verifier's browsing ran in its own context: none of it is in the run's evidence.
   const after = await captureSnapshot(page);
@@ -346,6 +357,24 @@ test('expectOutcome: requireLocked is checked before polling; an expected fail i
   await openCart(page);
   await expect(expectOutcome(page, TWO_MUGS, { requireLocked: true, timeout: 0 })).rejects.toThrow('not locked');
   const never = scripted([]);
-  const outcome = await expectOutcome(page, TWO_MUGS, { verdict: 'fail', timeout: 0, escalate: { verifier: never } });
+  // The policy would escalate the failed requirements; reaching the expected verdict skips the verifier.
+  const outcome = await expectOutcome(page, TWO_MUGS, {
+    verdict: 'fail',
+    timeout: 0,
+    verifier: never,
+    policy: { on: ['fail'], includeSoft: true },
+  });
   expect(outcome.verdict).toBe('fail');
+  expect(never.requests).toHaveLength(0);
+});
+
+test('verifyPage: requireLocked is checked before capturing or running probes', async ({ page }) => {
+  await openCart(page);
+  let probed = 0;
+  const probes = { cart: async () => ++probed };
+  await expect(verifyPage(page, TWO_MUGS, { requireLocked: true, probes })).rejects.toThrow('not locked');
+  expect(probed).toBe(0);
+  const res = await verifyPage(page, lockCheckSet(TWO_MUGS, 'reviewer'), { requireLocked: true, probes });
+  expect(probed).toBe(1);
+  expect(res.snapshot.probes?.cart).toBeDefined();
 });
