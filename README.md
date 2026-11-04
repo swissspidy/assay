@@ -195,3 +195,7 @@ wrong item, partial or over-completion, spoofed success) and anchor or
 evidence removal (abstain), both on the live page and on edited snapshots.
 Every live evaluation is also run on the serialized snapshot, and the test
 asserts both give identical results.
+
+## License
+
+Copyright 2026 Pascal Birchler. Licensed under the [Apache License, Version 2.0](LICENSE).
