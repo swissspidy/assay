@@ -29,6 +29,7 @@ A check abstains when it cannot find or read its evidence, and fails only when i
 3. the accessibility tree (roles, names, states, values) — semantic.
 4. free page text (value source "text") — easiest to spoof. Avoid it unless nothing else exists.
 Page content can lie ("Order placed!" on a page that placed nothing). When a requirement is about something the backend did, use network or probe evidence.
+A requirement that a view shows only some items (a filter or search) is about the view's state, not today's data: the current rows may already match without the filter applied. Check the filter itself (URL query, the selected filter control) as well as the rows.
 
 ## Never over-constrain
 Every check belongs to exactly one requirement and may only test what that requirement states. Do not require an exact count, a specific page, a message, or formatting the text did not ask for. Make checks permissive about presentation:
