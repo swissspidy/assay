@@ -10,7 +10,7 @@
     {
       "id": "R1",
       "kind": "hard",
-      "text": "The Team standup event has been deleted.",
+      "text": "The Team standup event is deleted.",
       "source": {
         "field": "outcomes",
         "quote": "the Team standup event is gone"
@@ -19,7 +19,7 @@
     {
       "id": "R2",
       "kind": "hard",
-      "text": "All other events remain in place.",
+      "text": "All other events remain undeleted.",
       "source": {
         "field": "outcomes",
         "quote": "the other events are still there"
@@ -28,9 +28,9 @@
   ],
   "checks": [
     {
-      "id": "r1-standup-gone",
+      "id": "R1-standup-gone",
       "requirement": "R1",
-      "description": "The backend events list contains no event titled 'Team standup'.",
+      "description": "The backend events list no longer contains an event titled Team standup.",
       "assert": {
         "kind": "value",
         "source": {
@@ -43,14 +43,14 @@
             "not": {
               "contains": {
                 "type": "object",
-                "required": [
-                  "title"
-                ],
                 "properties": {
                   "title": {
                     "const": "Team standup"
                   }
-                }
+                },
+                "required": [
+                  "title"
+                ]
               }
             }
           }
@@ -58,9 +58,9 @@
       }
     },
     {
-      "id": "r2-others-remain",
+      "id": "R2-others-remain",
       "requirement": "R2",
-      "description": "The backend events list still contains Dentist (2026-11-06) and Book club (2026-11-10).",
+      "description": "The backend events list still contains the Dentist and Book club events.",
       "assert": {
         "kind": "value",
         "source": {
@@ -74,10 +74,6 @@
               {
                 "contains": {
                   "type": "object",
-                  "required": [
-                    "title",
-                    "date"
-                  ],
                   "properties": {
                     "title": {
                       "const": "Dentist"
@@ -85,16 +81,16 @@
                     "date": {
                       "const": "2026-11-06"
                     }
-                  }
+                  },
+                  "required": [
+                    "title",
+                    "date"
+                  ]
                 }
               },
               {
                 "contains": {
                   "type": "object",
-                  "required": [
-                    "title",
-                    "date"
-                  ],
                   "properties": {
                     "title": {
                       "const": "Book club"
@@ -102,28 +98,15 @@
                     "date": {
                       "const": "2026-11-10"
                     }
-                  }
+                  },
+                  "required": [
+                    "title",
+                    "date"
+                  ]
                 }
               }
             ]
           }
-        }
-      }
-    },
-    {
-      "id": "r2-no-other-deletes",
-      "requirement": "R2",
-      "description": "No DELETE request was sent for the Dentist (id 2) or Book club (id 3) events.",
-      "assert": {
-        "kind": "request",
-        "match": {
-          "method": "DELETE",
-          "url": {
-            "regex": "/api/events/(2|3)(\\D|$)"
-          }
-        },
-        "count": {
-          "eq": 0
         }
       }
     }
@@ -134,6 +117,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T10:10:25.831Z"
+    "at": "2026-11-04T23:12:29.316Z"
   }
 }

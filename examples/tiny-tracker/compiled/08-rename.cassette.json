@@ -1,14 +1,14 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T10:10:40.335Z",
+ "recordedAt": "2026-11-04T23:12:38.291Z",
  "turns": {
   "sha256:82eaa7821b8071bad4f901d70c026c7726841ec490fd0e64d136189177bcdaec": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01LEBA5dwRR5SNRJ15XRFh8b",
+     "id": "toolu_01NB2Q7kcRQ5TYaL2maoJg9w",
      "name": "submit_rubric",
      "input": {
       "requirements": [
@@ -26,7 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01LEBA5dwRR5SNRJ15XRFh8b",
+     "id": "toolu_01NB2Q7kcRQ5TYaL2maoJg9w",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -52,17 +52,17 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:5a210bda1416de61e1dbbc265f8ca11d17538351927713b7685d8157c4a7efc5": {
+  "sha256:bd2fa6ad1b1ffab36dcc316a1ce8345d317c971a111243648de18864e4e43193": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01CkYhD2exharFpofZzV1EKv",
+     "id": "toolu_01CnDyxdRe9JZik1Ab81VJEq",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01Nx83iUYaBAauKFQcqYkUje",
+     "id": "toolu_01FAwS9Hm6qhEjUQ6f2BiV8o",
      "name": "network_log",
      "input": {}
     }
@@ -70,7 +70,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01CkYhD2exharFpofZzV1EKv",
+     "id": "toolu_01CnDyxdRe9JZik1Ab81VJEq",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -79,7 +79,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Nx83iUYaBAauKFQcqYkUje",
+     "id": "toolu_01FAwS9Hm6qhEjUQ6f2BiV8o",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -88,48 +88,55 @@
     }
    ],
    "usage": {
-    "inputTokens": 13948,
+    "inputTokens": 15890,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 13944
+    "cacheWriteTokens": 15886
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:14e8ba5e697054c85e41a1897040b87eb82dafa06f4d5db570152e6c990c7162": {
+  "sha256:b0cd590e2b6588eaa1481ad954ffb7f511ab1555faa522e12b0748b81f98a30e": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01S6KpbB3pVsqUZsbByyKkP3",
-     "name": "try_assertion",
+     "id": "toolu_01Qt8XZqypbV6F6N4ds6njq5",
+     "name": "submit_checks",
      "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "issues"
-       },
-       "expect": {
-        "schema": {
-         "type": "array",
-         "contains": {
-          "type": "object",
-          "required": [
-           "id",
-           "title"
-          ],
-          "properties": {
-           "id": {
-            "const": 3
-           },
-           "title": {
-            "const": "Fix typo in README"
+      "checks": [
+       {
+        "id": "r1-probe-title",
+        "requirement": "R1",
+        "description": "The backend issues list contains issue id 3 with title exactly \"Fix typo in README\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "title"
+            ],
+            "properties": {
+             "id": {
+              "const": 3
+             },
+             "title": {
+              "const": "Fix typo in README"
+             }
+            }
            }
           }
          }
         }
        }
-      }
+      ]
      }
     }
    ],
@@ -137,150 +144,58 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSpQgKEAgTGAI4AUIIdGhpbmtpbmcSDLOLdMIPBdMTs9/3BRoM/1+d8mXa4+UgZGY2IjBUWVy+NvpHZ7PSkPahnnMF2oj3jaLRJy7uaTNrlAYxbwhWuZTJFXEm9CV9c7nf3I8qwgfTDvf3+8TOd0uOb6Ry74j5Tf0K5kNJCoawrAmMlek2G8SSjEpwBs3yH/tX76g7Xto6M0fS8pYaNeZONU1XX16oO4v+UGvgCqNntnbA+S/rgNZdl1DxSaAt3nT60hpcB8cqMPUUU+O9oZSrkgtPmhUa2gMsdC3pYgaXLyvMchW8st2NsUZrhifNT9F2WqXJHCKJ8O5+0UC7p366wE5JqFr8qFs1nKrC10AKAkN2KJe8EBeQ9omSJPIuGF95ah5O0jjDwZNzxsdIFDcLfIRKf/x6UnwyC+oTWlj9pr6p+BTPuXTlQOemZHeFLIpNAHz9LJ2ERrcOrNBsSeJUY6o1WBKAGYLxWYJR7kr19wITRO2CCTu3PpPzyongMtCxPwF6LR7Zc6kQQ8Jy1wKeyeO4YW06zA0XKSoio0YklivW93C1f+so58WYXtIjaYDX4lZoNA59/Axqtyz9NGuy3Fex4NiUd4MD0p6Amsi1TAcYg2EW5hy4c9k+Yf2K42GF6b4MSD2rJEqJkWaGY21klUvSZT8hyM/zsB+X9ex4a2173LnuFquyQfscIAyxXs1G9clv3o4ulixZSZgZdkpWqNrzgHZlLPoJl6+pJxRklYcd4oe9Nb/1/UqQak2adb5Nm8+N66QeWAA63eTah0Rlw2aUVZ7+TUgzFPA8ZSFAKi42NnHJEOtkrraaucB+B1NdlnenFSqUN6nGPhxVxvXaQGN7jfnHpXzWTZ85wC9Q9kBWvJ4tNNrc8yuYa+DqcNeNzj5Z+Tc8Fy0d76CMJ2drDbJ4tsBh1k0GDEIOzCgUlMQrAJvr2L1DvsTP3/gcv9HZV5S+2WC6LRiR/DsUnWMFp34SxpO9PNDLA9JWKpXZIleqUplxw63nA5np44ERL4RPDNMBCsokkg2qQfwj6GCq1k/cK74pIbk+9NS2GdIeukfZz5ebhvatBerMN7+p8JYCTSQp8XWh6Qhiuc0YLK7efZQFaDI0931JeljnaZBT3QratI+UQOowUXUxRWLGyUSeQiTMCIQZiipPFAlMXWi1zkbhl3gEg8PRtYFYFNnDHsgNpcTd3F7ory2ZibJuybfPF5GI3ZDzNp0qj9Zj9LAhakWWLll9FYY2taygmaIPpRyR41uQzvXlym3V0vgsKH8YrmGW74v/xcwfnPw/SAw2lF2dsoLfstY3CO3Rx4MVuO1t7xBioGRhu5gwF9NOfeM7sIPpyjN84tY8feadfkOAiDqUoyeqKDosO499PkgQpC5BmNnlQkpkom22QPgYgJNPAb/GtokJiBgB"
+     "signature": "CAQS4wYKEAgTGAI4AUIIdGhpbmtpbmcSDLWgOM++pg8dAwTl+BoM+W1PypT+ff2yHLX/IjBcVhP67f0rFsbg1bNB4NbahwF0sMdYUa7rfgsdWH5OtFM4s2IeOFB5B7BYgEvd6QYqgAbiSbm+4lglmfVnWBDIAZGrVqgjXrvJ9FyC3IZUFoFqJP0Oeksx7lWph2OUaC1AZ3WazjFznvmpEaZRqnYaCpJRMcd+4E+XGr8HdMkRV0tCzXZR8c7BgdTl+Fip3A1iXbWab0Le7mSDWT//wyzga26PQjjs93gC8z1ZiVNIAwA/uQ1/ryWVySrLjO8Yj+pZGDIQG4Wp13p06XoXdDSszD/x6hIEyRrttj/m6IjKuNS9yTr34LyONsXlMAdcTFBGgUf5Ks2sMDjTmmj2sw3GchAdaOXUyhi2sIJFoj5SJgE+PEzTcbf3UTngN8L45Xc8AuRNK2gkz6/egDD9WJmewAo6/aris5EpIdxll3Qj3AXZYM4ts7ndOn94o8urJMFPHV6jXhFdLR+z1eAY2N4j0PE8RwyOzbhau7pgSj4YhgWyfHp4P0JnFOHyKB/wSlxm5uFcXxXcCD0ygzssvVNNFA1pF9mvB1ngLLJ93RFEV1o4PICipX8ZmW+wpUEBCP97LUZ+PurI5OCBPBFJ8mPbmgRBRWa5rE2AXsbVGDybHOcbSURpNBZ5vcE7H4nTegJUSRiSja+Ibmer6vRJtKKBgNP7s7KSYD3QHRniQwqIpq4j9YCBwrxiHhfhOEo943+JY97EZWRHw7wMnXN8mqVxCRNKx7WErHxjNWe9IWzWJq6V0s3kfDtFG0riQW78N+EXE/vTmnwza+42FLUyy4zDKKQO2GGp7nkqkhcTqPGYHewK8IoE6VIwjSA/v6rUWYlW/ONJxLRFgLt36M65EE+FDtAhwuPTnXqVM67lNRUhmGVexY6IttltUbr1sN9dcDMwh8MNSEA/KPQyhOdE+7dY8ueYPSS97Kp9OVy+9X+QYGTRniDlXW5bMNyXbqKHyQvUS/xIfiEUwevu+rFV3rhB1TeOLPlCHH0AL+uZlxqUFLJ7yhBtUlo5rBEvKyRbGdjnArAAn225nZkfSxRU8GBH6PRWBWBJmrXJL/tMroIWy/Xyu14UnKLfeGZ8kivdt+bXH20YAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01S6KpbB3pVsqUZsbByyKkP3",
-     "name": "try_assertion",
+     "id": "toolu_01Qt8XZqypbV6F6N4ds6njq5",
+     "name": "submit_checks",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "issues"
-       },
-       "expect": {
-        "schema": {
-         "type": "array",
-         "contains": {
-          "type": "object",
-          "required": [
-           "id",
-           "title"
-          ],
-          "properties": {
-           "id": {
-            "const": 3
-           },
-           "title": {
-            "const": "Fix typo in README"
+      "checks": [
+       {
+        "id": "r1-probe-title",
+        "requirement": "R1",
+        "description": "The backend issues list contains issue id 3 with title exactly \"Fix typo in README\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "title"
+            ],
+            "properties": {
+             "id": {
+              "const": 3
+             },
+             "title": {
+              "const": "Fix typo in README"
+             }
+            }
            }
           }
          }
         }
        }
-      }
+      ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 14416,
-    "outputTokens": 293,
-    "cacheReadTokens": 13944,
+    "inputTokens": 16358,
+    "outputTokens": 288,
+    "cacheReadTokens": 15886,
     "cacheWriteTokens": 470
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:a731bfb0b39258ecac28f2b3d480696bffc42d114b38082484f9e0e32b7f9eda": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_01XShs4cJ8VGwzhYDJ9ND9Fk",
-     "name": "submit_checks",
-     "input": {
-      "checks": [
-       {
-        "id": "issue3-title-backend",
-        "requirement": "R1",
-        "description": "The backend issues probe shows issue with id 3 having title exactly \"Fix typo in README\".",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "issues"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "id",
-             "title"
-            ],
-            "properties": {
-             "id": {
-              "const": 3
-             },
-             "title": {
-              "const": "Fix typo in README"
-             }
-            }
-           }
-          }
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_01XShs4cJ8VGwzhYDJ9ND9Fk",
-     "name": "submit_checks",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "checks": [
-       {
-        "id": "issue3-title-backend",
-        "requirement": "R1",
-        "description": "The backend issues probe shows issue with id 3 having title exactly \"Fix typo in README\".",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "issues"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "id",
-             "title"
-            ],
-            "properties": {
-             "id": {
-              "const": 3
-             },
-             "title": {
-              "const": "Fix typo in README"
-             }
-            }
-           }
-          }
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 14784,
-    "outputTokens": 221,
-    "cacheReadTokens": 14414,
-    "cacheWriteTokens": 368
    },
    "model": "claude-opus-5-5"
   }

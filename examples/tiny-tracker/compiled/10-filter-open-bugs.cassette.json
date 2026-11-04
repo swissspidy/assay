@@ -1,14 +1,14 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T10:10:58.719Z",
+ "recordedAt": "2026-11-04T23:12:59.815Z",
  "turns": {
   "sha256:db00b34056e80968320a9bd07f5475fbfb6751cda4bf4c352b05507550f0028e": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01GVHNQEU4hc6bx6wUiuCNaz",
+     "id": "toolu_01YPp6xUqAxLaRDDSpbNGpQH",
      "name": "submit_rubric",
      "input": {
       "requirements": [
@@ -17,14 +17,14 @@
         "kind": "hard",
         "text": "The issue list shows only open issues.",
         "field": "outcomes",
-        "quote": "Then the list shows only open issues"
+        "quote": "the list shows only open issues"
        },
        {
         "id": "R2",
         "kind": "hard",
         "text": "The issue list shows only issues labelled bug.",
         "field": "outcomes",
-        "quote": "Then the list shows only issues labelled bug"
+        "quote": "the list shows only issues labelled bug"
        }
       ]
      }
@@ -33,7 +33,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01GVHNQEU4hc6bx6wUiuCNaz",
+     "id": "toolu_01YPp6xUqAxLaRDDSpbNGpQH",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -45,14 +45,14 @@
         "kind": "hard",
         "text": "The issue list shows only open issues.",
         "field": "outcomes",
-        "quote": "Then the list shows only open issues"
+        "quote": "the list shows only open issues"
        },
        {
         "id": "R2",
         "kind": "hard",
         "text": "The issue list shows only issues labelled bug.",
         "field": "outcomes",
-        "quote": "Then the list shows only issues labelled bug"
+        "quote": "the list shows only issues labelled bug"
        }
       ]
      }
@@ -60,23 +60,23 @@
    ],
    "usage": {
     "inputTokens": 1130,
-    "outputTokens": 169,
+    "outputTokens": 165,
     "cacheReadTokens": 0,
     "cacheWriteTokens": 1126
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:e7da5e733f74f4426e3e236f43158b4bfb4c331730aea51d0c7fc5a88ecfe479": {
+  "sha256:fa42c7729bdb59df53b0bffa5385b8306cf113506b51b0124024f5f4bbfb99a6": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_012T1ipZAf7zCGBb2gtyNzjJ",
+     "id": "toolu_01S8BP69gyP4iDy6FATsninz",
      "name": "page_outline",
      "input": {}
     },
     {
-     "id": "toolu_019cmNiJRcjby3xrVM1hn4KW",
+     "id": "toolu_018FSdKpEXEe5uwqkERybuHs",
      "name": "network_log",
      "input": {}
     }
@@ -84,7 +84,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_012T1ipZAf7zCGBb2gtyNzjJ",
+     "id": "toolu_01S8BP69gyP4iDy6FATsninz",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -93,7 +93,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_019cmNiJRcjby3xrVM1hn4KW",
+     "id": "toolu_018FSdKpEXEe5uwqkERybuHs",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -102,277 +102,169 @@
     }
    ],
    "usage": {
-    "inputTokens": 13989,
+    "inputTokens": 15927,
     "outputTokens": 50,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 13985
+    "cacheWriteTokens": 15923
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:30d04cf30935d64e01205bec0fa62eeb8d150890249c3238f0c3f3d1a3231b83": {
+  "sha256:82284e18686de0775ab46ff4b3f7dd9ab95dbe20f0e5e2b63202af4b9a811a76": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01AgG6uAtJ2jumMR3nGbLLGr",
-     "name": "try_assertion",
-     "input": {
-      "assert": {
-       "kind": "allOf",
-       "of": [
-        {
-         "kind": "url",
-         "match": {
-          "query": {
-           "status": {
-            "equals": "open",
-            "ignoreCase": true
-           },
-           "label": {
-            "equals": "bug",
-            "ignoreCase": true
-           }
-          }
-         }
-        },
-        {
-         "kind": "state",
-         "target": {
-          "role": "option",
-          "name": "Open",
-          "within": {
-           "role": "combobox",
-           "name": "Status"
-          }
-         },
-         "expect": {
-          "selected": true
-         }
-        },
-        {
-         "kind": "state",
-         "target": {
-          "role": "option",
-          "name": "bug",
-          "within": {
-           "role": "combobox",
-           "name": "Label"
-          }
-         },
-         "expect": {
-          "selected": true
-         }
-        },
-        {
-         "kind": "contains",
-         "scope": {
-          "role": "table",
-          "name": "Issues"
-         },
-         "witness": {
-          "role": "columnheader",
-          "name": "Status"
-         },
-         "match": {
-          "role": "cell",
-          "name": {
-           "equals": "Closed",
-           "ignoreCase": true
-          }
-         },
-         "count": {
-          "eq": 0
-         }
-        },
-        {
-         "kind": "contains",
-         "scope": {
-          "role": "table",
-          "name": "Issues"
-         },
-         "witness": {
-          "role": "columnheader",
-          "name": "Labels"
-         },
-         "match": {
-          "role": "row",
-          "name": {
-           "regex": "^\\d+ (?!.*\\bbug\\b)"
-          }
-         },
-         "count": {
-          "eq": 0
-         }
-        }
-       ]
-      }
-     }
+     "id": "toolu_01D5VWtBAoNxzKu5VfJ4Totc",
+     "name": "probes",
+     "input": {}
     }
    ],
    "raw": [
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "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"
+     "signature": "CAQSsgoKEAgTGAI4AUIIdGhpbmtpbmcSDP0Y3ufi6u8nnV1EABoM2vxcidTj875sIatAIjAW+URvEED6B+RzBKE8seNrjYGcmQiJizXWetrKU4vvmamP8j1BdezYwigpVI+70GwqzwnqK/JUgNwMkMc2Y8KAOVwGLDWodcZBFYm8wy6vLXjFHjOjGUkA4Cad351pKPF1kHzkcYEpDlEclnGGDSwdycDDc/uP7VIadFxkJST2c04ISvtPinerjlhz+W63LgBUcRJS7fq7Jy7BuFtuyYK4ec8OG+YidJJJWIQCftb08D0vkpJWFwbeQ64mC3zLqnP5mXbKRcNxekvTqWsl9KDfMsk1CXEFIUlBHQx5Ptjs96GhxUH74AOPs4PXYe3d6MC3XhdNTPVm8S6gLi4vsFXuaadIkkmHEt/JGNgZgkaBf1+L5d3UdfYf+/4RiILPHaxYHWIyx2L2DvrM4T26w7EMRWZqYur+6ONQWkyv8Uv4WinooTSgHx4nmdR1fdpnvkFNDNfIs+KSteI3MvpjNGbP5zYmiHmfPMU1B/H7J03EYZJeFrPfo3h7IGwF00HAxRtV/J5sCx8OyLc29kOBfVlMhynuUYesB0X72FUslP3sMr0qkqxTVVPBXEQP4SIbRTg3c7P4Yl3Kl6JB2BEVI/x8dHnEjPSGhtLHKOLG741xvlTL/m8UACRU2pg7Ebke8Xg0JK9155CfdbgOrCz5SlftoO4CHYiSgxLskmPMmRN1pJjOBLYgGbsS2knrwAPOZmhuWcDAucC76QgGu9f5yw8txI+aeIwGoFRkzQg9KQ9ElA2x5e9RsRHR8Ih6BmE0WmIfKZgo6QwVF1sEG7qV3T0i9cex0S1F3jkSl8YjGK9w/8bgbiiN9ILSq05xITc4IAQq8tOitHN5I2y4BQ0njRBIrz2PtHBbDIkYVO7f4DGC/zO1AN/QOeblf+u5e2n5NF6ZdzpCN9cfgeNMs3um3T1koBIIk75a3BLvre+7k48pJfMbz+rkXvdTWNI3wMX6ZwSwgQpyIRsazFaewURquiYb11iL+KrX22IYI1f1yyqYMQY5QouFvvzPlVlsK/tiw8udSaoy3Gi/1JvYt0pMtagLJtv/rkUrY0NI5Jf64RNQPiTWy8xhikpbG6GSKylNYezEgPpIxvylUZAWeCgbWBcQAGsizNYC9LhS3+cFX6hDc0DX0zE4/rVNyRC63L00Ckyr1o9bkwTTNwjpCxK49fzrdrmaqP9F2mG3me4mI6Qhl+u+4FTLTsfkox84wX7urwd6PCS+UntUc4OmHkp2hYJjTYUh3cufE0hhhqe9ICbbTqSWacNCJWySd3O6bLJjUqof5w1tuYf1d7L2+I3gI9RpiusbdfIdbuc/wTjYcTfcM5+1uGe0fzLsZS+GSks/CWQyft8DgSbeTe8JdZGz0xuNhbqCgL7fqfSQal9vRqYvFsTUb87UPGA6UnG0qpZEMNOFUo3DCDxvOqLvlS2cIM2+qloKLcoQBDiPgpntc52ptTXJwqNozqV7JrC9RU0/4LOCyusEJDcnYlTySVPLsQ0rCDJX/GZzGlFGF2Gux+prdLNINZLOY4QXO46iDHPWx6ZEB2NsBvgZO8YpwmevUWxw9qt6iQ2zyaP99XgM1WQrmJJVbcGQOCkLKTLyxWTflQ8wo6C0Ur5u67Q9QUG54+pW0XKMmC4N2saaKOrYpM+MBBaQjpADOvpGwUhaRBn9Qwy2Y2xbkx91z/L7IHr0HkZqhEtm2++0234Ger3WUChvF3jgGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01AgG6uAtJ2jumMR3nGbLLGr",
-     "name": "try_assertion",
+     "id": "toolu_01D5VWtBAoNxzKu5VfJ4Totc",
+     "name": "probes",
      "caller": {
       "type": "direct"
      },
-     "input": {
-      "assert": {
-       "kind": "allOf",
-       "of": [
-        {
-         "kind": "url",
-         "match": {
-          "query": {
-           "status": {
-            "equals": "open",
-            "ignoreCase": true
-           },
-           "label": {
-            "equals": "bug",
-            "ignoreCase": true
-           }
-          }
-         }
-        },
-        {
-         "kind": "state",
-         "target": {
-          "role": "option",
-          "name": "Open",
-          "within": {
-           "role": "combobox",
-           "name": "Status"
-          }
-         },
-         "expect": {
-          "selected": true
-         }
-        },
-        {
-         "kind": "state",
-         "target": {
-          "role": "option",
-          "name": "bug",
-          "within": {
-           "role": "combobox",
-           "name": "Label"
-          }
-         },
-         "expect": {
-          "selected": true
-         }
-        },
-        {
-         "kind": "contains",
-         "scope": {
-          "role": "table",
-          "name": "Issues"
-         },
-         "witness": {
-          "role": "columnheader",
-          "name": "Status"
-         },
-         "match": {
-          "role": "cell",
-          "name": {
-           "equals": "Closed",
-           "ignoreCase": true
-          }
-         },
-         "count": {
-          "eq": 0
-         }
-        },
-        {
-         "kind": "contains",
-         "scope": {
-          "role": "table",
-          "name": "Issues"
-         },
-         "witness": {
-          "role": "columnheader",
-          "name": "Labels"
-         },
-         "match": {
-          "role": "row",
-          "name": {
-           "regex": "^\\d+ (?!.*\\bbug\\b)"
-          }
-         },
-         "count": {
-          "eq": 0
-         }
-        }
-       ]
-      }
-     }
+     "input": {}
     }
    ],
    "usage": {
-    "inputTokens": 14661,
-    "outputTokens": 819,
-    "cacheReadTokens": 13985,
+    "inputTokens": 16599,
+    "outputTokens": 270,
+    "cacheReadTokens": 15923,
     "cacheWriteTokens": 674
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:7fea3d11bee4e9c0ab13b6f869aaac0463a64a8e9c4c5477f00350be2fb41fe4": {
+  "sha256:28144d94646bf455db7705ba156e8da3cc23502c512f727be208cb9c09184631": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01NDSWVejSoQ95YxbEm3KPWi",
-     "name": "probes",
-     "input": {}
+     "id": "toolu_01HCuzDe4sAocEKAL8ycgF9S",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "r1-url-status",
+        "requirement": "R1",
+        "description": "The issue list URL has the status filter set to open.",
+        "assert": {
+         "kind": "url",
+         "match": {
+          "path": "/issues",
+          "query": {
+           "status": {
+            "equals": "open",
+            "ignoreCase": true
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r1-no-closed-rows",
+        "requirement": "R1",
+        "description": "The Issues table contains no cell showing status Closed.",
+        "assert": {
+         "kind": "contains",
+         "scope": {
+          "role": "table",
+          "name": "Issues"
+         },
+         "witness": {
+          "role": "columnheader",
+          "name": "Status"
+         },
+         "match": {
+          "role": "cell",
+          "name": {
+           "equals": "Closed",
+           "ignoreCase": true
+          }
+         },
+         "count": {
+          "eq": 0
+         }
+        }
+       },
+       {
+        "id": "r2-url-label",
+        "requirement": "R2",
+        "description": "The issue list URL has the label filter set to bug.",
+        "assert": {
+         "kind": "url",
+         "match": {
+          "path": "/issues",
+          "query": {
+           "label": {
+            "equals": "bug",
+            "ignoreCase": true
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r2-no-nonbug-rows",
+        "requirement": "R2",
+        "description": "The Issues table contains no row whose labels are only feature or only docs.",
+        "assert": {
+         "kind": "contains",
+         "scope": {
+          "role": "table",
+          "name": "Issues"
+         },
+         "witness": {
+          "role": "columnheader",
+          "name": "Labels"
+         },
+         "match": {
+          "role": "cell",
+          "name": {
+           "regex": "^\\s*(feature|docs)\\s*$",
+           "flags": "i"
+          }
+         },
+         "count": {
+          "eq": 0
+         }
+        }
+       }
+      ]
+     }
     }
    ],
    "raw": [
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS7gYKEAgTGAI4AUIIdGhpbmtpbmcSDLEYo8GrJgDM3jvmzxoMftl5DGdprOQ/BHH4IjCDkyCZfHRKlA7TYGCCooPwo3rLKLME3a8go1eJSzC2e2hINLCnsZhP6s/PiL6zUBsqiwYu39oTb+eymUjvYgWDZK2isdS1lFuYhC2ZuPd/trRJfGuOCijRJmuFHvwn0O3wkUlNXJdcnXr9u48zm+seiRQ9WPMLTuJwgh6WvYPVQ/QIK5clSXrZP3ouSw9mnF8iC9FBcfjE8K56sIdbAYiAsX/oaJvk7IWYtO68h85Bi9DF0mkOa0/4SzNuqbCpLa/sshOIHuPCeBZmCwFJHNsCYlXF8AUydVySfdaEb2yVGUwp8LA+Nc9jujYx9O5rVScP3lB48FR6h/FF3uHHXHO95TvZbfFCjEWcRkSVhH5axtqviSmWnxbXGjTNYBSQNcXDLk+OzpLZwaYSFiYB8LCI2uozW/j6KCV5frAPm610lWW2gxOIjVysZIBfIBJ1iVFfFi5c10Z4oEPPMCeM2Gi9+h4BEjVYmj2gMKEqC+cMnuvcjmSfjeXgMahLf8IYwryoOstwA9mgFleRb51wdycmU2KXPng153xJg5odT/LslioB4FQMBOOeADfUauI6XMRftVvOzIkayJnt4NjmaC0emY4E7skperF/j4zkf7nQ/QJw3naG+1Ry9H3a3li0K8rZ723MeuFveKO2iZP1m5cTBGUaJkplZBsla0wG8XfXFSQ+pYsCOpKpoUp12yRR5+mHruqY/81DIZ/rWmhi0NVLA9SndxCdkyDoAwelk0zbj4TWaz+LhKUKBod4M8TsyxxJs2HDmzipMwUBqd9dJTEWg+OV0WUCqdaIwC0DrfJBl+MrRCAfykprEuKOtLFmQ+Qg/CxyMAHNgY2Jr3blNaqlKAsAhTlQMstX9lyiS8nQPOArgxi2spgez9ycS3YqtT9iVKCXM2d/RKILRXIgMtf0ja7ioyOTH17LlfSOiDnR6X+fZ+d4pca1MznVI10YyrXV1q+MS4o/TqoIyw30LnKs9hbKqiHYt06g/EaL3CeByJUUM7QlLi8eHlFCNm9Rvi3RM+d+7g+ZxRKdjMHDvZ2sNBdA46vPPYrKcogCzbC4V4PnjFcgQTM1YBd59zsET5tIIdRMKnScOyBZeNPHgRgB"
+     "signature": "CAQSiQcKEAgTGAI4AUIIdGhpbmtpbmcSDM2WhJWr66x9TSqjVhoMgX/NRZ2vjKVa6PURIjAIwBDQFkXrkPmryoN7S2pFUf7ilRZH4K3CePgGeXHxB63GSIATLRAYzs/k6RCDpl8qpgYAVT2oiXlzXvfqjL2iHX2xBgLM82v/BkTi0mPWXu6r+B5+9ShFo9GqFwSPdzFZMSgjzYf97YgOltSDigVodIhvvhkK/Z4hdw/H6iUuryi9SzTbrZcbmoHiC9J0uqUn2PQknR0o/BE6QdI5APHCwaKpbsq6RP0MObN3PmSElbkiG6uNs6BtTUu86JuA6QHWle+RQduT9Np5cXAwYllSPjSos74GTvf/ecIeqg+8eQT55kP60aceq8bHV8FCHjvhbvD27I/wUNnnJ79MQ33Ae7aQqvqcqmP+RvDbtgp/LBgGPDV0Zh/WHG/38psezzCAmCDVf9xPwOFKNEWw3p+1YgIAYXNl3zo/YB16X2dZ2z5Qw9+vGntkbojdPdj4IwkqG/bN6/A/p+Giy0og4SBf/atnAtmTDXK0pLXdi6i7STJUGfDQVJrqKA6GfpaOsCAZfiAuBEVyV+ZYNbQfoTTcoJpTHjDb+UVyJ1gluPA5A1ykxRPrT68qTLFZjc/IgLTUkSafhKrRJZQnC/oTPA9IE21bwYQ64YjgqGn/J2ZKNOC2pPjmXhyaoC/0Yt1ugr/MQwNN3vw3NubB+yHK4Q/FKxw4RQNqq9eiiOcaPYNDZQ3aLfvGbtpHwt5AH0ebI2ukR198VNDt72U1z7YNrLeK1fSj9sD8OR8dJnheJqPFmzWVnBb/9D6pDyzfJ9708fPA7lCwZUGceJgMuvpyMzFiZpocc3mxIIigwt4ZKdHa8tF2GF+OOk9O6i1InzoX+NtIwuOZwDzVxJmDowRMgi2LeL75Ux7IxycIkfxfcKdv0Kw/7yVvFNd0+dKc3qmDfWBp2RntYJbA65JzcyI1gNdvlQTScQCzf/pDcasHiu6LRaYL0K+F2pJXqFnj9XHhEBDRnxcQERQjQG5UOxKV/9l2Ce6u5Lcs+7vOWx6DXK4+nhI21xaHoaFBUSGwyiYpyYi8Pv5Xgxsez8Y7ZxsdJPmZkZDQaZTQ/ULvh/93do4+RWvTsxn1wIGXTnwZGbsXpK1+C1FK0uczu+0PqWzsLrLVT/R4edo9YGIP+AGdrBrFEDOz13ijV1FlchgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_01NDSWVejSoQ95YxbEm3KPWi",
-     "name": "probes",
+     "id": "toolu_01HCuzDe4sAocEKAL8ycgF9S",
+     "name": "submit_checks",
      "caller": {
       "type": "direct"
      },
-     "input": {}
-    }
-   ],
-   "usage": {
-    "inputTokens": 15743,
-    "outputTokens": 81,
-    "cacheReadTokens": 14659,
-    "cacheWriteTokens": 1082
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:ff013ca80d0a259f40e872b79f41641ff23871e1b83e1c2bc6332976b00bb786": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_018KnPqX2GDYW9NtZpH6zPFn",
-     "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "R1-url-status-open",
+        "id": "r1-url-status",
         "requirement": "R1",
         "description": "The issue list URL has the status filter set to open.",
         "assert": {
          "kind": "url",
          "match": {
+          "path": "/issues",
           "query": {
            "status": {
             "equals": "open",
@@ -383,9 +275,9 @@
         }
        },
        {
-        "id": "R1-no-closed-rows",
+        "id": "r1-no-closed-rows",
         "requirement": "R1",
-        "description": "The Issues table contains no rows whose status cell is Closed.",
+        "description": "The Issues table contains no cell showing status Closed.",
         "assert": {
          "kind": "contains",
          "scope": {
@@ -409,12 +301,13 @@
         }
        },
        {
-        "id": "R2-url-label-bug",
+        "id": "r2-url-label",
         "requirement": "R2",
         "description": "The issue list URL has the label filter set to bug.",
         "assert": {
          "kind": "url",
          "match": {
+          "path": "/issues",
           "query": {
            "label": {
             "equals": "bug",
@@ -425,9 +318,9 @@
         }
        },
        {
-        "id": "R2-no-non-bug-rows",
+        "id": "r2-no-nonbug-rows",
         "requirement": "R2",
-        "description": "The Issues table contains no issue rows that lack the bug label.",
+        "description": "The Issues table contains no row whose labels are only feature or only docs.",
         "assert": {
          "kind": "contains",
          "scope": {
@@ -437,108 +330,12 @@
          "witness": {
           "role": "columnheader",
           "name": "Labels"
-         },
-         "match": {
-          "role": "row",
-          "name": {
-           "regex": "^\\d+ (?!.*\\bbug\\b)"
-          }
-         },
-         "count": {
-          "eq": 0
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_018KnPqX2GDYW9NtZpH6zPFn",
-     "name": "submit_checks",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "checks": [
-       {
-        "id": "R1-url-status-open",
-        "requirement": "R1",
-        "description": "The issue list URL has the status filter set to open.",
-        "assert": {
-         "kind": "url",
-         "match": {
-          "query": {
-           "status": {
-            "equals": "open",
-            "ignoreCase": true
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "R1-no-closed-rows",
-        "requirement": "R1",
-        "description": "The Issues table contains no rows whose status cell is Closed.",
-        "assert": {
-         "kind": "contains",
-         "scope": {
-          "role": "table",
-          "name": "Issues"
-         },
-         "witness": {
-          "role": "columnheader",
-          "name": "Status"
          },
          "match": {
           "role": "cell",
           "name": {
-           "equals": "Closed",
-           "ignoreCase": true
-          }
-         },
-         "count": {
-          "eq": 0
-         }
-        }
-       },
-       {
-        "id": "R2-url-label-bug",
-        "requirement": "R2",
-        "description": "The issue list URL has the label filter set to bug.",
-        "assert": {
-         "kind": "url",
-         "match": {
-          "query": {
-           "label": {
-            "equals": "bug",
-            "ignoreCase": true
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "R2-no-non-bug-rows",
-        "requirement": "R2",
-        "description": "The Issues table contains no issue rows that lack the bug label.",
-        "assert": {
-         "kind": "contains",
-         "scope": {
-          "role": "table",
-          "name": "Issues"
-         },
-         "witness": {
-          "role": "columnheader",
-          "name": "Labels"
-         },
-         "match": {
-          "role": "row",
-          "name": {
-           "regex": "^\\d+ (?!.*\\bbug\\b)"
+           "regex": "^\\s*(feature|docs)\\s*$",
+           "flags": "i"
           }
          },
          "count": {
@@ -551,10 +348,10 @@
     }
    ],
    "usage": {
-    "inputTokens": 16107,
-    "outputTokens": 555,
-    "cacheReadTokens": 15741,
-    "cacheWriteTokens": 364
+    "inputTokens": 17152,
+    "outputTokens": 601,
+    "cacheReadTokens": 16597,
+    "cacheWriteTokens": 553
    },
    "model": "claude-opus-5-5"
   }

@@ -19,7 +19,7 @@
     {
       "id": "R2",
       "kind": "hard",
-      "text": "All other items remain in the cart.",
+      "text": "All other items stay in the cart.",
       "source": {
         "field": "outcomes",
         "quote": "the other items stay in the cart"
@@ -28,9 +28,9 @@
   ],
   "checks": [
     {
-      "id": "r1-probe-no-red-mug",
+      "id": "r1-no-red-mug",
       "requirement": "R1",
-      "description": "The backend cart has no item with SKU MUG-RED or name Red Mug.",
+      "description": "The backend cart probe after the task holds no item named Red Mug.",
       "assert": {
         "kind": "value",
         "source": {
@@ -43,20 +43,50 @@
             "type": "array",
             "not": {
               "contains": {
-                "anyOf": [
-                  {
-                    "type": "object",
-                    "properties": {
-                      "sku": {
-                        "const": "MUG-RED"
-                      }
-                    },
-                    "required": [
-                      "sku"
-                    ]
-                  },
-                  {
-                    "type": "object",
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "const": "Red Mug"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r2-others-kept",
+      "requirement": "R2",
+      "description": "The cart items after the task equal the cart items before the task minus the Red Mug.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/items"
+        },
+        "normalize": [
+          {
+            "op": "items"
+          }
+        ],
+        "expect": {
+          "sameAs": {
+            "source": {
+              "from": "probe",
+              "probe": "cart",
+              "pointer": "/items",
+              "at": "before"
+            },
+            "normalize": [
+              {
+                "op": "items",
+                "where": {
+                  "not": {
                     "properties": {
                       "name": {
                         "const": "Red Mug"
@@ -66,68 +96,9 @@
                       "name"
                     ]
                   }
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "id": "r1-ui-no-red-mug-row",
-      "requirement": "R1",
-      "description": "The Cart table shows no row for Red Mug.",
-      "assert": {
-        "kind": "contains",
-        "scope": {
-          "role": "table",
-          "name": "Cart"
-        },
-        "witness": {
-          "role": "columnheader",
-          "name": "Product"
-        },
-        "match": {
-          "role": "row",
-          "name": {
-            "contains": "Red Mug"
-          }
-        },
-        "count": {
-          "eq": 0
-        }
-      }
-    },
-    {
-      "id": "r2-probe-blue-mug-kept",
-      "requirement": "R2",
-      "description": "The backend cart still contains the Blue Mug (SKU MUG-BLUE) with a positive quantity.",
-      "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "cart",
-          "pointer": "/items"
-        },
-        "expect": {
-          "schema": {
-            "type": "array",
-            "contains": {
-              "type": "object",
-              "properties": {
-                "sku": {
-                  "const": "MUG-BLUE"
-                },
-                "qty": {
-                  "type": "number",
-                  "minimum": 1
                 }
-              },
-              "required": [
-                "sku",
-                "qty"
-              ]
-            }
+              }
+            ]
           }
         }
       }
@@ -139,6 +110,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T10:10:02.818Z"
+    "at": "2026-11-04T23:12:10.464Z"
   }
 }

@@ -59,15 +59,15 @@
         "expect": {
           "approx": {
             "value": 21.5,
-            "abs": 0.005
+            "abs": 0.001
           }
         }
       }
     },
     {
-      "id": "r1-total-ui",
+      "id": "r1-total-page",
       "requirement": "R1",
-      "description": "The cart page's total status shows $21.50.",
+      "description": "The cart page shows a total of $21.50.",
       "assert": {
         "kind": "value",
         "source": {
@@ -102,7 +102,7 @@
               "amount": 21.5,
               "currency": "USD"
             },
-            "abs": 0.005
+            "abs": 0.001
           }
         }
       }
@@ -123,10 +123,6 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "name",
-                "qty"
-              ],
               "properties": {
                 "name": {
                   "const": "Blue Mug"
@@ -134,7 +130,11 @@
                 "qty": {
                   "const": 1
                 }
-              }
+              },
+              "required": [
+                "name",
+                "qty"
+              ]
             }
           }
         }
@@ -156,10 +156,6 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "name",
-                "qty"
-              ],
               "properties": {
                 "name": {
                   "const": "Red Mug"
@@ -167,7 +163,11 @@
                 "qty": {
                   "const": 1
                 }
-              }
+              },
+              "required": [
+                "name",
+                "qty"
+              ]
             }
           }
         }
@@ -191,6 +191,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T10:10:27.809Z"
+    "at": "2026-11-04T23:12:33.441Z"
   }
 }

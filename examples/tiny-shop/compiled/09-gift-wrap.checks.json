@@ -30,7 +30,7 @@
     {
       "id": "R2-order-request",
       "requirement": "R2",
-      "description": "A POST to /api/orders succeeded, placing an order.",
+      "description": "A POST to /api/orders succeeded and returned a placed order with items.",
       "assert": {
         "kind": "request",
         "match": {
@@ -41,14 +41,33 @@
           "status": {
             "gte": 200,
             "lt": 300
+          },
+          "responseBody": {
+            "type": "object",
+            "required": [
+              "id",
+              "items"
+            ],
+            "properties": {
+              "status": {
+                "const": "placed"
+              },
+              "items": {
+                "type": "array",
+                "minItems": 1
+              }
+            }
           }
+        },
+        "count": {
+          "gte": 1
         }
       }
     },
     {
-      "id": "R2-order-placed-probe",
+      "id": "R2-latest-order-placed",
       "requirement": "R2",
-      "description": "The backend's latest order exists with status placed.",
+      "description": "The backend's latest order has status 'placed' and contains at least one item.",
       "assert": {
         "kind": "value",
         "source": {
@@ -60,11 +79,16 @@
             "type": "object",
             "required": [
               "id",
-              "status"
+              "status",
+              "items"
             ],
             "properties": {
               "status": {
                 "const": "placed"
+              },
+              "items": {
+                "type": "array",
+                "minItems": 1
               }
             }
           }
@@ -72,7 +96,7 @@
       }
     },
     {
-      "id": "R1-giftwrap-probe",
+      "id": "R1-latest-order-giftwrap",
       "requirement": "R1",
       "description": "The backend's latest placed order has giftWrap set to true.",
       "assert": {
@@ -101,9 +125,9 @@
       }
     },
     {
-      "id": "R1-giftwrap-response",
+      "id": "R1-order-request-giftwrap",
       "requirement": "R1",
-      "description": "The last successful order creation response shows giftWrap true.",
+      "description": "The last order submission sent giftWrap true and the server stored it as gift wrapped.",
       "assert": {
         "kind": "value",
         "source": {
@@ -133,6 +157,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T10:11:29.804Z"
+    "at": "2026-11-04T23:13:50.478Z"
   }
 }

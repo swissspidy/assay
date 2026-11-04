@@ -10,7 +10,7 @@
     {
       "id": "R1",
       "kind": "hard",
-      "text": "The Dentist event's title is now \"Dentist (Dr. Lee)\".",
+      "text": "The existing Dentist event's title is now \"Dentist (Dr. Lee)\".",
       "source": {
         "field": "outcomes",
         "quote": "the Dentist event is called \"Dentist (Dr. Lee)\""
@@ -19,9 +19,9 @@
   ],
   "checks": [
     {
-      "id": "R1-probe-title",
+      "id": "dentist-renamed-backend",
       "requirement": "R1",
-      "description": "The backend events list contains the Dentist event (id 2, on 2026-11-06 at 14:30) with title exactly \"Dentist (Dr. Lee)\".",
+      "description": "The backend events list has the original Dentist event (id 2, 2026-11-06 14:30) titled exactly \"Dentist (Dr. Lee)\", and no event still titled plain \"Dentist\".",
       "assert": {
         "kind": "value",
         "source": {
@@ -53,6 +53,51 @@
                   "const": "14:30"
                 }
               }
+            },
+            "not": {
+              "contains": {
+                "type": "object",
+                "required": [
+                  "title"
+                ],
+                "properties": {
+                  "title": {
+                    "const": "Dentist"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "dentist-rename-request",
+      "requirement": "R1",
+      "description": "A successful PUT/PATCH to /api/events/2 sent the title \"Dentist (Dr. Lee)\".",
+      "assert": {
+        "kind": "request",
+        "match": {
+          "method": [
+            "PATCH",
+            "PUT"
+          ],
+          "url": {
+            "path": "/api/events/2"
+          },
+          "status": {
+            "gte": 200,
+            "lt": 300
+          },
+          "requestBody": {
+            "type": "object",
+            "required": [
+              "title"
+            ],
+            "properties": {
+              "title": {
+                "const": "Dentist (Dr. Lee)"
+              }
             }
           }
         }
@@ -65,6 +110,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T10:10:59.988Z"
+    "at": "2026-11-04T23:13:06.703Z"
   }
 }
