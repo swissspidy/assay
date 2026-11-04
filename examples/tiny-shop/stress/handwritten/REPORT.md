@@ -5,14 +5,14 @@
 | tiny-shop/newsletter | 18/18 | 10/10 (10 / 0) | – | – | 0 |
 | tiny-shop/add-blue-mug | 22/22 | 2/2 (2 / 0) | – | – | 0 |
 | tiny-shop/cart-two-mugs | 24/24 | 8/8 (8 / 0) | – | – | 0 |
-| tiny-shop/remove-red-mug | 23/23 | 6/6 (6 / 0) | – | – | 0 |
+| tiny-shop/remove-red-mug | 23/23 | 24/24 (24 / 0) | – | – | 0 |
 | tiny-shop/set-quantity | 22/22 | 6/6 (6 / 0) | – | – | 0 |
 | tiny-shop/cart-total | 30/30 | 14/14 (14 / 0) | – | – | 0 |
-| tiny-shop/express-order | 20/20 | 14/14 (14 / 0) | – | – | 0 |
-| tiny-shop/delivery-date | 28/28 | 8/8 (8 / 0) | – | – | 0 |
+| tiny-shop/express-order | 20/20 | 30/30 (30 / 0) | – | – | 0 |
+| tiny-shop/delivery-date | 28/28 | 28/28 (28 / 0) | – | – | 0 |
 | tiny-shop/gift-wrap | 20/20 | 10/10 (10 / 0) | – | – | 0 |
 | tiny-shop/dark-german | 16/16 | 10/10 (10 / 0) | – | – | 0 |
-| **tiny-shop** | **223/223** | **88/88** (88 / 0) | | | 0 |
+| **tiny-shop** | **223/223** | **142/142** (142 / 0) | | | 0 |
 
 ## tiny-shop/newsletter v1
 
@@ -36,8 +36,8 @@
 ## tiny-shop/remove-red-mug v1
 
 - Valid variants accepted: **23/23** (100%)
-- Mutants rejected: **6/6** (100%; 6 by fail, 0 by abstain)
-- Mutants with a success claim added still rejected: 6/6
+- Mutants rejected: **24/24** (100%; 24 by fail, 0 by abstain)
+- Mutants with a success claim added still rejected: 24/24
 ## tiny-shop/set-quantity v1
 
 - Valid variants accepted: **22/22** (100%)
@@ -59,13 +59,13 @@
 ## tiny-shop/express-order v1
 
 - Valid variants accepted: **20/20** (100%)
-- Mutants rejected: **14/14** (100%; 14 by fail, 0 by abstain)
-- Mutants with a success claim added still rejected: 14/14
+- Mutants rejected: **30/30** (100%; 30 by fail, 0 by abstain)
+- Mutants with a success claim added still rejected: 30/30
 ## tiny-shop/delivery-date v1
 
 - Valid variants accepted: **28/28** (100%)
-- Mutants rejected: **8/8** (100%; 8 by fail, 0 by abstain)
-- Mutants with a success claim added still rejected: 8/8
+- Mutants rejected: **28/28** (100%; 28 by fail, 0 by abstain)
+- Mutants with a success claim added still rejected: 28/28
 ## tiny-shop/gift-wrap v1
 
 - Valid variants accepted: **20/20** (100%)

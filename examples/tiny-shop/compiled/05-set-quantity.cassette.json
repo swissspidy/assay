@@ -1,14 +1,14 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T10:10:18.828Z",
+ "recordedAt": "2026-11-04T23:12:25.521Z",
  "turns": {
   "sha256:77749a43136ba4b74a146ba091731a7a0ea359b54464907cc88a39bb9f9d834c": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_014asdPm3hCBQrEy4m3Pvzii",
+     "id": "toolu_01P9TAeW9Nrzfr5J3ax9F94u",
      "name": "submit_rubric",
      "input": {
       "requirements": [
@@ -26,7 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_014asdPm3hCBQrEy4m3Pvzii",
+     "id": "toolu_01P9TAeW9Nrzfr5J3ax9F94u",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -52,22 +52,22 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:cf6ab4cdc7e9431c1356673f617445a020a6a5bc7ad92b45c8d3aa0ccc1ea1b0": {
+  "sha256:c5dbc478b2861a2fea6c1fcc3c07e6ab5948236888a9074dbbb88da0100594b3": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_011QuFcRnKtvfbY2e137UBnM",
+     "id": "toolu_01X266HMbJzx1JV2tugvxJ2X",
      "name": "page_outline",
      "input": {}
     },
     {
-     "id": "toolu_01SGatz1WpJS1G1Ans1bNEBn",
+     "id": "toolu_01L9RUMcH7iUh5QBpCCVcGeY",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01XW2NFH74bPF2zsDnagRCkb",
+     "id": "toolu_01PVRvHfhctavxgxLLE7KM8s",
      "name": "network_log",
      "input": {}
     }
@@ -75,7 +75,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_011QuFcRnKtvfbY2e137UBnM",
+     "id": "toolu_01X266HMbJzx1JV2tugvxJ2X",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -84,7 +84,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01SGatz1WpJS1G1Ans1bNEBn",
+     "id": "toolu_01L9RUMcH7iUh5QBpCCVcGeY",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -93,7 +93,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01XW2NFH74bPF2zsDnagRCkb",
+     "id": "toolu_01PVRvHfhctavxgxLLE7KM8s",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -102,26 +102,26 @@
     }
    ],
    "usage": {
-    "inputTokens": 13963,
+    "inputTokens": 15905,
     "outputTokens": 72,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 13959
+    "cacheWriteTokens": 15901
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:349cdb8359d9105dd6090cd7564f12578bcb1fe2ef67bc3b77b8e810017f2c0b": {
+  "sha256:e482ea7b3a8323697dff7e2ebb4e5b4aa7a6f73861e9d5cf6071781f619456dd": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01JPmo38bxYvYgD9WZebPVzn",
+     "id": "toolu_01D2xhcNzwhku7ParRD1nJtm",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "R1-probe-cart-blue-mug-qty-3",
+        "id": "r1-backend-cart-blue-mug-qty-3",
         "requirement": "R1",
-        "description": "The backend cart contains a Blue Mug line item with quantity 3.",
+        "description": "The backend cart probe contains a Blue Mug item with quantity 3.",
         "assert": {
          "kind": "value",
          "source": {
@@ -134,6 +134,10 @@
            "type": "array",
            "contains": {
             "type": "object",
+            "required": [
+             "name",
+             "qty"
+            ],
             "properties": {
              "name": {
               "const": "Blue Mug"
@@ -141,48 +145,55 @@
              "qty": {
               "const": 3
              }
-            },
-            "required": [
-             "name",
-             "qty"
-            ]
+            }
            }
           }
          }
         }
        },
        {
-        "id": "R1-ui-blue-mug-qty-3",
+        "id": "r1-page-cart-blue-mug-qty-3",
         "requirement": "R1",
-        "description": "The cart page's quantity input for Blue Mug shows 3.",
+        "description": "The cart page's quantity field for the Blue Mug shows 3.",
         "assert": {
-         "kind": "state",
-         "target": {
-          "anchors": [
-           {
-            "role": "spinbutton",
-            "name": {
-             "contains": "Blue Mug"
+         "kind": "value",
+         "source": {
+          "from": "node",
+          "target": {
+           "anchors": [
+            {
+             "role": "spinbutton",
+             "name": {
+              "contains": "Blue Mug"
+             },
+             "within": {
+              "role": "table",
+              "name": "Cart"
+             }
             },
-            "within": {
-             "role": "table",
-             "name": "Cart"
+            {
+             "role": "spinbutton",
+             "name": {
+              "contains": "Blue Mug"
+             },
+             "landmark": {
+              "role": "main"
+             }
             }
-           },
-           {
-            "role": "spinbutton",
-            "name": {
-             "contains": "Blue Mug"
-            },
-            "landmark": {
-             "role": "main"
-            }
-           }
-          ]
+           ]
+          },
+          "field": "value"
          },
+         "normalize": [
+          {
+           "op": "number",
+           "locale": "en-US"
+          }
+         ],
          "expect": {
-          "value": {
-           "regex": "^\\s*3\\s*$"
+          "approx": {
+           "value": 3,
+           "abs": 0
           }
          }
         }
@@ -195,11 +206,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSvQcKEAgTGAI4AUIIdGhpbmtpbmcSDFwfZgqa90STbrlQMRoM+eyO98GA/FJllK6BIjBAgwDFSfgHtbEbHByNMAovrHuxeIoElSGegg324DQKLnvIZGNphpXTCCFabVQfzHsq2gb4BNInjJIWv0iiBhrA2b9gR7n1gaHkq04ZGeX9ipesC3bdsoxYP0aYJfA/R8omwUw9gIOu4XSUSInqnfOtGkhcZdvTIYpeGOhXvPvgyyJuhzuTq8M35GK5LVs8cQxsAaQkxP1BHohKF1Ps8Rc9IFS0ViGQnv+9lB17GcLLt+/Y/1F1qkICkMHt17LEhB7qghUhPFeugabZiKqcWAWF5uuX04vIQNCJ3PNWBjNFy5Arr2AkOEJE2Gywln1ga4F2JbSOns7nlbN9TwHe0QxH+CvGGWNkOeamKQZOrnheGkPibhO4zjXE1nIY01q7TmLGvKVhDrpeFnl47R6Jd7L41KVQUNlJp4c2Gk1Cmw/nKERvehY0YpnOsqQ7ABLK/TpCMbdJBnJ6PNIT3S1AgzyR67lTdG7PvtQzyPFZ3JdNmQfACDJjKT8FLat5sywopE9yPYPKuADNuASqfX8mXW5G/v0FgpnwdycGLz/S4jjveYUQJFvrCrhryZx2mA0x/tjL4TU6KtyVwt8v925Ju4IMBpjkejlxEeid3zhUTRpUwRgGb2qEYxeMw6BJ89RgKgs535PYGMNZGZ2au9CkkvDAQNIHnKoQO/Er1e4gRTgxLTIKM5Ue25uOGLJBfV3emFGur+EBH6jIfTTNBSTlZ3MDT1K91I/qUixZDft1s/Zf7LlrrfcGYf4V9/7egv+pTKHwETyIsc/A1Y/lzljRgareqhr80RWQ76MYWB128vTim72wwogGGMJb1NOCbPi5zYFo/O+cENMwBE3GcIBAPdhF+pe7VkoJSt5/4VjBsh89xnp7XJmvC1HMJ4sC0xvR2a6I/gIVB/urJmmxi0VVk3/o54jrzpJekh0sEL9nAYOf9UxOeOkiMdLjUKjQssS4Z4uU/nSiEZXsjGxuMN+VbwPVyKEhXYkz4ZvhfyKE2QRC3v2InoDw69nh7sHeyETPntg+47Xu4THVoaWlBx0APPgqZGhi2EpGn2LzvzxRrDVm+IwE+Ry18V3IRF89H9Xy6k9JrZ7WcWGU4pmBaJLKPPY4F1rV4dyeqOdTZlXVOhdEQcTAFDQnppuoFVc7I9IW4Ecfzbn1EcaGr0PIXwXk6ObLZD0oRms0q1Bo7A42xmE4fpv4xp0q2Lski2WDjCUYAQ=="
+     "signature": "CAQShgcKEAgTGAI4AUIIdGhpbmtpbmcSDJH6dy33A4u4yVpm3xoMyVqJbU702m8Xb9m2IjDWnDTl23KjkyAX6gpErmFzYuOKoyTH/lkSly1HVIZaR786psEccmpYx6Ddzim/tvwqowYCTwENaeOrchOlGjlrHTiySqvYdIpXZd+PG1IBGcWVLZBdYQxgk9WtVBP+bwsayv+2CYs55ogzoXqZPvV5bIb+4VgYA7KjUGOlLrGCBcdwuQztsZB6/1iaflDOyK/Qph/bADxTwuhRZC5KZnxGgmyzbp/i4TsNi1gxcG4pyXljsFsmUhZZQ3BEsOm0rpkUy8g+I/4sszpBRocW83b3yQjqSq4HnPhXvbKJp69KtUZtBt8p78N3ebp7ghI3KU8LGm4pK56lyxNiWhzJNqJcF0OrWFen8p0VKd7aa9C4T+BwdnLpQ6bX+de/GX/V6mZ+kboGiUNnMoE7OVGD99ADkB/ceu9+L0MXMXLqcPvEBXKyuAfg29O4zHX8YXdrffQQWKX/IhbmlPBh6DkVMcDdbAJLfHnqdi4uYifHfAXbF2ylJMWgsqKY2u81EFWIr6SvWW7yn9wiPVYUdKQv2yOHHpvMHAUqcdiLP9KvK1kFMn11+zNAHNLGTinmKSIeFDcIqKOpxT41Pix47xs+hhS69JnhAgPm5yo4yZ3bBbxvYFWN0GorQwwvzyIeVDS4gvtbSXp9Dmp5kDBOlWy6e/s8JWYsoqmqfC2VXh+fw+hZB/vbrSHKjBPWj5vkkEIwvWud+5yQOX7vmDJOu0PyQlznrBJom0oMbP7tae54SMrW0WmQuJEAUd9qEwaOLOQ3CPeVqggOFIQNmWgAH1GUWGfFFtVNWO8r8e9L6/EqxMFLJ9dCJdcvVrzI2ybAbZf+o4WHevxbMgEXidkVJgcdUSeTr5qoEjTh8e+9qOPaMI/lPk7Q3KuX4ppfGMqsrnWFjICqTB+zDnnoMfzy2AUcAKH4t7tv2KfMa2dlqV3oa5kx7zpbwamx2uhPLn4CmDV5qcYP0dZqgZcUAFk6R1tLTINgvYEcaoBNb+xxeW1KevcbzWtn0SnBo5UcSlfkdkFX3yBLP5fawbc6223kTluPItD9TQ22aINcn4TyMFXZ7LUDt7mjOxvWcD6T2ocgB+Stz9Amz9POLwVrSmCinyoxbuRGPqeGQx3uCXwdOAW+ILHSQGW/qMkX3BgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_01JPmo38bxYvYgD9WZebPVzn",
+     "id": "toolu_01D2xhcNzwhku7ParRD1nJtm",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -207,9 +218,9 @@
      "input": {
       "checks": [
        {
-        "id": "R1-probe-cart-blue-mug-qty-3",
+        "id": "r1-backend-cart-blue-mug-qty-3",
         "requirement": "R1",
-        "description": "The backend cart contains a Blue Mug line item with quantity 3.",
+        "description": "The backend cart probe contains a Blue Mug item with quantity 3.",
         "assert": {
          "kind": "value",
          "source": {
@@ -222,6 +233,10 @@
            "type": "array",
            "contains": {
             "type": "object",
+            "required": [
+             "name",
+             "qty"
+            ],
             "properties": {
              "name": {
               "const": "Blue Mug"
@@ -229,48 +244,55 @@
              "qty": {
               "const": 3
              }
-            },
-            "required": [
-             "name",
-             "qty"
-            ]
+            }
            }
           }
          }
         }
        },
        {
-        "id": "R1-ui-blue-mug-qty-3",
+        "id": "r1-page-cart-blue-mug-qty-3",
         "requirement": "R1",
-        "description": "The cart page's quantity input for Blue Mug shows 3.",
+        "description": "The cart page's quantity field for the Blue Mug shows 3.",
         "assert": {
-         "kind": "state",
-         "target": {
-          "anchors": [
-           {
-            "role": "spinbutton",
-            "name": {
-             "contains": "Blue Mug"
+         "kind": "value",
+         "source": {
+          "from": "node",
+          "target": {
+           "anchors": [
+            {
+             "role": "spinbutton",
+             "name": {
+              "contains": "Blue Mug"
+             },
+             "within": {
+              "role": "table",
+              "name": "Cart"
+             }
             },
-            "within": {
-             "role": "table",
-             "name": "Cart"
+            {
+             "role": "spinbutton",
+             "name": {
+              "contains": "Blue Mug"
+             },
+             "landmark": {
+              "role": "main"
+             }
             }
-           },
-           {
-            "role": "spinbutton",
-            "name": {
-             "contains": "Blue Mug"
-            },
-            "landmark": {
-             "role": "main"
-            }
-           }
-          ]
+           ]
+          },
+          "field": "value"
          },
+         "normalize": [
+          {
+           "op": "number",
+           "locale": "en-US"
+          }
+         ],
          "expect": {
-          "value": {
-           "regex": "^\\s*3\\s*$"
+          "approx": {
+           "value": 3,
+           "abs": 0
           }
          }
         }
@@ -280,9 +302,9 @@
     }
    ],
    "usage": {
-    "inputTokens": 14866,
-    "outputTokens": 538,
-    "cacheReadTokens": 13959,
+    "inputTokens": 16808,
+    "outputTokens": 546,
+    "cacheReadTokens": 15901,
     "cacheWriteTokens": 905
    },
    "model": "claude-opus-5-5"

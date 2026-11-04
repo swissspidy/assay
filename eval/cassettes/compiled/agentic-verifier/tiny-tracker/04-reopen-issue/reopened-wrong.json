@@ -1,19 +1,19 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T10:18:06.155Z",
+ "recordedAt": "2026-11-04T23:21:26.304Z",
  "turns": {
   "sha256:e0e9285434b180842acc199bdab42a77eb74c5d89b40be7b7c0726fa2269d761": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_018waWEzyNtEk5yPnnAxQp5o",
+     "id": "toolu_01BLZsLrFHFEd83rGgmK2JGU",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01Fwa5HoeydtucCGVrD3rKjg",
+     "id": "toolu_01Jj6wEJBiZJbsDT5YJcThxn",
      "name": "network_log",
      "input": {}
     }
@@ -21,7 +21,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_018waWEzyNtEk5yPnnAxQp5o",
+     "id": "toolu_01BLZsLrFHFEd83rGgmK2JGU",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -30,7 +30,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Fwa5HoeydtucCGVrD3rKjg",
+     "id": "toolu_01Jj6wEJBiZJbsDT5YJcThxn",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -46,12 +46,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:4b72697ee4f01314397f1b8227b836c9378e24f3b163781908f6e315e5b78c82": {
+  "sha256:9d48f6051f801039b6258b387fb080727cbe21b4f5c2b7e8c724feaa1f93e153": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01KxPMUvvkqtLjRZ68EZ4SMi",
+     "id": "toolu_01HHDLv5Gqikmm9Co2oCchJr",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -62,7 +62,7 @@
          1,
          2
         ],
-        "reasoning": "The issues probe shows issue #3 still has status \"closed\". The network log shows only two POSTs, both to /issues/2/state. The agent changed issue #2 twice and never sent anything for issue #3."
+        "reasoning": "The server-side probe shows issue #3 still has status \"closed\". The only state-change requests the agent sent went to /issues/2/state, so it acted on issue #2, not issue #3."
        }
       ]
      }
@@ -72,11 +72,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSvAUKEAgTGAI4AUIIdGhpbmtpbmcSDFym5R3bU4tRCERHXRoMYDGbWbA4SxNllHauIjBI3UNEcG0X1qgT0ZvsA08uxEnXgAisOceOac8HO9zGr0CPpOpIFYm0FedEb1eocJsq2QRmRJJ4qmkTlurAdOOQzDB4cWIphXw7ZrvuzXAnPLTD4XxnD2Y83ppGWPbiSq1mLObbpNMfW4rZAeJ8p6H9yh/SPneZevuECErp/TnKm4rrKIdhijArD+ebUGZAPMlpLN9k09Gf/ARCebNjsTWY8g2MpES+HoajFAAJfRpTAgJlEpjPUNLQYl2Wrz3yQ3shqX/nUCeWbtgVpY8M8icCUBdzB0jzhhqDlFg8glovjIxEdKBrSSg8yOtZsGUFn+UJMFiGAIzVH2GkRwyTqCwoQB945TLPlHAX7UFtcXb3QaZBnx0iHHG9okMOJZKAmnQeT+OPAN+EXNTx6HQXa3U3RgDU6K5uwSBRTjLZ0jwQt4Adrvl16xOGFVnQUIUhjs2ysvYPWwiBBqZxvVxQpO6sduwelrHfMxpP9Hv12zfghhtd0QNxyPY6IXtBAFZ6eyJdV6T+YFzj+eaTGmn8vbxevFP+teGKO1I7rSoSNBmfRv7P4jegIxFLKbrcnrALpOX+MY/y1HhpxqTkBMZdB52Adsi196Cmi3NazWlYSPikGv9i4aQBgdVaT0X38oFSWvOOBz+J5Baj4lg2iSodP41Bri2YgcbvbBnAVQokcs6UmQXGcOkyOMlJzNp9pGUfTdq0VU2nhahB+8ganRgvpwJM06A81Pq7kOKXiu+zcjNJgH7iK7U/6ltejWw8hzH50VR/D5avjBfe70/D4PTwRZmiD0AN5LQW4lub8P3gdPkFUYC9fGS+QGMD23gBuWaLa6wuU0nPVef0TiPkRrYQ3b+5nSYsozZUbYjsQOpuGAE="
+     "signature": "CAQSswUKEAgTGAI4AUIIdGhpbmtpbmcSDHaHHSVbZejjBHDBYhoM9satTO++jOAX02fIIjAhIvNWsOlBM9Trjet6f4lE5trpITyyn3kFMRGBE5xsmP/SLkZ4750+uD3UMn03R0Mq0AQBh80tQnbaiJ8EiYZ4Y4NguXyNB0A+ttykJPSKN743uidZGUD9jA99hfsEbAbbdT5ZtxT/eXSIi+ehytUBoy/VHRMHCOqtgZJKpNevUznfoy3lZo/JqkH/JWZG7g445AQJvbddR/6TOLsGhG2JHcM3gb4kfXalyZHtRwxuv4Sr+J/OgEDOwgT/YNYHHPIHQvAb2+snFVXhawqH5H91mruUt/HOQcMePs4/OR3K0RgPDRJqufHi+6jvQksWvfoRESENrpswfIJ1SCjpeAcZxFArzrnCY6tTxEsggMtM1gxRNnSZ+dcVkdla/dwq8jW/IeqzuhAsKOHbUhqphABa3P8tykhvsFx8Ot0Mn+S1YBkQ7jwmcgNKrjBzYR7rkLCfM2mHMxEeVIoBEoR3b5mUi5+lE+TkhzYv1QWsgh0N1s41o1fl8BniYTUVXNnf1RFHO7ly7mreKc/QirISYS6DgDJClrGxIj7jppWz7721IEW30iv+pNavjzymh3dj8BOaf36JTfUM78wFm9lJvtE5Fex2VC4YHKqFSiQyGoS51c7ZH94F0S8f7tgZBylYSvDHoT9OpCjHNIxZm7VXcaiObaoOz5/42vEOI69gCpjGF31Kf4/2CBMOCBZYAZWwn5JzoQfJwlpG88ozsTFZ6hsDxuE3qKhlYOm2TmS2CqbP4zdAfFKSzoa7xyiSFdA8RwMc5w1vaIiGREINdLqYX7YfVchPLCgYS2SyrkYTjY/vtElbh3dVrevEvFBrjFygLONqVEE1xmjwnaurXvzOqFl7kmgfGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01KxPMUvvkqtLjRZ68EZ4SMi",
+     "id": "toolu_01HHDLv5Gqikmm9Co2oCchJr",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -90,7 +90,7 @@
          1,
          2
         ],
-        "reasoning": "The issues probe shows issue #3 still has status \"closed\". The network log shows only two POSTs, both to /issues/2/state. The agent changed issue #2 twice and never sent anything for issue #3."
+        "reasoning": "The server-side probe shows issue #3 still has status \"closed\". The only state-change requests the agent sent went to /issues/2/state, so it acted on issue #2, not issue #3."
        }
       ]
      }
@@ -98,18 +98,18 @@
    ],
    "usage": {
     "inputTokens": 2392,
-    "outputTokens": 190,
+    "outputTokens": 180,
     "cacheReadTokens": 1822,
     "cacheWriteTokens": 568
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:71ad5212c2e56cd8bcebe4938e9fc74cc294ed8c43dc1a7741b7eecf124f3e89": {
+  "sha256:5bd6eeff7b9b4e3f98505c3dde0ac8eb9104409e9f2f435c8960cac1b859bb29": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01AF3TYZ8bZxYKsYSq2ytaQw",
+     "id": "toolu_01MhQWJ3foBX3JqQCRaoCJES",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -120,7 +120,7 @@
          1,
          2
         ],
-        "reasoning": "The issues probe shows issue #3 still has status \"closed\". The network log shows only two POSTs, both to /issues/2/state. The agent changed issue #2 twice and never sent anything for issue #3."
+        "reasoning": "The server-side probe shows issue #3 still has status \"closed\". The only state-change requests the agent sent went to /issues/2/state, so it acted on issue #2, not issue #3."
        }
       ]
      }
@@ -129,7 +129,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01AF3TYZ8bZxYKsYSq2ytaQw",
+     "id": "toolu_01MhQWJ3foBX3JqQCRaoCJES",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -143,17 +143,17 @@
          1,
          2
         ],
-        "reasoning": "The issues probe shows issue #3 still has status \"closed\". The network log shows only two POSTs, both to /issues/2/state. The agent changed issue #2 twice and never sent anything for issue #3."
+        "reasoning": "The server-side probe shows issue #3 still has status \"closed\". The only state-change requests the agent sent went to /issues/2/state, so it acted on issue #2, not issue #3."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2628,
-    "outputTokens": 156,
+    "inputTokens": 2618,
+    "outputTokens": 149,
     "cacheReadTokens": 2390,
-    "cacheWriteTokens": 236
+    "cacheWriteTokens": 226
    },
    "model": "claude-opus-5-5"
   }

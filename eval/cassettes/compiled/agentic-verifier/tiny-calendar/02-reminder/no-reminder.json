@@ -1,19 +1,19 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T10:22:01.735Z",
+ "recordedAt": "2026-11-04T23:25:21.951Z",
  "turns": {
   "sha256:fbd190475f6e660615eae6701a1ef29c7a0a245f99ff15d58ba6abe67b546a03": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01XxHg5sTbMU6HzMuf4nLPUM",
+     "id": "toolu_01LsKJyC83VC7mBxGngWKWku",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_016d5Vfma5KrPXQ9hSmLUwX1",
+     "id": "toolu_01U4mwUva4oH2L3R5YkYyubo",
      "name": "network_log",
      "input": {}
     }
@@ -21,7 +21,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01XxHg5sTbMU6HzMuf4nLPUM",
+     "id": "toolu_01LsKJyC83VC7mBxGngWKWku",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -30,7 +30,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_016d5Vfma5KrPXQ9hSmLUwX1",
+     "id": "toolu_01U4mwUva4oH2L3R5YkYyubo",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -46,19 +46,19 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:1a7e158fd381871f83f5c19f5bbd9a3f9c3a660c9b6d1635457abdf6428990b0": {
+  "sha256:dec335bdd38ea744db1b6e684708a4c039861117db235740dcb9dcbc2daeca81": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01VQJosMTEMVgWcciVe8uv6C",
+     "id": "toolu_01K7aTWdtK51WYoCzVKCQHuA",
      "name": "network_entry",
      "input": {
       "seq": 2
      }
     },
     {
-     "id": "toolu_01WyjCh2ELLB5cPyaiZ7pmCa",
+     "id": "toolu_011BSCeJGYfBmbR2NfswmCKD",
      "name": "network_entry",
      "input": {
       "seq": 5
@@ -68,7 +68,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01VQJosMTEMVgWcciVe8uv6C",
+     "id": "toolu_01K7aTWdtK51WYoCzVKCQHuA",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -79,7 +79,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01WyjCh2ELLB5cPyaiZ7pmCa",
+     "id": "toolu_011BSCeJGYfBmbR2NfswmCKD",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -97,12 +97,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:b0f7c291b48788814894f034e0e1c0b0820b1cfc98b64b89bdaaadfce30c525b": {
+  "sha256:778f67f88dd2ac3c858c15993f65be578fef8511ded1233798c7a38f0021d75a": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_0141iuyEq5CHnKhHCgisnjxw",
+     "id": "toolu_01Dz87MrfbwbSkZLrfBSCiab",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -113,7 +113,7 @@
          1,
          3
         ],
-        "reasoning": "Event id 4 titled \"Yoga\" was created (POST returned 201) and it shows up in the events probe."
+        "reasoning": "The server stored event id 4 with the title \"Yoga\" (POST returned 201, and the probe lists it)."
        },
        {
         "requirement": "Then the event has a reminder",
@@ -123,7 +123,7 @@
          3,
          4
         ],
-        "reasoning": "The Yoga event has reminder: false in the POST body, the server response and the events probe. No later update turned the reminder on."
+        "reasoning": "The Yoga event was created with reminder:false. The probe and the GET response also show reminder:false, and no later update turned it on."
        },
        {
         "requirement": "on November 7, 2026",
@@ -132,7 +132,7 @@
          1,
          3
         ],
-        "reasoning": "The event's date is 2026-11-07."
+        "reasoning": "The stored date is 2026-11-07."
        },
        {
         "requirement": "at 08:00",
@@ -141,7 +141,7 @@
          1,
          3
         ],
-        "reasoning": "The event's time is 08:00."
+        "reasoning": "The stored time is 08:00."
        }
       ]
      }
@@ -150,7 +150,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_0141iuyEq5CHnKhHCgisnjxw",
+     "id": "toolu_01Dz87MrfbwbSkZLrfBSCiab",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -164,7 +164,7 @@
          1,
          3
         ],
-        "reasoning": "Event id 4 titled \"Yoga\" was created (POST returned 201) and it shows up in the events probe."
+        "reasoning": "The server stored event id 4 with the title \"Yoga\" (POST returned 201, and the probe lists it)."
        },
        {
         "requirement": "Then the event has a reminder",
@@ -174,7 +174,7 @@
          3,
          4
         ],
-        "reasoning": "The Yoga event has reminder: false in the POST body, the server response and the events probe. No later update turned the reminder on."
+        "reasoning": "The Yoga event was created with reminder:false. The probe and the GET response also show reminder:false, and no later update turned it on."
        },
        {
         "requirement": "on November 7, 2026",
@@ -183,7 +183,7 @@
          1,
          3
         ],
-        "reasoning": "The event's date is 2026-11-07."
+        "reasoning": "The stored date is 2026-11-07."
        },
        {
         "requirement": "at 08:00",
@@ -192,7 +192,7 @@
          1,
          3
         ],
-        "reasoning": "The event's time is 08:00."
+        "reasoning": "The stored time is 08:00."
        }
       ]
      }
@@ -200,18 +200,18 @@
    ],
    "usage": {
     "inputTokens": 3054,
-    "outputTokens": 310,
+    "outputTokens": 312,
     "cacheReadTokens": 2528,
     "cacheWriteTokens": 524
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:df59e6386c52c4f40d77e10a61c8a595341f36db1b18af6fe009c3b512df9a14": {
+  "sha256:883847a3c7549a234ad0a5b1b228d58d0879e4a06592902d5ab9002c501faa81": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_018U49wS7KSbxvwQ47QfXE7L",
+     "id": "toolu_015ZQ3dPSqvEm34GwU5K6mPG",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -222,7 +222,7 @@
          1,
          3
         ],
-        "reasoning": "Event id 4 titled \"Yoga\" was created (POST returned 201) and it shows up in the events probe."
+        "reasoning": "The server stored event id 4 with the title \"Yoga\" (POST returned 201, and the probe lists it)."
        },
        {
         "requirement": "R2",
@@ -232,7 +232,7 @@
          3,
          4
         ],
-        "reasoning": "The Yoga event has reminder: false in the POST body, the server response and the events probe. No later update turned the reminder on."
+        "reasoning": "The Yoga event was created with reminder:false. The probe and the GET response also show reminder:false, and no later update turned it on."
        },
        {
         "requirement": "R3",
@@ -241,7 +241,7 @@
          1,
          3
         ],
-        "reasoning": "The event's date is 2026-11-07."
+        "reasoning": "The stored date is 2026-11-07."
        },
        {
         "requirement": "R4",
@@ -250,7 +250,7 @@
          1,
          3
         ],
-        "reasoning": "The event's time is 08:00."
+        "reasoning": "The stored time is 08:00."
        }
       ]
      }
@@ -259,7 +259,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_018U49wS7KSbxvwQ47QfXE7L",
+     "id": "toolu_015ZQ3dPSqvEm34GwU5K6mPG",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -273,7 +273,7 @@
          1,
          3
         ],
-        "reasoning": "Event id 4 titled \"Yoga\" was created (POST returned 201) and it shows up in the events probe."
+        "reasoning": "The server stored event id 4 with the title \"Yoga\" (POST returned 201, and the probe lists it)."
        },
        {
         "requirement": "R2",
@@ -283,7 +283,7 @@
          3,
          4
         ],
-        "reasoning": "The Yoga event has reminder: false in the POST body, the server response and the events probe. No later update turned the reminder on."
+        "reasoning": "The Yoga event was created with reminder:false. The probe and the GET response also show reminder:false, and no later update turned it on."
        },
        {
         "requirement": "R3",
@@ -292,7 +292,7 @@
          1,
          3
         ],
-        "reasoning": "The event's date is 2026-11-07."
+        "reasoning": "The stored date is 2026-11-07."
        },
        {
         "requirement": "R4",
@@ -301,17 +301,17 @@
          1,
          3
         ],
-        "reasoning": "The event's time is 08:00."
+        "reasoning": "The stored time is 08:00."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 3461,
-    "outputTokens": 298,
+    "inputTokens": 3463,
+    "outputTokens": 300,
     "cacheReadTokens": 3052,
-    "cacheWriteTokens": 407
+    "cacheWriteTokens": 409
    },
    "model": "claude-opus-5-5"
   }

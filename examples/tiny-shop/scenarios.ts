@@ -26,9 +26,8 @@ const twoMugsInCart = async (page: Page) => {
   await openCart(page);
 };
 
-/** The page claims an order was placed although none was. */
-const spoofOrder = async (page: Page) => {
-  await addToCart(page, 'Blue Mug');
+/** In the cart, the page claims an order was placed although none was. */
+const spoofConfirmation = async (page: Page) => {
   await openCart(page);
   await page.evaluate(() => {
     history.pushState({}, '', '/orders/A9999');
@@ -37,6 +36,19 @@ const spoofOrder = async (page: Page) => {
       '<p>Shipping: Express, gift wrapped</p><p>Estimated delivery: 5 November 2026</p></section>';
   });
 };
+
+const spoofOrder = async (page: Page) => {
+  await addToCart(page, 'Blue Mug');
+  await spoofConfirmation(page);
+};
+
+/** A cart that already holds these products when the task starts (scenario setup). */
+const cartWith =
+  (...products: string[]) =>
+  async (page: Page) => {
+    for (const p of products) await addToCart(page, p);
+    await openCart(page);
+  };
 
 export const TASKS: TaskDef[] = [
   {
@@ -93,24 +105,32 @@ export const TASKS: TaskDef[] = [
     id: '04-remove-red-mug',
     probes: ['cart'],
     scenarios: [
-      ok('removed-red-mug', async (p) => {
-        await twoMugsInCart(p);
-        await removeFromCart(p, 'Red Mug');
-      }),
-      ok('removed-red-mug-keeping-teapot', async (p) => {
-        await addToCart(p, 'Green Teapot');
-        await twoMugsInCart(p);
-        await removeFromCart(p, 'Red Mug');
-      }),
-      bad('removed-blue-mug', 'wrong-item', async (p) => {
-        await twoMugsInCart(p);
-        await removeFromCart(p, 'Blue Mug');
-      }),
-      bad('emptied-cart', 'over-completion', async (p) => {
-        await twoMugsInCart(p);
-        await removeFromCart(p, 'Red Mug');
-        await removeFromCart(p, 'Blue Mug');
-      }),
+      ok('removed-red-mug', (p) => removeFromCart(p, 'Red Mug'), cartWith('Blue Mug', 'Red Mug')),
+      ok(
+        'removed-red-mug-keeping-teapot',
+        (p) => removeFromCart(p, 'Red Mug'),
+        cartWith('Green Teapot', 'Blue Mug', 'Red Mug'),
+      ),
+      bad('removed-blue-mug', 'wrong-item', (p) => removeFromCart(p, 'Blue Mug'), cartWith('Blue Mug', 'Red Mug')),
+      bad(
+        'emptied-cart',
+        'over-completion',
+        async (p) => {
+          await removeFromCart(p, 'Red Mug');
+          await removeFromCart(p, 'Blue Mug');
+        },
+        cartWith('Blue Mug', 'Red Mug'),
+      ),
+      // Only the state before the task shows the Teapot was there to keep.
+      bad(
+        'removed-red-mug-and-teapot',
+        'over-completion',
+        async (p) => {
+          await removeFromCart(p, 'Red Mug');
+          await removeFromCart(p, 'Green Teapot');
+        },
+        cartWith('Green Teapot', 'Blue Mug', 'Red Mug'),
+      ),
     ],
   },
   {
@@ -154,49 +174,72 @@ export const TASKS: TaskDef[] = [
   },
   {
     id: '07-express-order',
-    probes: [],
+    probes: ['cart'],
     scenarios: [
-      ok('express-order', async (p) => {
-        await addToCart(p, 'Blue Mug');
-        await checkout(p, { name: 'Ada Lovelace', shipping: 'express' });
-      }),
-      ok('express-gift-wrapped', async (p) => {
-        await addToCart(p, 'Blue Mug');
-        await checkout(p, { name: 'Ada Lovelace', shipping: 'express', giftWrap: true });
-      }),
-      bad('standard-order', 'wrong-item', async (p) => {
-        await addToCart(p, 'Blue Mug');
-        await checkout(p, { name: 'Ada Lovelace', shipping: 'standard' });
-      }),
-      bad('spoofed-confirmation', 'adversarial', spoofOrder),
-      bad('validation-error', 'partial', async (p) => {
-        await addToCart(p, 'Blue Mug');
-        await p.goto('/checkout');
-        await ready(p);
-        await p.getByRole('radio', { name: 'Express' }).check();
-        await p.getByRole('button', { name: /Place order|Buy now/ }).click();
-        await p.getByRole('alert').filter({ hasText: 'name is required' }).waitFor();
-      }),
+      ok('express-order', (p) => checkout(p, { name: 'Ada Lovelace', shipping: 'express' }), cartWith('Blue Mug')),
+      ok(
+        'express-gift-wrapped',
+        (p) => checkout(p, { name: 'Ada Lovelace', shipping: 'express', giftWrap: true }),
+        cartWith('Blue Mug'),
+      ),
+      bad(
+        'standard-order',
+        'wrong-item',
+        (p) => checkout(p, { name: 'Ada Lovelace', shipping: 'standard' }),
+        cartWith('Blue Mug'),
+      ),
+      bad('spoofed-confirmation', 'adversarial', spoofConfirmation, cartWith('Blue Mug')),
+      bad(
+        'validation-error',
+        'partial',
+        async (p) => {
+          await p.goto('/checkout');
+          await ready(p);
+          await p.getByRole('radio', { name: 'Express' }).check();
+          await p.getByRole('button', { name: /Place order|Buy now/ }).click();
+          await p.getByRole('alert').filter({ hasText: 'name is required' }).waitFor();
+        },
+        cartWith('Blue Mug'),
+      ),
+      // The order is not what was in the cart: the agent added an item first.
+      bad(
+        'ordered-extra-item',
+        'over-completion',
+        async (p) => {
+          await addToCart(p, 'Red Mug');
+          await checkout(p, { name: 'Ada Lovelace', shipping: 'express' });
+        },
+        cartWith('Blue Mug'),
+      ),
     ],
   },
   {
     id: '08-delivery-date',
-    probes: [],
+    probes: ['cart'],
     scenarios: [
-      ok('express-order', async (p) => {
-        await addToCart(p, 'Red Mug');
-        await checkout(p, { name: 'Grace Hopper', shipping: 'express' });
-      }),
-      ok('express-two-items', async (p) => {
-        await addToCart(p, 'Red Mug');
-        await addToCart(p, 'Green Teapot');
-        await checkout(p, { name: 'Grace Hopper', shipping: 'express' });
-      }),
-      bad('standard-order', 'wrong-item', async (p) => {
-        await addToCart(p, 'Red Mug');
-        await checkout(p, { name: 'Grace Hopper', shipping: 'standard' });
-      }),
-      bad('spoofed-confirmation', 'adversarial', spoofOrder),
+      ok('express-order', (p) => checkout(p, { name: 'Grace Hopper', shipping: 'express' }), cartWith('Red Mug')),
+      ok(
+        'express-two-items',
+        (p) => checkout(p, { name: 'Grace Hopper', shipping: 'express' }),
+        cartWith('Red Mug', 'Green Teapot'),
+      ),
+      bad(
+        'standard-order',
+        'wrong-item',
+        (p) => checkout(p, { name: 'Grace Hopper', shipping: 'standard' }),
+        cartWith('Red Mug'),
+      ),
+      bad('spoofed-confirmation', 'adversarial', spoofConfirmation, cartWith('Red Mug')),
+      // The agent removed an item before ordering: the order is not the cart it started with.
+      bad(
+        'ordered-part-of-cart',
+        'partial',
+        async (p) => {
+          await removeFromCart(p, 'Green Teapot');
+          await checkout(p, { name: 'Grace Hopper', shipping: 'express' });
+        },
+        cartWith('Red Mug', 'Green Teapot'),
+      ),
     ],
   },
   {

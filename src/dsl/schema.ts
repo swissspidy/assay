@@ -140,6 +140,7 @@ export const checkSetSchema = {
         requirement: { type: 'string' },
         description: { type: 'string', minLength: 1 },
         assert: { $ref: '#/definitions/assertion' },
+        onFail: { enum: ['escalate', 'keep'] },
       },
     },
     locator: {
@@ -265,6 +266,7 @@ export const checkSetSchema = {
             area: { enum: ['cookie', 'local', 'session'] },
             key: { type: 'string' },
             origin: { type: 'string', pattern: '^https?://' },
+            at: { enum: ['after', 'before'] },
           },
         },
         {
@@ -275,6 +277,7 @@ export const checkSetSchema = {
             from: { const: 'probe' },
             probe: { type: 'string', minLength: 1 },
             pointer: { type: 'string', pattern: '^(/.*)?$' },
+            at: { enum: ['after', 'before'] },
           },
         },
       ],
@@ -340,6 +343,16 @@ export const checkSetSchema = {
             op: { const: 'datetime' },
             locale: { type: 'string', minLength: 2 },
             timezone: { type: 'string' },
+          },
+        },
+        {
+          type: 'object',
+          additionalProperties: false,
+          required: ['op'],
+          properties: {
+            op: { const: 'items' },
+            where: { $ref: '#/definitions/jsonSchema' },
+            pointer: { type: 'string', pattern: '^(/.*)?$' },
           },
         },
       ],

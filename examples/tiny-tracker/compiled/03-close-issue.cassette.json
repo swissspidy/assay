@@ -1,14 +1,14 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T10:09:47.823Z",
+ "recordedAt": "2026-11-04T23:11:57.135Z",
  "turns": {
   "sha256:5b27b3ced726a810375d563f959733609d8bb0f9c3040a617cae7bfd819cc6fb": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01YbL1osvU2KQrYpoQHSDQRf",
+     "id": "toolu_01Fsb42Nj4BjmYGqnnJonagf",
      "name": "submit_rubric",
      "input": {
       "requirements": [
@@ -26,7 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01YbL1osvU2KQrYpoQHSDQRf",
+     "id": "toolu_01Fsb42Nj4BjmYGqnnJonagf",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -52,17 +52,17 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:73f98974a2c3b9d2b21d9e9d3ffbd06476fd15dff1a931a58ceb94550ee5ccb9": {
+  "sha256:5324b45246cb06ccc37f6c3e28c66c67335c143a7d06208476e2253e9628d948": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01YHUCoyeAEJ5FYSm6zj1QZV",
+     "id": "toolu_01RYCAtTyk2QphMAoPXh8zmF",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01Hm5ZrZtiDJ9qDujL7ijjiZ",
+     "id": "toolu_018GEfdmybjGGaxEKPstCSEr",
      "name": "network_log",
      "input": {}
     }
@@ -70,7 +70,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01YHUCoyeAEJ5FYSm6zj1QZV",
+     "id": "toolu_01RYCAtTyk2QphMAoPXh8zmF",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -79,7 +79,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Hm5ZrZtiDJ9qDujL7ijjiZ",
+     "id": "toolu_018GEfdmybjGGaxEKPstCSEr",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -88,22 +88,55 @@
     }
    ],
    "usage": {
-    "inputTokens": 13920,
+    "inputTokens": 15862,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 13916
+    "cacheWriteTokens": 15858
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:7e2021f8d34884c9e351040f78e5099292d6eeec83038d817fd71d2dd2f6dbb4": {
+  "sha256:6700570d8db8560b0b0ca12f82e9883945c31982f90b82ac389ab07e9266af53": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01XdT4FL1cGpn2CQ33dUwWnK",
-     "name": "network_entry",
+     "id": "toolu_01EKwwar4vRBo9BeNETFkmTM",
+     "name": "submit_checks",
      "input": {
-      "seq": 1
+      "checks": [
+       {
+        "id": "issue1-closed-probe",
+        "requirement": "R1",
+        "description": "The backend issues probe shows issue with id 1 has status 'closed'.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "status"
+            ],
+            "properties": {
+             "id": {
+              "const": 1
+             },
+             "status": {
+              "const": "closed"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
      }
     }
    ],
@@ -111,124 +144,58 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQStgcKEAgTGAI4AUIIdGhpbmtpbmcSDL/iUI54aBbehlVGZxoM+PuzwAqlZPa/4lARIjBKZGGXzpltXx/yAjwFSp0IQwLdHOedAvmd2r/SLGJdS2ihc5NMPWNGeob8seWYphwq0waCAVyZuTBXHWHtDxhvYww6ns7G+iBcZvsEwj9lHYOXaCofF1wchokvIlYtsfEcaugTLLfNLg4OiR9f6DfwJtlYt2Btdk6Ii0E04SuoCwj2DQKc3EY7uCckBKJTN4MRF6mLiEyAGEv8/6nNgXlI2LDNoVUSyEnYj21DsBFB5bYB08/Lnzvvy+XgbCIeyvhZTbUF6AtRddxelwLoQlNjWy2mxQoEQmpofvwykzn+YVZGxpzQ2DNXfUlUtYZPMhW2l5ddiWPQR2AaEnIX6g7guAScCoKxkTlcNVMzCjGIGCoGMR/Z4iVXGj3MwMwq3fuzHOS3qbrlNC7RoVwz5os+FhfbNb6pjvuyiXQafRewwN21vGVtSEJ4X9n4kdkyF93dGI8EbLuWy1MxOydm4pz2xQdw9e4sNOQ26snPztLxSvHOzMEeoe2FbO3WyufFp3MVRWGloPs3tBX0xzVbZ3h5Kwk1TnbWJVJpW6eCF0Qa0jRiihzSPdvQXgNwrGinuKea2xFYDKPv+1OIDrCaOxe0A/n+PlXT1TlPFcpl4EycE0B83ikfva4Fcj0wj/WERKXlJnw3IUCxpqJNNtsR7tU1P9qoHvIHUAHtATozjDZZQ2jh+0FYihXxDY8xzsxrNP3pJWI/mVFWMyQ6i8+JcWrJS6m9gse29goI/mYRXdWbesKEGNL8jkfUBMHn2DvrpFNVxGBONempPHqpOYswrssyV1n0v6F6vh7wR5fZf1YwhcyINH2DW8MsENwAix4QIiXyW4fAgruGcLHfUkXMjAW7IvtYYInikOdRiSWW5IpdRw42qzmAjQ1/uKRHRVfmkPhh8usXonTr3yGDcCR6nBIf2MTol+Ns1PQ6D2d7lJrNFm2sd2xMMs82/f4/Hb5HHjv2P6eOuisVnTA9SxCOfTODeq0konNCjnGkJ4Z33ouNTM6XMJ7n1kbiT6wizIrFba3cVOPO1pzBg27FEaWRR2wYD4UDbf+MuRGS0tj9oX/IxgH7odsQ/VxogwNilqeCaIzCgGQQ5px3VLFxgS5CH5bd3PnbGnNN/6RYWudqzE8cJtfrio646l1D6WMPhFbcWRFRGbqitXzMLPlqGzrulGvB1AndhxtNZ3n65Es/BdAVqiaxQWYe2hgB"
+     "signature": "CAQSjAYKEAgTGAI4AUIIdGhpbmtpbmcSDFaZ2lPMH1u3QhxRdxoMvoPYAlNt85NqzQY0IjCUrJTsruKlyFXdllK2Sz7+EkPIAzfz0zHGJo5lT1a+NKzzoA0kFMQUVniZTwjP6O0qqQW0V0DrNWLTUOyxaLeoZeJGjSg0qjOHB6O9acqhUIqqqCE/fwxq5yu2BQcGXJLEjihemCrACia95doVu8tkU1AwPBF60XmqzLLplrKcdluEUaj2yQGtnbTGMImNnfu6EFAPfRzmd5EBlWX1iBol+ZwoAFby1VKpGxNoJO4+GDFXSmWyCD/Hs7C5ibtVcrsn1CxaFL2Tk9iPSEPvfVzMt6Abo66Elx7Oy4HQ31f+khie8jQfxyFd1DxUaXfzSiu/HMqf6i8WljlDxjDUANyG+v5eE84qv8UuNgH86uKgDBWH+Ek+qUgEg0ZApPnXHlvg/YMSwVwZH6dM3FiWk1OOQcGJGcPCkNbUReqGfT4GGpd+Iv+hkOXVzJCch7jkKIVqsZJWQ3sKZ6uR06Esw77zAT9nyVEFyQxp+aS6iucNu8vkG/Yw8XbiwpTw1NXqXqpKXyfewKHKQxMCuflLbRO2Sw8SSTLfzOBeIL3/T7GSMvADmbXNFAuUs6IbwImxvNAAcGaNkG+Ro9E1T4YSvl31sNuep+FMcTS/06Uh8h03xqgJGvVTOclontsnPEvVt2qO6Z5e+i5ug8ErhMAkUpe/aS9T1KdTEuGIzSGpwwKxYMdjyaOlVbMYQk6diM2rtEXLr4zk/j2tg8njXJBRmpKphrAQnGCf+5iMk8osCKJvQ05og1zTr0W4/7a3buh4Oqbz00GHJDyMl5y0f5JWGVkt6N58Y4kIMwthAEzCZ932G/dNzc5yicNEU8LYXcZNt+t9jB2aZY60x7MX5e62lZL6IFCplhw7HnMNlzz2r5kM8bfVaXLo3BxlQOY6WDKL0Eu6gghYCjMd/z+xYctAyCelBIGwK+Zm0m1yaypQAfwpEeRsZxBc/6eu9DhvJLWtvz60rDveYAO/jzGur2cYAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01XdT4FL1cGpn2CQ33dUwWnK",
-     "name": "network_entry",
+     "id": "toolu_01EKwwar4vRBo9BeNETFkmTM",
+     "name": "submit_checks",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "seq": 1
+      "checks": [
+       {
+        "id": "issue1-closed-probe",
+        "requirement": "R1",
+        "description": "The backend issues probe shows issue with id 1 has status 'closed'.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "status"
+            ],
+            "properties": {
+             "id": {
+              "const": 1
+             },
+             "status": {
+              "const": "closed"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 14387,
-    "outputTokens": 151,
-    "cacheReadTokens": 13916,
+    "inputTokens": 16329,
+    "outputTokens": 246,
+    "cacheReadTokens": 15858,
     "cacheWriteTokens": 469
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:05b6e6480431b298dc5e9a406d933a4c6bcf12743dfa862abddbfdb809a3bc79": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_01CZ1m4EcAramTCmCBTT4FAU",
-     "name": "submit_checks",
-     "input": {
-      "checks": [
-       {
-        "id": "issue1-closed-probe",
-        "requirement": "R1",
-        "description": "Backend issues data shows issue with id 1 having status 'closed'.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "issues"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "id",
-             "status"
-            ],
-            "properties": {
-             "id": {
-              "const": 1
-             },
-             "status": {
-              "const": "closed"
-             }
-            }
-           }
-          }
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_01CZ1m4EcAramTCmCBTT4FAU",
-     "name": "submit_checks",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "checks": [
-       {
-        "id": "issue1-closed-probe",
-        "requirement": "R1",
-        "description": "Backend issues data shows issue with id 1 having status 'closed'.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "issues"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "id",
-             "status"
-            ],
-            "properties": {
-             "id": {
-              "const": 1
-             },
-             "status": {
-              "const": "closed"
-             }
-            }
-           }
-          }
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 14637,
-    "outputTokens": 196,
-    "cacheReadTokens": 14385,
-    "cacheWriteTokens": 250
    },
    "model": "claude-opus-5-5"
   }

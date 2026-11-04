@@ -12,6 +12,12 @@
       "kind": "hard",
       "text": "Estimated delivery shown as 5 November 2026",
       "source": { "field": "outcomes", "quote": "estimated delivery of 5 November 2026" }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The order is for the cart as it was before the task",
+      "source": { "field": "instruction", "quote": "Place an order for my cart" }
     }
   ],
   "checks": [
@@ -41,6 +47,33 @@
           { "op": "date", "locale": "en-GB" }
         ],
         "expect": { "equals": "2026-11-05" }
+      }
+    },
+    {
+      "id": "C3",
+      "requirement": "R2",
+      "description": "An order was placed, and its items (from the server's response) are the items the cart held before the task.",
+      "assert": {
+        "kind": "allOf",
+        "of": [
+          { "kind": "request", "match": { "method": "POST", "url": { "path": "/api/orders" }, "status": 201 } },
+          {
+            "kind": "value",
+            "source": {
+              "from": "response",
+              "match": { "method": "POST", "url": { "path": "/api/orders" }, "status": 201 },
+              "pointer": "/items",
+              "pick": "last"
+            },
+            "normalize": [{ "op": "items" }],
+            "expect": {
+              "sameAs": {
+                "source": { "from": "probe", "probe": "cart", "pointer": "/items", "at": "before" },
+                "normalize": [{ "op": "items" }]
+              }
+            }
+          }
+        ]
       }
     }
   ]

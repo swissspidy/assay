@@ -1,14 +1,14 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T10:10:43.734Z",
+ "recordedAt": "2026-11-04T23:12:48.990Z",
  "turns": {
   "sha256:d0884dc02f042b4ff087b308ec80b82243337baf6c4a6f87d559be7e7432b01d": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01CyWhHbqBUh64snsvERWWzK",
+     "id": "toolu_01KdjrgeVTJK2VFaV7eTfYNp",
      "name": "submit_rubric",
      "input": {
       "requirements": [
@@ -26,7 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01CyWhHbqBUh64snsvERWWzK",
+     "id": "toolu_01KdjrgeVTJK2VFaV7eTfYNp",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -52,17 +52,17 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:927577d7a6a6b34e817ea90bb2d39462cd2aa150aadd5f8983f31ef54213abce": {
+  "sha256:98b5b6302e629d1eb427be0d8b11565f0772bcf21cd0a5465ed16b02cc9bf801": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01N9HQpoaDpU6Yz8YmdNt8xG",
+     "id": "toolu_013vCS97Ug3vigrhPhzrc9w5",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_0122iKbaArQafsYYAfvQseDd",
+     "id": "toolu_01AvjBLDKN1araoHsrK8gabB",
      "name": "network_log",
      "input": {}
     }
@@ -70,7 +70,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01N9HQpoaDpU6Yz8YmdNt8xG",
+     "id": "toolu_013vCS97Ug3vigrhPhzrc9w5",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -79,7 +79,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_0122iKbaArQafsYYAfvQseDd",
+     "id": "toolu_01AvjBLDKN1araoHsrK8gabB",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -88,57 +88,24 @@
     }
    ],
    "usage": {
-    "inputTokens": 13926,
+    "inputTokens": 15868,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 13922
+    "cacheWriteTokens": 15864
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:75b3e587df9fc0644fb08dfdc64d9733cf6f43a384cd3d28473205063ac99030": {
+  "sha256:3a562d03388705c6f9bad3eae1bc695af7c074314bbc26d1c66314b0cd264fb0": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01FJRdgeWT1mzfjYS7QgThGP",
-     "name": "network_entry",
-     "input": {
-      "seq": 3
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_01FJRdgeWT1mzfjYS7QgThGP",
-     "name": "network_entry",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "seq": 3
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 14418,
-    "outputTokens": 49,
-    "cacheReadTokens": 13922,
-    "cacheWriteTokens": 494
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:bf6af5725578dfe4621f22c54cb4bdc240b322bf5b4edcd952e2da27102ff319": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_01Cj8tcPFJuy6Ekv6ysymafr",
+     "id": "toolu_014FYFeUhpQE8oAMw1kW88Vx",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "R1-probe-timezone",
+        "id": "R1-timezone-probe",
         "requirement": "R1",
         "description": "The backend settings record has its time zone set to Europe/Berlin.",
         "assert": {
@@ -148,12 +115,8 @@
           "probe": "settings",
           "pointer": "/timezone"
          },
-         "normalize": [
-          "trim"
-         ],
          "expect": {
-          "regex": "^(Europe/)?Berlin$",
-          "flags": "i"
+          "regex": "Berlin"
          }
         }
        }
@@ -165,11 +128,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS4AYKEAgTGAI4AUIIdGhpbmtpbmcSDM2PjAsf9lSjP3iLoBoMAIQguFEN6lfhRzlsIjDgmd9b/Ns8XeUSBpkbrc+3cvSKCxDEd63B2PppDqVw0meIcHrMjLmAhpzdV1+bTK8q/QXASrcnE9A4lSbeZmSaBhQ031xnjgATP8XzSe78tks60kpFLU2Gv10QiAfu9H8wdT1FVy+2s50kKuTw5GNMynVGFo6m3ktLkCWtljIIJV9Hjsj21Gg8qWSps0Ik7q/nWIM8HZLxRU00qD1pTTBe4Zq/LWSL7GrPQitxzZhfPnnuBb6/fUP0L+IPrKnPFItK2jxB6GCu2fs0NPQpG28YFf3au7CJ68uV55rNFlqB5c24EDFFAirZBNP39ozyZkgWONc6TpU3vxc1iDazm75Qi3OAmH6xg9Lp18ZBPGVlJw/hfwvbJXG3HuHx6golCnB5CTkh299rpxTZ8VNsLetTCERDiCHSU9qViFFDi2dMpIUrZSllVihvIY97iJm3UI2x8d/c8eVpwBcUVlgFCShzaEFqZCb4VpQ1ch112DoNitu+pL7Dso3GbRy4aiwPgWGUgdAddXEQvAF5+nqJExBTKsjQxLpBVJkK9jm8GXiZz8kAs4hQWQ6oiNouNI7DCsRA53Cv2xhfDOPk0YFb7m7q/nGmnWvMYDeDK1eFG7cBgynTQxlD6vkB3ilyPy3crXMqSQPiDHWTknH6+UY/KJvVfVD0uFT2+mSDf5yXhW3BwdbA9hcXgLNsjSjG9rrEJJlbaYdEiUScCsVICcFIhCBdQhz9KMwg6UTe0A4IRwyhkGEEyjVou0KGOJmb60Ev9OheypoQ01tRhQrxzk/bQ0M4XBMGfCniCYMvXDr+uClAXhQOkiSdvbvdWGw7ojpZErMfmWQJcPytVzjjJIRXjTZPAQEq0BHeQcceogG5W8xrz9EM6q4G09XTYavuVXgS04FW6NJPKM7nEY3wQ+NbuGW06eF2asfa334YMA6Ca9FR+2qFIJ26ALBSzr/KvUbqO+kM4HK8ttae5HgQ9ylS4bFBW4EZV+cwIdGtbvus3ACeoDXb6aWEkHmbdOXUSDAox6gajqmfc0beAL55D/md8iTIdb6JhKLcUjCVZNDBt/kupR/6BKcvVEy6PSy0zV9834QYAQ=="
+     "signature": "CAQSkAYKEAgTGAI4AUIIdGhpbmtpbmcSDGzFkN6FzetHxDiWhxoMaCxtI4FQF+ktXnaKIjDz7t3CIqgndH0ucZuRARXDvyk1R2zPwz2Mb0N65KIVGKN17vtNOpu/t0nwKSemlaYqrQU7LBEFpAmXfEsGAs8W17Wlhg0sVGcDkpgeo/1RLbR/C1JlSVborWLlaRLhXf43FpqzFq7WHvZ3TZsAS/NVbN9hek/aXuQPC2gZmPSmDQ/DUiIUOCmrQi9kuRM2DrkGv/ngVKlECRaJrdqxOQYr8gguFodXalWDjd2UdNek+WSfn7RldwtjY3KGIv9OKdItGZzRZ9SHVSo8ZASsiuSxxhG7gUPZr7jVMWvGjUfRYj9Y+zyMvPkxLuQFn6eGdWXGjL8/kIexjJd4/ST+LGBJ3U+nxSJ65W08kLfemF8DtOgTyRfJ+rtuUMO1LVCAXWx2TC7K6aOr2auCiWdUCuplTHfEn+eXbnpJ0g5MGpwBlvebgV65iQJmMQ1Un6rAxke0/++Kb9aG63JetLgCIMPMKBuwnxoz7CPshlL3XHPE9QKpOVR4f0eMHcI9dzcE8Q0LEe0LEvryYT3oXoXLomWt0Lcmt08t/y0APqwIUqmVR/oxWbhmWVuuk2z+WRv8RNsMbWko3q06PKldUi2gmWW5rAj3h+HTSJUq/VyQ2cfaa9vAJzcNIHCtfaYR+k98myWgR2IN5T4E53TACTBTr/zUPRbaD/Dw5fLBrpPNx+OOdnWVWz29KWKa4XYqddBjvjSdVSzF1LfAXHuUx46uxdaREBCu8mER8uLkmUQzOPkB3fwSsBC9armZJEDzQ1GfNbDgn4NLCJ02opo41D8fDOixQJr1RBuown3WOC4KGQG97AXwA+Mhyd1DvSWI28R/DJouid5GECu3GBAm181qs0QbwbtnIATzhlb547UQw4c22RrB5BC6nFoKhjGYslqFAqKY1GydVLdCMLJnIJQLQX0JW+JgiCFOLFN+oyXwtv4fr3PuzfDqXKS/oGqiDh/UVVp/ahnE92/1dhixgiZCajARGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Cj8tcPFJuy6Ekv6ysymafr",
+     "id": "toolu_014FYFeUhpQE8oAMw1kW88Vx",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -177,7 +140,7 @@
      "input": {
       "checks": [
        {
-        "id": "R1-probe-timezone",
+        "id": "R1-timezone-probe",
         "requirement": "R1",
         "description": "The backend settings record has its time zone set to Europe/Berlin.",
         "assert": {
@@ -187,12 +150,8 @@
           "probe": "settings",
           "pointer": "/timezone"
          },
-         "normalize": [
-          "trim"
-         ],
          "expect": {
-          "regex": "^(Europe/)?Berlin$",
-          "flags": "i"
+          "regex": "Berlin"
          }
         }
        }
@@ -201,10 +160,10 @@
     }
    ],
    "usage": {
-    "inputTokens": 14582,
-    "outputTokens": 271,
-    "cacheReadTokens": 14416,
-    "cacheWriteTokens": 164
+    "inputTokens": 16360,
+    "outputTokens": 220,
+    "cacheReadTokens": 15864,
+    "cacheWriteTokens": 494
    },
    "model": "claude-opus-5-5"
   }

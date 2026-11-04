@@ -6,7 +6,7 @@
  *   - removing anchors / evidence channels → abstain (live DOM edits and snapshot edits)
  */
 import { expect, type Page } from '@playwright/test';
-import { test, expectOutcome } from '../src/playwright/index.ts';
+import { test, captureBaseline, expectOutcome } from '../src/playwright/index.ts';
 import { evaluate, type EvidenceSnapshot, type Outcome } from '../src/index.ts';
 import { editNodes, removeNodes } from '../src/stress/index.ts';
 import {
@@ -22,6 +22,12 @@ import {
 } from './helpers.ts';
 
 const byId = (o: Outcome, id: string) => o.checks.find((c) => c.check === id)!;
+
+/** The task starts with these products in the cart: add them, then capture the baseline. */
+const cartAtStart = async (page: Page, ...products: string[]) => {
+  for (const p of products) await addToCart(page, p);
+  await captureBaseline(page, { probes: shopProbes(page) });
+};
 const req = (o: Outcome, id: string) => o.requirements.find((r) => r.requirement === id)!;
 
 /** Remove the accessible semantics of an element in the live page. */
@@ -181,9 +187,8 @@ test.describe('03 cart has two mugs (contains in an anchored scope)', () => {
 // ---------------------------------------------------------------------------
 test.describe('04 remove red mug (absence via count 0, keep the rest)', () => {
   const checks = loadChecks('04-remove-red-mug');
-  const setup = async (page: Page) => {
-    await addToCart(page, 'Blue Mug');
-    await addToCart(page, 'Red Mug');
+  const setup = async (page: Page, ...extra: string[]) => {
+    await cartAtStart(page, ...extra, 'Blue Mug', 'Red Mug');
     await openCart(page);
   };
   const remove = async (page: Page, product: string) => {
@@ -214,6 +219,30 @@ test.describe('04 remove red mug (absence via count 0, keep the rest)', () => {
     expect(req(outcome, 'R1').status).toBe('pass');
     expect(req(outcome, 'R2').status).toBe('fail');
     expect(outcome.verdict).toBe('fail');
+  });
+
+  test('removed another item the cart held before (over-completion) → fail on the baseline', async ({ page }) => {
+    await setup(page, 'Green Teapot');
+    await remove(page, 'Red Mug');
+    await remove(page, 'Green Teapot');
+    const { outcome } = await judge(page, checks, { probes: shopProbes(page) });
+    expect(req(outcome, 'R1').status).toBe('pass');
+    expect(byId(outcome, 'C3').status).toBe('fail');
+    expect(outcome.verdict).toBe('fail');
+  });
+
+  test('kept the Teapot that was there before → success', async ({ page }) => {
+    await setup(page, 'Green Teapot');
+    await remove(page, 'Red Mug');
+    await expectOutcome(page, checks, { probes: shopProbes(page) });
+  });
+
+  test('no baseline → "keep everything else" abstains', async ({ page }) => {
+    await setup(page);
+    await remove(page, 'Red Mug');
+    const { outcome } = await judge(page, checks, { probes: shopProbes(page), baseline: null });
+    expect(byId(outcome, 'C3')).toMatchObject({ status: 'abstain', reason: 'evidence_unavailable' });
+    expect(outcome.verdict).toBe('abstain');
   });
 
   test('an empty-looking table without its anchor does not count as "removed" → abstain', async ({ page }) => {
@@ -333,14 +362,14 @@ test.describe('07 express order (network evidence vs. spoofed confirmation)', ()
   const checks = loadChecks('07-express-order');
 
   test('express order placed → success', async ({ page }) => {
-    await addToCart(page, 'Blue Mug');
+    await cartAtStart(page, 'Blue Mug');
     await checkout(page, { name: 'Ada Lovelace', shipping: 'express' });
     const outcome = await expectOutcome(page, checks);
     expect(req(outcome, 'R3').status).toBe('pass');
   });
 
   test('standard shipping → fail', async ({ page }) => {
-    await addToCart(page, 'Blue Mug');
+    await cartAtStart(page, 'Blue Mug');
     await checkout(page, { name: 'Ada Lovelace', shipping: 'standard' });
     const { outcome } = await judge(page, checks);
     expect(outcome.verdict).toBe('fail');
@@ -348,7 +377,7 @@ test.describe('07 express order (network evidence vs. spoofed confirmation)', ()
   });
 
   test('page merely claims success (spoofed heading + URL) → fail on structured evidence', async ({ page }) => {
-    await addToCart(page, 'Blue Mug');
+    await cartAtStart(page, 'Blue Mug');
     await openCart(page);
     await page.evaluate(() => {
       history.pushState({}, '', '/orders/A9999');
@@ -361,7 +390,7 @@ test.describe('07 express order (network evidence vs. spoofed confirmation)', ()
   });
 
   test('validation error, no order → fail', async ({ page }) => {
-    await addToCart(page, 'Blue Mug');
+    await cartAtStart(page, 'Blue Mug');
     await page.goto('/checkout');
     await ready(page);
     await page.getByRole('radio', { name: 'Express' }).check();
@@ -370,8 +399,26 @@ test.describe('07 express order (network evidence vs. spoofed confirmation)', ()
     expect((await judge(page, checks)).outcome.verdict).toBe('fail');
   });
 
-  test('network not recorded → abstain', async ({ page }) => {
+  test('ordered more than the cart held before (an item added first) → fail', async ({ page }) => {
+    await cartAtStart(page, 'Blue Mug');
+    await addToCart(page, 'Red Mug');
+    await checkout(page, { name: 'Ada Lovelace', shipping: 'express' });
+    const { outcome } = await judge(page, checks);
+    expect(req(outcome, 'R1').status).toBe('pass');
+    expect(req(outcome, 'R4').status).toBe('fail');
+    expect(outcome.verdict).toBe('fail');
+  });
+
+  test('no baseline → the order cannot be compared with the cart → abstain', async ({ page }) => {
     await addToCart(page, 'Blue Mug');
+    await checkout(page, { name: 'Ada Lovelace', shipping: 'express' });
+    const { outcome } = await judge(page, checks);
+    expect(req(outcome, 'R4')).toMatchObject({ status: 'abstain', reason: 'evidence_unavailable' });
+    expect(outcome.verdict).toBe('abstain');
+  });
+
+  test('network not recorded → abstain', async ({ page }) => {
+    await cartAtStart(page, 'Blue Mug');
     await checkout(page, { name: 'Ada Lovelace', shipping: 'express' });
     const { outcome } = await judge(page, checks, { recorder: null });
     expect(outcome.verdict).toBe('abstain');
@@ -384,13 +431,13 @@ test.describe('08 delivery date (extract + date normalizer)', () => {
   const checks = loadChecks('08-delivery-date');
 
   test('express → 5 November 2026 → success', async ({ page }) => {
-    await addToCart(page, 'Red Mug');
+    await cartAtStart(page, 'Red Mug');
     await checkout(page, { name: 'Grace Hopper', shipping: 'express' });
     await expectOutcome(page, checks);
   });
 
   test('standard → 12 November 2026 → fail', async ({ page }) => {
-    await addToCart(page, 'Red Mug');
+    await cartAtStart(page, 'Red Mug');
     await checkout(page, { name: 'Grace Hopper', shipping: 'standard' });
     const { outcome } = await judge(page, checks);
     expect(byId(outcome, 'C2').status).toBe('fail');
@@ -398,7 +445,7 @@ test.describe('08 delivery date (extract + date normalizer)', () => {
   });
 
   test('date shown in another format is still read correctly (snapshot variants)', async ({ page }) => {
-    await addToCart(page, 'Red Mug');
+    await cartAtStart(page, 'Red Mug');
     await checkout(page, { name: 'Grace Hopper', shipping: 'express' });
     const { snapshot } = await judge(page, checks);
     const show = (s: EvidenceSnapshot, text: string) =>
@@ -419,7 +466,7 @@ test.describe('08 delivery date (extract + date normalizer)', () => {
   });
 
   test('summary region unlabelled → abstain', async ({ page }) => {
-    await addToCart(page, 'Red Mug');
+    await cartAtStart(page, 'Red Mug');
     await checkout(page, { name: 'Grace Hopper', shipping: 'express' });
     await strip(page, '#summary', { 'aria-label': null });
     const { outcome } = await judge(page, checks);

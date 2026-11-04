@@ -1,19 +1,19 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T10:18:26.989Z",
+ "recordedAt": "2026-11-04T23:21:47.078Z",
  "turns": {
   "sha256:7f7578efa17a52704b34d06ee1c30aa96d6bd4a237ad0ee4677fe4d548fc9432": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01XpCs76kbNSPQ1DGKSMw6rb",
+     "id": "toolu_01GFcHcHSxC2MAUAMRL5tmTG",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01ELbjQTKG8Hr36UEyMiWHQM",
+     "id": "toolu_01VduqKmK7mWZ8EVHuwTydog",
      "name": "network_log",
      "input": {}
     }
@@ -21,7 +21,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01XpCs76kbNSPQ1DGKSMw6rb",
+     "id": "toolu_01GFcHcHSxC2MAUAMRL5tmTG",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -30,7 +30,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01ELbjQTKG8Hr36UEyMiWHQM",
+     "id": "toolu_01VduqKmK7mWZ8EVHuwTydog",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -46,12 +46,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:12528227cc321883482cebc46937dd4a318e3277e7f471d4d12bc93c1e1cac21": {
+  "sha256:bc1250b747aca7ff976369b13d789eb8f568a95aa5ee364f4f4ef1108b1fab16": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01KyNvnBr3Q5PWaaskh8qotW",
+     "id": "toolu_01EwoKPamkBU3uz9munpBs6F",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -62,7 +62,7 @@
          1,
          2
         ],
-        "reasoning": "The server-side probe shows issue #1 still has assignee null. Bob is the assignee of issue #2 instead, and the only assign POST in the network log went to /issues/2/assign."
+        "reasoning": "Server-side probe shows issue #1 assignee is null; the agent instead POSTed to /issues/2/assign, assigning issue #2 to bob."
        }
       ]
      }
@@ -71,7 +71,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01KyNvnBr3Q5PWaaskh8qotW",
+     "id": "toolu_01EwoKPamkBU3uz9munpBs6F",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -85,7 +85,7 @@
          1,
          2
         ],
-        "reasoning": "The server-side probe shows issue #1 still has assignee null. Bob is the assignee of issue #2 instead, and the only assign POST in the network log went to /issues/2/assign."
+        "reasoning": "Server-side probe shows issue #1 assignee is null; the agent instead POSTed to /issues/2/assign, assigning issue #2 to bob."
        }
       ]
      }
@@ -93,18 +93,18 @@
    ],
    "usage": {
     "inputTokens": 2318,
-    "outputTokens": 155,
+    "outputTokens": 146,
     "cacheReadTokens": 1833,
     "cacheWriteTokens": 483
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:4f20a15dc2452ddcc3851d4abd4ba2a5f53f9ba86aa5ff3b34204f1e06349545": {
+  "sha256:544c1cdaeb2cf3c4b573bbf2e26e39200b9ac92145f87425c7743baea4b1ce43": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Jx1FdupcQm5mn3QnaMbTq4",
+     "id": "toolu_01KHztUoryzWxbuLmFSMpCTH",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -115,7 +115,7 @@
          1,
          2
         ],
-        "reasoning": "The server-side probe shows issue #1 still has assignee null. Bob is the assignee of issue #2 instead, and the only assign POST in the network log went to /issues/2/assign."
+        "reasoning": "Server-side probe shows issue #1 assignee is null; the agent instead POSTed to /issues/2/assign, assigning issue #2 to bob."
        }
       ]
      }
@@ -124,7 +124,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01Jx1FdupcQm5mn3QnaMbTq4",
+     "id": "toolu_01KHztUoryzWxbuLmFSMpCTH",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -138,17 +138,17 @@
          1,
          2
         ],
-        "reasoning": "The server-side probe shows issue #1 still has assignee null. Bob is the assignee of issue #2 instead, and the only assign POST in the network log went to /issues/2/assign."
+        "reasoning": "Server-side probe shows issue #1 assignee is null; the agent instead POSTed to /issues/2/assign, assigning issue #2 to bob."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2523,
-    "outputTokens": 148,
+    "inputTokens": 2514,
+    "outputTokens": 139,
     "cacheReadTokens": 2316,
-    "cacheWriteTokens": 205
+    "cacheWriteTokens": 196
    },
    "model": "claude-opus-5-5"
   }

@@ -1,7 +1,7 @@
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { expect } from '@playwright/test';
-import { captureSnapshot, EvidenceRecorder, test } from '../src/playwright/index.ts';
+import { captureBaseline, captureSnapshot, EvidenceRecorder, test } from '../src/playwright/index.ts';
 import { evaluate, type CheckSet, type EvidenceSnapshot } from '../src/index.ts';
 import { cutUtf8 } from '../src/snapshot/capture.ts';
 import { addToCart, ready } from './helpers.ts';
@@ -381,4 +381,76 @@ test('credential-like storage keys and cookie names are redacted; checks on them
   // keepStorage keeps a named key readable.
   const kept = await captureSnapshot(page, { keepStorage: ['authToken'] });
   expect(Object.values(kept.storage!.local)[0]!.authToken).toBe('eyJhbGciOi.secret');
+});
+
+test('a baseline captured before the agent acts joins later snapshots of the context', async ({ page }) => {
+  await page.goto('/');
+  await ready(page);
+  await page.evaluate(() => localStorage.setItem('theme', 'light'));
+  await addToCart(page, 'Blue Mug');
+  const cart = async () => (await page.request.get('/api/cart')).json();
+  const baseline = await captureBaseline(page, { probes: { cart } });
+  expect(baseline.url).toMatch(/\/$/);
+  expect(baseline.probes.cart).toMatchObject({ ok: true, value: { items: [{ name: 'Blue Mug' }] } });
+  expect(Object.values(baseline.storage!.local)[0]!.theme).toBe('light');
+  expect(baseline.redacted).toContain('cookie:sid'); // httpOnly, as in snapshots
+
+  await addToCart(page, 'Red Mug');
+  await page.evaluate(() => localStorage.setItem('theme', 'dark'));
+  const s = await captureSnapshot(page, { probes: { cart } });
+  expect(s.baseline).toEqual(baseline);
+  expect(s.probes.cart).toMatchObject({ ok: true, value: { items: [{}, {}] } });
+  // Leave it out, or pass another one.
+  expect((await captureSnapshot(page, { baseline: null })).baseline).toBeUndefined();
+  const other = { ...baseline, probes: {} };
+  expect((await captureSnapshot(page, { baseline: other })).baseline).toEqual(other);
+
+  const themeKept: CheckSet = {
+    schema: 'assay.checks/v1',
+    id: 't',
+    version: '1',
+    task: { instruction: 'Keep my theme.' },
+    requirements: [{ id: 'R1', kind: 'hard', text: 'kept', source: { field: 'instruction', quote: 'Keep my theme' } }],
+    checks: [
+      {
+        id: 'C1',
+        requirement: 'R1',
+        description: 'The theme is what it was before.',
+        assert: {
+          kind: 'value',
+          source: { from: 'storage', area: 'local', key: 'theme' },
+          expect: { sameAs: { source: { from: 'storage', area: 'local', key: 'theme', at: 'before' } } },
+        },
+      },
+    ],
+  };
+  expect(evaluate(themeKept, s).verdict).toBe('fail');
+  await page.evaluate(() => localStorage.setItem('theme', 'light'));
+  expect(evaluate(themeKept, await captureSnapshot(page)).verdict).toBe('success');
+});
+
+test('capturing a baseline again replaces the earlier one for later snapshots', async ({ page }) => {
+  await page.goto('/');
+  await ready(page);
+  await page.evaluate(() => localStorage.setItem('theme', 'light'));
+  const first = await captureBaseline(page);
+  await page.evaluate(() => localStorage.setItem('theme', 'dark'));
+  const second = await captureBaseline(page);
+  expect(Object.values(first.storage!.local)[0]!.theme).toBe('light');
+  expect(Object.values(second.storage!.local)[0]!.theme).toBe('dark');
+  expect((await captureSnapshot(page)).baseline).toEqual(second);
+});
+
+test('a baseline belongs to its browser context', async ({ page, browser }) => {
+  await page.goto('/');
+  await ready(page);
+  await captureBaseline(page);
+  const other = await browser.newContext();
+  try {
+    const p = await other.newPage();
+    await p.goto(page.url());
+    expect((await captureSnapshot(p)).baseline).toBeUndefined();
+  } finally {
+    await other.close();
+  }
 });

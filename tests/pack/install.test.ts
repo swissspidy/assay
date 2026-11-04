@@ -69,8 +69,9 @@ test('the installed library verifies a check set, and every entry point loads', 
   await writeFile(
     script,
     `import { readFileSync } from 'node:fs';
+import * as rootEntry from '${name}';
 import { evaluate, validateCheckSet, verify } from '${name}';
-import { captureSnapshot, expectOutcome, test, verifyPage } from '${name}/playwright';
+import { captureBaseline, captureSnapshot, expectOutcome, test, verifyPage } from '${name}/playwright';
 import { compileTask } from '${name}/compiler';
 import { stressTest } from '${name}/stress';
 import { anthropicModel, replayModel, runAgent } from '${name}/models';
@@ -97,9 +98,10 @@ console.log(JSON.stringify({
   correct: await verdict(${JSON.stringify(correct)}),
   wrong: await verdict(${JSON.stringify(wrong)}),
   evaluate: evaluate(checks, load(${JSON.stringify(correct)}).snapshot).verdict,
-  playwright: [captureSnapshot, expectOutcome, test, verifyPage].every((f) => typeof f === 'function'),
+  playwright: [captureBaseline, captureSnapshot, expectOutcome, test, verifyPage].every((f) => typeof f === 'function'),
   entries: [compileTask, stressTest, anthropicModel, replayModel, runAgent, metrics].every((f) => typeof f === 'function'),
   aiSdk: [model.id, turn.stop, turn.text],
+  rootLeaks: ['captureBaseline', 'captureSnapshot', 'EvidenceRecorder'].filter((k) => k in rootEntry),
 }));
 `,
   );
@@ -112,6 +114,7 @@ console.log(JSON.stringify({
     playwright: true,
     entries: true,
     aiSdk: ['mock:m', 'end_turn', 'hi'],
+    rootLeaks: [],
   });
 });
 
@@ -179,15 +182,16 @@ test('the installed type declarations typecheck a consumer', async () => {
   await writeFile(join(dir, 'tsconfig.json'), tsconfig('consumer.ts', false));
   await writeFile(
     join(dir, 'consumer.ts'),
-    `import { evaluate, verify, type CheckSet, type EvidenceSnapshot, type ModelClient, type Outcome } from '${name}';
-import type { ExpectOutcomeOptions } from '${name}/playwright';
+    `import { evaluate, verify, type Baseline, type CheckSet, type EvidenceSnapshot, type ModelClient, type Outcome } from '${name}';
+import type { BaselineOptions, ExpectOutcomeOptions } from '${name}/playwright';
 import type { CompileOptions } from '${name}/compiler';
 import type { StressReport } from '${name}/stress';
 import type { Metrics } from '${name}/eval';
 export const verdictOf = (cs: CheckSet, s: EvidenceSnapshot): Outcome['verdict'] => evaluate(cs, s).verdict;
 export const escalated = async (cs: CheckSet, s: EvidenceSnapshot, verifier: ModelClient) =>
   (await verify(cs, s, { verifier })).record;
-export const options: ExpectOutcomeOptions = { timeout: 0, requireLocked: true };
+export const options: ExpectOutcomeOptions = { timeout: 0, requireLocked: true, baseline: null };
+export const before = (b: Baseline, o: BaselineOptions): [string, boolean] => [b.url, o.storage ?? true];
 export type Used = [CompileOptions['rubric'], StressReport['rates']['variantsAccepted'], Metrics['balancedAccuracy']];
 `,
   );

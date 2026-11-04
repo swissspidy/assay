@@ -1,0 +1,126 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T23:06:32.655Z",
+ "turns": {
+  "sha256:6d01784a31eabf30c532458635666b8c77d9f2c3f3cb60ee4c0945920c226cbf": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01QDE3bbs5628DSTUjPxz6B3",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_012wsGaCMfU3jwhw45DCsGP9",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01QDE3bbs5628DSTUjPxz6B3",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_012wsGaCMfU3jwhw45DCsGP9",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1903,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1899
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:7dd3b76c0e0d69e02e8c6683e56c2f8f9fe0b9cc7b1958917307596269696213": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01EbsiBnFuT2dznDmbSE6HLe",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The final cart probe has no MUG-RED, and the log shows a DELETE request for /api/cart/items/MUG-RED."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "Before the task, the cart held Green Teapot, Blue Mug and Red Mug. Afterward, only Blue Mug is left. The agent also sent DELETE /api/cart/items/POT-GREEN, which removed the Green Teapot as well."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSsgUKEAgTGAI4AUIIdGhpbmtpbmcSDP8NCs94v1FUgNog7hoMxhMZQWe4URfpj5rEIjBC2XLvwXQmA9xhcP1iAm8tZHdRG2ZsCCdSWcmKIH33sauLciqYK2Fu9pYq/pkzqHUqzwSK7r08EJrh7hlNawRbhmyCVX7QyYaZGxVBCTitAnaM6PPWEpU0X/egaVCYLQXUYrJWc/DcFdTaUX0QaItKfED2iO3IxmOtIKlJwHtpLNb+Zisobzc7nEN8gmd3bGo3/wKhBSt2fZ7ZovqHkIuP/Dx4IWAXfz/ph/DGtjMMdT+u1qPUt/WaxkIjdx3002D8E5SPY8ajAnsCyGTaIETwZ8aPuPuxI4dv9SCQlaalIjD/Ps1yUqcI34p1hDhjQnJxD1RI0yn4fPx1CeVoMLzv9BaGCapeQiYgYGOHnrobi75tVSkXN10/nlLSOVJX1CYJ6IqTgTzsbO6xMBT1rD1Yyqc18QhSYbU2j7FfTN31xlHQbqXPl59FfrLD4GY9ZgRJN21jZadJ0bLGU3xkIFzezNQTJVCN564r5X6zBzISsjNkowugK7vL0MEqAr7Omz71JSyAODTsDu9JktVgc3Dx0fhXOs0TvorPF9PZYUOYM4aCe7Fg7caEZUbFVrLwrAHzS0aCGiQj9qWr2wHYBur36ki/gVU4tkS4hRZdv/XCvohsY8A+7r4YRY1xnPzyxjQXM7acrMHNgl62a4Ql2ZfNzovGDaXsq4lDcszKb+UIzLptZuDULgrHEPQgFWzafD2AQekJcSPCZWmNWnrXpREghy7X3NVJzO1OdJ4IMkJYOrEJa2j0uf42KZJXprH/4KkWdxExHW25EXKMnidSjVfCaDrVTVzxlpzi4zns8NRR1kEtTSOCFzrh5KI2QjLxS+jTH8hy011N+rcTqddx8h8+0z8YAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01EbsiBnFuT2dznDmbSE6HLe",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The final cart probe has no MUG-RED, and the log shows a DELETE request for /api/cart/items/MUG-RED."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "Before the task, the cart held Green Teapot, Blue Mug and Red Mug. Afterward, only Blue Mug is left. The agent also sent DELETE /api/cart/items/POT-GREEN, which removed the Green Teapot as well."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2753,
+    "outputTokens": 270,
+    "cacheReadTokens": 1899,
+    "cacheWriteTokens": 852
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

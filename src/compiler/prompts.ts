@@ -63,5 +63,17 @@ Your submission is also stress-tested: it must accept valid variants of the corr
 
 Explore before writing. Prefer few, strong checks over many weak ones. Every requirement needs at least one check.`;
 
+/**
+ * Appended to DISCOVERY_SYSTEM when a reference snapshot has a baseline, so the
+ * prompt (and the recordings keyed on it) only changes for tasks that have one.
+ */
+export const DISCOVERY_BASELINE = `## State before the task (baseline)
+Some references also hold a baseline: probe results and storage captured before the agent started (shown under "BEFORE THE TASK" by the probes and storage tools). A probe or storage source reads it with "at": "before", e.g. {from:"probe", probe:"cart", pointer:"/items", at:"before"}; without "at" it reads the state after the task. A run without a baseline makes such a check abstain.
+Use it for requirements that relate the end state to the start: "keep everything else", "order what is in my cart", "only change X". Compare the two states with a sameAs binding, never by copying values you saw before the task into literals: a literal only knows this reference's starting state.
+- normalizer {op:"items", where?: JSONSchema, pointer?: "/json/pointer"} turns a JSON array into an unordered collection: it keeps the items matching "where", maps each to the value at "pointer", and sorts them. Two collections are equal when they hold the same items in any order.
+- "everything else stays": the items after sameAs the items before without the removed one, e.g. source {from:"probe", probe:"cart", pointer:"/items"}, normalize [{op:"items"}], expect {sameAs: {source: {from:"probe", probe:"cart", pointer:"/items", at:"before"}, normalize: [{op:"items", where: {not: {properties: {name: {const: "Red Mug"}}, required: ["name"]}}}]}}.
+- "order what is in my cart": the order's items (from the order response or a probe) sameAs the cart's items before the task, both through {op:"items"}.
+- Use "pointer" to compare only the fields the task is about when other fields may legitimately differ between the two reads.`;
+
 export const DISCOVERY_NUDGE =
   'Continue exploring if needed, then call submit_checks with your checks. Every requirement needs at least one check.';

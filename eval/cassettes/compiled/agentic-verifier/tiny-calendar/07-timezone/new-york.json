@@ -1,19 +1,19 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T10:24:06.146Z",
+ "recordedAt": "2026-11-04T23:27:43.029Z",
  "turns": {
   "sha256:61d542210157b1276f8c0e923fafeab66aeee4d0cf20fb1d791b46a9b5709f56": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01NRUfiKNudrGiiZg9yh1SCN",
+     "id": "toolu_01PesdSPmQyGRzL6sPDu9cTf",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01VZTmGUnaQNtWC1gSHFTvKb",
+     "id": "toolu_01Dgw5PrEMzGf832eSa2avzZ",
      "name": "network_log",
      "input": {}
     }
@@ -21,7 +21,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01NRUfiKNudrGiiZg9yh1SCN",
+     "id": "toolu_01PesdSPmQyGRzL6sPDu9cTf",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -30,7 +30,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01VZTmGUnaQNtWC1gSHFTvKb",
+     "id": "toolu_01Dgw5PrEMzGf832eSa2avzZ",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -46,19 +46,19 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:6924cb24d397e7167ea4582047f8d713b632a42aac2cdd72ce841d9468d8b0b5": {
+  "sha256:a39f0c1c061a60cb8cdbbecacfd43527c3be6ff042f2bef766cc77b8451bea77": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_014zCrJrFuFZiXptSf5C3bYv",
+     "id": "toolu_01NyoApptV8mkWS3ZDGt74v6",
      "name": "network_entry",
      "input": {
       "seq": 3
      }
     },
     {
-     "id": "toolu_01QQDvfAZ3ky1WAP8hvdQ9fF",
+     "id": "toolu_01DRcVuvcdVwYv9177cns9ez",
      "name": "page_outline",
      "input": {}
     }
@@ -66,7 +66,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_014zCrJrFuFZiXptSf5C3bYv",
+     "id": "toolu_01NyoApptV8mkWS3ZDGt74v6",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -77,7 +77,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01QQDvfAZ3ky1WAP8hvdQ9fF",
+     "id": "toolu_01DRcVuvcdVwYv9177cns9ez",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -93,24 +93,24 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:d0d5daabff08617db512e356f60c4ba5287dedfc8a4b6480e88ebd5a8e5567d4": {
+  "sha256:f502972a30f36793fff5f6ca45ac0cce58bc20d062b9c1fa012d7c5d6529f32d": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01MrUJgqysfw1VD4aSTNE41K",
+     "id": "toolu_01H2nwMRfG2QkwvrQhkUP4bS",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
        {
-        "requirement": "the time zone setting is Berlin",
+        "requirement": "R1",
         "status": "fail",
         "cites": [
          1,
          3,
          4
         ],
-        "reasoning": "The server-side settings probe shows timezone \"America/New_York\". The only PUT /api/settings sent timezone \"America/New_York\", and the page's combobox shows \"New York\" selected, not Berlin."
+        "reasoning": "The server settings probe shows timezone \"America/New_York\". The only PUT to /api/settings sent and received back America/New_York, and the page's combobox still has \"New York\" selected, not Berlin."
        }
       ]
      }
@@ -120,11 +120,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQStAUKEAgTGAI4AUIIdGhpbmtpbmcSDExt0h/38AAwMyCGJxoMcsDzb9zMDIrE6/zTIjBFDjEx8Ge1OtILyulvtwc03Wrd+j/0gFH8bEsOxdfxo4+/XcNNBHjDnNlDIdwcUKcq0QT58Jz3tX7y3MeviiIApOh5JGoUH1ZnK0Ro3B+dCWjoj3m+nCLZzhnUjcuVpUYTQXApicPS2Et6wQsX/TJqO1RV0Xa7p/AxalQ0HZuWJJ08UzscN6a5NLzMo8vUSBWP3ySYuKikUwhdlXWBZp0tUnFHLUvA2SBAwcLP/4A60C4frcfiG+pnfzEzykMtN3HJQyRJImeS4rMPs6pXYoXxEpg49DbDE+Q+0jbXMFhjoFPiYQOzImEU86NNUkq5etOUMqNGBsUy2s531+M+rz2x2PrGS2HB4HiNu+z/8NU9Mdy34e/BzQUIKGnlGZefqOelfyS2IzB+e73UHYThUSPiin7Ha21yPi9ZcnroABB1Z1Ov6vnUMm9W3BS9M2v/VIGsEFIKvPnwOGk55JKMdR994PirJMDXvzP+qrRNr8UiyvwFzkoQjBRkvicQg7Ecn4vJE1VbkxDcbZOmJCdD+P6wqCXwefEPqVboWe07X0KMbwFl0mMkSVYYwZzWKNZb/ddlA7Of8cauKkTQc5N1+OZueAP2Z2TFQiEXBM5PUwrV5c3REhwIjVyJIbLjXhaLeaoa8cWxPAztaCpjrqdZos3L2Qnql9WU2NrWdHWYCrrZebAUO3pRgSVNmShYY/kpGqcqJJNVT264CDUbLlV4Fny2JEpey0X0mrRyhye7zpKwXs90kjaFg1UHw2WNy1/t1hZfxpH7J3Z97NhN8WtxiirDoTEwCaveP+6rcWUVhqJGqKby4aVu96zmkHMVx13pqV5rY9I4EuiFEZSldylpNn7o32WjKxgB"
+     "signature": "CAQSuAUKEAgTGAI4AUIIdGhpbmtpbmcSDH1uzvjeHsigG4F57BoMZjgaREkbIC5HokKXIjBToTVfDO5xMmxbWKZtuPZZhcavJykDUNKbqLg/cD1vgLyUrYVxagjli/RwDTudqccq1QQ6EeU25mwx+dSjbTs2qD/VkBXp7YbNVpPZ/sbcFSWo307EVGOikx1SAeIQoNeSXlFYhsWOTkdrPGwkxJMlKflLodLrFHspT9e4i6J7yxP197R2er1P5TGaNs9PhWxPTFSvrqD6BCbFuYGAMR890U5idKorfFkXVxmKVLx0hATRfaNqqGK4i4TggwQtLfnJ6KRnWrOHmA9lYnMjlUZefEehyYZj7q2DoFpY5SVaVIMmYW49+rq/eITnpombUKMeYSBSHcHZQ3OOEqc5Wf1o5waMw8r7XIYtwJk10oCmYecvoFhL0mrzcQaWsDXWMzlzljXwCQAJzzBhnf3DwVT9MrzdNNiRxpXOn+y13wUvsQZ9My0U2dyHHE2KtQ8CBE/SaLGvmiq+hCcFG/d5ITnnCtzsZKVmGjKA+8mV/GOtzWx43lOuKc/KaNjA4bo0ivSyasdQwzj/3nGWpbnppUtylEomC02VU5nPyBh+Sj5TOFzDtgeLDGAaP33jDlcp23De7Yh0ewELtlL0DjszVgTU3Ct0dmVelTTHs5MJwnIp/2BfYCfYduv8VmXhuOijtr3O0ErsLgSp3rZjsvMNE9GT7ZEEXZrFQm5BKai/HkmddT+yuNaIFrMBLRlFiSo+WTTLbWzCtL3z1ulWqP7qc2chrKBMIkkA/sfcFtVIE7fObEFMeCGPHg3Rm69iVKx9l91G64/6v3wOhxFpCTbogIDyI/4a90m01bOK8DAMlX+BYxgBubaE7PSXKOAfOyn4ST7pFrBK2A3l4ISyfFdQ3ZMpcynHPnbxjCgYAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01MrUJgqysfw1VD4aSTNE41K",
+     "id": "toolu_01H2nwMRfG2QkwvrQhkUP4bS",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -132,14 +132,14 @@
      "input": {
       "verdicts": [
        {
-        "requirement": "the time zone setting is Berlin",
+        "requirement": "R1",
         "status": "fail",
         "cites": [
          1,
          3,
          4
         ],
-        "reasoning": "The server-side settings probe shows timezone \"America/New_York\". The only PUT /api/settings sent timezone \"America/New_York\", and the page's combobox shows \"New York\" selected, not Berlin."
+        "reasoning": "The server settings probe shows timezone \"America/New_York\". The only PUT to /api/settings sent and received back America/New_York, and the page's combobox still has \"New York\" selected, not Berlin."
        }
       ]
      }
@@ -147,64 +147,9 @@
    ],
    "usage": {
     "inputTokens": 2894,
-    "outputTokens": 182,
+    "outputTokens": 172,
     "cacheReadTokens": 2333,
     "cacheWriteTokens": 559
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:d611356c76a34649c03b08d0768afd514331d53f098a191af689e632b50930ca": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_0172nTg7EsnxoomJcJGj18B3",
-     "name": "submit_verdict",
-     "input": {
-      "verdicts": [
-       {
-        "requirement": "R1",
-        "status": "fail",
-        "cites": [
-         1,
-         3,
-         4
-        ],
-        "reasoning": "The server-side settings probe shows timezone \"America/New_York\". The only PUT /api/settings sent timezone \"America/New_York\", and the page's combobox shows \"New York\" selected, not Berlin."
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_0172nTg7EsnxoomJcJGj18B3",
-     "name": "submit_verdict",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "verdicts": [
-       {
-        "requirement": "R1",
-        "status": "fail",
-        "cites": [
-         1,
-         3,
-         4
-        ],
-        "reasoning": "The server-side settings probe shows timezone \"America/New_York\". The only PUT /api/settings sent timezone \"America/New_York\", and the page's combobox shows \"New York\" selected, not Berlin."
-       }
-      ]
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 3126,
-    "outputTokens": 162,
-    "cacheReadTokens": 2892,
-    "cacheWriteTokens": 232
    },
    "model": "claude-opus-5-5"
   }

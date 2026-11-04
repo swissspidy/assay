@@ -162,20 +162,20 @@
           "content-type": "application/json"
         },
         "requestBody": {
-          "sku": "MUG-BLUE",
+          "sku": "MUG-RED",
           "qty": 1
         },
         "responseBody": {
           "items": [
             {
-              "sku": "MUG-BLUE",
-              "name": "Blue Mug",
+              "sku": "MUG-RED",
+              "name": "Red Mug",
               "qty": 1,
-              "price": 12,
-              "lineTotal": 12
+              "price": 9.5,
+              "lineTotal": 9.5
             }
           ],
-          "total": 12
+          "total": 9.5
         }
       },
       {
@@ -213,14 +213,59 @@
         "responseBody": {
           "items": [
             {
-              "sku": "MUG-BLUE",
-              "name": "Blue Mug",
+              "sku": "MUG-RED",
+              "name": "Red Mug",
               "qty": 1,
-              "price": 12,
-              "lineTotal": 12
+              "price": 9.5,
+              "lineTotal": 9.5
             }
           ],
-          "total": 12
+          "total": 9.5
+        }
+      },
+      {
+        "seq": 7,
+        "method": "GET",
+        "url": "http://localhost:4173/cart",
+        "resourceType": "document",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/html; charset=utf-8"
+        }
+      },
+      {
+        "seq": 8,
+        "method": "GET",
+        "url": "http://localhost:4173/app.js",
+        "resourceType": "script",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/javascript"
+        }
+      },
+      {
+        "seq": 9,
+        "method": "GET",
+        "url": "http://localhost:4173/api/cart",
+        "resourceType": "fetch",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "application/json"
+        },
+        "responseBody": {
+          "items": [
+            {
+              "sku": "MUG-RED",
+              "name": "Red Mug",
+              "qty": 1,
+              "price": 9.5,
+              "lineTotal": 9.5
+            }
+          ],
+          "total": 9.5
         }
       }
     ],
@@ -250,20 +295,78 @@
         "value": {
           "items": [
             {
-              "sku": "MUG-BLUE",
-              "name": "Blue Mug",
+              "sku": "MUG-RED",
+              "name": "Red Mug",
               "qty": 1,
-              "price": 12,
-              "lineTotal": 12
+              "price": 9.5,
+              "lineTotal": 9.5
             }
           ],
-          "total": 12
+          "total": 9.5
         }
       },
       "latestOrder": {
         "ok": false,
         "error": "/api/orders/latest → 404"
+      },
+      "settings": {
+        "ok": true,
+        "value": {
+          "newsletter": false
+        }
       }
+    },
+    "baseline": {
+      "capturedAt": "1970-01-01T00:00:00.000Z",
+      "url": "http://localhost:4173/cart",
+      "storage": {
+        "cookies": [
+          {
+            "name": "sid",
+            "value": {
+              "redacted": true
+            },
+            "domain": "localhost",
+            "path": "/",
+            "httpOnly": true,
+            "secure": false
+          }
+        ],
+        "local": {
+          "http://localhost:4173": {}
+        },
+        "session": {
+          "http://localhost:4173": {}
+        }
+      },
+      "probes": {
+        "cart": {
+          "ok": true,
+          "value": {
+            "items": [
+              {
+                "sku": "MUG-RED",
+                "name": "Red Mug",
+                "qty": 1,
+                "price": 9.5,
+                "lineTotal": 9.5
+              }
+            ],
+            "total": 9.5
+          }
+        },
+        "latestOrder": {
+          "ok": false,
+          "error": "/api/orders/latest → 404"
+        },
+        "settings": {
+          "ok": true,
+          "value": {
+            "newsletter": false
+          }
+        }
+      },
+      "redacted": ["cookie:sid"]
     },
     "meta": {
       "capturer": "assay/0.1.0",

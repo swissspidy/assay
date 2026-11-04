@@ -21,6 +21,12 @@ export interface RecordedRequirement {
   decidedBy: 'checks' | 'verifier' | 'none';
   reason?: AbstainReason | string;
   /**
+   * Set when a verifier was given: why the requirement was escalated ("policy", or
+   * "onFail" when its failed checks asked for it), or "kept" when a failed check's
+   * `onFail: "keep"` kept a failure the policy would have escalated.
+   */
+  escalation?: 'policy' | 'onFail' | 'kept';
+  /**
    * What decided it: observed check evidence, or the tool outputs the verifier
    * cited (labelled verifier-cited). Never the model's prose or the agent's claims.
    */
@@ -51,7 +57,15 @@ export interface OutcomeRecord {
   snapshot: { digest: string; url: string; capturedAt: string; file?: string };
   verdict: Verdict;
   requirements: RecordedRequirement[];
-  checks: { id: string; requirement: string; status: Status; reason?: AbstainReason; message: string }[];
+  checks: {
+    id: string;
+    requirement: string;
+    status: Status;
+    reason?: AbstainReason;
+    message: string;
+    /** The check's own escalation setting, when it has one. */
+    onFail?: 'escalate' | 'keep';
+  }[];
   drift: { check: string; locator: string }[];
   escalation?: {
     policy: { on: ('abstain' | 'fail')[]; includeSoft: boolean };

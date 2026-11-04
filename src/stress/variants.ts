@@ -15,6 +15,7 @@ import type {
   Normalizer,
   NetworkEntry,
   AXNode,
+  ProbeResult,
   ValueSource,
 } from '../types.ts';
 import { AXIndex, readNodeField, resolveTarget } from '../runtime/axindex.ts';
@@ -149,13 +150,17 @@ function mapBodies(s: EvidenceSnapshot, fn: (v: Json) => Json): EvidenceSnapshot
     ...(isObj(e.requestBody) ? { requestBody: apply(e.requestBody) } : {}),
     ...(isObj(e.responseBody) ? { responseBody: apply(e.responseBody) } : {}),
   }));
-  const probes = Object.fromEntries(
-    Object.entries(s.probes).map(([k, p]) => [
-      k,
-      p.ok && isObj(p.value) ? { ok: true as const, value: apply(p.value) } : p,
-    ]),
-  );
-  return changed ? { ...s, network: network ?? null, probes } : null;
+  const mapProbes = (ps: Record<string, ProbeResult>) =>
+    Object.fromEntries(
+      Object.entries(ps).map(([k, p]) => [
+        k,
+        p.ok && isObj(p.value) ? { ok: true as const, value: apply(p.value) } : p,
+      ]),
+    );
+  const probes = mapProbes(s.probes);
+  // The API's shape is the same before and after the task, so the baseline gets the same edit.
+  const baseline = s.baseline ? { ...s.baseline, probes: mapProbes(s.baseline.probes) } : undefined;
+  return changed ? { ...s, network: network ?? null, probes, ...(baseline ? { baseline } : {}) } : null;
 }
 
 const reverseArrays = (v: Json): Json =>

@@ -50,6 +50,18 @@ const { outcome } = await verify(checks, loadSnapshot(readFileSync('snapshot.jso
 console.log(formatOutcome(outcome));
 ```
 
+When a check compares the end state with the start ("keep everything else", "order what is in my
+cart"), capture a baseline after setting up the starting state and before the agent acts. Later
+snapshots in the same browser context include it:
+
+```ts
+import { captureBaseline } from '@swissspidy/assay/playwright';
+
+await captureBaseline(page, { probes }); // probe results and storage before the task
+await runMyAgent(page, 'Remove the Red Mug from my cart, but keep everything else.');
+await expectOutcome(page, checks, { probes });
+```
+
 `verify` validates the check set first and throws `CheckSetError` if it is invalid. `evaluate` is
 the same check run without validation or a record, for hot loops.
 
@@ -84,6 +96,25 @@ the same check run without validation or a record, for hot loops.
   source via `sameAs`), `url`, `request`, and `allOf`/`anyOf`. Normalizers parse numbers, money,
   dates and date-times (`datetime`, compared as instants; `approx` on them is in minutes). The JSON
   Schema is exported as `checkSetSchema`; `validateCheckSet` adds semantic checks.
+
+- **Baseline.** A probe or storage source with `"at": "before"` reads the state before the task
+  (`captureBaseline`); without a baseline such a check abstains. The `items` normalizer turns a JSON
+  array into an unordered collection (filtered by a JSON Schema `where`, projected by a `pointer`),
+  so "keep everything else" is the cart after `sameAs` the cart before, minus the removed item:
+
+  ```json
+  {
+    "kind": "value",
+    "source": { "from": "probe", "probe": "cart", "pointer": "/items" },
+    "normalize": [{ "op": "items" }],
+    "expect": {
+      "sameAs": {
+        "source": { "from": "probe", "probe": "cart", "pointer": "/items", "at": "before" },
+        "normalize": [{ "op": "items", "where": { "not": { "properties": { "name": { "const": "Red Mug" } } } } }]
+      }
+    }
+  }
+  ```
 
 - **Pass, fail, abstain.** Checks combine with three-valued logic. A requirement passes when its
   checks pass; the run succeeds when every hard requirement passes. Abstain is never turned into a
@@ -162,6 +193,10 @@ const { outcome, record, written } = await verify(locked, snapshot, {
 });
 ```
 
+By default only abstained hard requirements escalate; `policy: { on: ['abstain', 'fail'] }` also
+sends failures. A check known to be brittle can set `"onFail": "escalate"`, and a robust one
+`"onFail": "keep"`: a failed requirement escalates only when every check that failed it allows it.
+
 The verifier sees only the escalated requirements, gets read-only tools, and must cite the tool
 outputs it relies on; uncited verdicts are rejected. Its decisions are merged into the outcome and
 marked `decidedBy: "verifier"`. The outcome record (`assay.record/v1`) keeps who decided each
@@ -207,16 +242,17 @@ request changed. Both are in `@swissspidy/assay/models`.
 ## How well it works
 
 Three small example apps (`examples/tiny-shop`, `tiny-tracker`, `tiny-calendar`) provide 30 tasks
-and 123 labelled runs: correct, wrong item, partial, undone, over-completion, and adversarial pages
-that only claim success. Each task was compiled from one correct run; on the 93 held-out runs:
+and 126 labelled runs: correct, wrong item, partial, undone, over-completion, and adversarial pages
+that only claim success. Each task was compiled from one correct run; on the 96 held-out runs:
 
-| System           | Balanced accuracy | Cost / run | Model at run time |
-| ---------------- | ----------------- | ---------- | ----------------- |
-| compiled checks  | 1.000             | $0         | no                |
-| LLM judge        | 0.927             | $0.0119    | yes               |
-| agentic verifier | 0.942             | $0.0273    | yes               |
+| System           | Balanced accuracy | TPR   | TNR   | Cost / run | Latency (median / p95) | Model at run time |
+| ---------------- | ----------------- | ----- | ----- | ---------- | ---------------------- | ----------------- |
+| compiled checks  | 1.000             | 1.000 | 1.000 | $0         | 0.3 ms / 4.6 ms        | no                |
+| LLM judge        | 0.906             | 0.933 | 0.879 | $0.0119    | 4.3 s / 10.0 s         | yes               |
+| agentic verifier | 0.976             | 0.967 | 0.985 | $0.0279    | 8.9 s / 14.4 s         | yes               |
 
-The LLM judge accepted 3 of 8 adversarial pages; the checks and the verifier rejected all of them.
+The LLM judge accepted 3 of 8 adversarial pages, and all 3 runs that changed the starting cart
+wrongly; the checks and the verifier rejected all of them.
 Full results: [eval/results/compiled/REPORT.md](eval/results/compiled/REPORT.md). Against simulated
 later releases of each app (renamed copy, new layout, extra API fields, a real regression), checks
 written for the first release give no wrong verdict: they abstain where renamed text breaks an

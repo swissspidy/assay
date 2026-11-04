@@ -58,6 +58,8 @@ A snapshot is a single JSON document:
   "network": [ /* NetworkEntry */ ] | null,      // null = not recorded
   "storage": { "cookies": [...], "local": {...}, "session": {...} } | null,
   "probes":  { "latestOrder": { "ok": true, "value": { ... } } },
+  "baseline": { "capturedAt": "...", "url": "...", "storage": {...} | null,   // optional: state before
+                "probes": { "cart": { "ok": true, "value": { ... } } }, "redacted": [] },  // the task (§1.1)
   "meta":    { "capturer": "assay/0.1.0", "redacted": ["cookie:sid"] }
 }
 ```
@@ -191,7 +193,43 @@ so the check set stays data. The adapter is code, but it lives with the
 environment, not with the checks.
 
 **Digest.** `sha256` of the canonical JSON (sorted keys, no whitespace) of the
-snapshot with `capturedAt` removed. Outcome records cite this digest.
+snapshot with `capturedAt` (and the baseline's `capturedAt`) removed. Outcome
+records cite this digest.
+
+#### 1.1 Baseline: the state before the task
+
+A snapshot is taken at the end of a run, so on its own it cannot say what
+changed. Some requirements are only about change: "remove the Red Mug, but keep
+everything else" (which items were there?) and "order what is in my cart" (the
+server empties the cart at checkout). A check compiled from one reference can
+only name the items that reference happened to have, so a run that also removes
+another item passes.
+
+`captureBaseline(page, { probes })` captures probe results, storage and the page
+URL once the task's starting state is set up and before the agent acts. Snapshots
+taken later in the same browser context carry it as `baseline` (the Playwright
+`test` fixture needs nothing else; `captureSnapshot` and `expectOutcome` also take
+`baseline` explicitly, and `null` leaves it out). A probe or storage source reads
+it with `"at": "before"` (§2.4). The default is `"after"`, the end state.
+
+- Only probes and storage. They are the structured state a task changes. The
+  page, the accessibility tree and the network log of the start are not kept: the
+  page before the task is rarely the page that shows the outcome, and the network
+  log already starts with the browser context (requests made while setting up the
+  starting state stay in it).
+- Redaction applies as in the end snapshot; the baseline lists its own
+  `redacted` keys.
+- A check that reads the baseline of a snapshot without one abstains
+  (`evidence_unavailable`), as for any channel that was not captured. So does a
+  probe that was not run before the task.
+- Storage keys without an `origin` resolve against the final page's origin, as
+  for the end state; capture the baseline on a page of the app's origin.
+
+**Versioning.** The schema stays `assay.snapshot/v1`. `baseline` is an optional,
+additive key and is left out (not `null`) when there is none, so snapshots and
+digests written before it are unchanged and stay valid. A reader that predates it
+ignores the key, and a check set that reads it (`at`) does not validate there, so
+no reader can silently evaluate `at: "before"` as the end state.
 
 **Scope limits of v1.** Main frame only: no iframes, no shadow-DOM-specific
 handling beyond what `ariaSnapshot` exposes. One page per snapshot. State that
@@ -244,7 +282,8 @@ network log, not by navigating at check time (see "Rejected alternatives").
 `task.instruction` or `task.outcomes` (after case-folding and whitespace
 normalization). The validator rejects requirements it can't trace. Every
 check names exactly one requirement. A requirement is `hard` (it decides the
-overall verdict) or `soft` (reported only).
+overall verdict) or `soft` (reported only). A check may also say what escalation does when it
+fails (`"onFail": "escalate" | "keep"`, ADR 0004).
 
 #### 2.1 Anchors vs. assertions
 
@@ -343,15 +382,18 @@ type ValueSource =
   | { from: 'text'; scope?: Target; pattern: string; flags?: string; group?: number | string }
   | { from: 'url'; part: 'href' | 'origin' | 'pathname' | 'search' | 'hash' | { param: string } }
   | { from: 'request' | 'response'; match: RequestMatch; pointer?: string; pick?: 'only' | 'first' | 'last' }
-  | { from: 'storage'; area: 'cookie' | 'local' | 'session'; key: string; origin?: string }
-  | { from: 'probe'; probe: string; pointer?: string };
+  | { from: 'storage'; area: 'cookie' | 'local' | 'session'; key: string; origin?: string; at?: 'after' | 'before' }
+  | { from: 'probe'; probe: string; pointer?: string; at?: 'after' | 'before' };
 ```
+
+`at: "before"` reads the baseline (§1.1); the validator warns about a check that
+reads only the baseline, since that does not depend on what the agent did.
 
 `pointer` is an RFC 6901 JSON Pointer into a JSON body or probe value.
 `pick` defaults to `only`: if several requests match, the value is
 ambiguous and the check abstains. `last` is for "the final state was saved".
 
-A `value` check reads, then normalizes, then compares. Accessible names and text (`from: "node"`, fields `name` and `text`) are canonicalized (NFC, whitespace collapsed) before the normalizers run, as in §2.3. Control values, URLs and the `text` channel (`from: "text"`, which keeps line breaks) are read verbatim. The validator warns about `extract` and `replace` patterns on names or text that expect raw whitespace. **Abstain means the
+A `value` check reads, then normalizes, then compares. Accessible names and text (`from: "node"`, fields `name` and `text`, and the text of a `from: "text"` scope, which is derived from them) are canonicalized (NFC, whitespace collapsed) before the normalizers run, as in §2.3. Control values and URLs are read verbatim; the unscoped `text` channel keeps line breaks and collapses other runs of whitespace to one space. The validator warns about `extract` and `replace` patterns on names or text that expect raw whitespace. **Abstain means the
 value couldn't be determined.** That covers a missing anchor, no matching
 request, a missing pointer path, a regex that doesn't match, a redacted
 value, or a normalizer that can't parse the input. **Fail means the value
@@ -401,6 +443,7 @@ parsing depends on them. Checks never read host settings.
 | `currency {locale, currency?}`                                                    | string → money `{amount, currency}`       | Symbol or ISO code before or after the amount. An ambiguous symbol (`$`, `¥`, `kr`) resolves through `currency`. A symbol that contradicts it gives the symbol's currency, so the comparison fails. An ambiguous symbol without `currency` ⇒ `normalize_failed`                                                                                                 |
 | `date {locale, timezone?}`                                                        | string → `"YYYY-MM-DD"`                   | ISO dates, numeric dates in the locale's field order, and English or locale month names. Two-digit years, relative dates ("tomorrow") and invalid days ⇒ `normalize_failed`. An ISO datetime with an offset is converted to `timezone` (required in that case)                                                                                                  |
 | `datetime {locale, timezone?}`                                                    | string → instant `"YYYY-MM-DDTHH:MM:SSZ"` | ISO date-times and the localized forms `date` accepts with a time of day (`14:30`, `2:30 PM`, seconds optional). An offset in the value (`Z`, `+01:00`, `UTC`, `GMT+1`) decides. Without one the wall time is read in `timezone`; no timezone, a time skipped or repeated by a DST change, a zone abbreviation (`CET`, `EST`) or two times ⇒ `normalize_failed` |
+| `items {where?, pointer?}`                                                        | Json array → Json array                   | the array as an unordered collection: keeps items matching the JSON Schema `where`, maps each to the value at `pointer`, sorts by canonical JSON. Not an array ⇒ `type_mismatch`; an item without `pointer` ⇒ `normalize_failed` (see 2.6.2)                                                                                                                    |
 | `json`                                                                            | string → Json                             | parse failure ⇒ `normalize_failed`                                                                                                                                                                                                                                                                                                                              |
 | `boolean`                                                                         | string → boolean                          | true/false/yes/no/on/off/1/0                                                                                                                                                                                                                                                                                                                                    |
 
@@ -488,6 +531,44 @@ is about the backend state itself.
 
 Equality is the only operator. Tolerances across sources (a page that shows
 minutes and a probe with seconds) are left out until a task needs them.
+
+##### 2.6.2 Comparing with the state before the task
+
+With a baseline, `sameAs` relates the end state to the start:
+
+```jsonc
+// "Remove the Red Mug from my cart, but keep everything else"
+{
+  "kind": "value",
+  "source": { "from": "probe", "probe": "cart", "pointer": "/items" },
+  "normalize": [{ "op": "items" }],
+  "expect": {
+    "sameAs": {
+      "source": { "from": "probe", "probe": "cart", "pointer": "/items", "at": "before" },
+      "normalize": [
+        {
+          "op": "items",
+          "where": { "not": { "properties": { "name": { "const": "Red Mug" } }, "required": ["name"] } },
+        },
+      ],
+    },
+  },
+}
+// "Order what is in my cart": the order response's /items sameAs probe cart /items at before, both through items.
+```
+
+"Everything else stays" is a statement about a collection: the items after are
+the items before, minus the removed one, in any order. `items` is the one
+normalizer this needs. It filters with JSON Schema, which the DSL already uses to
+match JSON (request bodies, `schema`), projects with a JSON Pointer, which sources
+already use, and sorts, so the comparison is a multiset comparison and does not
+depend on the order an API happens to return. A comparison mode on `sameAs`
+(subset, difference) was the alternative. It would add operators whose meaning
+depends on the operand, while a normalizer keeps `sameAs` plain equality and works
+on either side, with literals too (`items` then `equals`). `pointer` is for fields
+that may legitimately differ between the two reads; whole items compare
+everything, so a changed quantity also fails "keep everything else". When order
+matters, compare without `items`.
 
 #### 2.7 Results and aggregation
 
@@ -631,6 +712,6 @@ in three places:
 
 ## Open questions (later milestones)
 
-- An escalation policy per check (`onAbstain`, `onFail: "escalate"`).
-  Locking metadata (`locked: {by, at, digest}`, ADR 0004) and compiler
-  provenance (`compiled: {compiler, model, modelsUsed, at}`, ADR 0002) are in.
+None. Locking metadata (`locked: {by, at, digest}`, ADR 0004), compiler
+provenance (`compiled: {compiler, model, modelsUsed, at}`, ADR 0002) and a
+per-check escalation setting (`onFail`, ADR 0004) are in.

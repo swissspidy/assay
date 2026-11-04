@@ -1,27 +1,41 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T09:35:23.451Z",
+ "recordedAt": "2026-11-04T23:07:52.799Z",
  "turns": {
-  "sha256:8a59ef97a242ba09f6d83ac229ac9dafa496284750fff16cd9a35576efcebf92": {
+  "sha256:545db3647d6d0cd8711f460b902e0d8d329faa990fbc831b3508f414c588e82a": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01TVLURTbCsmfTjxTEpRzuaz",
+     "id": "toolu_01TcbpcREnEgKfoSBSwjjKx1",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01UYfnY2dWxAJsk5pNjCuBA6",
      "name": "page_outline",
      "input": {}
     },
     {
-     "id": "toolu_0161xiRFfsfjKoNBWDtWmbxJ",
-     "name": "probes",
+     "id": "toolu_01TsXBsZ6fjRdSmxfUVmT19i",
+     "name": "network_log",
      "input": {}
     }
    ],
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01TVLURTbCsmfTjxTEpRzuaz",
+     "id": "toolu_01TcbpcREnEgKfoSBSwjjKx1",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01UYfnY2dWxAJsk5pNjCuBA6",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -30,8 +44,8 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_0161xiRFfsfjKoNBWDtWmbxJ",
-     "name": "probes",
+     "id": "toolu_01TsXBsZ6fjRdSmxfUVmT19i",
+     "name": "network_log",
      "caller": {
       "type": "direct"
      },
@@ -39,63 +53,52 @@
     }
    ],
    "usage": {
-    "inputTokens": 1866,
-    "outputTokens": 49,
+    "inputTokens": 1914,
+    "outputTokens": 72,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 1862
+    "cacheWriteTokens": 1910
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:3eeb4e692c5f7d59b6e2373b85c6b9ddd4c577ef3065f0616f6164bea7a54a00": {
+  "sha256:db62d98e6f3a6b5332a31cb443fedfd0c0ef36a44fdcc26167641cb01137a4bf": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_014UnTm4NH6LCmWNzFHuFMv4",
-     "name": "network_log",
-     "input": {}
+     "id": "toolu_01GitdBVHnQkpjkvqJPowU32",
+     "name": "network_entry",
+     "input": {
+      "seq": 3
+     }
+    },
+    {
+     "id": "toolu_01QVrgdxitYkeyomzBAzH5kR",
+     "name": "network_entry",
+     "input": {
+      "seq": 9
+     }
     }
    ],
    "raw": [
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSwgYKEAgTGAI4AUIIdGhpbmtpbmcSDA+tGAJqQ+qlAhUB7RoMWQYVSGm1GUKTLoglIjAkxxhhhirPEZAki891Qgb0ZFLBTTjoehOccEsw8idXOQfIxfJB7zirxNIu+p4Nb4kq3wXTGvpalOm0Rk0yE8ptpdE2r4xyTKX26IlB86+FCv4Us35Qs57lOSJicqoaOMiRIstC/oXgzCXtPHfdHZqQxebrZERIni8Ljoz60yx0yQZ3aE0doRJj/3BG0uNX8xU7wGUatbGAO+v2ZC8Tbl+HJ200Asw79jiGCwNoCksKSVlyqYiZshJ/nHfzSMOBLWlMgSlHNN0PJH133xyu5tT6M74/CB3LzbQTd2+ZzwtV9Go3sHxKVt/48Ql+Qye7m46k/kU6ql537WxcqG6DEzrUtrQ9KTgxF/CnAqL6mY334t5jGNegTvPG77jrL31kCTctrN7336+Pqvc36IJbq6CH1GJyKX1deZ8AprP3Gsn7XmhLg5/4BZNFiQjgi8cBvzpVWLo034ZBJKWOdobolzD2JPJFJ04uiq3YrDPX6UW5GVSAdvwAsCUKRarXwn72id+flMaA80todS0qDBkapdBk0+YXnop11U9kcmX4IOpOcc8nIqD7uavAwXwNEuI3QnBT5igvln9hIUANvdmsV6oyk2tFzqwNqwhKhglth9h4EfVNE1F/Nu8LwSEUQpyGCleSEetYeuP7AIjD8jJ6EGBE4ggtCtVg3fMrntGIDPblSCVbb8+fr83UKpmjVfW9I2FszHbxzC4Jvx29veCZ7wKEHBMq9Zy3XAJ5Y6YTj+SC4uOeYgFgtID7Zp/5nYlnWi5PoBfEWvbYeRClkq1PaJQo2rqFvF1VD/3YlxgCmr18v1SFGGhmjf9frgwL+6x6nFI+xH7FYDQHl3PSAzVKyM0XIEKsLION1WMA20a9mfvJY12XodRDDbW5yKi+pWUwL7YCEOwibr1XyHvPCvOwzlJeya7++Eicb3E4UX227EMphJ0wiWgaeiY3K6D8ix2vLsl2LXla6vwrQyS1BqwoZ/3JdxnEfK7Ptq3MXR/L98YbgZNydchnYdjJfvcJZN0YRXe2w9S1J33xNrSLABpm/1PgwikYAQ=="
+     "signature": "CAQSmAcKEAgTGAI4AUIIdGhpbmtpbmcSDKDXfisFWKexXDK3CRoM0o2m2SteiYDp9mmKIjDb1MIYlYEi8mKlKZYIW5LCda8X7DqQ34QYh0wyqX1wI3kBjabkN7MUGwikvK3siHYqtQZ3i+2q/z8vT9bh0hJI3Ate41UIq3jTe4Ez+OK+tfRJ0jUsL3iUC85JeQmQbF0VdRmQz6hQRQRGyhQbg3pCdgjyKgekfmjG11RZ6BjE395jqykga1X54E2sVnzxppmjKlg+UEJ85hpqu/Vm5ywgrs262rVfgKWM2BNT/iOlAhvjYrNCZrSEDA9UklUknWiSO68o+j+kF4dwRJOGJSJIjAwzRf/wZySX1YbuP46jxkTxYGER2ZPdyqCsiPb96xbRrTLzoM7H+UKf/MiIbiGiaBfk6v0pZvnRFhHYxzzfxhMRsltFI2Gyd+DU8atCnOEo00JNTAZTbx/Grrcydb6oJDsnzAdAAYmf6Tv9LoU4SloOlBjVWuveeZC3bzgOB9zWgJOSv+rmjhKaprCaXF+pcdU+kYqx4H+CpPWgfJyIxh8k6pqMcwEm20ixiHo4djMKtqhrvLt/SoX6eIuFrBu3tmOzm8LOI/1IjOvY/izq/bHi0zh7gWuaYALIrbCdl8TkFzZB7PNrQ/C8oiElaYaBw0d+zmENZcNqxPyIv6iiegc6jA9x1AiAuyqlDk+thbLV2WMjTGyBxybi72LL1YP7Nvu+1in3mlpCDzSQokliH87BY7PV3iCPCAolqqVKQwEJ9eIcHejKDvRyjZ6zCmYVmbqwb6pHi4G0tGoNsQohibOfQ2/S45uAggOes69AKC/iwOjIOZJlYrbWdIKWfuHgbqyQXIWZsfvq5GzYtjRPr77sTEEsMJ7e8Lb1jtuNsGL6fnBZwYHbCsKErMjbGW1GrWe60geleG5zGQRVn7tE6USLE9M66wmqwZZKDVhFZ/CdLuPdZcw+OHZ9H/pOK6E1q8TDONIezAajl3XF5I/ZcrguxhTLWaBYLHUo9LFjMnJr5ujWyvmN1c+1ruLI1h/Ayvaj+FuVgwxRarySDMg8mq74/Fm3S45C94YrIVngupL7JLZUZ2L1bnu44LVgjPyedahNm+WKfpGTdDg9zL/2hIgFzp3gVqwkntUbUoQDqL2FeR/JuIkwSRLVfmCa72t1iLYfsjaWJ3vzm/hidp/KAyQzNdqNgQEmD+DZvsTCPWnoMqdKAa+AwxgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_014UnTm4NH6LCmWNzFHuFMv4",
-     "name": "network_log",
+     "id": "toolu_01GitdBVHnQkpjkvqJPowU32",
+     "name": "network_entry",
      "caller": {
       "type": "direct"
      },
-     "input": {}
-    }
-   ],
-   "usage": {
-    "inputTokens": 2446,
-    "outputTokens": 103,
-    "cacheReadTokens": 1862,
-    "cacheWriteTokens": 582
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:7f8ddd8bb12912bfaf1e496c82eda13ebc0d4e1e7fe21de325f249ecf8c19dd3": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_013acnP8VvxRgL338cxHDjXA",
-     "name": "network_entry",
      "input": {
-      "seq": 9
+      "seq": 3
      }
-    }
-   ],
-   "raw": [
+    },
     {
      "type": "tool_use",
-     "id": "toolu_013acnP8VvxRgL338cxHDjXA",
+     "id": "toolu_01QVrgdxitYkeyomzBAzH5kR",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -106,19 +109,19 @@
     }
    ],
    "usage": {
-    "inputTokens": 2779,
-    "outputTokens": 49,
-    "cacheReadTokens": 2444,
-    "cacheWriteTokens": 333
+    "inputTokens": 3042,
+    "outputTokens": 202,
+    "cacheReadTokens": 1910,
+    "cacheWriteTokens": 1130
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:79ca44ba32701d4da79ab9df7e77c5eb3f24cd613779837ae08878fee7efae0c": {
+  "sha256:99352c407e379e7118c23476ebab092abb74033c5642273656132291bfdfb69c": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_012hqBmqWWwkWQ9KSFnGx9Ar",
+     "id": "toolu_01KHRbxXWSiV7HJFcFo3uWVf",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -128,9 +131,19 @@
         "cites": [
          1,
          2,
-         4
+         5
         ],
-        "reasoning": "The confirmation page for order A1001 shows \"Estimated delivery: 5 November 2026\" with Shipping: Express. The server's order record (probe and GET /api/orders/A1001) shows estimatedDelivery \"2026-11-05\" and shipping \"express\", which matches."
+        "reasoning": "The confirmation page reads 'Estimated delivery: 5 November 2026'. The server's order response and the latestOrder probe both show estimatedDelivery 2026-11-05."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         4,
+         5
+        ],
+        "reasoning": "POST /api/orders returned 201 for order A1001 with status 'placed' and express shipping. Its items (1 Red Mug, $9.50) match the cart recorded before the task, and the cart is empty afterwards. The POST to /api/cart/items just adds that same item, so the cart still holds qty 1 and the order did not change what was in it."
        }
       ]
      }
@@ -138,8 +151,13 @@
    ],
    "raw": [
     {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS4QcKEAgTGAI4AUIIdGhpbmtpbmcSDDwzxl82ZMrDBhG6TRoM6ikStT8VA6mAQ93rIjDnlqr6KI2ClLyGIcTUYxcKGH1VuNrk0NAkbc55sRgcNT3gBUQm9pBxWTvv8eOs6jMq/gbwHYEp/kmc2RYC3mQpBGPKQbj/wcsSpUZWThgdYK38iwdvxwORD1SEoe/5+GymUgtWNj7NzuBO6O//NcuPW5h5knLKgOn7WxX8BileqYK8rf+mcUuIfHQWSC4s4kTaYXaaQaFEiYJ8Zn9QdWFL96tbRI+gD5p3gj2pcTxWkOZSwiubDy5HdqjWSqq/UaIqEHdcntirpbU34a6G0sihph6/fpeP0Fj+nKFwPOhEkotksY4SCeTiGsTJ7sD6dgfmmnqQedhZnU04ktw4SW/j/XUvdZ/J/HdRdKEnr8ohKq510A5loMzflB4pcXKN8W721cU21ctFGhD9o2wnPRLx6U1xcPmAez/9cwcLk76sFR6q9fefMfc0HYsM+MaYqyORRWyGAFmPq+tu6JJruaClBhAMyF09R80gBfrZ33Gjbus5WR6vgiL6ZcEQJYhz3P0EaahYhRb7viKOSLc7YWn3ktVcb+wsfBFHbgj3zV3Bh/f1Byp1JyI8qrP4c5KnR6oEH10BzQLk8RT8r8i2nbcrknRyNS1gUpBrzS0gDMuyrvVLvKqi9jSg4/cPGLSU7G5W2yXggHfW/lzo3c+DGe/Ux/0X0CPZfBMfow+2I4eTuDnwoQZEA28zHcrPd2n9sJuEcFVf/pufA4AbSGT7ugzMAtT2qQP/psC8t7fj+F7Drj7O9CEtrW6k5344nqyYc2l0kr7v6vc/kspB2qTXY3ZX3mft+NPEgTkCYBQpqvsSVFFo8DZhm6DrAWCfyaIjvBfrllEVuTDOkqsA9dqA5HLXjpcOlk0CEa90y+zqGRX6hwPW0+4hBiB2u/EpSGE6XOKyoRdPHqClEBwu+CBo1Sz1kync987s7Zkha2Foga+jPKUb7NPmF1ljbxlqYPR5ye/DsOagyMjrYPv3oxupYJLxxpwqCjRQSV8QejTv2nacCdoXH7ZAEEJfb7Slj7K2gow9BlUWXEjjXZ0bnUimnldKPY2ijz4qEBt/AQTE6lO6PmvinENb8GC3A6C5N8rP19ZK9MGSMaQOjoNe2rYqUyv6WhTzVuV//Rse825YIh65ZzeOhztdJhaG/ihJteBGSmEP77XESHxXkafniNgbjx4SYZBZTOluHqjsFO59pGAJAjKSQq05St5hear+pgE3xJzrqj6dWqktb8aEAUxOuoNgXANi0GhTugEN59fcdYEVHTUYAQ=="
+    },
+    {
      "type": "tool_use",
-     "id": "toolu_012hqBmqWWwkWQ9KSFnGx9Ar",
+     "id": "toolu_01KHRbxXWSiV7HJFcFo3uWVf",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -152,19 +170,29 @@
         "cites": [
          1,
          2,
-         4
+         5
         ],
-        "reasoning": "The confirmation page for order A1001 shows \"Estimated delivery: 5 November 2026\" with Shipping: Express. The server's order record (probe and GET /api/orders/A1001) shows estimatedDelivery \"2026-11-05\" and shipping \"express\", which matches."
+        "reasoning": "The confirmation page reads 'Estimated delivery: 5 November 2026'. The server's order response and the latestOrder probe both show estimatedDelivery 2026-11-05."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         4,
+         5
+        ],
+        "reasoning": "POST /api/orders returned 201 for order A1001 with status 'placed' and express shipping. Its items (1 Red Mug, $9.50) match the cart recorded before the task, and the cart is empty afterwards. The POST to /api/cart/items just adds that same item, so the cart still holds qty 1 and the order did not change what was in it."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 3068,
-    "outputTokens": 184,
-    "cacheReadTokens": 2777,
-    "cacheWriteTokens": 289
+    "inputTokens": 3765,
+    "outputTokens": 396,
+    "cacheReadTokens": 3040,
+    "cacheWriteTokens": 723
    },
    "model": "claude-opus-5-5"
   }

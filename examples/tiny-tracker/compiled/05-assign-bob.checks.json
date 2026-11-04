@@ -19,9 +19,9 @@
   ],
   "checks": [
     {
-      "id": "issue1-assignee-bob-probe",
+      "id": "issue1-assignee-bob",
       "requirement": "R1",
-      "description": "The backend issues list contains issue id 1 with assignee 'bob'.",
+      "description": "The backend issues probe shows issue with id 1 has assignee \"bob\".",
       "assert": {
         "kind": "value",
         "source": {
@@ -33,10 +33,6 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "id",
-                "assignee"
-              ],
               "properties": {
                 "id": {
                   "const": 1
@@ -44,7 +40,11 @@
                 "assignee": {
                   "const": "bob"
                 }
-              }
+              },
+              "required": [
+                "id",
+                "assignee"
+              ]
             }
           }
         }
@@ -57,6 +57,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T10:10:05.410Z"
+    "at": "2026-11-04T23:12:12.085Z"
   }
 }

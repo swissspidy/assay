@@ -190,7 +190,7 @@
       {
         "seq": 4,
         "method": "GET",
-        "url": "http://localhost:4173/checkout",
+        "url": "http://localhost:4173/cart",
         "resourceType": "document",
         "status": 200,
         "requestHeaders": {},
@@ -211,6 +211,51 @@
       },
       {
         "seq": 6,
+        "method": "GET",
+        "url": "http://localhost:4173/api/cart",
+        "resourceType": "fetch",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "application/json"
+        },
+        "responseBody": {
+          "items": [
+            {
+              "sku": "MUG-RED",
+              "name": "Red Mug",
+              "qty": 1,
+              "price": 9.5,
+              "lineTotal": 9.5
+            }
+          ],
+          "total": 9.5
+        }
+      },
+      {
+        "seq": 7,
+        "method": "GET",
+        "url": "http://localhost:4173/checkout",
+        "resourceType": "document",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/html; charset=utf-8"
+        }
+      },
+      {
+        "seq": 8,
+        "method": "GET",
+        "url": "http://localhost:4173/app.js",
+        "resourceType": "script",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/javascript"
+        }
+      },
+      {
+        "seq": 9,
         "method": "POST",
         "url": "http://localhost:4173/api/orders",
         "resourceType": "fetch",
@@ -246,7 +291,7 @@
         }
       },
       {
-        "seq": 7,
+        "seq": 10,
         "method": "GET",
         "url": "http://localhost:4173/orders/A1001",
         "resourceType": "document",
@@ -257,7 +302,7 @@
         }
       },
       {
-        "seq": 8,
+        "seq": 11,
         "method": "GET",
         "url": "http://localhost:4173/app.js",
         "resourceType": "script",
@@ -268,7 +313,7 @@
         }
       },
       {
-        "seq": 9,
+        "seq": 12,
         "method": "GET",
         "url": "http://localhost:4173/api/orders/A1001",
         "resourceType": "fetch",
@@ -345,7 +390,65 @@
           "total": 9.5,
           "estimatedDelivery": "2026-11-05"
         }
+      },
+      "settings": {
+        "ok": true,
+        "value": {
+          "newsletter": false
+        }
       }
+    },
+    "baseline": {
+      "capturedAt": "1970-01-01T00:00:00.000Z",
+      "url": "http://localhost:4173/cart",
+      "storage": {
+        "cookies": [
+          {
+            "name": "sid",
+            "value": {
+              "redacted": true
+            },
+            "domain": "localhost",
+            "path": "/",
+            "httpOnly": true,
+            "secure": false
+          }
+        ],
+        "local": {
+          "http://localhost:4173": {}
+        },
+        "session": {
+          "http://localhost:4173": {}
+        }
+      },
+      "probes": {
+        "cart": {
+          "ok": true,
+          "value": {
+            "items": [
+              {
+                "sku": "MUG-RED",
+                "name": "Red Mug",
+                "qty": 1,
+                "price": 9.5,
+                "lineTotal": 9.5
+              }
+            ],
+            "total": 9.5
+          }
+        },
+        "latestOrder": {
+          "ok": false,
+          "error": "/api/orders/latest → 404"
+        },
+        "settings": {
+          "ok": true,
+          "value": {
+            "newsletter": false
+          }
+        }
+      },
+      "redacted": ["cookie:sid"]
     },
     "meta": {
       "capturer": "assay/0.1.0",

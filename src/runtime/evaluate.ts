@@ -17,7 +17,7 @@ import type {
   ValueSource,
 } from '../types.ts';
 import { CHANNEL_TRUST } from '../types.ts';
-import { describeTextMatch, matchText, stripGlobal } from '../text.ts';
+import { canonical, describeTextMatch, matchText, stripGlobal } from '../text.ts';
 import { checkSetDigest, snapshotDigest } from '../snapshot/digest.ts';
 import { AXIndex, describeLocator, readNodeField, resolveTarget, type INode } from './axindex.ts';
 import { compare, compareNumber, compareValues, describeNumberCompare, jsonPointer } from './compare.ts';
@@ -114,7 +114,8 @@ function readSource(ctx: Ctx, src: ValueSource): Read {
       if (src.scope) {
         const r = resolve(ctx, src.scope);
         if (isResult(r)) return r;
-        text = ctx.index.text(r.node);
+        // Scoped text is derived from accessible names, so it is canonicalized like a node's text.
+        text = canonical(ctx.index.text(r.node));
         drift = r.drift;
         locator = `text of ${ctx.index.path(r.node)}`;
         channel = 'a11y';
@@ -185,38 +186,43 @@ function readSource(ctx: Ctx, src: ValueSource): Read {
       return { value: fromJson(v), evidence: ev('network', { locator, value: v }), drift: [] };
     }
     case 'storage': {
-      if (!snap.storage) return abstain('evidence_unavailable', 'storage was not captured');
+      const before = src.at === 'before';
+      if (before && !snap.baseline) return abstain('evidence_unavailable', 'no baseline was captured before the task');
+      const storage = before ? snap.baseline!.storage : snap.storage;
+      if (!storage)
+        return abstain('evidence_unavailable', `storage was not captured${before ? ' before the task' : ''}`);
+      const when = before ? ' (before)' : '';
       const pageOrigin = safeOrigin(snap.page.url);
       if (src.area === 'cookie') {
         const host = safeHost(src.origin ?? snap.page.url);
-        const c = snap.storage.cookies.filter(
+        const c = storage.cookies.filter(
           (cookie) => cookie.name === src.key && (!host || domainMatches(host, cookie.domain)),
         );
         if (c.length === 0)
           return {
             value: ABSENT,
-            evidence: ev('storage', { locator: `cookie ${src.key}`, value: null }),
+            evidence: ev('storage', { locator: `cookie ${src.key}${when}`, value: null }),
             drift: [],
             absent: true,
           };
         if (c.length > 1 && new Set(c.map((x) => JSON.stringify(x.value))).size > 1)
           return abstain('value_ambiguous', `cookie ${src.key} has ${c.length} different values`, [
-            ev('storage', { locator: `cookie ${src.key}` }),
+            ev('storage', { locator: `cookie ${src.key}${when}` }),
           ]);
         const value = c[0]!.value;
         if (typeof value !== 'string')
           return abstain('evidence_unavailable', `cookie ${src.key} was redacted at capture time`, [
-            ev('storage', { locator: `cookie ${src.key}` }),
+            ev('storage', { locator: `cookie ${src.key}${when}` }),
           ]);
         return {
           value: { type: 'string', value },
-          evidence: ev('storage', { locator: `cookie ${src.key}`, value }),
+          evidence: ev('storage', { locator: `cookie ${src.key}${when}`, value }),
           drift: [],
         };
       }
       const origin = src.origin ? safeOrigin(src.origin) : pageOrigin;
-      const area = snap.storage[src.area][origin ?? ''];
-      const locator = `${src.area}Storage[${JSON.stringify(src.key)}] @ ${origin}`;
+      const area = storage[src.area][origin ?? ''];
+      const locator = `${src.area}Storage[${JSON.stringify(src.key)}] @ ${origin}${when}`;
       if (!area || !Object.prototype.hasOwnProperty.call(area, src.key))
         return { value: ABSENT, evidence: ev('storage', { locator, value: null }), drift: [], absent: true };
       const value = area[src.key]!;
@@ -227,14 +233,19 @@ function readSource(ctx: Ctx, src: ValueSource): Read {
       return { value: { type: 'string', value }, evidence: ev('storage', { locator, value }), drift: [] };
     }
     case 'probe': {
-      const p = snap.probes[src.probe];
-      if (!p) return abstain('evidence_unavailable', `probe ${src.probe} was not run`);
+      const before = src.at === 'before';
+      if (before && !snap.baseline) return abstain('evidence_unavailable', 'no baseline was captured before the task');
+      const when = before ? ' before the task' : '';
+      const p = (before ? snap.baseline!.probes : snap.probes)[src.probe];
+      if (!p) return abstain('evidence_unavailable', `probe ${src.probe} was not run${when}`);
       if (!p.ok)
-        return abstain('probe_error', `probe ${src.probe} failed: ${p.error}`, [ev('probe', { locator: src.probe })]);
+        return abstain('probe_error', `probe ${src.probe} failed${when}: ${p.error}`, [
+          ev('probe', { locator: `${src.probe}${before ? ' (before)' : ''}` }),
+        ]);
       const v = jsonPointer(p.value, src.pointer);
-      const locator = `probe ${src.probe}${src.pointer ? ' at ' + src.pointer : ''}`;
+      const locator = `probe ${src.probe}${before ? ' (before)' : ''}${src.pointer ? ' at ' + src.pointer : ''}`;
       if (v === undefined)
-        return abstain('value_unavailable', `${src.pointer} not present in result of probe ${src.probe}`, [
+        return abstain('value_unavailable', `${src.pointer} not present in result of probe ${src.probe}${when}`, [
           ev('probe', { locator }),
         ]);
       return { value: fromJson(v), evidence: ev('probe', { locator, value: v }), drift: [] };

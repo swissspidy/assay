@@ -7,21 +7,20 @@
   ],
   "turns": {
     "rubric": 1,
-    "discovery": 3
+    "discovery": 4
   },
   "usage": {
-    "inputTokens": 45750,
-    "outputTokens": 2053,
-    "cacheReadTokens": 29018,
-    "cacheWriteTokens": 16720
+    "inputTokens": 73442,
+    "outputTokens": 3986,
+    "cacheReadTokens": 52072,
+    "cacheWriteTokens": 21356
   },
   "coverage": [
     {
       "requirement": "R1",
-      "quote": "Then an order is placed",
+      "quote": "an order is placed",
       "checks": [
-        "R1.order-post",
-        "R1.probe-placed"
+        "r1-order-request"
       ],
       "channels": [
         "network",
@@ -31,9 +30,9 @@
     },
     {
       "requirement": "R2",
-      "quote": "Then the order ships express",
+      "quote": "the order ships express",
       "checks": [
-        "R2.probe-express"
+        "r2-express"
       ],
       "channels": [
         "probe"
@@ -42,33 +41,34 @@
     },
     {
       "requirement": "R3",
-      "quote": "Then the order confirmation is shown",
+      "quote": "the order confirmation is shown",
       "checks": [
-        "R3.url",
-        "R3.heading"
+        "r3-confirmation"
       ],
       "channels": [
         "url",
+        "probe",
         "a11y"
       ],
       "trust": "structured"
     },
     {
       "requirement": "R4",
-      "quote": "Order what is in my cart",
+      "quote": "in the name of Ada Lovelace",
       "checks": [
-        "R4.probe-items"
+        "r4-name"
       ],
       "channels": [
+        "network",
         "probe"
       ],
       "trust": "structured"
     },
     {
       "requirement": "R5",
-      "quote": "in the name of Ada Lovelace",
+      "quote": "Order what is in my cart",
       "checks": [
-        "R5.probe-name"
+        "r5-cart-items"
       ],
       "channels": [
         "probe"

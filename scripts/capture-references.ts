@@ -33,6 +33,7 @@ for (const app of APPS) {
           throw new Error(`${app.name}/${task.id}/${s.name}: response bodies could not be captured`);
         // capturedAt is metadata (excluded from digests); pin it so re-captures diff cleanly.
         snap.capturedAt = '1970-01-01T00:00:00.000Z';
+        if (snap.baseline) snap.baseline.capturedAt = snap.capturedAt;
         writeFileSync(
           new URL(`${s.name}.json`, dir),
           JSON.stringify({ label: { expected: s.expected, kind: s.kind }, snapshot: snap }, null, 1) + '\n',

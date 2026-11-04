@@ -1,19 +1,19 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T10:25:04.083Z",
+ "recordedAt": "2026-11-04T23:28:57.230Z",
  "turns": {
-  "sha256:621c7facdf5a605c9ddf49857bb1e7976b5135bd421e5299d441d63b902faf72": {
+  "sha256:d9d9b3579235e1f77d94e2a7ba19633e92fa454a4a152c4345272940f093d7da": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_011qxCfC72UJ9DnYCbR1TzcK",
+     "id": "toolu_01Jk7yRBLRkvvnAtsBn8mv3j",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01EDNakQtdah2R2eGsQCAkwf",
+     "id": "toolu_013adAvKx6ZQ7dDHdFE157y5",
      "name": "network_log",
      "input": {}
     }
@@ -21,7 +21,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_011qxCfC72UJ9DnYCbR1TzcK",
+     "id": "toolu_01Jk7yRBLRkvvnAtsBn8mv3j",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -30,7 +30,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01EDNakQtdah2R2eGsQCAkwf",
+     "id": "toolu_013adAvKx6ZQ7dDHdFE157y5",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -39,19 +39,19 @@
     }
    ],
    "usage": {
-    "inputTokens": 1928,
+    "inputTokens": 1919,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 1924
+    "cacheWriteTokens": 1915
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:4d8511223d2625c8c432559ad15bb5ddc48ac202aec4b7429ded98e367b012b7": {
+  "sha256:ae2776ef69af9cc86d67b9edbddd9e9b009d479829e4fc5ed4e988a6b0d311f0": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01RQYu5JPu3asZmczkk9Qjjs",
+     "id": "toolu_01SKRohdACsnsw9ySFG7Pmqa",
      "name": "network_entry",
      "input": {
       "seq": 2
@@ -61,7 +61,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01RQYu5JPu3asZmczkk9Qjjs",
+     "id": "toolu_01SKRohdACsnsw9ySFG7Pmqa",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -72,19 +72,19 @@
     }
    ],
    "usage": {
-    "inputTokens": 2541,
+    "inputTokens": 2532,
     "outputTokens": 49,
-    "cacheReadTokens": 1924,
+    "cacheReadTokens": 1915,
     "cacheWriteTokens": 615
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:6507b4a8c7fe3f00da43a1664f76f0c330da94b7e5251fcf8002cd1051522637": {
+  "sha256:187caba26702a534849e27e456e0129da09c145a104d4f44ed977f9cb2f072d1": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01V4vuDYLmyZeB5WRi5Mf6nk",
+     "id": "toolu_01Fp5yvP1JrVZfBoncHtB1ks",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -95,7 +95,7 @@
          1,
          3
         ],
-        "reasoning": "Event id 4 titled \"Workshop\" exists in the stored events."
+        "reasoning": "The events probe shows event id 4 with the title \"Workshop\", and the server's POST /api/events call returned 201."
        },
        {
         "requirement": "Then the workshop lasts 90 minutes",
@@ -104,25 +104,16 @@
          1,
          3
         ],
-        "reasoning": "The stored event has a duration of 120 minutes, not 90. The POST body also sent duration 120."
+        "reasoning": "The event was submitted and stored with duration 120 minutes, not 90."
        },
        {
-        "requirement": "November 12, 2026",
+        "requirement": "on November 12, 2026 at 10:00",
         "status": "pass",
         "cites": [
          1,
          3
         ],
-        "reasoning": "The event's date is 2026-11-12."
-       },
-       {
-        "requirement": "at 10:00",
-        "status": "pass",
-        "cites": [
-         1,
-         3
-        ],
-        "reasoning": "The event's time is 10:00."
+        "reasoning": "The stored event has date 2026-11-12 and time 10:00."
        }
       ]
      }
@@ -131,7 +122,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01V4vuDYLmyZeB5WRi5Mf6nk",
+     "id": "toolu_01Fp5yvP1JrVZfBoncHtB1ks",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -145,7 +136,7 @@
          1,
          3
         ],
-        "reasoning": "Event id 4 titled \"Workshop\" exists in the stored events."
+        "reasoning": "The events probe shows event id 4 with the title \"Workshop\", and the server's POST /api/events call returned 201."
        },
        {
         "requirement": "Then the workshop lasts 90 minutes",
@@ -154,44 +145,35 @@
          1,
          3
         ],
-        "reasoning": "The stored event has a duration of 120 minutes, not 90. The POST body also sent duration 120."
+        "reasoning": "The event was submitted and stored with duration 120 minutes, not 90."
        },
        {
-        "requirement": "November 12, 2026",
+        "requirement": "on November 12, 2026 at 10:00",
         "status": "pass",
         "cites": [
          1,
          3
         ],
-        "reasoning": "The event's date is 2026-11-12."
-       },
-       {
-        "requirement": "at 10:00",
-        "status": "pass",
-        "cites": [
-         1,
-         3
-        ],
-        "reasoning": "The event's time is 10:00."
+        "reasoning": "The stored event has date 2026-11-12 and time 10:00."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2813,
-    "outputTokens": 294,
-    "cacheReadTokens": 2539,
+    "inputTokens": 2804,
+    "outputTokens": 269,
+    "cacheReadTokens": 2530,
     "cacheWriteTokens": 272
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:44c8b930a1294c8c4278ec99aa788d99755270e72d005d63e8b3e65cfeafd5ce": {
+  "sha256:3922ac17846db2702347ccb0c2773bfebbaedf811b711048c1ef80f870210a22": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_013zU7AEjPtRaJx59CuUMHbQ",
+     "id": "toolu_019kmYdquDLGHHSUwziq4b88",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -202,7 +184,7 @@
          1,
          3
         ],
-        "reasoning": "Event id 4 titled \"Workshop\" exists in the stored events."
+        "reasoning": "The events probe shows event id 4 with the title \"Workshop\", and the server's POST /api/events call returned 201."
        },
        {
         "requirement": "R2",
@@ -211,7 +193,7 @@
          1,
          3
         ],
-        "reasoning": "The stored event has a duration of 120 minutes, not 90. The POST body also sent duration 120."
+        "reasoning": "The event was submitted and stored with duration 120 minutes, not 90."
        },
        {
         "requirement": "R3",
@@ -220,16 +202,7 @@
          1,
          3
         ],
-        "reasoning": "The event's date is 2026-11-12."
-       },
-       {
-        "requirement": "R4",
-        "status": "pass",
-        "cites": [
-         1,
-         3
-        ],
-        "reasoning": "The event's time is 10:00."
+        "reasoning": "The stored event has date 2026-11-12 and time 10:00."
        }
       ]
      }
@@ -238,7 +211,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_013zU7AEjPtRaJx59CuUMHbQ",
+     "id": "toolu_019kmYdquDLGHHSUwziq4b88",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -252,7 +225,7 @@
          1,
          3
         ],
-        "reasoning": "Event id 4 titled \"Workshop\" exists in the stored events."
+        "reasoning": "The events probe shows event id 4 with the title \"Workshop\", and the server's POST /api/events call returned 201."
        },
        {
         "requirement": "R2",
@@ -261,7 +234,7 @@
          1,
          3
         ],
-        "reasoning": "The stored event has a duration of 120 minutes, not 90. The POST body also sent duration 120."
+        "reasoning": "The event was submitted and stored with duration 120 minutes, not 90."
        },
        {
         "requirement": "R3",
@@ -270,26 +243,17 @@
          1,
          3
         ],
-        "reasoning": "The event's date is 2026-11-12."
-       },
-       {
-        "requirement": "R4",
-        "status": "pass",
-        "cites": [
-         1,
-         3
-        ],
-        "reasoning": "The event's time is 10:00."
+        "reasoning": "The stored event has date 2026-11-12 and time 10:00."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 3208,
-    "outputTokens": 276,
-    "cacheReadTokens": 2811,
-    "cacheWriteTokens": 395
+    "inputTokens": 3168,
+    "outputTokens": 243,
+    "cacheReadTokens": 2802,
+    "cacheWriteTokens": 364
    },
    "model": "claude-opus-5-5"
   }

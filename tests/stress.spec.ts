@@ -54,7 +54,7 @@ test('generation is deterministic', () => {
 test('mutants are labelled with the check they attack and include page-claims-only', () => {
   const cs = checks('07-express-order');
   const ms = generateMutants(cs, successRefs('07-express-order')[0]!.snapshot);
-  expect(new Set(ms.map((m) => m.check).filter(Boolean))).toEqual(new Set(['C1', 'C2', 'C3']));
+  expect(new Set(ms.map((m) => m.check).filter(Boolean))).toEqual(new Set(['C1', 'C2', 'C3', 'C4']));
   const claims = ms.find((m) => m.id === 'claims-only')!;
   expect(claims.advisory).toBe(true);
   expect(evaluate(cs, claims.snapshot).verdict).not.toBe('success');
@@ -152,6 +152,8 @@ test('relying on page content alone raises an advisory', () => {
       assert: { kind: 'contains', match: { role: 'heading', name: 'Order confirmed' } },
     },
   ]);
+  // Without R4, whose check compares the order with the cart before the task.
+  pageOnly.requirements = pageOnly.requirements.filter((r) => r.id !== 'R4');
   const r = stressTest(pageOnly, successRefs('07-express-order'));
   expect(r.advisories.map((a) => a.id)).toContain('claims-only');
 });

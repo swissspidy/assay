@@ -10,7 +10,7 @@
     {
       "id": "R1",
       "kind": "hard",
-      "text": "An event titled \"Yoga\" exists.",
+      "text": "An event named \"Yoga\" exists.",
       "source": {
         "field": "outcomes",
         "quote": "Then an event \"Yoga\" exists"
@@ -48,7 +48,7 @@
     {
       "id": "r1-yoga-exists",
       "requirement": "R1",
-      "description": "The backend events list contains an event titled \"Yoga\".",
+      "description": "The backend events list contains an event titled Yoga on 2026-11-07 at 08:00.",
       "assert": {
         "kind": "value",
         "source": {
@@ -61,12 +61,20 @@
             "contains": {
               "type": "object",
               "required": [
-                "title"
+                "title",
+                "date",
+                "time"
               ],
               "properties": {
                 "title": {
+                  "const": "Yoga"
+                },
+                "date": {
+                  "const": "2026-11-07"
+                },
+                "time": {
                   "type": "string",
-                  "pattern": "^\\s*Yoga\\s*$"
+                  "pattern": "^08:00"
                 }
               }
             }
@@ -77,7 +85,7 @@
     {
       "id": "r2-yoga-reminder",
       "requirement": "R2",
-      "description": "The stored Yoga event on 2026-11-07 at 08:00 has reminder set to true.",
+      "description": "The Yoga event on 2026-11-07 at 08:00 has reminder set to true in the backend.",
       "assert": {
         "kind": "value",
         "source": {
@@ -97,15 +105,14 @@
               ],
               "properties": {
                 "title": {
-                  "type": "string",
-                  "pattern": "^\\s*Yoga\\s*$"
+                  "const": "Yoga"
                 },
                 "date": {
                   "const": "2026-11-07"
                 },
                 "time": {
                   "type": "string",
-                  "pattern": "^0?8:00(:00)?$"
+                  "pattern": "^08:00"
                 },
                 "reminder": {
                   "const": true
@@ -119,7 +126,7 @@
     {
       "id": "r3-yoga-date",
       "requirement": "R3",
-      "description": "The stored Yoga event is dated 2026-11-07 (at 08:00).",
+      "description": "The backend Yoga event at 08:00 is dated 2026-11-07.",
       "assert": {
         "kind": "value",
         "source": {
@@ -138,15 +145,14 @@
               ],
               "properties": {
                 "title": {
-                  "type": "string",
-                  "pattern": "^\\s*Yoga\\s*$"
+                  "const": "Yoga"
                 },
                 "date": {
                   "const": "2026-11-07"
                 },
                 "time": {
                   "type": "string",
-                  "pattern": "^0?8:00(:00)?$"
+                  "pattern": "^08:00"
                 }
               }
             }
@@ -157,7 +163,7 @@
     {
       "id": "r4-yoga-time",
       "requirement": "R4",
-      "description": "The stored Yoga event on 2026-11-07 starts at 08:00.",
+      "description": "The backend Yoga event on 2026-11-07 starts at 08:00.",
       "assert": {
         "kind": "value",
         "source": {
@@ -176,15 +182,14 @@
               ],
               "properties": {
                 "title": {
-                  "type": "string",
-                  "pattern": "^\\s*Yoga\\s*$"
+                  "const": "Yoga"
                 },
                 "date": {
                   "const": "2026-11-07"
                 },
                 "time": {
                   "type": "string",
-                  "pattern": "^0?8:00(:00)?$"
+                  "pattern": "^08:00(:00)?$"
                 }
               }
             }
@@ -199,6 +204,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T10:09:47.114Z"
+    "at": "2026-11-04T23:11:57.384Z"
   }
 }

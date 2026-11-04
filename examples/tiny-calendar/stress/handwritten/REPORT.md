@@ -5,14 +5,14 @@
 | tiny-calendar/lunch | 20/20 | 10/10 (10 / 0) | – | – | 0 |
 | tiny-calendar/reminder | 20/20 | 6/6 (6 / 0) | – | – | 0 |
 | tiny-calendar/rsvp | 20/20 | 2/2 (2 / 0) | – | – | 0 |
-| tiny-calendar/move-dentist | 20/20 | 2/2 (2 / 0) | – | – | 0 |
+| tiny-calendar/move-dentist | 20/20 | 4/4 (4 / 0) | – | – | 0 |
 | tiny-calendar/delete-standup | 24/24 | 8/8 (8 / 0) | – | – | 0 |
 | tiny-calendar/location | 20/20 | 2/2 (2 / 0) | – | – | 0 |
 | tiny-calendar/timezone | 20/20 | 6/6 (6 / 0) | – | – | 0 |
 | tiny-calendar/week-start | 18/18 | 4/4 (4 / 0) | – | – | 0 |
-| tiny-calendar/rename-dentist | 20/20 | 2/2 (2 / 0) | – | – | 0 |
+| tiny-calendar/rename-dentist | 20/20 | 4/4 (4 / 0) | – | – | 0 |
 | tiny-calendar/workshop | 20/20 | 6/6 (6 / 0) | – | – | 0 |
-| **tiny-calendar** | **202/202** | **48/48** (48 / 0) | | | 0 |
+| **tiny-calendar** | **202/202** | **52/52** (52 / 0) | | | 0 |
 
 ## tiny-calendar/lunch v1
 
@@ -32,8 +32,8 @@
 ## tiny-calendar/move-dentist v1
 
 - Valid variants accepted: **20/20** (100%)
-- Mutants rejected: **2/2** (100%; 2 by fail, 0 by abstain)
-- Mutants with a success claim added still rejected: 2/2
+- Mutants rejected: **4/4** (100%; 4 by fail, 0 by abstain)
+- Mutants with a success claim added still rejected: 4/4
 ## tiny-calendar/delete-standup v1
 
 - Valid variants accepted: **24/24** (100%)
@@ -57,8 +57,8 @@
 ## tiny-calendar/rename-dentist v1
 
 - Valid variants accepted: **20/20** (100%)
-- Mutants rejected: **2/2** (100%; 2 by fail, 0 by abstain)
-- Mutants with a success claim added still rejected: 2/2
+- Mutants rejected: **4/4** (100%; 4 by fail, 0 by abstain)
+- Mutants with a success claim added still rejected: 4/4
 ## tiny-calendar/workshop v1
 
 - Valid variants accepted: **20/20** (100%)
