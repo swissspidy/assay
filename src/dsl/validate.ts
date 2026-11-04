@@ -3,6 +3,7 @@ import type {
   Assertion,
   CheckSet,
   Comparison,
+  Json,
   Locator,
   Normalizer,
   RequestMatch,
@@ -11,6 +12,8 @@ import type {
   ValueSource,
 } from '../types.ts';
 import { canonical } from '../text.ts';
+import { canonicalJson } from '../snapshot/digest.ts';
+import { instantOf } from '../runtime/values.ts';
 import { checkSetSchema } from './schema.ts';
 
 const ajv = new Ajv({ allErrors: true, strict: false });
@@ -31,7 +34,7 @@ export class CheckSetError extends Error {
   }
 }
 
-type VType = 'string' | 'number' | 'money' | 'date' | 'boolean' | 'unknown';
+type VType = 'string' | 'number' | 'money' | 'date' | 'datetime' | 'boolean' | 'unknown';
 
 export function validateCheckSet(input: unknown): ValidationReport {
   const errors: string[] = [];
@@ -72,7 +75,11 @@ export function validateCheckSet(input: unknown): ValidationReport {
   for (const r of cs.requirements) {
     const mine = cs.checks.filter((c) => c.requirement === r.id).map((c) => c.assert);
     const readsNetwork = mine.some(
-      (a) => a.kind === 'value' && (a.source.from === 'request' || a.source.from === 'response'),
+      (a) =>
+        a.kind === 'value' &&
+        [a.source, ...('sameAs' in a.expect ? [a.expect.sameAs.source] : [])].some(
+          (src) => src.from === 'request' || src.from === 'response',
+        ),
     );
     const assertsExistence = mine.some((a) => a.kind !== 'value');
     if (readsNetwork && !assertsExistence)
@@ -136,13 +143,16 @@ function flowType(t: VType, steps: Normalizer[] | undefined, at: string, errors:
     const op = typeof step === 'string' ? step : step.op;
     if (typeof step === 'object' && (step.op === 'extract' || step.op === 'replace'))
       checkRegex(step.regex, step.op === 'replace' ? (step.flags ?? 'g') : step.flags, `${at} ${op}`, errors);
-    if (typeof step === 'object' && (step.op === 'number' || step.op === 'currency' || step.op === 'date')) {
+    if (
+      typeof step === 'object' &&
+      (step.op === 'number' || step.op === 'currency' || step.op === 'date' || step.op === 'datetime')
+    ) {
       try {
         Intl.NumberFormat(step.locale);
       } catch {
         errors.push(`${at}: unknown locale ${JSON.stringify(step.locale)}`);
       }
-      if (step.op === 'date' && step.timezone) {
+      if ((step.op === 'date' || step.op === 'datetime') && step.timezone) {
         try {
           Intl.DateTimeFormat('en', { timeZone: step.timezone });
         } catch {
@@ -162,13 +172,15 @@ function flowType(t: VType, steps: Normalizer[] | undefined, at: string, errors:
       'json',
       'boolean',
       'date',
+      'datetime',
     ].includes(op);
     if (
       stringOp &&
       t !== 'string' &&
       t !== 'unknown' &&
       !(op === 'boolean' && t === 'boolean') &&
-      !(op === 'date' && t === 'date')
+      !(op === 'date' && t === 'date') &&
+      !(op === 'datetime' && t === 'datetime')
     )
       errors.push(`${at}: normalizer ${op} cannot take a ${t} value`);
     if (op === 'number' && !['string', 'number', 'unknown'].includes(t))
@@ -182,16 +194,25 @@ function flowType(t: VType, steps: Normalizer[] | undefined, at: string, errors:
           ? 'money'
           : op === 'date'
             ? 'date'
-            : op === 'boolean'
-              ? 'boolean'
-              : op === 'json'
-                ? 'unknown'
-                : 'string';
+            : op === 'datetime'
+              ? 'datetime'
+              : op === 'boolean'
+                ? 'boolean'
+                : op === 'json'
+                  ? 'unknown'
+                  : 'string';
   }
   return t;
 }
 
-const boundType = (b: unknown): VType => (typeof b === 'number' ? 'number' : typeof b === 'string' ? 'date' : 'money');
+const boundType = (b: unknown): VType =>
+  typeof b === 'number'
+    ? 'number'
+    : typeof b === 'string'
+      ? /^\d{4}-\d{2}-\d{2}$/.test(b)
+        ? 'date'
+        : 'datetime'
+      : 'money';
 
 function checkComparison(t: VType, cmp: Comparison, at: string, errors: string[], warnings: string[]): void {
   if ('regex' in cmp) checkRegex(cmp.regex, cmp.flags, at, errors);
@@ -204,6 +225,10 @@ function checkComparison(t: VType, cmp: Comparison, at: string, errors: string[]
       errors.push(`${at}: equals ${JSON.stringify(e)} cannot match a number`);
     if (t === 'date' && (typeof e !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(e)))
       errors.push(`${at}: a date normalizes to YYYY-MM-DD; equals ${JSON.stringify(e)} cannot match`);
+    if (t === 'datetime' && (typeof e !== 'string' || instantOf(e) === undefined))
+      errors.push(
+        `${at}: a datetime normalizes to an instant; equals ${JSON.stringify(e)} needs an ISO date-time with an offset (e.g. "2026-11-05T14:30:00+01:00")`,
+      );
     if (t === 'money' && (typeof e !== 'object' || e === null || !('amount' in e)))
       errors.push(`${at}: equals needs {amount, currency} for a money value`);
     if (t === 'string' && typeof e !== 'string')
@@ -217,7 +242,9 @@ function checkComparison(t: VType, cmp: Comparison, at: string, errors: string[]
       : ['gt', 'gte', 'lt', 'lte'].filter((k) => k in cmp).map((k) => (cmp as Record<string, unknown>)[k]);
   if (bounds.length) {
     if (t === 'string' || t === 'boolean')
-      errors.push(`${at}: ordering/approx comparison on a ${t}; add a number, currency or date normalizer`);
+      errors.push(`${at}: ordering/approx comparison on a ${t}; add a number, currency, date or datetime normalizer`);
+    if ('approx' in cmp && (t === 'date' || t === 'datetime') && cmp.approx.rel !== undefined)
+      errors.push(`${at}: rel has no meaning for a ${t}; use abs (${t === 'date' ? 'days' : 'minutes'})`);
     for (const b of bounds) {
       const bt = boundType(b);
       if (t !== 'unknown' && t !== bt && !(t === 'money' && bt === 'number'))
@@ -246,31 +273,15 @@ function walkAssertion(a: Assertion, at: string, errors: string[], warnings: str
         );
       return;
     case 'value': {
-      const src = a.source;
-      if (src.from === 'node') {
-        checkTarget(src.target, at, errors);
-        if (src.field === 'name' || src.field === 'text') {
-          for (const n of a.normalize ?? []) {
-            if (typeof n !== 'object' || (n.op !== 'extract' && n.op !== 'replace')) continue;
-            if (/\\n|\\r|\\t|[\t\n\r]| {2}|\\s\{2|\\u00a0/.test(n.regex) || (n.flags ?? '').includes('m'))
-              warnings.push(
-                `${at}: accessible ${src.field} is whitespace-normalized before normalizers run (newlines, tabs and runs of spaces become one space); /${n.regex}/ expects raw whitespace`,
-              );
-          }
-        }
-      }
-      if (src.from === 'text') {
-        if (src.scope) checkTarget(src.scope, at, errors);
-        checkRegex(src.pattern, src.flags, at, errors);
-        warnings.push(
-          `${at}: reads free page text, which is the easiest evidence to spoof; prefer a11y, network or probe evidence`,
-        );
-      }
-      if (src.from === 'request' || src.from === 'response') {
-        checkRequestMatch(src.match, at, errors);
-      }
-      const t = flowType(sourceType(src), a.normalize, at, errors);
-      checkComparison(t, a.expect, at, errors, warnings);
+      const t = checkValueSource(a.source, a.normalize, at, errors, warnings);
+      if ('sameAs' in a.expect) {
+        const other = a.expect.sameAs;
+        const ot = checkValueSource(other.source, other.normalize, `${at} sameAs`, errors, warnings);
+        if (t !== 'unknown' && ot !== 'unknown' && t !== ot)
+          errors.push(`${at}: sameAs compares a ${t} with a ${ot}; normalize both sides to the same type`);
+        if (side(a.source, a.normalize) === side(other.source, other.normalize))
+          errors.push(`${at}: sameAs compares a value with itself`);
+      } else checkComparison(t, a.expect, at, errors, warnings);
       return;
     }
     case 'url':
@@ -285,6 +296,40 @@ function walkAssertion(a: Assertion, at: string, errors: string[], warnings: str
       a.of.forEach((s, i) => walkAssertion(s, `${at}.${a.kind}[${i}]`, errors, warnings));
       return;
   }
+}
+
+/** Identity of one side of a comparison: its source and normalizers. */
+const side = (src: ValueSource, n: Normalizer[] | undefined) => canonicalJson({ src, n: n ?? [] } as unknown as Json);
+
+/** Checks one value source and its normalizers; returns the type the pipeline produces. */
+function checkValueSource(
+  src: ValueSource,
+  normalize: Normalizer[] | undefined,
+  at: string,
+  errors: string[],
+  warnings: string[],
+): VType {
+  if (src.from === 'node') {
+    checkTarget(src.target, at, errors);
+    if (src.field === 'name' || src.field === 'text') {
+      for (const n of normalize ?? []) {
+        if (typeof n !== 'object' || (n.op !== 'extract' && n.op !== 'replace')) continue;
+        if (/\\n|\\r|\\t|[\t\n\r]| {2}|\\s\{2|\\u00a0/.test(n.regex) || (n.flags ?? '').includes('m'))
+          warnings.push(
+            `${at}: accessible ${src.field} is whitespace-normalized before normalizers run (newlines, tabs and runs of spaces become one space); /${n.regex}/ expects raw whitespace`,
+          );
+      }
+    }
+  }
+  if (src.from === 'text') {
+    if (src.scope) checkTarget(src.scope, at, errors);
+    checkRegex(src.pattern, src.flags, at, errors);
+    warnings.push(
+      `${at}: reads free page text, which is the easiest evidence to spoof; prefer a11y, network or probe evidence`,
+    );
+  }
+  if (src.from === 'request' || src.from === 'response') checkRequestMatch(src.match, at, errors);
+  return flowType(sourceType(src), normalize, at, errors);
 }
 
 function checkRequestMatch(m: RequestMatch, at: string, errors: string[]): void {

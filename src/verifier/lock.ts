@@ -3,7 +3,7 @@
  * language and locks the set. A locked set carries who locked it, when, and the
  * digest of exactly what was confirmed; any later edit breaks the lock.
  */
-import type { Assertion, CheckSet, Locator, Target, TextMatch, ValueSource } from '../types.ts';
+import type { Assertion, CheckSet, Locator, Normalizer, Target, TextMatch, ValueSource } from '../types.ts';
 import { checkSetDigest } from '../snapshot/digest.ts';
 import { describeTextMatch } from '../text.ts';
 import { describeLocator } from '../runtime/axindex.ts';
@@ -77,6 +77,11 @@ function source(s: ValueSource): string {
   }
 }
 
+const normalized = (steps: Normalizer[] | undefined) =>
+  steps?.length
+    ? `, normalized by ${steps.map((n) => (typeof n === 'string' ? n : JSON.stringify(n))).join(' → ')}`
+    : '';
+
 /** A mechanical plain-language rendering of what an assertion actually tests. */
 export function describeAssertion(a: Assertion): string {
   switch (a.kind) {
@@ -91,7 +96,9 @@ export function describeAssertion(a: Assertion): string {
     case 'contains':
       return `${a.scope ? target(a.scope) : 'the page'} contains ${describeNumberCompare(a.count ?? { gte: 1 })} ${loc(a.match)}${a.witness ? ` (witness: ${loc(a.witness)} must exist)` : ''}`;
     case 'value':
-      return `${source(a.source)}${a.normalize?.length ? `, normalized by ${a.normalize.map((n) => (typeof n === 'string' ? n : JSON.stringify(n))).join(' → ')}` : ''}, ${JSON.stringify(a.expect)}`;
+      return 'sameAs' in a.expect
+        ? `${source(a.source)}${normalized(a.normalize)}, equals ${source(a.expect.sameAs.source)}${normalized(a.expect.sameAs.normalize)}`
+        : `${source(a.source)}${normalized(a.normalize)}, ${JSON.stringify(a.expect)}`;
     case 'url':
       return `the page URL matches ${describeUrlMatch(a.match)}`;
     case 'request':

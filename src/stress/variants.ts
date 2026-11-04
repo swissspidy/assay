@@ -7,11 +7,20 @@
  * (e.g. `reorder` when the task asks for a sort order, `extra-row` when it fixes
  * the number of items). Tasks list those in `skipVariants`.
  */
-import type { Assertion, CheckSet, EvidenceSnapshot, Json, Normalizer, NetworkEntry, AXNode } from '../types.ts';
+import type {
+  Assertion,
+  CheckSet,
+  EvidenceSnapshot,
+  Json,
+  Normalizer,
+  NetworkEntry,
+  AXNode,
+  ValueSource,
+} from '../types.ts';
 import { AXIndex, readNodeField, resolveTarget } from '../runtime/axindex.ts';
-import { applyNormalizers, type TypedValue } from '../runtime/values.ts';
+import { applyNormalizers, zoneOffset, type TypedValue } from '../runtime/values.ts';
 import { clone, editById, replaceText, treeChanged } from './edit.ts';
-import { readSpan } from './mutants.ts';
+import { readSpan, timezoneOf } from './mutants.ts';
 
 export interface Variant {
   id: string;
@@ -206,8 +215,10 @@ function readKeys(cs: CheckSet): Set<string> {
   const keys = new Set<string>();
   // Only value sources count, not data that merely looks like one (e.g. inside a schema).
   const walk = (a: Assertion): void => {
-    if (a.kind === 'value' && a.source.from === 'storage') keys.add(a.source.key);
-    else if (a.kind === 'allOf' || a.kind === 'anyOf') a.of.forEach(walk);
+    if (a.kind === 'value') {
+      if (a.source.from === 'storage') keys.add(a.source.key);
+      if ('sameAs' in a.expect && a.expect.sameAs.source.from === 'storage') keys.add(a.expect.sameAs.source.key);
+    } else if (a.kind === 'allOf' || a.kind === 'anyOf') a.of.forEach(walk);
   };
   for (const c of cs.checks) walk(c.assert);
   return keys;
@@ -254,7 +265,17 @@ function urlVariant(s: EvidenceSnapshot, fn: (u: URL) => void): EvidenceSnapshot
 
 const uniq = (xs: string[]) => [...new Set(xs)];
 
-function formatsFor(v: TypedValue, span: string, locale: string): string[] {
+/** The wall clock of instant `t` in `timezone` as ISO 8601 with its offset ("2026-11-05T14:30+01:00"). */
+function isoInZone(t: number, timezone: string, seconds: boolean): string {
+  const offset = zoneOffset(t, timezone) / 60_000;
+  const local = new Date(t + offset * 60_000).toISOString();
+  const sign = offset < 0 ? '-' : '+';
+  const abs = Math.abs(offset);
+  const zone = `${sign}${String(Math.floor(abs / 60)).padStart(2, '0')}:${String(abs % 60).padStart(2, '0')}`;
+  return `${local.slice(0, seconds ? 19 : 16)}${zone}`;
+}
+
+function formatsFor(v: TypedValue, span: string, locale: string, timezone: string | undefined): string[] {
   if (v.type === 'money') {
     const n = v.value.amount;
     const c = v.value.currency;
@@ -289,6 +310,21 @@ function formatsFor(v: TypedValue, span: string, locale: string): string[] {
         .concat([v.value]),
     );
   }
+  if (v.type === 'datetime') {
+    // Rendered on the wall clock of the check's timezone; a value read with its own
+    // offset and no timezone has no zone to render in.
+    if (!timezone) return [];
+    const t = Date.parse(v.value);
+    if (t % 1000 !== 0) return []; // no localized style shows milliseconds
+    const seconds = t % 60_000 !== 0;
+    const timeStyle = seconds ? 'medium' : 'short';
+    return uniq(
+      (['full', 'long', 'medium', 'short'] as const)
+        .map((dateStyle) => new Intl.DateTimeFormat(locale, { dateStyle, timeStyle, timeZone: timezone }).format(t))
+        .filter((x) => /\d{4}/.test(x)) // 2-digit years are ambiguous by design
+        .concat([isoInZone(t, timezone, seconds)]),
+    );
+  }
   return [];
 }
 
@@ -302,40 +338,47 @@ function* valueAssertions(a: Assertion): Generator<Extract<Assertion, { kind: 'v
   if (a.kind === 'allOf' || a.kind === 'anyOf') for (const s of a.of) yield* valueAssertions(s);
 }
 
+/** The sources a value assertion reads, with their normalizers: its own, and a `sameAs` operand. */
+function readsOf(a: Extract<Assertion, { kind: 'value' }>): { source: ValueSource; normalize?: Normalizer[] }[] {
+  return [{ source: a.source, normalize: a.normalize }, ...('sameAs' in a.expect ? [a.expect.sameAs] : [])];
+}
+
 function formattingVariants(cs: CheckSet, s: EvidenceSnapshot, idx: AXIndex): Variant[] {
   const out: Variant[] = [];
   for (const c of cs.checks) {
     for (const a of valueAssertions(c.assert)) {
-      const locale = localeOf(a.normalize);
-      if (a.source.from !== 'node' || !locale) continue;
-      const r = resolveTarget(idx, a.source.target);
-      if (!r.ok) continue;
-      const raw = readNodeField(idx, r.node, a.source.field);
-      if (raw === undefined) continue;
-      const span = readSpan(raw, a.normalize);
-      if (!span) continue;
-      let typed: TypedValue;
-      try {
-        typed = applyNormalizers({ type: 'string', value: raw }, a.normalize);
-      } catch {
-        continue;
-      }
-      const target = r.node.id;
-      const field = a.source.field;
-      for (const [i, alt] of formatsFor(typed, span, locale).entries()) {
-        if (alt === span) continue;
-        const next = raw.replace(span, () => alt);
-        const snap = editById(s, (n, id) => {
-          if (id !== target) return undefined;
-          if (field === 'value' || field === 'url') return { ...n, [field]: next };
-          return replaceText(n, span, alt) ?? undefined;
-        });
-        if (!treeChanged(s, snap)) continue; // the value spans several text runs: no faithful edit
-        out.push({
-          id: `format:${c.id}:${i}`,
-          description: `${c.id}'s value shown as ${JSON.stringify(alt)} instead of ${JSON.stringify(span)}`,
-          snapshot: snap,
-        });
+      for (const [k, { source, normalize }] of readsOf(a).entries()) {
+        const locale = localeOf(normalize);
+        if (source.from !== 'node' || !locale) continue;
+        const r = resolveTarget(idx, source.target);
+        if (!r.ok) continue;
+        const raw = readNodeField(idx, r.node, source.field);
+        if (raw === undefined) continue;
+        const span = readSpan(raw, normalize);
+        if (!span) continue;
+        let typed: TypedValue;
+        try {
+          typed = applyNormalizers({ type: 'string', value: raw }, normalize);
+        } catch {
+          continue;
+        }
+        const target = r.node.id;
+        const field = source.field;
+        for (const [i, alt] of formatsFor(typed, span, locale, timezoneOf(normalize)).entries()) {
+          if (alt === span) continue;
+          const next = raw.replace(span, () => alt);
+          const snap = editById(s, (n, id) => {
+            if (id !== target) return undefined;
+            if (field === 'value' || field === 'url') return { ...n, [field]: next };
+            return replaceText(n, span, alt) ?? undefined;
+          });
+          if (!treeChanged(s, snap)) continue; // the value spans several text runs: no faithful edit
+          out.push({
+            id: `format:${c.id}:${k ? 'sameAs:' : ''}${i}`,
+            description: `${c.id}'s ${k ? 'compared ' : ''}value shown as ${JSON.stringify(alt)} instead of ${JSON.stringify(span)}`,
+            snapshot: snap,
+          });
+        }
       }
     }
   }
