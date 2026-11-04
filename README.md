@@ -155,7 +155,7 @@ Three small apps (`examples/tiny-shop`, `examples/tiny-tracker`, `examples/tiny-
   - Add `-- --checks compiled` to use the compiled check sets. The run each set was compiled from is then left out.
   - Model rows are recorded to cassettes when `ANTHROPIC_API_KEY` is set and replayed otherwise.
 - `npm run stability` judges every run against five releases of each app, and against the regression alone, (renamed copy, new layout with look-alike content, extra API fields, and a real regression), with checks written for the first. Results go to `stability/results/REPORT.md`. CI runs it on every change and fails on any wrong verdict.
-- A weekly workflow measures the model baselines live, when the API key secret is set.
+- The Model baselines workflow (run by hand) measures the model rows live with fresh recordings, when the API key secret is set. Run it after changing the model, a prompt or the model adapter.
 
 See [ADR 0005](docs/adr/0005-evaluation-and-stability.md).
 
@@ -183,10 +183,10 @@ the package, installs it into an empty project and uses it from there; CI runs i
 
 A pull request that changes what the package does adds a changeset (`npm run changeset`; see
 [CONTRIBUTING.md](CONTRIBUTING.md)). The Release workflow turns the changesets on `main` into a
-"Version packages" pull request. Merging it tests the package, stages it on npm with npm's
-trusted publishing and provenance, and opens a draft GitHub release. A staged version goes public
-once a maintainer approves it with 2FA; the workflow then tags it and publishes the release (on the
-next push, its daily run, or by running it by hand). See
+"Version packages" pull request. Merging it stages that version on npm with npm's trusted
+publishing and provenance, then tags it and creates its GitHub release. The version goes public once
+a maintainer approves the staged publish with 2FA. Any other push to `main` only updates the
+"Version packages" pull request. See
 [ADR 0006](docs/adr/0006-npm-package-and-releases.md).
 
 Milestone 1 acceptance lives in `tests/tasks.spec.ts`. It covers 10 tasks

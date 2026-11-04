@@ -6,4 +6,4 @@ change for the changelog. Commit the file it writes here.
 
 The Release workflow collects the changesets on `main` into a "Version packages" pull request, which
 bumps `package.json` and writes `CHANGELOG.md`. Merging that pull request stages the new version on
-npm with a draft GitHub release; approving the staged version on npm tags it and publishes the release ([ADR 0006](../docs/adr/0006-npm-package-and-releases.md)).
+npm, tags it and creates its GitHub release; the version goes public once a maintainer approves the stage on npm ([ADR 0006](../docs/adr/0006-npm-package-and-releases.md)).
