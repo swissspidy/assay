@@ -93,9 +93,9 @@ The checks are written for v1, and every scenario runs against every variant.
 
 The run is deterministic and takes under three minutes, so it runs in CI on every change (`ci.yml`, job "Stability"). Each app also answers `GET /__assay/version`, so the runner never silently reuses some other server that happens to be on the port.
 
-### What runs weekly (`model-baselines.yml`)
+### Measuring the model rows live (`model-baselines.yml`)
 
-The only thing that changes on its own is the model side: hosted models are updated. The weekly workflow therefore evaluates the LLM judge and the agentic verifier live, with fresh recordings, and keeps reports and cassettes as artifacts for 90 days so weeks can be compared. It needs the `ANTHROPIC_API_KEY` secret and does nothing without it.
+The apps and the check sets do not change on their own, and the model ID is pinned (`claude-opus-5-5` unless `ASSAY_MODEL` says otherwise), so a schedule would mostly re-measure the same thing. The workflow therefore runs by hand: after changing the model, a prompt or the model adapter, it evaluates the LLM judge and the agentic verifier live, with fresh recordings, and keeps reports and cassettes as artifacts for 90 days so runs can be compared. It needs the `ANTHROPIC_API_KEY` secret and does nothing without it. (An earlier version of this ADR ran it weekly.)
 
 ## Results so far
 

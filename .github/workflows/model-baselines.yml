@@ -1,14 +1,14 @@
 name: Model baselines
 
 # The checks and the simulated app releases are deterministic and run in CI on
-# every change (ci.yml, "Stability"). What changes on its own over time is the
-# model side: hosted models are updated, so the LLM judge's and the agentic
-# verifier's verdicts can drift. This weekly run evaluates them live and keeps
-# the reports and recordings as artifacts (90 days), so weeks can be compared.
+# every change (ci.yml, "Stability"). This run measures the model rows (the LLM
+# judge and the agentic verifier) live, with fresh recordings, and keeps the
+# reports and recordings as artifacts (90 days), so runs can be compared. The
+# apps, the checks and the pinned model ID do not change on their own, so it
+# runs by hand: after changing the model, a prompt or the model adapter
+# (docs/adr/0005-evaluation-and-stability.md).
 # It needs the ANTHROPIC_API_KEY repository secret and does nothing without it.
 on:
-  schedule:
-    - cron: '17 4 * * 1' # Mondays 04:17 UTC
   workflow_dispatch:
     inputs:
       checks:
@@ -46,7 +46,7 @@ jobs:
           cache: npm
       - if: env.HAS_KEY == 'true'
         run: npm ci
-      # Fresh recordings every week: the committed cassettes are not reused.
+      # Fresh recordings: the committed cassettes are not reused.
       - name: Evaluation (live)
         if: env.HAS_KEY == 'true'
         env:
