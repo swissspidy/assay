@@ -12,17 +12,6 @@ import { clauseCovered } from '../src/compiler/compile.ts';
 
 import { APPS } from '../examples/apps.ts';
 
-/**
- * Incorrect runs added with baselines (they change the cart the task started with). The
- * compiled sets for these tasks predate baselines and accept them. The next PR re-records
- * the compiled sets and removes this list; nothing else may be added to it.
- */
-const KNOWN_MISSES = new Set([
-  'tiny-shop/04-remove-red-mug/removed-red-mug-and-teapot.json',
-  'tiny-shop/07-express-order/ordered-extra-item.json',
-  'tiny-shop/08-delivery-date/ordered-part-of-cart.json',
-]);
-
 for (const app of APPS) {
   const root = app.dir;
   const dir = new URL('compiled/', root);
@@ -51,12 +40,7 @@ for (const app of APPS) {
       const refDir = new URL(`references/${id}/`, root);
       for (const rf of readdirSync(refDir)) {
         const { label, snapshot } = JSON.parse(readFileSync(new URL(rf, refDir), 'utf8'));
-        const verdict = evaluate(cs, snapshot).verdict;
-        if (KNOWN_MISSES.has(`${app.name}/${id}/${rf}`) && verdict === 'success') {
-          test.info().annotations.push({ type: 'needs recompile', description: `${rf}: success, labelled fail` });
-          continue;
-        }
-        expect(verdict, rf).toBe(label.expected);
+        expect(evaluate(cs, snapshot).verdict, rf).toBe(label.expected);
       }
     });
   }

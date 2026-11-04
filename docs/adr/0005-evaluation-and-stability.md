@@ -101,33 +101,33 @@ The apps and the check sets do not change on their own, and the model ID is pinn
 
 ## Results so far
 
-Measured on 2026-11-04 with `claude-opus-5-5` at effort `high`, for the compiler, the LLM judge and the agentic verifier. Latency is per run after capture; model latency is from the live recordings.
+Measured on 2026-11-04 with `claude-opus-5-5` at effort `high`, for the compiler, the LLM judge and the agentic verifier. Latency is per run after capture; model latency is from the live recordings. The LLM judge's is from its first recording of 123 of these runs (the three runs added later took 5.1 s and 6.9 s at median and p95).
 
-- **Compiling:** all 30 tasks compile from one correct run each, and the compiled sets judge every held-out labelled run correctly (`examples/<app>/compiled/SUMMARY.md`). The first live compile missed three: an `anyOf` branch reading a probe field no snapshot had (failed runs abstained), an exact comment text that rejected a correct "Working on it." and row-only checks for a list filter that the seed data already satisfied without the filter. The compiler now refuses `anyOf` branches that no correct run can read, and the discovery prompt covers dictated messages and filter state. Review then found checks for one event's title, date and time that could each be met by a different event; the prompt now has every such check select the record by all the details the task states. The tasks were then re-recorded.
-- **Stress (compiled sets):** every near-miss mutant is rejected (284/284, all by fail) and every valid variant is accepted (625/625).
-- **Eval, compiled checks** (93 held-out runs: 30 correct, 63 incorrect):
+- **Compiling:** all 30 tasks compile from one correct run each, and the compiled sets judge every one of the 96 held-out labelled runs correctly (`examples/<app>/compiled/SUMMARY.md`), including the three baseline runs. The first live compile missed three: an `anyOf` branch reading a probe field no snapshot had (failed runs abstained), an exact comment text that rejected a correct "Working on it." and row-only checks for a list filter that the seed data already satisfied without the filter. The compiler now refuses `anyOf` branches that no correct run can read, and the discovery prompt covers dictated messages and filter state. Review then found checks for one event's title, date and time that could each be met by a different event; the prompt now has every such check select the record by all the details the task states. The tasks were then re-recorded.
+- **Stress (compiled sets):** every near-miss mutant is rejected (348/348, all by fail) and every valid variant is accepted (623/623). The handwritten sets: 254/254 and 625/625. After the recompile for baselines, two checks abstained on valid variants: a pattern on a region's text missed non-breaking spaces, and date re-formatting dropped the "Estimated delivery:" label a check was anchored on. Both were tool bugs (ADR 0002), fixed before the final recording.
+- **Eval, compiled checks** (96 held-out runs: 30 correct, 66 incorrect):
 
 | System            | Balanced accuracy | TPR   | TNR   | Cost / run | Latency (median / p95) |
 | ----------------- | ----------------- | ----- | ----- | ---------- | ---------------------- |
-| checks            | 1.000             | 1.000 | 1.000 | $0         | 0.3 ms / 4.7 ms        |
-| checks+escalation | 1.000             | 1.000 | 1.000 | $0         | 0.2 ms / 0.6 ms        |
-| llm-judge         | 0.927             | 0.933 | 0.921 | $0.0119    | 4.3 s / 10.0 s         |
-| agentic-verifier  | 0.942             | 0.900 | 0.984 | $0.0273    | 8.3 s / 14.4 s         |
+| checks            | 1.000             | 1.000 | 1.000 | $0         | 0.3 ms / 4.6 ms        |
+| checks+escalation | 1.000             | 1.000 | 1.000 | $0         | 0.1 ms / 0.4 ms        |
+| llm-judge         | 0.906             | 0.933 | 0.879 | $0.0119    | 4.3 s / 10.0 s         |
+| agentic-verifier  | 0.976             | 0.967 | 0.985 | $0.0279    | 8.9 s / 14.4 s         |
 
-- These results were measured on the 123 runs before the three baseline runs were added; the compiled sets for Tiny Shop 04, 07 and 08 predate baselines and accept those three runs until they are recompiled.
-- **Eval, handwritten checks** (all 123 runs): checks 1.000; LLM judge 0.944 ($0.0117 per run); agentic verifier 0.984 ($0.0244 per run). The checks row is circular here (see above).
+- **Eval, handwritten checks** (all 126 runs): checks 1.000; LLM judge 0.923 ($0.0117 per run); agentic verifier 0.984 ($0.0249 per run). The checks row is circular here (see above).
 - No compiled check abstained on these runs, so escalation never called the model.
-- The LLM judge accepted three adversarial pages that only claim success (a spoofed delivery date, gift wrap and deletion), a wrong rename and the label-only filter, and rejected two correct runs. The agentic verifier, which reads probes and the network log, rejected every adversarial page. It shares two misses with the first compile: it rejected the comment ending in a period and accepted the label-only filter. With the compiled requirements it also rejected two correct orders that added gift wrap to an express order.
+- The LLM judge got the same ten runs wrong in both modes. It accepted three adversarial pages that only claim success (a spoofed delivery date, gift wrap and deletion), a wrong rename, the label-only filter and all three baseline runs: it sees only the end state, so removing the teapot as well, ordering an extra item and ordering part of the cart all look done. It rejected two correct runs (an express order with gift wrap, and the comment ending in a period).
+- The agentic verifier, which reads probes (with their baseline) and the network log, rejected every adversarial page and every baseline run. It got two runs wrong in both modes, the two the first compile also missed: it rejected the comment ending in a period and accepted the label-only filter.
 - **Stability** (handwritten checks, no model):
 
 | Variant         | Correct | Abstain | Broken | Agent error | Regression runs caught |
 | --------------- | ------- | ------- | ------ | ----------- | ---------------------- |
-| v1              | 123/123 | 0       | 0      | 0           | –                      |
-| v2 copy         | 116/123 | 7       | 0      | 0           | –                      |
-| v3 layout       | 116/123 | 7       | 0      | 0           | –                      |
-| v4 api          | 116/123 | 7       | 0      | 0           | –                      |
-| v5 regression   | 118/123 | 5       | 0      | 0           | 6/6                    |
-| regression only | 123/123 | 0       | 0      | 0           | 6/6                    |
+| v1              | 126/126 | 0       | 0      | 0           | –                      |
+| v2 copy         | 119/126 | 7       | 0      | 0           | –                      |
+| v3 layout       | 119/126 | 7       | 0      | 0           | –                      |
+| v4 api          | 119/126 | 7       | 0      | 0           | –                      |
+| v5 regression   | 121/126 | 5       | 0      | 0           | 6/6                    |
+| regression only | 126/126 | 0       | 0      | 0           | 6/6                    |
 
 - The abstains are Tiny Shop checks anchored on renamed text (newsletter label, cart region, delivery text). They escalate instead of guessing.
 - The look-alike content in v3 and the extra API fields in v4 changed no verdict.

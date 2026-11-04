@@ -27,7 +27,7 @@ point from there.
   `playwright/`, `compiler/`, `stress/`, `model/` for `/models`, `eval/`) or is a single module
   (`model/ai-sdk.ts` for `/ai-sdk`).
 - `examples/`: three small apps (Tiny Shop, Tiny Tracker, Tiny Calendar) with 30 tasks, handwritten
-  and compiled check sets, and 123 labelled reference runs.
+  and compiled check sets, and 126 labelled reference runs.
 - `tests/`: unit tests (`tests/unit/`), live acceptance tests against the example apps, and the
   package test (`tests/pack/`). `tests/tasks.spec.ts` evaluates every Tiny Shop task live and on the
   serialized snapshot and asserts both give identical results.

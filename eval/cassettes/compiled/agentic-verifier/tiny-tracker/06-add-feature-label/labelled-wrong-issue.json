@@ -1,19 +1,19 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T10:18:51.768Z",
+ "recordedAt": "2026-11-04T23:22:09.433Z",
  "turns": {
   "sha256:a4a5f55de0c806b0706ba82ba099d9d81bb0c3c97565631a5eeb5e28a01e7df4": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_015HhQfcPPGbCd87AEzVu5VY",
+     "id": "toolu_01Hs9bvtbPNWQQ5Yc6r1qBwj",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01RGJUuF5qpncJyXV7KzE8eh",
+     "id": "toolu_01QJo3qED7SHuUCva7zup324",
      "name": "network_log",
      "input": {}
     }
@@ -21,7 +21,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_015HhQfcPPGbCd87AEzVu5VY",
+     "id": "toolu_01Hs9bvtbPNWQQ5Yc6r1qBwj",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -30,7 +30,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01RGJUuF5qpncJyXV7KzE8eh",
+     "id": "toolu_01QJo3qED7SHuUCva7zup324",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -46,12 +46,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:bca37c4c4dfaf791e2a187c3da71571bac1f59b2f61709ec24cd8e6f14cf12bd": {
+  "sha256:fd9af2c8c0f13debee803d597f63ed41410d0731d66a85f01e04780d1ca067e0": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01WTTYxwkRTt9LGuNmWgBC68",
+     "id": "toolu_01X6d8aFtH9zPN8vSAnzsTMx",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -62,7 +62,7 @@
          1,
          2
         ],
-        "reasoning": "The probe shows issue #1's labels are only [\"bug\"]. The only POST went to /issues/3/labels, so the label was added to issue #3, not issue #1."
+        "reasoning": "Server-side probe shows issue #1 labels are only [\"bug\"]. The only mutation was POST /issues/3/labels, which targeted issue #3, not #1."
        },
        {
         "requirement": "issue #1 still has the bug label",
@@ -70,7 +70,7 @@
         "cites": [
          1
         ],
-        "reasoning": "The probe shows issue #1's labels still include \"bug\"."
+        "reasoning": "Probe shows issue #1 labels include \"bug\"."
        }
       ]
      }
@@ -80,11 +80,16 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS6AUKEAgTGAI4AUIIdGhpbmtpbmcSDCS8PvxSdz7nSm2WbxoMFRend5dqSPx+gT0oIjAT4BIKS01paMM+kTV9qF4VvuM3u/Hs3QpyMuQJQ/len2myhopFp4tidihF6fMmn34qhQXB/xbQy4/DL8uVV97Eg+4MMrJtlvBK4UYVR+VGELSK0X8LlQ0zKaiKkXpPWUYnyuWJe6IxmMpPx0xdVJTl4udlPUz/3AZe4/T7LtvrjDsp/S9DnFC7q357dZU36jluYO61j1yDp4MrQU8MZyR9a+3pcyDKc/mSVJTmf6E1VP4DEOp0AWi4vfQttkPxEK9Cs/GPSBSj8vPFgdttB/rDEinVarpNjSczFkfNh1MJY5scxBW9QrMAHAxfTQicjxSv4Woxa8QCJT6Z8WUBlV2yfMe9a3QUwHu3w1qObPFZ/SoSRpnwp76n0uo2EUfFNECCXeP9yRqg3y/1FIXbwxIxhBZ2bb2rhC5ZzEd3XS9Jz5sF0Qt0s/Tid9cqK1YIJoPu3QZL6F2jE9oON0jPBLrpNzyxCxaDc7c6Tz9jyXYWvEdRp6rhQY9JEqBCiSOWmT2Kijqd95/V/2pPIGQCfK8FIsU98RozpkgsOw+cY+5s+eC8ttRCt+F9ajlNCtl86sKSBcH9e1cKb2cuBuWZJKKtga/k93K/We8hcK0jOnrBzBRtfWEQd+Dqn7MOTgnvG3LQVTMkGtXSt8a6PeUeIrpcuB89R80w9dIoiSBKeA6bH2AD0FuzpybQZKrrAYm50IRmgTXwnEK8StLxEYFzoWl1bdnVDe+1IekyYuB6oSEI2joVyvXPEIZFnK5cCipxwgViYmht7+JKZyyELD7wFciyAqaITvuDADKNutdgJXvBjo0L3CVzBpTMRXyfZyGBNmsD78582/2Hy5JqRDFSICmytK+pyPe+/C+rLMY5Yb6h4hnQp84j3o1MzAvlOgTFAJ1NVGQhSA7+RQWE2H6C/tTtaCQj67bZcHcYAQ=="
+     "signature": "CAQS4AUKEAgTGAI4AUIIdGhpbmtpbmcSDPbzaw6XcDv4ck/PLhoM2Csg2ATXNSWXfXO9IjA5ZPnftRqXFYmNR7oMGuhfceIIowKST4V+/5UNeeXTpYfwItL/uSga2oDPypV54eAq/QRkrZj0GIIIgdDOG7iUI9AdlvPHKg8Q8/VTfk009dKdh64Yz0cak8jTf9oOmKQ5fgW5O9c0pAgxkMqPNGiIa/+LRexK18VRK9xl/7IPswReMyeQZ5ifOUy0/V5hR33CSJu/puL0O434saPlD2vO/uKBAwKbyzGaOPsqW8hK/DR+XIWM46h88IJLC/So3VhURmYrGE/MrgeYZCk2r9PSjTNEO+DgSU5pZNOcFOZx6iU5KNDexDkDIJkSnDvT1cI7iu+/SyXJUpl740lewpekKCK1Fhs23+zx/TXwuuKhs29L6mMHQp5XCI0JcUDvNnUq+XgRK7Z19diNte6oj7w287zstqNZNpopYweEY25WIDJW+/fedV0eaFwWnABmkDiVKUfhhDb7NjfRQLzWGnnRPOeaYE4wZGirbW8bPw88Vbh3bHFlxl+v4u+mOoua7ZjMzl2q+KKb4sWp5RtGFZgfzAn/FdP0l7K2MjqlW36Bj46WD//eal/ROOz4yFry8FnULGDfkcSeE/czLjIGiGzvZBeHSESZNz2MO64+oMGqnuGZouGi637s+VBtALsEvdTdoE0r82zUujISadB+FQEBQ2aYVBKvVS3ZvLTwr31Tdwm3ulBo6IU3kEaYCICekBDp+P+1qHhQLv/L4Jp3ii3exRTX13B8z9rKl/3NxdTHHiZp15UgE4R/bkntpw9KOVaiE2vDbXe0h9YECZacw/1lIO+eGrcbRMNRUF5b7EA0iOj2NaQ3x2Ll3B3UPYl+HFm1emqfOObL6ctm3I5o1NW8xFKPk/KoCheic+vSA5Bgfil1iWhP5OkLYUJ9X8Nfs0tkfXrMZW7NaAeo0fgCA1N2GAE="
+    },
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSwwgKEQgTGAI4AUIJbmFycmF0aW9uEgzgUassUaghfQ7Uv5saDLb5UhXVCN4ppW+nwSIwOCb8mwq3OZyYqM3sWxgrmoJ7Q1TBhof8fHvlzMZqduF10u0Xio0uFP76sdS7zjY+Kt8H2ybFRhZiVFbhFBVIyCez8CEnBPfkk+7XNl91bMNw8p6RVm+IGXuQbMK7mS/VyDVhxaTyKvoJKir/jn89ySAbkSQtTl2xIzeEt0hVmoXdiTEeZJkeUa4tWh/KcjizXBGaa0qTBrhV8/MTiytx4H3ULk/pNEiUywNxUkWL2Nq0R77mm5fU/iLbB9bFVX/gBQbBHwWRsbMQKVHyCuA/oJJeej2aCGCmTzEb9jdYPPVZZv+WdlTLld6e9g9t6ZkrVIRk3l9F9WbU8Yjp1JR03W64uKblaE5VHDc3J3mM7d8PbPmA1UTnAxJbqzy53//yOKAWWRB/boPG5seooyhcotFMQaaTLDVrzw5NpnGByYVOVxiPMWEyifFYbEsi7r4/eYwGN4Hyo7G6NfDgqTQMvu+XT/zZ98I2NEKSHFU4LfBkK4Xk29MsqlNoQMzQRD/7Zq55nCruKHZu1xEdoVyACa8djtIIKUjrwZNuyLYAxQd4SxTHSX4Xp5nD/SdDzVhtKuflnKABL4WBVi0ugMjP7q5GGcQqHxmiM1lSg9Sb7htGHkpF34zdcAQsJrWhbRM/g08ICYYO3TcIfxb6HX7cwMTRxUSPIr8Q52QEC2vRd1Rkkh58zf42FEVW1wPc4A2CqvfQbnOsyUGuU5+12ukbMyEQ2xGQk/9u6lGTy2Fr+Bioh5EF5Cv8KmPqjp+QT+KcHgwMIyOwATiRFlE7xkr3dc+rj90L6iCuI7oQ3j9RBpojd4gN2yvUjR6g3sKwfjB7fFRq9iUXr8DTtbLc/DqQQRTTYqzZvw+OUptbqb9EO97il4jXsVyPOy/mFzLYjPXZb4wcqYYdrjDfaC1g7Kpi/ccpFsAiivy781/5h0TM9z6KrvX2ps3X3r2ybDbZAc4xCExKy0HdaTZQcOzfFiCeyiEdmrhg7ldrJEH31UEKOWonPFggNw1n6m3xVcG9AxaAy73nDRTt0s4fEACoS9yaJHCb04hv8vBZGrp5rtkX2vmTw0/5hP631zlDdagYMGv9wFA8cAqqpDu/mg08friqEbcbJKfzU4k/tgpNozrQ7iWOkeX9bl5844xPFowjiow05BrO5VaZK2nAaqrPEa2crAba1gwgF8wV+3Qaj4VFALOUuxkYWMLe16ixl/DDS3XveIzbbtYXJfldqe7DNxFnMZA/rk30rEKCoDu4viWlgrKAkZkq51FEOO8wndOhYsK2bRrfwCs8k6XyXmQhVLEt1wqTjRiBCDOEdjQpjUbt7Q+6OstBO1zQl6W5pVflFcID3P8eFjpxiLIwEyin1NaimCkyowzp6pCSNvQ8gkxlqi6awBgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_01WTTYxwkRTt9LGuNmWgBC68",
+     "id": "toolu_01X6d8aFtH9zPN8vSAnzsTMx",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -98,7 +103,7 @@
          1,
          2
         ],
-        "reasoning": "The probe shows issue #1's labels are only [\"bug\"]. The only POST went to /issues/3/labels, so the label was added to issue #3, not issue #1."
+        "reasoning": "Server-side probe shows issue #1 labels are only [\"bug\"]. The only mutation was POST /issues/3/labels, which targeted issue #3, not #1."
        },
        {
         "requirement": "issue #1 still has the bug label",
@@ -106,7 +111,7 @@
         "cites": [
          1
         ],
-        "reasoning": "The probe shows issue #1's labels still include \"bug\"."
+        "reasoning": "Probe shows issue #1 labels include \"bug\"."
        }
       ]
      }
@@ -114,18 +119,18 @@
    ],
    "usage": {
     "inputTokens": 2365,
-    "outputTokens": 255,
+    "outputTokens": 394,
     "cacheReadTokens": 1874,
     "cacheWriteTokens": 489
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:4743fabf922582eb3b2af031eb357de81ce3a6337091e413a6b0772499efe277": {
+  "sha256:d666891b7867237b8cb8110c9e09aeac871cc1d0520f6b3c5f800497acf3ffc9": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_017sfd33LeHzTf92M7LsQLRB",
+     "id": "toolu_01UPHsdPx2R12TRGhbEyMz6D",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -136,7 +141,7 @@
          1,
          2
         ],
-        "reasoning": "The probe shows issue #1's labels are only [\"bug\"]. The only POST went to /issues/3/labels, so the label was added to issue #3, not issue #1."
+        "reasoning": "Server-side probe shows issue #1 labels are only [\"bug\"]. The only mutation was POST /issues/3/labels, which targeted issue #3, not #1."
        },
        {
         "requirement": "R2",
@@ -144,7 +149,7 @@
         "cites": [
          1
         ],
-        "reasoning": "The probe shows issue #1's labels still include \"bug\"."
+        "reasoning": "Probe shows issue #1 labels include \"bug\"."
        }
       ]
      }
@@ -153,7 +158,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_017sfd33LeHzTf92M7LsQLRB",
+     "id": "toolu_01UPHsdPx2R12TRGhbEyMz6D",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -167,7 +172,7 @@
          1,
          2
         ],
-        "reasoning": "The probe shows issue #1's labels are only [\"bug\"]. The only POST went to /issues/3/labels, so the label was added to issue #3, not issue #1."
+        "reasoning": "Server-side probe shows issue #1 labels are only [\"bug\"]. The only mutation was POST /issues/3/labels, which targeted issue #3, not #1."
        },
        {
         "requirement": "R2",
@@ -175,17 +180,17 @@
         "cites": [
          1
         ],
-        "reasoning": "The probe shows issue #1's labels still include \"bug\"."
+        "reasoning": "Probe shows issue #1 labels include \"bug\"."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2686,
+    "inputTokens": 2825,
     "outputTokens": 198,
     "cacheReadTokens": 2363,
-    "cacheWriteTokens": 321
+    "cacheWriteTokens": 460
    },
    "model": "claude-opus-5-5"
   }

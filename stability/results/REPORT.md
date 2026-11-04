@@ -1,17 +1,17 @@
 # Stability run
 
-Generated 2026-11-03T22:16:03.896Z · check sets: **handwritten** (written for v1) · 123 scenarios per variant.
+Generated 2026-11-04T23:19:53.360Z · check sets: **handwritten** (written for v1) · 126 scenarios per variant.
 
 Correct = the expected verdict for that version. Abstain = the checks could not decide and would escalate (safe). Broken = a wrong decided verdict. Agent error = the scripted agent could not finish on that UI, so nothing was judged.
 
 | Variant | Releases | Correct | Abstain | Broken | Agent error | Runs with anchor drift | Regression runs caught |
 |---|---|---|---|---|---|---|---|
-| v1 | as recorded | 123/123 | 0 | 0 | 0 | 0 | – |
-| v2 | copy | 116/123 | 7 | 0 | 0 | 11 | – |
-| v3 | layout | 116/123 | 7 | 0 | 0 | 11 | – |
-| v4 | api | 116/123 | 7 | 0 | 0 | 11 | – |
-| v5 | regression | 118/123 | 5 | 0 | 0 | 11 | 6/6 |
-| regression | regression only (on v1) | 123/123 | 0 | 0 | 0 | 0 | 6/6 |
+| v1 | as recorded | 126/126 | 0 | 0 | 0 | 0 | – |
+| v2 | copy | 119/126 | 7 | 0 | 0 | 11 | – |
+| v3 | layout | 119/126 | 7 | 0 | 0 | 11 | – |
+| v4 | api | 119/126 | 7 | 0 | 0 | 11 | – |
+| v5 | regression | 121/126 | 5 | 0 | 0 | 11 | 6/6 |
+| regression | regression only (on v1) | 126/126 | 0 | 0 | 0 | 0 | 6/6 |
 
 ## Releases
 
@@ -26,11 +26,11 @@ Correct = the expected verdict for that version. Abstain = the checks could not 
 | tiny-shop/01-newsletter | 4/4 | 2/4 (2 abstain) | 2/4 (2 abstain) | 2/4 (2 abstain) | 4/4 | 4/4 |
 | tiny-shop/02-add-blue-mug | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 |
 | tiny-shop/03-cart-two-mugs | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 |
-| tiny-shop/04-remove-red-mug | 4/4 | 2/4 (2 abstain) | 2/4 (2 abstain) | 2/4 (2 abstain) | 2/4 (2 abstain) | 4/4 |
+| tiny-shop/04-remove-red-mug | 5/5 | 3/5 (2 abstain) | 3/5 (2 abstain) | 3/5 (2 abstain) | 3/5 (2 abstain) | 5/5 |
 | tiny-shop/05-set-quantity | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 |
 | tiny-shop/06-cart-total | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 | 3/3 |
-| tiny-shop/07-express-order | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
-| tiny-shop/08-delivery-date | 4/4 | 1/4 (3 abstain) | 1/4 (3 abstain) | 1/4 (3 abstain) | 1/4 (3 abstain) | 4/4 |
+| tiny-shop/07-express-order | 6/6 | 6/6 | 6/6 | 6/6 | 6/6 | 6/6 |
+| tiny-shop/08-delivery-date | 5/5 | 2/5 (3 abstain) | 2/5 (3 abstain) | 2/5 (3 abstain) | 2/5 (3 abstain) | 5/5 |
 | tiny-shop/09-gift-wrap | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
 | tiny-shop/10-dark-german | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 | 4/4 |
 | tiny-tracker/01-create-bug | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |

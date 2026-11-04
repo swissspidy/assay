@@ -1,27 +1,32 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T10:20:49.362Z",
+ "recordedAt": "2026-11-04T23:24:10.383Z",
  "turns": {
-  "sha256:b6b8110db35e9169b7d4dcf2b9d0d1ce38d10bced438c8cfca9ad25851814129": {
+  "sha256:adaaba361b2e58d9a89fd1ae5825e9d3fce46db1a753a8a81987d180924f6a45": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_011oHaKrgECm1YuHiEyFPQZm",
+     "id": "toolu_01ASR77eSmMQENkhC5R1rV8W",
      "name": "page_outline",
      "input": {}
     },
     {
-     "id": "toolu_01QPaxvqqgaPttDTgN3nY45B",
+     "id": "toolu_016hWErGsMcV2nguBKr1VqhL",
      "name": "probes",
      "input": {}
     }
    ],
    "raw": [
     {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSlQUKEAgTGAI4AUIIdGhpbmtpbmcSDPgFEJuQKKLart5LkxoMxeRyjK05LZNRBsceIjCyrhhLFWVx/js1fGiTzdffLBAJeHFSP9r5EarREJosu/W8jgTISxMSyK/0Iwah+ZYqsgS+e2nnPe0E+knuZyEI0Oo3o4vn4mmvftv53innKZNGDKa6wAGfr3lGug2cj0jaxo4vtypjCXcB2PCp6fVjhAJWnL1mvEkfF/uf4elqpbJ0enyBGNmAqa5OgBnY0Tfk0ohRXmCBIKWHPb5+LSlHsum0c/RlZmBEBLHKpKoKysEHpJM+xbhiTkFv6lTkVssVZGvyGwwTDAR3Eh2ZP+pMYY1r65Q/MhI13PeZfB6EtF1x9Sxul2A+boXC51sdpqwommtwE9mRF26ijRy7JDE3It/soHXRt7e64tRNV8dDQ0lo401Xw8gfZdrgEqwRLSFZ8sy98BM18p/zDmS/ZSE8Mg8GGPmFt+bNhmjibB1uHdE+woQ0cMdN5uYtO8r/n/rixdGaHg/CBX6LUHhMjvnOHY0fxCmBeQ6itdFNS3VQ/XadNvL+lmaRR5MhaTBVSgDEyW61NvKV5oMMICz+IgoYKtRMkNPenf3rR0aOMat9brdpQZzcZ3i0h6QlqaciqgzIaPW7U5ggzB7CUdc6MsDIfHX9Hlu1nRG7L/ThaV+NZo2ZRUrHT1QWfrzT+AhJ5WVyklMCRWLvz66jemv47FL5bKjMjUiT4nuxjv6aOyvMIL811zj7O01e2Bxb14vkXgVeKG2Mk6Y6kLfiULJh+bRNnalecN7c8NsxGshNDDs8IK8aoJVaJXpwiIr63/rsNW6buibs4G2E5RfDB8RX/QPim44UWdpiGW7fl3cvTOe5HHTAZ5boGAE="
+    },
+    {
      "type": "tool_use",
-     "id": "toolu_011oHaKrgECm1YuHiEyFPQZm",
+     "id": "toolu_01ASR77eSmMQENkhC5R1rV8W",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -30,7 +35,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01QPaxvqqgaPttDTgN3nY45B",
+     "id": "toolu_016hWErGsMcV2nguBKr1VqhL",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -39,19 +44,19 @@
     }
    ],
    "usage": {
-    "inputTokens": 1875,
-    "outputTokens": 49,
+    "inputTokens": 1871,
+    "outputTokens": 66,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 1871
+    "cacheWriteTokens": 1867
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:3ce3bed91ed06a3e20b36361461ae1a279389c683c1c19e6cbb13da807d51c30": {
+  "sha256:e856b27401a5ca9ced055763ac4c78e2904b86334dd1aa1a3645a037fd0677fe": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01JpbtVL4TEd2GYypUGu1Rea",
+     "id": "toolu_014eT2eREccB7SLYLUgQQcmu",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -62,7 +67,7 @@
          1,
          2
         ],
-        "reasoning": "The status filter is set to Open (URL has status=open). The list shows exactly issues 1 and 2, and both are open. The closed issue #3 is not shown."
+        "reasoning": "The status filter is set to Open (status=open in the URL). The list shows only issues #1 and #2, and both are open. The one closed issue, #3, is left out."
        },
        {
         "requirement": "R2",
@@ -70,7 +75,7 @@
         "cites": [
          1
         ],
-        "reasoning": "The label filter is empty (label=, set to 'Any'). The list includes issue #2 'Add dark mode', which is labelled 'feature', not bug, so it does not show only bug issues."
+        "reasoning": "The label filter is still set to Any (label= is empty in the URL). The list includes issue #2, 'Add dark mode', which is labelled feature, not bug."
        }
       ]
      }
@@ -79,7 +84,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01JpbtVL4TEd2GYypUGu1Rea",
+     "id": "toolu_014eT2eREccB7SLYLUgQQcmu",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -93,7 +98,7 @@
          1,
          2
         ],
-        "reasoning": "The status filter is set to Open (URL has status=open). The list shows exactly issues 1 and 2, and both are open. The closed issue #3 is not shown."
+        "reasoning": "The status filter is set to Open (status=open in the URL). The list shows only issues #1 and #2, and both are open. The one closed issue, #3, is left out."
        },
        {
         "requirement": "R2",
@@ -101,17 +106,17 @@
         "cites": [
          1
         ],
-        "reasoning": "The label filter is empty (label=, set to 'Any'). The list includes issue #2 'Add dark mode', which is labelled 'feature', not bug, so it does not show only bug issues."
+        "reasoning": "The label filter is still set to Any (label= is empty in the URL). The list includes issue #2, 'Add dark mode', which is labelled feature, not bug."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2864,
-    "outputTokens": 228,
-    "cacheReadTokens": 1871,
-    "cacheWriteTokens": 991
+    "inputTokens": 2877,
+    "outputTokens": 218,
+    "cacheReadTokens": 1867,
+    "cacheWriteTokens": 1008
    },
    "model": "claude-opus-5-5"
   }

@@ -1,19 +1,19 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T10:20:30.059Z",
+ "recordedAt": "2026-11-04T23:23:53.871Z",
  "turns": {
-  "sha256:59cd6f5c1369c928832d5dfc2d47eb393a104e254961234358d1d52214b124b1": {
+  "sha256:29d41d52617e08f6027037270f1437229c2f0ea50928427985f233b29404af63": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01EnrVyRwkUgd3YHkH4N4b6F",
+     "id": "toolu_01BvWnvd4snaUmjfHFHX3xwr",
      "name": "page_outline",
      "input": {}
     },
     {
-     "id": "toolu_01GMh7rL4ja57XmsephLTwfK",
+     "id": "toolu_01LPDvhsFbacEL6zsjpwidqw",
      "name": "probes",
      "input": {}
     }
@@ -21,7 +21,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01EnrVyRwkUgd3YHkH4N4b6F",
+     "id": "toolu_01BvWnvd4snaUmjfHFHX3xwr",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -30,7 +30,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01GMh7rL4ja57XmsephLTwfK",
+     "id": "toolu_01LPDvhsFbacEL6zsjpwidqw",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -39,39 +39,39 @@
     }
    ],
    "usage": {
-    "inputTokens": 1874,
+    "inputTokens": 1870,
     "outputTokens": 49,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 1870
+    "cacheWriteTokens": 1866
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:089ab2a1dc23ff40099d63db7d77612c70dc06b21167bfbbfd26e133ae6adc9b": {
+  "sha256:fb53ae802dbb7e5cac86a0c6fd973ad7d81d60c5ff5f016bd6cb5d4b21d34de9": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01APmSgL5N1ZwxK3oWCpcC33",
+     "id": "toolu_012z9ci6EN4MtsG2VF2dF5AV",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
        {
-        "requirement": "Then the list shows only open issues",
+        "requirement": "the list shows only open issues",
         "status": "pass",
         "cites": [
          1,
          2
         ],
-        "reasoning": "The list has Status=Open and label=bug filters applied and shows one row, #1, with status Open. The stored data confirms the only issue that is both open and a bug is #1, so the list contains only open issues."
+        "reasoning": "The page has status=open applied, and the list shows only issue #1, whose status is Open. The probe data shows that #1 is the only open issue labelled bug, so the filtered list is correct."
        },
        {
-        "requirement": "Then the list shows only issues labelled bug",
+        "requirement": "the list shows only issues labelled bug",
         "status": "pass",
         "cites": [
          1,
          2
         ],
-        "reasoning": "The Label filter is set to bug and the one row shown is labelled bug. #2 (feature) and #3 (docs) are not shown."
+        "reasoning": "The page has label=bug applied, and the only row shown is #1, labelled bug. Issues #2 (feature) and #3 (docs) are left out. The status line reads \"1 issue\"."
        }
       ]
      }
@@ -81,16 +81,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSvQUKEAgTGAI4AUIIdGhpbmtpbmcSDP5/K89omgh7nj0ZFBoMwpAONZEV7IYNkYoqIjD5uGtJdDEy8RmIOx1oJUujlm9yL42LxBRTQGzigSGlywt8e9b1rYe5gIWxGE1lRtIq2gRkOQ2dKsTLFVoX3S0minELS4g+z6WA85MKJG37C0gMMZr6DHsxf9ezE9sD7Ub+cwt/M+kkw6XKXPqgUqe0lNO7k/15lQ2TQwcxdIXBUPsEbUAMnGV7WD92/OXHlrbYrYvFsYfDU5N7bMVp0vSyFJ4/WudoHESL+cVTbrUuRQDEfG4Z8bHaoEpTPPWGUQ87BwBVK0RvxA1H8SK9edM2e/I4yvd7QqH3/KGe18xeI7U6WlQCDAkaILcB5J8ltRREdQpylP8P2CxNJUyqWZ0fnty1yUkhgXuoKoOmjyRp9Wf+iw+zUvq17ISquHutl+8yM36FE9xxR7hRUAYmD0s5lt369Nff22DqDzNHX7bcRYbycBQep+OrSkaEeaiIkcadXxK5bqGzWvlsJalNmEYcCBEK8//pebwBHTfk8BSDHmHhXPllbeyxMa8RDjJYdFcKijz1vgW5B1wdvwiaxdmnia8mhyvfoiNIrnX5YrIxlLHgFBu5LtRWmrnwO/zoyA3tpK7FCOw8kpQZAAZn+iX+HKa1WaKbWhMK9Fx+7OKXCHaYD3Jf14cNJRVgtxl8T3UY7o3E1sHquG964xiXmDLBxZAZ02JOD/FFK1WakQkKOLrwm4CyYGLWBbFkanb1D3B69iz8Y4DeHkb2RrCm6POVbmr8MZIPEc6pxZ0NRmk4waFF7h1Ue4SdjTOYTIwiXQPnYkjpa8kTVe8oZMUMC3YXregFO5LNt3kja6+MeHuxqMDMUZg5w4RGLIITCnZr2o9tmghVMVIVD3wjkisjTbjL5OVgVsfSMYdDmHH71xgB"
-    },
-    {
-     "type": "thinking",
-     "thinking": "",
-     "signature": "CAQSqgsKEQgTGAI4AUIJbmFycmF0aW9uEgzObZu81WH1JG9iE0UaDP09zTPQvTQnSzakUSIwqRUjFQ7gR7030P+yX7/pqetMf8HbNlPwp5NHaN4g57HZyw3vKWZkww/89SuQV4UcKsYKOL1+vznY98FcUYx4+Xa8aS+v0UOPq0TuXJh+tNNkMhds2nyAcHoe9IVaXwfMMbgg+iI9TssghFNjwIImy9Wbwpa8P4i9dbAe2JXa2zBP2hfDMNxiwrVATlsVrLnYZ0jsU5jX3UoDlDQ8CfVwye9KBdGUYenTBf4QuNldjEjqg9kmbmwJX5fPZWQSuT/EOMBQVjPglG00jWNcU1dS8480DAWyXxkWHXF7AAT2/4wSPBg3F0Q5kxTlMB51icm+NQRsTvj6si6XVPIc/OdkPQllihmU72qD1lpcDgIvZX0NT8ykx0XFyJYUQJAn3G1V6LG4HIe8DzrF/1tLAp2cLcoPCOcjrcTbCgly9b2pCl/40Z6Wb0gpPSJbO8cN4HC07mfd3DdS3f7HbVMwEIt3ByzwtJv1fog46+5CfCSKcJTUPm9wu29Sk7wI+DvRViIRI6mcb0IV3FwofCGKJbhexw6JDY8Ao1iLeQDREF5Qy8EkfPor38ANMitKzZOACAPKeHnSg1Gm+Z4T/qU9+Dt/eVBYCjhGWaAcDCCISeGOwQLGe7nugLSAXM4o2Ny8HbVV2+gFrrKgxmWxc9MknjRDXQzZQTF316zCsIvz+TZTq/1DO4L/cFYjGtdgpjc7B01v/8i7Fb78L9yWqoBiaydEvFBdbYMHY0RiS9I+bLAEAlmZyed26nFDPl2dY0d9D9hnSW8UkTUmuLwyu8Dtq/B+iv9+nw+BXYL6yqjMwAjbhR00WmzO4BZWCuNwlx+KiYzCGjVZPX8udG/6/vkltzxouo7lJ+a3v75ybI+cg3Ee6VpLdDUlIchC2ER5mINeAdVfL4Nsfh4JBwghqpeqHw/ZQDF6wQTw+0Ky9hgC1BoPs9cwy6BvhNvenCPZiZDplINpIG9cfgr0Cs1AhRyD3lF9OkCBixZsQEWKTrDrWeJxw6BmeMGXhJwzBplKkcIeLKDhoHn2h3vhRuKabR0ejkxg1ILUicpj70yYYq9QW0EakKVgISgYgVaHPlx0IsBBKB2sDMHZtDtevPLs82VUMcQ+n1ijKmThuQtjg6bm7qJ2PEL2bkXEFkSj4fB5uGLRfLdH5tFYN1m4t5KgSn+cd4pWSP141b/FN1gAFxS79Yr2tW1zzAbhnUO8lIyja9KPCNCBV735zkgrvk5kTwRNt38qe4W/5FUDKnR3kH2zMplZCAPxR4nfifGb0LxB1sP1BJwDvxIMzSVDryHbLeiDE7ZZ/sNMj/2xYd52HQvmOK4zF4OHc2QeS+uQYKDdwjI0vbttYd0NIGneFS6r73C0VprEvg3JqmIGLMja3dSvtGlsMVP7VF23FWhc/Lvy5Sg1SjCDFH45vB1dCsA1ouSKOIgSAVv+DQygjN/J6GMKhdD9Lbnvro2pmZPp4mdvQulj2wpjyjZshhvgba+8kmBD+w05LKydbWJKlyo2biHnrj/+/NePt8nSP98je5hrxMC2K2zfinZKYqyHkAr9uvbc53Yv+gpMz4SK7ew7omBG3hjnER7L5X6VDditTg0WagNtKvw2PA9MVkvdBsRn4Jue4FaAmiIAiXgyx0G9jXQHV1fBS8jOnGp192YrSFRdAn3svfZUiuWrLpBdcsiOPcMwYW/1si+JVSM1CnEXzxEfHqyGOyDdVbQmDvHgcTFJq1smx8anUgmugRvk3gNxdZFDlvVPE38eCaKtLySMoOUS+5sex1K6BJ4JM5vQlI5WOmUWDLJcPGu9bbwYn3D08A7GO01Ge8yi23fQoT58lZHxuDNTeOxIrRFZ9s5cjIfRloPWniL859TgWcP2d816GAE="
+     "signature": "CAQSvwUKEAgTGAI4AUIIdGhpbmtpbmcSDA6E6W6uO0/jWg2MxBoMkqVPquSPRAveRSkhIjC7HJVikE/29vW0GCzZGo5rV/aW7UzBHW99I3gQKshtl1xrMgj2e4v7F/7TqH41BFEq3ARsZcRz8BJGhAKCpP27HWfMj/rEeQNtEfG/DEIwBdwkeOjHX65PdJDlT8M9uRykWUxSYq71/hdUtZXgPcSM62G5YpXkwJEYetVBz0dQP8vmw+Bd1oYMnrbj/cxkMUEBS3CduVnWgna33IFB/01HWYK1x/Ji5YNsucn7seYhYPyLmlD8b1+mR66IHrTIRlW6yJoNvH8Y4A1tpuXLxCKyiW+n6wHka3gOOrS3gsfgQbjRB+Cb2JiLj3GWIJ32v8kVPLb/J+5+elQpRQCAB8ptv9nfOVU6f4XZjQUjtv57g3t0p6M1oYS9pIemP0UUxxWIyFahtKQgnmoq5QfbAdCVMa6Wk9aSw/mQ0UbssQ9SyARuF2kW3GcsJW+uvYW1IKfwhkpRLHdYChLW//Q0cTuKMCztjUWu2/RMc2uVJzGdyJYDSyzUMkbG34B93TKSeT0+PDL2zO3JNdzaQZXSzY87TuaMY/QO8F8dMi2GwamTJL+4R4TPUOzioctRSeK0F3JOsotcej/SIWr/0lFPpC+Gt5s/woqp9t1r2wTGgMdFGRpbZNK63W4LAD39ywhdxHoa3DUF8AVaRGmqTD+eHC6JtIUO7eGBfWIqAp2pnjw45iKISNMmX95t920udhZB7EpfBggxm7r7ZADccwQuqWpkq83yhUPpu+Z9jQT6WD5q/WyPneXXxUWNzVNZxhNCZZL0hpLuEjqdmbntF5z50SwdDeoY16JjvZz9xljJgnby8rzilz2/hqTlpVRtRbAInz4Lg19wvXM19kkT/LAm/Tu04za8ijGzenyjDTDczNnBGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01APmSgL5N1ZwxK3oWCpcC33",
+     "id": "toolu_012z9ci6EN4MtsG2VF2dF5AV",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -98,41 +93,41 @@
      "input": {
       "verdicts": [
        {
-        "requirement": "Then the list shows only open issues",
+        "requirement": "the list shows only open issues",
         "status": "pass",
         "cites": [
          1,
          2
         ],
-        "reasoning": "The list has Status=Open and label=bug filters applied and shows one row, #1, with status Open. The stored data confirms the only issue that is both open and a bug is #1, so the list contains only open issues."
+        "reasoning": "The page has status=open applied, and the list shows only issue #1, whose status is Open. The probe data shows that #1 is the only open issue labelled bug, so the filtered list is correct."
        },
        {
-        "requirement": "Then the list shows only issues labelled bug",
+        "requirement": "the list shows only issues labelled bug",
         "status": "pass",
         "cites": [
          1,
          2
         ],
-        "reasoning": "The Label filter is set to bug and the one row shown is labelled bug. #2 (feature) and #3 (docs) are not shown."
+        "reasoning": "The page has label=bug applied, and the only row shown is #1, labelled bug. Issues #2 (feature) and #3 (docs) are left out. The status line reads \"1 issue\"."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2774,
-    "outputTokens": 531,
-    "cacheReadTokens": 1870,
+    "inputTokens": 2770,
+    "outputTokens": 281,
+    "cacheReadTokens": 1866,
     "cacheWriteTokens": 902
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:1a5dda2851717255c926f6670f416366682e5727ef48d26b76881c332fb7e50c": {
+  "sha256:51db211eee2f4ab540e12e1f4a8e3f45e53266e04be471f3adf8d14dba30c270": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_0179zehp3Ebg8vpJo7CmFpqU",
+     "id": "toolu_017yQ7Gto5opEH75QgpjvkGi",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -143,7 +138,7 @@
          1,
          2
         ],
-        "reasoning": "The list has Status=Open and label=bug filters applied and shows one row, #1, with status Open. The stored data confirms the only issue that is both open and a bug is #1, so the list contains only open issues."
+        "reasoning": "The page has status=open applied, and the list shows only issue #1, whose status is Open. The probe data shows that #1 is the only open issue labelled bug, so the filtered list is correct."
        },
        {
         "requirement": "R2",
@@ -152,7 +147,7 @@
          1,
          2
         ],
-        "reasoning": "The Label filter is set to bug and the one row shown is labelled bug. #2 (feature) and #3 (docs) are not shown."
+        "reasoning": "The page has label=bug applied, and the only row shown is #1, labelled bug. Issues #2 (feature) and #3 (docs) are left out. The status line reads \"1 issue\"."
        }
       ]
      }
@@ -161,7 +156,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_0179zehp3Ebg8vpJo7CmFpqU",
+     "id": "toolu_017yQ7Gto5opEH75QgpjvkGi",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -175,7 +170,7 @@
          1,
          2
         ],
-        "reasoning": "The list has Status=Open and label=bug filters applied and shows one row, #1, with status Open. The stored data confirms the only issue that is both open and a bug is #1, so the list contains only open issues."
+        "reasoning": "The page has status=open applied, and the list shows only issue #1, whose status is Open. The probe data shows that #1 is the only open issue labelled bug, so the filtered list is correct."
        },
        {
         "requirement": "R2",
@@ -184,17 +179,17 @@
          1,
          2
         ],
-        "reasoning": "The Label filter is set to bug and the one row shown is labelled bug. #2 (feature) and #3 (docs) are not shown."
+        "reasoning": "The page has label=bug applied, and the only row shown is #1, labelled bug. Issues #2 (feature) and #3 (docs) are left out. The status line reads \"1 issue\"."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 3375,
-    "outputTokens": 232,
-    "cacheReadTokens": 2772,
-    "cacheWriteTokens": 601
+    "inputTokens": 3117,
+    "outputTokens": 246,
+    "cacheReadTokens": 2768,
+    "cacheWriteTokens": 347
    },
    "model": "claude-opus-5-5"
   }

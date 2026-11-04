@@ -1,27 +1,41 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T09:35:46.497Z",
+ "recordedAt": "2026-11-04T23:08:33.063Z",
  "turns": {
-  "sha256:8a59ef97a242ba09f6d83ac229ac9dafa496284750fff16cd9a35576efcebf92": {
+  "sha256:545db3647d6d0cd8711f460b902e0d8d329faa990fbc831b3508f414c588e82a": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_014sBv98ikGUBWopZUDUT4if",
+     "id": "toolu_01ByTW1e6hbtjMJurns3NXqh",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01WApR86pBqkxvMrmYNtZggL",
      "name": "page_outline",
      "input": {}
     },
     {
-     "id": "toolu_01JqtScZQz6NWMCyx1EvLN5o",
-     "name": "probes",
+     "id": "toolu_015NR3yDjfb2BRuwGUBNnG67",
+     "name": "network_log",
      "input": {}
     }
    ],
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_014sBv98ikGUBWopZUDUT4if",
+     "id": "toolu_01ByTW1e6hbtjMJurns3NXqh",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01WApR86pBqkxvMrmYNtZggL",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -30,8 +44,8 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01JqtScZQz6NWMCyx1EvLN5o",
-     "name": "probes",
+     "id": "toolu_015NR3yDjfb2BRuwGUBNnG67",
+     "name": "network_log",
      "caller": {
       "type": "direct"
      },
@@ -39,19 +53,75 @@
     }
    ],
    "usage": {
-    "inputTokens": 1866,
-    "outputTokens": 49,
-    "cacheReadTokens": 1862,
+    "inputTokens": 1914,
+    "outputTokens": 72,
+    "cacheReadTokens": 1910,
     "cacheWriteTokens": 0
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:3569ffd22937008c409c1d89f6a1e47e02b99bb428ea3f5249e0a1e5b71bf7ce": {
+  "sha256:d99bfadfe43366fc5b457fd2f1d6374546d9cbcb19a25f1f1df5e090f49f7377": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_013ipW1qQeyRWo69Y7Hj57hJ",
+     "id": "toolu_01Jc3CA8DnfENNF7kPCpD5eX",
+     "name": "network_entry",
+     "input": {
+      "seq": 3
+     }
+    },
+    {
+     "id": "toolu_01YUdsENjPTnWgsqtSAWT54S",
+     "name": "network_entry",
+     "input": {
+      "seq": 9
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSgwcKEAgTGAI4AUIIdGhpbmtpbmcSDG+ocrj0nx7lyIZoSBoM9H9oPyI/G2Mqm3b9IjDeTtQb7IydqT9SNOYTCpEVgLCFog3ocxmOyCbLRDpv9NcEq9UtCntpA7fVWczbZDgqoAZLwtN1v5XF4Mb2/eeT/Nr75Fymo+GHqr30rXRo3tHSm3+cLj2BJh10IoOAIttL/+xF69cwPW1VBvR/ZFzEaiA9WpW9UpkJafbHuw4HZHkG3/A0S75uL+XyZkaFVTASxueKP4OCOLEQZrzxZh5TXOTJk7x17Gd8AKA7w9XNl919YtxuyEQEHlQrxuXmCgE57g5pFiaIbfCZ/+Z67hL4JChhVoUDt03JWMYhTf3AUCjuibueL9O8nLsCxPm5YdXqrC8kVrPNek9bPKNdt+WA3h+wkSBLGC4VqflExhjFjfETCUxWAjLy7zOZyvQLCNP24BWIkb6jmBsUfWPPBAVurNRfPG3JCE68XBP/xBRyDd3b2VR6CrBvixmyASANsqb62mn0IIi9em/5gKAKSTF7zoWUftg2MPK9dcgtPZHeEco1Z5zTPzy12YIw8tZ+9a8020tFKfGIxNloah7QmxlTg+Vt5qATRQ5AcTqtM3IAGVx3KWiTO9/DzipH+8wxmsE94hubFuZBKq0VW4RwAIn9I3HzlCB/DR3ddMNzAItkXH2Wkzftr9JQDwEznMzGv+21XIg2+yAAMRyNC5SZoczO6qsmJjXN79qncGH22wP8sw8iGhOF4GfpJVjs3UGKVX5D9IMnTTKl1McPBFaJpmSr2nW3r6Fin+44/XoIKWpQeWF4aJ32ch3zqsXnUP4uZzstALXV3nq4RgugRQUIHfzVPJdNvIsTBbV47H8OLK/eL+IITm7hX1gGbwsh37myIYOhCFZQacZ1MzDnm5+Si5AiHogzuok0OMMNPQSMPXs7WklPwtekJNYjffQ52eR7ZZVnXk4mHp3qbSStW/Qeou0CsSHVZzblGbNnbUhud/ZIF9Q/5jmvubFjWUjyPJbb9+yJTNwQMC2yKZTYc343S3yJ8Z05aoV2++Vg/CSCf0NJcgGf2HCZFvgguwrTVqHxHNHobDH616vAb1BGoAFjYbhYIzM0YL9OMPaEQYwnnM689zyFjZXLm7qVCnDSLSBOxjXKBGTn/UkBaBXA2VBuunKZd2L4YrIkmgFVraUI39PfS4eu9RgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Jc3CA8DnfENNF7kPCpD5eX",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 3
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01YUdsENjPTnWgsqtSAWT54S",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 9
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3044,
+    "outputTokens": 193,
+    "cacheReadTokens": 1910,
+    "cacheWriteTokens": 1132
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:d0f8d27be8e30c5e81ac0363e5ba7dbbc4dcb661b42a3f270d1ca0982840fb74": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01GCYwhpauqddLF7w9Zm1u5v",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -60,9 +130,20 @@
         "status": "fail",
         "cites": [
          1,
-         2
+         2,
+         5
         ],
-        "reasoning": "The confirmation page shows 'Shipping: Standard' and 'Estimated delivery: 12 November 2026'. The server's latestOrder record agrees: shipping 'standard', estimatedDelivery 2026-11-12. It does not show 5 November 2026."
+        "reasoning": "The order went in with shipping \"standard\", not express. The confirmation page shows \"Estimated delivery: 12 November 2026\", and the server stored estimatedDelivery 2026-11-12, not 5 November 2026."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         4,
+         5
+        ],
+        "reasoning": "POST /api/orders returned 201 and created order A1001 with status placed. It holds the cart's contents (1 Red Mug, $9.50), which match the baseline cart, and the cart is now empty. The order exists, although it used the wrong shipping option."
        }
       ]
      }
@@ -70,8 +151,13 @@
    ],
    "raw": [
     {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSoQcKEAgTGAI4AUIIdGhpbmtpbmcSDKXabXJy/q0RAnM7fBoMW4Rd3aKz0N+fTGbeIjAy7r3Slc8dpyGrKauQaHeUh3DOUhGaU+Okh8ZE1AZy+tKq/EnXnUfJSGH4Uzbss8YqvgZMhY4v2/wLbbhllnhGahCnDdiZNAsItrhqwV1KAtgJ8tRoJS+kp0GZvuyFH0RdN4t0FTgnxcGvwfiQhYT2Qzms6TLK5tMpZpPkDD8VyfmBHbvTh3SqHbwi3hUL7ZQ0zALr1DeMvGMr8L+J4iK4PNXz5i61K/RYZOKAqDqGVWsk9XBmqcPd+V1GtxiizxxM7ffIixwJYxhKfTV8oHQ7SV4ZytqZ4McRi1ok3XgMOkYGK5hAS4W7AfNhRWFe/jhReGSSFyS8hxAXaChxm8FoUq9AdPme7ZYv1aB2i5i7dinxP36QIIGPvp9kT2vUSPTEAY7duMF4G5OaWXCqgfQVEx/bdoA4L3m7bVZKWXy2vdp/gB28/ZDElcS4xwxmdqPb80bUY103owSwFJCINl3GwdRUXa12Pslsq/auDB79KEuQRYABF2RnvlMEFBSxOz3or0CqtCtqb1MUCr4SXpzhJWfVe4VF8Wl0DC36eGcs0ZBfhSItAcUJtsVXObOIEVoFrC2hhpMgggeBmpQPvgI/O8tTgdczq3PEf0T2lp5CMg7Gq3A1gIa0ochCRQEVYsVXgKk8CSJxD3ucarH/k9ZTfsluB+0Uic/E7oCc+jlu41VOIIrR0SpITvdAkgzJG4xHLedg/6ppiPgDZtF19JO4j9Bqc8Cpuzi0+QPuuT5vOrLa3xDLdgZwkEctXOr30rQi8zFmEggl8fF2GMWzbY8je/VbAginHRucjq6GseL2go0IHQklE67m3GTyddDLbcji2H4yaYtAKP4wDV6IEyfX3AfcEGDuOA9p5JQ/ZdrJhwxbeP7GnGIkJGLYGdskLI40u97Ou8iUP65KYoSJ8EfSgMOU3sHTjdDzCePPI/W0w9GyAZM49Ti4Il5EpZlPwBOjCleUUONF+3tuKkr4TVHOlrN4nvvBPtPhQHHkecLTEA8CQ6AeVrPBxg95MexYB7WFWeiUlPL5wuSJfflWSOwlzFYI2ETRH4xu6Dgfyhgan8cTWQy4/M2agMI2JwEJbajO0AVcKM4wSklXgy9kIbm9/c0Xp2VKLpEtj0LjJFj+mAjrhLN124McV/jjeWo9ud2l8MViPMRsOnoQSUxmRxlLYxgB"
+    },
+    {
      "type": "tool_use",
-     "id": "toolu_013ipW1qQeyRWo69Y7Hj57hJ",
+     "id": "toolu_01GCYwhpauqddLF7w9Zm1u5v",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -83,19 +169,30 @@
         "status": "fail",
         "cites": [
          1,
-         2
+         2,
+         5
         ],
-        "reasoning": "The confirmation page shows 'Shipping: Standard' and 'Estimated delivery: 12 November 2026'. The server's latestOrder record agrees: shipping 'standard', estimatedDelivery 2026-11-12. It does not show 5 November 2026."
+        "reasoning": "The order went in with shipping \"standard\", not express. The confirmation page shows \"Estimated delivery: 12 November 2026\", and the server stored estimatedDelivery 2026-11-12, not 5 November 2026."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         4,
+         5
+        ],
+        "reasoning": "POST /api/orders returned 201 and created order A1001 with status placed. It holds the cart's contents (1 Red Mug, $9.50), which match the baseline cart, and the cart is now empty. The order exists, although it used the wrong shipping option."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2448,
-    "outputTokens": 174,
-    "cacheReadTokens": 1862,
-    "cacheWriteTokens": 584
+    "inputTokens": 3760,
+    "outputTokens": 355,
+    "cacheReadTokens": 3042,
+    "cacheWriteTokens": 716
    },
    "model": "claude-opus-5-5"
   }

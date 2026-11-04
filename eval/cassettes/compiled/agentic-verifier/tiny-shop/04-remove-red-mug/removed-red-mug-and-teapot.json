@@ -1,0 +1,130 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T23:15:52.695Z",
+ "turns": {
+  "sha256:b52f1d47438c5a4ce7fe65e9a12d71981b2280c69e6395c3b62b99d1941c3ffe": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017xix2KDsNtNzDbyiPqAGZT",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01Q85iqYK2uocmMfHHJhciEE",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_017xix2KDsNtNzDbyiPqAGZT",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Q85iqYK2uocmMfHHJhciEE",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1907,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1903
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:b1f17c4e44ec6504f5f832dff9400d2fa08f468e186947522bdc7d13563a41cd": {
+   "stop": "tool_use",
+   "text": "The agent removed the Red Mug but also removed the Green Teapot, so the second requirement fails.",
+   "toolCalls": [
+    {
+     "id": "toolu_01Y1ifJPmAZEBzPaEt1nDqCo",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The cart contains only the Blue Mug after the task, so there is no MUG-RED. The log also shows the request DELETE /api/cart/items/MUG-RED (#9)."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "Before the task the cart had a Green Teapot, a Blue Mug and a Red Mug. Afterwards only the Blue Mug is left. The agent also sent DELETE /api/cart/items/POT-GREEN (#10), which removed the Green Teapot."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS1wUKEAgTGAI4AUIIdGhpbmtpbmcSDAzuie09nCJpr/8yExoM6/WDStI/ion9yRwbIjDapqWq/QdhGaJiWyzyMKVFLrEFT/KO2eg/46KwAq5kIOHACbyuwwwrC2AmFfhB7dEq9ARAaf05seJYs3CKHhN0hgpdZCWTXQj83n0gLZNXz8RYUkWwRvsXnFlABjLUVpHYf+rafnQqp84TLl62W5ZbAPnHUnOyZ+Tj0uuBHG8USSNJT2B3F1aUZEf6WOTjRpdYH+EUxnY0t15FNKx02e7or64bUJw0pfDWmF9wEzF83e8AGp65Ec3lRVKndI6Ev9lNNzLdEzBu8JfEEy0LTcO+qmevp1BYs5VEf7XtLq8p9FKWavSY6rfquW0Yarr8QEClSE1uOZbOm22SuBycHf6JzQx4aE2k9gax02cw+EF7yA8oOplpOdBPthV4l+TXz7+G94a3PVTgmdoXt78LMQv2W3weAO9RkoHXQ3iSFf+KSg6n0qcUMOtuee2CM7dd2ZqakWg7Kfnc9jZkzsrvAmU9LBJmpWNDasnH4H+EfII6f/lDJrVtQ1cDkFdFQI+89tNa4HvAVvgzUPif6+sqxbIf5rmxSWnr38tdsWBsUSWQLMFbja9/tep0x7zDwxYoUqhHZxevH+45Q6YoQ0mR8s9emhAn1Yxu30WHT/Ygm+BykxKw/g/B6NWQBb2r5dpWYFkqsCOWNsaF1NSM+JGRfXzn+LArOEGLur+6mAfdN3orfV97DQ5CE9qMfGZHKpROLhC9MtCAdzXS6PMMMgMGqkgux7OLF95Q4JgF+lrteHXQVXDpNuricuX1Gb5IzIkj6RzNatBD5MbsgTXly9tvYFXo1yuOx2BATzGdE/AFTjs2W5feAGfMNgCBsEihU9/1NJa8eE/O+nqJsdGONX63jLHbqcT79RElRxTncOgUiwLkBYgzKj/nrjWaqwTrYJea8FZ2WLD6yD50GAE="
+    },
+    {
+     "type": "text",
+     "text": "The agent removed the Red Mug but also removed the Green Teapot, so the second requirement fails."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Y1ifJPmAZEBzPaEt1nDqCo",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The cart contains only the Blue Mug after the task, so there is no MUG-RED. The log also shows the request DELETE /api/cart/items/MUG-RED (#9)."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "Before the task the cart had a Green Teapot, a Blue Mug and a Red Mug. Afterwards only the Blue Mug is left. The agent also sent DELETE /api/cart/items/POT-GREEN (#10), which removed the Green Teapot."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2757,
+    "outputTokens": 340,
+    "cacheReadTokens": 1903,
+    "cacheWriteTokens": 852
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}
