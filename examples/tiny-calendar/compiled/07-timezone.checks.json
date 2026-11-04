@@ -1,0 +1,49 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-calendar/07-timezone",
+  "version": "1",
+  "task": {
+    "instruction": "Set my calendar's time zone to Berlin.",
+    "outcomes": "Then the time zone setting is Berlin"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The calendar's time zone setting is Berlin.",
+      "source": {
+        "field": "outcomes",
+        "quote": "the time zone setting is Berlin"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1.probe-timezone",
+      "requirement": "R1",
+      "description": "The backend settings store the time zone as Europe/Berlin.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "settings",
+          "pointer": "/timezone"
+        },
+        "normalize": [
+          "trim"
+        ],
+        "expect": {
+          "equals": "Europe/Berlin"
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T09:30:00.111Z"
+  }
+}

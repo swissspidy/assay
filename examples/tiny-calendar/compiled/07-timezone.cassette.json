@@ -1,0 +1,210 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:30:00.111Z",
+ "turns": {
+  "sha256:d0884dc02f042b4ff087b308ec80b82243337baf6c4a6f87d559be7e7432b01d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_019hc1ZCiTJVTuvmJJAXKcRP",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The calendar's time zone setting is Berlin.",
+        "field": "outcomes",
+        "quote": "the time zone setting is Berlin"
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_019hc1ZCiTJVTuvmJJAXKcRP",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The calendar's time zone setting is Berlin.",
+        "field": "outcomes",
+        "quote": "the time zone setting is Berlin"
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1108,
+    "outputTokens": 113,
+    "cacheReadTokens": 1104,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:c9442bd5e0cba480762f3ed4e5b123290969d1d8dc4e7409c9d0114c09a6c45f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KEphWcDEmKKSMpb9hBakKM",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01XF1kypa5iDbTgBWMjCjoqV",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01KEphWcDEmKKSMpb9hBakKM",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01XF1kypa5iDbTgBWMjCjoqV",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 13818,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 13814
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:d0d3f1d0e86febc3136e2fa1b1c1d3581fa81dc2c0b014b78898d77438156f83": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Hn9KhKFMZJqUiYFYEtgpcf",
+     "name": "network_entry",
+     "input": {
+      "seq": 3
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Hn9KhKFMZJqUiYFYEtgpcf",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 3
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 14310,
+    "outputTokens": 49,
+    "cacheReadTokens": 13814,
+    "cacheWriteTokens": 494
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:1bde86b683fb641582baf0fd220dec7168d4a697f38fa366888aae87014fc478": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01AtmrG35o192qkJC3W5k8LM",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "R1.probe-timezone",
+        "requirement": "R1",
+        "description": "The backend settings store the time zone as Europe/Berlin.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "settings",
+          "pointer": "/timezone"
+         },
+         "normalize": [
+          "trim"
+         ],
+         "expect": {
+          "equals": "Europe/Berlin"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSoQcKEAgTGAI4AUIIdGhpbmtpbmcSDOn5hy3lq0OwQ8LJFRoMwsACVOB/69l8ThQzIjBgvk6o1dn6FBtQ2VxpwmH0jgeJ5T+qyle1BiIT4u2b7XTyUpkPE7YuvUsYfJ6R/KIqvga3RichBDb9IewNJdl4a7hjoNbA5mArqZrYf7bi3LTXRZLBEzqhjYh6R3JWT8WbmPHs+A/WhHGsncecIwRf3A+lOP7XDWygTp5F07c6FngKTyJI2PG213yiyffMeTzIXBbtoYiR8Rbk98GpomIlHKTVL28GbjiBiby6ujzmgDOAAjCp9xnomGznj/hOIut8IjROcewgir7QR5xh01pSjkIrcV0f4NKRq+PpHdeB8nZ50MwV/FeTzIuXGcuh2AC0laWYxaa+Ycf0naeuOJJGBv7eg6qN0YMC+HAMYXMlt3cxM4zrvOITQyafhLQtZdErtOlJ/S6LmLipw2rv3iYOMQIM3m0fwETF9L4XWgh9iVMBDG/AdrDiNREMbEwBq0yzMs665p8XjTIUD7hnveCCz72i6o533+krpfYdDwcC83743F7hHZtpYTnGTtF1YhSVu/FaH6B3enVZiAdVJIDEoMJO0Xuh2Xa/OAzIgqcWtsnc5fP0hxoC1w3hzQGq+nC0utSmCL2ksPnr1CXFaWkFCrKKWfPKrl/TpQe7J0pdNtyaGWOsjbSG+ceYufLtfC7I7sxRmX4WNQgm2N0t5iNjI3U4zFSCARUHxGIo8Msl7ezwBWB1n3ozTtZ05idWbc12cXMkSSf9/uEHIMxVOdZScFodTBekcp8xS79RpvHsWI6BZ5ZVmFd++w/8qbkoDcsM7srF3DDO2yOFSdwzJhC5t6Bo7TKxs3A2kxSEbpTB5gSuM6ee5BecHBvrLWNir2QAhBKveUpDjWO7QIlaNslQaQ+bGtq5H1jBo7jVlAzyJn5fApCPfuJ4hUqn828d6YoOJ3PsLC8oNi4PNViI+C8AnXflbbmhBvGBZDVl18PSx3zYSq01sAwk/8M+18mRmxJ2uRdu8EdN5qdPLdpPeztr8xHMOMvoY39/Awjh15i9uKPXC4S47HZYJnodcZumBJe0pJcaz+i3R3S/GKmUnsgxZDl+F0s4Tj5rCOgXLW6bNkFMb63+lo93SzgCjHnea9skqxzTKGOKzzkkfkWk+VbkDrP/hoK74t2Q1VSBtz1SkiZGtV8lf4IE2z+3+OFKrLsd5nSAAn7COh/CDh1oChlQmRgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01AtmrG35o192qkJC3W5k8LM",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "R1.probe-timezone",
+        "requirement": "R1",
+        "description": "The backend settings store the time zone as Europe/Berlin.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "settings",
+          "pointer": "/timezone"
+         },
+         "normalize": [
+          "trim"
+         ],
+         "expect": {
+          "equals": "Europe/Berlin"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 14474,
+    "outputTokens": 285,
+    "cacheReadTokens": 14308,
+    "cacheWriteTokens": 164
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

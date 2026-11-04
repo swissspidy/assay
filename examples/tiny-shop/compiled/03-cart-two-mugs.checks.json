@@ -1,0 +1,173 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/03-cart-two-mugs",
+  "version": "1",
+  "task": {
+    "instruction": "Put a Blue Mug and a Red Mug in my cart and show me the cart.",
+    "outcomes": "Then the cart page lists a Blue Mug\nThen the cart page lists a Red Mug"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The cart page lists a Blue Mug.",
+      "source": {
+        "field": "outcomes",
+        "quote": "Then the cart page lists a Blue Mug"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The cart page lists a Red Mug.",
+      "source": {
+        "field": "outcomes",
+        "quote": "Then the cart page lists a Red Mug"
+      }
+    },
+    {
+      "id": "R3",
+      "kind": "hard",
+      "text": "The cart is shown to the user.",
+      "source": {
+        "field": "instruction",
+        "quote": "show me the cart"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "r1-cart-row-blue",
+      "requirement": "R1",
+      "description": "The Cart table on the cart page has a row containing Blue Mug.",
+      "assert": {
+        "kind": "contains",
+        "scope": {
+          "anchors": [
+            {
+              "role": "table",
+              "name": "Cart"
+            },
+            {
+              "role": "table",
+              "landmark": {
+                "role": "main"
+              }
+            }
+          ]
+        },
+        "match": {
+          "role": "row",
+          "text": {
+            "contains": "Blue Mug"
+          }
+        }
+      }
+    },
+    {
+      "id": "r1-backend-blue",
+      "requirement": "R1",
+      "description": "The backend cart contains an item named Blue Mug.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/items"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "const": "Blue Mug"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r2-cart-row-red",
+      "requirement": "R2",
+      "description": "The Cart table on the cart page has a row containing Red Mug.",
+      "assert": {
+        "kind": "contains",
+        "scope": {
+          "anchors": [
+            {
+              "role": "table",
+              "name": "Cart"
+            },
+            {
+              "role": "table",
+              "landmark": {
+                "role": "main"
+              }
+            }
+          ]
+        },
+        "match": {
+          "role": "row",
+          "text": {
+            "contains": "Red Mug"
+          }
+        }
+      }
+    },
+    {
+      "id": "r2-backend-red",
+      "requirement": "R2",
+      "description": "The backend cart contains an item named Red Mug.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/items"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "const": "Red Mug"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r3-on-cart-page",
+      "requirement": "R3",
+      "description": "The browser ends on the cart page (/cart).",
+      "assert": {
+        "kind": "url",
+        "match": {
+          "path": "/cart"
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T09:28:57.113Z"
+  }
+}

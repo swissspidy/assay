@@ -1,0 +1,56 @@
+{
+  "task": "tiny-tracker/10-filter-open-bugs",
+  "status": "compiled",
+  "model": "anthropic:claude-opus-5-5@high",
+  "modelsUsed": [
+    "claude-opus-5-5"
+  ],
+  "turns": {
+    "rubric": 1,
+    "discovery": 3
+  },
+  "usage": {
+    "inputTokens": 44852,
+    "outputTokens": 1380,
+    "cacheReadTokens": 29558,
+    "cacheWriteTokens": 15282
+  },
+  "coverage": [
+    {
+      "requirement": "R1",
+      "quote": "Then the list shows only open issues",
+      "checks": [
+        "r1-status-filter",
+        "r1-no-closed-rows"
+      ],
+      "channels": [
+        "url",
+        "a11y"
+      ],
+      "trust": "semantic"
+    },
+    {
+      "requirement": "R2",
+      "quote": "Then the list shows only issues labelled bug",
+      "checks": [
+        "r2-label-filter",
+        "r2-no-nonbug-rows"
+      ],
+      "channels": [
+        "url",
+        "a11y"
+      ],
+      "trust": "semantic"
+    }
+  ],
+  "warnings": [
+    "Advisory: the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable [filtered/claims-only]"
+  ],
+  "references": [
+    {
+      "name": "filtered",
+      "kind": "success",
+      "verdict": "success"
+    }
+  ]
+}

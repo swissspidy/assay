@@ -1,0 +1,293 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:29:00.172Z",
+ "turns": {
+  "sha256:5b27b3ced726a810375d563f959733609d8bb0f9c3040a617cae7bfd819cc6fb": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_019cAnkfiK2uspFpKDc12K1V",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "Issue #1 is closed.",
+        "field": "outcomes",
+        "quote": "issue #1 is closed"
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_019cAnkfiK2uspFpKDc12K1V",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "Issue #1 is closed.",
+        "field": "outcomes",
+        "quote": "issue #1 is closed"
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1093,
+    "outputTokens": 104,
+    "cacheReadTokens": 1089,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:8de64ed0c497a17f2d593591ea3bce65afb5c244bd2078540dfc2d79e1f21258": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KmyF37sQ3Hov2Nq6YygZd8",
+     "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_01Hz66WoguQdixPJB8B1CB7C",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01KmyF37sQ3Hov2Nq6YygZd8",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Hz66WoguQdixPJB8B1CB7C",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 13814,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 13810
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:21314fcf3551990254ccdbec4185379de6a7037a90b71b1deff9cebacdb66258": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HZGwo7Tj52LpsFABtueRA8",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "id",
+           "status"
+          ],
+          "properties": {
+           "id": {
+            "const": 1
+           },
+           "status": {
+            "const": "closed"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSjQcKEAgTGAI4AUIIdGhpbmtpbmcSDBc2r7nqEAnMjgTfCxoMo6HJSFuoKzyzu5CKIjCcsL3msAdxJj9L0enfUuM2LJp1dIRbKu1wiuFIF7CKMu8PjqYHfM2KX7hxVHjUbHsqqgak+tHIGUKqwP5eybRqTkDXU5mR3XIOZtfnI/foyADJGiEpDmlAmxzMehl1ugDI8bhiTBIWxKUSfmINhuAtli2reOayF5tv78lqCLHg4lCkU83yzWQgFj6axRnIO0wDjD5d5C0m9ehl9wa2jktVRV5qMaTh3VHBA2fF86uje4ddcd0G5r0714zOreR4NaqAID1moUN36JMjp0W1+zX0ro7G0pAE44QLplqA1T7WjgvwfQkkdZVsKbI7kTG8xNoceUmdtwmw1LD8PCZnMcllbnIoKK+SGJd9Yv1xgF20DWayUrrVC+hqV55qrMi+zzg8/O0OvfeJnUHD/O40BbXeZNc6ZZyAblPO43csisLvXIITjWSRITyFIEYrCX5HLglLtRl76iHLyJRW5uEpjd80n9Gl2WWhJpRFcVqf2Jnf2QDVdz37riJlU2fWzBQhEaNhGpgxAOAyItMi591gc5W4fzmVTchvkNvhNFlWd/j/zW3cxE7FjDmjwF/uXIam1dVRGOJ6h1NtQAJ/t0lFeLoVjKY7dZemEXnMvyYY9xjJAj3BgCZSNGCXjd6VVX2wHQSjtx2uaCYZBT5eD9sKXhhAmBG9oClkBx0OXkkwd66JcVjkpzlHXLE/xxASdPdx/QrQoi/KptRhlj8oNsJM/GT4j5V8gqMF0ZFVma+zx2VIDZYmgBSeie7cs/7NEahLhxYT+4jMaCXPEjSTZWPwSmfxDcySYMGXvrXNDCYIwk83hJoVMvj8xG2N+NTdloNEHbBGte5h7e++bzfUgIHYgsTKXeubhHUTsdI3Na4J1WqBC+5Jp+RHKQX7w4bzd5lTgcl8sUbwZJnNPm+H+oS2Y16iDjzCJzdcOQwHZSATfnSgnVnSCIpfRRRHif0NgbUvBhSi9aHcykM7tISegSif5vHHlMzcg1Vz2h7Pm+GGplf1Zhqf1s2JvIvtLYxv6yKUzSNz/bE4uVPVYPmLSTWVAZ/MuKevPdTG4GdhkrJjCqmXB8rL4Y+xRfQo9+jzEqZfExEkkYIgG/b0HNndfqyRPTuf8bD/IwQnkA1NPXSC0vAgKBln2k9pNU47XWDs9VwYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01HZGwo7Tj52LpsFABtueRA8",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "id",
+           "status"
+          ],
+          "properties": {
+           "id": {
+            "const": 1
+           },
+           "status": {
+            "const": "closed"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 14281,
+    "outputTokens": 232,
+    "cacheReadTokens": 13810,
+    "cacheWriteTokens": 469
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:70bb52074ab8a08f67e65c06a176f2762259998345ad4d9f56557f9b716b805b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01BqjSa5YREiWTN4xztXimrt",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "issue1-closed-backend",
+        "requirement": "R1",
+        "description": "The backend issues probe shows issue with id 1 has status \"closed\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "status"
+            ],
+            "properties": {
+             "id": {
+              "const": 1
+             },
+             "status": {
+              "const": "closed"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSpwYKEAgTGAI4AUIIdGhpbmtpbmcSDIkaglaXiItD8mPpvhoM7g/DpwpoUWfgj7/xIjCqFrnIjp5jW6KEawLhjkU/15uw2R7q8oAMZlDb88cKoEmd2rfKmFlYymycM3mdTqQqxAWS5/nA9Za08NrEoxJS5V26NGmuDfLV4mhJmCtDgfKourw2mO2SZ8ujO8XmD7ktl3sdDLFMXqWeutSpxB5fJmYUtWujbmfL7BNrBB9ZMFaMzdvCgym9oXvPK4L727NnzOX+WOMsGqYiTlGX/lXKfj4C4n+xLl3Wp8KWwgsPi/gSxmPckRMSgfOmEbrUJR1uHPyKFlko+acpiEnr5RIrU95Y4tqQMBkzJv7PnfjPWEsow0HkBVQ+m8e06LHNz3EBlu7darLRe5a5sKagAV1Uu2CWGw/2eWuxLK7VN5fpV3ODSdsu6yC4tce986Hu4hhuCFZdf57+qSwhbz42AIplT0xQ9qOueCdrU20W0YH4LbKqgcSL3pxQv7wz/oazxoq0NlS+Pp3UVA41Xzc/tR08wPrWCtV0ALFFv8tpRjuzrbP6/yMmezj3yRI2VrzNqTt/u3RkOSsX8M4yv4C9IV3I36StsUBb5TI37MF2p5oEepja4rxhXECLiPAtimflq20U7ZpzFFzIOhBz0GUwU9Kls0TNmXEt9LN9KdBrz/ylqOrvBVfrxxsZFk+4L3/OpSVWdHpDElqodSZfA12CX7UnsH86dC3L9Ue2A/aRwOWoHD8POk/UWKsQo1QHqZKVzU8YiyMJTMhFuUMxRZEUE4AV74XQp8vuKCMCJ0hIE9h1r+aR2a8ldL3ClTkHIwAwRZtKiH1kV5fpxNKB2HvQt5EipkbDa6ONm3b4gRV11MTQT2utjB79cgGVUaIbyKo9tkcBzaK6Ntw2R7tfrU2CA77El4WvvJBmYhm1WiInP1YL9d54JNHAf60IW4RRYdZqR6VBYNCppQUBFDIeermxmOOBjgrB+FEAwtbUEprTL+Mm5NJBFZwYFI0FscXor4EsndhNzf4KtLSJ3uLcoCgc/hgmmlQzUwOEsexW1AYQOo+ZdI8tKt6nDJoYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01BqjSa5YREiWTN4xztXimrt",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "issue1-closed-backend",
+        "requirement": "R1",
+        "description": "The backend issues probe shows issue with id 1 has status \"closed\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "status"
+            ],
+            "properties": {
+             "id": {
+              "const": 1
+             },
+             "status": {
+              "const": "closed"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 14589,
+    "outputTokens": 245,
+    "cacheReadTokens": 14279,
+    "cacheWriteTokens": 308
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

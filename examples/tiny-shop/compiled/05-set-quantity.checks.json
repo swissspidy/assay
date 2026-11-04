@@ -1,0 +1,99 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/05-set-quantity",
+  "version": "1",
+  "task": {
+    "instruction": "Change the quantity of the Blue Mug in my cart to 3.",
+    "outcomes": "Then the cart shows 3 Blue Mugs"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The cart shows a quantity of 3 for the Blue Mug.",
+      "source": {
+        "field": "outcomes",
+        "quote": "the cart shows 3 Blue Mugs"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "r1-backend-cart-blue-mug-qty-3",
+      "requirement": "R1",
+      "description": "The backend cart contains a Blue Mug line item with quantity 3.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/items"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "name",
+                "qty"
+              ],
+              "properties": {
+                "name": {
+                  "const": "Blue Mug"
+                },
+                "qty": {
+                  "const": 3
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r1-ui-cart-blue-mug-qty-3",
+      "requirement": "R1",
+      "description": "The cart page's quantity field for Blue Mug shows 3.",
+      "assert": {
+        "kind": "state",
+        "target": {
+          "anchors": [
+            {
+              "role": "spinbutton",
+              "name": {
+                "contains": "Blue Mug"
+              },
+              "within": {
+                "role": "table",
+                "name": "Cart"
+              }
+            },
+            {
+              "role": "spinbutton",
+              "name": {
+                "contains": "Blue Mug"
+              },
+              "landmark": {
+                "role": "main"
+              }
+            }
+          ]
+        },
+        "expect": {
+          "value": {
+            "regex": "^\\s*3\\s*$"
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T09:29:23.045Z"
+  }
+}

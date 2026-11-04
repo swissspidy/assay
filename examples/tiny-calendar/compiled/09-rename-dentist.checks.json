@@ -1,0 +1,62 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-calendar/09-rename-dentist",
+  "version": "1",
+  "task": {
+    "instruction": "Rename the Dentist event to \"Dentist (Dr. Lee)\".",
+    "outcomes": "Then the Dentist event is called \"Dentist (Dr. Lee)\""
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The existing Dentist event's title is now \"Dentist (Dr. Lee)\".",
+      "source": {
+        "field": "outcomes",
+        "quote": "the Dentist event is called \"Dentist (Dr. Lee)\""
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "dentist-renamed-backend",
+      "requirement": "R1",
+      "description": "The backend events store has event id 2 (the original Dentist event) titled exactly \"Dentist (Dr. Lee)\".",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "events"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "id",
+                "title"
+              ],
+              "properties": {
+                "id": {
+                  "const": 2
+                },
+                "title": {
+                  "const": "Dentist (Dr. Lee)"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T09:30:20.321Z"
+  }
+}

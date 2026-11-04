@@ -1,0 +1,336 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:29:44.187Z",
+ "turns": {
+  "sha256:16552ccaf0e78e52072d8b3df1ea0c3a308ee6f52c8c6b4563bcbbb38619ceac": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_019M3uDWW32JtKwHDZwbt54J",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "Issue #2 has a comment with the text \"Working on it\".",
+        "field": "outcomes",
+        "quote": "issue #2 has a comment \"Working on it\""
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_019M3uDWW32JtKwHDZwbt54J",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "Issue #2 has a comment with the text \"Working on it\".",
+        "field": "outcomes",
+        "quote": "issue #2 has a comment \"Working on it\""
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1115,
+    "outputTokens": 123,
+    "cacheReadTokens": 1111,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:9439497211691271b4531cc9dc896a77d1f95fb2cd7b4fd4f42519d396bfde91": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01UTNKhb9gvqyYqr8djebU4j",
+     "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_01HD2ScynxcygZVaA2wzEhUf",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01UTNKhb9gvqyYqr8djebU4j",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01HD2ScynxcygZVaA2wzEhUf",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 13829,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 13825
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:caf783195402290f69c1f64da655446c0b0e9ac208b7dc48b2c9ae2774332b48": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_016ERmbCeiQUHcrefTG92Udm",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "id",
+           "comments"
+          ],
+          "properties": {
+           "id": {
+            "const": 2
+           },
+           "comments": {
+            "type": "array",
+            "contains": {
+             "type": "object",
+             "required": [
+              "text"
+             ],
+             "properties": {
+              "text": {
+               "type": "string",
+               "pattern": "^\\s*Working on it[.!]?\\s*$"
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSggcKEAgTGAI4AUIIdGhpbmtpbmcSDOOBKcmuTi4iBI5fyRoMyLp1v4S6jFhWAsjPIjAlcEU6QJp5VU18aN6cGBwoFOP15maLAbzgORU7FH5ynGQ/YrkMhXZPV/PodkcDJokqnwbclbiMPY371QWE3pc4yfY6cUy2z/w37zg8w5QCaccQxyqWTxtu7XdZCHkIm95USvGmjYFbTexppIuqhaClS99v6Tj4BSoxyqBm/8mP0LP14KXBgbDDWIe1SsCSovvaTNByHVnfZQnHslXPh3eN79XTN+5qeSL/e3cvic25874ldJnx1zjaVKLs8C0nFC3rdxJP9UHf4vWzH3nv2utf7SjkxDforoM8Sl5bdk3a+LRVjG7QMeIn6oZpwykNxf/A46Mhi84F8hO/6vvF705qCGdvwxjnrvlF2A6yud6mS+7Y0KHbXnK1vpKf1AXilLKs/DMTjqKaqmCluCO0o0fij0pKVyWC3GRLP+CPoUYQ8sFtdNXMELA8mtQjVxNZ4JRNDGKkTN7mOd/VK78PZac3oH5ilps+fGXArBf3P1DQBrngI5nPnhpOdrI3qB2TCiOEiSA0VGywXTTyuxsjWIGw9vyhcA+lvJRu7+CE8bErxOMm6EXmquZqaUXDa/UxvvUozDJBx5lrfRSobqPwG0TMob8YtqOmKZ1c3tM6D98tT0NWbh3wJN9DKLz5a7UeZk3pBAuW3uOl2SQcnHw/gxeNod9pvLNOmhkj82TcTFT2ZumGvn42DhdYMzf9eNCDUdamXDNYycOb9I29q6G/k5DBn6rbsr3XWXH3KV0xKqSxG/PGve87g9lIai3c5/S8jahc3N15BGYw1rawXwJ2DiYSFWghX/jgvgUu+45I3I2EvORQfzOkNrPOT6g5CNfSzGq1PR5BShM4j1zoicJa8303VCUV9+5SB5f15Si9CDt2u49ZVC/J9ddm3HBs43JP/GZfYN19TUUEVC5WgfFSSnLMEvjMGm+L+kTWJv9mPvUOoM5/Mg7TfApqU4olyB8SeUZPN7fcpy1wANXPvJY2S1+rKQPG3imaECEwwqfrsmXhYn+sz3BVEw3aoxmCAAP6VYIYg2lh8uGns1hy2pn2XMbC+/2hQpEHYIKwDaIK15ISou6+pqrgU9x26dl3NjhjLDW/78OLCQx0asvKh0PaVdkexvipKi7KycY/m7A0D9UGeFoBGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_016ERmbCeiQUHcrefTG92Udm",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "id",
+           "comments"
+          ],
+          "properties": {
+           "id": {
+            "const": 2
+           },
+           "comments": {
+            "type": "array",
+            "contains": {
+             "type": "object",
+             "required": [
+              "text"
+             ],
+             "properties": {
+              "text": {
+               "type": "string",
+               "pattern": "^\\s*Working on it[.!]?\\s*$"
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 14325,
+    "outputTokens": 290,
+    "cacheReadTokens": 13825,
+    "cacheWriteTokens": 498
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:5f5e644252becc7c2e84767df0a9423a972b262aeed47d994704aeb725c82b52": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01YKxDDeGuzuM8h2htbN9FML",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "r1-probe-comment",
+        "requirement": "R1",
+        "description": "Backend issues probe shows issue id 2 has a comment whose text is \"Working on it\" (allowing trailing punctuation/whitespace).",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "comments"
+            ],
+            "properties": {
+             "id": {
+              "const": 2
+             },
+             "comments": {
+              "type": "array",
+              "contains": {
+               "type": "object",
+               "required": [
+                "text"
+               ],
+               "properties": {
+                "text": {
+                 "type": "string",
+                 "pattern": "^\\s*Working on it[.!]?\\s*$"
+                }
+               }
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01YKxDDeGuzuM8h2htbN9FML",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "r1-probe-comment",
+        "requirement": "R1",
+        "description": "Backend issues probe shows issue id 2 has a comment whose text is \"Working on it\" (allowing trailing punctuation/whitespace).",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "comments"
+            ],
+            "properties": {
+             "id": {
+              "const": 2
+             },
+             "comments": {
+              "type": "array",
+              "contains": {
+               "type": "object",
+               "required": [
+                "text"
+               ],
+               "properties": {
+                "text": {
+                 "type": "string",
+                 "pattern": "^\\s*Working on it[.!]?\\s*$"
+                }
+               }
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 14693,
+    "outputTokens": 296,
+    "cacheReadTokens": 14323,
+    "cacheWriteTokens": 368
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

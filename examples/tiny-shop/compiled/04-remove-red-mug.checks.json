@@ -1,0 +1,144 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/04-remove-red-mug",
+  "version": "1",
+  "task": {
+    "instruction": "Remove the Red Mug from my cart, but keep everything else.",
+    "outcomes": "Then the cart no longer contains a Red Mug\nThen the other items stay in the cart"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The Red Mug is no longer in the cart.",
+      "source": {
+        "field": "outcomes",
+        "quote": "the cart no longer contains a Red Mug"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "All other items stay in the cart.",
+      "source": {
+        "field": "outcomes",
+        "quote": "the other items stay in the cart"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "r1-probe-no-red-mug",
+      "requirement": "R1",
+      "description": "The backend cart probe has no item with SKU MUG-RED or named Red Mug.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/items"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "not": {
+              "contains": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "sku": {
+                        "const": "MUG-RED"
+                      }
+                    },
+                    "required": [
+                      "sku"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "const": "Red Mug"
+                      }
+                    },
+                    "required": [
+                      "name"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r1-ui-no-red-mug-row",
+      "requirement": "R1",
+      "description": "The Cart table shows no row containing Red Mug.",
+      "assert": {
+        "kind": "contains",
+        "scope": {
+          "role": "table",
+          "name": "Cart"
+        },
+        "witness": {
+          "role": "columnheader",
+          "name": "Product"
+        },
+        "match": {
+          "role": "row",
+          "text": {
+            "contains": "Red Mug"
+          }
+        },
+        "count": {
+          "eq": 0
+        }
+      }
+    },
+    {
+      "id": "r2-probe-blue-mug-kept",
+      "requirement": "R2",
+      "description": "The backend cart probe still contains the Blue Mug (SKU MUG-BLUE) with quantity at least 1.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/items"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "sku": {
+                  "const": "MUG-BLUE"
+                },
+                "qty": {
+                  "type": "number",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "sku",
+                "qty"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T09:29:09.584Z"
+  }
+}

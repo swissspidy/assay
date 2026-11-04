@@ -1,0 +1,464 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:29:28.090Z",
+ "turns": {
+  "sha256:b9f2382643f6d586ff840254428d53143dd3c724d0119f8798dd6d61ea5cdb9c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017CPXKwixjD7zb6dSBNGNvr",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "Issue #1 has the feature label.",
+        "field": "outcomes",
+        "quote": "issue #1 has the feature label"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
+        "text": "Issue #1 still has the bug label.",
+        "field": "outcomes",
+        "quote": "issue #1 still has the bug label"
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_017CPXKwixjD7zb6dSBNGNvr",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "Issue #1 has the feature label.",
+        "field": "outcomes",
+        "quote": "issue #1 has the feature label"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
+        "text": "Issue #1 still has the bug label.",
+        "field": "outcomes",
+        "quote": "issue #1 still has the bug label"
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1138,
+    "outputTokens": 165,
+    "cacheReadTokens": 1134,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:e0b00112a30af581631fb3a8b9a08b3f34b49ea4eafd382edf259fea16a24a5e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KRQJiYmESGELVfzabS2mwo",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01DTit9yXNt9zE4wzbpD2MZA",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01KRQJiYmESGELVfzabS2mwo",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01DTit9yXNt9zE4wzbpD2MZA",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 13910,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 13906
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:7a923768e803d81a3be9dfa08049e520f780f647567de945c8571f02519410f6": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Bz1nHvcVes4XNSiFT9ai96",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "id",
+           "labels"
+          ],
+          "properties": {
+           "id": {
+            "const": 1
+           },
+           "labels": {
+            "type": "array",
+            "contains": {
+             "const": "feature"
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "id": "toolu_01GvLfE4DLnPkAGokmC5MGmf",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "id",
+           "labels"
+          ],
+          "properties": {
+           "id": {
+            "const": 1
+           },
+           "labels": {
+            "type": "array",
+            "contains": {
+             "const": "nonexistent"
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSwAcKEAgTGAI4AUIIdGhpbmtpbmcSDKftVImxAuvXylQS+xoMz09P3QZhotnsjI0bIjAVD8BRouoieSmaNPoB90+TLHTNnuQ3HYHXuDcqdxrASdZVRQzS06vhBnrc34EsrWMq3QbYL91k3r0N1C9/c6a9zst8aJxQu/kWSSOhHgMnLHxq6emCZLzESbypbrzSv98hmO2hzGM5kZKbOPjc01bS2jaHBps6l6ozgGQcJWIbZ+/V1qcaFuCENAvP3PpIAW1myIMb0eMFC+VuVtHUUUeqwHc7YE6QDQPFwDiRpCSK3EGNt68bDXLn9u9p4wsPtlHCcapFJUA6MUr836Rm/ayjSUy5IfnGslvNuZ8kBUH+xXQNVN78lpE5amzMJJ3+l7v7XDxCHb6tM7ov+5YxYPCoz12y3QVcoYy6QZpRFlTK2JY+owPNbpAoFSPepoTfwZun+/frgFszGgzB1Ns37suS7/uU6IejupnnJER4Bbc8rX275FMbq+NpRELGuDu9VCKEmrPfGtOaM2qa5vtei8a4XOMbkIAm8yS3jIM1GBN1fK704ti7KIM3CHEIcYaf1q2jrb5vx9QQv12qK34DRiZQElxRIetuuDQE6J4iCw2t8vesj2IfsgywCsy+U+/94tEV0MYGdqSyuBtcOeilTm2fTTGJoqZASCerwObZQYubZadPbYbETsOgzuZ1QU702BDjUgTvIhgWbTnMsn3PG5BGx0IbHwOMVHJHvnUekMf5t12MYZn+xihF6I4PCHyrDa2RowGbLP4EykJQD3l4eNBubVzoisp5qXnJagczXWQPR+ozp17qAbxjEF8nrHMT0uDuncZu8t2QJ+PZXplpaKEfnpDvTcPbJzMS6wS4w1R3K97XfrJ5gioI3zx/WdgrO+8nULsevik/vt2l2AWVKStN7Vq227n123gsXaOYjzaV9Y9tpryPnRgTjqgIg9fgAkvP4ERwWXomH1HRsS1ElhLtvwc9q2hDfhq4TxGhbTAcMKZmoWXQ9aCVbqE5ZpPPW/lxXkdCyTBQhBFhVRGQIyfJw/P207AcJnrqWtMAeHlGVJfz8oYrLw00HMne60DSLFHPqvE2Koj9SknZBpQwMhJseN63+vyzBmrHwqwm+uvQnJbNT2ucDm46HeV5MN8iJMNDRit+oy5WbwlHkgItDAJ5WjSlriHPCOKuIb9E/14CMCEaZO48Iyt7v1402JWjO2wCAfXyxMbW8SO3Nisweix/A+3H+6sqdNZ7QFdZMXIY7gxaqpO/8UZDw8ghnZ3uXdoYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Bz1nHvcVes4XNSiFT9ai96",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "id",
+           "labels"
+          ],
+          "properties": {
+           "id": {
+            "const": 1
+           },
+           "labels": {
+            "type": "array",
+            "contains": {
+             "const": "feature"
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01GvLfE4DLnPkAGokmC5MGmf",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "id",
+           "labels"
+          ],
+          "properties": {
+           "id": {
+            "const": 1
+           },
+           "labels": {
+            "type": "array",
+            "contains": {
+             "const": "nonexistent"
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 14383,
+    "outputTokens": 424,
+    "cacheReadTokens": 13906,
+    "cacheWriteTokens": 475
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:76d696e8d9565915232bfd057078859a5b22423eaba15ed09c77ad38425ad544": {
+   "stop": "tool_use",
+   "text": "Schema works and discriminates.",
+   "toolCalls": [
+    {
+     "id": "toolu_012t96t16fJ5ByFPMd7gXMHE",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "r1-feature-label-backend",
+        "requirement": "R1",
+        "description": "The backend issues probe shows issue #1 with the 'feature' label in its labels list.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "labels"
+            ],
+            "properties": {
+             "id": {
+              "const": 1
+             },
+             "labels": {
+              "type": "array",
+              "contains": {
+               "const": "feature"
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r2-bug-label-backend",
+        "requirement": "R2",
+        "description": "The backend issues probe shows issue #1 still carrying the 'bug' label.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "labels"
+            ],
+            "properties": {
+             "id": {
+              "const": 1
+             },
+             "labels": {
+              "type": "array",
+              "contains": {
+               "const": "bug"
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "text",
+     "text": "Schema works and discriminates."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_012t96t16fJ5ByFPMd7gXMHE",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "r1-feature-label-backend",
+        "requirement": "R1",
+        "description": "The backend issues probe shows issue #1 with the 'feature' label in its labels list.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "labels"
+            ],
+            "properties": {
+             "id": {
+              "const": 1
+             },
+             "labels": {
+              "type": "array",
+              "contains": {
+               "const": "feature"
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r2-bug-label-backend",
+        "requirement": "R2",
+        "description": "The backend issues probe shows issue #1 still carrying the 'bug' label.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "labels"
+            ],
+            "properties": {
+             "id": {
+              "const": 1
+             },
+             "labels": {
+              "type": "array",
+              "contains": {
+               "const": "bug"
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 14987,
+    "outputTokens": 415,
+    "cacheReadTokens": 14381,
+    "cacheWriteTokens": 604
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

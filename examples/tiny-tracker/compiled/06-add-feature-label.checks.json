@@ -1,0 +1,109 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/06-add-feature-label",
+  "version": "1",
+  "task": {
+    "instruction": "Add the feature label to issue #1, keeping its existing labels.",
+    "outcomes": "Then issue #1 has the feature label\nThen issue #1 still has the bug label"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Issue #1 has the feature label.",
+      "source": {
+        "field": "outcomes",
+        "quote": "issue #1 has the feature label"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "Issue #1 still has the bug label.",
+      "source": {
+        "field": "outcomes",
+        "quote": "issue #1 still has the bug label"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "r1-feature-label-backend",
+      "requirement": "R1",
+      "description": "The backend issues probe shows issue #1 with the 'feature' label in its labels list.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "id",
+                "labels"
+              ],
+              "properties": {
+                "id": {
+                  "const": 1
+                },
+                "labels": {
+                  "type": "array",
+                  "contains": {
+                    "const": "feature"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r2-bug-label-backend",
+      "requirement": "R2",
+      "description": "The backend issues probe shows issue #1 still carrying the 'bug' label.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "id",
+                "labels"
+              ],
+              "properties": {
+                "id": {
+                  "const": 1
+                },
+                "labels": {
+                  "type": "array",
+                  "contains": {
+                    "const": "bug"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T09:29:28.090Z"
+  }
+}

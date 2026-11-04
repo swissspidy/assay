@@ -1,0 +1,5326 @@
+[
+ {
+  "checkSet": {
+   "id": "tiny-shop/01-newsletter",
+   "version": "1"
+  },
+  "references": [
+   "subscribed-and-dark-theme",
+   "subscribed"
+  ],
+  "variants": [
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "subscribed",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "subscribed",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "subscribed",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "subscribed",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "subscribed",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "subscribed",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "subscribed",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "subscribed",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "subscribed",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "r1-probe:value:0",
+    "check": "r1-probe",
+    "description": "probe settings at /newsletter is false (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "r1-probe:value:0+claim",
+    "check": "r1-probe",
+    "description": "probe settings at /newsletter is false (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "r1-request:request:missing",
+    "check": "r1-request",
+    "description": "the request was never sent",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "r1-request:request:missing+claim",
+    "check": "r1-request",
+    "description": "the request was never sent, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "r1-request:request:failed",
+    "check": "r1-request",
+    "description": "the request failed with HTTP 500",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "r1-request:request:failed+claim",
+    "check": "r1-request",
+    "description": "the request failed with HTTP 500, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "r1-request:request:requestBody:schema:0",
+    "check": "r1-request",
+    "description": "requestBody: required newsletter missing",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "r1-request:request:requestBody:schema:0+claim",
+    "check": "r1-request",
+    "description": "requestBody: required newsletter missing, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "r1-request:request:requestBody:schema:1",
+    "check": "r1-request",
+    "description": "requestBody: newsletter: pinned value changed",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "r1-request:request:requestBody:schema:1+claim",
+    "check": "r1-request",
+    "description": "requestBody: newsletter: pinned value changed, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "r2-checkbox:state:checked",
+    "check": "r2-checkbox",
+    "description": "checked is false instead of true",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "r2-checkbox:state:checked+claim",
+    "check": "r2-checkbox",
+    "description": "checked is false instead of true, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed-and-dark-theme",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail"
+   },
+   {
+    "reference": "subscribed",
+    "id": "r1-probe:value:0",
+    "check": "r1-probe",
+    "description": "probe settings at /newsletter is false (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed",
+    "id": "r1-probe:value:0+claim",
+    "check": "r1-probe",
+    "description": "probe settings at /newsletter is false (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed",
+    "id": "r1-request:request:missing",
+    "check": "r1-request",
+    "description": "the request was never sent",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed",
+    "id": "r1-request:request:missing+claim",
+    "check": "r1-request",
+    "description": "the request was never sent, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed",
+    "id": "r1-request:request:failed",
+    "check": "r1-request",
+    "description": "the request failed with HTTP 500",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed",
+    "id": "r1-request:request:failed+claim",
+    "check": "r1-request",
+    "description": "the request failed with HTTP 500, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed",
+    "id": "r1-request:request:requestBody:schema:0",
+    "check": "r1-request",
+    "description": "requestBody: required newsletter missing",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed",
+    "id": "r1-request:request:requestBody:schema:0+claim",
+    "check": "r1-request",
+    "description": "requestBody: required newsletter missing, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed",
+    "id": "r1-request:request:requestBody:schema:1",
+    "check": "r1-request",
+    "description": "requestBody: newsletter: pinned value changed",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed",
+    "id": "r1-request:request:requestBody:schema:1+claim",
+    "check": "r1-request",
+    "description": "requestBody: newsletter: pinned value changed, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed",
+    "id": "r2-checkbox:state:checked",
+    "check": "r2-checkbox",
+    "description": "checked is false instead of true",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed",
+    "id": "r2-checkbox:state:checked+claim",
+    "check": "r2-checkbox",
+    "description": "checked is false instead of true, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "subscribed",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 18,
+   "variantsTotal": 18,
+   "mutantsRejected": 12,
+   "mutantsRejectedByFail": 12,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 12,
+   "claimMutantsRejected": 12,
+   "claimMutantsTotal": 12
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-shop/02-add-blue-mug",
+   "version": "1"
+  },
+  "references": [
+   "added-blue-and-red-mug",
+   "added-blue-mug"
+  ],
+  "variants": [
+   {
+    "reference": "added-blue-and-red-mug",
+    "id": "reorder",
+    "description": "list items and table rows in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-and-red-mug",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-and-red-mug",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-and-red-mug",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-and-red-mug",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-and-red-mug",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-and-red-mug",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-and-red-mug",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-and-red-mug",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-and-red-mug",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-and-red-mug",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-mug",
+    "id": "reorder",
+    "description": "list items and table rows in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-mug",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-mug",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-mug",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-mug",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-mug",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-mug",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-mug",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-mug",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-mug",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "added-blue-mug",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "added-blue-and-red-mug",
+    "id": "cart-has-blue-mug:value:0",
+    "check": "cart-has-blue-mug",
+    "description": "probe cart at /items is [{\"sku\":\"MUG-RED\",\"name\":\"Red Mug\",\"qty\":1,\"price\":9.5,\"lineTotal\":9.5}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "added-blue-and-red-mug",
+    "id": "cart-has-blue-mug:value:0+claim",
+    "check": "cart-has-blue-mug",
+    "description": "probe cart at /items is [{\"sku\":\"MUG-RED\",\"name\":\"Red Mug\",\"qty\":1,\"price\":9.5,\"lineTotal\":9.5}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "added-blue-and-red-mug",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "added-blue-mug",
+    "id": "cart-has-blue-mug:value:0",
+    "check": "cart-has-blue-mug",
+    "description": "probe cart at /items is [] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "added-blue-mug",
+    "id": "cart-has-blue-mug:value:0+claim",
+    "check": "cart-has-blue-mug",
+    "description": "probe cart at /items is [] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "added-blue-mug",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 22,
+   "variantsTotal": 22,
+   "mutantsRejected": 2,
+   "mutantsRejectedByFail": 2,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 2,
+   "claimMutantsRejected": 2,
+   "claimMutantsTotal": 2
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-shop/03-cart-two-mugs",
+   "version": "1"
+  },
+  "references": [
+   "both-mugs-and-teapot",
+   "both-mugs"
+  ],
+  "variants": [
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "reorder",
+    "description": "list items and table rows in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "extra-row",
+    "description": "an unrelated extra row in each table",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs",
+    "id": "reorder",
+    "description": "list items and table rows in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs",
+    "id": "extra-row",
+    "description": "an unrelated extra row in each table",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "both-mugs",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "r1-cart-row-blue:contains:removed",
+    "check": "r1-cart-row-blue",
+    "description": "the matching item(s) are missing (1 removed)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "r1-cart-row-blue:contains:removed+claim",
+    "check": "r1-cart-row-blue",
+    "description": "the matching item(s) are missing (1 removed), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "r1-cart-row-blue:contains:wrong-item",
+    "check": "r1-cart-row-blue",
+    "description": "row \"Product Quantity Price\" is there instead",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "r1-cart-row-blue:contains:wrong-item+claim",
+    "check": "r1-cart-row-blue",
+    "description": "row \"Product Quantity Price\" is there instead, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "r1-backend-blue:value:0",
+    "check": "r1-backend-blue",
+    "description": "probe cart at /items is [{\"sku\":\"MUG-RED\",\"name\":\"Red Mug\",\"qty\":1,\"price\":9.5,\"lineTotal\":9.5},{\"sku\":\"POT-GREEN\",\"name\":\"Green Teapot\",\"qty\":1,\"price\":27,\"lineTotal\":27}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "r1-backend-blue:value:0+claim",
+    "check": "r1-backend-blue",
+    "description": "probe cart at /items is [{\"sku\":\"MUG-RED\",\"name\":\"Red Mug\",\"qty\":1,\"price\":9.5,\"lineTotal\":9.5},{\"sku\":\"POT-GREEN\",\"name\":\"Green Teapot\",\"qty\":1,\"price\":27,\"lineTotal\":27}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "r2-cart-row-red:contains:removed",
+    "check": "r2-cart-row-red",
+    "description": "the matching item(s) are missing (1 removed)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "r2-cart-row-red:contains:removed+claim",
+    "check": "r2-cart-row-red",
+    "description": "the matching item(s) are missing (1 removed), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "r2-cart-row-red:contains:wrong-item",
+    "check": "r2-cart-row-red",
+    "description": "row \"Product Quantity Price\" is there instead",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "r2-cart-row-red:contains:wrong-item+claim",
+    "check": "r2-cart-row-red",
+    "description": "row \"Product Quantity Price\" is there instead, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "r2-backend-red:value:0",
+    "check": "r2-backend-red",
+    "description": "probe cart at /items is [{\"sku\":\"MUG-BLUE\",\"name\":\"Blue Mug\",\"qty\":1,\"price\":12,\"lineTotal\":12},{\"sku\":\"POT-GREEN\",\"name\":\"Green Teapot\",\"qty\":1,\"price\":27,\"lineTotal\":27}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "r2-backend-red:value:0+claim",
+    "check": "r2-backend-red",
+    "description": "probe cart at /items is [{\"sku\":\"MUG-BLUE\",\"name\":\"Blue Mug\",\"qty\":1,\"price\":12,\"lineTotal\":12},{\"sku\":\"POT-GREEN\",\"name\":\"Green Teapot\",\"qty\":1,\"price\":27,\"lineTotal\":27}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "r3-on-cart-page:url:elsewhere",
+    "check": "r3-on-cart-page",
+    "description": "the browser ended on a different page",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "r3-on-cart-page:url:elsewhere+claim",
+    "check": "r3-on-cart-page",
+    "description": "the browser ended on a different page, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs-and-teapot",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "both-mugs",
+    "id": "r1-cart-row-blue:contains:removed",
+    "check": "r1-cart-row-blue",
+    "description": "the matching item(s) are missing (1 removed)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs",
+    "id": "r1-cart-row-blue:contains:removed+claim",
+    "check": "r1-cart-row-blue",
+    "description": "the matching item(s) are missing (1 removed), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs",
+    "id": "r1-cart-row-blue:contains:wrong-item",
+    "check": "r1-cart-row-blue",
+    "description": "row \"Product Quantity Price\" is there instead",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs",
+    "id": "r1-cart-row-blue:contains:wrong-item+claim",
+    "check": "r1-cart-row-blue",
+    "description": "row \"Product Quantity Price\" is there instead, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs",
+    "id": "r1-backend-blue:value:0",
+    "check": "r1-backend-blue",
+    "description": "probe cart at /items is [{\"sku\":\"MUG-RED\",\"name\":\"Red Mug\",\"qty\":1,\"price\":9.5,\"lineTotal\":9.5}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs",
+    "id": "r1-backend-blue:value:0+claim",
+    "check": "r1-backend-blue",
+    "description": "probe cart at /items is [{\"sku\":\"MUG-RED\",\"name\":\"Red Mug\",\"qty\":1,\"price\":9.5,\"lineTotal\":9.5}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs",
+    "id": "r2-cart-row-red:contains:removed",
+    "check": "r2-cart-row-red",
+    "description": "the matching item(s) are missing (1 removed)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs",
+    "id": "r2-cart-row-red:contains:removed+claim",
+    "check": "r2-cart-row-red",
+    "description": "the matching item(s) are missing (1 removed), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs",
+    "id": "r2-cart-row-red:contains:wrong-item",
+    "check": "r2-cart-row-red",
+    "description": "row \"Product Quantity Price\" is there instead",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs",
+    "id": "r2-cart-row-red:contains:wrong-item+claim",
+    "check": "r2-cart-row-red",
+    "description": "row \"Product Quantity Price\" is there instead, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs",
+    "id": "r2-backend-red:value:0",
+    "check": "r2-backend-red",
+    "description": "probe cart at /items is [{\"sku\":\"MUG-BLUE\",\"name\":\"Blue Mug\",\"qty\":1,\"price\":12,\"lineTotal\":12}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs",
+    "id": "r2-backend-red:value:0+claim",
+    "check": "r2-backend-red",
+    "description": "probe cart at /items is [{\"sku\":\"MUG-BLUE\",\"name\":\"Blue Mug\",\"qty\":1,\"price\":12,\"lineTotal\":12}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs",
+    "id": "r3-on-cart-page:url:elsewhere",
+    "check": "r3-on-cart-page",
+    "description": "the browser ended on a different page",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs",
+    "id": "r3-on-cart-page:url:elsewhere+claim",
+    "check": "r3-on-cart-page",
+    "description": "the browser ended on a different page, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "both-mugs",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 24,
+   "variantsTotal": 24,
+   "mutantsRejected": 14,
+   "mutantsRejectedByFail": 14,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 14,
+   "claimMutantsRejected": 14,
+   "claimMutantsTotal": 14
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-shop/04-remove-red-mug",
+   "version": "1"
+  },
+  "references": [
+   "removed-red-mug-keeping-teapot",
+   "removed-red-mug"
+  ],
+  "variants": [
+   {
+    "reference": "removed-red-mug-keeping-teapot",
+    "id": "reorder",
+    "description": "list items and table rows in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug-keeping-teapot",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug-keeping-teapot",
+    "id": "extra-row",
+    "description": "an unrelated extra row in each table",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug-keeping-teapot",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug-keeping-teapot",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug-keeping-teapot",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug-keeping-teapot",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug-keeping-teapot",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug-keeping-teapot",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug-keeping-teapot",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug-keeping-teapot",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug-keeping-teapot",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug",
+    "id": "extra-row",
+    "description": "an unrelated extra row in each table",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "removed-red-mug",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "removed-red-mug-keeping-teapot",
+    "id": "r1-ui-no-red-mug-row:contains:extra",
+    "check": "r1-ui-no-red-mug-row",
+    "description": "an item that should be absent (row \"\") is present",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "removed-red-mug-keeping-teapot",
+    "id": "r1-ui-no-red-mug-row:contains:extra+claim",
+    "check": "r1-ui-no-red-mug-row",
+    "description": "an item that should be absent (row \"\") is present, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "removed-red-mug-keeping-teapot",
+    "id": "r2-probe-blue-mug-kept:value:0",
+    "check": "r2-probe-blue-mug-kept",
+    "description": "probe cart at /items is [{\"sku\":\"POT-GREEN\",\"name\":\"Green Teapot\",\"qty\":1,\"price\":27,\"lineTotal\":27}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "removed-red-mug-keeping-teapot",
+    "id": "r2-probe-blue-mug-kept:value:0+claim",
+    "check": "r2-probe-blue-mug-kept",
+    "description": "probe cart at /items is [{\"sku\":\"POT-GREEN\",\"name\":\"Green Teapot\",\"qty\":1,\"price\":27,\"lineTotal\":27}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "removed-red-mug-keeping-teapot",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "removed-red-mug",
+    "id": "r1-ui-no-red-mug-row:contains:extra",
+    "check": "r1-ui-no-red-mug-row",
+    "description": "an item that should be absent (row \"\") is present",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "removed-red-mug",
+    "id": "r1-ui-no-red-mug-row:contains:extra+claim",
+    "check": "r1-ui-no-red-mug-row",
+    "description": "an item that should be absent (row \"\") is present, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "removed-red-mug",
+    "id": "r2-probe-blue-mug-kept:value:0",
+    "check": "r2-probe-blue-mug-kept",
+    "description": "probe cart at /items is [] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "removed-red-mug",
+    "id": "r2-probe-blue-mug-kept:value:0+claim",
+    "check": "r2-probe-blue-mug-kept",
+    "description": "probe cart at /items is [] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "removed-red-mug",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 23,
+   "variantsTotal": 23,
+   "mutantsRejected": 4,
+   "mutantsRejectedByFail": 4,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 4,
+   "claimMutantsRejected": 4,
+   "claimMutantsTotal": 4
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": [
+   "r1-probe-no-red-mug"
+  ]
+ },
+ {
+  "checkSet": {
+   "id": "tiny-shop/05-set-quantity",
+   "version": "1"
+  },
+  "references": [
+   "quantity-2-then-3",
+   "quantity-3"
+  ],
+  "variants": [
+   {
+    "reference": "quantity-2-then-3",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-2-then-3",
+    "id": "extra-row",
+    "description": "an unrelated extra row in each table",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-2-then-3",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-2-then-3",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-2-then-3",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-2-then-3",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-2-then-3",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-2-then-3",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-2-then-3",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-2-then-3",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-2-then-3",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-3",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-3",
+    "id": "extra-row",
+    "description": "an unrelated extra row in each table",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-3",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-3",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-3",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-3",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-3",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-3",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-3",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-3",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "quantity-3",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "quantity-2-then-3",
+    "id": "r1-backend-cart-blue-mug-qty-3:value:0",
+    "check": "r1-backend-cart-blue-mug-qty-3",
+    "description": "probe cart at /items is [] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "quantity-2-then-3",
+    "id": "r1-backend-cart-blue-mug-qty-3:value:0+claim",
+    "check": "r1-backend-cart-blue-mug-qty-3",
+    "description": "probe cart at /items is [] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "quantity-2-then-3",
+    "id": "r1-ui-cart-blue-mug-qty-3:state:value",
+    "check": "r1-ui-cart-blue-mug-qty-3",
+    "description": "value is \"3x\"",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "quantity-2-then-3",
+    "id": "r1-ui-cart-blue-mug-qty-3:state:value+claim",
+    "check": "r1-ui-cart-blue-mug-qty-3",
+    "description": "value is \"3x\", while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "quantity-2-then-3",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "quantity-3",
+    "id": "r1-backend-cart-blue-mug-qty-3:value:0",
+    "check": "r1-backend-cart-blue-mug-qty-3",
+    "description": "probe cart at /items is [] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "quantity-3",
+    "id": "r1-backend-cart-blue-mug-qty-3:value:0+claim",
+    "check": "r1-backend-cart-blue-mug-qty-3",
+    "description": "probe cart at /items is [] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "quantity-3",
+    "id": "r1-ui-cart-blue-mug-qty-3:state:value",
+    "check": "r1-ui-cart-blue-mug-qty-3",
+    "description": "value is \"3x\"",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "quantity-3",
+    "id": "r1-ui-cart-blue-mug-qty-3:state:value+claim",
+    "check": "r1-ui-cart-blue-mug-qty-3",
+    "description": "value is \"3x\", while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "quantity-3",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 22,
+   "variantsTotal": 22,
+   "mutantsRejected": 4,
+   "mutantsRejectedByFail": 4,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 4,
+   "claimMutantsRejected": 4,
+   "claimMutantsTotal": 4
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-shop/06-cart-total",
+   "version": "1"
+  },
+  "references": [
+   "blue-and-red",
+   "red-then-blue"
+  ],
+  "variants": [
+   {
+    "reference": "blue-and-red",
+    "id": "reorder",
+    "description": "list items and table rows in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "extra-row",
+    "description": "an unrelated extra row in each table",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "format:r1-total-backend:1",
+    "description": "r1-total-backend's value shown as \"USD 21.50\" instead of \"$21.50\"",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "format:r1-total-backend:2",
+    "description": "r1-total-backend's value shown as \"21.50 USD\" instead of \"$21.50\"",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "format:r1-total-backend:3",
+    "description": "r1-total-backend's value shown as \"$21.5\" instead of \"$21.50\"",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "reorder",
+    "description": "list items and table rows in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "extra-row",
+    "description": "an unrelated extra row in each table",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "format:r1-total-backend:1",
+    "description": "r1-total-backend's value shown as \"USD 21.50\" instead of \"$21.50\"",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "format:r1-total-backend:2",
+    "description": "r1-total-backend's value shown as \"21.50 USD\" instead of \"$21.50\"",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "format:r1-total-backend:3",
+    "description": "r1-total-backend's value shown as \"$21.5\" instead of \"$21.50\"",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[0]:value:0",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 22.5 (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[0]:value:0+claim",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 22.5 (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[0]:value:1",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 215 (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[0]:value:1+claim",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 215 (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[0]:value:2",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 22.501 (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[0]:value:2+claim",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 22.501 (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[0]:value:3",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 20.499 (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[0]:value:3+claim",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 20.499 (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[0]:value:4",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 20.5 (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[0]:value:4+claim",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 20.5 (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[1]:value:0",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$21.51\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[1]:value:0+claim",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$21.51\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[1]:value:1",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$22.50\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[1]:value:1+claim",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$22.50\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[1]:value:2",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$215.00\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[1]:value:2+claim",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$215.00\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[1]:value:3",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$21.49\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[1]:value:3+claim",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$21.49\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[1]:value:4",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$20.50\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[1]:value:4+claim",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$20.50\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[1]:value:5",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"€21.50\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r1-total-backend:allOf[1]:value:5+claim",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"€21.50\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r2-blue-mug:value:0",
+    "check": "r2-blue-mug",
+    "description": "probe cart at /items is [{\"sku\":\"MUG-RED\",\"name\":\"Red Mug\",\"qty\":1,\"price\":9.5,\"lineTotal\":9.5}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r2-blue-mug:value:0+claim",
+    "check": "r2-blue-mug",
+    "description": "probe cart at /items is [{\"sku\":\"MUG-RED\",\"name\":\"Red Mug\",\"qty\":1,\"price\":9.5,\"lineTotal\":9.5}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r3-red-mug:value:0",
+    "check": "r3-red-mug",
+    "description": "probe cart at /items is [{\"sku\":\"MUG-BLUE\",\"name\":\"Blue Mug\",\"qty\":1,\"price\":12,\"lineTotal\":12}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r3-red-mug:value:0+claim",
+    "check": "r3-red-mug",
+    "description": "probe cart at /items is [{\"sku\":\"MUG-BLUE\",\"name\":\"Blue Mug\",\"qty\":1,\"price\":12,\"lineTotal\":12}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r4-cart-open:url:elsewhere",
+    "check": "r4-cart-open",
+    "description": "the browser ended on a different page",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "r4-cart-open:url:elsewhere+claim",
+    "check": "r4-cart-open",
+    "description": "the browser ended on a different page, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "blue-and-red",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[0]:value:0",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 22.5 (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[0]:value:0+claim",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 22.5 (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[0]:value:1",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 215 (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[0]:value:1+claim",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 215 (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[0]:value:2",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 22.501 (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[0]:value:2+claim",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 22.501 (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[0]:value:3",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 20.499 (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[0]:value:3+claim",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 20.499 (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[0]:value:4",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 20.5 (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[0]:value:4+claim",
+    "check": "r1-total-backend",
+    "description": "probe cart at /total is 20.5 (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[1]:value:0",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$21.51\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[1]:value:0+claim",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$21.51\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[1]:value:1",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$22.50\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[1]:value:1+claim",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$22.50\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[1]:value:2",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$215.00\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[1]:value:2+claim",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$215.00\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[1]:value:3",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$21.49\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[1]:value:3+claim",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$21.49\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[1]:value:4",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$20.50\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[1]:value:4+claim",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"$20.50\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[1]:value:5",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"€21.50\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r1-total-backend:allOf[1]:value:5+claim",
+    "check": "r1-total-backend",
+    "description": "the text of main › region \"Cart summary\" › paragraph › status \"Cart total\" is \"€21.50\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r2-blue-mug:value:0",
+    "check": "r2-blue-mug",
+    "description": "probe cart at /items is [{\"sku\":\"MUG-RED\",\"name\":\"Red Mug\",\"qty\":1,\"price\":9.5,\"lineTotal\":9.5}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r2-blue-mug:value:0+claim",
+    "check": "r2-blue-mug",
+    "description": "probe cart at /items is [{\"sku\":\"MUG-RED\",\"name\":\"Red Mug\",\"qty\":1,\"price\":9.5,\"lineTotal\":9.5}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r3-red-mug:value:0",
+    "check": "r3-red-mug",
+    "description": "probe cart at /items is [{\"sku\":\"MUG-BLUE\",\"name\":\"Blue Mug\",\"qty\":1,\"price\":12,\"lineTotal\":12}] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r3-red-mug:value:0+claim",
+    "check": "r3-red-mug",
+    "description": "probe cart at /items is [{\"sku\":\"MUG-BLUE\",\"name\":\"Blue Mug\",\"qty\":1,\"price\":12,\"lineTotal\":12}] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r4-cart-open:url:elsewhere",
+    "check": "r4-cart-open",
+    "description": "the browser ended on a different page",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "r4-cart-open:url:elsewhere+claim",
+    "check": "r4-cart-open",
+    "description": "the browser ended on a different page, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "red-then-blue",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "abstain",
+    "rejected": true,
+    "rejectedBy": "abstain"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 30,
+   "variantsTotal": 30,
+   "mutantsRejected": 28,
+   "mutantsRejectedByFail": 28,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 28,
+   "claimMutantsRejected": 28,
+   "claimMutantsTotal": 28
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-shop/07-express-order",
+   "version": "1"
+  },
+  "references": [
+   "express-gift-wrapped",
+   "express-order"
+  ],
+  "variants": [
+   {
+    "reference": "express-gift-wrapped",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-order",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-order",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-order",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-order",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-order",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-order",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-order",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-order",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-order",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-order",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "express-gift-wrapped",
+    "id": "R1-order-request:request:missing",
+    "check": "R1-order-request",
+    "description": "the request was never sent",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "R1-order-request:request:missing+claim",
+    "check": "R1-order-request",
+    "description": "the request was never sent, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "R1-order-request:request:failed",
+    "check": "R1-order-request",
+    "description": "the request failed with HTTP 500",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "R1-order-request:request:failed+claim",
+    "check": "R1-order-request",
+    "description": "the request failed with HTTP 500, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "R1-order-probe:value:0",
+    "check": "R1-order-probe",
+    "description": "probe latestOrder at /status is \"placex\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "R1-order-probe:value:0+claim",
+    "check": "R1-order-probe",
+    "description": "probe latestOrder at /status is \"placex\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "R2-shipping-express:value:0",
+    "check": "R2-shipping-express",
+    "description": "probe latestOrder at /shipping is \"expresx\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "R2-shipping-express:value:0+claim",
+    "check": "R2-shipping-express",
+    "description": "probe latestOrder at /shipping is \"expresx\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "R3-confirmation-page:allOf[0]:url:elsewhere",
+    "check": "R3-confirmation-page",
+    "description": "the browser ended on a different page",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "R3-confirmation-page:allOf[0]:url:elsewhere+claim",
+    "check": "R3-confirmation-page",
+    "description": "the browser ended on a different page, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "R3-confirmation-page:allOf[1]:contains:removed",
+    "check": "R3-confirmation-page",
+    "description": "the matching item(s) are missing (1 removed)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "R3-confirmation-page:allOf[1]:contains:removed+claim",
+    "check": "R3-confirmation-page",
+    "description": "the matching item(s) are missing (1 removed), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "R4-name:value:0",
+    "check": "R4-name",
+    "description": "probe latestOrder at /name is \"Ada Lovelacx\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "R4-name:value:0+claim",
+    "check": "R4-name",
+    "description": "probe latestOrder at /name is \"Ada Lovelacx\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "R5-items:value:0",
+    "check": "R5-items",
+    "description": "probe latestOrder at /items is [] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "R5-items:value:0+claim",
+    "check": "R5-items",
+    "description": "probe latestOrder at /items is [] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-gift-wrapped",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R1-order-request:request:missing",
+    "check": "R1-order-request",
+    "description": "the request was never sent",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R1-order-request:request:missing+claim",
+    "check": "R1-order-request",
+    "description": "the request was never sent, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R1-order-request:request:failed",
+    "check": "R1-order-request",
+    "description": "the request failed with HTTP 500",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R1-order-request:request:failed+claim",
+    "check": "R1-order-request",
+    "description": "the request failed with HTTP 500, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R1-order-probe:value:0",
+    "check": "R1-order-probe",
+    "description": "probe latestOrder at /status is \"placex\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R1-order-probe:value:0+claim",
+    "check": "R1-order-probe",
+    "description": "probe latestOrder at /status is \"placex\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-shipping-express:value:0",
+    "check": "R2-shipping-express",
+    "description": "probe latestOrder at /shipping is \"expresx\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-shipping-express:value:0+claim",
+    "check": "R2-shipping-express",
+    "description": "probe latestOrder at /shipping is \"expresx\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R3-confirmation-page:allOf[0]:url:elsewhere",
+    "check": "R3-confirmation-page",
+    "description": "the browser ended on a different page",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R3-confirmation-page:allOf[0]:url:elsewhere+claim",
+    "check": "R3-confirmation-page",
+    "description": "the browser ended on a different page, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R3-confirmation-page:allOf[1]:contains:removed",
+    "check": "R3-confirmation-page",
+    "description": "the matching item(s) are missing (1 removed)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R3-confirmation-page:allOf[1]:contains:removed+claim",
+    "check": "R3-confirmation-page",
+    "description": "the matching item(s) are missing (1 removed), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R4-name:value:0",
+    "check": "R4-name",
+    "description": "probe latestOrder at /name is \"Ada Lovelacx\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R4-name:value:0+claim",
+    "check": "R4-name",
+    "description": "probe latestOrder at /name is \"Ada Lovelacx\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R5-items:value:0",
+    "check": "R5-items",
+    "description": "probe latestOrder at /items is [] (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R5-items:value:0+claim",
+    "check": "R5-items",
+    "description": "probe latestOrder at /items is [] (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 16,
+   "mutantsRejectedByFail": 16,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 16,
+   "claimMutantsRejected": 16,
+   "claimMutantsTotal": 16
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-shop/08-delivery-date",
+   "version": "1"
+  },
+  "references": [
+   "express-order",
+   "express-two-items"
+  ],
+  "variants": [
+   {
+    "reference": "express-order",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-order",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-order",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "abstain",
+    "accepted": false,
+    "rejectedBy": [
+     {
+      "check": "R1-confirmation-delivery-date",
+      "status": "abstain",
+      "reason": "value_unavailable",
+      "message": "/Estimated delivery:?\\s*(\\d{1,2}(?:st|nd|rd|th)?\\s+[A-Za-z]+\\.?,?\\s+\\d{4}|[A-Za-z]+\\.?\\s+\\d{1,2}(?:st|nd|rd|th)?,?\\s+\\d{4}|\\d{4}-\\d{2}-\\d{2}|\\d{1,2}[/.]\\d{1,2}[/.]\\d{4})/ not found in text of main › region \"Order  summary\""
+     }
+    ]
+   },
+   {
+    "reference": "express-order",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-order",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-order",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-order",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-order",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-order",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-order",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-two-items",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-two-items",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-two-items",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "abstain",
+    "accepted": false,
+    "rejectedBy": [
+     {
+      "check": "R1-confirmation-delivery-date",
+      "status": "abstain",
+      "reason": "value_unavailable",
+      "message": "/Estimated delivery:?\\s*(\\d{1,2}(?:st|nd|rd|th)?\\s+[A-Za-z]+\\.?,?\\s+\\d{4}|[A-Za-z]+\\.?\\s+\\d{1,2}(?:st|nd|rd|th)?,?\\s+\\d{4}|\\d{4}-\\d{2}-\\d{2}|\\d{1,2}[/.]\\d{1,2}[/.]\\d{4})/ not found in text of main › region \"Order  summary\""
+     }
+    ]
+   },
+   {
+    "reference": "express-two-items",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-two-items",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-two-items",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-two-items",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-two-items",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-two-items",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "express-two-items",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "express-order",
+    "id": "R1-confirmation-delivery-date:value:0",
+    "check": "R1-confirmation-delivery-date",
+    "description": "text of main › region \"Order summary\" is \"6 November 2026\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R1-confirmation-delivery-date:value:0+claim",
+    "check": "R1-confirmation-delivery-date",
+    "description": "text of main › region \"Order summary\" is \"6 November 2026\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R1-confirmation-delivery-date:value:1",
+    "check": "R1-confirmation-delivery-date",
+    "description": "text of main › region \"Order summary\" is \"4 November 2026\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R1-confirmation-delivery-date:value:1+claim",
+    "check": "R1-confirmation-delivery-date",
+    "description": "text of main › region \"Order summary\" is \"4 November 2026\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-order-request:request:missing",
+    "check": "R2-order-request",
+    "description": "the request was never sent",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-order-request:request:missing+claim",
+    "check": "R2-order-request",
+    "description": "the request was never sent, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-order-request:request:failed",
+    "check": "R2-order-request",
+    "description": "the request failed with HTTP 500",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-order-request:request:failed+claim",
+    "check": "R2-order-request",
+    "description": "the request failed with HTTP 500, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-order-request:request:responseBody:schema:0",
+    "check": "R2-order-request",
+    "description": "responseBody: required id missing",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-order-request:request:responseBody:schema:0+claim",
+    "check": "R2-order-request",
+    "description": "responseBody: required id missing, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-order-request:request:responseBody:schema:1",
+    "check": "R2-order-request",
+    "description": "responseBody: required items missing",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-order-request:request:responseBody:schema:1+claim",
+    "check": "R2-order-request",
+    "description": "responseBody: required items missing, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-order-request:request:responseBody:schema:2",
+    "check": "R2-order-request",
+    "description": "responseBody: items: too few items",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-order-request:request:responseBody:schema:2+claim",
+    "check": "R2-order-request",
+    "description": "responseBody: items: too few items, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-order-probe:value:0",
+    "check": "R2-order-probe",
+    "description": "probe latestOrder is {\"id\":\"A1001\",\"name\":\"Grace Hopper\",\"shipping\":\"express\",\"giftWrap\":false,\"items\":[{\"sku\":\"MUG-RED\",\"name\":\"Red Mug\",\"qty\":1,\"price\":9.5,\"lineTotal\":9.5}],\"total\":9.5,\"estimatedDelivery\":\"2026-11-05\"} (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-order-probe:value:0+claim",
+    "check": "R2-order-probe",
+    "description": "probe latestOrder is {\"id\":\"A1001\",\"name\":\"Grace Hopper\",\"shipping\":\"express\",\"giftWrap\":false,\"items\":[{\"sku\":\"MUG-RED\",\"name\":\"Red Mug\",\"qty\":1,\"price\":9.5,\"lineTotal\":9.5}],\"total\":9.5,\"estimatedDelivery\":\"2026-11-05\"} (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-order-probe:value:1",
+    "check": "R2-order-probe",
+    "description": "probe latestOrder is {\"id\":\"A1001\",\"status\":\"placed\",\"name\":\"Grace Hopper\",\"shipping\":\"express\",\"giftWrap\":false,\"total\":9.5,\"estimatedDelivery\":\"2026-11-05\"} (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-order-probe:value:1+claim",
+    "check": "R2-order-probe",
+    "description": "probe latestOrder is {\"id\":\"A1001\",\"status\":\"placed\",\"name\":\"Grace Hopper\",\"shipping\":\"express\",\"giftWrap\":false,\"total\":9.5,\"estimatedDelivery\":\"2026-11-05\"} (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-order-probe:value:2",
+    "check": "R2-order-probe",
+    "description": "probe latestOrder is {\"id\":\"A1001\",\"status\":\"placex\",\"name\":\"Grace Hopper\",\"shipping\":\"express\",\"giftWrap\":false,\"items\":[{\"sku\":\"MUG-RED\",\"name\":\"Red Mug\",\"qty\":1,\"price\":9.5,\"lineTotal\":9.5}],\"total\":9.5,\"estimatedDelivery\":\"2026-11-05\"} (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-order-probe:value:2+claim",
+    "check": "R2-order-probe",
+    "description": "probe latestOrder is {\"id\":\"A1001\",\"status\":\"placex\",\"name\":\"Grace Hopper\",\"shipping\":\"express\",\"giftWrap\":false,\"items\":[{\"sku\":\"MUG-RED\",\"name\":\"Red Mug\",\"qty\":1,\"price\":9.5,\"lineTotal\":9.5}],\"total\":9.5,\"estimatedDelivery\":\"2026-11-05\"} (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-order-probe:value:3",
+    "check": "R2-order-probe",
+    "description": "probe latestOrder is {\"id\":\"A1001\",\"status\":\"placed\",\"name\":\"Grace Hopper\",\"shipping\":\"express\",\"giftWrap\":false,\"items\":[],\"total\":9.5,\"estimatedDelivery\":\"2026-11-05\"} (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R2-order-probe:value:3+claim",
+    "check": "R2-order-probe",
+    "description": "probe latestOrder is {\"id\":\"A1001\",\"status\":\"placed\",\"name\":\"Grace Hopper\",\"shipping\":\"express\",\"giftWrap\":false,\"items\":[],\"total\":9.5,\"estimatedDelivery\":\"2026-11-05\"} (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R3-express-request:value:0",
+    "check": "R3-express-request",
+    "description": "request body at /shipping of #6 is \"expresx\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R3-express-request:value:0+claim",
+    "check": "R3-express-request",
+    "description": "request body at /shipping of #6 is \"expresx\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R3-express-probe:value:0",
+    "check": "R3-express-probe",
+    "description": "probe latestOrder at /shipping is \"expresx\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "R3-express-probe:value:0+claim",
+    "check": "R3-express-probe",
+    "description": "probe latestOrder at /shipping is \"expresx\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-order",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R1-confirmation-delivery-date:value:0",
+    "check": "R1-confirmation-delivery-date",
+    "description": "text of main › region \"Order summary\" is \"6 November 2026\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R1-confirmation-delivery-date:value:0+claim",
+    "check": "R1-confirmation-delivery-date",
+    "description": "text of main › region \"Order summary\" is \"6 November 2026\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R1-confirmation-delivery-date:value:1",
+    "check": "R1-confirmation-delivery-date",
+    "description": "text of main › region \"Order summary\" is \"4 November 2026\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R1-confirmation-delivery-date:value:1+claim",
+    "check": "R1-confirmation-delivery-date",
+    "description": "text of main › region \"Order summary\" is \"4 November 2026\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R2-order-request:request:missing",
+    "check": "R2-order-request",
+    "description": "the request was never sent",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R2-order-request:request:missing+claim",
+    "check": "R2-order-request",
+    "description": "the request was never sent, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R2-order-request:request:failed",
+    "check": "R2-order-request",
+    "description": "the request failed with HTTP 500",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R2-order-request:request:failed+claim",
+    "check": "R2-order-request",
+    "description": "the request failed with HTTP 500, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R2-order-request:request:responseBody:schema:0",
+    "check": "R2-order-request",
+    "description": "responseBody: required id missing",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R2-order-request:request:responseBody:schema:0+claim",
+    "check": "R2-order-request",
+    "description": "responseBody: required id missing, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R2-order-request:request:responseBody:schema:1",
+    "check": "R2-order-request",
+    "description": "responseBody: required items missing",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R2-order-request:request:responseBody:schema:1+claim",
+    "check": "R2-order-request",
+    "description": "responseBody: required items missing, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R2-order-request:request:responseBody:schema:2",
+    "check": "R2-order-request",
+    "description": "responseBody: items: too few items",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R2-order-request:request:responseBody:schema:2+claim",
+    "check": "R2-order-request",
+    "description": "responseBody: items: too few items, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R2-order-probe:value:0",
+    "check": "R2-order-probe",
+    "description": "probe latestOrder is {\"id\":\"A1001\",\"name\":\"Grace Hopper\",\"shipping\":\"express\",\"giftWrap\":false,\"items\":[{\"sku\":\"MUG-RED\",\"name\":\"Red Mug\",\"qty\":1,\"price\":9.5,\"lineTotal\":9.5},{\"sku\":\"POT-GREEN\",\"name\":\"Green Teapot\",\"qty\":1,\"price\":27,\"lineTotal\":27}],\"total\":36.5,\"estimatedDelivery\":\"2026-11-05\"} (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R2-order-probe:value:0+claim",
+    "check": "R2-order-probe",
+    "description": "probe latestOrder is {\"id\":\"A1001\",\"name\":\"Grace Hopper\",\"shipping\":\"express\",\"giftWrap\":false,\"items\":[{\"sku\":\"MUG-RED\",\"name\":\"Red Mug\",\"qty\":1,\"price\":9.5,\"lineTotal\":9.5},{\"sku\":\"POT-GREEN\",\"name\":\"Green Teapot\",\"qty\":1,\"price\":27,\"lineTotal\":27}],\"total\":36.5,\"estimatedDelivery\":\"2026-11-05\"} (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R2-order-probe:value:1",
+    "check": "R2-order-probe",
+    "description": "probe latestOrder is {\"id\":\"A1001\",\"status\":\"placed\",\"name\":\"Grace Hopper\",\"shipping\":\"express\",\"giftWrap\":false,\"total\":36.5,\"estimatedDelivery\":\"2026-11-05\"} (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R2-order-probe:value:1+claim",
+    "check": "R2-order-probe",
+    "description": "probe latestOrder is {\"id\":\"A1001\",\"status\":\"placed\",\"name\":\"Grace Hopper\",\"shipping\":\"express\",\"giftWrap\":false,\"total\":36.5,\"estimatedDelivery\":\"2026-11-05\"} (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R2-order-probe:value:2",
+    "check": "R2-order-probe",
+    "description": "probe latestOrder is {\"id\":\"A1001\",\"status\":\"placex\",\"name\":\"Grace Hopper\",\"shipping\":\"express\",\"giftWrap\":false,\"items\":[{\"sku\":\"MUG-RED\",\"name\":\"Red Mug\",\"qty\":1,\"price\":9.5,\"lineTotal\":9.5},{\"sku\":\"POT-GREEN\",\"name\":\"Green Teapot\",\"qty\":1,\"price\":27,\"lineTotal\":27}],\"total\":36.5,\"estimatedDelivery\":\"2026-11-05\"} (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R2-order-probe:value:2+claim",
+    "check": "R2-order-probe",
+    "description": "probe latestOrder is {\"id\":\"A1001\",\"status\":\"placex\",\"name\":\"Grace Hopper\",\"shipping\":\"express\",\"giftWrap\":false,\"items\":[{\"sku\":\"MUG-RED\",\"name\":\"Red Mug\",\"qty\":1,\"price\":9.5,\"lineTotal\":9.5},{\"sku\":\"POT-GREEN\",\"name\":\"Green Teapot\",\"qty\":1,\"price\":27,\"lineTotal\":27}],\"total\":36.5,\"estimatedDelivery\":\"2026-11-05\"} (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R2-order-probe:value:3",
+    "check": "R2-order-probe",
+    "description": "probe latestOrder is {\"id\":\"A1001\",\"status\":\"placed\",\"name\":\"Grace Hopper\",\"shipping\":\"express\",\"giftWrap\":false,\"items\":[],\"total\":36.5,\"estimatedDelivery\":\"2026-11-05\"} (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R2-order-probe:value:3+claim",
+    "check": "R2-order-probe",
+    "description": "probe latestOrder is {\"id\":\"A1001\",\"status\":\"placed\",\"name\":\"Grace Hopper\",\"shipping\":\"express\",\"giftWrap\":false,\"items\":[],\"total\":36.5,\"estimatedDelivery\":\"2026-11-05\"} (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R3-express-request:value:0",
+    "check": "R3-express-request",
+    "description": "request body at /shipping of #7 is \"expresx\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R3-express-request:value:0+claim",
+    "check": "R3-express-request",
+    "description": "request body at /shipping of #7 is \"expresx\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R3-express-probe:value:0",
+    "check": "R3-express-probe",
+    "description": "probe latestOrder at /shipping is \"expresx\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "R3-express-probe:value:0+claim",
+    "check": "R3-express-probe",
+    "description": "probe latestOrder at /shipping is \"expresx\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "express-two-items",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 18,
+   "variantsTotal": 20,
+   "mutantsRejected": 26,
+   "mutantsRejectedByFail": 26,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 26,
+   "claimMutantsRejected": 26,
+   "claimMutantsTotal": 26
+  },
+  "overConstrained": [],
+  "fragile": [
+   {
+    "check": "R1-confirmation-delivery-date",
+    "variants": [
+     {
+      "reference": "express-order",
+      "id": "spacing",
+      "description": "non-breaking and doubled spaces in visible text"
+     },
+     {
+      "reference": "express-two-items",
+      "id": "spacing",
+      "description": "non-breaking and doubled spaces in visible text"
+     }
+    ]
+   }
+  ],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-shop/09-gift-wrap",
+   "version": "1"
+  },
+  "references": [
+   "gift-wrapped-express",
+   "gift-wrapped"
+  ],
+  "variants": [
+   {
+    "reference": "gift-wrapped-express",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "gift-wrapped-express",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "gift-wrapped-express",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "gift-wrapped-express",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "gift-wrapped-express",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "gift-wrapped-express",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "gift-wrapped-express",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "gift-wrapped-express",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "gift-wrapped-express",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "gift-wrapped-express",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "json-array-order",
+    "description": "arrays in JSON bodies and probe results in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "retry",
+    "description": "each state-changing request first failed with HTTP 503 and was retried",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "gift-wrapped-express",
+    "id": "order-placed-request:request:missing",
+    "check": "order-placed-request",
+    "description": "the request was never sent",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped-express",
+    "id": "order-placed-request:request:missing+claim",
+    "check": "order-placed-request",
+    "description": "the request was never sent, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped-express",
+    "id": "order-placed-request:request:failed",
+    "check": "order-placed-request",
+    "description": "the request failed with HTTP 500",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped-express",
+    "id": "order-placed-request:request:failed+claim",
+    "check": "order-placed-request",
+    "description": "the request failed with HTTP 500, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped-express",
+    "id": "order-placed-probe:value:0",
+    "check": "order-placed-probe",
+    "description": "probe latestOrder at /status is \"placex\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped-express",
+    "id": "order-placed-probe:value:0+claim",
+    "check": "order-placed-probe",
+    "description": "probe latestOrder at /status is \"placex\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped-express",
+    "id": "giftwrap-probe:value:0",
+    "check": "giftwrap-probe",
+    "description": "probe latestOrder at /giftWrap is false (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped-express",
+    "id": "giftwrap-probe:value:0+claim",
+    "check": "giftwrap-probe",
+    "description": "probe latestOrder at /giftWrap is false (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped-express",
+    "id": "giftwrap-request:value:0",
+    "check": "giftwrap-request",
+    "description": "request body at /giftWrap of #6 is false (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped-express",
+    "id": "giftwrap-request:value:0+claim",
+    "check": "giftwrap-request",
+    "description": "request body at /giftWrap of #6 is false (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped-express",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail"
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "order-placed-request:request:missing",
+    "check": "order-placed-request",
+    "description": "the request was never sent",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "order-placed-request:request:missing+claim",
+    "check": "order-placed-request",
+    "description": "the request was never sent, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "order-placed-request:request:failed",
+    "check": "order-placed-request",
+    "description": "the request failed with HTTP 500",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "order-placed-request:request:failed+claim",
+    "check": "order-placed-request",
+    "description": "the request failed with HTTP 500, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "order-placed-probe:value:0",
+    "check": "order-placed-probe",
+    "description": "probe latestOrder at /status is \"placex\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "order-placed-probe:value:0+claim",
+    "check": "order-placed-probe",
+    "description": "probe latestOrder at /status is \"placex\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "giftwrap-probe:value:0",
+    "check": "giftwrap-probe",
+    "description": "probe latestOrder at /giftWrap is false (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "giftwrap-probe:value:0+claim",
+    "check": "giftwrap-probe",
+    "description": "probe latestOrder at /giftWrap is false (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "giftwrap-request:value:0",
+    "check": "giftwrap-request",
+    "description": "request body at /giftWrap of #6 is false (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "giftwrap-request:value:0+claim",
+    "check": "giftwrap-request",
+    "description": "request body at /giftWrap of #6 is false (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "gift-wrapped",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 20,
+   "variantsTotal": 20,
+   "mutantsRejected": 10,
+   "mutantsRejectedByFail": 10,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 10,
+   "claimMutantsRejected": 10,
+   "claimMutantsTotal": 10
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ },
+ {
+  "checkSet": {
+   "id": "tiny-shop/10-dark-german",
+   "version": "1"
+  },
+  "references": [
+   "dark-and-german",
+   "german-then-dark"
+  ],
+  "variants": [
+   {
+    "reference": "dark-and-german",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "dark-and-german",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "dark-and-german",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "dark-and-german",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "dark-and-german",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "dark-and-german",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "dark-and-german",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "dark-and-german",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "extra-content",
+    "description": "unrelated recommendations and a promotional status message on the page",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "wrap-main",
+    "description": "main content wrapped in an extra region",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "spacing",
+    "description": "non-breaking and doubled spaces in visible text",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "extra-json-fields",
+    "description": "extra fields in JSON bodies and probe results",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "network-noise",
+    "description": "an analytics beacon and repeated GET requests",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "extra-storage",
+    "description": "unrelated cookies and storage keys",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "url-decoration",
+    "description": "a tracking query parameter on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "url-hash",
+    "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   }
+  ],
+  "mutants": [
+   {
+    "reference": "dark-and-german",
+    "id": "theme-dark:value:0",
+    "check": "theme-dark",
+    "description": "localStorage theme is \"darx\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "dark-and-german",
+    "id": "theme-dark:value:0+claim",
+    "check": "theme-dark",
+    "description": "localStorage theme is \"darx\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "dark-and-german",
+    "id": "theme-dark:storage:unset",
+    "check": "theme-dark",
+    "description": "local theme is not set",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "dark-and-german",
+    "id": "theme-dark:storage:unset+claim",
+    "check": "theme-dark",
+    "description": "local theme is not set, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "dark-and-german",
+    "id": "lang-german:value:0",
+    "check": "lang-german",
+    "description": "cookie lang is \"dx\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "dark-and-german",
+    "id": "lang-german:value:0+claim",
+    "check": "lang-german",
+    "description": "cookie lang is \"dx\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "dark-and-german",
+    "id": "lang-german:value:1",
+    "check": "lang-german",
+    "description": "cookie lang is \"xx\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "dark-and-german",
+    "id": "lang-german:value:1+claim",
+    "check": "lang-german",
+    "description": "cookie lang is \"xx\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "dark-and-german",
+    "id": "lang-german:value:2",
+    "check": "lang-german",
+    "description": "cookie lang is \"\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "dark-and-german",
+    "id": "lang-german:value:2+claim",
+    "check": "lang-german",
+    "description": "cookie lang is \"\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "dark-and-german",
+    "id": "lang-german:storage:unset",
+    "check": "lang-german",
+    "description": "cookie lang is not set",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "dark-and-german",
+    "id": "lang-german:storage:unset+claim",
+    "check": "lang-german",
+    "description": "cookie lang is not set, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "dark-and-german",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail"
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "theme-dark:value:0",
+    "check": "theme-dark",
+    "description": "localStorage theme is \"darx\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "theme-dark:value:0+claim",
+    "check": "theme-dark",
+    "description": "localStorage theme is \"darx\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "theme-dark:storage:unset",
+    "check": "theme-dark",
+    "description": "local theme is not set",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "theme-dark:storage:unset+claim",
+    "check": "theme-dark",
+    "description": "local theme is not set, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "lang-german:value:0",
+    "check": "lang-german",
+    "description": "cookie lang is \"dx\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "lang-german:value:0+claim",
+    "check": "lang-german",
+    "description": "cookie lang is \"dx\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "lang-german:value:1",
+    "check": "lang-german",
+    "description": "cookie lang is \"xx\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "lang-german:value:1+claim",
+    "check": "lang-german",
+    "description": "cookie lang is \"xx\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "lang-german:value:2",
+    "check": "lang-german",
+    "description": "cookie lang is \"\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "lang-german:value:2+claim",
+    "check": "lang-german",
+    "description": "cookie lang is \"\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "lang-german:storage:unset",
+    "check": "lang-german",
+    "description": "cookie lang is not set",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "lang-german:storage:unset+claim",
+    "check": "lang-german",
+    "description": "cookie lang is not set, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "german-then-dark",
+    "id": "claims-only",
+    "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
+    "advisory": true,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail"
+   }
+  ],
+  "rates": {
+   "variantsAccepted": 16,
+   "variantsTotal": 16,
+   "mutantsRejected": 12,
+   "mutantsRejectedByFail": 12,
+   "mutantsRejectedByAbstain": 0,
+   "mutantsTotal": 12,
+   "claimMutantsRejected": 12,
+   "claimMutantsTotal": 12
+  },
+  "overConstrained": [],
+  "fragile": [],
+  "weak": [],
+  "missed": [],
+  "advisories": [],
+  "untested": []
+ }
+]

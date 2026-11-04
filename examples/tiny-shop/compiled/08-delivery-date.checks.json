@@ -1,0 +1,203 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/08-delivery-date",
+  "version": "1",
+  "task": {
+    "instruction": "Place an order for my cart with express shipping and show me the estimated delivery date.",
+    "outcomes": "Then the confirmation shows an estimated delivery of 5 November 2026"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The order confirmation shows an estimated delivery date of 5 November 2026.",
+      "source": {
+        "field": "outcomes",
+        "quote": "the confirmation shows an estimated delivery of 5 November 2026"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "An order is placed for the items in the user's cart.",
+      "source": {
+        "field": "instruction",
+        "quote": "Place an order for my cart"
+      }
+    },
+    {
+      "id": "R3",
+      "kind": "hard",
+      "text": "The order uses express shipping.",
+      "source": {
+        "field": "instruction",
+        "quote": "with express shipping"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-confirmation-delivery-date",
+      "requirement": "R1",
+      "description": "The order summary on the confirmation page shows an estimated delivery date of 5 November 2026.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "text",
+          "scope": {
+            "anchors": [
+              {
+                "role": "region",
+                "name": "Order summary"
+              },
+              {
+                "role": "region",
+                "name": {
+                  "contains": "summary",
+                  "ignoreCase": true
+                },
+                "landmark": {
+                  "role": "main"
+                }
+              }
+            ]
+          },
+          "pattern": "Estimated delivery:?\\s*(\\d{1,2}(?:st|nd|rd|th)?\\s+[A-Za-z]+\\.?,?\\s+\\d{4}|[A-Za-z]+\\.?\\s+\\d{1,2}(?:st|nd|rd|th)?,?\\s+\\d{4}|\\d{4}-\\d{2}-\\d{2}|\\d{1,2}[/.]\\d{1,2}[/.]\\d{4})",
+          "flags": "i",
+          "group": 1
+        },
+        "normalize": [
+          {
+            "op": "date",
+            "locale": "en-GB"
+          }
+        ],
+        "expect": {
+          "approx": {
+            "value": "2026-11-05",
+            "abs": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "R2-order-request",
+      "requirement": "R2",
+      "description": "A POST to /api/orders succeeded and the server returned a placed order containing items.",
+      "assert": {
+        "kind": "request",
+        "match": {
+          "method": "POST",
+          "url": {
+            "path": "/api/orders"
+          },
+          "status": {
+            "gte": 200,
+            "lt": 300
+          },
+          "responseBody": {
+            "type": "object",
+            "required": [
+              "id",
+              "items"
+            ],
+            "properties": {
+              "items": {
+                "type": "array",
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R2-order-probe",
+      "requirement": "R2",
+      "description": "The backend's latest order has status placed and contains at least one item.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "latestOrder"
+        },
+        "expect": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "status",
+              "items"
+            ],
+            "properties": {
+              "status": {
+                "const": "placed"
+              },
+              "items": {
+                "type": "array",
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R3-express-request",
+      "requirement": "R3",
+      "description": "The order submission sent shipping set to express.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "request",
+          "match": {
+            "method": "POST",
+            "url": {
+              "path": "/api/orders"
+            },
+            "status": {
+              "gte": 200,
+              "lt": 300
+            }
+          },
+          "pick": "last",
+          "pointer": "/shipping"
+        },
+        "normalize": [
+          "trim",
+          "lowercase"
+        ],
+        "expect": {
+          "equals": "express"
+        }
+      }
+    },
+    {
+      "id": "R3-express-probe",
+      "requirement": "R3",
+      "description": "The backend's latest order is stored with express shipping.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/shipping"
+        },
+        "normalize": [
+          "trim",
+          "lowercase"
+        ],
+        "expect": {
+          "equals": "express"
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T09:30:09.119Z"
+  }
+}

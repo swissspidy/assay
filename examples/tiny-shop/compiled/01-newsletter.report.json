@@ -1,0 +1,52 @@
+{
+  "task": "tiny-shop/01-newsletter",
+  "status": "compiled",
+  "model": "anthropic:claude-opus-5-5@high",
+  "modelsUsed": [
+    "claude-opus-5-5"
+  ],
+  "turns": {
+    "rubric": 1,
+    "discovery": 3
+  },
+  "usage": {
+    "inputTokens": 43757,
+    "outputTokens": 797,
+    "cacheReadTokens": 29321,
+    "cacheWriteTokens": 14424
+  },
+  "coverage": [
+    {
+      "requirement": "R1",
+      "quote": "the newsletter subscription is saved",
+      "checks": [
+        "r1-probe",
+        "r1-request"
+      ],
+      "channels": [
+        "probe",
+        "network"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R2",
+      "quote": "the newsletter checkbox in the preferences is checked",
+      "checks": [
+        "r2-checkbox"
+      ],
+      "channels": [
+        "a11y"
+      ],
+      "trust": "semantic"
+    }
+  ],
+  "warnings": [],
+  "references": [
+    {
+      "name": "subscribed",
+      "kind": "success",
+      "verdict": "success"
+    }
+  ]
+}

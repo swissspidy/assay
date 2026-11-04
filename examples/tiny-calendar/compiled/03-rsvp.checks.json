@@ -1,0 +1,81 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-calendar/03-rsvp",
+  "version": "1",
+  "task": {
+    "instruction": "RSVP that I'm going to the Book club.",
+    "outcomes": "Then my RSVP for Book club is going"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The user's RSVP for the Book club event is set to going.",
+      "source": {
+        "field": "outcomes",
+        "quote": "my RSVP for Book club is going"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "book-club-rsvp-backend",
+      "requirement": "R1",
+      "description": "The backend events probe shows the Book club event with rsvp set to \"yes\" (going).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "events"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "title",
+                "rsvp"
+              ],
+              "properties": {
+                "title": {
+                  "const": "Book club"
+                },
+                "rsvp": {
+                  "const": "yes"
+                }
+              }
+            },
+            "not": {
+              "contains": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "rsvp"
+                ],
+                "properties": {
+                  "title": {
+                    "const": "Book club"
+                  },
+                  "rsvp": {
+                    "not": {
+                      "const": "yes"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T09:29:19.135Z"
+  }
+}

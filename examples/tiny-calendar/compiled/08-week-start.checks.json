@@ -1,0 +1,74 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-calendar/08-week-start",
+  "version": "1",
+  "task": {
+    "instruction": "Make my week start on Monday.",
+    "outcomes": "Then the week starts on Monday"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The week start setting is Monday.",
+      "source": {
+        "field": "outcomes",
+        "quote": "the week starts on Monday"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "weekstart-storage-monday",
+      "requirement": "R1",
+      "description": "The saved weekStart preference in localStorage is Monday.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "storage",
+          "area": "local",
+          "key": "weekStart",
+          "origin": "http://localhost:4175"
+        },
+        "normalize": [
+          "trim",
+          "lowercase"
+        ],
+        "expect": {
+          "oneOf": [
+            "monday",
+            "\"monday\"",
+            "1"
+          ]
+        }
+      }
+    },
+    {
+      "id": "weekstart-select-monday",
+      "requirement": "R1",
+      "description": "The 'Week starts on' selector in the settings form shows Monday selected.",
+      "assert": {
+        "kind": "state",
+        "target": {
+          "role": "option",
+          "name": "Monday",
+          "within": {
+            "role": "combobox",
+            "name": "Week starts on"
+          }
+        },
+        "expect": {
+          "selected": true
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T09:30:08.076Z"
+  }
+}

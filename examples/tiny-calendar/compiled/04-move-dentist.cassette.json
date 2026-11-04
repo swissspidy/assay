@@ -1,0 +1,364 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:29:29.633Z",
+ "turns": {
+  "sha256:40a298e27e66c233cc86a6faca1355debcd9454ae840ebe37208076dd787bfb7": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_013P1jJua5ZDEh1Fb4HVDjJW",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The Dentist appointment is scheduled on November 7, 2026.",
+        "field": "outcomes",
+        "quote": "the Dentist appointment is on November 7, 2026"
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_013P1jJua5ZDEh1Fb4HVDjJW",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The Dentist appointment is scheduled on November 7, 2026.",
+        "field": "outcomes",
+        "quote": "the Dentist appointment is on November 7, 2026"
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1123,
+    "outputTokens": 125,
+    "cacheReadTokens": 1119,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:9cee40731ab7f0b24cfead23a74001c8335677ee1a2c17c687073fa5c157a402": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LJTEE6zsJ1NwsUekPFGqDb",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_013wCvgApMHka2XymFyQjnvT",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01LJTEE6zsJ1NwsUekPFGqDb",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_013wCvgApMHka2XymFyQjnvT",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 13837,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 13833
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:574fe26130261b832daf13ec0dd51cc0a0cc9e0d8e9888846395b5745f55e45c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_019V9ReWWnuSa2fEZvpQHkw3",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "events"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "title",
+           "date"
+          ],
+          "properties": {
+           "title": {
+            "const": "Dentist"
+           },
+           "date": {
+            "const": "2026-11-07"
+           }
+          }
+         },
+         "not": {
+          "contains": {
+           "type": "object",
+           "required": [
+            "title",
+            "date"
+           ],
+           "properties": {
+            "title": {
+             "const": "Dentist"
+            },
+            "date": {
+             "not": {
+              "const": "2026-11-07"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS/wcKEAgTGAI4AUIIdGhpbmtpbmcSDCHkpvhK7mDLpa+KhRoMYUUpzj9znsOnsF23IjAyJv2qWa5rE/mRhPSMcqBXiG3Lwoe6CZW6DHvY2Shp7lndoleOCBhvdPZeFtxBPBwqnAeFM4fog/PxowoxwkGfes4NN/qqPGbeDnFIM+GpEMoDn4Qr6dxVfuVqEyNMbDoNDPFSg+EqxmQ9RWBc0yPX5YmKaDlVt/E51Xw4mp6uBIZKay7GQy3J1hkI71Fi0YOgFYjlPvXLKt51CL464nf1ZO3NxaBJfAfA5gm/KT661z4eH7jbCHidlTVSPgkJMdOBFarOuUuMqtnQH9dsBGLjSomooy7UM46v0VEIaEDuYiPjLV/xB+zLYqrqKKxgJ8wfJSssCtxUrmysNgR66rTmOP+O+XzThytp+mi6D/5Vnm5Hv0FIpA39hxn/ZsI59+f4M8ffuLG27sm87dob7XjHY7aFHlGRS3hCtepPbUHt/cMqxSjepiCJrr0V1xi6479nHLolxXE23Zoo2TBBAseGxbREnjea4BD433b+yLjI2PJ3FERa5oFcgvXxLNyr+2pp0X6VCDbSx0Ezstxx19+jFypZnl1n6wQB1+lT9BJwVTfssHnkbGeF5V2T9Gq/w3xzvU6wmK0J+eYhttjH93rn/WvCSmeaqXrr2wkI36Y1qiz/G6eMnFeOtCL9lTwrt1h54ZIVa/UaPt4AyyiLRzH3Xuj3oCPo8GLIp8DHbwT2U1k8aH5zQC17SxjH2fV35cODVS2tOX+2NfcAzS3ryPggxAMejjGL4MkK026Y2YtXg7dH0xjdY9d/2hRUJsa9CIUXW7US6oxBQfnWNRaZU1drH85N90NqSCswY3t4lmhtmn2gzi1P9Csnx965DMGuNQOk9Bf9YyRDPk3nhfaFTFkGtfRvRnGFuKZohUARpUSdvRw+ZgOqD7FAwSHR3s/YrdkFz1ovCkh6v1KDQhCmjAQJD4wkOWPH5x0V/CeNyDag94fLCexNC1Y+r+fYKPKUzjcn2E/LV7Ynm5bMKI7mUVPrksJ3cUd6bxggRjrcev6a+MC5WyLGAi4P9Tt64XCNCuV32qZ+JFn9AZ6HMMOR/KOzpCYU+0xAHRijxfOWRT+ccsI4iKO8UG3pEkf62smEIkHaRGt56/yOPBnx4utH5Q9oM6P15CSn2DU73ghGQ86zvAdz9fcigAWkScmhBVW8HmRVx5jozVOHBCE1yabWGTsxLvlbsKLMJMCU65m2pwYitBQS3NH3AdrcZZVCiCEsaUL4QDyIAe2DOw1S07yiQATt+mdSQ/22ATwwCM/eigF1wRzG4vSRQMptCh/Ll01iXpPRDAk32B7IwJeXHbCzr8cYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_019V9ReWWnuSa2fEZvpQHkw3",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "events"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "title",
+           "date"
+          ],
+          "properties": {
+           "title": {
+            "const": "Dentist"
+           },
+           "date": {
+            "const": "2026-11-07"
+           }
+          }
+         },
+         "not": {
+          "contains": {
+           "type": "object",
+           "required": [
+            "title",
+            "date"
+           ],
+           "properties": {
+            "title": {
+             "const": "Dentist"
+            },
+            "date": {
+             "not": {
+              "const": "2026-11-07"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 14387,
+    "outputTokens": 345,
+    "cacheReadTokens": 13833,
+    "cacheWriteTokens": 552
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:f3c089eae51f9d6666c54435270d354c7390e4682cce598d715ff69c294453a9": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01C3Z2bB2x6CddKGwQ8x3E6V",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "dentist-date-backend",
+        "requirement": "R1",
+        "description": "The backend events list has the Dentist event dated 2026-11-07 and no Dentist event on any other date.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "events"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "title",
+             "date"
+            ],
+            "properties": {
+             "title": {
+              "const": "Dentist"
+             },
+             "date": {
+              "const": "2026-11-07"
+             }
+            }
+           },
+           "not": {
+            "contains": {
+             "type": "object",
+             "required": [
+              "title",
+              "date"
+             ],
+             "properties": {
+              "title": {
+               "const": "Dentist"
+              },
+              "date": {
+               "not": {
+                "const": "2026-11-07"
+               }
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01C3Z2bB2x6CddKGwQ8x3E6V",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "dentist-date-backend",
+        "requirement": "R1",
+        "description": "The backend events list has the Dentist event dated 2026-11-07 and no Dentist event on any other date.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "events"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "title",
+             "date"
+            ],
+            "properties": {
+             "title": {
+              "const": "Dentist"
+             },
+             "date": {
+              "const": "2026-11-07"
+             }
+            }
+           },
+           "not": {
+            "contains": {
+             "type": "object",
+             "required": [
+              "title",
+              "date"
+             ],
+             "properties": {
+              "title": {
+               "const": "Dentist"
+              },
+              "date": {
+               "not": {
+                "const": "2026-11-07"
+               }
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 14817,
+    "outputTokens": 296,
+    "cacheReadTokens": 14385,
+    "cacheWriteTokens": 430
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

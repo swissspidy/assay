@@ -1,0 +1,56 @@
+{
+  "task": "tiny-shop/09-gift-wrap",
+  "status": "compiled",
+  "model": "anthropic:claude-opus-5-5@high",
+  "modelsUsed": [
+    "claude-opus-5-5"
+  ],
+  "turns": {
+    "rubric": 1,
+    "discovery": 3
+  },
+  "usage": {
+    "inputTokens": 44109,
+    "outputTokens": 876,
+    "cacheReadTokens": 29386,
+    "cacheWriteTokens": 14711
+  },
+  "coverage": [
+    {
+      "requirement": "R1",
+      "quote": "the order is gift wrapped",
+      "checks": [
+        "giftwrap-probe",
+        "giftwrap-request"
+      ],
+      "channels": [
+        "probe",
+        "network"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R2",
+      "quote": "Check out my cart",
+      "checks": [
+        "order-placed-request",
+        "order-placed-probe"
+      ],
+      "channels": [
+        "network",
+        "probe"
+      ],
+      "trust": "structured"
+    }
+  ],
+  "warnings": [
+    "requirement R1: its value checks abstain when no request matches; add a \"request\" check so a missing request fails"
+  ],
+  "references": [
+    {
+      "name": "gift-wrapped",
+      "kind": "success",
+      "verdict": "success"
+    }
+  ]
+}

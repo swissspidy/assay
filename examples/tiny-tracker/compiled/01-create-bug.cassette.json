@@ -1,0 +1,375 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:28:37.237Z",
+ "turns": {
+  "sha256:7e9edbbcb993366b43e9b8546379538aced7585dcbd9e04dd9a5c7ad6451513e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01NmLEqw7gL6RxHb5HNNyg6s",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "A new issue titled \"Checkout fails on Safari\" exists.",
+        "field": "outcomes",
+        "quote": "a new issue titled \"Checkout fails on Safari\" exists"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
+        "text": "The new issue has the bug label.",
+        "field": "outcomes",
+        "quote": "the new issue has the bug label"
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01NmLEqw7gL6RxHb5HNNyg6s",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "A new issue titled \"Checkout fails on Safari\" exists.",
+        "field": "outcomes",
+        "quote": "a new issue titled \"Checkout fails on Safari\" exists"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
+        "text": "The new issue has the bug label.",
+        "field": "outcomes",
+        "quote": "the new issue has the bug label"
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1160,
+    "outputTokens": 183,
+    "cacheReadTokens": 1156,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:c5d98a0fffda94eaee1bef0aa3f1ca4b5b590e877fc44a79f183621fd24010f7": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011ez2SMnEeW9ZLogPy4tvZh",
+     "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_01AVVjCpHo1yTLorz9c4S5vc",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_011ez2SMnEeW9ZLogPy4tvZh",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01AVVjCpHo1yTLorz9c4S5vc",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 13948,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 13944
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:bdaee87b39db5e55b03e02f4aa0b0ec6b345a034f244ba58153d77ef7471df78": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011SRcLm4NQm4aPHsGpMSu42",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "title",
+           "labels"
+          ],
+          "properties": {
+           "title": {
+            "const": "Checkout fails on Safari"
+           },
+           "labels": {
+            "type": "array",
+            "contains": {
+             "const": "bug"
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS0AcKEAgTGAI4AUIIdGhpbmtpbmcSDDeTTwcWfhAIuwPy6xoMjFVvuaQxyo4pbzW+IjBiIRsYIB/X/Mwz/Yoq2wSXH9pNLWv3sItfFGAEZySqK+5318Er87XiWTGsOrNvcDgq7QYFLdC0rkVWOwv0V9LmLSUEaR7r3fYUJwiSPzpWb6iRrRnUc3GSZoM4A6TAeI+DPySK2vkfybCTEYG3TnIsk0mqSlVpBVCMGHSk0o+odsjs3m97iGahi9fuV0N+oKxCsaXAFkZUK7RbeEXaWt7UcregF0ybpWxzgTLgQTHgkAeQHzNARp3AxoJ625M0d/a5Qz4ii2B86bD8NCkVAdlEaKDR3D/Tisi2tXa/u5XNGGWtyt5GRyjyCU/uQGUbq/UY9IQROd8VAcTw9RE2oMykIvyxPIZ64UpyxHNQmOB2KyOJl/TeDQCE6vxu7Jogv2SsVrGRdfSitCur+3J2t88OZFLDUgYghqLQO5yQapSOy1yMKomi2tMwT+9+1+PHSIqZFuVT5HKswEKlALXQGt7Ykb04U1N9L1NPFrQYGZr0Yts1nu3akT572PXZjMADjABQquqNFCiuZ2FaZkqr5fyoxwgWH93ElIIpdOSqhhfduE3OUzcaKANr8Sc0eXjwYbqXGKV09xheJYICvhuy10SFDK5zTSq4Pv8a48p7rYyiNytPc1OfL+iJl88UeeKDfzX/J+F+vU7v9+BSLPiqVage+VFhqcNr2SFRJRkiQ7C/IihyQSLmzBzUkCVmOARBVS/vtGYd5fS98+QksdB+FF6BOWKN73GcCnVa2I7rIiyVBpyWRHKZg2rAVUTgQdApEZwD2DjoqUz2uqd7dhNOvI3YPzUtCDoO58t/T6LGYFAWRKc07iaasXR3VPrLgHXzy8YISShFqmfQk/0dWC/9992f4tPH2a3nt34AawiXaAo5CCUh9uteflI7H7wL09Ccfzl7M+FythAxioqa0zUiqDxr1tY1mccVk3TAOlUxQYTyxEfDq2zrCBmDz5HUQ6XQRwIf5MZcV1pBL650sGu7ZzPhi6AeGjGCkZGceO7B1yw0HQNH280bctHb+KFLFcXqCWb/LNy/A2smiRwCpiNYc+ZEGPf3UqQYFc5sGEPbMpapjYAdfqtEBbFFOcV7wXaREGpblIzL52O1b5xOiSUW+uK/Xv64oO0tpi3b3d3+18hlOyZaGwzycsVyThdigxM8RURltnBhu9D7zneR0lYAlL8yDvTJy94c3cEsXE5qeYP7d1hj4AnvdIw4z0Ke6h5gzG07MlVhhp1J6Qm/+rvORfXZGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_011SRcLm4NQm4aPHsGpMSu42",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "title",
+           "labels"
+          ],
+          "properties": {
+           "title": {
+            "const": "Checkout fails on Safari"
+           },
+           "labels": {
+            "type": "array",
+            "contains": {
+             "const": "bug"
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 14498,
+    "outputTokens": 274,
+    "cacheReadTokens": 13944,
+    "cacheWriteTokens": 552
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:65a1de3baef2567b4b4675cd2ae1e9f3a8bcc96522d995a259f37501b1fa1dac": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018EQ2RWQfHp7515CrqG1kRE",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "R1-issue-exists",
+        "requirement": "R1",
+        "description": "The backend issues list contains an issue titled exactly \"Checkout fails on Safari\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "title"
+            ],
+            "properties": {
+             "title": {
+              "const": "Checkout fails on Safari"
+             }
+            }
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "R2-issue-has-bug-label",
+        "requirement": "R2",
+        "description": "The backend issue titled \"Checkout fails on Safari\" has \"bug\" among its labels.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "title",
+             "labels"
+            ],
+            "properties": {
+             "title": {
+              "const": "Checkout fails on Safari"
+             },
+             "labels": {
+              "type": "array",
+              "contains": {
+               "const": "bug"
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS/gYKEAgTGAI4AUIIdGhpbmtpbmcSDMWljmZibUpL8PRSkhoMEDBOElVAdLAIj5quIjBTXI/sovtI7qV86YtMVqc5lNuxzLILIjsRMdo4Cu6p27ZJjphQgjC4ELwiqCmAhe8qmwbnqzSww7Z9K62cmTrXQGWh3qKMYRMbSo8Gv36Rd9JyXkb81hSkS70EkX0yQV5GjltGwcyqHC/ZtP0DvtBcQAEuFGMuYl2/KJrSBBtksDN7kIA2OfaRgSypVqcHKqBf2B54BgN93AAKqkCMrr9lPB6FJ8tmXMXhlfjCmsh3OKqVg6kp+ASfDPi/YTHSng1jhrOYb1mR/MP5y5Z64A/wXPy+tYDHEk6tZGniHge1L5umv0YGUnN0HkJez2hu+xR1jrBQU9KYwK/CHv4C9TImBKPMt2kN545eabUOab2w1VwIdSmpnl89czsBiXT/2j8/Wp9vnDHZyndswIc2b80s0hKjO47c/DgvSXC/fgAAZYvJj6eE9aIqLU+BTXOSftQWugl/ChyKEQwyNLGeCa1hQSMsyepBD98jATWARgKTX+f6sh5r3ovv69r5rTbZbzu4Zm3UeaL6GIuNVgBM8hfQeP4GYAgJvyoOu4bJhusc5SX0vxCi5N8pcSKKmiJKnvG4drXegzkIWQdI0CSU3O4IzmQh8b0fL6CxgA4/DpWTn/WMXQm3ZinNlLbJDUSfp918PZjucGq9RixE+ZbXY0kJKpIkCWPd2MzkXMkvoBhrFeHgo4nXSAUo1gTZPdBR2tN9qk/D0GWO8uWb8EBhLitx5gdKVPKqE0RDfxpjagwbYiS1U5n3iZJCanGOHYBSVpPXj47v4lqJQaIE9WSnKdAAXuDqufme1vYmvhFHgdL9EJyMZM08gq+0QOtkTqgpB2k+2og3Xqqys4OJlZF4cpTi05ZC8BOmPs8Giu5OjKczReDSwUqg4yrmiRLu3VdyKDmPKT8+bhNaRW50WcXlJmUJ9GBV/2YU7gpMJrAti32UPEWMojgK7Yh4pz20ReAtdcDBTqxx8svWG2pXnqz4QcXC0feMserQgMFRXEADQYwGhE8gv4TYHmwuMDQIliaHKQyGHpCXpmFnv6n2S5i4BjwOPkZGdqcD/Y59R4SUxXinuHjMfbfX434lGrq3ZXNYI3qscAGeMB/Z1N6lyK/TzPe8dgTfat0pc3WCxyTz8mgYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_018EQ2RWQfHp7515CrqG1kRE",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "R1-issue-exists",
+        "requirement": "R1",
+        "description": "The backend issues list contains an issue titled exactly \"Checkout fails on Safari\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "title"
+            ],
+            "properties": {
+             "title": {
+              "const": "Checkout fails on Safari"
+             }
+            }
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "R2-issue-has-bug-label",
+        "requirement": "R2",
+        "description": "The backend issue titled \"Checkout fails on Safari\" has \"bug\" among its labels.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "title",
+             "labels"
+            ],
+            "properties": {
+             "title": {
+              "const": "Checkout fails on Safari"
+             },
+             "labels": {
+              "type": "array",
+              "contains": {
+               "const": "bug"
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 14852,
+    "outputTokens": 471,
+    "cacheReadTokens": 14496,
+    "cacheWriteTokens": 354
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

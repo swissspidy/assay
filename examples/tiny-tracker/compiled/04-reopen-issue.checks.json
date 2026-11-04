@@ -1,0 +1,90 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-tracker/04-reopen-issue",
+  "version": "1",
+  "task": {
+    "instruction": "Reopen issue #3.",
+    "outcomes": "Then issue #3 is open again"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Issue #3 is in the open state again.",
+      "source": {
+        "field": "outcomes",
+        "quote": "issue #3 is open again"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "issue3-open-backend",
+      "requirement": "R1",
+      "description": "The backend issues probe shows issue #3 with status \"open\".",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "const": 3
+                },
+                "status": {
+                  "const": "open"
+                }
+              },
+              "required": [
+                "id",
+                "status"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "issue3-reopen-request",
+      "requirement": "R1",
+      "description": "A successful POST to /issues/3/state was sent with status \"open\".",
+      "assert": {
+        "kind": "request",
+        "match": {
+          "method": "POST",
+          "url": {
+            "path": "/issues/3/state"
+          },
+          "status": {
+            "lt": 400
+          },
+          "requestBody": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "const": "open"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-04T09:29:09.185Z"
+  }
+}
