@@ -9,8 +9,8 @@
 #    CI. version-ci starts ci.yml on its branch with workflow_dispatch, which that token can (its
 #    only permission is actions: write). The results show in Actions and on the branch's head
 #    commit, but not in the pull request's checks section.
-# 2. pack (a release only): installs, builds and packs the package, and tests the tarball as
-#    installed. It cannot request an OIDC token.
+# 2. pack (a release only): installs, runs everything CI does, builds and packs the package, and
+#    tests the tarball as installed. It cannot request an OIDC token.
 # 3. publish (a release only): stages that tarball on npm with the job's OIDC token (npm adds
 #    provenance), then tags the version and creates its GitHub release. It installs nothing, so no
 #    dependency's install script or test code runs where it could publish. A staged version goes
@@ -91,11 +91,11 @@ jobs:
         run: gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref changeset-release/main
 
   pack:
-    name: Build and pack
+    name: Test and pack
     needs: version
     if: needs.version.outputs.release == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     permissions:
       contents: read
     steps:
@@ -108,8 +108,16 @@ jobs:
           node-version-file: .nvmrc
           package-manager-cache: false
       - run: npm ci
-      # Packs, installs the tarball into an empty project and uses it from there. CI ran the rest
-      # of the tests on this commit.
+      # Nothing requires ci.yml to pass on main, so the release runs everything CI does first.
+      # No browser cache: a release uses nothing another run saved.
+      - run: npx playwright install --with-deps chromium
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+        env:
+          CI: 'true'
+      # Packs, installs the tarball into an empty project and uses it from there.
       - run: npm run test:pack
       # Runs prepack (the dist/ build).
       - run: mkdir release && npm pack --pack-destination release

@@ -31,8 +31,8 @@ on npm belongs to an unrelated package.
     "Version packages" pull request that bumps `package.json` and writes `CHANGELOG.md`. Its pushes
     start no workflow, so the release workflow starts CI on that branch with `workflow_dispatch`.
   - A push to `main` is a release when the version in `package.json` has no tag (the version pull
-    request was just merged). Then the workflow builds and packs the package, tests the tarball as
-    installed, stages it on npm, and tags the version and creates its GitHub release from its
+    request was just merged). Then the workflow runs everything CI does, builds and packs the
+    package, tests the tarball as installed, stages it on npm, and tags the version and creates its GitHub release from its
     changelog section. A version already on npm (published by hand) is only tagged. Every other push
     only updates the version pull request.
   - The tag decides, not npm: a staged version is not on npm until it is approved, and npm will not
@@ -51,8 +51,8 @@ on npm belongs to an unrelated package.
   runs where it could publish. The Changesets job, which can push and open pull requests, installs
   with `--ignore-scripts`. No release job uses a dependency or browser cache. The publishing job runs
   in the `npm` environment, which the trusted publisher names. It skips `npm stage publish` when the
-  version is already on npm, so a version published by hand only gets its tag and release. The release runs only the installed-package test before packing: CI already
-  ran the full suite on the same commit.
+  version is already on npm, so a version published by hand only gets its tag and release. The
+  pack job runs the full CI suite before packing, since nothing requires `ci.yml` to pass on `main`.
 - **zizmor checks the workflows** (`.github/workflows/zizmor.yml`) on every change to `.github/`.
 
 ## Consequences
