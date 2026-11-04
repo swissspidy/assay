@@ -515,4 +515,40 @@ test.describe('review fixes', () => {
     expect(r.missed).toEqual([]);
     expect(r.weak).toEqual([]);
   });
+
+  test('a label cut off by a deleting replace stays when the value is reformatted', () => {
+    const delivery: Assertion = {
+      kind: 'value',
+      source: { from: 'node', target: { role: 'paragraph', text: { contains: 'Estimated delivery' } }, field: 'text' },
+      normalize: [
+        { op: 'replace', regex: '^.*estimated delivery\\s*:?\\s*', flags: 'i', with: '' },
+        'trim',
+        { op: 'date', locale: 'en-GB' },
+      ],
+      expect: { equals: '2026-11-05' },
+    };
+    const s = snap([{ role: 'paragraph', children: [{ role: 'text', name: 'Estimated delivery: 5 November 2026' }] }]);
+    const vs = generateVariants(one(delivery), s).filter((v) => v.id.startsWith('format:'));
+    expect(vs.length).toBeGreaterThan(0);
+    for (const v of vs) expect(run(delivery, v.snapshot).status, v.description).toBe('pass');
+    expect(vs.map((v) => v.description).join('\n')).toContain('"5 Nov 2026" instead of "5 November 2026"');
+    const ms = generateMutants(one(delivery), s).filter((m) => m.check === 'C1');
+    expect(ms.length).toBeGreaterThan(0);
+    for (const m of ms) expect(run(delivery, m.snapshot).status, m.description).toBe('fail');
+    const r = stressTest(one(delivery), [{ name: 'ref', snapshot: s }]);
+    expect(r.fragile).toEqual([]);
+    expect(r.missed).toEqual([]);
+  });
+
+  test('scoped page text is whitespace-normalized like a node’s text', () => {
+    const a: Assertion = {
+      kind: 'value',
+      source: { from: 'text', scope: { role: 'region', name: 'Order summary' }, pattern: 'Order number: (\\S+)' },
+      expect: { equals: 'A1001' },
+    };
+    const s = snap([
+      { role: 'region', name: 'Order summary', children: [{ role: 'text', name: 'Order  number:  A1001' }] },
+    ]);
+    expect(run(a, s).status).toBe('pass');
+  });
 });

@@ -99,16 +99,29 @@ export function timezoneOf(steps: Normalizer[] | undefined): string | undefined 
   return undefined;
 }
 
-/** The substring of a canonical raw value that the pipeline reads (honours a leading extract step). */
+/**
+ * The substring of a canonical raw value that the pipeline reads: what is left after the
+ * leading steps that only cut text away (extract, a replace that deletes, trim). A label cut
+ * off that way ("Estimated delivery: ") is not part of the value, so an edit of the value
+ * keeps it. Undefined when the steps do not leave one contiguous part of the raw text.
+ */
 export function readSpan(raw: string, steps: Normalizer[] | undefined): string | undefined {
-  const first = steps?.[0];
-  if (first && typeof first === 'object' && first.op === 'extract') {
-    const m = new RegExp(first.regex, stripGlobal(first.flags)).exec(raw);
-    if (!m) return undefined;
-    const g = first.group ?? (m.length > 1 ? 1 : 0);
-    return typeof g === 'number' ? m[g] : m.groups?.[g];
+  let span = raw;
+  for (const step of steps ?? []) {
+    if (step === 'trim') span = span.trim();
+    else if (typeof step === 'object' && step.op === 'extract') {
+      const m = new RegExp(step.regex, stripGlobal(step.flags)).exec(span);
+      if (!m) return undefined;
+      const g = step.group ?? (m.length > 1 ? 1 : 0);
+      const v = typeof g === 'number' ? m[g] : m.groups?.[g];
+      if (v === undefined) return undefined;
+      span = v;
+    } else if (typeof step === 'object' && step.op === 'replace' && step.with === '') {
+      span = span.replace(new RegExp(step.regex, step.flags ?? 'g'), '');
+    } else break;
   }
-  return raw.trim();
+  span = span.trim();
+  return span && raw.includes(span) ? span : undefined;
 }
 
 /** The array in a raw string that the pipeline parses first ("json"), if it is one. */

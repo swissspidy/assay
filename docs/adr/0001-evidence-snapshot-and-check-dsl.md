@@ -393,7 +393,7 @@ reads only the baseline, since that does not depend on what the agent did.
 `pick` defaults to `only`: if several requests match, the value is
 ambiguous and the check abstains. `last` is for "the final state was saved".
 
-A `value` check reads, then normalizes, then compares. Accessible names and text (`from: "node"`, fields `name` and `text`) are canonicalized (NFC, whitespace collapsed) before the normalizers run, as in §2.3. Control values, URLs and the `text` channel (`from: "text"`, which keeps line breaks) are read verbatim. The validator warns about `extract` and `replace` patterns on names or text that expect raw whitespace. **Abstain means the
+A `value` check reads, then normalizes, then compares. Accessible names and text (`from: "node"`, fields `name` and `text`, and the text of a `from: "text"` scope, which is derived from them) are canonicalized (NFC, whitespace collapsed) before the normalizers run, as in §2.3. Control values and URLs are read verbatim; the unscoped `text` channel keeps line breaks and collapses other runs of whitespace to one space. The validator warns about `extract` and `replace` patterns on names or text that expect raw whitespace. **Abstain means the
 value couldn't be determined.** That covers a missing anchor, no matching
 request, a missing pointer path, a regex that doesn't match, a redacted
 value, or a normalizer that can't parse the input. **Fail means the value

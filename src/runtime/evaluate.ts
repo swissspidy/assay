@@ -17,7 +17,7 @@ import type {
   ValueSource,
 } from '../types.ts';
 import { CHANNEL_TRUST } from '../types.ts';
-import { describeTextMatch, matchText, stripGlobal } from '../text.ts';
+import { canonical, describeTextMatch, matchText, stripGlobal } from '../text.ts';
 import { checkSetDigest, snapshotDigest } from '../snapshot/digest.ts';
 import { AXIndex, describeLocator, readNodeField, resolveTarget, type INode } from './axindex.ts';
 import { compare, compareNumber, compareValues, describeNumberCompare, jsonPointer } from './compare.ts';
@@ -114,7 +114,8 @@ function readSource(ctx: Ctx, src: ValueSource): Read {
       if (src.scope) {
         const r = resolve(ctx, src.scope);
         if (isResult(r)) return r;
-        text = ctx.index.text(r.node);
+        // Scoped text is derived from accessible names, so it is canonicalized like a node's text.
+        text = canonical(ctx.index.text(r.node));
         drift = r.drift;
         locator = `text of ${ctx.index.path(r.node)}`;
         channel = 'a11y';
