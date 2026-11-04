@@ -23,7 +23,7 @@ import { AXIndex, readNodeField, resolveTarget, type INode } from '../runtime/ax
 import { matchRequest } from '../runtime/network.ts';
 import { compareNumber, jsonPointer } from '../runtime/compare.ts';
 import { evaluateAssertion } from '../runtime/evaluate.ts';
-import { applyNormalizers, fromJson, type TypedValue } from '../runtime/values.ts';
+import { applyNormalizers, fromJson, toJson, type TypedValue } from '../runtime/values.ts';
 import { stripGlobal } from '../text.ts';
 import { clone, editById, nearMiss, replaceText, setPointer, treeChanged } from './edit.ts';
 import { exampleOf, schemaViolations } from './schema.ts';
@@ -90,6 +90,11 @@ function synthesize(loc: Locator): AXNode | undefined {
 
 function localeOf(steps: Normalizer[] | undefined): string | undefined {
   for (const s of steps ?? []) if (typeof s === 'object' && 'locale' in s) return s.locale;
+  return undefined;
+}
+
+export function timezoneOf(steps: Normalizer[] | undefined): string | undefined {
+  for (const s of steps ?? []) if (typeof s === 'object' && 'timezone' in s && s.timezone) return s.timezone;
   return undefined;
 }
 
@@ -349,12 +354,14 @@ function valueMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, {
     let next: Json | undefined;
     if (textual) {
       if (span === undefined) continue;
-      const rendered = renderLike(span, typed, cand, localeOf(a.normalize));
+      const rendered = renderLike(span, typed, cand, localeOf(a.normalize), timezoneOf(a.normalize));
       if (rendered === undefined) continue;
       next = (r.raw as string).replace(span, () => rendered);
-    } else if (!a.normalize?.length) {
+    } else {
+      // A JSON value is written as the candidate itself; the read-back below drops it
+      // unless the normalizers turn it back into exactly the candidate.
       next = cand.type === 'money' ? { ...cand.value } : (cand.value as Json);
-    } else continue;
+    }
     // The pipeline must read back exactly the intended near miss.
     try {
       if (key(applyNormalizers(fromJson(next), a.normalize)) !== key(cand)) continue;
@@ -391,6 +398,42 @@ function valueMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, {
     if (unset) out.push({ id: 'storage:unset', description: `${src.area} ${src.key} is not set`, snapshot: unset });
   }
   return out;
+}
+
+/**
+ * A `sameAs` binding: each side in turn is perturbed so that it no longer equals the
+ * other (near misses, another item's value, an unset key), as an `equals` against the
+ * other side's current value would be.
+ */
+function bindingMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, { kind: 'value' }>): M[] {
+  if (!('sameAs' in a.expect)) return [];
+  const other = a.expect.sameAs;
+  const read = (src: ValueSource, steps: Normalizer[] | undefined): TypedValue | undefined => {
+    const r = readable(s, idx, src);
+    if (!r) return undefined;
+    try {
+      return applyNormalizers(fromJson(r.raw), steps);
+    } catch {
+      return undefined;
+    }
+  };
+  const left = read(a.source, a.normalize);
+  const right = read(other.source, other.normalize);
+  if (!left || !right) return [];
+  return [
+    ...valueMutants(s, idx, {
+      kind: 'value',
+      source: a.source,
+      normalize: a.normalize,
+      expect: { equals: toJson(right) },
+    }),
+    ...valueMutants(s, idx, {
+      kind: 'value',
+      source: other.source,
+      normalize: other.normalize,
+      expect: { equals: toJson(left) },
+    }).map((m) => ({ ...m, id: `sameAs:${m.id}` })),
+  ];
 }
 
 // --- requests ------------------------------------------------------------------
@@ -688,7 +731,7 @@ function assertionMutants(s: EvidenceSnapshot, idx: AXIndex, a: Assertion): M[] 
     case 'contains':
       return containsMutants(s, idx, a);
     case 'value':
-      return valueMutants(s, idx, a);
+      return 'sameAs' in a.expect ? bindingMutants(s, idx, a) : valueMutants(s, idx, a);
     case 'url': {
       let u: URL;
       try {

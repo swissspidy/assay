@@ -47,8 +47,16 @@ const money = {
   properties: { amount: { type: 'number' }, currency: { type: 'string', pattern: '^[A-Z]{3}$' } },
 };
 
+/** A date-time literal must name its offset, so it denotes one instant. */
+const instant = '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d+)?)?(Z|[+-]\\d{2}:\\d{2})$';
+
 const bound = {
-  oneOf: [{ type: 'number' }, { type: 'string', pattern: '^\\d{4}-\\d{2}-\\d{2}$' }, { $ref: '#/definitions/money' }],
+  oneOf: [
+    { type: 'number' },
+    { type: 'string', pattern: '^\\d{4}-\\d{2}-\\d{2}$' },
+    { type: 'string', pattern: instant },
+    { $ref: '#/definitions/money' },
+  ],
 };
 
 const simpleNormalizers = [
@@ -324,11 +332,37 @@ export const checkSetSchema = {
           required: ['op', 'locale'],
           properties: { op: { const: 'date' }, locale: { type: 'string', minLength: 2 }, timezone: { type: 'string' } },
         },
+        {
+          type: 'object',
+          additionalProperties: false,
+          required: ['op', 'locale'],
+          properties: {
+            op: { const: 'datetime' },
+            locale: { type: 'string', minLength: 2 },
+            timezone: { type: 'string' },
+          },
+        },
       ],
     },
     comparison: {
       oneOf: [
         { type: 'object', additionalProperties: false, required: ['equals'], properties: { equals: {} } },
+        {
+          type: 'object',
+          additionalProperties: false,
+          required: ['sameAs'],
+          properties: {
+            sameAs: {
+              type: 'object',
+              additionalProperties: false,
+              required: ['source'],
+              properties: {
+                source: { $ref: '#/definitions/valueSource' },
+                normalize: { type: 'array', items: { $ref: '#/definitions/normalizer' } },
+              },
+            },
+          },
+        },
         {
           type: 'object',
           additionalProperties: false,

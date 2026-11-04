@@ -31,5 +31,5 @@ Breaking: one `verify` function and focused entry points.
   | `@swissspidy/assay/models`   | `anthropicModel`, `toAnthropicMessages`, `fromAnthropicMessage`, `runAgent`, `replayModel`, `recordingModel`, `requestKey`                                              |
   | `@swissspidy/assay/eval`     | `llmJudge`, `JUDGE_SYSTEM`, `metrics`, `costUsd`, `PRICING`                                                                                                             |
 
-- No longer exported: `evaluateAssertion`, `kleeneAnd`, `kleeneOr`, `applyNormalizers`, `parseLocaleNumber`, `parseCurrency`, `parseDate`, `NormalizeError`, `parseAriaSnapshot`, `canonical`, `matchText`, `canonicalJson`, `citedEvidence`, `sameOrigin`, `newRecordId`, `lockState` and `schemaViolations`.
+- No longer exported: `evaluateAssertion`, `kleeneAnd`, `kleeneOr`, `applyNormalizers`, `parseLocaleNumber`, `parseCurrency`, `parseDate`, `parseDateTime`, `NormalizeError`, `parseAriaSnapshot`, `canonical`, `matchText`, `canonicalJson`, `citedEvidence`, `sameOrigin`, `newRecordId`, `lockState` and `schemaViolations`.
 - Only `@swissspidy/assay/models` names `@anthropic-ai/sdk` in its type declarations, so TypeScript consumers of the other entry points no longer need `skipLibCheck` when the SDK is not installed.

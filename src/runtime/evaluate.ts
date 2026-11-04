@@ -8,6 +8,8 @@ import type {
   EvidenceSnapshot,
   Evidence,
   Json,
+  Normalizer,
+  Operand,
   Outcome,
   RequirementResult,
   Status,
@@ -18,7 +20,7 @@ import { CHANNEL_TRUST } from '../types.ts';
 import { describeTextMatch, matchText, stripGlobal } from '../text.ts';
 import { checkSetDigest, snapshotDigest } from '../snapshot/digest.ts';
 import { AXIndex, describeLocator, readNodeField, resolveTarget, type INode } from './axindex.ts';
-import { compare, compareNumber, describeNumberCompare, jsonPointer } from './compare.ts';
+import { compare, compareNumber, compareValues, describeNumberCompare, jsonPointer } from './compare.ts';
 import { NormalizeError, applyNormalizers, fromJson, toJson, type TypedValue } from './values.ts';
 import { describeRequestMatch, describeUrlMatch, matchRequest, matchUrl } from './network.ts';
 
@@ -259,6 +261,56 @@ function domainMatches(host: string, cookieDomain: string): boolean {
   return host === d || host.endsWith('.' + d);
 }
 
+/** A read and normalized value; `value` is undefined for an observed absence (normalizers do not run). */
+type Normalized = { value?: TypedValue; evidence: Evidence; drift: string[] };
+
+function readNormalized(ctx: Ctx, src: ValueSource, steps: Normalizer[] | undefined): Normalized | AssertionResult {
+  const read = readSource(ctx, src);
+  if (isResult(read)) return read;
+  if (read.absent) return { evidence: read.evidence, drift: read.drift };
+  let v: TypedValue;
+  try {
+    v = applyNormalizers(read.value, steps);
+  } catch (e) {
+    if (e instanceof NormalizeError) return abstain(e.reason, e.message, [read.evidence], read.drift);
+    throw e;
+  }
+  const evidence = { ...read.evidence, value: toJson(v) };
+  if (steps?.length)
+    evidence.locator = `${read.evidence.locator ?? ''} (raw ${JSON.stringify(read.evidence.value)})`.trim();
+  return { value: v, evidence, drift: read.drift };
+}
+
+/**
+ * A `sameAs` binding: the value equals the value read from a second source. Either side
+ * unreadable abstains; an observed absence on either side fails (there is nothing to be equal to).
+ */
+function evaluateBinding(ctx: Ctx, left: Normalized, other: Operand): AssertionResult {
+  const right = readNormalized(ctx, other.source, other.normalize);
+  if (isResult(right))
+    return {
+      ...right,
+      message: `the value to compare with could not be read: ${right.message}`,
+      evidence: [left.evidence, ...right.evidence],
+      drift: [...left.drift, ...right.drift],
+    };
+  const evidence = [left.evidence, right.evidence];
+  const drift = [...left.drift, ...right.drift];
+  const where = right.evidence.locator ?? right.evidence.channel;
+  if (!left.value || !right.value) {
+    const unset = [left, right].filter((x) => !x.value).map((x) => `${x.evidence.locator} is not set`);
+    return fail(`${unset.join(' and ')}; nothing to compare`, evidence, drift);
+  }
+  try {
+    const c = compareValues(left.value, right.value);
+    const msg = `${c.message} (${where})`;
+    return c.ok ? pass(msg, evidence, drift) : fail(msg, evidence, drift);
+  } catch (e) {
+    if (e instanceof NormalizeError) return abstain(e.reason, e.message, evidence, drift);
+    throw e;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Assertions
 // ---------------------------------------------------------------------------
@@ -321,27 +373,19 @@ export function evaluateAssertion(ctx: Ctx, a: Assertion): AssertionResult {
       return compareNumber(hits.length, count) ? pass(msg, evidence, drift) : fail(msg, evidence, drift);
     }
     case 'value': {
-      const read = readSource(ctx, a.source);
+      const read = readNormalized(ctx, a.source, a.normalize);
       if (isResult(read)) return read;
-      if (read.absent) {
+      if ('sameAs' in a.expect) return evaluateBinding(ctx, read, a.expect.sameAs);
+      if (!read.value) {
         // Normalizers do not apply to an absent value; only an expectation of null/absence passes.
         const e = a.expect;
         const ok = ('equals' in e && e.equals === null) || ('oneOf' in e && e.oneOf.includes(null));
         const msg = `${read.evidence.locator} is not set`;
         return ok ? pass(msg, [read.evidence]) : fail(msg, [read.evidence]);
       }
-      let v: TypedValue;
+      const evidence = [read.evidence];
       try {
-        v = applyNormalizers(read.value, a.normalize);
-      } catch (e) {
-        if (e instanceof NormalizeError) return abstain(e.reason, e.message, [read.evidence], read.drift);
-        throw e;
-      }
-      const evidence = [{ ...read.evidence, value: toJson(v) }];
-      if (a.normalize?.length)
-        evidence[0]!.locator = `${read.evidence.locator ?? ''} (raw ${JSON.stringify(read.evidence.value)})`.trim();
-      try {
-        const c = compare(v, a.expect);
+        const c = compare(read.value, a.expect);
         return c.ok ? pass(c.message, evidence, read.drift) : fail(c.message, evidence, read.drift);
       } catch (e) {
         if (e instanceof NormalizeError) return abstain(e.reason, e.message, evidence, read.drift);

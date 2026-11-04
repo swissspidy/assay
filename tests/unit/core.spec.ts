@@ -437,7 +437,7 @@ test.describe('check set validation', () => {
     const cs2 = base();
     (cs2.checks[0]!.assert as { normalize: unknown }).normalize = undefined;
     (cs2.checks[0]!.assert as { expect: unknown }).expect = { gte: 3 };
-    expect(validateCheckSet(cs2).errors.join()).toContain('add a number, currency or date normalizer');
+    expect(validateCheckSet(cs2).errors.join()).toContain('add a number, currency, date or datetime normalizer');
   });
   test('rejects invalid regex and JSON schema', () => {
     const cs = base();

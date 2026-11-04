@@ -80,8 +80,10 @@ the same check run without validation or a record, for hot loops.
   ```
 
   Assertion kinds: `state`, `contains`, `value` (read from a node, text, the URL, a request or
-  response, storage or a probe, then normalized and compared), `url`, `request`, and `allOf`/`anyOf`.
-  The JSON Schema is exported as `checkSetSchema`; `validateCheckSet` adds semantic checks.
+  response, storage or a probe, then normalized and compared with a literal, or with a second
+  source via `sameAs`), `url`, `request`, and `allOf`/`anyOf`. Normalizers parse numbers, money,
+  dates and date-times (`datetime`, compared as instants; `approx` on them is in minutes). The JSON
+  Schema is exported as `checkSetSchema`; `validateCheckSet` adds semantic checks.
 
 - **Pass, fail, abstain.** Checks combine with three-valued logic. A requirement passes when its
   checks pass; the run succeeds when every hard requirement passes. Abstain is never turned into a
