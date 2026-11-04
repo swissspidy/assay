@@ -3,7 +3,7 @@
  * rendered as compact text so the model can find where each requirement is
  * observable.
  */
-import type { AXNode, EvidenceSnapshot, Json, NetworkEntry } from '../types.ts';
+import type { AXNode, Baseline, EvidenceSnapshot, Json, NetworkEntry, ProbeResult, StorageRecord } from '../types.ts';
 import { AXIndex } from '../runtime/axindex.ts';
 
 const clip = (s: string, n: number) => (s.length > n ? s.slice(0, n - 1) + '…' : s);
@@ -110,9 +110,7 @@ export function networkEntry(snapshot: EvidenceSnapshot, seq: number): string {
     .join('\n');
 }
 
-export function storageView(snapshot: EvidenceSnapshot): string {
-  if (!snapshot.storage) return 'Storage was not captured.';
-  const s = snapshot.storage;
+function storageLines(s: StorageRecord): string[] {
   return [
     'cookies:',
     ...s.cookies.map(
@@ -131,17 +129,40 @@ export function storageView(snapshot: EvidenceSnapshot): string {
         ([k, v]) => `  ${o} ${k} = ${typeof v === 'string' ? JSON.stringify(clip(v, 200)) : '(redacted)'}`,
       ),
     ),
+  ];
+}
+
+/** A note that the snapshot holds a baseline, and where it was taken. */
+const beforeHeading = (b: Baseline) =>
+  `BEFORE THE TASK (baseline captured at ${b.url} before the agent started):`;
+
+export function storageView(snapshot: EvidenceSnapshot): string {
+  const after = snapshot.storage ? storageLines(snapshot.storage).join('\n') : 'Storage was not captured.';
+  const b = snapshot.baseline;
+  if (!b) return after;
+  return [
+    'AFTER THE TASK:',
+    after,
+    '',
+    beforeHeading(b),
+    b.storage ? storageLines(b.storage).join('\n') : 'Storage was not captured.',
   ].join('\n');
 }
 
-export function probesView(snapshot: EvidenceSnapshot): string {
-  const entries = Object.entries(snapshot.probes);
+function probeLines(probes: Record<string, ProbeResult>): string {
+  const entries = Object.entries(probes);
   if (!entries.length) return 'No probes were run.';
   return entries
     .map(([k, r]) => (r.ok ? `${k}: ${clip(JSON.stringify(r.value, null, 1), 3000)}` : `${k}: ERROR ${r.error}`))
     .join('\n\n');
 }
 
+export function probesView(snapshot: EvidenceSnapshot): string {
+  const b = snapshot.baseline;
+  if (!b) return probeLines(snapshot.probes);
+  return ['AFTER THE TASK:', probeLines(snapshot.probes), '', beforeHeading(b), probeLines(b.probes)].join('\n');
+}
+
 export function summary(snapshot: EvidenceSnapshot): string {
-  return `URL ${snapshot.page.url} — title ${JSON.stringify(snapshot.page.title)}; network ${snapshot.network ? `${snapshot.network.length} entries` : 'not recorded'}; storage ${snapshot.storage ? 'captured' : 'not captured'}; probes: ${Object.keys(snapshot.probes).join(', ') || 'none'}`;
+  return `URL ${snapshot.page.url} — title ${JSON.stringify(snapshot.page.title)}; network ${snapshot.network ? `${snapshot.network.length} entries` : 'not recorded'}; storage ${snapshot.storage ? 'captured' : 'not captured'}; probes: ${Object.keys(snapshot.probes).join(', ') || 'none'}${snapshot.baseline ? `; baseline before the task: probes ${Object.keys(snapshot.baseline.probes).join(', ') || 'none'}, storage ${snapshot.baseline.storage ? 'captured' : 'not captured'}` : ''}`;
 }

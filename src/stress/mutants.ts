@@ -16,12 +16,13 @@ import type {
   NetworkEntry,
   Normalizer,
   RequestMatch,
+  StorageRecord,
   TextMatch,
   ValueSource,
 } from '../types.ts';
 import { AXIndex, readNodeField, resolveTarget, type INode } from '../runtime/axindex.ts';
 import { matchRequest } from '../runtime/network.ts';
-import { compareNumber, jsonPointer } from '../runtime/compare.ts';
+import { compare, compareNumber, jsonPointer } from '../runtime/compare.ts';
 import { evaluateAssertion } from '../runtime/evaluate.ts';
 import { applyNormalizers, fromJson, toJson, type TypedValue } from '../runtime/values.ts';
 import { stripGlobal } from '../text.ts';
@@ -108,6 +109,20 @@ export function readSpan(raw: string, steps: Normalizer[] | undefined): string |
     return typeof g === 'number' ? m[g] : m.groups?.[g];
   }
   return raw.trim();
+}
+
+/** One item of an array removed, changed (a near miss), or a changed copy added. */
+function arrayEdits(arr: Json[]): { what: string; value: Json }[] {
+  const out: { what: string; value: Json }[] = [];
+  arr.slice(0, 8).forEach((item, i) => {
+    out.push({ what: `item ${i} removed`, value: arr.filter((_, j) => j !== i) });
+    const changed = nearMiss(item);
+    if (changed !== undefined)
+      out.push({ what: `item ${i} changed`, value: arr.map((x, j) => (j === i ? changed : x)) });
+  });
+  const extra = arr.length ? nearMiss(arr[0]!) : undefined;
+  if (extra !== undefined) out.push({ what: 'an extra item', value: [...arr, extra] });
+  return out;
 }
 
 /** Other values at the same position in sibling array elements (for "wrong item" substitutions). */
@@ -239,21 +254,23 @@ function readable(s: EvidenceSnapshot, idx: AXIndex, src: ValueSource): Readable
       };
     }
     case 'storage': {
-      if (!s.storage) return undefined;
-      const st = s.storage;
+      const before = src.at === 'before';
+      const st = before ? s.baseline?.storage : s.storage;
+      if (!st) return undefined;
+      // Writes the edited storage back where it was read from.
+      const put = (storage: StorageRecord): EvidenceSnapshot =>
+        before ? { ...s, baseline: { ...s.baseline!, storage } } : { ...s, storage };
+      const when = before ? ' before the task' : '';
       if (src.area === 'cookie') {
         const c = st.cookies.find((x) => x.name === src.key);
         if (!c || typeof c.value !== 'string') return undefined;
         return {
           raw: c.value,
-          what: `cookie ${src.key}`,
+          what: `cookie ${src.key}${when}`,
           siblings: [],
           write(next) {
             if (typeof next !== 'string') return undefined;
-            return {
-              ...s,
-              storage: { ...st, cookies: st.cookies.map((x) => (x.name === src.key ? { ...x, value: next } : x)) },
-            };
+            return put({ ...st, cookies: st.cookies.map((x) => (x.name === src.key ? { ...x, value: next } : x)) });
           },
         };
       }
@@ -270,11 +287,11 @@ function readable(s: EvidenceSnapshot, idx: AXIndex, src: ValueSource): Readable
       if (typeof raw !== 'string') return undefined;
       return {
         raw,
-        what: `${which}Storage ${src.key}`,
+        what: `${which}Storage ${src.key}${when}`,
         siblings: [],
         write(next) {
           if (typeof next !== 'string') return undefined;
-          return { ...s, storage: { ...st, [which]: { ...st[which], [origin]: { ...area, [src.key]: next } } } };
+          return put({ ...st, [which]: { ...st[which], [origin]: { ...area, [src.key]: next } } });
         },
       };
     }
@@ -303,14 +320,16 @@ function readable(s: EvidenceSnapshot, idx: AXIndex, src: ValueSource): Readable
       };
     }
     case 'probe': {
-      const p = s.probes[src.probe];
-      if (!p?.ok) return undefined;
+      const before = src.at === 'before';
+      const probes = before ? s.baseline?.probes : s.probes;
+      const p = probes?.[src.probe];
+      if (!probes || !p?.ok) return undefined;
       const pointer = src.pointer ?? '';
       const raw = jsonPointer(p.value, pointer);
       if (raw === undefined) return undefined;
       return {
         raw,
-        what: `probe ${src.probe}${pointer ? ` at ${pointer}` : ''}`,
+        what: `probe ${src.probe}${before ? ' before the task' : ''}${pointer ? ` at ${pointer}` : ''}`,
         siblings: pointer ? siblingValues(p.value, pointer) : [],
         write(next) {
           let value: Json = next;
@@ -318,7 +337,8 @@ function readable(s: EvidenceSnapshot, idx: AXIndex, src: ValueSource): Readable
             value = clone(p.value);
             if (!setPointer(value, pointer, next)) return undefined;
           }
-          return { ...s, probes: { ...s.probes, [src.probe]: { ok: true, value } } };
+          const edited = { ...probes, [src.probe]: { ok: true as const, value } };
+          return before ? { ...s, baseline: { ...s.baseline!, probes: edited } } : { ...s, probes: edited };
         },
       };
     }
@@ -377,23 +397,42 @@ function valueMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, {
     }
     add(sib, 'a different item’s value');
   }
-  if (a.source.from === 'storage' && s.storage) {
-    const src = a.source;
-    const st = s.storage;
+  // A JSON array (a cart, an order's items): one item removed, changed or added. Kept
+  // only when the check's own normalizers and comparison read it as a violation.
+  if (Array.isArray(r.raw)) {
+    for (const edit of arrayEdits(r.raw)) {
+      try {
+        if (compare(applyNormalizers(fromJson(edit.value), a.normalize), a.expect).ok) continue;
+      } catch {
+        continue;
+      }
+      add(edit.value, edit.what);
+    }
+  }
+  const src = a.source;
+  const before = src.from === 'storage' && src.at === 'before';
+  const st = src.from === 'storage' ? (before ? s.baseline?.storage : s.storage) : undefined;
+  if (src.from === 'storage' && st) {
+    const put = (storage: StorageRecord): EvidenceSnapshot =>
+      before ? { ...s, baseline: { ...s.baseline!, storage } } : { ...s, storage };
     let unset: EvidenceSnapshot | undefined;
-    if (src.area === 'cookie')
-      unset = { ...s, storage: { ...st, cookies: st.cookies.filter((x) => x.name !== src.key) } };
+    if (src.area === 'cookie') unset = put({ ...st, cookies: st.cookies.filter((x) => x.name !== src.key) });
     else {
       const which: 'local' | 'session' = src.area;
       try {
         const origin = src.origin ? new URL(src.origin).origin : new URL(s.page.url).origin;
         const { [src.key]: _gone, ...rest } = st[which][origin] ?? {};
-        unset = { ...s, storage: { ...st, [which]: { ...st[which], [origin]: rest } } };
+        unset = put({ ...st, [which]: { ...st[which], [origin]: rest } });
       } catch {
         unset = undefined;
       }
     }
-    if (unset) out.push({ id: 'storage:unset', description: `${src.area} ${src.key} is not set`, snapshot: unset });
+    if (unset)
+      out.push({
+        id: 'storage:unset',
+        description: `${src.area} ${src.key} is not set${before ? ' before the task' : ''}`,
+        snapshot: unset,
+      });
   }
   return out;
 }
@@ -432,6 +471,37 @@ function bindingMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion,
       expect: { equals: toJson(left) },
     }).map((m) => ({ ...m, id: `sameAs:${m.id}` })),
   ];
+}
+
+/**
+ * A binding between the state before and after the task on the same probe or storage
+ * key ("the cart after is the cart before minus the Red Mug"): the run changed nothing,
+ * so the state after is the baseline's. Dropped when the reference's state did not
+ * change (then doing nothing is a correct outcome, as for "keep X unchanged").
+ */
+function noOpMutants(s: EvidenceSnapshot, a: Extract<Assertion, { kind: 'value' }>): M[] {
+  if (!('sameAs' in a.expect) || !s.baseline) return [];
+  const sides = [a.source, a.expect.sameAs.source];
+  const after = sides.find((x) => (x.from === 'probe' || x.from === 'storage') && x.at !== 'before');
+  const before = sides.find((x) => (x.from === 'probe' || x.from === 'storage') && x.at === 'before');
+  if (!after || !before) return [];
+  let snap: EvidenceSnapshot | undefined;
+  if (after.from === 'probe' && before.from === 'probe' && after.probe === before.probe) {
+    const was = s.baseline.probes[before.probe];
+    if (was && JSON.stringify(was) !== JSON.stringify(s.probes[after.probe]))
+      snap = { ...s, probes: { ...s.probes, [after.probe]: clone(was) } };
+  }
+  if (
+    after.from === 'storage' &&
+    before.from === 'storage' &&
+    after.area === before.area &&
+    after.key === before.key &&
+    s.baseline.storage &&
+    s.storage &&
+    JSON.stringify(s.baseline.storage) !== JSON.stringify(s.storage)
+  )
+    snap = { ...s, storage: clone(s.baseline.storage) };
+  return snap ? [{ id: 'baseline:no-op', description: 'the state after the task is the state before it', snapshot: snap }] : [];
 }
 
 // --- requests ------------------------------------------------------------------
@@ -729,7 +799,7 @@ function assertionMutants(s: EvidenceSnapshot, idx: AXIndex, a: Assertion): M[] 
     case 'contains':
       return containsMutants(s, idx, a);
     case 'value':
-      return 'sameAs' in a.expect ? bindingMutants(s, idx, a) : valueMutants(s, idx, a);
+      return 'sameAs' in a.expect ? [...bindingMutants(s, idx, a), ...noOpMutants(s, a)] : valueMutants(s, idx, a);
     case 'url': {
       let u: URL;
       try {

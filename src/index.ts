@@ -2,8 +2,10 @@ export * from './types.ts';
 export { canonical, matchText } from './text.ts';
 export { parseAriaSnapshot } from './snapshot/aria.ts';
 export {
+  captureBaseline,
   captureSnapshot,
   EvidenceRecorder,
+  type BaselineOptions,
   type CaptureOptions,
   type Probe,
   type RecorderOptions,

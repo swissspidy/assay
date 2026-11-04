@@ -68,6 +68,22 @@ export interface StorageRecord {
 
 export type ProbeResult = { ok: true; value: Json } | { ok: false; error: string };
 
+/**
+ * State captured before the agent started (see captureBaseline). Checks read it
+ * with `at: "before"` on a probe or storage source.
+ */
+export interface Baseline {
+  /** Metadata only, never read by checks (excluded from the digest). */
+  capturedAt: string;
+  /** URL of the page when the baseline was captured. */
+  url: string;
+  /** null = storage was not captured. */
+  storage: StorageRecord | null;
+  probes: Record<string, ProbeResult>;
+  /** Values redacted in this baseline, as in `meta.redacted`. */
+  redacted: string[];
+}
+
 export interface EvidenceSnapshot {
   schema: typeof SNAPSHOT_SCHEMA;
   capturedAt: string;
@@ -79,6 +95,8 @@ export interface EvidenceSnapshot {
   /** null = storage was not captured. */
   storage: StorageRecord | null;
   probes: Record<string, ProbeResult>;
+  /** State before the agent started; absent = no baseline was captured. */
+  baseline?: Baseline;
   meta: { capturer: string; redacted: string[] };
 }
 
@@ -150,8 +168,11 @@ export type ValueSource =
   | { from: 'text'; scope?: Target; pattern: string; flags?: string; group?: number | string }
   | { from: 'url'; part: 'href' | 'origin' | 'pathname' | 'search' | 'hash' | { param: string } }
   | { from: 'request' | 'response'; match: RequestMatch; pointer?: string; pick?: 'only' | 'first' | 'last' }
-  | { from: 'storage'; area: 'cookie' | 'local' | 'session'; key: string; origin?: string }
-  | { from: 'probe'; probe: string; pointer?: string };
+  | { from: 'storage'; area: 'cookie' | 'local' | 'session'; key: string; origin?: string; at?: Moment }
+  | { from: 'probe'; probe: string; pointer?: string; at?: Moment };
+
+/** When a probe or storage value was read: at the end of the run (default) or from the baseline. */
+export type Moment = 'after' | 'before';
 
 export type Normalizer =
   | 'trim'
@@ -168,7 +189,9 @@ export type Normalizer =
   | { op: 'number'; locale: string }
   | { op: 'currency'; locale: string; currency?: string }
   | { op: 'date'; locale: string; timezone?: string }
-  | { op: 'datetime'; locale: string; timezone?: string };
+  | { op: 'datetime'; locale: string; timezone?: string }
+  /** A JSON array as an unordered collection: keep items matching `where`, map each to `pointer`, sort. */
+  | { op: 'items'; where?: JsonSchema; pointer?: string };
 
 export interface Money {
   amount: number;
@@ -237,6 +260,12 @@ export interface Check {
   requirement: string;
   description: string;
   assert: Assertion;
+  /**
+   * What escalation does when this check fails (ADR 0004): "escalate" sends the
+   * failed requirement to the verifier, "keep" keeps the failure. Unset follows
+   * the escalation policy (`policy.on`).
+   */
+  onFail?: 'escalate' | 'keep';
 }
 
 /** Provenance of a compiled check set. */

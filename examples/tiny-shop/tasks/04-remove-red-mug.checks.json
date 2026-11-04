@@ -53,14 +53,22 @@
     {
       "id": "C3",
       "requirement": "R2",
-      "description": "The backend cart still contains the Blue Mug that was there before.",
+      "description": "The backend cart (probe 'cart') holds the items it held before the task, minus the Red Mug.",
       "assert": {
         "kind": "value",
         "source": { "from": "probe", "probe": "cart", "pointer": "/items" },
+        "normalize": [{ "op": "items" }],
         "expect": {
-          "schema": {
-            "type": "array",
-            "contains": { "type": "object", "properties": { "name": { "const": "Blue Mug" } }, "required": ["name"] }
+          "sameAs": {
+            "source": { "from": "probe", "probe": "cart", "pointer": "/items", "at": "before" },
+            "normalize": [
+              {
+                "op": "items",
+                "where": {
+                  "not": { "type": "object", "properties": { "name": { "const": "Red Mug" } }, "required": ["name"] }
+                }
+              }
+            ]
           }
         }
       }

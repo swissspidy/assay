@@ -4,7 +4,7 @@
  * outcome; optionally propose a recompiled check set for re-approval.
  */
 import type { Page } from '@playwright/test';
-import type { CheckSet, EvidenceSnapshot, Outcome, Requirement, RequirementResult, Status, Verdict } from '../types.ts';
+import type { CheckSet, EvidenceSnapshot, Outcome, Requirement, RequirementResult, Verdict } from '../types.ts';
 import { evaluate, kleeneAnd } from '../runtime/evaluate.ts';
 import { checkSetDigest } from '../snapshot/digest.ts';
 import type { ModelClient } from '../model/types.ts';
@@ -15,7 +15,10 @@ import { newRecordId, RECORD_SCHEMA, type OutcomeRecord, type RecordedRequiremen
 import { isLocked, lockState } from './lock.ts';
 
 export interface EscalationPolicy {
-  /** Requirement statuses that trigger the verifier (default ["abstain"]). */
+  /**
+   * Requirement statuses that trigger the verifier (default ["abstain"]). A check's
+   * `onFail` overrides this for failures it causes (see selectRequirement).
+   */
   on?: ('abstain' | 'fail')[];
   /** Also escalate soft requirements (default false). */
   includeSoft?: boolean;
@@ -56,6 +59,36 @@ export interface VerifyResult {
 
 const message = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
+/**
+ * Why a requirement is (or is not) escalated:
+ * - "policy": its status is in `policy.on`, and no failed check says otherwise;
+ * - "onFail": it failed, the policy keeps failures, and every check that failed it says "escalate";
+ * - "kept": it failed, the policy escalates failures, but a check that failed it says "keep";
+ * - undefined: not escalated (passed, soft without includeSoft, or not in the policy).
+ *
+ * A failure is escalated only when every check that failed the requirement allows it:
+ * one robust check that failed is enough to keep the failure.
+ */
+export function selectRequirement(
+  cs: CheckSet,
+  req: Requirement,
+  outcome: Outcome,
+  policy: Required<EscalationPolicy>,
+): EscalationSelection | undefined {
+  if (req.kind !== 'hard' && !policy.includeSoft) return undefined;
+  const status = outcome.requirements.find((r) => r.requirement === req.id)?.status;
+  if (status === 'abstain') return policy.on.includes('abstain') ? 'policy' : undefined;
+  if (status !== 'fail') return undefined;
+  const byPolicy = policy.on.includes('fail');
+  const failed = outcome.checks.filter((c) => c.requirement === req.id && c.status === 'fail');
+  const onFail = (id: string) => cs.checks.find((c) => c.id === id)?.onFail ?? (byPolicy ? 'escalate' : 'keep');
+  const escalate = failed.length > 0 && failed.every((c) => onFail(c.check) === 'escalate');
+  if (escalate) return byPolicy ? 'policy' : 'onFail';
+  return byPolicy ? 'kept' : undefined;
+}
+
+export type EscalationSelection = 'policy' | 'onFail' | 'kept';
+
 export async function verifyWithEscalation(
   cs: CheckSet,
   snapshot: EvidenceSnapshot,
@@ -63,8 +96,8 @@ export async function verifyWithEscalation(
 ): Promise<VerifyResult> {
   if (opts.requireLocked && !isLocked(cs))
     throw new Error(`Check set ${cs.id} v${cs.version} is not locked (or was edited after locking).`);
-  const policy = {
-    on: opts.policy?.on ?? (['abstain'] as ('abstain' | 'fail')[]),
+  const policy: Required<EscalationPolicy> = {
+    on: opts.policy?.on ?? ['abstain'],
     includeSoft: opts.policy?.includeSoft ?? false,
   };
   const t0 = performance.now();
@@ -72,9 +105,13 @@ export async function verifyWithEscalation(
   const checksMs = performance.now() - t0;
   const checksStatus = new Map(checksOutcome.requirements.map((r) => [r.requirement, r.status] as const));
 
-  const toEscalate: Requirement[] = cs.requirements.filter(
-    (r) => (r.kind === 'hard' || policy.includeSoft) && (policy.on as Status[]).includes(checksStatus.get(r.id)!),
+  const selection = new Map(
+    cs.requirements.map((r) => [r.id, selectRequirement(cs, r, checksOutcome, policy)] as const),
   );
+  const toEscalate: Requirement[] = cs.requirements.filter((r) => {
+    const sel = selection.get(r.id);
+    return sel === 'policy' || sel === 'onFail';
+  });
 
   let verifier: VerifierResult | undefined;
   let verifierError: string | undefined;
@@ -170,6 +207,7 @@ export async function verifyWithEscalation(
     const checks = checksOutcome.checks.filter(
       (c) => c.requirement === req.id && (r.status === 'abstain' || c.status === r.status),
     );
+    const sel = opts.verifier ? selection.get(req.id) : undefined;
     return {
       id: req.id,
       kind: req.kind,
@@ -177,6 +215,7 @@ export async function verifyWithEscalation(
       status: r.status,
       decidedBy: r.status === 'abstain' ? 'none' : byVerifier ? 'verifier' : 'checks',
       ...(r.reason ? { reason: r.reason } : {}),
+      ...(sel ? { escalation: sel } : {}),
       evidence: byVerifier
         ? (r.verifierEvidence ?? []).map((observation) => ({
             origin: 'verifier-cited' as const,
@@ -188,6 +227,7 @@ export async function verifyWithEscalation(
   });
 
   const lock = lockState(cs);
+  const onFailOf = new Map(cs.checks.map((c) => [c.id, c.onFail] as const));
   const record: OutcomeRecord = {
     schema: RECORD_SCHEMA,
     id: newRecordId(),
@@ -213,6 +253,7 @@ export async function verifyWithEscalation(
       status: c.status,
       ...(c.reason ? { reason: c.reason } : {}),
       message: c.message,
+      ...(onFailOf.get(c.check) ? { onFail: onFailOf.get(c.check) } : {}),
     })),
     drift: checksOutcome.drift,
     ...(opts.verifier && toEscalate.length

@@ -71,9 +71,9 @@ function source(s: ValueSource): string {
     case 'response':
       return `the ${s.from} body${s.pointer ? ` at ${s.pointer}` : ''} of ${s.pick ?? 'the only'} request matching ${describeRequestMatch(s.match)}`;
     case 'storage':
-      return `${s.area === 'cookie' ? 'cookie' : `${s.area}Storage`} ${JSON.stringify(s.key)}`;
+      return `${s.area === 'cookie' ? 'cookie' : `${s.area}Storage`} ${JSON.stringify(s.key)}${s.at === 'before' ? ' before the task' : ''}`;
     case 'probe':
-      return `backend probe ${s.probe}${s.pointer ? ` at ${s.pointer}` : ''}`;
+      return `backend probe ${s.probe}${s.pointer ? ` at ${s.pointer}` : ''}${s.at === 'before' ? ' before the task' : ''}`;
   }
 }
 
@@ -121,6 +121,7 @@ export function reviewSheet(cs: CheckSet): string {
       // One line per description: a line break could forge a heading or another check's entry.
       const description = c.description.replace(/\s*[\r\n\u2028\u2029]+\s*/g, ' ');
       lines.push(`- **${c.id}** ${description}`, `  - tests: ${describeAssertion(c.assert)}`);
+      if (c.onFail) lines.push(`  - on fail: ${c.onFail === 'escalate' ? 'escalate to the verifier' : 'keep the failure'}`);
     }
   }
   const lock = (cs as CheckSet & { locked?: Lock }).locked;

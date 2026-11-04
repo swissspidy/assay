@@ -24,6 +24,12 @@
       "kind": "soft",
       "text": "The order confirmation is shown",
       "source": { "field": "outcomes", "quote": "the order confirmation is shown" }
+    },
+    {
+      "id": "R4",
+      "kind": "hard",
+      "text": "The order holds what was in the cart before the task",
+      "source": { "field": "instruction", "quote": "Order what is in my cart" }
     }
   ],
   "checks": [
@@ -72,6 +78,33 @@
             "kind": "contains",
             "scope": { "role": "main" },
             "match": { "role": "heading", "name": { "contains": "Order confirmed" } }
+          }
+        ]
+      }
+    },
+    {
+      "id": "C4",
+      "requirement": "R4",
+      "description": "An order was placed, and its items (from the server's response) are the items the cart held before the task.",
+      "assert": {
+        "kind": "allOf",
+        "of": [
+          { "kind": "request", "match": { "method": "POST", "url": { "path": "/api/orders" }, "status": 201 } },
+          {
+            "kind": "value",
+            "source": {
+              "from": "response",
+              "match": { "method": "POST", "url": { "path": "/api/orders" }, "status": 201 },
+              "pointer": "/items",
+              "pick": "last"
+            },
+            "normalize": [{ "op": "items" }],
+            "expect": {
+              "sameAs": {
+                "source": { "from": "probe", "probe": "cart", "pointer": "/items", "at": "before" },
+                "normalize": [{ "op": "items" }]
+              }
+            }
           }
         ]
       }

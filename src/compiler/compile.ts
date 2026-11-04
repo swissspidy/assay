@@ -31,7 +31,7 @@ import type { ModelClient } from '../model/types.ts';
 import { parseOutcomes, parseOutcomesDetailed, type Clause } from './outcomes.ts';
 import { stressTest, type FindingRef } from '../stress/stress.ts';
 import { findNodes, networkEntry, networkLog, outline, probesView, storageView, summary } from './explore.ts';
-import { DISCOVERY_NUDGE, DISCOVERY_SYSTEM, RUBRIC_SYSTEM } from './prompts.ts';
+import { DISCOVERY_BASELINE, DISCOVERY_NUDGE, DISCOVERY_SYSTEM, RUBRIC_SYSTEM } from './prompts.ts';
 
 export interface TaskInput {
   id: string;
@@ -742,7 +742,7 @@ export async function compileTask(task: TaskInput, refs: Reference[], opts: Comp
     .join('\n\n');
   const run = await runAgent<CheckSet>({
     model: opts.model,
-    system: DISCOVERY_SYSTEM,
+    system: refs.some((r) => r.snapshot.baseline) ? `${DISCOVERY_SYSTEM}\n\n${DISCOVERY_BASELINE}` : DISCOVERY_SYSTEM,
     prompt,
     tools,
     maxTurns: opts.maxTurns ?? 40,

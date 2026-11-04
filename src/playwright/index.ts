@@ -1,6 +1,12 @@
 import { test as base, type Page } from '@playwright/test';
 import type { CheckSet, EvidenceSnapshot, Outcome, Verdict } from '../types.ts';
-import { EvidenceRecorder, captureSnapshot, type CaptureOptions, type RecorderOptions } from '../snapshot/capture.ts';
+import {
+  EvidenceRecorder,
+  captureBaseline,
+  captureSnapshot,
+  type CaptureOptions,
+  type RecorderOptions,
+} from '../snapshot/capture.ts';
 import { assertValidCheckSet } from '../dsl/validate.ts';
 import { evaluate } from '../runtime/evaluate.ts';
 import { formatOutcome } from '../report.ts';
@@ -129,4 +135,4 @@ export async function expectOutcome(
   return outcome;
 }
 
-export { EvidenceRecorder, captureSnapshot };
+export { EvidenceRecorder, captureBaseline, captureSnapshot };

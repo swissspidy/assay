@@ -2,9 +2,9 @@
 import { spawn, type ChildProcess } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { chromium, type Browser } from '@playwright/test';
-import { EvidenceRecorder, captureSnapshot, type EvidenceSnapshot } from '../src/index.ts';
+import { EvidenceRecorder, captureBaseline, captureSnapshot, type EvidenceSnapshot } from '../src/index.ts';
 import type { AppDef } from '../examples/apps.ts';
-import type { Scenario } from '../examples/lib/scenario.ts';
+import { play, type Scenario } from '../examples/lib/scenario.ts';
 
 export interface AppRunner {
   baseURL: string;
@@ -86,7 +86,7 @@ export async function startApp(
       try {
         await EvidenceRecorder.attach(context);
         const page = await context.newPage();
-        await scenario.run(page);
+        await play(scenario, page, (p) => captureBaseline(p, { probes: app.probes(p) }));
         return await captureSnapshot(page, { probes: app.probes(page) });
       } finally {
         await context.close();

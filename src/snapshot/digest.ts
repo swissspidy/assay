@@ -22,9 +22,13 @@ export function sha256(s: string): string {
   return 'sha256:' + createHash('sha256').update(s).digest('hex');
 }
 
-/** Digest of a snapshot, excluding the capture timestamp. */
-export function snapshotDigest(snapshot: { capturedAt?: string }): string {
+/** Digest of a snapshot, excluding the capture timestamps (of the snapshot and of its baseline). */
+export function snapshotDigest(snapshot: { capturedAt?: string; baseline?: { capturedAt?: string } }): string {
   const { capturedAt: _ignored, ...rest } = snapshot;
+  if (rest.baseline) {
+    const { capturedAt: _also, ...baseline } = rest.baseline;
+    return sha256(canonicalJson({ ...rest, baseline }));
+  }
   return sha256(canonicalJson(rest));
 }
 

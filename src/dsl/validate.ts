@@ -160,6 +160,12 @@ function flowType(t: VType, steps: Normalizer[] | undefined, at: string, errors:
         }
       }
     }
+    if (typeof step === 'object' && step.op === 'items') {
+      if (step.where !== undefined) checkSchema(step.where, `${at} items where`, errors);
+      if (t !== 'unknown') errors.push(`${at}: normalizer items needs a JSON array, but the value is ${t}`);
+      t = 'unknown';
+      continue;
+    }
     const stringOp = [
       'trim',
       'collapseWhitespace',
@@ -282,6 +288,10 @@ function walkAssertion(a: Assertion, at: string, errors: string[], warnings: str
         if (side(a.source, a.normalize) === side(other.source, other.normalize))
           errors.push(`${at}: sameAs compares a value with itself`);
       } else checkComparison(t, a.expect, at, errors, warnings);
+      if (before(a.source) && (!('sameAs' in a.expect) || before(a.expect.sameAs.source)))
+        warnings.push(
+          `${at}: reads only the state before the task, which does not depend on what the agent did; compare it with the state after (sameAs)`,
+        );
       return;
     }
     case 'url':
@@ -297,6 +307,9 @@ function walkAssertion(a: Assertion, at: string, errors: string[], warnings: str
       return;
   }
 }
+
+/** A source that reads the baseline (the state before the task). */
+const before = (src: ValueSource) => (src.from === 'probe' || src.from === 'storage') && src.at === 'before';
 
 /** Identity of one side of a comparison: its source and normalizers. */
 const side = (src: ValueSource, n: Normalizer[] | undefined) => canonicalJson({ src, n: n ?? [] } as unknown as Json);

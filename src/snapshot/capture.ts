@@ -1,6 +1,7 @@
 import type { BrowserContext, Frame, Page, Request } from '@playwright/test';
 import {
   SNAPSHOT_SCHEMA,
+  type Baseline,
   type CookieRecord,
   type EvidenceSnapshot,
   type Json,
@@ -417,7 +418,14 @@ export interface CaptureOptions {
   keepCookies?: string[];
   /** Web storage keys whose values are kept even if they look like credentials. */
   keepStorage?: string[];
+  /**
+   * State before the agent started (captureBaseline). Defaults to the last baseline
+   * captured in the page's browser context, if any; null leaves it out.
+   */
+  baseline?: Baseline | null;
 }
+
+export type BaselineOptions = Pick<CaptureOptions, 'probes' | 'storage' | 'keepCookies' | 'keepStorage'>;
 
 /**
  * Names that usually hold credentials. Values under these names, and httpOnly cookie
@@ -426,12 +434,9 @@ export interface CaptureOptions {
  */
 export const CREDENTIAL_NAME = /token|secret|passw(or)?d|session|auth|jwt|bearer|api[-_]?key|credential/i;
 
-export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Promise<EvidenceSnapshot> {
-  const recorder = opts.recorder === undefined ? EvidenceRecorder.for(page.context()) : opts.recorder;
-  const redacted: string[] = [];
-
-  const ariaYaml = await page.locator('body').ariaSnapshot();
-  const domState = await page.evaluate(() => {
+/** Page state read inside the page: text, title, origin and web storage. */
+async function readDom(page: Page) {
+  return page.evaluate(() => {
     // oxlint-disable-next-line unicorn/consistent-function-scoping -- runs in the page, must be self-contained
     const dump = (s: Storage) => {
       const o: Record<string, string> = {};
@@ -457,42 +462,49 @@ export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Pr
       session,
     };
   });
+}
 
-  let storage: StorageRecord | null = null;
-  if (opts.storage !== false) {
-    const keep = new Set(opts.keepCookies ?? []);
-    const cookies: CookieRecord[] = (await page.context().cookies()).map((c) => {
-      const hide = (c.httpOnly || CREDENTIAL_NAME.test(c.name)) && !keep.has(c.name);
-      if (hide) redacted.push(`cookie:${c.name}`);
-      return {
-        name: c.name,
-        value: hide ? { redacted: true } : c.value,
-        domain: c.domain,
-        path: c.path,
-        httpOnly: c.httpOnly,
-        secure: c.secure,
-      };
-    });
-    const keepKeys = new Set(opts.keepStorage ?? []);
-    const scrub = (area: 'local' | 'session', kv: Record<string, string>) =>
-      Object.fromEntries(
-        Object.entries(kv).map(([k, v]): [string, string | Redacted] => {
-          if (!CREDENTIAL_NAME.test(k) || keepKeys.has(k)) return [k, v];
-          redacted.push(`${area}Storage:${k}`);
-          return [k, { redacted: true }];
-        }),
-      );
-    storage = {
-      cookies,
-      local: domState.origin !== 'null' ? { [domState.origin]: scrub('local', domState.local) } : {},
-      session: domState.origin !== 'null' ? { [domState.origin]: scrub('session', domState.session) } : {},
+async function readStorage(
+  page: Page,
+  dom: { origin: string; local: Record<string, string>; session: Record<string, string> },
+  opts: BaselineOptions,
+  redacted: string[],
+): Promise<StorageRecord | null> {
+  if (opts.storage === false) return null;
+  const keep = new Set(opts.keepCookies ?? []);
+  const cookies: CookieRecord[] = (await page.context().cookies()).map((c) => {
+    const hide = (c.httpOnly || CREDENTIAL_NAME.test(c.name)) && !keep.has(c.name);
+    if (hide) redacted.push(`cookie:${c.name}`);
+    return {
+      name: c.name,
+      value: hide ? { redacted: true } : c.value,
+      domain: c.domain,
+      path: c.path,
+      httpOnly: c.httpOnly,
+      secure: c.secure,
     };
-  }
+  });
+  const keepKeys = new Set(opts.keepStorage ?? []);
+  const scrub = (area: 'local' | 'session', kv: Record<string, string>) =>
+    Object.fromEntries(
+      Object.entries(kv).map(([k, v]): [string, string | Redacted] => {
+        if (!CREDENTIAL_NAME.test(k) || keepKeys.has(k)) return [k, v];
+        redacted.push(`${area}Storage:${k}`);
+        return [k, { redacted: true }];
+      }),
+    );
+  return {
+    cookies,
+    local: dom.origin !== 'null' ? { [dom.origin]: scrub('local', dom.local) } : {},
+    session: dom.origin !== 'null' ? { [dom.origin]: scrub('session', dom.session) } : {},
+  };
+}
 
-  // Run probes concurrently but record them in declaration order, so snapshots are reproducible.
-  const probeEntries = Object.entries(opts.probes ?? {});
-  const probeResults = await Promise.all(
-    probeEntries.map(async ([, probe]): Promise<ProbeResult> => {
+/** Runs probes concurrently but records them in declaration order, so snapshots are reproducible. */
+async function runProbes(probes: Record<string, Probe> | undefined): Promise<Record<string, ProbeResult>> {
+  const entries = Object.entries(probes ?? {});
+  const results = await Promise.all(
+    entries.map(async ([, probe]): Promise<ProbeResult> => {
       try {
         const value = await probe();
         return { ok: true, value: JSON.parse(JSON.stringify(value ?? null)) as Json };
@@ -501,8 +513,44 @@ export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Pr
       }
     }),
   );
-  const probes: Record<string, ProbeResult> = {};
-  probeEntries.forEach(([name], i) => (probes[name] = probeResults[i]!));
+  const out: Record<string, ProbeResult> = {};
+  entries.forEach(([name], i) => (out[name] = results[i]!));
+  return out;
+}
+
+/** The last baseline captured in each browser context (captureSnapshot's default). */
+const baselines = new WeakMap<BrowserContext, Baseline>();
+
+/**
+ * Capture the state before the agent starts: probe results, storage and the page
+ * URL. Call it once the task's starting state is set up, before the agent acts.
+ * Later snapshots in the same browser context include it (unless given another
+ * `baseline`), so checks can compare the end state with it (`at: "before"`).
+ */
+export async function captureBaseline(page: Page, opts: BaselineOptions = {}): Promise<Baseline> {
+  const redacted: string[] = [];
+  const dom = await readDom(page);
+  const storage = await readStorage(page, dom, opts, redacted);
+  const baseline: Baseline = {
+    capturedAt: new Date().toISOString(),
+    url: page.url(),
+    storage,
+    probes: await runProbes(opts.probes),
+    redacted: redacted.toSorted(),
+  };
+  baselines.set(page.context(), baseline);
+  return structuredClone(baseline);
+}
+
+export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Promise<EvidenceSnapshot> {
+  const recorder = opts.recorder === undefined ? EvidenceRecorder.for(page.context()) : opts.recorder;
+  const baseline = opts.baseline === undefined ? baselines.get(page.context()) : opts.baseline;
+  const redacted: string[] = [];
+
+  const ariaYaml = await page.locator('body').ariaSnapshot();
+  const dom = await readDom(page);
+  const storage = await readStorage(page, dom, opts, redacted);
+  const probes = await runProbes(opts.probes);
 
   let network: NetworkEntry[] | null = null;
   if (recorder) {
@@ -513,12 +561,14 @@ export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Pr
   return {
     schema: SNAPSHOT_SCHEMA,
     capturedAt: new Date().toISOString(),
-    page: { url: page.url(), title: domState.title },
+    page: { url: page.url(), title: dom.title },
     a11y: parseAriaSnapshot(ariaYaml),
-    text: domState.text,
+    text: dom.text,
     network,
     storage,
     probes,
+    // Left out (not null) when there is none, so digests of snapshots without one are unchanged.
+    ...(baseline ? { baseline: structuredClone(baseline) } : {}),
     meta: { capturer: CAPTURER, redacted: redacted.toSorted() },
   };
 }
