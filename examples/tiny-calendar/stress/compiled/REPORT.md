@@ -10,9 +10,9 @@
 | tiny-calendar/06-location | 20/20 | 2/2 (2 / 0) | – | – | 0 |
 | tiny-calendar/07-timezone | 20/20 | 6/6 (6 / 0) | – | – | 0 |
 | tiny-calendar/08-week-start | 18/18 | 10/10 (10 / 0) | – | – | 0 |
-| tiny-calendar/09-rename-dentist | 20/20 | 2/2 (2 / 0) | – | – | 0 |
+| tiny-calendar/09-rename-dentist | 20/20 | 4/4 (4 / 0) | – | – | 0 |
 | tiny-calendar/10-workshop | 20/20 | 8/8 (8 / 0) | – | – | 0 |
-| **tiny-calendar** | **202/202** | **68/68** (68 / 0) | | | 0 |
+| **tiny-calendar** | **202/202** | **70/70** (70 / 0) | | | 0 |
 
 ## tiny-calendar/01-lunch v1
 
@@ -60,8 +60,8 @@
 ## tiny-calendar/09-rename-dentist v1
 
 - Valid variants accepted: **20/20** (100%)
-- Mutants rejected: **2/2** (100%; 2 by fail, 0 by abstain)
-- Mutants with a success claim added still rejected: 2/2
+- Mutants rejected: **4/4** (100%; 4 by fail, 0 by abstain)
+- Mutants with a success claim added still rejected: 4/4
 ## tiny-calendar/10-workshop v1
 
 - Valid variants accepted: **20/20** (100%)

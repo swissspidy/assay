@@ -122,6 +122,61 @@ test("decided requirements stay decided; failures escalate only by policy, and '
   expect(res3.record.requirements.find((r) => r.id === 'R2')).toMatchObject({ status: 'fail', decidedBy: 'checks' });
 });
 
+test('a check can ask for its failures to escalate ("onFail") or to be kept, overriding policy.on', async () => {
+  const partial = ref('03-cart-two-mugs', 'only-blue-mug'); // R2 (Red Mug in the cart) fails on C2
+  const withOnFail = (onFail: 'escalate' | 'keep', extra?: 'escalate' | 'keep' | 'unset') => {
+    const c2 = TWO_MUGS.checks.find((c) => c.id === 'C2')!;
+    const checks = TWO_MUGS.checks.map((c) => (c.id === 'C2' ? { ...c, onFail } : c));
+    // A second check that fails R2 too, with its own setting (or none).
+    if (extra) checks.push({ ...c2, id: 'C3', ...(extra === 'unset' ? {} : { onFail: extra }) });
+    return { ...TWO_MUGS, checks };
+  };
+  const decides = () =>
+    scripted([
+      () => call('page_outline', {}),
+      () => call('submit_verdict', { verdicts: [verdict('R2', 'fail', [1])] }),
+    ]);
+
+  // The default policy keeps failures; C2 asks to escalate them.
+  const res = await verifyWithEscalation(withOnFail('escalate'), partial, { verifier: decides() });
+  expect(res.record.escalation!.requirements).toEqual(['R2']);
+  expect(res.record.requirements.find((r) => r.id === 'R2')).toMatchObject({
+    decidedBy: 'verifier',
+    escalation: 'onFail',
+  });
+  expect(res.record.checks.find((c) => c.id === 'C2')!.onFail).toBe('escalate');
+
+  // Every check that failed the requirement must allow it: one without a setting follows the policy (keep).
+  const never = scripted([]);
+  const mixed = await verifyWithEscalation(withOnFail('escalate', 'unset'), partial, { verifier: never });
+  expect(mixed.record.escalation).toBeUndefined();
+  expect(mixed.record.requirements.find((r) => r.id === 'R2')!.escalation).toBeUndefined();
+
+  // The policy escalates failures; C2 keeps its own.
+  const kept = await verifyWithEscalation(withOnFail('keep'), partial, {
+    verifier: never,
+    policy: { on: ['abstain', 'fail'] },
+  });
+  expect(kept.record.escalation).toBeUndefined();
+  expect(kept.record.requirements.find((r) => r.id === 'R2')).toMatchObject({
+    status: 'fail',
+    decidedBy: 'checks',
+    escalation: 'kept',
+  });
+
+  // ...and with the policy, a failure all of whose checks allow it escalates "by policy".
+  const both = await verifyWithEscalation(withOnFail('escalate', 'unset'), partial, {
+    verifier: decides(),
+    policy: { on: ['abstain', 'fail'] },
+  });
+  expect(both.record.requirements.find((r) => r.id === 'R2')!.escalation).toBe('policy');
+
+  // onFail does not touch abstains, and needs no verifier to be valid.
+  expect(validateCheckSet(withOnFail('escalate')).ok).toBe(true);
+  expect(validateCheckSet({ ...TWO_MUGS, checks: [{ ...TWO_MUGS.checks[0]!, onFail: 'always' }] }).ok).toBe(false);
+  expect(reviewSheet(withOnFail('escalate'))).toContain('on fail: escalate to the verifier');
+});
+
 test("a model error keeps the checks' outcome and is recorded", async () => {
   const broken: ModelClient = {
     id: 'broken',

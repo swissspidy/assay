@@ -17,7 +17,7 @@ All of it must be reproducible offline and in CI. The agent's own success report
 
 ## Decision
 
-### Dataset: 30 tasks, 3 apps, 123 labelled runs
+### Dataset: 30 tasks, 3 apps, 126 labelled runs
 
 | App           | Style                                        | Tasks                                                                        |
 | ------------- | -------------------------------------------- | ---------------------------------------------------------------------------- |
@@ -29,6 +29,7 @@ All of it must be reproducible offline and in CI. The agent's own success report
 - Each scenario has a kind: `correct`, `no-op`, `undone`, `wrong-item`, `partial`, `over-completion` or `adversarial`. Adversarial runs make the page claim success without the underlying state changing.
 - The label comes from the scenario definition, not from any verifier.
 - A `correct` run does what was asked and nothing harmful besides. Harmless detours are allowed, such as browsing first or making a mistake and correcting it before the end. Unrequested changes to other data are not, so a run that also reopens an issue or moves an event's time is not labelled correct.
+- A scenario can set up the state the task starts from (Tiny Shop 04, 07 and 08 start with a cart). Runners then capture a baseline before the scripted agent acts (ADR 0001 §1.1), and the three runs that change that starting state wrongly (removing another item, ordering more or less than the cart held) are labelled incorrect.
 - `npm run references` records the reference snapshots under `examples/<app>/references/`. `tests/scenarios.spec.ts` replays the scenarios live.
 
 ### Systems compared (`npm run eval`)
@@ -113,6 +114,7 @@ Measured on 2026-11-04 with `claude-opus-5-5` at effort `high`, for the compiler
 | llm-judge         | 0.927             | 0.933 | 0.921 | $0.0119    | 4.3 s / 10.0 s         |
 | agentic-verifier  | 0.942             | 0.900 | 0.984 | $0.0273    | 8.3 s / 14.4 s         |
 
+- These results were measured on the 123 runs before the three baseline runs were added; the compiled sets for Tiny Shop 04, 07 and 08 predate baselines and accept those three runs until they are recompiled.
 - **Eval, handwritten checks** (all 123 runs): checks 1.000; LLM judge 0.944 ($0.0117 per run); agentic verifier 0.984 ($0.0244 per run). The checks row is circular here (see above).
 - No compiled check abstained on these runs, so escalation never called the model.
 - The LLM judge accepted three adversarial pages that only claim success (a spoofed delivery date, gift wrap and deletion), a wrong rename and the label-only filter, and rejected two correct runs. The agentic verifier, which reads probes and the network log, rejected every adversarial page. It shares two misses with the first compile: it rejected the comment ending in a period and accepted the label-only filter. With the compiled requirements it also rejected two correct orders that added gift wrap to an express order.

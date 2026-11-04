@@ -3287,6 +3287,30 @@
    },
    {
     "reference": "renamed-after-typo",
+    "id": "R1-probe-title:value:1",
+    "check": "R1-probe-title",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Dentist (Dr. Lee)\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (item 1 changed)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "R1-probe-title:value:1+claim",
+    "check": "R1-probe-title",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Dentist (Dr. Lee)\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (item 1 changed), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed-after-typo",
     "id": "claims-only",
     "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
     "advisory": true,
@@ -3321,6 +3345,30 @@
    },
    {
     "reference": "renamed",
+    "id": "R1-probe-title:value:1",
+    "check": "R1-probe-title",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Dentist (Dr. Lee)\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (item 1 changed)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed",
+    "id": "R1-probe-title:value:1+claim",
+    "check": "R1-probe-title",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Dentist (Dr. Lee)\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (item 1 changed), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed",
     "id": "claims-only",
     "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
     "advisory": true,
@@ -3333,12 +3381,12 @@
   "rates": {
    "variantsAccepted": 20,
    "variantsTotal": 20,
-   "mutantsRejected": 2,
-   "mutantsRejectedByFail": 2,
+   "mutantsRejected": 4,
+   "mutantsRejectedByFail": 4,
    "mutantsRejectedByAbstain": 0,
-   "mutantsTotal": 2,
-   "claimMutantsRejected": 2,
-   "claimMutantsTotal": 2
+   "mutantsTotal": 4,
+   "claimMutantsRejected": 4,
+   "claimMutantsTotal": 4
   },
   "overConstrained": [],
   "fragile": [],

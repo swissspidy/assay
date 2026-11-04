@@ -133,7 +133,10 @@ function applyOne(v: TypedValue, step: Exclude<Normalizer, string>): TypedValue 
  */
 function items(v: TypedValue, step: Extract<Normalizer, { op: 'items' }>): Json[] {
   if (v.type !== 'json' || !Array.isArray(v.value))
-    throw new NormalizeError(`items expects a JSON array, got ${v.type === 'json' ? describeValue(v) : v.type}`, 'type_mismatch');
+    throw new NormalizeError(
+      `items expects a JSON array, got ${v.type === 'json' ? describeValue(v) : v.type}`,
+      'type_mismatch',
+    );
   const keep = step.where === undefined ? undefined : compileSchema(step.where);
   const out: Json[] = [];
   for (const [i, item] of v.value.entries()) {

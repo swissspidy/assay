@@ -152,7 +152,10 @@ function mapBodies(s: EvidenceSnapshot, fn: (v: Json) => Json): EvidenceSnapshot
   }));
   const mapProbes = (ps: Record<string, ProbeResult>) =>
     Object.fromEntries(
-      Object.entries(ps).map(([k, p]) => [k, p.ok && isObj(p.value) ? { ok: true as const, value: apply(p.value) } : p]),
+      Object.entries(ps).map(([k, p]) => [
+        k,
+        p.ok && isObj(p.value) ? { ok: true as const, value: apply(p.value) } : p,
+      ]),
     );
   const probes = mapProbes(s.probes);
   // The API's shape is the same before and after the task, so the baseline gets the same edit.

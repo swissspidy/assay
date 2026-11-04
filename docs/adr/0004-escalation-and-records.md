@@ -13,7 +13,7 @@ Compiled checks abstain when they can't find or read their evidence (ADR 0001). 
 ### Escalation (`verifyWithEscalation`)
 
 1. Evaluate the check set on the snapshot. This step is model-free and takes milliseconds.
-2. Select the requirements to escalate. By default these are the hard requirements that abstained. `policy.on` can add `fail`, for example for tasks where checks are known to be brittle, and `includeSoft` adds soft requirements. A failure is only re-decided if the verifier observes a definite pass or fail; a verifier `unknown` never overrides a decision the checks made.
+2. Select the requirements to escalate. By default these are the hard requirements that abstained. `policy.on` can add `fail`, for example for tasks where checks are known to be brittle, and `includeSoft` adds soft requirements. A single check can override `policy.on` for the failures it causes (see "Per-check escalation" below). A failure is only re-decided if the verifier observes a definite pass or fail; a verifier `unknown` never overrides a decision the checks made.
 3. Run the agentic verifier only on those requirements. It gets:
    - the task text and the requirements as their quotes,
    - why each check couldn't decide, as hints, not evidence,
@@ -34,6 +34,26 @@ Compiled checks abstain when they can't find or read their evidence (ADR 0001). 
 4. Merge. The checks' decisions stand; the verifier's pass or fail fills in the escalated requirements. The verdict is recomputed with the same Kleene rule over the hard requirements, and the returned `Outcome` marks each verifier-decided requirement (`decidedBy: "verifier"`) with its cited evidence, which `formatOutcome` shows. If the verifier fails (model or API error), the checks' outcome stands and the record says `escalation.status: "error"`.
 5. Propose (optional). Suppose the checks abstained on hard requirements the verifier then passed, and the final verdict is success. Then the snapshot is a correct run the checks couldn't read. The compiler (ADR 0002, including stress testing per ADR 0003) recompiles **only the checks** from it with the `proposer` model; the confirmed requirements are kept as they are. The proposal gets a unique version (`<version>+proposal.<digest>`) and is recorded as `pending-approval`. It is never used automatically, and a compile failure is recorded as `failed`.
 
+### Per-check escalation (`onFail`)
+
+`policy.on` is one setting for a whole run. Brittleness is a property of one check: a check that reads a date from page text in a format the app may change, next to a probe check whose failure is certain. A check can therefore state what a failure it causes means:
+
+```jsonc
+{
+  "id": "C2",
+  "requirement": "R1",
+  "description": "The Order summary shows an estimated delivery date of 2026-11-05.",
+  "onFail": "escalate", // or "keep"; unset follows policy.on
+  "assert": { "kind": "value", "source": { "from": "node", "...": "..." }, "expect": { "equals": "2026-11-05" } },
+}
+```
+
+Escalation decides requirements, so the setting is combined per requirement: a failed requirement is escalated when **every check that failed it** allows it, each by its own `onFail` or, if unset, by `policy.on`. One failed check whose failure is certain (`"keep"`, or unset under the default policy) keeps the failure. So `onFail: "escalate"` escalates a failure that only brittle checks caused, even under the default policy, and `onFail: "keep"` keeps a failure that the policy would escalate. Abstains are not affected: an abstain has no decision to keep, and it always escalates. `includeSoft` still decides whether soft requirements escalate.
+
+The setting is on the check rather than the requirement because it describes evidence, not the outcome: the same requirement can have a brittle UI check and a robust probe check, and only the probe check's failure should stand. A requirement-level setting would escalate the probe's certain failures too.
+
+The record shows both sides: each check's `onFail`, and per requirement `escalation`: `"policy"` or `"onFail"` (why it was escalated), or `"kept"` (a check's `"keep"` held a failure back from the policy). It is set when a verifier was given. `reviewSheet` lists the setting under the check, so the reviewer confirms it with the rest of the check.
+
 `expectOutcome` accepts `escalate` (escalation happens only after polling has settled, so an abstain waits the full `timeout` first), `recordDir`, and `requireLocked` (checked before polling).
 
 ### Outcome records (`assay.record/v1`)
@@ -45,7 +65,7 @@ One JSON document per verification:
 - the snapshot's digest, URL and capture time, plus the path to its content-addressed copy (`snapshots/<digest>.json`, written once);
 - the verdict;
 - per requirement: quote, status, **who decided** (`checks`, `verifier` or `none`) and the evidence that decided it. For checks, that's the evidence of the checks whose status matches the requirement's. For the verifier, it's the tool outputs it cited, labelled `verifier-cited`; the model's own reasoning is kept in the escalation's verdicts as notes, not as evidence;
-- per check: status, abstain reason, message; anchor drift;
+- per check: status, abstain reason, message, its `onFail` setting if any; anchor drift; per requirement, when a verifier was given, why it was or was not escalated (`escalation`);
 - the escalation, if any: policy, escalated requirements, model, models actually used (fallbacks), status (or error), verdicts, every tool observation, token usage, turns;
 - `agentClaims`: the agent's report, labelled `agent-claimed`. It sits next to the evidence for audit and is never an input to any decision;
 - the proposal, if any;

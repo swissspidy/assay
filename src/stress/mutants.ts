@@ -503,7 +503,9 @@ function noOpMutants(s: EvidenceSnapshot, a: Extract<Assertion, { kind: 'value' 
     JSON.stringify(s.baseline.storage) !== JSON.stringify(s.storage)
   )
     snap = { ...s, storage: clone(s.baseline.storage) };
-  return snap ? [{ id: 'baseline:no-op', description: 'the state after the task is the state before it', snapshot: snap }] : [];
+  return snap
+    ? [{ id: 'baseline:no-op', description: 'the state after the task is the state before it', snapshot: snap }]
+    : [];
 }
 
 // --- requests ------------------------------------------------------------------

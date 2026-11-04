@@ -5,14 +5,14 @@
 | tiny-shop/01-newsletter | 18/18 | 4/4 (4 / 0) | – | – | 0 |
 | tiny-shop/02-add-blue-mug | 22/22 | 2/2 (2 / 0) | – | – | 0 |
 | tiny-shop/03-cart-two-mugs | 24/24 | 14/14 (14 / 0) | – | – | 0 |
-| tiny-shop/04-remove-red-mug | 23/23 | 4/4 (4 / 0) | – | – | 0 |
+| tiny-shop/04-remove-red-mug | 23/23 | 6/6 (6 / 0) | – | – | 0 |
 | tiny-shop/05-set-quantity | 22/22 | 4/4 (4 / 0) | – | – | 0 |
 | tiny-shop/06-cart-total | 30/30 | 30/30 (30 / 0) | – | – | 0 |
 | tiny-shop/07-express-order | 20/20 | 52/52 (52 / 0) | – | – | 0 |
 | tiny-shop/08-delivery-date | 28/28 | 36/36 (36 / 0) | – | – | 0 |
 | tiny-shop/09-gift-wrap | 20/20 | 20/20 (20 / 0) | – | – | 0 |
 | tiny-shop/10-dark-german | 16/16 | 12/12 (12 / 0) | – | – | 0 |
-| **tiny-shop** | **223/223** | **178/178** (178 / 0) | | | 0 |
+| **tiny-shop** | **223/223** | **180/180** (180 / 0) | | | 0 |
 
 ## tiny-shop/01-newsletter v1
 
@@ -32,8 +32,8 @@
 ## tiny-shop/04-remove-red-mug v1
 
 - Valid variants accepted: **23/23** (100%)
-- Mutants rejected: **4/4** (100%; 4 by fail, 0 by abstain)
-- Mutants with a success claim added still rejected: 4/4
+- Mutants rejected: **6/6** (100%; 6 by fail, 0 by abstain)
+- Mutants with a success claim added still rejected: 6/6
 
 **Checks without a targeted mutant**
 - r1-probe-no-red-mug

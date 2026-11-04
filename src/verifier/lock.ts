@@ -121,7 +121,8 @@ export function reviewSheet(cs: CheckSet): string {
       // One line per description: a line break could forge a heading or another check's entry.
       const description = c.description.replace(/\s*[\r\n\u2028\u2029]+\s*/g, ' ');
       lines.push(`- **${c.id}** ${description}`, `  - tests: ${describeAssertion(c.assert)}`);
-      if (c.onFail) lines.push(`  - on fail: ${c.onFail === 'escalate' ? 'escalate to the verifier' : 'keep the failure'}`);
+      if (c.onFail)
+        lines.push(`  - on fail: ${c.onFail === 'escalate' ? 'escalate to the verifier' : 'keep the failure'}`);
     }
   }
   const lock = (cs as CheckSet & { locked?: Lock }).locked;

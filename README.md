@@ -87,7 +87,13 @@ Assertion kinds: `state`, `contains` (with an optional `witness`), `value`
 then normalized, then compared with a literal, or with a second source via
 `sameAs`), `url`, `request`, and `allOf`/`anyOf` (Kleene logic). Normalizers
 parse numbers, money, dates and date-times (`datetime`, compared as instants;
-`approx` on them is in minutes). The JSON Schema is exported as
+`approx` on them is in minutes). A probe or storage source can read the state
+before the task (`"at": "before"`) from a baseline taken with
+`captureBaseline(page, { probes })` before the agent starts, and the `items`
+normalizer turns arrays into unordered collections, so "keep everything else"
+is the cart after `sameAs` the cart before minus one item. A check can set
+`"onFail": "escalate"` (or `"keep"`) to override the escalation policy for the
+failures it causes. The JSON Schema is exported as
 `checkSetSchema`, and `validateCheckSet` adds semantic checks: traceable
 quotes, requirement references, regex and schema compilation, and normalizer
 and comparison type flow.
@@ -153,7 +159,7 @@ In Playwright: `await expectOutcome(page, locked, { escalate: { verifier }, reco
 
 ## Evaluation and stability (milestone 5)
 
-Three small apps (`examples/tiny-shop`, `examples/tiny-tracker`, `examples/tiny-calendar`) provide 30 tasks and 123 labelled runs. The runs are correct, wrong item, partial, undone, over-completion, or adversarial pages that only claim success.
+Three small apps (`examples/tiny-shop`, `examples/tiny-tracker`, `examples/tiny-calendar`) provide 30 tasks and 126 labelled runs. The runs are correct, wrong item, partial, undone, over-completion, or adversarial pages that only claim success.
 
 - `npm run eval` compares checks, checks with escalation, an LLM judge and the agentic verifier on balanced accuracy, TPR, TNR, cost and latency. Results go to `eval/results/REPORT.md`.
   - Add `-- --checks compiled` to use the compiled check sets. The run each set was compiled from is then left out. Results go to `eval/results/compiled/REPORT.md`.

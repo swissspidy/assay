@@ -53,11 +53,7 @@ export const bad = (name: string, kind: ScenarioKind, run: (page: Page) => Promi
  * Plays a scenario on a page: its setup, then a baseline of the starting state
  * (when it has a setup), then the agent's run.
  */
-export async function play(
-  s: Scenario,
-  page: Page,
-  baseline: (page: Page) => Promise<unknown>,
-): Promise<void> {
+export async function play(s: Scenario, page: Page, baseline: (page: Page) => Promise<unknown>): Promise<void> {
   if (s.setup) {
     await s.setup(page);
     await baseline(page);

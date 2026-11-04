@@ -188,7 +188,8 @@ function readSource(ctx: Ctx, src: ValueSource): Read {
       const before = src.at === 'before';
       if (before && !snap.baseline) return abstain('evidence_unavailable', 'no baseline was captured before the task');
       const storage = before ? snap.baseline!.storage : snap.storage;
-      if (!storage) return abstain('evidence_unavailable', `storage was not captured${before ? ' before the task' : ''}`);
+      if (!storage)
+        return abstain('evidence_unavailable', `storage was not captured${before ? ' before the task' : ''}`);
       const when = before ? ' (before)' : '';
       const pageOrigin = safeOrigin(snap.page.url);
       if (src.area === 'cookie') {

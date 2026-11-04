@@ -133,8 +133,7 @@ function storageLines(s: StorageRecord): string[] {
 }
 
 /** A note that the snapshot holds a baseline, and where it was taken. */
-const beforeHeading = (b: Baseline) =>
-  `BEFORE THE TASK (baseline captured at ${b.url} before the agent started):`;
+const beforeHeading = (b: Baseline) => `BEFORE THE TASK (baseline captured at ${b.url} before the agent started):`;
 
 export function storageView(snapshot: EvidenceSnapshot): string {
   const after = snapshot.storage ? storageLines(snapshot.storage).join('\n') : 'Storage was not captured.';
