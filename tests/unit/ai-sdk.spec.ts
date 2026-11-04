@@ -145,6 +145,9 @@ test('the agent loop keeps control: reasoning is sent back, tool results return 
       toolCall('echo', '{"text": ', 'bad'), // unparseable input
     ],
     (opts) => {
+      // The assistant turn with the invalid call went back, so its result has a call to answer.
+      const assistant = opts.prompt.find((m) => m.role === 'assistant')!;
+      expect(assistant.content).toContainEqual(expect.objectContaining({ type: 'tool-call', toolCallId: 'bad' }));
       const tool = opts.prompt.at(-1)!;
       expect(tool.role).toBe('tool');
       expect(tool.content[0]).toMatchObject({ type: 'tool-result', toolCallId: 'bad', toolName: 'echo' });

@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { readFileSync, readdirSync } from 'node:fs';
 import {
   evaluate,
+  loadSnapshot,
   validateCheckSet,
   snapshotDigest,
   type Assertion,
@@ -466,4 +467,27 @@ test.describe('check set validation', () => {
       expect(validateCheckSet(cs).warnings.join()).toContain('whitespace-normalized');
     }
   });
+});
+
+test('loadSnapshot rejects a malformed accessibility tree with a clear error', () => {
+  const json = readFileSync(
+    new URL('../../examples/tiny-shop/references/03-cart-two-mugs/both-mugs.json', import.meta.url),
+    'utf8',
+  );
+  const good = JSON.parse(json).snapshot as EvidenceSnapshot;
+  expect(loadSnapshot(JSON.stringify(good)).a11y.role).toBe(good.a11y.role);
+  const broken = (edit: (s: EvidenceSnapshot) => void) => {
+    const s = structuredClone(good);
+    edit(s);
+    return () => loadSnapshot(s);
+  };
+  expect(broken((s) => ((s.a11y as unknown as { children: unknown }).children = { role: 'main' }))).toThrow(
+    'snapshot a11y.children is not an array',
+  );
+  expect(broken((s) => ((s.a11y.children![0] as unknown as { role: unknown }).role = 3))).toThrow(
+    'snapshot a11y.children[0].role is not a string',
+  );
+  expect(broken((s) => (s.a11y.children![0]!.children = [null as never]))).toThrow(
+    'snapshot a11y.children[0].children[0] is not an accessibility node',
+  );
 });

@@ -32,4 +32,5 @@ Breaking: one `verify` function and focused entry points.
   | `@swissspidy/assay/eval`     | `llmJudge`, `JUDGE_SYSTEM`, `metrics`, `costUsd`, `PRICING`                                                                                                             |
 
 - No longer exported: `evaluateAssertion`, `kleeneAnd`, `kleeneOr`, `applyNormalizers`, `parseLocaleNumber`, `parseCurrency`, `parseDate`, `parseDateTime`, `NormalizeError`, `parseAriaSnapshot`, `canonical`, `matchText`, `canonicalJson`, `citedEvidence`, `sameOrigin`, `newRecordId`, `lockState` and `schemaViolations`.
-- Only `@swissspidy/assay/models` names `@anthropic-ai/sdk` in its type declarations, so TypeScript consumers of the other entry points no longer need `skipLibCheck` when the SDK is not installed.
+- Only `@swissspidy/assay/models` names `@anthropic-ai/sdk` in its type declarations, so TypeScript consumers of the root, `/playwright`, `/compiler`, `/stress` and `/eval` no longer need `skipLibCheck` when the SDK is not installed. (`/ai-sdk` consumers need `skipLibCheck` or `@types/json-schema`, because the AI SDK's own declarations import `json-schema`.)
+- `loadSnapshot` also checks the accessibility tree's shape (every node has a string `role`, `children` is an array) and rejects a malformed tree with an error naming the node, instead of `verify` failing later with a `TypeError`.

@@ -6,7 +6,7 @@
 import { after, before, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { access, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -24,6 +24,7 @@ const aiVersion = (
   JSON.parse(await readFile(join(root, 'node_modules/ai/package.json'), 'utf8')) as { version: string }
 ).version;
 let dir: string;
+let tarball: string;
 let files: string[];
 
 before(async () => {
@@ -34,6 +35,7 @@ before(async () => {
   });
   const [pack] = JSON.parse(stdout.slice(stdout.indexOf('['))) as { filename: string; files: { path: string }[] }[];
   files = pack!.files.map((f) => f.path);
+  tarball = join(dir, pack!.filename);
   await writeFile(join(dir, 'package.json'), JSON.stringify({ name: 'consumer', private: true, type: 'module' }));
   // --ignore-scripts: nothing in the consumer needs a lifecycle script (no browser is launched).
   // The AI SDK is an optional peer dependency: installed here so the `/ai-sdk` entry can be used.
@@ -111,6 +113,37 @@ console.log(JSON.stringify({
     entries: true,
     aiSdk: ['mock:m', 'end_turn', 'hi'],
   });
+});
+
+test('without the optional peers, every entry point but /ai-sdk loads', async () => {
+  // A second consumer with only the package: no `ai` and no @anthropic-ai/sdk. Not inside `dir`,
+  // whose node_modules (with `ai`) module resolution would find by walking up.
+  const bare = await mkdtemp(join(tmpdir(), 'assay-pack-bare-'));
+  after(() => rm(bare, { recursive: true, force: true }));
+  await writeFile(join(bare, 'package.json'), JSON.stringify({ name: 'bare', private: true, type: 'module' }));
+  await run('npm', ['install', '--no-audit', '--no-fund', '--ignore-scripts', tarball], {
+    cwd: bare,
+    maxBuffer: 64 << 20,
+  });
+  await assert.rejects(access(join(bare, 'node_modules/ai')));
+  await assert.rejects(access(join(bare, 'node_modules/@anthropic-ai/sdk')));
+  const entries = Object.keys(exports).map((e) => (e === '.' ? name : `${name}/${e.slice(2)}`));
+  const script = join(bare, 'load.js');
+  await writeFile(
+    script,
+    `const out = {};
+for (const e of ${JSON.stringify(entries)}) {
+  try { out[e] = Object.keys(await import(e)).length > 0; } catch (err) { out[e] = err.code ?? String(err); }
+}
+console.log(JSON.stringify(out));
+`,
+  );
+  const { stdout } = await run(process.execPath, [script], { cwd: bare });
+  const loaded = JSON.parse(stdout) as Record<string, boolean | string>;
+  for (const e of entries) {
+    if (e === `${name}/ai-sdk`) assert.equal(loaded[e], 'ERR_MODULE_NOT_FOUND', e);
+    else assert.equal(loaded[e], true, e);
+  }
 });
 
 test('the capturer id names the installed version', async () => {

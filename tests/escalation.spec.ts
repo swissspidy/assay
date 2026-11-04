@@ -4,7 +4,7 @@ import { mkdtempSync, readFileSync, readdirSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { captureSnapshot, expectOutcome, test } from '../src/playwright/index.ts';
+import { captureSnapshot, expectOutcome, test, verifyPage } from '../src/playwright/index.ts';
 import {
   CheckSetError,
   isLocked,
@@ -357,6 +357,24 @@ test('expectOutcome: requireLocked is checked before polling; an expected fail i
   await openCart(page);
   await expect(expectOutcome(page, TWO_MUGS, { requireLocked: true, timeout: 0 })).rejects.toThrow('not locked');
   const never = scripted([]);
-  const outcome = await expectOutcome(page, TWO_MUGS, { verdict: 'fail', timeout: 0, verifier: never });
+  // The policy would escalate the failed requirements; reaching the expected verdict skips the verifier.
+  const outcome = await expectOutcome(page, TWO_MUGS, {
+    verdict: 'fail',
+    timeout: 0,
+    verifier: never,
+    policy: { on: ['fail'], includeSoft: true },
+  });
   expect(outcome.verdict).toBe('fail');
+  expect(never.requests).toHaveLength(0);
+});
+
+test('verifyPage: requireLocked is checked before capturing or running probes', async ({ page }) => {
+  await openCart(page);
+  let probed = 0;
+  const probes = { cart: async () => ++probed };
+  await expect(verifyPage(page, TWO_MUGS, { requireLocked: true, probes })).rejects.toThrow('not locked');
+  expect(probed).toBe(0);
+  const res = await verifyPage(page, lockCheckSet(TWO_MUGS, 'reviewer'), { requireLocked: true, probes });
+  expect(probed).toBe(1);
+  expect(res.snapshot.probes?.cart).toBeDefined();
 });

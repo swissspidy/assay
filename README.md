@@ -190,7 +190,8 @@ package:
 - **Vercel AI SDK** (`@swissspidy/assay/ai-sdk`, needs `ai` 7 or later and a provider package):
   `aiSdkModel` wraps any AI SDK language model. Each turn is one `generateText` call whose tools
   have no `execute`, so Assay's own loop still validates inputs, enforces citations and records
-  cassettes ([ADR 0007](docs/adr/0007-vercel-ai-sdk-adapter.md)).
+  cassettes ([ADR 0007](docs/adr/0007-vercel-ai-sdk-adapter.md)). The AI SDK's type declarations
+  import `json-schema`, so TypeScript projects need `skipLibCheck` or `@types/json-schema`.
 
   ```ts
   import { anthropic } from '@ai-sdk/anthropic'; // or any other AI SDK provider

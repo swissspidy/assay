@@ -71,8 +71,10 @@ on npm belongs to an unrelated package.
   provenance); the next push then tags it and creates its release. Later versions come from
   changesets.
 - The Anthropic adapter's declarations name `@anthropic-ai/sdk`, an optional peer dependency. Since
-  the adapter moved to `@swissspidy/assay/models`, only that entry point does: a TypeScript consumer
-  of the other entry points needs no `skipLibCheck`, and the package test checks one with it off.
-  A consumer of `/models` without the SDK installed still needs it.
+  the adapter moved to `@swissspidy/assay/models`, only that entry point does, so a consumer of
+  `/models` without the SDK installed needs `skipLibCheck`. A consumer of `/ai-sdk` needs
+  `skipLibCheck` or `@types/json-schema`: the AI SDK's own declarations (`@ai-sdk/provider`) import
+  `json-schema`, which ships no types. The other entry points need neither; the package test
+  typechecks a consumer of them with `skipLibCheck` off.
 - The version stays 0.x while the check DSL and the record format may still change; a breaking change
   is a minor bump.
