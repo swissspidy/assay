@@ -2,16 +2,10 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import {
-  applyNormalizers,
-  compileTask,
   describeAssertion,
   evaluate,
-  evaluateAssertion,
-  generateMutants,
-  generateVariants,
-  NormalizeError,
+  loadSnapshot,
   snapshotDigest,
-  stressTest,
   validateCheckSet,
   type Assertion,
   type Baseline,
@@ -20,6 +14,10 @@ import {
   type Json,
   type StorageRecord,
 } from '../../src/index.ts';
+import { compileTask } from '../../src/compiler/index.ts';
+import { generateMutants, generateVariants, stressTest } from '../../src/stress/index.ts';
+import { evaluateAssertion } from '../../src/runtime/evaluate.ts';
+import { applyNormalizers, NormalizeError } from '../../src/runtime/values.ts';
 import { AXIndex } from '../../src/runtime/axindex.ts';
 import { probesView, storageView, summary } from '../../src/compiler/explore.ts';
 import { scripted } from '../support/scripted.ts';
@@ -206,6 +204,24 @@ test.describe('snapshot digest', () => {
     expect(snapshotDigest(a)).not.toBe(snapshotDigest(snap({ probes: a.probes })));
     expect(snapshotDigest(a)).toBe(snapshotDigest({ ...a, baseline: { ...before, capturedAt: 'later' } }));
     expect(snapshotDigest(a)).not.toBe(snapshotDigest({ ...a, baseline: baseline({ cart: cart() }) }));
+  });
+});
+
+test.describe('loading a snapshot', () => {
+  test('accepts a well-formed baseline and rejects a malformed one', () => {
+    const a = after(item('Blue Mug'));
+    expect(loadSnapshot(JSON.stringify(a)).baseline).toEqual(before);
+    expect(loadSnapshot(JSON.stringify(snap())).baseline).toBeUndefined();
+    const bad = (b: unknown) => () => loadSnapshot({ ...a, baseline: b });
+    expect(bad(null)).toThrow('snapshot baseline is not an object');
+    expect(bad({ ...before, url: 1 })).toThrow('baseline.url');
+    expect(bad({ ...before, probes: { cart: { ok: true } } })).toThrow('baseline.probes.cart is not a probe result');
+    expect(bad({ ...before, probes: { cart: { ok: false } } })).toThrow('baseline.probes.cart');
+    expect(bad({ ...before, storage: { cookies: {} } })).toThrow('baseline.storage');
+    expect(bad({ ...before, redacted: [1] })).toThrow('baseline.redacted');
+    expect(
+      loadSnapshot({ ...a, baseline: { ...before, storage: { cookies: [], local: {}, session: {} } } }),
+    ).toBeTruthy();
   });
 });
 

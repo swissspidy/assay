@@ -1,18 +1,14 @@
 /** Milestone 3 acceptance: variants and mutants are generated, rates reported, flawed checks flagged. */
 import { test, expect } from '@playwright/test';
 import { readdirSync, readFileSync } from 'node:fs';
+import { evaluate, type Check, type CheckSet, type EvidenceSnapshot, type AXNode } from '../src/index.ts';
 import {
-  evaluate,
   formatStressReport,
   generateMutants,
   generateVariants,
   stressTest,
-  type Check,
-  type CheckSet,
-  type EvidenceSnapshot,
   type StressReference,
-  type AXNode,
-} from '../src/index.ts';
+} from '../src/stress/index.ts';
 import { schemaViolations } from '../src/stress/mutants.ts';
 import { APPS, app as appByName } from '../examples/apps.ts';
 import { nearMiss } from '../src/stress/edit.ts';

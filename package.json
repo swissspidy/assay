@@ -25,7 +25,12 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js",
-    "./playwright": "./dist/playwright/index.js"
+    "./playwright": "./dist/playwright/index.js",
+    "./compiler": "./dist/compiler/index.js",
+    "./stress": "./dist/stress/index.js",
+    "./models": "./dist/model/index.js",
+    "./ai-sdk": "./dist/model/ai-sdk.js",
+    "./eval": "./dist/eval/index.js"
   },
   "publishConfig": {
     "access": "public",
@@ -62,16 +67,21 @@
     "@changesets/cli": "^3.0.3",
     "@playwright/test": "^1.64.1",
     "@types/node": "^24.0.0",
+    "ai": "^7.0.147",
     "oxfmt": "^0.75.0",
     "oxlint": "^1.90.0",
     "tsrs": "0.20.1-ts7.1.0-beta"
   },
   "peerDependencies": {
     "@anthropic-ai/sdk": ">=1.4.0",
-    "@playwright/test": ">=1.49.0"
+    "@playwright/test": ">=1.49.0",
+    "ai": ">=7.0.0"
   },
   "peerDependenciesMeta": {
     "@anthropic-ai/sdk": {
+      "optional": true
+    },
+    "ai": {
       "optional": true
     }
   },

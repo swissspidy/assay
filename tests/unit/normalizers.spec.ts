@@ -1,5 +1,11 @@
 import { test, expect } from '@playwright/test';
-import { applyNormalizers, parseCurrency, parseDate, parseLocaleNumber, NormalizeError } from '../../src/index.ts';
+import {
+  applyNormalizers,
+  parseCurrency,
+  parseDate,
+  parseLocaleNumber,
+  NormalizeError,
+} from '../../src/runtime/values.ts';
 
 const reason = (fn: () => unknown) => {
   try {

@@ -1,42 +1,41 @@
+/**
+ * `@swissspidy/assay`: verify task outcomes with compiled checks.
+ *
+ * Other entry points: `/playwright` (live pages), `/compiler`, `/stress`,
+ * `/models` (agent loop, cassettes, Anthropic adapter), `/ai-sdk` (Vercel AI SDK
+ * adapter) and `/eval` (baselines and metrics).
+ */
 export * from './types.ts';
-export { canonical, matchText } from './text.ts';
-export { parseAriaSnapshot } from './snapshot/aria.ts';
-export {
-  captureBaseline,
-  captureSnapshot,
-  EvidenceRecorder,
-  type BaselineOptions,
-  type CaptureOptions,
-  type Probe,
-  type RecorderOptions,
-} from './snapshot/capture.ts';
-export { snapshotDigest, checkSetDigest, canonicalJson } from './snapshot/digest.ts';
+export { verify, type EscalationPolicy, type VerifyOptions, type VerifyResult } from './verifier/escalate.ts';
+export { evaluate, type EvaluateOptions } from './runtime/evaluate.ts';
+export { loadSnapshot } from './snapshot/load.ts';
+export { snapshotDigest, checkSetDigest } from './snapshot/digest.ts';
 export { checkSetSchema } from './dsl/schema.ts';
 export { validateCheckSet, assertValidCheckSet, CheckSetError, type ValidationReport } from './dsl/validate.ts';
-export { evaluate, evaluateAssertion, kleeneAnd, kleeneOr } from './runtime/evaluate.ts';
-export {
-  applyNormalizers,
-  parseLocaleNumber,
-  parseCurrency,
-  parseDate,
-  parseDateTime,
-  NormalizeError,
-  type TypedValue,
-} from './runtime/values.ts';
-export { verifyPage, verifySnapshot, loadSnapshot, type VerifyResult } from './runtime/verify.ts';
 export { formatOutcome } from './report.ts';
-export { mapA11y, editNodes, removeNodes, unwrapNodes } from './snapshot/edit.ts';
-export * from './compiler/index.ts';
-export { runAgent, type AgentTool, type AgentRun, type AgentOptions, type ToolOutcome } from './model/agent.ts';
 export {
-  anthropicModel,
-  toAnthropicMessages,
-  fromAnthropicMessage,
-  type AnthropicOptions,
-  type AnthropicLike,
-} from './model/anthropic.ts';
-export { replayModel, recordingModel, requestKey, type Cassette, type ReplayModel } from './model/replay.ts';
+  lockCheckSet,
+  isLocked,
+  describeAssertion,
+  reviewSheet,
+  type Lock,
+  type LockedCheckSet,
+} from './verifier/lock.ts';
+export {
+  writeOutcomeRecord,
+  RECORD_SCHEMA,
+  type OutcomeRecord,
+  type RecordedRequirement,
+  type RecordedObservation,
+  type RecordInput,
+  type WrittenRecord,
+} from './verifier/record.ts';
+export {
+  runVerifier,
+  type VerifierInput,
+  type VerifierResult,
+  type RequirementVerdict,
+  type VerifierStatus,
+  type Observation,
+} from './verifier/verifier.ts';
 export * from './model/types.ts';
-export * from './stress/index.ts';
-export * from './verifier/index.ts';
-export * from './eval/index.ts';

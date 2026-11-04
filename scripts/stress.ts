@@ -7,7 +7,8 @@
  * Writes examples/<app>/stress/<set>/REPORT.md and report.json, and a combined summary.
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { formatStressReport, stressTest, type CheckSet, type StressReport } from '../src/index.ts';
+import type { CheckSet } from '../src/index.ts';
+import { formatStressReport, stressTest, type StressReport } from '../src/stress/index.ts';
 import { APPS } from '../examples/apps.ts';
 
 const which = process.argv[2] ?? 'handwritten';

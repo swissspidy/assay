@@ -10,9 +10,11 @@ Compiled checks abstain when they can't find or read their evidence (ADR 0001). 
 
 ## Decision
 
-### Escalation (`verifyWithEscalation`)
+### Escalation (`verify`)
 
-1. Evaluate the check set on the snapshot. This step is model-free and takes milliseconds.
+`verify(checkSet, snapshot, options)` is the one entry point; without `options.verifier` it stops after step 1 and builds the record, and no model runs. `verifyPage` and `expectOutcome` (Playwright) capture the snapshot first and pass the page on for live access.
+
+1. Validate the check set and evaluate it on the snapshot. This step is model-free and takes milliseconds.
 2. Select the requirements to escalate. By default these are the hard requirements that abstained. `policy.on` can add `fail`, for example for tasks where checks are known to be brittle, and `includeSoft` adds soft requirements. A single check can override `policy.on` for the failures it causes (see "Per-check escalation" below). A failure is only re-decided if the verifier observes a definite pass or fail; a verifier `unknown` never overrides a decision the checks made.
 3. Run the agentic verifier only on those requirements. It gets:
    - the task text and the requirements as their quotes,
@@ -54,7 +56,7 @@ The setting is on the check rather than the requirement because it describes evi
 
 The record shows both sides: each check's `onFail`, and per requirement `escalation`: `"policy"` or `"onFail"` (why it was escalated), or `"kept"` (a check's `"keep"` held a failure back from the policy). It is set when a verifier was given. `reviewSheet` lists the setting under the check, so the reviewer confirms it with the rest of the check.
 
-`expectOutcome` accepts `escalate` (escalation happens only after polling has settled, so an abstain waits the full `timeout` first), `recordDir`, and `requireLocked` (checked before polling).
+`expectOutcome` accepts the same options as `verify` (`verifier`, `policy`, `proposer`, `recordDir`, `requireLocked`, …). Escalation happens only after polling has settled, so an abstain waits the full `timeout` first, and `requireLocked` is checked before polling.
 
 ### Outcome records (`assay.record/v1`)
 
@@ -71,7 +73,7 @@ One JSON document per verification:
 - the proposal, if any;
 - timings: checks, escalation, proposal.
 
-`writeOutcomeRecord(dir, record, snapshot, checkSet, proposal?)` writes `records/<time>-<id>.json` plus content-addressed copies: `snapshots/<digest>.json`, `checksets/<digest>.json`, `observations/<digest>.txt` (the verifier's full tool outputs, so a decision based on live evidence can be re-checked later) and `proposals/<digest>.checks.json`. It recomputes the snapshot and check-set digests and refuses to write if they don't match the record.
+`writeOutcomeRecord(dir, result)` (or `verify`'s `recordDir` option) takes a `verify` result and writes `records/<time>-<id>.json` plus content-addressed copies: `snapshots/<digest>.json`, `checksets/<digest>.json`, `observations/<digest>.txt` (the verifier's full tool outputs, so a decision based on live evidence can be re-checked later) and `proposals/<digest>.checks.json`. It recomputes the snapshot and check-set digests and refuses to write if they don't match the record.
 
 ### Human confirmation and locking
 

@@ -14,6 +14,9 @@ on npm belongs to an unrelated package.
 
 - **The package is `@swissspidy/assay`**, published with public access and npm provenance
   (`publishConfig`). Imports are `@swissspidy/assay` and `@swissspidy/assay/playwright`.
+  (Later, the library was split into focused entry points: `.` for verification, records and
+  locking, `./playwright`, `./compiler`, `./stress`, `./models` for the agent loop, cassettes and
+  the Anthropic adapter, `./ai-sdk` (ADR 0007) and `./eval`.)
 - **It ships `dist/` and `docs/`**, plus `package.json`, `README.md`, `LICENSE` and `CHANGELOG.md`.
   `npm pack` builds `dist/` first (`prepack`); `dist/` is not committed. `docs/` is shipped because
   the README links to the ADRs. Examples, tests, scripts and the evaluation data stay in the
@@ -23,7 +26,7 @@ on npm belongs to an unrelated package.
 - **CI tests the package as installed** (`tests/pack/install.test.ts`, `npm run test:pack`). It packs
   the package and checks the file list. It installs the tarball into an empty project, then validates
   and evaluates a real check set through the installed library (a correct run gives success, a wrong
-  one fail). It loads the Playwright entry point and typechecks a TypeScript consumer against the
+  one fail). It loads every entry point and typechecks a TypeScript consumer against the
   installed declarations. CI runs it on every change, and the release runs it before packing.
 - **Releases use Changesets and npm's trusted publishing** (`.github/workflows/release.yml`), as
   `swissspidy/playwright-webmcp` does:
@@ -67,9 +70,11 @@ on npm belongs to an unrelated package.
   that exists, so the first version is published by hand (`npm publish --access public`, without
   provenance); the next push then tags it and creates its release. Later versions come from
   changesets.
-- The Anthropic adapter's declarations name `@anthropic-ai/sdk`, an optional peer dependency. A
-  TypeScript consumer that has not installed it needs `skipLibCheck` (the usual default, and what
-  `tsc --init` writes). Removing the SDK from the public types would mean declaring its message types
-  ourselves, which is left for when the adapter's API settles.
+- The Anthropic adapter's declarations name `@anthropic-ai/sdk`, an optional peer dependency. Since
+  the adapter moved to `@swissspidy/assay/models`, only that entry point does, so a consumer of
+  `/models` without the SDK installed needs `skipLibCheck`. A consumer of `/ai-sdk` needs
+  `skipLibCheck` or `@types/json-schema`: the AI SDK's own declarations (`@ai-sdk/provider`) import
+  `json-schema`, which ships no types. The other entry points need neither; the package test
+  typechecks a consumer of them with `skipLibCheck` off.
 - The version stays 0.x while the check DSL and the record format may still change; a breaking change
   is a minor bump.

@@ -116,18 +116,21 @@ function writeOnce(file: string, content: string): void {
   if (!existsSync(file)) writeFileSync(file, content);
 }
 
+/** What `writeOutcomeRecord` needs: the parts of a `verify` result it writes. */
+export interface RecordInput {
+  record: OutcomeRecord;
+  snapshot: EvidenceSnapshot;
+  checkSet: CheckSet;
+  proposal?: CheckSet;
+}
+
 /**
- * Write the record to `<dir>/records/<createdAt>-<id>.json` with content-addressed
- * copies under `snapshots/`, `checksets/`, `observations/` and `proposals/`.
- * The snapshot and check-set digests are recomputed, not trusted from the record.
+ * Write a `verify` result's record to `<dir>/records/<createdAt>-<id>.json` with
+ * content-addressed copies under `snapshots/`, `checksets/`, `observations/` and
+ * `proposals/`. The snapshot and check-set digests are recomputed, not trusted
+ * from the record.
  */
-export function writeOutcomeRecord(
-  dir: string,
-  record: OutcomeRecord,
-  snapshot: EvidenceSnapshot,
-  checkSet: CheckSet,
-  proposal?: CheckSet,
-): WrittenRecord {
+export function writeOutcomeRecord(dir: string, { record, snapshot, checkSet, proposal }: RecordInput): WrittenRecord {
   const snapDigest = snapshotDigest(snapshot);
   if (snapDigest !== record.snapshot.digest)
     throw new Error(`Snapshot digest ${snapDigest} does not match the record (${record.snapshot.digest}).`);

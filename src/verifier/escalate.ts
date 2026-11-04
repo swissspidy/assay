@@ -1,17 +1,25 @@
 /**
- * Escalation (pipeline step 7): run the locked checks; when a requirement
+ * Verification (pipeline step 7): run the locked checks; when a requirement
  * abstains (or, if configured, fails), ask the agentic verifier; record the
  * outcome; optionally propose a recompiled check set for re-approval.
  */
 import type { Page } from '@playwright/test';
 import type { CheckSet, EvidenceSnapshot, Outcome, Requirement, RequirementResult, Verdict } from '../types.ts';
 import { evaluate, kleeneAnd } from '../runtime/evaluate.ts';
+import { assertValidCheckSet } from '../dsl/validate.ts';
 import { checkSetDigest } from '../snapshot/digest.ts';
 import type { ModelClient } from '../model/types.ts';
 import type { Probe } from '../snapshot/capture.ts';
 import { compileTask } from '../compiler/compile.ts';
 import { citedEvidence, runVerifier, type VerifierResult } from './verifier.ts';
-import { newRecordId, RECORD_SCHEMA, type OutcomeRecord, type RecordedRequirement } from './record.ts';
+import {
+  newRecordId,
+  RECORD_SCHEMA,
+  writeOutcomeRecord,
+  type OutcomeRecord,
+  type RecordedRequirement,
+  type WrittenRecord,
+} from './record.ts';
 import { isLocked, lockState } from './lock.ts';
 
 export interface EscalationPolicy {
@@ -25,7 +33,7 @@ export interface EscalationPolicy {
 }
 
 export interface VerifyOptions {
-  /** Model for the agentic verifier. Without it, nothing escalates. */
+  /** Model for the agentic verifier. Without it, nothing escalates and no model runs. */
   verifier?: ModelClient;
   policy?: EscalationPolicy;
   /** Live read-only access for the verifier (an isolated context with a copy of the session). */
@@ -45,6 +53,8 @@ export interface VerifyOptions {
   /** Task id for the record (defaults to the check set id). */
   taskId?: string;
   maxVerifierTurns?: number;
+  /** Write the outcome record (with the snapshot and check set) under this directory. */
+  recordDir?: string;
 }
 
 export interface VerifyResult {
@@ -53,8 +63,13 @@ export interface VerifyResult {
   /** The checks-only outcome. */
   checksOutcome: Outcome;
   record: OutcomeRecord;
+  /** The validated check set that ran. */
+  checkSet: CheckSet;
+  snapshot: EvidenceSnapshot;
   verifier?: VerifierResult;
   proposal?: CheckSet;
+  /** Where the record went, when `recordDir` was given. */
+  written?: WrittenRecord;
 }
 
 const message = (e: unknown) => (e instanceof Error ? e.message : String(e));
@@ -89,11 +104,17 @@ export function selectRequirement(
 
 export type EscalationSelection = 'policy' | 'onFail' | 'kept';
 
-export async function verifyWithEscalation(
-  cs: CheckSet,
+/**
+ * Verify a task outcome: validate the check set (throws `CheckSetError`), run it
+ * on the snapshot, escalate what it cannot decide to `opts.verifier` (if given),
+ * and build the outcome record. No model runs unless `verifier` or `proposer` is set.
+ */
+export async function verify(
+  checkSet: CheckSet | unknown,
   snapshot: EvidenceSnapshot,
   opts: VerifyOptions = {},
 ): Promise<VerifyResult> {
+  const cs = assertValidCheckSet(checkSet);
   if (opts.requireLocked && !isLocked(cs))
     throw new Error(`Check set ${cs.id} v${cs.version} is not locked (or was edited after locking).`);
   const policy: Required<EscalationPolicy> = {
@@ -299,5 +320,15 @@ export async function verifyWithEscalation(
     },
   };
 
-  return { outcome, checksOutcome, record, ...(verifier ? { verifier } : {}), ...(proposal ? { proposal } : {}) };
+  const result: VerifyResult = {
+    outcome,
+    checksOutcome,
+    record,
+    checkSet: cs,
+    snapshot,
+    ...(verifier ? { verifier } : {}),
+    ...(proposal ? { proposal } : {}),
+  };
+  if (opts.recordDir) result.written = writeOutcomeRecord(opts.recordDir, result);
+  return result;
 }

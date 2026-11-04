@@ -6,15 +6,9 @@
  *   - removing anchors / evidence channels → abstain (live DOM edits and snapshot edits)
  */
 import { expect, type Page } from '@playwright/test';
-import { test, expectOutcome } from '../src/playwright/index.ts';
-import {
-  captureBaseline,
-  evaluate,
-  editNodes,
-  removeNodes,
-  type EvidenceSnapshot,
-  type Outcome,
-} from '../src/index.ts';
+import { test, captureBaseline, expectOutcome } from '../src/playwright/index.ts';
+import { evaluate, type EvidenceSnapshot, type Outcome } from '../src/index.ts';
+import { editNodes, removeNodes } from '../src/stress/index.ts';
 import {
   addToCart,
   checkout,

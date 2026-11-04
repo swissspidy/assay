@@ -1,8 +1,8 @@
 /** Every scripted trajectory of every example app gets its labelled verdict from the handwritten checks (live and offline). */
 import { expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { test } from '../src/playwright/index.ts';
-import { captureBaseline, formatOutcome, type CheckSet } from '../src/index.ts';
+import { captureBaseline, test } from '../src/playwright/index.ts';
+import { formatOutcome, type CheckSet } from '../src/index.ts';
 import { APPS } from '../examples/apps.ts';
 import { play } from '../examples/lib/scenario.ts';
 import { judge } from './helpers.ts';

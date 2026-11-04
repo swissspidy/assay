@@ -4,25 +4,20 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { AnthropicError } from '@anthropic-ai/sdk';
 import { call, lastResults, scripted } from '../support/scripted.ts';
+import { validateCheckSet, type Check, type EvidenceSnapshot } from '../../src/index.ts';
 import {
-  anthropicModel,
-  canonical,
   checkRubric,
   compileTask,
   coversClause,
   coverage,
   parseOutcomes,
   parseOutcomesDetailed,
-  validateCheckSet,
-  recordingModel,
-  replayModel,
   rubricFromClauses,
-  runAgent,
-  type Check,
-  type EvidenceSnapshot,
   type Reference,
   type TaskInput,
-} from '../../src/index.ts';
+} from '../../src/compiler/index.ts';
+import { anthropicModel, recordingModel, replayModel, runAgent } from '../../src/model/index.ts';
+import { canonical } from '../../src/text.ts';
 import {
   clauseCovered,
   containsClause,

@@ -5,10 +5,23 @@
  */
 import { test, expect } from '@playwright/test';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { canonical, evaluate, parseOutcomes, validateCheckSet, type CheckSet } from '../src/index.ts';
+import { evaluate, validateCheckSet, type CheckSet } from '../src/index.ts';
+import { parseOutcomes } from '../src/compiler/index.ts';
+import { canonical } from '../src/text.ts';
 import { clauseCovered } from '../src/compiler/compile.ts';
 
 import { APPS } from '../examples/apps.ts';
+
+/**
+ * Incorrect runs added with baselines (they change the cart the task started with). The
+ * compiled sets for these tasks predate baselines and accept them. The next PR re-records
+ * the compiled sets and removes this list; nothing else may be added to it.
+ */
+const KNOWN_MISSES = new Set([
+  'tiny-shop/04-remove-red-mug/removed-red-mug-and-teapot.json',
+  'tiny-shop/07-express-order/ordered-extra-item.json',
+  'tiny-shop/08-delivery-date/ordered-part-of-cart.json',
+]);
 
 for (const app of APPS) {
   const root = app.dir;
@@ -36,15 +49,11 @@ for (const app of APPS) {
         expect(clauseCovered(quotes, clause.text), `outcome ${JSON.stringify(clause.text)} is quoted`).toBe(true);
       }
       const refDir = new URL(`references/${id}/`, root);
-      // Sets compiled before snapshots had a baseline cannot see that a run changed the
-      // starting state (e.g. removed an item it should have kept). Such a miss is
-      // reported until the set is recompiled; every other run must be judged correctly.
-      const readsBaseline = JSON.stringify(cs.checks).includes('"at":"before"');
       for (const rf of readdirSync(refDir)) {
         const { label, snapshot } = JSON.parse(readFileSync(new URL(rf, refDir), 'utf8'));
         const verdict = evaluate(cs, snapshot).verdict;
-        if (verdict !== label.expected && label.expected === 'fail' && snapshot.baseline && !readsBaseline) {
-          test.info().annotations.push({ type: 'needs recompile', description: `${rf}: ${verdict}, labelled fail` });
+        if (KNOWN_MISSES.has(`${app.name}/${id}/${rf}`) && verdict === 'success') {
+          test.info().annotations.push({ type: 'needs recompile', description: `${rf}: success, labelled fail` });
           continue;
         }
         expect(verdict, rf).toBe(label.expected);

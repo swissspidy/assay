@@ -622,8 +622,9 @@ labeled `agent-claimed`. The runtime never treats a claim as evidence.
 
 - `evaluate(checkSet, snapshot) → Outcome` is a pure function. It is the
   only evaluator.
-- **Live mode is capture, then evaluate.** `verifyPage(page, checkSet)` takes
-  a snapshot of the live page and evaluates it. This makes live and offline
+- **Live mode is capture, then evaluate.** `verifyPage(page, checkSet)` (in
+  `@swissspidy/assay/playwright`) takes a snapshot of the live page and
+  evaluates it. This makes live and offline
   results identical by construction. `expectOutcome` in Playwright polls
   (capture and evaluate every ~250 ms until success or timeout), like
   Playwright's web-first assertions, to absorb UI settling.
