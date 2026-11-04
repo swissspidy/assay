@@ -111,6 +111,19 @@ export function readSpan(raw: string, steps: Normalizer[] | undefined): string |
   return raw.trim();
 }
 
+/** The array in a raw string that the pipeline parses first ("json"), if it is one. */
+function jsonArrayText(raw: Json, steps: Normalizer[] | undefined): Json[] | undefined {
+  const first = steps?.[0];
+  if (typeof raw !== 'string' || !(first === 'json' || (typeof first === 'object' && first.op === 'json')))
+    return undefined;
+  try {
+    const v = JSON.parse(raw) as Json;
+    return Array.isArray(v) ? v : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 /** One item of an array removed, changed (a near miss), or a changed copy added. */
 function arrayEdits(arr: Json[]): { what: string; value: Json }[] {
   const out: { what: string; value: Json }[] = [];
@@ -401,14 +414,19 @@ function valueMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, {
   }
   // A JSON array (a cart, an order's items): one item removed, changed or added. Kept
   // only when the check's own normalizers and comparison read it as a violation.
-  if (Array.isArray(r.raw)) {
-    for (const edit of arrayEdits(r.raw)) {
+  // JSON text holding an array (a cart in localStorage) read through "json": the same
+  // edits, written back as JSON text.
+  const parsed = jsonArrayText(r.raw, a.normalize);
+  const arr = Array.isArray(r.raw) ? r.raw : parsed;
+  if (arr) {
+    for (const edit of arrayEdits(arr)) {
+      const next: Json = parsed ? JSON.stringify(edit.value) : edit.value;
       try {
-        if (compare(applyNormalizers(fromJson(edit.value), a.normalize), a.expect).ok) continue;
+        if (compare(applyNormalizers(fromJson(next), a.normalize), a.expect).ok) continue;
       } catch {
         continue;
       }
-      add(edit.value, edit.what);
+      add(next, edit.what);
     }
   }
   const src = a.source;
@@ -476,35 +494,31 @@ function bindingMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion,
 }
 
 /**
- * A binding between the state before and after the task on the same probe or storage
- * key ("the cart after is the cart before minus the Red Mug"): the run changed nothing,
- * so the state after is the baseline's. Dropped when the reference's state did not
- * change (then doing nothing is a correct outcome, as for "keep X unchanged").
+ * A binding between the state before and after the task on the same probe value or
+ * storage key ("the cart after is the cart before minus the Red Mug"): the run changed
+ * nothing, so the value after is the baseline's. Only the value the check reads is
+ * compared and replaced; the mutant is dropped when the correct run did not change it
+ * (then doing nothing is a correct outcome, as for "keep X unchanged").
  */
-function noOpMutants(s: EvidenceSnapshot, a: Extract<Assertion, { kind: 'value' }>): M[] {
+function noOpMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, { kind: 'value' }>): M[] {
   if (!('sameAs' in a.expect) || !s.baseline) return [];
   const sides = [a.source, a.expect.sameAs.source];
   const after = sides.find((x) => (x.from === 'probe' || x.from === 'storage') && x.at !== 'before');
   const before = sides.find((x) => (x.from === 'probe' || x.from === 'storage') && x.at === 'before');
   if (!after || !before) return [];
-  let snap: EvidenceSnapshot | undefined;
-  if (after.from === 'probe' && before.from === 'probe' && after.probe === before.probe) {
-    const was = s.baseline.probes[before.probe];
-    if (was && JSON.stringify(was) !== JSON.stringify(s.probes[after.probe]))
-      snap = { ...s, probes: { ...s.probes, [after.probe]: clone(was) } };
-  }
-  if (
-    after.from === 'storage' &&
-    before.from === 'storage' &&
-    after.area === before.area &&
-    after.key === before.key &&
-    s.baseline.storage &&
-    s.storage &&
-    JSON.stringify(s.baseline.storage) !== JSON.stringify(s.storage)
-  )
-    snap = { ...s, storage: clone(s.baseline.storage) };
+  const same =
+    after.from === 'probe' && before.from === 'probe'
+      ? after.probe === before.probe && (after.pointer ?? '') === (before.pointer ?? '')
+      : after.from === 'storage' && before.from === 'storage'
+        ? after.area === before.area && after.key === before.key && after.origin === before.origin
+        : false;
+  if (!same) return [];
+  const now = readable(s, idx, after);
+  const was = readable(s, idx, before);
+  if (!now || !was || JSON.stringify(now.raw) === JSON.stringify(was.raw)) return [];
+  const snap = now.write(clone(was.raw));
   return snap
-    ? [{ id: 'baseline:no-op', description: 'the state after the task is the state before it', snapshot: snap }]
+    ? [{ id: 'baseline:no-op', description: `${now.what} is what it was before the task`, snapshot: snap }]
     : [];
 }
 
@@ -803,7 +817,7 @@ function assertionMutants(s: EvidenceSnapshot, idx: AXIndex, a: Assertion): M[] 
     case 'contains':
       return containsMutants(s, idx, a);
     case 'value':
-      return 'sameAs' in a.expect ? [...bindingMutants(s, idx, a), ...noOpMutants(s, a)] : valueMutants(s, idx, a);
+      return 'sameAs' in a.expect ? [...bindingMutants(s, idx, a), ...noOpMutants(s, idx, a)] : valueMutants(s, idx, a);
     case 'url': {
       let u: URL;
       try {

@@ -429,6 +429,18 @@ test('a baseline captured before the agent acts joins later snapshots of the con
   expect(evaluate(themeKept, await captureSnapshot(page)).verdict).toBe('success');
 });
 
+test('capturing a baseline again replaces the earlier one for later snapshots', async ({ page }) => {
+  await page.goto('/');
+  await ready(page);
+  await page.evaluate(() => localStorage.setItem('theme', 'light'));
+  const first = await captureBaseline(page);
+  await page.evaluate(() => localStorage.setItem('theme', 'dark'));
+  const second = await captureBaseline(page);
+  expect(Object.values(first.storage!.local)[0]!.theme).toBe('light');
+  expect(Object.values(second.storage!.local)[0]!.theme).toBe('dark');
+  expect((await captureSnapshot(page)).baseline).toEqual(second);
+});
+
 test('a baseline belongs to its browser context', async ({ page, browser }) => {
   await page.goto('/');
   await ready(page);

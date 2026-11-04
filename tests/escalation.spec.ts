@@ -171,7 +171,19 @@ test('a check can ask for its failures to escalate ("onFail") or to be kept, ove
   });
   expect(both.record.requirements.find((r) => r.id === 'R2')!.escalation).toBe('policy');
 
-  // onFail does not touch abstains, and needs no verifier to be valid.
+  // onFail does not touch abstains: an abstaining check marked "keep" still escalates under the default policy.
+  const keepButAbstains = { ...TWO_MUGS, checks: TWO_MUGS.checks.map((c) => ({ ...c, onFail: 'keep' as const })) };
+  const abstained = await verify(keepButAbstains, unanchored(), {
+    verifier: scripted([
+      () => call('page_outline', {}),
+      () => call('submit_verdict', { verdicts: [verdict('R1', 'pass', [1]), verdict('R2', 'pass', [1])] }),
+    ]),
+  });
+  expect(abstained.record.escalation!.requirements).toEqual(['R1', 'R2']);
+  expect(abstained.record.requirements.map((r) => r.escalation)).toEqual(['policy', 'policy']);
+  expect(abstained.outcome.verdict).toBe('success');
+
+  // onFail needs no verifier to be valid.
   expect(validateCheckSet(withOnFail('escalate')).ok).toBe(true);
   expect(validateCheckSet({ ...TWO_MUGS, checks: [{ ...TWO_MUGS.checks[0]!, onFail: 'always' }] }).ok).toBe(false);
   expect(reviewSheet(withOnFail('escalate'))).toContain('on fail: escalate to the verifier');

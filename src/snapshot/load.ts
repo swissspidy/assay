@@ -46,9 +46,38 @@ function assertBaseline(b: unknown): void {
     const ok = isObject(r) && (r.ok === true ? 'value' in r : r.ok === false && typeof r.error === 'string');
     if (!ok) throw new Error(`snapshot baseline.probes.${name} is not a probe result`);
   }
-  const st = b.storage;
-  if (st !== null && !(isObject(st) && Array.isArray(st.cookies) && isObject(st.local) && isObject(st.session)))
-    throw new Error('snapshot baseline.storage is not a storage record or null');
+  if (b.storage !== null) assertStorage(b.storage, 'baseline.storage');
   if (!Array.isArray(b.redacted) || !b.redacted.every((x) => typeof x === 'string'))
     throw new Error('snapshot baseline.redacted is not a list of strings');
+}
+
+/** A stored value: a string, or `{redacted: true}` when it was redacted at capture. */
+const isStoredValue = (v: unknown) => typeof v === 'string' || (isObject(v) && v.redacted === true);
+
+/**
+ * A storage record as the runtime reads it: cookies with a name, domain, path,
+ * value and flags, and per-origin maps of web storage values.
+ */
+function assertStorage(st: unknown, path: string): void {
+  if (!isObject(st)) throw new Error(`snapshot ${path} is not a storage record or null`);
+  if (!Array.isArray(st.cookies)) throw new Error(`snapshot ${path}.cookies is not an array`);
+  st.cookies.forEach((c: unknown, i) => {
+    const ok =
+      isObject(c) &&
+      typeof c.name === 'string' &&
+      typeof c.domain === 'string' &&
+      typeof c.path === 'string' &&
+      isStoredValue(c.value) &&
+      typeof c.httpOnly === 'boolean' &&
+      typeof c.secure === 'boolean';
+    if (!ok) throw new Error(`snapshot ${path}.cookies[${i}] is not a cookie`);
+  });
+  for (const area of ['local', 'session'] as const) {
+    const byOrigin = st[area];
+    if (!isObject(byOrigin)) throw new Error(`snapshot ${path}.${area} is not an object`);
+    for (const [origin, kv] of Object.entries(byOrigin)) {
+      if (!isObject(kv) || !Object.values(kv).every(isStoredValue))
+        throw new Error(`snapshot ${path}.${area}[${JSON.stringify(origin)}] is not a map of stored values`);
+    }
+  }
 }

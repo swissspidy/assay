@@ -219,6 +219,20 @@ test.describe('loading a snapshot', () => {
     expect(bad({ ...before, probes: { cart: { ok: false } } })).toThrow('baseline.probes.cart');
     expect(bad({ ...before, storage: { cookies: {} } })).toThrow('baseline.storage');
     expect(bad({ ...before, redacted: [1] })).toThrow('baseline.redacted');
+    // Storage: every cookie and every origin's map as the runtime reads them.
+    const storage = (st: object) => bad({ ...before, storage: { cookies: [], local: {}, session: {}, ...st } });
+    const cookie = { name: 'theme', value: 'dark', domain: 'shop.test', path: '/', httpOnly: false, secure: false };
+    expect(storage({ cookies: [cookie, { ...cookie, value: { redacted: true } }] })).not.toThrow();
+    expect(storage({ cookies: [1] })).toThrow('baseline.storage.cookies[0] is not a cookie');
+    expect(storage({ cookies: [{ ...cookie, name: undefined }] })).toThrow('cookies[0] is not a cookie');
+    expect(storage({ cookies: [cookie, { ...cookie, value: 3 }] })).toThrow('cookies[1] is not a cookie');
+    expect(storage({ cookies: [{ ...cookie, httpOnly: 'no' }] })).toThrow('cookies[0] is not a cookie');
+    expect(storage({ local: { 'https://shop.test': { theme: 'dark', token: { redacted: true } } } })).not.toThrow();
+    expect(storage({ local: { 'https://shop.test': 'dark' } })).toThrow(
+      'baseline.storage.local["https://shop.test"] is not a map of stored values',
+    );
+    expect(storage({ session: { 'https://shop.test': { n: 1 } } })).toThrow('baseline.storage.session');
+    expect(storage({ local: [] })).toThrow('baseline.storage.local is not an object');
     expect(
       loadSnapshot({ ...a, baseline: { ...before, storage: { cookies: [], local: {}, session: {} } } }),
     ).toBeTruthy();
@@ -279,6 +293,84 @@ test.describe('stress testing', () => {
     };
     const kept = snap({ probes: before.probes, baseline: before });
     expect(generateMutants(one(same), kept).map((m) => m.id)).not.toContain('C1:baseline:no-op');
+  });
+
+  test('the no-op mutant compares and replaces only the value the check reads', () => {
+    const same: Assertion = {
+      kind: 'value',
+      source: { from: 'probe', probe: 'cart', pointer: '/items' },
+      expect: { sameAs: { source: { from: 'probe', probe: 'cart', pointer: '/items', at: 'before' } } },
+    };
+    const items = [item('Blue Mug')];
+    // A sibling field changed (the cart's update time), the items did not: doing nothing to them is correct.
+    const touched = snap({
+      probes: { cart: { ok: true, value: { items, updated: 2 } } },
+      baseline: baseline({ cart: { ok: true, value: { items, updated: 1 } } }),
+    });
+    expect(generateMutants(one(same), touched).map((m) => m.id)).not.toContain('C1:baseline:no-op');
+    // The items changed: the mutant puts back the items before the task and leaves the rest.
+    const changed = snap({
+      probes: { cart: { ok: true, value: { items: [item('Red Mug')], updated: 2 } } },
+      baseline: baseline({ cart: { ok: true, value: { items, updated: 1 } } }),
+    });
+    const noOp = generateMutants(one(same), changed).find((m) => m.id === 'C1:baseline:no-op')!;
+    expect(noOp.snapshot.probes.cart).toEqual({ ok: true, value: { items, updated: 2 } });
+
+    // Storage: only the asserted key counts, not other keys.
+    const theme: Assertion = {
+      kind: 'value',
+      source: { from: 'storage', area: 'local', key: 'theme' },
+      expect: { sameAs: { source: { from: 'storage', area: 'local', key: 'theme', at: 'before' } } },
+    };
+    const local = (kv: Record<string, string>): StorageRecord => ({
+      cookies: [],
+      local: { 'https://shop.test': kv },
+      session: {},
+    });
+    const other = snap({
+      storage: local({ theme: 'dark', scrollY: '40' }),
+      baseline: baseline({}, local({ theme: 'dark', scrollY: '0' })),
+    });
+    expect(generateMutants(one(theme), other).map((m) => m.id)).not.toContain('C1:baseline:no-op');
+    const flipped = snap({
+      storage: local({ theme: 'light', scrollY: '40' }),
+      baseline: baseline({}, local({ theme: 'dark', scrollY: '0' })),
+    });
+    const m = generateMutants(one(theme), flipped).find((x) => x.id === 'C1:baseline:no-op')!;
+    expect(m.snapshot.storage!.local['https://shop.test']).toEqual({ theme: 'dark', scrollY: '40' });
+  });
+
+  test('JSON text holding an array (read through "json") gets item mutants written back as text', () => {
+    const cartText: Assertion = {
+      kind: 'value',
+      source: { from: 'storage', area: 'local', key: 'cart' },
+      normalize: ['json', { op: 'items', pointer: '/name' }],
+      expect: {
+        sameAs: {
+          source: { from: 'storage', area: 'local', key: 'cart', at: 'before' },
+          normalize: ['json', { op: 'items', where: notRedMug, pointer: '/name' }],
+        },
+      },
+    };
+    const local = (v: Json): StorageRecord => ({
+      cookies: [],
+      local: { 'https://shop.test': { cart: JSON.stringify(v) } },
+      session: {},
+    });
+    const s = snap({
+      storage: local([item('Green Teapot'), item('Blue Mug')]),
+      baseline: baseline({}, local([item('Green Teapot'), item('Blue Mug'), item('Red Mug')])),
+    });
+    expect(run(cartText, s).status).toBe('pass');
+    const ms = generateMutants(one(cartText), s).filter((m) => m.check === 'C1');
+    const what = ms.map((m) => m.description);
+    expect(what).toContainEqual(expect.stringMatching(/^localStorage cart is .* \(item 1 removed\)$/));
+    expect(what).toContainEqual(expect.stringMatching(/^localStorage cart before the task is .* \(an extra item\)$/));
+    for (const m of ms) {
+      if (!m.id.endsWith('storage:unset'))
+        expect(typeof m.snapshot.storage!.local['https://shop.test']!.cart, m.description).toBe('string');
+      expect(run(cartText, m.snapshot).status, m.description).not.toBe('pass');
+    }
   });
 
   test('variants that reshape API JSON reshape the baseline too, so the binding accepts them', () => {
