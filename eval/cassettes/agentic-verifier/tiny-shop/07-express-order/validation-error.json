@@ -1,0 +1,186 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:35:18.262Z",
+ "turns": {
+  "sha256:dd71735ffe08d184e09867e33f1d479b20e46b0ef28a30910b31784812e74286": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KeCiz95sQoKCKb7bANccES",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01BHScDqYiW36e1uDBW2gGTY",
+     "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_014ZdftKLJeL6eQDg5y38Aj2",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01KeCiz95sQoKCKb7bANccES",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01BHScDqYiW36e1uDBW2gGTY",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_014ZdftKLJeL6eQDg5y38Aj2",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1892,
+    "outputTokens": 72,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1888
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:92d0e8bdbffd23d7a235cecfe5f0d3220a32911b01d31ba8bc1ce6be56c24244": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01NfAy6kEpGEDQPPHjdNtCJU",
+     "name": "network_entry",
+     "input": {
+      "seq": 6
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01NfAy6kEpGEDQPPHjdNtCJU",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 6
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2661,
+    "outputTokens": 49,
+    "cacheReadTokens": 1888,
+    "cacheWriteTokens": 771
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:8dc775bef36b909ec04bdfef4c7914a9c95a6e7abbb6d59d6d426f91c9fbfb9e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011Mm4Az4iuZ8tJP1QWTg2ma",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         4
+        ],
+        "reasoning": "The only POST to /api/orders went out with an empty name and came back 422 \"name is required\". /api/orders/latest returns 404, and the item is still in the cart. No order was placed."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         4
+        ],
+        "reasoning": "No order exists, so nothing ships express. The rejected request did ask for express shipping, but the server never created the order (latest order is 404)."
+       },
+       {
+        "requirement": "R3",
+        "status": "fail",
+        "cites": [
+         3
+        ],
+        "reasoning": "The page is still the checkout form, showing the error alert \"Could not place order: name is required\". No order confirmation is displayed."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_011Mm4Az4iuZ8tJP1QWTg2ma",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         4
+        ],
+        "reasoning": "The only POST to /api/orders went out with an empty name and came back 422 \"name is required\". /api/orders/latest returns 404, and the item is still in the cart. No order was placed."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         4
+        ],
+        "reasoning": "No order exists, so nothing ships express. The rejected request did ask for express shipping, but the server never created the order (latest order is 404)."
+       },
+       {
+        "requirement": "R3",
+        "status": "fail",
+        "cites": [
+         3
+        ],
+        "reasoning": "The page is still the checkout form, showing the error alert \"Could not place order: name is required\". No order confirmation is displayed."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2834,
+    "outputTokens": 292,
+    "cacheReadTokens": 2659,
+    "cacheWriteTokens": 173
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

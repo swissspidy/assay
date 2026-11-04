@@ -1,0 +1,121 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:50:14.996Z",
+ "turns": {
+  "sha256:b6b8110db35e9169b7d4dcf2b9d0d1ce38d10bced438c8cfca9ad25851814129": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01SXGqefYM3LKmxVAMTeMrQG",
+     "name": "page_outline",
+     "input": {}
+    },
+    {
+     "id": "toolu_01UadX5rcn2C3vNA2tRr46RB",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01SXGqefYM3LKmxVAMTeMrQG",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01UadX5rcn2C3vNA2tRr46RB",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1875,
+    "outputTokens": 49,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1871
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:b150b520ad6441661f658d32f0d73181148a92bdbb4d54dc9b158f6e514cb768": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015adLuTBT8pT3xK8G2Hjhiz",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The status filter is set to Open (status=open), and both rows shown (#1 and #2) are Open. The closed issue #3 does not appear."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The label filter is still set to Any (label= is empty), and the list includes #2 'Add dark mode', which is labelled feature, not bug."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_015adLuTBT8pT3xK8G2Hjhiz",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The status filter is set to Open (status=open), and both rows shown (#1 and #2) are Open. The closed issue #3 does not appear."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The label filter is still set to Any (label= is empty), and the list includes #2 'Add dark mode', which is labelled feature, not bug."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2864,
+    "outputTokens": 208,
+    "cacheReadTokens": 1871,
+    "cacheWriteTokens": 991
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

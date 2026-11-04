@@ -1,0 +1,180 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:45:49.661Z",
+ "turns": {
+  "sha256:a0a648bd1d8de1894358f76c5b4d9c0f4e42987b8331b839c30b5835bad17b7c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01QcVPwLAU9s6X9LLHLer2DV",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_019qSWif1Jr6dGfPdRiyQGEr",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01QcVPwLAU9s6X9LLHLer2DV",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_019qSWif1Jr6dGfPdRiyQGEr",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1856,
+    "outputTokens": 48,
+    "cacheReadTokens": 1852,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:602dd643081767caf93113f0c3ec3cd7be177072765c967fe0847586079086a7": {
+   "stop": "tool_use",
+   "text": "Need to confirm the original list.",
+   "toolCalls": [
+    {
+     "id": "toolu_01XAnAdkCQVdpYtfdrnGPjE9",
+     "name": "network_entry",
+     "input": {
+      "seq": 2
+     }
+    },
+    {
+     "id": "toolu_012VGLKWmGWs9CRMa8RcL8pr",
+     "name": "network_entry",
+     "input": {
+      "seq": 6
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "text",
+     "text": "Need to confirm the original list."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01XAnAdkCQVdpYtfdrnGPjE9",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 2
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_012VGLKWmGWs9CRMa8RcL8pr",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 6
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2383,
+    "outputTokens": 106,
+    "cacheReadTokens": 1852,
+    "cacheWriteTokens": 529
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:10bfbbc2de40921276bba2e4104c740085618e5489dc06a2d9a1703b3befe2fd": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KUrTVo6YCinPFyF1yCQdTx",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "At the start there were three events, and Team standup had id 1 (obs 3). The server got a DELETE for /api/events/1 and confirmed it with {\"deleted\":1} (obs 4). The final events probe no longer lists Team standup (obs 1)."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "Dentist (id 2) and Book club (id 3) are still in the final probe, and their fields match the original data (obs 1, 3). The network log shows only one DELETE and no other changes (obs 2)."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01KUrTVo6YCinPFyF1yCQdTx",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "At the start there were three events, and Team standup had id 1 (obs 3). The server got a DELETE for /api/events/1 and confirmed it with {\"deleted\":1} (obs 4). The final events probe no longer lists Team standup (obs 1)."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "Dentist (id 2) and Book club (id 3) are still in the final probe, and their fields match the original data (obs 1, 3). The network log shows only one DELETE and no other changes (obs 2)."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2971,
+    "outputTokens": 272,
+    "cacheReadTokens": 2381,
+    "cacheWriteTokens": 588
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

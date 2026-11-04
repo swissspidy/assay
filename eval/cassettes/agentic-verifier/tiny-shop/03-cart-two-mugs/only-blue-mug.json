@@ -1,0 +1,137 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:32:59.493Z",
+ "turns": {
+  "sha256:d024d9893fd5d7f27a39df27f468515f0653aa9cbcd00d6560554dfc896e52bd": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Q4w2mxzbRVNeJnJXpNETvY",
+     "name": "page_outline",
+     "input": {}
+    },
+    {
+     "id": "toolu_015b7NeeE8qAGXX3QYFPJ6ed",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_014aytSgVDhRW9rG8dvZdbkk",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Q4w2mxzbRVNeJnJXpNETvY",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_015b7NeeE8qAGXX3QYFPJ6ed",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_014aytSgVDhRW9rG8dvZdbkk",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1888,
+    "outputTokens": 72,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1884
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:712030beebf2f4f371b73bdb458cfe987ba9c18d388db5438c605407bd2bb940": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Q8rEJ73j9D3w2XWhAG35se",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The cart page table has a Blue Mug row (qty 1, $12.00), and the server cart probe returns MUG-BLUE."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The cart page lists only Blue Mug, and the server cart probe holds only MUG-BLUE. The network log shows just one POST to /api/cart/items, so a Red Mug was never added."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Q8rEJ73j9D3w2XWhAG35se",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The cart page table has a Blue Mug row (qty 1, $12.00), and the server cart probe returns MUG-BLUE."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The cart page lists only Blue Mug, and the server cart probe holds only MUG-BLUE. The network log shows just one POST to /api/cart/items, so a Red Mug was never added."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2763,
+    "outputTokens": 225,
+    "cacheReadTokens": 1884,
+    "cacheWriteTokens": 877
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

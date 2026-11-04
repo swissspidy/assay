@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:31:20.353Z",
+ "turns": {
+  "sha256:7850736cf179e18a0fe1a426539b71c7a8948a5c94ebfc0081c19b4886c0d966": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Wp1Svv5AaZZqEo4X6ZAvFe",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to rename the event to \"Dentist (Dr. Lee)\". The final page shows the event was saved as \"Dentist (Dr. Li)\". The heading, the page title, and the Title textbox all read \"Dentist (Dr. Li)\", and the status says \"Changes saved\", so the wrong name was stored. \"Li\" is not \"Lee\", so the expected outcome was not met, even though the agent reported that it finished the task."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Wp1Svv5AaZZqEo4X6ZAvFe",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to rename the event to \"Dentist (Dr. Lee)\". The final page shows the event was saved as \"Dentist (Dr. Li)\". The heading, the page title, and the Title textbox all read \"Dentist (Dr. Li)\", and the status says \"Changes saved\", so the wrong name was stored. \"Li\" is not \"Lee\", so the expected outcome was not met, even though the agent reported that it finished the task."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1297,
+    "outputTokens": 213,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1293
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

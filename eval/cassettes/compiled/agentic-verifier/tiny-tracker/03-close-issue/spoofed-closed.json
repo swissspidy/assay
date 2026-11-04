@@ -1,0 +1,174 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:47:17.683Z",
+ "turns": {
+  "sha256:96f12b5b889563fdaecd75d3fcb9d722645834437f558ca59071a539926977a4": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01DjU54oE6fDkLh7oyhdZURD",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01M8b3QWPi9BQRiyv1YyAoUR",
+     "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_01RJUG4PX45JAmwhBXJFEvvP",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01DjU54oE6fDkLh7oyhdZURD",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01M8b3QWPi9BQRiyv1YyAoUR",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01RJUG4PX45JAmwhBXJFEvvP",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1825,
+    "outputTokens": 72,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1821
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:1861065524a36b29ebd73de86ddf9a615a3cbf9a9b4460f473721f089449d4e2": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01DuT83jsWsiAb2Fv4uRdbdu",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 is closed",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side probe shows issue #1 with status \"open\". The network log has only a GET of the page and no close request. The page shows status \"Open\" and the \"Close issue\" button is still there. The banner saying \"Issue #1 is now closed.\" doesn't match any of this, so it can't be trusted."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01DuT83jsWsiAb2Fv4uRdbdu",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 is closed",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side probe shows issue #1 with status \"open\". The network log has only a GET of the page and no close request. The page shows status \"Open\" and the \"Close issue\" button is still there. The banner saying \"Issue #1 is now closed.\" doesn't match any of this, so it can't be trusted."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2939,
+    "outputTokens": 194,
+    "cacheReadTokens": 1821,
+    "cacheWriteTokens": 1116
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:1d50b1086bee36e70d6812608cfca6c0003d06c4e71ff2e51175a9675c9dc241": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01N4TLduGoaRfRRvynBgPbC7",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side probe shows issue #1 with status \"open\". The network log has only a GET of the page and no close request. The page shows status \"Open\" and the \"Close issue\" button is still there. The banner saying \"Issue #1 is now closed.\" doesn't match any of this, so it can't be trusted."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01N4TLduGoaRfRRvynBgPbC7",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side probe shows issue #1 with status \"open\". The network log has only a GET of the page and no close request. The page shows status \"Open\" and the \"Close issue\" button is still there. The banner saying \"Issue #1 is now closed.\" doesn't match any of this, so it can't be trusted."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3180,
+    "outputTokens": 192,
+    "cacheReadTokens": 2937,
+    "cacheWriteTokens": 241
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

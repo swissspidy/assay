@@ -1,0 +1,143 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:46:29.426Z",
+ "turns": {
+  "sha256:2857806bbbd976e14c140675088add1d3737035662a01dc67a9b1f78d38a648f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01BJ5p14wje4yZUPJCGCLPqz",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01JfXwyMmQ9ayqypkQV6jSiF",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01BJ5p14wje4yZUPJCGCLPqz",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01JfXwyMmQ9ayqypkQV6jSiF",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1829,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1825
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:77b101cb9e9eff420d343dd0711369aca401f07dccf11721aa34e013fa851fe5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01DeyQ3kdCf8CwDy5fw5zEcg",
+     "name": "find_nodes",
+     "input": {
+      "text": "City Library"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSvAUKEAgTGAI4AUIIdGhpbmtpbmcSDGukyegD0SBYhPlurhoMYRGLRACXqA48+6GNIjBDiUXHkZrMJCEC4zcGQ6TTpAckG8XGB49HtZ0Dw65tvOB0qbjRBGyCcNG1hvBuf1wq2QR8VRQanGx/JvDkzOEfFRljgBRXCfCFqj3XrfwYsjN5Gq5n3Z9RdMEmGQD15E06p1Dgev7BSKoJxOaRcSfpvl0P0aQ35zQMvFHGQasr4kYYRNMARe+N91bQEqzekoC2zH+AeU3Q3RkAueDVZ1wQXDJYea+vYn/U3Z9oZnaMCLxMv13nf1f5Vr19AH+/fhyD1o1axNiqgTrrLlBBWT9hC7emxW0a/h9JvofdLlCbZSnsqP/fD1ZVum59l79Odj4clhs6PxuWY+r/276NHyrD3S+YAN3dknfLI/S3MXtYxhDhXLzZu+ljTHVdHwZae+q2fDdoHsCurOzPSuyYwAigh5BSoQdD3d+jU7qPnMD4x70QRLHsG6yAyo1clVEu21kUI2g5uHYnAovVRPoIZ3NwrkqHY1LyMTpJFK5BtgwdLYdxJboxadG38t1jexx7HT5w7JMiOg6qgJU6nf0B4fdtEgwPVnqCHFFpHZJN8lHZ+2pdwihHVYzFxGFYVMuAXSg5ibYh5UEqzMo4486Qnpjgf9lPRutiE/iNhZjTbywQlDC6qzcMEz1Mg8PPcBVAWJLkUgzREoEvVYfHvTB+OCLDZeP+b3ioPfZTevP2Op6BinCgHsypDqoJ1Vr21DDCGfvNWXKPqJploRAz45KG1GTNlTSaAvXGKTj+lCoNlrt7xWoVTdCVEOxCYbuEQzAK6+6MlYS9MN0TMkhiA0CGrctPDCrWca8TLW6RjtpW6/oVZUE5q6odoMueoUGoS9eaNewFnJb4Y7lucwIdqw48zAgC+a7gRtDiW6MbcW62GAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01DeyQ3kdCf8CwDy5fw5zEcg",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "text": "City Library"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2353,
+    "outputTokens": 78,
+    "cacheReadTokens": 1825,
+    "cacheWriteTokens": 526
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:718500fb64056c3f86e4e2907cf7aee11a0bb4e70032a91fdb62040758d2f008": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01B3tJF8Z1RvBhZkUhbmVhRa",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side events probe still lists Book club (id 3) with location \"Corner Cafe\". The network log has only GET requests and no PATCH/PUT/POST that would save a change, and \"City Library\" does not appear anywhere on the captured page."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01B3tJF8Z1RvBhZkUhbmVhRa",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side events probe still lists Book club (id 3) with location \"Corner Cafe\". The network log has only GET requests and no PATCH/PUT/POST that would save a change, and \"City Library\" does not appear anywhere on the captured page."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2450,
+    "outputTokens": 169,
+    "cacheReadTokens": 2351,
+    "cacheWriteTokens": 97
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

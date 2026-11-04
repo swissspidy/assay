@@ -1,0 +1,141 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:52:30.171Z",
+ "turns": {
+  "sha256:0574121f5d817c4325324218464b04fc11a083fbce2c1c87ac5067eaedb54e34": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015Ggpeit3c8jexXnj3e8FAS",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01KHAHPAjTG4TZtL96MoAn7E",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_015Ggpeit3c8jexXnj3e8FAS",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01KHAHPAjTG4TZtL96MoAn7E",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1850,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1846
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:65407f032261646271ca7dd8f714e29460f2c9aa2733286be62cf9314e074925": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015MLZSa19hm25YFpyphxB9t",
+     "name": "network_entry",
+     "input": {
+      "seq": 6
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_015MLZSa19hm25YFpyphxB9t",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 6
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2414,
+    "outputTokens": 49,
+    "cacheReadTokens": 1846,
+    "cacheWriteTokens": 566
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:2f8f616dfe22493df3b24fd9b90c97860d9d52cf08fdf2747cd7896835dc9649": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01UWQTgwCVoZi7vzbgQdvjwH",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent's PATCH to /api/events/2 sent date \"2026-11-08\", and the server stored that date (obs 3). The events probe also shows the Dentist event on 2026-11-08, not 2026-11-07 (obs 1). The timezone setting is UTC, so the stored date is not shifted by a timezone offset."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS5QUKEAgTGAI4AUIIdGhpbmtpbmcSDDHnl39tK7l1K8QQMBoMBQAreDqtoqwFCwBjIjAUKNSpG/Q3wD1Fa2n7hFb8vSfrxTM57MNcNqCPTucyWZYjxd/LLwtFA80lRa/cmAIqggX6pJSjpB62rHtm6dwha6rEgAaGzU8JjqndSWHpVBVkhDXC+gTLoeANNIQUMuhZgCrXLC0UotpwKt3CpOG2gxmSgxoXDrmOMjJj3oR3hrtIWdEnkGQjPU/sGSvAo1YE8N4lCb8EtZKJp9Wj66jgbVG4nh88YXfAW7FWnG0eGyFY7f2yC5JQwuxxOuWnz3cyYJhIuJIkFcr4VuwGpbBb1B3EXCDETj33FdezA3dDGkhwy8xz8KGcj3H9X/9dwJTp3fmA3hUa2tQ+UgC4JIx437NfRHBWcL0dvnZYwcPX3IUDUFL6N2vzMsjD43EkwF/dztXs0bjlcbegRf6CndgFTaPzp5EoFVV8R0lcUDUONu4TpWa/9YwOSkJoNs8JTn1EboETLgu5fuu5/Qwivh/zyDr1ZATAePexh5YZGWmbVe/0zZXztU8FJDBctwcCEtVUjSI+GGUwDImNB/LKR4T2kXAfmgeSCYnCfBIvFNmZvU9mp3KsYymA/x2j+PFqoLo0r78R2JOtdfF1rg7SlVeAkSEnfEIJZAEESURCmMg6YBkS10xO4EEWdpcRylHkFzIWeaTB9Dhg1fyhLBxi9mbY/jdffuaU43IbUhoTMjrEYONEwC4HtckQQMU5dr5w3OnRDKlT4duThYgUBhWsHacHKBlY0JNlzq1psxHsInJXFDmLinVYTXMhhey0QDOAHxCC5Z3jzMqORSa9fTpYfMRdzyozKapQZWi6wRLP/89SkttECAUaVGY6P4dfcCGoSKThZjTJxwqUU6HaFF3TzVp7SheUvPXc78S6y91NvV2sHmmTfD3WzgNU6lvLj7NHPpaTjvoUG9XOKM9mHG7apkOvkmNNROcYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01UWQTgwCVoZi7vzbgQdvjwH",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent's PATCH to /api/events/2 sent date \"2026-11-08\", and the server stored that date (obs 3). The events probe also shows the Dentist event on 2026-11-08, not 2026-11-07 (obs 1). The timezone setting is UTC, so the stored date is not shifted by a timezone offset."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2686,
+    "outputTokens": 239,
+    "cacheReadTokens": 2412,
+    "cacheWriteTokens": 272
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

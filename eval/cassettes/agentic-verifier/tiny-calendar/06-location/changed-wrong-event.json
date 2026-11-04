@@ -1,0 +1,161 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:46:14.750Z",
+ "turns": {
+  "sha256:7b5f25026c3cfd69acacb74be9b1ae93f5fca43223590ccec22d89efa5c169a0": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018SL28n5AWipgW85wuKD8ms",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01W4rpj4T5ZcWMh61Z4rVmzB",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_018SL28n5AWipgW85wuKD8ms",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01W4rpj4T5ZcWMh61Z4rVmzB",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1830,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1826
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:7d559c1604802f18be31555712e913c2ac1afb28c18d81ef3f43bd75702e46bf": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01M6HbnYFGeKTPfP2gYJstiB",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Book club takes place at City Library",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The server-side events probe still lists Book club (id 3) at \"Corner Cafe\". The agent's only PATCH went to /api/events/2, which is Dentist, and Dentist's location is now \"City Library\". The wrong event was changed."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSzgUKEAgTGAI4AUIIdGhpbmtpbmcSDHxtXKkL4j1EMDm5jxoMbsL4zK11FQc0c13GIjBtPRZwPk30JMGdtqZyjgPVkNcENyPiap7eexua5UXsRVZqqwd5B5T1LEjArFgqsDcq6wT4jGChAPWYJdK2orthIyv6PsiDd4W9F/Dc1XFPXCLfd25PRyq3GpY1dJS9TyZn/KTBUaoXjgv7AiWW7mDjePcGvO8NSK4tF9Y/EHNz5N42pOjuhOCQLGfgI5eij3J436eT/0l6Iikg8RiUgrHxgNvb6RABwhsQnXGrTt0KQrcBSgKZWA+RkXYE/ro8gPc2kb4recp3I9KU0Wtp1THg8KaCHgixu6RkQ20f7UtFEBrPy4nMzCFW9dgEIPCKh8y5q0CkWYZUcRULj1hHoKCKBM/npnBwLuBFOds/8tgJ4JewxtIfT/H1uXQqm68pFmar56aOwkhwgbuO8/I7/hiHG4SaI7IGm5hYwvwRr5lLqQkhdtCAjf069YP++B0S7VMxdX/qG6ew8fWCLiCnHB8NsIS0YX5X3gxRLmQxyeZjBcL2JsINdKmwNbQOgslNEvFzpO+iBPdwcf9g5EFJeXOKlsjoGMTiFweYBkqLhK3zXijKlgDXiu6IuJEZp65A7PqlrT5pYKb0OKOYHwP58u5qFGGhElTGrso7zDpV3qmda4YLzQgSvIcFlGPg6EEBug76kEEmAlsBxwSAhqBqZODEU1LyaOlPCtp9lP6evShzk5zrYVRW7VdLSMqHYzRCkiQ9fVbmyBkmcQK+kkTYjpx5LL9K9MruIrMxZkac+t/yEZ+qGtbcKy2nv9SYoVpDojMNrKUV6B/UlhH9SmcwTOeORaFKHb3XFv0yejEih53jwdVE23XYGYLfpyvWyabY6nuKnzUaAnWRGoj5hFwQ9K1WEGSfJddkW3Muj4RBdQO/CAnChmwaSKSbwycshK12GAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01M6HbnYFGeKTPfP2gYJstiB",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Book club takes place at City Library",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The server-side events probe still lists Book club (id 3) at \"Corner Cafe\". The agent's only PATCH went to /api/events/2, which is Dentist, and Dentist's location is now \"City Library\". The wrong event was changed."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2391,
+    "outputTokens": 208,
+    "cacheReadTokens": 1826,
+    "cacheWriteTokens": 563
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:80a33d696fac90fae1b30a9a4c72eab138d8b1f29e0526d9a1cbd5dda2a4ad80": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HwbeA6d3Dia5x73ARPeZFe",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The server-side events probe still lists Book club (id 3) at \"Corner Cafe\". The agent's only PATCH went to /api/events/2, which is Dentist, and Dentist's location is now \"City Library\". The wrong event was changed."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01HwbeA6d3Dia5x73ARPeZFe",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The server-side events probe still lists Book club (id 3) at \"Corner Cafe\". The agent's only PATCH went to /api/events/2, which is Dentist, and Dentist's location is now \"City Library\". The wrong event was changed."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2647,
+    "outputTokens": 169,
+    "cacheReadTokens": 2389,
+    "cacheWriteTokens": 256
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

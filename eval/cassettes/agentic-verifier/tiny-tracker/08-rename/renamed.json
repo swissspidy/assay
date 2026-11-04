@@ -1,0 +1,194 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:41:56.580Z",
+ "turns": {
+  "sha256:972a894ddaa0850a309e1d684182425b7a555b8a0139febda095e0124e68c063": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Lq32rbuMzpV9R8bcvrVJK7",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_012atSwchGXM1zfpzAFCdLAm",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Lq32rbuMzpV9R8bcvrVJK7",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_012atSwchGXM1zfpzAFCdLAm",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1855,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1851
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:f962ae55c62bd67714fc0dc1b275fd4b7c390bbcb7bc7803e22ebb0897a4e0da": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LyB4oTXyv9JJwh14YJE92P",
+     "name": "network_entry",
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSzQUKEAgTGAI4AUIIdGhpbmtpbmcSDHqsd94y0p+NNvalsBoM2fHeBpZzLDYt0aX9IjDAktlmq42GEylCo8TQevjuqD/mfgdaZuhPPOc+w4ItWm47ezucJK52QP2uidB7qDkq6gSVXS9Hkvb4ta2oq+J8C9tymdgnMIL3/umqBhDPvqlMUEXnPlzNaL3ybDgQBkiFMylM96fOnjIfEA2NxWXox1urunmTX+3+SXqhdehiiNqOrIYPNjC6SQsqvjDS9xYERNAeLXPyLthEjoMS+qx018c08r00/+0kZbgkZczo1NaozHiGmPTrBfi+AKKvPJwWkxGsybSrbe3sOOAlR1pgK/7bkuC+BzC5x97VNe0eLddNOtk1mLpmldyZiS1FW/Vl+6Yyo8HW6pa6TSyS0XLMyYLiC23lsz6UpWhSf1HePSRRPorhfZDBZ8/mijbkSrLLO3Hr0snmFC/JMnakZQdGTA6vYJDN5OlmfA/cAZSTCDQuWwqlUdiOjfEO5MytFukmQwKjIcccjxKJXa/4VpN8i5EbYkXcZN/KH5JvHnM0lA2xYyCER9x9xU5YAFlhehJSWxLaykqvjZO6fSfy0BXfoysP5uNgQuBU3ASJGpOLpXftgrNmmhr12ar0i3UkpJ8aRfAiaXyJIYD6Hv4p6Vjc1lxaY8GQe2az9NE0G1hAn1NjVVYP56PmnKFC35fOasIcfxar5vJIQwYf5tJEyTBaz7J9oLSodXKQBSSVq99Jl9TixkWO24T8L1Bkt3D2SnPmtSmJV5WtksH59VbfczzSCPOg5UqjFKKg/yxqO24IPHPYeQpdAWEAUkJCsFf3dJi5m1HkOLaEKzs2ueEXS8sdeU4MPpd07Gi9F+hveRMccmOZ54VCcpgGiqbLvVrvcAblaL0VLDS4bAJF07Jh4vN9Ajoo1Qp5MsQUnMOwAVg9UqzS4rZFyPcvK+3rs2cYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01LyB4oTXyv9JJwh14YJE92P",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2337,
+    "outputTokens": 75,
+    "cacheReadTokens": 1851,
+    "cacheWriteTokens": 484
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:225d4addf7611b8753dbd7c52484b2d979ae538b6058adb744601bbc2581e93e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01V3hJZjhEAJAHg3Q8FFJY3h",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #3 is titled \"Fix typo in README\"",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server-side issues probe shows issue id 3 with the title \"Fix typo in README\". The network log shows a POST to /issues/3/rename with title \"Fix typo in README\", and the server answered with a 303 redirect."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01V3hJZjhEAJAHg3Q8FFJY3h",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #3 is titled \"Fix typo in README\"",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server-side issues probe shows issue id 3 with the title \"Fix typo in README\". The network log shows a POST to /issues/3/rename with title \"Fix typo in README\", and the server answered with a 303 redirect."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2524,
+    "outputTokens": 177,
+    "cacheReadTokens": 2335,
+    "cacheWriteTokens": 187
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:d56e695e7f3cbb8d446d9b995a07548bd84cf2d2113f0f388e773f5e7bcfbe50": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Cy1XkYC2U1i5VgN87jEvCC",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server-side issues probe shows issue id 3 with the title \"Fix typo in README\". The network log shows a POST to /issues/3/rename with title \"Fix typo in README\", and the server answered with a 303 redirect."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Cy1XkYC2U1i5VgN87jEvCC",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server-side issues probe shows issue id 3 with the title \"Fix typo in README\". The network log shows a POST to /issues/3/rename with title \"Fix typo in README\", and the server answered with a 303 redirect."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2755,
+    "outputTokens": 163,
+    "cacheReadTokens": 2522,
+    "cacheWriteTokens": 231
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

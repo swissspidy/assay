@@ -1,0 +1,249 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:43:54.820Z",
+ "turns": {
+  "sha256:5b4f49636a2b9bd31edcc7341cfcafa354371849752a94d44d4ad67a3ea69c3a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011mHRbJXi9i6BUyyavP3br8",
+     "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_01SeYpFniGDYUhkK9tVgQYxV",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01FbCfWWBzEjrwJL5tRMvKZf",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_011mHRbJXi9i6BUyyavP3br8",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01SeYpFniGDYUhkK9tVgQYxV",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01FbCfWWBzEjrwJL5tRMvKZf",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1940,
+    "outputTokens": 72,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1936
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:5cc4433d6e88f773b8af21de02252a297b91a2c69c04758307159215072d891a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01541M83enxBiEcwn8Q8K6gM",
+     "name": "network_entry",
+     "input": {
+      "seq": 6
+     }
+    },
+    {
+     "id": "toolu_012UbDNRjFaDrNdUh89o5jLx",
+     "name": "network_entry",
+     "input": {
+      "seq": 3
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01541M83enxBiEcwn8Q8K6gM",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 6
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_012UbDNRjFaDrNdUh89o5jLx",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 3
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2709,
+    "outputTokens": 95,
+    "cacheReadTokens": 1936,
+    "cacheWriteTokens": 771
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:223e29fc8ffa5878b99a0c5dc162358b4d849f76afe4bf2ed7a7d7c7568595d5": {
+   "stop": "tool_use",
+   "text": "The agent did not place the order. Its one order request (`POST /api/orders`) went out with an empty name and the server rejected it with a 422 error (\"name is required\"). All five requirements fail.",
+   "toolCalls": [
+    {
+     "id": "toolu_016ZFkqQup1vZ2JoWss9Md6w",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         4
+        ],
+        "reasoning": "The only order request (POST /api/orders) failed with 422 \"name is required\". Looking up the latest order returns 404, so no order was placed."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         2,
+         4
+        ],
+        "reasoning": "The request asked for express shipping, but the server rejected it, so no order exists that could ship express."
+       },
+       {
+        "requirement": "R3",
+        "status": "fail",
+        "cites": [
+         3
+        ],
+        "reasoning": "The final page is still the checkout form. It shows the alert \"Could not place order: name is required\" instead of an order confirmation."
+       },
+       {
+        "requirement": "R4",
+        "status": "fail",
+        "cites": [
+         3,
+         4
+        ],
+        "reasoning": "The order request was sent with name \"\", not \"Ada Lovelace\", and the Full name field is empty."
+       },
+       {
+        "requirement": "R5",
+        "status": "fail",
+        "cites": [
+         2,
+         4
+        ],
+        "reasoning": "The cart still holds the Blue Mug, and the order attempt was rejected, so the cart contents were not ordered."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQStwYKEAgTGAI4AUIIdGhpbmtpbmcSDF1sEqzUb7szTLh2/BoMcnfpdN1NttYg3yI3IjCbXU24sSb4LaCx1Tlt3pttG7luXMacQ+470jlism9yzzfiO45l/sA0LXdMv44ZfJoq1AX0wNyHFaagyukC/7VlXTvLHi4pmUInPlXFKRKLSnVa7peERBIZTHiVcsPHIyDdcrymOEXM7bVuVG1cAmFGfkrrMQkCPnYMxDOqoR8fcOZsOURLLxbPVDq0wkPD/OUYDhQDv0xgQvdZGSInn/btCIsC1MKLY2m5e053QwNfQfze9z8fq4DZBL7xRtoscUQHWtLvQ2HMqRz3gPznebG60zutv4Hm00vh/cOqGffUg86ZcBTcWg6W/xYpoRo8rTVD76qa8w8z+TmTZqlr3V0kBwg+3zVF05KpeXnbGwV6oupDQ5A5n8W2LC9t4AMXb8kJ5eBQ/3F7qY9106BUi+YTHYL1bGBiJIOgusuVg5RpVwW+GhtRU1dMNXmwIgBBnsw5nAWix46+/L7XxhLOdhNLD1XDWeK1GXHZDRzyFSi8oyipK7ttP6vg+rcEYJhlabEJmBLJNlNx5xeU/FfZBBWxJqgGFyKr8Co7gs8iA4Tus1BylCkp2ek0838aabg7EN/X6FUSptfEYFi01IOEgDKuB+edy85R40hRXhE5Fzn6G3gRuc6X1IwHxs+VP0pHZWOiRXMmLAwTs6yTtRV8TnzBz/pLwkI8TK3mMxWnJGdCFbk5oK79t8J5uXfc0+QNmr1P20wD1tBwToQaxbNKig0eJJSOPmkVBN3dXUnWSjj+pAc7AADfQ2STsJKGGUNO+Luidp+3agCQGX+34y9Cmv93ipPprQvbT2gHThGURMTSYAh2pTX75IcRW+3Y7RsXsepgN/fx05RfDexg6uXkZxsUh2H1VGBAWF+KPr9z5DgC77lzh0wXwqZuxczHgi8xFHdlqdoiUefLg2L7X4fIpQpjJFaz3otmvCN7qAa++CQybVsjXpTvPN/6+7/V25YUw7/HeauvGT3ilswYdya+nYSerO1vx04C/xdHp93L2J3vVyPhAPIv6dj35nqP40qhkgxH9RjW2nXAGAE="
+    },
+    {
+     "type": "text",
+     "text": "The agent did not place the order. Its one order request (`POST /api/orders`) went out with an empty name and the server rejected it with a 422 error (\"name is required\"). All five requirements fail."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_016ZFkqQup1vZ2JoWss9Md6w",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         4
+        ],
+        "reasoning": "The only order request (POST /api/orders) failed with 422 \"name is required\". Looking up the latest order returns 404, so no order was placed."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         2,
+         4
+        ],
+        "reasoning": "The request asked for express shipping, but the server rejected it, so no order exists that could ship express."
+       },
+       {
+        "requirement": "R3",
+        "status": "fail",
+        "cites": [
+         3
+        ],
+        "reasoning": "The final page is still the checkout form. It shows the alert \"Could not place order: name is required\" instead of an order confirmation."
+       },
+       {
+        "requirement": "R4",
+        "status": "fail",
+        "cites": [
+         3,
+         4
+        ],
+        "reasoning": "The order request was sent with name \"\", not \"Ada Lovelace\", and the Full name field is empty."
+       },
+       {
+        "requirement": "R5",
+        "status": "fail",
+        "cites": [
+         2,
+         4
+        ],
+        "reasoning": "The cart still holds the Blue Mug, and the order attempt was rejected, so the cart contents were not ordered."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3169,
+    "outputTokens": 523,
+    "cacheReadTokens": 2707,
+    "cacheWriteTokens": 460
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

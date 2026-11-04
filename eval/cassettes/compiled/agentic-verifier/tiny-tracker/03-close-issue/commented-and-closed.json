@@ -1,0 +1,179 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:47:07.529Z",
+ "turns": {
+  "sha256:2ed974870ecf0b14bbee1ceb4b5c60b7c8d984ae35faa42a716b090530fe5026": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0114LVss1hn9BSQNfybG5vsE",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01GNYRWzLEZWAZ1pPG2AhrxC",
+     "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_01FcLFRH28QC8riFtrNeCRa1",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_0114LVss1hn9BSQNfybG5vsE",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01GNYRWzLEZWAZ1pPG2AhrxC",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01FcLFRH28QC8riFtrNeCRa1",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1825,
+    "outputTokens": 72,
+    "cacheReadTokens": 1821,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:fe83210cfd1de0adbf1700c87daa4ef8445e73e43883a9787bfa5b2328cd6ffd": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Cq1E6xxhNkJFzSq6jdrrTC",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 is closed",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side probe shows issue id 1 with status \"closed\" (obs 1). The network log shows a POST to /issues/1/state (obs 2), and the page shows Status \"Closed\" with a \"Reopen issue\" button (obs 3). The agent also posted a comment, but the requirement doesn't cover that."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS3wUKEAgTGAI4AUIIdGhpbmtpbmcSDJthEmiBlROxX4/EpRoMQ34rQCpxksI39+pmIjDv3vgJ8b4qNNvjSGKZz63YIZYMN38aqPbLheFpCGvyFOv8Bt0TAp+46uk4DrWEvdMq/ATfdUtudhGFbLTlWavh4s9f8jTLWP2ABGXXKz01AnQdXy5hU20aPX1ktOqDykEnD3AvLCU1w4VsQt2SMRXPzDTsa1YsZBZAvPpL8xjuyAetW1dh5gj3xzCwGPgozR5IY5d6U1dOv8nDQh0hjrJEgEjYKr1PLpBmiaWCpIBcoUScJtAD0c4ddhb7Sdt8bo+Lk2qB0fy7CpR+vAP9sL8icnQRFYJQ3zhwHz1T2vh8xTWMPOJi8qsjhaSroGvQq9sMPGCGUYhqaGl2eZU2Zfgb7sH4Xy5rTZhbF7yapSbllWBOS0CKmFDMDX9fFUFKUZpgpzXBksTsMprm3yNEtEJVPkATBsohp56p0xcelWRDYcBQ/s9MI9eJjBvKchCIz65VhVVrWp54KBD76txsInkt8WqXCStoTsseC9E58yXqBmV0YQvu37piaeDP9fUslbIqzSJZhSI1iOZ2Y3m84oHkMtrcN4uFDCVcH9TUXMYgYnRie000AtpPMcL7tLabwRe5On2oJOIoJ4RxmhIUdxrrAWqtuMshZtregwy9ydiGup++d6WaLxG0uUk9i6g5tzG1Q9GHpC5BzRkrjcO6mjEkM52OKhywTPPftOLXsp3/yp/Ct1b4TOYPye3ADRHkjpkK8yDq+gADrrUr5hGHv/dVx072qmmxz7j6C4M6h9V+4XhR0YLyQ9WJMe0kcjPpfboV0P+rFYQW+NU29XeIE3eUBrsVaKza6EhgT3lrkPvrCHVzLMQI/cv0EcWjzxCRdqdoyAHk/Ey/W3sCV4YWnOvIvpixqtrrN7hDzFNSdoEifQsATxKCLNoFMocVi0soMMBfH7gVHjzo32bDZMFx/NYYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Cq1E6xxhNkJFzSq6jdrrTC",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 is closed",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side probe shows issue id 1 with status \"closed\" (obs 1). The network log shows a POST to /issues/1/state (obs 2), and the page shows Status \"Closed\" with a \"Reopen issue\" button (obs 3). The agent also posted a comment, but the requirement doesn't cover that."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3126,
+    "outputTokens": 232,
+    "cacheReadTokens": 1821,
+    "cacheWriteTokens": 1303
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:13e0944cc7227ed7a50bca00844ac937eda3ebce6ae8e3b5ddd5d1f7679c7a33": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01DCAiKpkEg5zEw31Gm9Sy2s",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side probe shows issue id 1 with status \"closed\" (obs 1). The network log shows a POST to /issues/1/state (obs 2), and the page shows Status \"Closed\" with a \"Reopen issue\" button (obs 3). The agent also posted a comment, but the requirement doesn't cover that."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01DCAiKpkEg5zEw31Gm9Sy2s",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side probe shows issue id 1 with status \"closed\" (obs 1). The network log shows a POST to /issues/1/state (obs 2), and the page shows Status \"Closed\" with a \"Reopen issue\" button (obs 3). The agent also posted a comment, but the requirement doesn't cover that."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3405,
+    "outputTokens": 198,
+    "cacheReadTokens": 3124,
+    "cacheWriteTokens": 279
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

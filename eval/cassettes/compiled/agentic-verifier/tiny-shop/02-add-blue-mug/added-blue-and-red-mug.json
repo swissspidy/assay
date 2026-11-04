@@ -1,0 +1,194 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:41:41.047Z",
+ "turns": {
+  "sha256:bc0757a21c1ae29dfa1104f3f63cd656cdf7ff777c97ef36e991839399ec87b9": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01J1oRhJYRzidMNkJnpam9o6",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01Dix5KM9pbv5r4qAMjKMjxR",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01J1oRhJYRzidMNkJnpam9o6",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Dix5KM9pbv5r4qAMjKMjxR",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1830,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1826
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:cffc62dca73e5cf1cf55cf2e192acc5ec53668722d04266b1e5304558364cf7d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Y5WL7ttaffvVDhZ7ZJ36yt",
+     "name": "network_entry",
+     "input": {
+      "seq": 4
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS+gUKEAgTGAI4AUIIdGhpbmtpbmcSDGwprOPQN+kBJpbr5RoMQG9u5BlsGOpG2+d0IjB1iPIK19rkyEBAnVEhABZpRqZA2wn6Nf01Uh4fhKMcEL6vTCAAP1wrKI9/y/VqUBAqlwXVG41TefLpvKAG/zDj+y7JanmugiVE24IPMJrSgfK6R8zCUCVrEm8ptSZvVdxxKw1L+8MCLTlylfnD1rBxObhQN04t+U/8qzX/P9BmLOH9duA8dzaNtRgW8D+6zq4vtBsHN0uAu2iQwzgZuAz0oxw3in/dPpl53Yl06m0RUzg4BB+3yDgbDtzjCKCz1Z9LNPNoOEnCBzapbwKuniu9AJMUJzAYXCzN2vyDYlPwcyr698cqjVUquqKCQBVG6pFZqWAQTp6mtGF+5kDymFDbiqSvtFzrI0JTbmBAI9+dU7/kMgDgRChH0RrlxFZ11n8CB1nbMJF/WZ3eL3uDZB5cDRfVbre9Sknu2sqZ584Y4+5vE/Wxz76ub5l+Y+9UPui0/05zCOXHQkIqq8CHCgVeoc96lLwB0oTPPMC2CEb3+ZTHa6FLgCq4l5wv5u+ugzrkVYyhmEAIS0wNfMp67034cTDqJ1qVL2lZHIYBU5uJwugqpxINrYlJadca98d4gWPlYIwAJtV+RoULhFRkaRIZpCyIbNQjEazRQv7lPQGAEtOTsfrDE/zNmR8czoZe3r6lKO3BHOqMVT3PPt0zlLxctVnlip0HD2dl3VPyBer01brpwir6laoSVywgao4+MUp1chdjKs5zRrOQK2iUdWeZjDrKE/R6c1fTvoDAEo68nu6FlGehqJy5joksJBFFTG9ZRfTlARAm/drN64oQnIkl01qsZUgguGtF5CM5QK4FlJCrdorJvUZCjZTtd9rDis/RGn8MwYM9SVW8VloGgzJV1R/0BlDEokhk3JZTn0ufWdEXkoDVXXmRe1R56aIlGnjyvjFvhHOXoihsPCCxy2fu/g+NG+558w6a/3zY3ns/Bj+T3yCXn6iVwtsYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Y5WL7ttaffvVDhZ7ZJ36yt",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 4
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2250,
+    "outputTokens": 99,
+    "cacheReadTokens": 1826,
+    "cacheWriteTokens": 422
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:fd548ea5e9fa904060f1c3a3a59f4e521986a0898b9672bf906c2723879ca0f6": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01TJEcFJSMDHQQ3tSRD2P7Eh",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the cart contains a Blue Mug",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server-side cart probe shows one Blue Mug (sku MUG-BLUE, qty 1). The POST /api/cart/items request with sku MUG-BLUE got a 200 response, and the cart it returned includes that item. A Red Mug is in the cart too, but this requirement only asks that the cart contain a Blue Mug."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01TJEcFJSMDHQQ3tSRD2P7Eh",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the cart contains a Blue Mug",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server-side cart probe shows one Blue Mug (sku MUG-BLUE, qty 1). The POST /api/cart/items request with sku MUG-BLUE got a 200 response, and the cart it returned includes that item. A Red Mug is in the cart too, but this requirement only asks that the cart contain a Blue Mug."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2608,
+    "outputTokens": 206,
+    "cacheReadTokens": 2248,
+    "cacheWriteTokens": 358
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a0e0c4283c4e507d77bc461d0acdf510dee23d181e0cf11749f3184a8be8e728": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01BpSFKQCMEcXb6QsUAJf7wY",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server-side cart probe shows one Blue Mug (sku MUG-BLUE, qty 1). The POST /api/cart/items request with sku MUG-BLUE got a 200 response, and the cart it returned includes that item. A Red Mug is in the cart too, but this requirement only asks that the cart contain a Blue Mug."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01BpSFKQCMEcXb6QsUAJf7wY",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server-side cart probe shows one Blue Mug (sku MUG-BLUE, qty 1). The POST /api/cart/items request with sku MUG-BLUE got a 200 response, and the cart it returned includes that item. A Red Mug is in the cart too, but this requirement only asks that the cart contain a Blue Mug."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2864,
+    "outputTokens": 199,
+    "cacheReadTokens": 2606,
+    "cacheWriteTokens": 256
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

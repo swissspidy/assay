@@ -1,0 +1,207 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:51:57.596Z",
+ "turns": {
+  "sha256:88b2a209d7f48d213d524821f6785b76b9c04d825823e17c3cb307b4b1e0a698": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Tg9T9FWvvWx34QA1KqqCHK",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01HwydsB7HpYbqK5R2c5UNA4",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Tg9T9FWvvWx34QA1KqqCHK",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01HwydsB7HpYbqK5R2c5UNA4",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1833,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1829
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:56b62e8834068e14183eca32f9d68c1d1ab07eabb292a3505d3fddf172cf1d97": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0127v4RuP9qNsgqkFtaqhhZe",
+     "name": "network_entry",
+     "input": {
+      "seq": 6
+     }
+    },
+    {
+     "id": "toolu_01RYhCGNnvhtyzJzoXRH6drq",
+     "name": "find_nodes",
+     "input": {
+      "text": "rsvp"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_0127v4RuP9qNsgqkFtaqhhZe",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 6
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01RYhCGNnvhtyzJzoXRH6drq",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "text": "rsvp"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2404,
+    "outputTokens": 98,
+    "cacheReadTokens": 1829,
+    "cacheWriteTokens": 573
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:269ca34549a0003f217bb5105a98b845c737b614d5e95e2322a0fa77dbe0191d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017jcBXCBm8vYKePSjZq1JPJ",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "my RSVP for Book club is going",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent sent PUT /api/events/3/rsvp with {\"rsvp\":\"maybe\"}, and the server stored and returned rsvp \"maybe\". The events probe also shows Book club with rsvp \"maybe\", not going/yes."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_017jcBXCBm8vYKePSjZq1JPJ",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "my RSVP for Book club is going",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent sent PUT /api/events/3/rsvp with {\"rsvp\":\"maybe\"}, and the server stored and returned rsvp \"maybe\". The events probe also shows Book club with rsvp \"maybe\", not going/yes."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2928,
+    "outputTokens": 180,
+    "cacheReadTokens": 2402,
+    "cacheWriteTokens": 524
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:828eddb5d9bc926a6b6edfe919a4f30c49683f60ac1e6874f072e5dd786d1f92": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01J9JHYzXVh81gQLJgppPrfY",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent sent PUT /api/events/3/rsvp with {\"rsvp\":\"maybe\"}, and the server stored and returned rsvp \"maybe\". The events probe also shows Book club with rsvp \"maybe\", not going/yes."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01J9JHYzXVh81gQLJgppPrfY",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent sent PUT /api/events/3/rsvp with {\"rsvp\":\"maybe\"}, and the server stored and returned rsvp \"maybe\". The events probe also shows Book club with rsvp \"maybe\", not going/yes."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3157,
+    "outputTokens": 174,
+    "cacheReadTokens": 2926,
+    "cacheWriteTokens": 229
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

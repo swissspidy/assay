@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:28:44.992Z",
+ "turns": {
+  "sha256:86cc52d8f82ee4cac43f3902f118e49f0fc867ad985ee9e90752f55a9e6f5bef": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Bvibkp3dcT8RkSeScTNbvr",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The issue list was never filtered. The Status filter is still set to \"All\" and the Label filter is still set to \"Any\". The table shows all 3 issues: the open bug (#1), an open feature (#2) and a closed docs issue (#3). The task was to show only open issues labelled bug, which should leave just #1. Neither expected outcome is met, so the agent's claim that it completed the task is not supported by the page."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Bvibkp3dcT8RkSeScTNbvr",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The issue list was never filtered. The Status filter is still set to \"All\" and the Label filter is still set to \"Any\". The table shows all 3 issues: the open bug (#1), an open feature (#2) and a closed docs issue (#3). The task was to show only open issues labelled bug, which should leave just #1. Neither expected outcome is met, so the agent's claim that it completed the task is not supported by the page."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1373,
+    "outputTokens": 206,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1369
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

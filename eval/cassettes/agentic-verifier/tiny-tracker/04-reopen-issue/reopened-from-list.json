@@ -1,0 +1,198 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:39:36.013Z",
+ "turns": {
+  "sha256:43a3e089319cbbf47943dab3f04457ee59367ba2c3bcb8148c630b1f3d882524": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CgcPJbwUtBrzCQ5GCEAiur",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01A4ya5xFptx3iiwbS8x2E38",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01CgcPJbwUtBrzCQ5GCEAiur",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01A4ya5xFptx3iiwbS8x2E38",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1826,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1822
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:1de87314b64abbcc45954bc8f3e053ff1bc9e7a44fe3eb73efda8663995d0703": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01EA8VoUVBmC6epbBUMLz87V",
+     "name": "network_entry",
+     "input": {
+      "seq": 3
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01EA8VoUVBmC6epbBUMLz87V",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 3
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2364,
+    "outputTokens": 49,
+    "cacheReadTokens": 1822,
+    "cacheWriteTokens": 540
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:bedfe39969559ef8676d10db1a38d4e351c231638d938c1f90ddffd1134c34e2": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_014RhYMHkUmdDwZejzQcRLdk",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #3 is open again",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The agent opened the closed-issues list, which suggests #3 started out closed. It then sent POST /issues/3/state with status=open and got a 303 back. The issues probe now shows issue #3 with status \"open\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS1AUKEAgTGAI4AUIIdGhpbmtpbmcSDGxrkfvzZ7aYRxYKYxoMwAHw8y492uaY/pSTIjBgW+s9O9srRuqt/U4mdWbBBW2i9AylsxtBMBsZ/2i8CTxh38Ru5Dxjb3nZBxvqOU8q8QQRobByBWt8SPLj3OyonOnuKViFAZgAB0Iyh1opzj43tjt+eAKSOi69Fx7jj81FQ9ShLVfKhb6TBib7NBzkU75h8LaOOzJvf9XtH3KUsYJdHUI4Pgt66Bo2kdlzNP+j3Hm1DppBJKE/jZknzI5nzr3TjWNrD/lv8d0MA7iU3g0P9iyIgiUO11Flj4YGlN8lHe7Om75A5RGEKZFcxJQO8NNmiHkUlZ90EJuVaH73PL1DDRYO0OPytpJPV0hattoUgOwzzurj0LN196DXChRe1ZoRy68QNozbLoMa8mglOvLaBFHSMc8aj4JM6ZQZfzsDco1z34eTVkHeEhyWWiGvvNx7FA+UvyYm5D8VCvNHWgEIfgUmNOzGMW7bxq5v/MoWVRFEOeNDvjbWgvwEJolURqyOP/XWLDmOGiRAlsx3Pld0M7vcFM4vSLSm1skhlzoRndlGmQHNfXJHWt+MwpTbBLQvrN8+uzRYytTXv9zK+hKDhzRR6Z39JXPBR7WwpROT+fp/5qgJTwXFNzdXfUdckavWMAiMpkqjdxXQhbuu7U38gVuL6Ld3TEpAiKIo9QXwIsaz5Q8ub/NYiXl3CyXRcmT8MpbQKNN28BPKxdCtrMG8NSTM0oSynsA8cdAInfGzOPjSyirHn9vYROHWVuFDg9ng2pbvzHrmL5DJbXrJID6o6do3ZkETOzyYF73m7tCedmNusoyA9/CjgQE/BKYxSY4QYlkexPHQPWCjRtK+fdlhDtAOLYFVnrIhHf40FNVLTHOU8p/PnBhtJEkftW86Jrddh0YN/1GUPBTKZYc1ke/GvlpmT2vYqbayyXrlDjZ97BEgGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_014RhYMHkUmdDwZejzQcRLdk",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #3 is open again",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The agent opened the closed-issues list, which suggests #3 started out closed. It then sent POST /issues/3/state with status=open and got a 303 back. The issues probe now shows issue #3 with status \"open\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2518,
+    "outputTokens": 196,
+    "cacheReadTokens": 2362,
+    "cacheWriteTokens": 154
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:05f15cd2da94554d8db4fc6a6e30f2bfee8f29d0861c467e1bf12b08f8db5ef0": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018fdXcpoaH4DMZsE1CekCoZ",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The agent opened the closed-issues list, which suggests #3 started out closed. It then sent POST /issues/3/state with status=open and got a 303 back. The issues probe now shows issue #3 with status \"open\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_018fdXcpoaH4DMZsE1CekCoZ",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The agent opened the closed-issues list, which suggests #3 started out closed. It then sent POST /issues/3/state with status=open and got a 303 back. The issues probe now shows issue #3 with status \"open\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2761,
+    "outputTokens": 163,
+    "cacheReadTokens": 2516,
+    "cacheWriteTokens": 243
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

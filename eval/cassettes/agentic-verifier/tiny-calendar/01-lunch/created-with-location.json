@@ -1,0 +1,207 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:43:21.993Z",
+ "turns": {
+  "sha256:4e774acca7e97349e018626c356d18e54177fa5b4fc309c26618e8fe7d3a3c89": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Be3SbPVVoGHuhRoNnk1yKM",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01GveEpRydxnQZ8oDbnSnEW5",
+     "name": "page_outline",
+     "input": {}
+    },
+    {
+     "id": "toolu_01WPJR1j6A2rwkTXic3uherT",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Be3SbPVVoGHuhRoNnk1yKM",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01GveEpRydxnQZ8oDbnSnEW5",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01WPJR1j6A2rwkTXic3uherT",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1933,
+    "outputTokens": 72,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1929
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:7cbf8faf87693c08c640c6da9f0e149f5b83c3057406a79e56e709c8c0b534b9": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FeUkfQzviwevytWfmFGbrK",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "an event \"Lunch with Sam\" exists on November 5, 2026 at 12:30",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server-side events probe has id 4, \"Lunch with Sam\", with date 2026-11-05 and time 12:30. The network log shows it was created by POST /api/events, which returned 201."
+       },
+       {
+        "requirement": "the event page shows the date November 5, 2026",
+        "status": "pass",
+        "cites": [
+         2
+        ],
+        "reasoning": "The event page /events/4 shows When: \"Thursday, November 5, 2026, 12:30 PM\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSgwYKEAgTGAI4AUIIdGhpbmtpbmcSDNH/ar50UdnxQuycaRoMnZfvJkW/xD5PQFkWIjCQBx2QxyZdyB71MVGkXh6oE7X/8RPbAiExOFd3RmOhtMbRzkvzdS6WRS3dcFBKH/oqoAWV/P9Yv66Cv2e/0hOFlY02tZGwF6zYeVjv4lqhknz1T+aGg9l/u8lH9+V5Tt8q37su5dNI3781oiHQNRI9ybTzzJBKMY0wwVChhW83rsBlTBAiDGBhjqAAk+8wmG1nvVIObhcFKNH+KC/pi9KnC5DFW6y5v4vqMsW8io0rxSFNFWsKNw3pUXk+7H0p91z++0mEBVmDi4sCMS1/cipp/vUuj9M0JlSmZPEOgPFGZFWZTjd48+SKhVpEWFNYUgVVogdPzDw1Ltm5SMg9dgwIBwArPmbwU3p4VN/81yzRePHHxGlmfxREOgIpjFs6MQIX4BrgpobukScpB7+6BevZRresHlHDsXwx/3DdEqT2IC9q2tDsL9unwEVtFIMY30i+Uo+b4tN6e+3lIvKS23/sS4WSK4+75ss5PUH6QSHnzsvlmgg7yoZJuWy0ctMVfPEv5Jpf6wF+e94N6iPqKgZ3Ll3p4N9dRUGPo731VN5471fJvC8fSyXJIN5rvLYf8RNF2fu/555HZMdiqnH/A5dxu5FEHG1g6YLfubw7Bf+Ui05eadvCMLj+4KnF0e3DM5qb7vVaxb47vhVSSDnaj2HioJdoxutscOiS0jJrl2KVOamWNIG3ZAPMiVG1HEn9N6C0L1+Q7/tloOIlj+cCax8uy9IujbSIrdWGvSeECFE5WxvDeyU8KplrrOQ9SALYUP7R+MKNcsv0qTjuuzqezf7976RzgL+zIyEsjzK3X3caKL+m5arVdruiCiegjAQGfle/IpAgnARjpr54L4G3P+tr5HHzl2ICcLlAzsHV6GGU/LZEBZ1PwQg6WE6PJTrGYjHv6gIrxeM9dIVhPpNDjxEj49M9CRZXgR2+2hc8myhGXlKz/vAv7dk98Vqjj1EwsBSt4pIYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01FeUkfQzviwevytWfmFGbrK",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "an event \"Lunch with Sam\" exists on November 5, 2026 at 12:30",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server-side events probe has id 4, \"Lunch with Sam\", with date 2026-11-05 and time 12:30. The network log shows it was created by POST /api/events, which returned 201."
+       },
+       {
+        "requirement": "the event page shows the date November 5, 2026",
+        "status": "pass",
+        "cites": [
+         2
+        ],
+        "reasoning": "The event page /events/4 shows When: \"Thursday, November 5, 2026, 12:30 PM\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3188,
+    "outputTokens": 305,
+    "cacheReadTokens": 1929,
+    "cacheWriteTokens": 1257
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:3f40fb7414a626d42346d8758337b1983248272ac6bbc5591a799404a387933c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015ZNtehDxdnsfnYXdbkt5ED",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server-side events probe has id 4, \"Lunch with Sam\", with date 2026-11-05 and time 12:30. The network log shows it was created by POST /api/events, which returned 201."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         2
+        ],
+        "reasoning": "The event page /events/4 shows When: \"Thursday, November 5, 2026, 12:30 PM\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_015ZNtehDxdnsfnYXdbkt5ED",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server-side events probe has id 4, \"Lunch with Sam\", with date 2026-11-05 and time 12:30. The network log shows it was created by POST /api/events, which returned 201."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         2
+        ],
+        "reasoning": "The event page /events/4 shows When: \"Thursday, November 5, 2026, 12:30 PM\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3580,
+    "outputTokens": 222,
+    "cacheReadTokens": 3186,
+    "cacheWriteTokens": 392
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

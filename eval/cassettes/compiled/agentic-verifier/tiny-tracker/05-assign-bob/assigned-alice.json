@@ -1,0 +1,199 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:47:48.202Z",
+ "turns": {
+  "sha256:5239123a0da20e61c2d9ac32427a2882fd81c990c7edcaf3563387a1b5bea5a5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01RvmDZ9tEj5vAxouxvpsvN1",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_0138gyhnxyPPKa7Q6ED6sujv",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01RvmDZ9tEj5vAxouxvpsvN1",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_0138gyhnxyPPKa7Q6ED6sujv",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1838,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1834
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:92b3e171ec3d25684e578fc0d5b2dfedcd81cba10f1ce3f53f626a616bad7b33": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_013kCLCNPHxvdxxoGsYp26he",
+     "name": "network_entry",
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_013kCLCNPHxvdxxoGsYp26he",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2321,
+    "outputTokens": 49,
+    "cacheReadTokens": 1834,
+    "cacheWriteTokens": 485
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:61716a986ce1c90133468adb7789a8ff89cedf0c3b3048439a14451f837b126e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01A3YZx5J8oqMjrJk8rV8Qrw",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 is assigned to bob",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent's POST to /issues/1/assign sent assignee=alice (obs 3), and the server-side probe shows issue #1's assignee is 'alice', not 'bob' (obs 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSsAUKEAgTGAI4AUIIdGhpbmtpbmcSDJaLLQ9AEAA83BoL7RoMs/ia6YUsJgKvsWf7IjByVuFEk4+9SxarNIeULnD4MLiHBWQ3C2FcbYlPAHuVv0WjwDRR0eWxda6WskTRcuUqzQSMZ1Yip7HBilKFLVfH3TzjBit8VQ9un5l23Hwu7qDZRtnqJNmZW4HKdsX9Ww3RONA00tCcuRXdVhZZLdFeOzGlxxr47tkKwXbpFGegQK8QWBXr0Q5GEu2vopJoKq52M8wf9DJ6jyrpC2x+Z6dRnKjmKsKafGz4prQIJK24ohvLy47nDMgCXRZnG91qQ79VaQDPyksT95RqGbN4y6HZ3nMbROoNzlCHlXMazDJGQueGFdayB6KQ7Se7l2jpf+/1mH0Om2L2xmIYh67OEAdjQFsqrxwp7/KTQ36OdOXz3rfQjNG7dz0FsD9klo/JH5X6xG1ujVe96m0ww8pavLhFVzp9ODO9UgRYeFDGGNx58Opa+fRBtNEBfqvBMepa2FQb8cqvxCN9fYT32VeLw6I8QbypsBykKX17eItH57bpVnUTFKnLVjwwc0Lb0agy21++SpoFPmNcNx0WTLIi78F9lK2kzvSLxek6TjaQ5vgnEB4Clgl1qZ0iSLg3YKDb7O+BUgcD7NOUjSvEpYaeAFJv+VFaZt0Gw7V7M63FUkv0hpgMSXsaP51Pv4jTbUeVnkmPVyQqkxc3xhg2ffa1H8yuO5kgqm5c+oM35NV4WS3dMmjsgfUIZhikKUmsOEj/NbWZWfcp7k4WBBUb6lIaZ2TOsywW338VK+Y6NWJvROPxV9zdekbWbq8RnfgWyz2aeaWA5DudgH52NW+9cm5IrIBg3ioxkWBIj8ayv7znqevIzKxTTy7pzbxIzNCjYlpr1uNW8wFZyx4p1R/a4TNuk+aDGAE="
+    },
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS0wcKEQgTGAI4AUIJbmFycmF0aW9uEgyfhmYNs+pVH7AjpKIaDGRzDxlVNsfMDcfYJSIwlyXSQ5wKgZfAwS7dwLWqVaCR7F/Jb3mADJeAn9/XYw4f1lUUS/o5bt1I442Se5vMKu8GSmjQf/BUo8TmBz8W4fQ2V6JHJbFsz41DrAwf2SRtMuQuCmfRpldWQSfY9fCtPRsue+sy0v7fDdvwF7LyXKNP8RA+SNB0Ya+xTnGIMC8CeSy4dvq3hQAWzlkLwyOEE08qfsCFwdvBB1L5xucAlJf1YS/w8gDofJ7Z4zaGKwOxHdFdK7I0jTfWfeSoaeeRNyBTRJvFfhD/BbhB3NMb7G2ggY1kE7vMvQd4CFg7q/c2PXS6Qt060DW4EbxIk9lr4aMd7IiH6kKrIwsMsaNqQa159xkkU1UhPTu56WGAVQ00h9m1sZ+6hkHoAltwZzvpXV2l22v+pV8jI000fS2jpElWYopQoH8plm86AY8qJe/rDaYbKb+mHroBvq9HGf3OHQeukeWHiyCf4ILzJqBGvmyMzzV5aUrh0eKSePb6/8ofYCiDeFgpVDfJ0FuA+aQAk/DYm7oluAbrVPxlvLcjoSzYbP/W9DuJ6Ucm2EUDQ/vVT8eO+oDUnusa0B4rq2P1ziFYS0ULMXlIj9mmBx73UU8hBBhNTEmgOojEIdeFUI4/FUePiFIhaalyoDWokZZQ1irklw13IX6xILy6iXn3Jtg70ZrX8s1obAibze9TvLvinlNEJ17phxAY7TOqjClb1mlztv9n6UnfY8EpyVOqstng22BcRhPWIZzMjxMyBi49VNtu6RHaun6X1wKLle73fPjnNnByfBm9UJQROJmdG0RCbJUNQwvjwuZ/8sfAfIWjC78ODOKaL8apatNbf/fQstOP6Ku5Ob41ckjHCc4pB7uozfZQZ7fhJpDBtkqCDjRKfzTlBlbJN5xsMBgbiUpOqrafVy29gSEo4fGmLLwToR9/e11Tp7/W7DaA6hRgK9bdE6PSFAEiYDYen/hYGPII67lhWL5DggkZyy7TgGlphfy/dEOGu8mIQyyCriOA1XtFaGWBlh9DfOkXtF+ptldtYAD9mgGAY0EDrBKjobjrqWw7UWNTH4oFpVWFzrJC/VwjYPa1iPP6LMvvI27ld7NOMhxOcyRPolXBG4Y72a+MECUi3osQhLdnV3jOijQK41okDUik9ab0x9enLy0NLbKIOOvEVxzLt/dUrew7qC3vVqZzuG3DhL3/d9ZGfF8hi1uGpXi9thraoKmObqEp+PkiF9uoO0tUQ0y/P482fX9HyL0zGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01A3YZx5J8oqMjrJk8rV8Qrw",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 is assigned to bob",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent's POST to /issues/1/assign sent assignee=alice (obs 3), and the server-side probe shows issue #1's assignee is 'alice', not 'bob' (obs 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2479,
+    "outputTokens": 277,
+    "cacheReadTokens": 2319,
+    "cacheWriteTokens": 158
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a51190a155a6978bce6f7d19513f1082bb827dbcfd8e7306c3b5d123ef63e065": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HNoDyRedLdwfume5EAPZxn",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent's POST to /issues/1/assign sent assignee=alice (obs 3), and the server-side probe shows issue #1's assignee is 'alice', not 'bob' (obs 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01HNoDyRedLdwfume5EAPZxn",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent's POST to /issues/1/assign sent assignee=alice (obs 3), and the server-side probe shows issue #1's assignee is 'alice', not 'bob' (obs 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2806,
+    "outputTokens": 154,
+    "cacheReadTokens": 2477,
+    "cacheWriteTokens": 327
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

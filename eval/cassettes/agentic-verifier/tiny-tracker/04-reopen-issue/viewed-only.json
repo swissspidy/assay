@@ -1,0 +1,174 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:39:55.431Z",
+ "turns": {
+  "sha256:a343842c098e44bcac6204ee188a07b139b0cb470c4f306e626cbd57707a0ed6": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_013LU7ig2poTp5W1VfnXDmsJ",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01NfgGVbxm2FvARs3a38ZG1R",
+     "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_01RtWytGrkBwfGkerw4HNKhn",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_013LU7ig2poTp5W1VfnXDmsJ",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01NfgGVbxm2FvARs3a38ZG1R",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01RtWytGrkBwfGkerw4HNKhn",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1826,
+    "outputTokens": 72,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1822
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:9969dbc28d2fb7b80ac7ce18d61149f0c328a226e6ab7fe3cf3204f2155c8f0c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01WjdMPYXYCXr15ih7qHnE9w",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #3 is open again",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side probe shows issue #3 still has status \"closed\". The network log has only the GET of the page and no reopen POST. The page still shows Status \"Closed\" and a \"Reopen issue\" button."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01WjdMPYXYCXr15ih7qHnE9w",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #3 is open again",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side probe shows issue #3 still has status \"closed\". The network log has only the GET of the page and no reopen POST. The page still shows Status \"Closed\" and a \"Reopen issue\" button."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2920,
+    "outputTokens": 163,
+    "cacheReadTokens": 1822,
+    "cacheWriteTokens": 1096
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:79323128786def470cfc6f36df9503308f88de717a5c2c1ac501c19f7f785875": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01BbsD25A19zsUCtmxFzyj6z",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side probe shows issue #3 still has status \"closed\". The network log has only the GET of the page and no reopen POST. The page still shows Status \"Closed\" and a \"Reopen issue\" button."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01BbsD25A19zsUCtmxFzyj6z",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side probe shows issue #3 still has status \"closed\". The network log has only the GET of the page and no reopen POST. The page still shows Status \"Closed\" and a \"Reopen issue\" button."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3130,
+    "outputTokens": 161,
+    "cacheReadTokens": 2918,
+    "cacheWriteTokens": 210
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

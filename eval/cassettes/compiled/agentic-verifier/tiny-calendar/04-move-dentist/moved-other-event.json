@@ -1,0 +1,194 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:52:21.587Z",
+ "turns": {
+  "sha256:487e7d22f96de636d429285683d2628774493b824aa4ca728f1099335f25fca4": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Fne9Rrziq551dE7w5yeVNy",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01Ca64iu5rBQvsacChCxbuij",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Fne9Rrziq551dE7w5yeVNy",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Ca64iu5rBQvsacChCxbuij",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1849,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1845
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:1b30940e7aff7f94af3c50dc4f883e068a6eac71ca14101ea373eb363382f29d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0159RuV5YgaBfM9ywdaHC3QP",
+     "name": "network_entry",
+     "input": {
+      "seq": 6
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSvgUKEAgTGAI4AUIIdGhpbmtpbmcSDG1Se+4eAxDnCo9LCRoMwK9w5l/sQouEpEOCIjDfORoxxu/MA6ZJhBPEIMeXjWIZyPFpp4uNFt4YojaNQnAL7Bg+GZLhAxyPpzcg21Mq2wTgAv5wj9/KGw+lvJ7dovPOMOrroqzBfAUqOZKnU4ZsWGLMVDIfRGhQdgS4M2ng8g8obQo6s4JyQX+/WcBizx+U0h4PySuBeMDpzo60mDc+GuBtb15/oeHhUNOvKvpic32W12Hy5F71dWt8/8pggxC0qMDW/3+wVPt16dOUZbt5b57usiAp1UVWBi1RGpFgfIqgR47fd5b56wwf6RRp+x7N5BPhkO4hvyy0TI0nmqwb1rUNG+4/QBhVjIFXGDeZwTxNcb7vVKFLCQEZZxfJ6na6ABsA5wuzS4EOfe2QNSejygUT8WAhLr3YMcJJqeTNZBH4Z/DYW2RaLwJNpEz5uRxfu91ZPBGAk33rakCwrHobhYJFgOjebXVlSFAgyHmqGQTVmdPQNniblT4Whz+jbWk/06QHZyCPYjaXCQCtPTS93r9I9wDsoBb7FjW5SW8d+hF2gZBDTcAvv2tyKl9y79REiO2mU1iB0+MT+F7T33HoMSArqVefOTD4V87R5wEW5awz6lxRTSSC3OpZniQQ8eHngveiupzbBagjS0no3F7tQ7DDlBMZ/GdvHu9huWqbWgiNYmYm5LLqQ3Ab/7rksst3BPlHT0HHKPKf1kQh7OEmmSJpwRiapYVRZBVrkXeAcAh279QQDk30oO6KiPfcEhddQ5ngQ9MlcmG/+npNu1ESDKqSl9cl6bm67l4kiKjyNHEhy4WYaOzShO+lTfC6ENNJThEEKziRfM7xvX+KlGN3kK2b/pLtmj37Vtp1wZxeIL7jOsNkT4k+Gpv4oKRR/rkhCJIvc8gCU+xMxmEYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_0159RuV5YgaBfM9ywdaHC3QP",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 6
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2413,
+    "outputTokens": 75,
+    "cacheReadTokens": 1845,
+    "cacheWriteTokens": 566
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a7e5b9e9e17fa406d333595e8592bcd117e79b5ed116837ee60a93052904fd84": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0117Ne7KR8g9MZHxsPW5nRPk",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the Dentist appointment is on November 7, 2026",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The events probe shows the Dentist event (id 2) still dated 2026-11-06. The only PATCH request went to event 3 (Book club) instead of the Dentist event."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_0117Ne7KR8g9MZHxsPW5nRPk",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the Dentist appointment is on November 7, 2026",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The events probe shows the Dentist event (id 2) still dated 2026-11-06. The only PATCH request went to event 3 (Book club) instead of the Dentist event."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2708,
+    "outputTokens": 157,
+    "cacheReadTokens": 2411,
+    "cacheWriteTokens": 295
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:fe4535f70accc4d3afbc906be51219fd17d61843cda0a999e71309fe6960dea6": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01JCTZttgM1EAFAnLXLUWrfH",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The events probe shows the Dentist event (id 2) still dated 2026-11-06. The only PATCH request went to event 3 (Book club) instead of the Dentist event."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01JCTZttgM1EAFAnLXLUWrfH",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The events probe shows the Dentist event (id 2) still dated 2026-11-06. The only PATCH request went to event 3 (Book club) instead of the Dentist event."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2920,
+    "outputTokens": 145,
+    "cacheReadTokens": 2706,
+    "cacheWriteTokens": 212
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

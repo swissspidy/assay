@@ -1,0 +1,162 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:42:37.470Z",
+ "turns": {
+  "sha256:45113f4ec5070323eceaaaa9235ae10a99f752a45546cedce518210feb108b9a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017N1ciLEWDXDfLskNnzxAs3",
+     "name": "page_outline",
+     "input": {}
+    },
+    {
+     "id": "toolu_01Q38SEpP8cvkfvPpptknxPK",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01H6Pnuyck3LRqvw7juTq6XE",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_017N1ciLEWDXDfLskNnzxAs3",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Q38SEpP8cvkfvPpptknxPK",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01H6Pnuyck3LRqvw7juTq6XE",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1890,
+    "outputTokens": 72,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1886
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:17b0a5b1a3970b33bed19891a2d3ce3480e2853dacfd0e186d259c1c98652d9b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01BUsuoowgEiq61ZyvmtUVws",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The page is filtered with status=open, and the only row shown is issue #1, whose status is Open. The probe confirms that issue is open, and the closed issue #3 does not appear."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The label=bug filter is applied, and the only row shown is labelled bug. Issue #2 (feature) and issue #3 (docs) are excluded."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The probe data shows issue #1 is the only open bug. The list shows exactly that issue (\"1 issue\"), so it shows only the open bugs."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSyQUKEAgTGAI4AUIIdGhpbmtpbmcSDNLht6xLjxnEnbe42BoMNwps2VmhRiD16riJIjBjuOcdbII/mh1TXcPrpuIj1AWm0OMMyUwcUiG+Vmuf+Ov2Tu6C4vqm37mgWmOE4FIq5gTzZDhDk7qIE/ZcQR2rfnSSuPUsF1PaUMRuwpBW9qqJTwsXI9rXJ8ZkXdQu0lZDkd0WDeDLzcxo4DwmIoHBzFCAiQDkXq7pIhXdS/Q/YeghJJWHosFqrPSYIu4XraXaD2jHzTSKQJ2U0hAxBF+ycZF6aW0iCFwq4qsfbKs25JOQ+NZ14bHWMwc8qC63CEOz8275L2c6UKg7io7nTw/JXjcjUrmfml1bSVzqEU7kzRawYv/6Y9NEH0qhUggsxH1Ck34bZut9jb528bHGICC8F9RrhCmIU+owiK9N9T/Iljhh9rMo4KXpyxXvDYbQpp1g8UaBPXq0pez3lfuh7DU2zN3YE8GdCcXnnXhIf7zpLS+Jx9abDh1BqE3pYq/XDNliksfd6+9J1WdEVrBhRorb0BZ1Mek03VcUMBwQcTEdMdbVqbbO7HZrRPkcR+xqxVYyVFrUYBCKsCUCPz0fmJm8PhWX2aBnMnmpaxoWhhtaJoof1BsgIfb1YyJiQNru56isqtsS8cCraqlOzmBnIMAMEg42zjLoJqdbuW/eW4hXN3j31KuA5MXpPI6MOEvw2uAnYHN0aQEqR2IGhbjsBQp84H8crmwzhYNN9lD4uEO+daT7od7GtYhd6HC6DrXtkMIme4dai2PkA2/AOH9ZHMoT94otzCBX241tEV0FrgiQrGfFF/q3ejyj2Bc9AbDseI7I0tQGKqlhdhNudwjFtNPFWs2TyzLsJFHwE4XvEw8OSY9sbL3A6VOouGx6yC01BuP/GZ6YmL3pv/6rw1Zy88qM4PGPL/0cXCHK+5DAA91d5LdR5FvFRZ2rDBgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01BUsuoowgEiq61ZyvmtUVws",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The page is filtered with status=open, and the only row shown is issue #1, whose status is Open. The probe confirms that issue is open, and the closed issue #3 does not appear."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The label=bug filter is applied, and the only row shown is labelled bug. Issue #2 (feature) and issue #3 (docs) are excluded."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The probe data shows issue #1 is the only open bug. The list shows exactly that issue (\"1 issue\"), so it shows only the open bugs."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2877,
+    "outputTokens": 338,
+    "cacheReadTokens": 1886,
+    "cacheWriteTokens": 989
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

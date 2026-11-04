@@ -1,0 +1,269 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:42:13.377Z",
+ "turns": {
+  "sha256:9902966147257a6d9ec545e0d0aab141a0c81b153dcd113f16349b7d5430eaf2": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_014W1ErTiQN5Lyrs4xXkaX1P",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01Tkhh7zqy1WC6TvEn4QARfD",
+     "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_014hLzE4V27P6BSHx8FhVaV3",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_014W1ErTiQN5Lyrs4xXkaX1P",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Tkhh7zqy1WC6TvEn4QARfD",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_014hLzE4V27P6BSHx8FhVaV3",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1878,
+    "outputTokens": 72,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1874
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:78e32970605a98685aa685c3e859693c8cbd24def82c80551f46d7dce7f31759": {
+   "stop": "tool_use",
+   "text": "Let me confirm the cart contents before deletion.",
+   "toolCalls": [
+    {
+     "id": "toolu_0122iXskpXk2zCkEzCw9eXid",
+     "name": "network_entry",
+     "input": {
+      "seq": 7
+     }
+    },
+    {
+     "id": "toolu_014nNkE6VxAn8Z1QpFJk4e2Q",
+     "name": "network_entry",
+     "input": {
+      "seq": 9
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "text",
+     "text": "Let me confirm the cart contents before deletion."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_0122iXskpXk2zCkEzCw9eXid",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 7
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_014nNkE6VxAn8Z1QpFJk4e2Q",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 9
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2713,
+    "outputTokens": 112,
+    "cacheReadTokens": 1874,
+    "cacheWriteTokens": 837
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:f887c7e9204ca344c26fee19eb33a54f863b5ab38a986085b76ae900a341cba5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018hgBvj1DJgjgTe2woBgzWy",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the cart no longer contains a Red Mug",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The agent sent DELETE /api/cart/items/MUG-RED, and the cart probe shows no items, so there is no Red Mug in the cart."
+       },
+       {
+        "requirement": "the other items stay in the cart",
+        "status": "fail",
+        "cites": [
+         4,
+         5,
+         1,
+         3
+        ],
+        "reasoning": "Before the deletions the cart held a Blue Mug and a Red Mug. The agent also deleted MUG-BLUE, and the cart is now empty (probe and page show 'Your cart is empty')."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_018hgBvj1DJgjgTe2woBgzWy",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the cart no longer contains a Red Mug",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The agent sent DELETE /api/cart/items/MUG-RED, and the cart probe shows no items, so there is no Red Mug in the cart."
+       },
+       {
+        "requirement": "the other items stay in the cart",
+        "status": "fail",
+        "cites": [
+         4,
+         5,
+         1,
+         3
+        ],
+        "reasoning": "Before the deletions the cart held a Blue Mug and a Red Mug. The agent also deleted MUG-BLUE, and the cart is now empty (probe and page show 'Your cart is empty')."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3200,
+    "outputTokens": 256,
+    "cacheReadTokens": 2711,
+    "cacheWriteTokens": 487
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a49f9f826d63e557986aa2f29217830603e543ae7f7f1de1a1c2fbafe22ae9fe": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01PZkMZBgDjz1apxysUtCJgS",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The agent sent DELETE /api/cart/items/MUG-RED, and the cart probe shows no items, so there is no Red Mug in the cart."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         4,
+         5,
+         1,
+         3
+        ],
+        "reasoning": "Before the deletions the cart held a Blue Mug and a Red Mug. The agent also deleted MUG-BLUE, and the cart is now empty (probe and page show 'Your cart is empty')."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01PZkMZBgDjz1apxysUtCJgS",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The agent sent DELETE /api/cart/items/MUG-RED, and the cart probe shows no items, so there is no Red Mug in the cart."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         4,
+         5,
+         1,
+         3
+        ],
+        "reasoning": "Before the deletions the cart held a Blue Mug and a Red Mug. The agent also deleted MUG-BLUE, and the cart is now empty (probe and page show 'Your cart is empty')."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3527,
+    "outputTokens": 246,
+    "cacheReadTokens": 3198,
+    "cacheWriteTokens": 327
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

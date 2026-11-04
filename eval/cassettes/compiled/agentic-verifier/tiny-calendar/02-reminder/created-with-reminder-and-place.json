@@ -1,0 +1,302 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:51:11.011Z",
+ "turns": {
+  "sha256:fbd190475f6e660615eae6701a1ef29c7a0a245f99ff15d58ba6abe67b546a03": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Dc4hfoqP2zap1e2kRcDwVr",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01UTQj4yUGj8Ypq5QgU2KoSh",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Dc4hfoqP2zap1e2kRcDwVr",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01UTQj4yUGj8Ypq5QgU2KoSh",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1917,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1913
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:55262648d2cfa4f525d1932d50eb56adb10e4637f538efb079c8a65dc99d90db": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018ZjRz5RtdXLxMFgycJbnGT",
+     "name": "network_entry",
+     "input": {
+      "seq": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSywUKEAgTGAI4AUIIdGhpbmtpbmcSDJwdFbRWc1cv9V6jXxoM7cWN3kEoLSZqV3LsIjBt0Ym5I/NhrjMC9yTbDfx4eZOu5dbIieOaQ5RM4QeyIegwNjmen7Rov0Pp2fkmQEcq6ATpN770cRsh1tdz5cHSYUjXn6FBKY8fn3w/nguv6BLyZ2eS/UwCeIunj1/659UAZ1JOC0h90yq0gHAadeSzoWVZ6uKdJFtQSaDEpBnBDD9AP4LrazocD+/ztvFwLaOuYdQUNdIeMpXZN9Bpg4en2VN3YWDlWyIL9shBkMmp2d3Pd9tjipIQQOtoJ/i19FOIpbkNviuIYRkWgw2rRdtI7uS8oQCWnNehb1KX+UrLhpoC4uYqCx7b0VwA0pd21+YE1iHboiwTp1CWaepmwHQzOmjnGVDiy/Q7s8IS7mvG20hlAndMU5v5BjWSa6KbT+/ATJ3VeJonRkGp1bpYELHkCcJL02eKbpnvNFH4oL9oxJIEdATWWjJKMnuikW0L8mYw2RUozf2fhfVzA5so3DRjb4if5WNiDtLY4XOjlIk+tnfUTQpI/oF6KltK+mhDd5bOPbHmrkvphlyyvmQpTLA9xrrbLZ7/r0DhuIrKjFS7PlDGDA476ArGt7nxxwAVEqv7Bsij0XJ10qG+UyHxpracXlgF8tnhFPftPQ7zY0YR+ziktlKqQB56zV19lQnvaNQs6nQSJQqsU6zAaaGXOJZOU+cy4mSV5CAUuH9GgfHBEdObq10pyZfdsO6AobRmInCl2bN71DwhyjGAtsGfuDET+hX/aAG79ugo/Y69W1m5LzrgK1oKbhKsN1avD4jfQte+XqJd8DCRYbEMngLD/AL+jUN80m7kDknIIMJlVrnxJmCfL5CLGDR6E5g/7vxPmcwvQ7dnVqmkZzItcuvC7tnRZzsg4J4ZW+uRN1u4IPDQ59WcRV5zrkWOpq4zGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_018ZjRz5RtdXLxMFgycJbnGT",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 2
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2535,
+    "outputTokens": 78,
+    "cacheReadTokens": 1913,
+    "cacheWriteTokens": 620
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:988c9382bf2f5e650271e0675c5b5c89bcfd0d6ba9d4b8030dedf1c66d9a4efc": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LLsncLbH7GRQ4UQiuNKGpP",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Then an event \"Yoga\" exists",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server created event id 4 with the title \"Yoga\" (POST returned 201), and the events probe lists it."
+       },
+       {
+        "requirement": "Then the event has a reminder",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The Yoga event has reminder: true in both the stored event and the server's response."
+       },
+       {
+        "requirement": "on November 7, 2026",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event's date is 2026-11-07."
+       },
+       {
+        "requirement": "at 08:00",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event's time is 08:00, and the settings timezone is UTC."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01LLsncLbH7GRQ4UQiuNKGpP",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Then an event \"Yoga\" exists",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server created event id 4 with the title \"Yoga\" (POST returned 201), and the events probe lists it."
+       },
+       {
+        "requirement": "Then the event has a reminder",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The Yoga event has reminder: true in both the stored event and the server's response."
+       },
+       {
+        "requirement": "on November 7, 2026",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event's date is 2026-11-07."
+       },
+       {
+        "requirement": "at 08:00",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event's time is 08:00, and the settings timezone is UTC."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2846,
+    "outputTokens": 305,
+    "cacheReadTokens": 2533,
+    "cacheWriteTokens": 311
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:51124e27731cca508fd5c29d45f2db326f0656f59f2c4893b18283d8be2aa6f3": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LyJ8Srm9BRnpdDmMTi85on",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server created event id 4 with the title \"Yoga\" (POST returned 201), and the events probe lists it."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The Yoga event has reminder: true in both the stored event and the server's response."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event's date is 2026-11-07."
+       },
+       {
+        "requirement": "R4",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event's time is 08:00, and the settings timezone is UTC."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01LyJ8Srm9BRnpdDmMTi85on",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server created event id 4 with the title \"Yoga\" (POST returned 201), and the events probe lists it."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The Yoga event has reminder: true in both the stored event and the server's response."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event's date is 2026-11-07."
+       },
+       {
+        "requirement": "R4",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event's time is 08:00, and the settings timezone is UTC."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3247,
+    "outputTokens": 292,
+    "cacheReadTokens": 2844,
+    "cacheWriteTokens": 401
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

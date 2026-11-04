@@ -1,0 +1,144 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:36:18.760Z",
+ "turns": {
+  "sha256:b23e16203b0e2c78aa0d402720aa371c6a1ff258baee3d70f20ed60682b01345": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017Zw3hRfQM75LYxKq12zNYR",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01BYwdvV3JjoSqXdq6LPQaF3",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_017Zw3hRfQM75LYxKq12zNYR",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01BYwdvV3JjoSqXdq6LPQaF3",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1841,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1837
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:5c74bf35f321e972c3cf156148dea55c72a7943e94a44a1cef3f41c326e28e6b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_012fVLAtw7QJeXnaQwRaEPC6",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS2gUKEAgTGAI4AUIIdGhpbmtpbmcSDBeDr6VtY28o/q8rbhoMOCR/Vu/6RJ/REYo7IjAI4YTdODS0l5tVLJzZMhigkkrT+Dt48FDd9sC7VQ8AhCZ50ZFdIgKiInf4inC3OkEq9wQnks4+8ZiCj6ukDZQ0dv2kLSDqrCshckDIwZZvtkkuPwaQCD36vFfknpQaIcwOH50D0BbgTP55KS2tVRZRd34fFTKt+vE17XFFpc0QVpgDmMv0Yj/x3B/3Vr7dzFFaBxUJEJddjQD1esepm3S3a4HOT4Is9U7RbugrJU/zs0YF8n+wjRSYYywUWT4NQxgxkgTpC7JUzu5ePwWTOZIGp1DiQ9VHy65X3Omq8Qe2Yj7n/19yEf68eAELEEqvadPcJpH/9BzJufeilsZ0yHlzt5nzm/00jXXsfcfiJtHJhMtrkjSiE4C/13bSxNaiMGKTrAEBN8COTn8ihDkhSR17/cmva047ZnrSHeCV3PxJ1WzuxoYo2Lju0YOj2kaoUi8W8R/1bG5g5jpFOo3DvE1QwetRrNLqiAYZmshyZ8p78yy4pJUn2oP2bfsxj1v5toRCSeNXOErJOQzFBoDr7CnaogCFYE8AOVToPH47ZZh3DsJKSg5e474TS0aHRke2694rOFqz6aPfrrKVEU6bP/b8MnrsJgM6c/tg3Z7H+NX3htWeDKd7fO6rEdog7j70fWnPUuslVvaHpZJG2X+ujJx7Mk1FPj8XpldF2kROPKgxEAvaRnUPI/lLvZgMhbnNLpijuFWzZqSe9IAmwtPSLwXxwIrya+OHh6RNHfHv1zFGPEwuQhAQDZ+8hElbeeZB/Nq+34YnDfi/dQrSnmdES8Fnmebzl2IkzJ/5CelZwItb2Ko98MBIMm82BrsnryLebtfW1mmvp+hR5sO9KCtWTDr8bgcgDyiEy+AFnMV8b1Q4eOou8WK93ocjS26bb8u5Nr2ExKPf1feQlfndGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_012fVLAtw7QJeXnaQwRaEPC6",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 2213,
+    "outputTokens": 61,
+    "cacheReadTokens": 1837,
+    "cacheWriteTokens": 374
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:4f73e4d71406a98cbfb6622d891336e6494010b50220d291bfb322d416bb23b8": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01YVSxw7SVgPHVUF6FnwhQPd",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The page shows 'Order confirmed … gift wrapped' (obs 3), but the server shows no order was placed. The network log has no checkout or order POST, only an add-to-cart call (obs 2). The latestOrder probe returns 404, and the cart still holds the Blue Mug (obs 1). The confirmation page is not backed by any order on the server, so there is no gift-wrapped order."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQStgYKEAgTGAI4AUIIdGhpbmtpbmcSDAeu21klKQrgxxX0YhoMq+g1x9y4KWM+CNuEIjBCs6slB+wuhnYYPMFhrr0up1Wk6FB3emF1WNCQHv4Thc06Sf5UR+qw0ztrq5Iea2Mq0wXonDdf8g0aFV46qnLylT3a06l9zZYTlB7ezghSIGsDcS/leBtwTZPBthSUQlkxACb2ZMpAKYohMR3noM7lmU9m4ZRtO53fwfcFoEwjCknqwMHXTG8K5tGQsNhouu91gSPzK65DeG8pSmKwWAC3Yc4x6YEpW7j43n0muxlVGV996UDUCaAo1SxmppDdD0l3jobuLPiGsC+mx8Y7Ufmcv58r0d+fyEN+wRMc9y4bc3ZFitgrI09MKxJHZ6fxr3BXhkt6L93MN69Z++uYHshsdF+N9Fbt8P1yL0H/GbWZvSAf9JsTcTNS82ipeFC5RgseCn12B33lQUUe2/R7rVi+xvFc8ucE6tXH8Z0Za/Ri41RjhvzEHpbTJdw+VIx0QOH4xzXmIV+E/X/jMP113xF8tPPbr1UXpt5eaZamNmpLvnikgR9M04nTZ2hLvBE6/vVemaSr7KF31O4z1OSR4gnPmLEnR7Je3RSedpx25fd0iLPaM+Fg6/Ry3fA0DMmP1QHLz93vgV0pIO9eDe+S8LRUDl24YHkr+u7ldUuiDT8A1hKyDc6JM855I4vd1pd+5ycHDSkYd4hb/gyhPqe+3iYmHPh0RDO7MaiJCJJFzLk8Br1gFSPAEeZ9aHecdm1ZirkcnkRgRtDDb7cbX18lasFbBfWmxBKdvgpJhO7b35YJCipBih5oK2VdVE5N/q0akq1kVLs5OaoNRroy2aiMzlhaNh+8rpBeY2uDAIcJSYzg3/C+iB24vo4CyTMeZ5JOvcDab6HvDMgVEAqzPF3T2iAkk/Ru09FzXj9Lm9I57mbGlagUjcXnqmbxOQxAtWgfrEHPRtDerJafbn8xFJuNXC5Pb8aK0HgQ6f+Gl6xJohOCOh8Hs9DALMOdon91kxrNSN6h5yp+Lg8/4oP6J7OoKAZl0xsreFX1DlRLDiVFhvlxlh8mWPM1ZVtyR1dbpYgAVJ+/ZNE0R10YAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01YVSxw7SVgPHVUF6FnwhQPd",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The page shows 'Order confirmed … gift wrapped' (obs 3), but the server shows no order was placed. The network log has no checkout or order POST, only an add-to-cart call (obs 2). The latestOrder probe returns 404, and the cart still holds the Blue Mug (obs 1). The confirmation page is not backed by any order on the server, so there is no gift-wrapped order."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2542,
+    "outputTokens": 260,
+    "cacheReadTokens": 2211,
+    "cacheWriteTokens": 329
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

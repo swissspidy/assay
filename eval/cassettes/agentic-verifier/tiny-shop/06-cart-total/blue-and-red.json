@@ -1,0 +1,160 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:34:10.553Z",
+ "turns": {
+  "sha256:1ad321174052b6e2dffed0aa745233ce133a7ec11e508488e65da15ba182239e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01P7chF9JY5FHpMPKzEwZsCv",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01Sr7MT7UboSNZtEZ5RBS6uW",
+     "name": "find_nodes",
+     "input": {
+      "text": "total"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01P7chF9JY5FHpMPKzEwZsCv",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Sr7MT7UboSNZtEZ5RBS6uW",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "text": "total"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1841,
+    "outputTokens": 71,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1837
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:2fb28c74ea0a8a16da0244b9d2a19da9b596c6a43fdedda28cb0cb8fd3163e1f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01MPQdnmj5c59n34YadTMRMd",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the cart total is $21.50",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The server-side cart probe shows one Blue Mug at $12 and one Red Mug at $9.50, with a total of 21.5. The cart page also shows \"Total: $21.50\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01MPQdnmj5c59n34YadTMRMd",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the cart total is $21.50",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The server-side cart probe shows one Blue Mug at $12 and one Red Mug at $9.50, with a total of 21.5. The cart page also shows \"Total: $21.50\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2310,
+    "outputTokens": 155,
+    "cacheReadTokens": 1837,
+    "cacheWriteTokens": 471
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:70a3b0632a598bd1c7385bab94e70723e75fb3ddf4bee16711cd0f1ede91dc6e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01D1v9cC78tSpfTF8YAabKU7",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The server-side cart probe shows one Blue Mug at $12 and one Red Mug at $9.50, with a total of 21.5. The cart page also shows \"Total: $21.50\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01D1v9cC78tSpfTF8YAabKU7",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The server-side cart probe shows one Blue Mug at $12 and one Red Mug at $9.50, with a total of 21.5. The cart page also shows \"Total: $21.50\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2512,
+    "outputTokens": 151,
+    "cacheReadTokens": 2308,
+    "cacheWriteTokens": 202
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

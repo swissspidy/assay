@@ -1,0 +1,212 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:39:00.825Z",
+ "turns": {
+  "sha256:2ed974870ecf0b14bbee1ceb4b5c60b7c8d984ae35faa42a716b090530fe5026": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018PTBjczByuMqhVPEV2Ew2N",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01227rH4iUQRVuCUdobmid5L",
+     "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_011q7okbEaU6wpVTZW6tk5xN",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_018PTBjczByuMqhVPEV2Ew2N",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01227rH4iUQRVuCUdobmid5L",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_011q7okbEaU6wpVTZW6tk5xN",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1825,
+    "outputTokens": 72,
+    "cacheReadTokens": 1821,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:aae7984d4a7bb44715f4acaee261a402df4ceef6b982ed702657cab780882f2a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FWT7MzLCSs9ccDUpktjobk",
+     "name": "network_entry",
+     "input": {
+      "seq": 4
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01FWT7MzLCSs9ccDUpktjobk",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 4
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3126,
+    "outputTokens": 49,
+    "cacheReadTokens": 1821,
+    "cacheWriteTokens": 1303
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:06a8130996336e5354c355f956e2bad4ffe0647ece55da5a13261352b83116c5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CMXjYpxkFCaV9Ckz7d5Q8L",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 is closed",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The server got POST /issues/1/state with status=closed and answered with a 303 redirect (obs 4). The issues probe shows issue #1 with status \"closed\" (obs 1), and the final page shows Status: Closed with a \"Reopen issue\" button (obs 3). The agent also added a comment nobody asked for, but the requirement only asks that the issue is closed."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSgAYKEAgTGAI4AUIIdGhpbmtpbmcSDNANovDvQk4fiXcI3BoMyWxVv1TSvWSbkfvLIjB9d/40XK/tubKaCr66LKDQN0Wg1bIqYbB3/VbVpvVZNKe+UoSYmqks05x3esuAQ84qnQVUuBG6ZrxQuHw5ytI+c+inQqIxihYtXVj0An+cqoyz4ZvjhUZ7PF8Z7+PJ1X/p//F2n+Zq8M+OAE2Sv9o6tTzxWVxCLi9pCe3NVJ/+RhY8bQ6E8gncyOJ1OWoDsASfWGJsc+7VK+E6gtJJexiZ0Die9APpkasMPhHKCnH1qUuDRgllT27VeFxOm9uNa3rKvcQT30aEWmiF6nBxI0djDNpXxXYVP8u3rRJbf8QpcLd7IVi23ZhKJ5Gv/utbPsrqHfHuPF+cpBD7iqD+Pj3+gCzCnwIaw3ejqwBt8Ibn5ItnF557v/9ZtEGFkVW44TYI6Y79u+zttt7ZEdo9j2bRaERCrrtwCcejauWEvD3PggHbh0IV3oAgii8HN8fK9CfBArO7I04qOi2rRJdxMbvy0wUzSSO+uvGyOL39wA/gu28OpwsibsZfPgKmPXPH235iWxNfDYIFiBB1O4QBH+2aB+bXGME+iXLlwtV7CfZmPY2fO1T1Iwu0jagj5AE/BVLsvvskZGTn0N9drEh7m4tM41+aj+vCMbjs6OmaYexg0N67P3esHZ/6DEiVwAaW0y+p1xyTOANCycrmJ1VwMcgtyqTiwzb8i1kSl5qnDAsOc7Ow1d0qIGImKz/D1In8zSLdHYXXWmqORmAjgqgbPD5Q16zYysnt/FdifalitV7Jcxy68ICC2FFG9t/iTHrPAYAUMMTD9JhnuPpRDaElG+x5Jg1ip39B/CozKqV/1rFnG5tFWSIbL1wCTY19XtB/bCYZmUmGU0+zKv5zfMGbKGuQYv5kTkzbbxL06jihPAMyyYMS3XGiIdbrTLRvstmb4/FIwRJM68q2TxSSuDf86pPLnBMMab7hp96zOyVzOyB9tw92qNCBZ9fRx7fApSk2VzIYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01CMXjYpxkFCaV9Ckz7d5Q8L",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 is closed",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The server got POST /issues/1/state with status=closed and answered with a 303 redirect (obs 4). The issues probe shows issue #1 with status \"closed\" (obs 1), and the final page shows Status: Closed with a \"Reopen issue\" button (obs 3). The agent also added a comment nobody asked for, but the requirement only asks that the issue is closed."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3281,
+    "outputTokens": 254,
+    "cacheReadTokens": 3124,
+    "cacheWriteTokens": 155
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a014ae9903765f224549acf2147c48329971fa1bfa47dab7057b242d35fa4902": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0199sXReqaDBPRoZcQcCGH6L",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The server got POST /issues/1/state with status=closed and answered with a 303 redirect (obs 4). The issues probe shows issue #1 with status \"closed\" (obs 1), and the final page shows Status: Closed with a \"Reopen issue\" button (obs 3). The agent also added a comment nobody asked for, but the requirement only asks that the issue is closed."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_0199sXReqaDBPRoZcQcCGH6L",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The server got POST /issues/1/state with status=closed and answered with a 303 redirect (obs 4). The issues probe shows issue #1 with status \"closed\" (obs 1), and the final page shows Status: Closed with a \"Reopen issue\" button (obs 3). The agent also added a comment nobody asked for, but the requirement only asks that the issue is closed."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3582,
+    "outputTokens": 214,
+    "cacheReadTokens": 3279,
+    "cacheWriteTokens": 301
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

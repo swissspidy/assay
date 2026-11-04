@@ -1,0 +1,156 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:46:51.372Z",
+ "turns": {
+  "sha256:14c3d05e0156b6db3ae2c32e215e89223e64b33fee0d3891534e790d15657024": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01EgMzJs3Z2zvBRRUHLZhg6J",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01WSLmAkNZQ5XJW7GbGVgdye",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01EgMzJs3Z2zvBRRUHLZhg6J",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01WSLmAkNZQ5XJW7GbGVgdye",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1824,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1820
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:5d298b3d2202b7a0a1cb8516bb63437734661d552f813851bc497c018141b868": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01EYhBv7GoazHr9rRsvqoViZ",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 is closed",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The probe shows issue #1 still has status \"open\". The network log has only one state change, a POST to /issues/2/state, so the agent changed issue #2 and never touched issue #1."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01EYhBv7GoazHr9rRsvqoViZ",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 is closed",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The probe shows issue #1 still has status \"open\". The network log has only one state change, a POST to /issues/2/state, so the agent changed issue #2 and never touched issue #1."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2305,
+    "outputTokens": 151,
+    "cacheReadTokens": 1820,
+    "cacheWriteTokens": 483
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:f8929816ffb50d057820ed4e111455a0736ce65ad29dd914cc45422285cf6160": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Ke5kTKpMgigaadwEECLwKq",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The probe shows issue #1 still has status \"open\". The network log has only one state change, a POST to /issues/2/state, so the agent changed issue #2 and never touched issue #1."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Ke5kTKpMgigaadwEECLwKq",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The probe shows issue #1 still has status \"open\". The network log has only one state change, a POST to /issues/2/state, so the agent changed issue #2 and never touched issue #1."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2502,
+    "outputTokens": 148,
+    "cacheReadTokens": 2303,
+    "cacheWriteTokens": 197
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

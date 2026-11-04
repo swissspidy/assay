@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:29:52.914Z",
+ "turns": {
+  "sha256:38c1bb16b353de1e189df556b290ebbd151eea682708776874e0c9b7bf0b32e0": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01R2xZLC1LU8WiqoNy58wLg4",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The final page shows the Dentist appointment on \"Sunday, November 8, 2026, 2:30 PM\", and the Date field holds \"2026-11-08\". The task asked for November 7, 2026. A \"Changes saved\" message is showing, but the saved date is November 8, not November 7, so the expected outcome was not met. The agent's claim that it finished is not supported by the page."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01R2xZLC1LU8WiqoNy58wLg4",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The final page shows the Dentist appointment on \"Sunday, November 8, 2026, 2:30 PM\", and the Date field holds \"2026-11-08\". The task asked for November 7, 2026. A \"Changes saved\" message is showing, but the saved date is November 8, not November 7, so the expected outcome was not met. The agent's claim that it finished is not supported by the page."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1255,
+    "outputTokens": 197,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1251
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

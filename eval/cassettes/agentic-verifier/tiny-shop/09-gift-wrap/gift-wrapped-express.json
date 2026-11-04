@@ -1,0 +1,194 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:35:50.381Z",
+ "turns": {
+  "sha256:403351d80a3edf3532f0d8524d7e518d75c319d44d1cf2ea924203d8e02ab374": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Geeg23sGeUbFmktEibo6Kp",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01KT6iDrJUPLktayxQBGHmtV",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Geeg23sGeUbFmktEibo6Kp",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01KT6iDrJUPLktayxQBGHmtV",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1844,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1840
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:1ae13119e34a490f821a3ed363e82eb88a14364d9e57ddc434a6d97f45e85539": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018TCwJ9THspmmVoe9Xm2oK4",
+     "name": "network_entry",
+     "input": {
+      "seq": 6
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_018TCwJ9THspmmVoe9Xm2oK4",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 6
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2362,
+    "outputTokens": 49,
+    "cacheReadTokens": 1840,
+    "cacheWriteTokens": 520
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:0c630365d216ac46b4ab0d81afef350962ee2c7657375eb8b2a95fff51725116": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015BEk3gQt3DRiMRxBU7d9Tn",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the order is gift wrapped",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST /api/orders request sent giftWrap: true, and the server answered 201 with order A1001 showing giftWrap: true and status placed. The latestOrder probe also shows giftWrap: true."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSiQYKEAgTGAI4AUIIdGhpbmtpbmcSDBDGn2DODW1T8JH/kRoMN6qk0LmWzqYGvUJtIjBTxRJvJ2BW3+LXXG9nadSHBE72BZ2kAnZdp/66+Pg5Yog9SbqaWIoNDWculwZEudoqpgW9YAQEAW5GnJuaSHGpv6X+ZCRIcGiJJbS7gQeCXaYPHoTwVlGm8i3mx05rJqn6Uv4DKHxl5NIbuZjiQCg0JncjssPk3eF9CEExwBcSIPW8ArRIENHWxBHlqh6riphWt2Zo5c+/S56TC2urhPgRm7DYK2MfNMi/sZ4gDxbcdWJ3v1cj56hRz5KcYGsNvUOtZm7MdfkekMxBxeUTtiKwpr9xn24PCWdzcwPgWFgGmdiftnuOPBozhKRKwPi4iRTXqPzBpZszWJrM19ag9QEETkWX+UHuaS8fbutlZ7aQQIb4jjHesG5BfNdLcjMzmC520giFGhO1a+DuWfAKS7IH7WzNyR6VHelUKIlnbunq9dgJ7NRAZIYlCHw7vXCCyPArvsk5sDO/Dh15vwPZCPx/8mfheMrV/hpv2alj2nbssgpQdB8n434bLtlzKzlcoT/4YBWthpewbhfXPsL1WMERkw15y6SFa9/6w+H4WWqFNtf1c8OSnBg0hZ/n/GTYXROBxq5/0Qg0dnOOqjNkC/Zx6JpBW6Mopos+hKE6AeFumKx0dWx+GWgakP/VvKmMCRQKgYs+8Xfmmclp8rRrOLuw7bniAC/l2VOxUSAo06CpqfgEx+EI8lwwo+K0IYyMsLnMlIrihflOPnDGZB5oqNmJt3TRvAKY5RQ6HNrgvdeSsH8TKY+ZSueYmBR+F5vvqrs+yPe7KKRmMTX6WUnQscLHcax7MWJGwjBZlr8cDaAqxYO1K5KOBYIK/QWZCPyaFvOUIoWe+mIe3xWfbm/SOuuB78mv5MmP4b6Ixbaeh0IF9h0qsEhf9ewfnrutv9EZE1K6gMbboRcNQ/4Ohy0MSnaOj9sPymHrVI8wlL8OczdHAl7ZAG36AiLlBWiOSdMG/Cqlj+BikV1sakQYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_015BEk3gQt3DRiMRxBU7d9Tn",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the order is gift wrapped",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST /api/orders request sent giftWrap: true, and the server answered 201 with order A1001 showing giftWrap: true and status placed. The latestOrder probe also shows giftWrap: true."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2684,
+    "outputTokens": 203,
+    "cacheReadTokens": 2360,
+    "cacheWriteTokens": 322
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:c72fc971e3ffcc03ea6b0c9841fc43fa9672deeddf3075d8b185f85a6a645ec9": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_013u9PmqLVrWkWMATUaPSkQv",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST /api/orders request sent giftWrap: true, and the server answered 201 with order A1001 showing giftWrap: true and status placed. The latestOrder probe also shows giftWrap: true."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_013u9PmqLVrWkWMATUaPSkQv",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST /api/orders request sent giftWrap: true, and the server answered 201 with order A1001 showing giftWrap: true and status placed. The latestOrder probe also shows giftWrap: true."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2934,
+    "outputTokens": 155,
+    "cacheReadTokens": 2682,
+    "cacheWriteTokens": 250
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

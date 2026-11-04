@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:22:38.463Z",
+ "turns": {
+  "sha256:74ab75ca05f22c8613376c7221c5db7a92665b338fa858ae0b789fe20398e1a7": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_012PTjy2wKa1LxC7uqSJMp3z",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The agent was asked to put both a Blue Mug and a Red Mug in the cart. The final cart page has only one row, Blue Mug (quantity 1, $12.00), and the $12.00 total matches that one item. There is no Red Mug anywhere on the page, so the outcome \"the cart page lists a Red Mug\" was not met, even though the agent said it had finished the task."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_012PTjy2wKa1LxC7uqSJMp3z",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The agent was asked to put both a Blue Mug and a Red Mug in the cart. The final cart page has only one row, Blue Mug (quantity 1, $12.00), and the $12.00 total matches that one item. There is no Red Mug anywhere on the page, so the outcome \"the cart page lists a Red Mug\" was not met, even though the agent said it had finished the task."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1078,
+    "outputTokens": 198,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1074
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

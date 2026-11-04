@@ -1,0 +1,143 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:45:10.358Z",
+ "turns": {
+  "sha256:487e7d22f96de636d429285683d2628774493b824aa4ca728f1099335f25fca4": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Sr18Gy3uFNihHdMdnmSrQi",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01AVXGgWc5h5bafuJvmwi1jz",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Sr18Gy3uFNihHdMdnmSrQi",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01AVXGgWc5h5bafuJvmwi1jz",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1849,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1845
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:f2a20c5aca9315e78867527c02ff8a4dfa18c5bfe04ac422d78d5d68dac7452e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HjEynKPcvqNnikkSBC8bX6",
+     "name": "network_entry",
+     "input": {
+      "seq": 6
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS8gUKEAgTGAI4AUIIdGhpbmtpbmcSDPuIdeW6sbT1mywB2RoM61BKmzSamRlO1kgkIjAcToiBrKDhGn7tEgSo+KuGxhQTqaEpLadVD/8Hz+HNwnAd/hS2ggHTE5xWzGS9W8IqjwUoGTh2b7l68i9gAPZItozL8EVPMJvD8m6aWtwAmWnAYjXNOdWhMq086DRi4ZGFvBs2pHSUHdDFF/d/uVrWZDsBjsvD1GNFPsvaNm0eWQT6ukZwFN2s2yj+VeSxXjUv1VzWCzwJHPASmwi8llr5WeCYkY2o+cMCmx1kh3VT10gXcxAIa2ei0NUk5Ty2njF3vXLCjS0UCNJboU1QePfwJsULPH1AIs+BrN/kLF1LmgcXbk8qmgIOVS4DrtGLUuZ0fTQ15HFSwpodZkF1ZDcvqArWAfeJ6V+4u5sFFhHoJzyizaKPDUYRZMkUtMnWwXEOs7JuWP1705I5gmPJGmYkHpJ7UJcFajc99MIX8NxGK3kipWpXhc9jpAXfbx2UzGP053rR3zzlV4fAoF8QDbJt3/UdDPm7BVSzlOKYSnF0F4dqJgIaqQY+vS2Bj+EsmtMY8B141Pj71cU1wL459P3u+IcNyAUhLFQbZREaGKsStqgbEN7bzYNYOBMhJQwj1tV0QBJnutT+0PbtICBVUJg5GePppNSRQTLrX02gM3IUAkbhAJOTelMzeNFxTO8/dg0Gu5LPqFYK49IzUcW8UvQ8uP0LKYx3nYd6manGyqdGC+YIrHHlHpo7ZmokpYc5tqUIuK8lF3dJ+/wBhHM26kHz3pK0hqJlDaHMfhgrbfh8s2KIJ+9pFY3j0tKMpxD2GB2wpv7yXXLr/lS0RUBDUElULyPq54vR8e1Mtgl9kvdySP61JGX3ILVFE30tNe9sVWNB9cRsIjNJD2cRjB3zXPCo0OWu6GMb+AyWj6CUCcItKS8X951byY4DOamygbpSYfoOk1hz4mgmTtTBX3X++XjVQcxEhOE1lZAmaxzADvfFHMdBGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01HjEynKPcvqNnikkSBC8bX6",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 6
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2413,
+    "outputTokens": 96,
+    "cacheReadTokens": 1845,
+    "cacheWriteTokens": 566
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:52dbc3e534532bd94a714ec20249d675ab992aff10c1643d36607f31e6229cb9": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CTnyZbaUykeGag7BcumQ5z",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side events probe still shows the Dentist event (id 2) dated 2026-11-06. The only write the agent made was a PATCH to event 3 (Book club), not to the Dentist event."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01CTnyZbaUykeGag7BcumQ5z",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side events probe still shows the Dentist event (id 2) dated 2026-11-06. The only write the agent made was a PATCH to event 3 (Book club), not to the Dentist event."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2729,
+    "outputTokens": 151,
+    "cacheReadTokens": 2411,
+    "cacheWriteTokens": 316
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

@@ -1,0 +1,297 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:54:41.077Z",
+ "turns": {
+  "sha256:9a222361805ef718c6e960873c8ea8d0db165a25daaf1668e7c3e114dd633e30": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01W8nE3rBiGDHSSdesHAoK4n",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_016ionsU5pGRj5pwwddGbLhD",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01W8nE3rBiGDHSSdesHAoK4n",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_016ionsU5pGRj5pwwddGbLhD",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1929,
+    "outputTokens": 48,
+    "cacheReadTokens": 1925,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:e7d5e3b6137c65e232f58b250b603acdeb030faa3fd123c5308b18c17cf21e70": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01MxPQf96R4KddnhNMhoxnib",
+     "name": "network_entry",
+     "input": {
+      "seq": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01MxPQf96R4KddnhNMhoxnib",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 2
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2542,
+    "outputTokens": 49,
+    "cacheReadTokens": 1925,
+    "cacheWriteTokens": 615
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:7432dc7cedde121c83297d3415801b4f08f45776b6b33315bb97bab13d8e33cb": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01B9XcLAAFNDSUWGdtGYqXz2",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Then an event \"Workshop\" exists",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Event id 4 titled \"Workshop\" is in the events probe, and the server returned 201 when it was created."
+       },
+       {
+        "requirement": "Then the workshop lasts 90 minutes",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event was saved with duration 60, not 90, in both the POST body and the events probe."
+       },
+       {
+        "requirement": "on November 12, 2026",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The saved date is 2026-11-12."
+       },
+       {
+        "requirement": "at 10:00",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The saved time is 10:00."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01B9XcLAAFNDSUWGdtGYqXz2",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Then an event \"Workshop\" exists",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Event id 4 titled \"Workshop\" is in the events probe, and the server returned 201 when it was created."
+       },
+       {
+        "requirement": "Then the workshop lasts 90 minutes",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event was saved with duration 60, not 90, in both the POST body and the events probe."
+       },
+       {
+        "requirement": "on November 12, 2026",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The saved date is 2026-11-12."
+       },
+       {
+        "requirement": "at 10:00",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The saved time is 10:00."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2814,
+    "outputTokens": 302,
+    "cacheReadTokens": 2540,
+    "cacheWriteTokens": 272
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:0a3dbd72b43027eaf29ee6d659353103e66fad1355053d5433a26c2a145c0f7a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01R2xW2NY3bPGPddeHjwxEq9",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Event id 4 titled \"Workshop\" is in the events probe, and the server returned 201 when it was created."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event was saved with duration 60, not 90, in both the POST body and the events probe."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The saved date is 2026-11-12."
+       },
+       {
+        "requirement": "R4",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The saved time is 10:00."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01R2xW2NY3bPGPddeHjwxEq9",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Event id 4 titled \"Workshop\" is in the events probe, and the server returned 201 when it was created."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The event was saved with duration 60, not 90, in both the POST body and the events probe."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The saved date is 2026-11-12."
+       },
+       {
+        "requirement": "R4",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The saved time is 10:00."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3218,
+    "outputTokens": 283,
+    "cacheReadTokens": 2812,
+    "cacheWriteTokens": 404
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

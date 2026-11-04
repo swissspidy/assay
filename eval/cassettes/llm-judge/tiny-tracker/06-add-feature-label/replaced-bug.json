@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:27:02.974Z",
+ "turns": {
+  "sha256:0f29c4d9cbdf2b8be92cf20a00ff76fd57ad602ebe12c7c33ddeb12bb5889072": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_014DSLsNkpkBxaHFTkxEqMhB",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "Issue #1 now shows only \"feature\" under Labels, and in the labels form \"feature\" is checked while \"bug\" is not. So the feature label was added, but the existing bug label was dropped, which breaks the requirement to keep the existing labels. Only one of the two expected outcomes was achieved."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_014DSLsNkpkBxaHFTkxEqMhB",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "Issue #1 now shows only \"feature\" under Labels, and in the labels form \"feature\" is checked while \"bug\" is not. So the feature label was added, but the existing bug label was dropped, which breaks the requirement to keep the existing labels. Only one of the two expected outcomes was achieved."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1314,
+    "outputTokens": 170,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1310
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

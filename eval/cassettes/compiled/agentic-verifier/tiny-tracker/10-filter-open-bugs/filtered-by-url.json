@@ -1,0 +1,126 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:49:55.667Z",
+ "turns": {
+  "sha256:59cd6f5c1369c928832d5dfc2d47eb393a104e254961234358d1d52214b124b1": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HdjczZ1rVt6D3vXvGKLZW6",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01HQnV1P6EUdboqh89KT91iA",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01HdjczZ1rVt6D3vXvGKLZW6",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01HQnV1P6EUdboqh89KT91iA",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1874,
+    "outputTokens": 49,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1870
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:7c954493a244158ccdc2ad83d4e305a71b7cb55d37b5266beffb4163677ee2ff": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CncWCGe8jJZSjzvNAmFRiq",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The page is at /issues?label=bug&status=open with Status set to Open. The table has one row, #1 'Login button misaligned', and its status is Open. The probe data agrees that issue 1 is open. The only closed issue (#3) is not in the list."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The Label filter is set to bug. The only row shown, issue #1, is labelled bug, which the probe confirms. The feature issue (#2) and the docs issue (#3) are left out."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS3QUKEAgTGAI4AUIIdGhpbmtpbmcSDIHi2bqYMD2iyvTX0xoMBzQrGnruisYaLIVIIjB/UnWaABBw4zT4NdjMvDFDqdRjJfcdOs8LUD8KsbjOWUY75zVq3okgXAozqLgZk0Iq+gToDpGiBmvYpYs10h+Rpn04r7GMLNEdJuQVLrsGCQEZEpfaD9ydM+3Ge1zzkBS3ZlL197GHnB95RxEeC00JzFN4nsZaDqwFroqU/jDwxSP0xVr1f9H4sqcfj/pc0ogCXDoK3vwhnuYn3yyJ4U2cV2q7LVwZJFQyHWLmeMz6HieCxXwJW32VvDWfOgyJxpfP9t0JxR2kDIRA6hHMggBZZIo6vPdlNSsO974DRRL4GM5ZwIZ6/MngZb4M3TmFnysRh0Cys+n10sTmPEWTIK90ZhUJIexbBw6ckZg8PD0R7mQFsCZIJIiC/CZ0DeeIkV6kAkE5fmYqKF6MKhza8WGrSPc+drV/am/qvWtPNuBQNsnvE20N8ruQ6NTYjbcq+ujpURQQOwT3txR1DEvwgh9GA8jp/ZgQC0ZYkZV/cN0JRuvq8InGJcu7FDPc8a8YCeqX7fvu/w+gVNZp9b8tXVc5iauzWJC0zO0rKTjQqYWdD2PEgfh/cV7rTSVhH3BSEqpezCe9xaRbIwVKaD9G3W5LIJ7kSsStvYeEkU2TEPoHfqRdkIf+dt/ZywxP2b3Xvwg+uwuX3RKLNRtSK8vYFS3CFSlBMG7wUKP24PCjNWSpDD3VrMGxFz59DokAFL+M+hgA1vbc9UQC6WjP7mpHsPs78Y1UnTFD61Eak6+6cKaedF6tNBOWcM7Pl+NUkVMlvD4WxUZcGfY20hQEZdKAy3Hzy5sMetmJgYDJWfk5CCvN5YwdseY2GmNJlwXQMYtZRAM0nrLz0Kld10C+5gpnf9xER+V/KMvT7Osm2JIGZoGqAg21pDAP2N0XBt6MBJmQoxhX4OSj+lgGlp4wzJswGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01CncWCGe8jJZSjzvNAmFRiq",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The page is at /issues?label=bug&status=open with Status set to Open. The table has one row, #1 'Login button misaligned', and its status is Open. The probe data agrees that issue 1 is open. The only closed issue (#3) is not in the list."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The Label filter is set to bug. The only row shown, issue #1, is labelled bug, which the probe confirms. The feature issue (#2) and the docs issue (#3) are left out."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2774,
+    "outputTokens": 297,
+    "cacheReadTokens": 1870,
+    "cacheWriteTokens": 902
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

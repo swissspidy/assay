@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:27:54.099Z",
+ "turns": {
+  "sha256:3abb2d776292a47e2ab49fb9b3bc59aa66ef134c678b46eea2c36149f69b751a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LwMYR9bEbHGkHjubZqBYGo",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to rename issue #3, but the final page is /issues/1, and its heading reads \"#1 Fix typo in README\". This means the agent renamed issue #1 instead. Nothing on the page shows that issue #3 now has the title \"Fix typo in README\". The agent also changed issue #1, which it was not asked to touch. The expected outcome was not met."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01LwMYR9bEbHGkHjubZqBYGo",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to rename issue #3, but the final page is /issues/1, and its heading reads \"#1 Fix typo in README\". This means the agent renamed issue #1 instead. Nothing on the page shows that issue #3 now has the title \"Fix typo in README\". The agent also changed issue #1, which it was not asked to touch. The expected outcome was not met."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1304,
+    "outputTokens": 191,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1300
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

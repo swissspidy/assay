@@ -1,0 +1,215 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:46:15.275Z",
+ "turns": {
+  "sha256:a2433c67a9b96e919f76956c4dc4cdeba01829da1f948815753a14dbda2e3bba": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017WzNSRD8ybmYbAF3acNbE4",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_015dT1zbcRd3n7hpXwZqa1cd",
+     "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_01JgU3Ce8pcKC9DLX95iipy8",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_017WzNSRD8ybmYbAF3acNbE4",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_015dT1zbcRd3n7hpXwZqa1cd",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01JgU3Ce8pcKC9DLX95iipy8",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1893,
+    "outputTokens": 72,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1889
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:ffb263ac9413ff3b2d201c42ba1e6cec6247758b6ae2bbd661955c8d1c0dab0b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01TwPxyaZqJYRd4noyGkCoSg",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "a new issue titled \"Checkout fails on Safari\" exists",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side issues probe lists only issues 1–3, and none of them is titled \"Checkout fails on Safari\". The network log has no create request, only one GET. The issues table shows 3 issues. The banner saying the issue was created does not match what the server stored."
+       },
+       {
+        "requirement": "the new issue has the bug label",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "No new issue exists in the probe data or in the table, so no new issue has the bug label. The only issue labeled bug is the existing issue #1, \"Login button misaligned\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS4gUKEAgTGAI4AUIIdGhpbmtpbmcSDNULxVUsJrEzxwMdLhoMVwCgmGPeqMHAZRIKIjC28YRteByn28Wx83Ac9rLZSHSpG1E6+UrzEwEN+Vu2V7rI86OsrHqaT1++Px7DHFUq/wSQJRbUYUakb1aHA2dEu33pORjyp0CovlSlLRajEgYGDfH+DUX2v1FqUpe82bjabqJ8qgmxMpesQtZC524+y3itDUfpd990eOXlC4LPZGx1Z/EsvyZ1I/QWpynAhO6CoxTLqozWVWUOJWFWyppme3BlbvaH8inD167j/f3SwpurCstc+OnZTHsj26Jwuc+zeTYLMB+tU6bqhD4aZDNX6KPqeLBjXz3oM+4tSj5cRh/VcJ2vjF4nDVi96LYhgf5pl0YRGbSvqbwV5KH+Hc6j8YEHO8PnSHIRWRjXSG4V1kIxZkEalAlOEVBH+xDwx+Zvu+/+mN8lYBp3utdFC3zA5TqkK3HZHEhUlVZdVwGaJ2ZFpOF2o6zZF9cXOOqFkiXCN22W55jn9gUShGHe1idsK6/z4bjs6x0qosayJhypcv/EjNSG52PlUROPpgFhwQgkN55V71nueU2aFiehzBYk8nyi+QQaTQRYPM+oBwCb5lOFgaDOHIcX0HjNFZou0xqrOaUIY5awDR2iZNwWN4gWhso6VOIQU73ZYel7DkZ3x49LSf2BmBBg9SfTuXwXMSyK/wbYW67kfkkCELoMMCA4/Wbtj1NcEZkxaQlGesP2io3mmm2K95JLHISGwfS0NlU2E31n9AnE5WXxYIiKZCW19p4vPnOIT9wleZacF+Z0Txc3xjxbPWCXPiwD5nREImkKiz5wqVQ+OEH395SvvwfB57sxTS0wQ0d3sNrjmSEIY9sbAfdyxkdWBdutX2eGbg+e7+vQhfuH1gJ4UAkQF/P0V+8iDGgCRX4oLOSmXaz5zT/vCaTmU5pbemyuhG9Y1NrTfKUqGXY5O59PFBRhwMo0TysYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01TwPxyaZqJYRd4noyGkCoSg",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "a new issue titled \"Checkout fails on Safari\" exists",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side issues probe lists only issues 1–3, and none of them is titled \"Checkout fails on Safari\". The network log has no create request, only one GET. The issues table shows 3 issues. The banner saying the issue was created does not match what the server stored."
+       },
+       {
+        "requirement": "the new issue has the bug label",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "No new issue exists in the probe data or in the table, so no new issue has the bug label. The only issue labeled bug is the existing issue #1, \"Login button misaligned\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3079,
+    "outputTokens": 319,
+    "cacheReadTokens": 1889,
+    "cacheWriteTokens": 1188
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:9f78494de930d73cfc965af6038446beb5a08ddf3c33753efb6b17a22b84d551": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01BX29i145fFBxapPrGeCs1f",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side issues probe lists only issues 1–3, and none of them is titled \"Checkout fails on Safari\". The network log has no create request, only one GET. The issues table shows 3 issues. The banner saying the issue was created does not match what the server stored."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "No new issue exists in the probe data or in the table, so no new issue has the bug label. The only issue labeled bug is the existing issue #1, \"Login button misaligned\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01BX29i145fFBxapPrGeCs1f",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side issues probe lists only issues 1–3, and none of them is titled \"Checkout fails on Safari\". The network log has no create request, only one GET. The issues table shows 3 issues. The banner saying the issue was created does not match what the server stored."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "No new issue exists in the probe data or in the table, so no new issue has the bug label. The only issue labeled bug is the existing issue #1, \"Login button misaligned\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3476,
+    "outputTokens": 270,
+    "cacheReadTokens": 3077,
+    "cacheWriteTokens": 397
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

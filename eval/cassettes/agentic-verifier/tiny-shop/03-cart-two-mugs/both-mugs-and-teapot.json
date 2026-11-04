@@ -1,0 +1,144 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:32:45.778Z",
+ "turns": {
+  "sha256:cd27c5f84eeb8dfbd140e6bd08b889a7ad6539133416eabd28c69706a132e9f6": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01E39SEr1UmTWKDgZAEDnVhN",
+     "name": "page_outline",
+     "input": {}
+    },
+    {
+     "id": "toolu_017rs2BNeCSBBGWkA7uchPWy",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01GKRrFnxQMwc1kDtJ571VBr",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01E39SEr1UmTWKDgZAEDnVhN",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_017rs2BNeCSBBGWkA7uchPWy",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01GKRrFnxQMwc1kDtJ571VBr",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1888,
+    "outputTokens": 72,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1884
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:cbd42b9f5095d3b2399e6911fed990aa050d724e316dd87c32ff57016f7f45d2": {
+   "stop": "tool_use",
+   "text": "The two requirements only ask whether the cart page lists the mugs, and both hold.",
+   "toolCalls": [
+    {
+     "id": "toolu_01EbXSXkZb9CDv8TBNhiVktu",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The cart page at /cart has a table row for Blue Mug, qty 1, $12.00. The server cart probe also shows MUG-BLUE in the cart."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The cart page at /cart has a table row for Red Mug, qty 1, $9.50. The server cart probe also shows MUG-RED in the cart."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS6QUKEAgTGAI4AUIIdGhpbmtpbmcSDMexTkohZaRutiUB/xoMVqDOp8I9We7ws9YGIjBDQ0yTetULC6bt1YCSYhlQNRJSMpU3WXZboLr1uNFiNhUvRzEi5dc/e3c57A00e+QqhgWzY6HqoCgwsCZLUBZWCjje4aKVlzWqQgO/sCsZqfGjI6TvRRMW81BXKPQXxgWlec3iiFO8bD1bq3fZs/+h5x1/vSqUm4xocPlsormfoHQZlMcrq+MvxIEdZT7dPz7a2uyKJYpOA1/VFd/6cwYahGEmMMiSfgw/nJ7Na4Oka52sBd9EcC/qzAy5wBJNx/VQujszo0MCcdUoeJEEPVWXT6nnhIWFchCE2aAFibovzWuSqu9kOZl1OyWdiPy9iSSXlgAwt4VCJLawBM6tqAmPz+44Es7yMnDeo/fCilqgztThUd+FOFMzTOHtkeJF8UEpMOizzmbXC+2JOetXr7DgVz5KBbL/d0jTV+FGfnBTtcJcZEhDdz5DTPCnmS6/3HnfSLpK2uEbrdDSrT/fCGxxTPDcaMteu4tWbbpIAcAwoqC2/8WJdtr3ZOW+5VCgw3ZGFaISnVsRDxbGNm8MdXXeXU6rUj2qYMU8NQ2zGGy2HMxbzTef01k8qv+BfKAu3QyIaKNOBUTalD7yCjxCdzIrXONYOZsMt3BO86XJdtrRiPAXXWJ4o06cMBk8jW76WizCPkF3HQEBLi5N+4gL+dxZbRyC1wA229q2S5wU8E7p9tyBzipLHq1rqLQGm6aV+fSkKtMRVsvoQXGzQRsqEdU5HyPP7iKyxSJC3gatf0XBTt0YpULHNKXG4qJZbFekvi70PvZxn26aDB5fkMTbGd1+tPEx8zaDa3gKhKDS12X2sDKBAvXlT3TqddBp2DZgf76CDlqcZpmdiqHAJYSy0tC7bRShJU0obkFsjYhpoBKvLpUx300Yu5uk+Ha2mWr32Q+by9Kk2av380yfGOmbW8CMmytJB5jpAr2+GAE="
+    },
+    {
+     "type": "text",
+     "text": "The two requirements only ask whether the cart page lists the mugs, and both hold."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01EbXSXkZb9CDv8TBNhiVktu",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The cart page at /cart has a table row for Blue Mug, qty 1, $12.00. The server cart probe also shows MUG-BLUE in the cart."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The cart page at /cart has a table row for Red Mug, qty 1, $9.50. The server cart probe also shows MUG-RED in the cart."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3215,
+    "outputTokens": 282,
+    "cacheReadTokens": 1884,
+    "cacheWriteTokens": 1329
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

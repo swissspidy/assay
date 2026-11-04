@@ -1,0 +1,215 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:37:52.122Z",
+ "turns": {
+  "sha256:a2433c67a9b96e919f76956c4dc4cdeba01829da1f948815753a14dbda2e3bba": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KtAnTBWWxG6HF8foLPARfg",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_011AAtJACk2ssFPWXx7kJwXW",
+     "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_01GPcMFQFyFpFJHJB1rsUDss",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01KtAnTBWWxG6HF8foLPARfg",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_011AAtJACk2ssFPWXx7kJwXW",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01GPcMFQFyFpFJHJB1rsUDss",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1893,
+    "outputTokens": 72,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1889
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:44213960b77e7cc443b2df2758d843062e8cb1227cfad650deb3ed78486b0e54": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KZQ2Sr3HVDEewo6Wj1Moss",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "a new issue titled \"Checkout fails on Safari\" exists",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side issues probe lists only 3 issues (Login button misaligned, Add dark mode, Typo in docs). None is titled \"Checkout fails on Safari\". The network log has only a single GET and no create request. The page table shows the same 3 issues. The status banner says the issue was created, but nothing on the server backs that up."
+       },
+       {
+        "requirement": "the new issue has the bug label",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "There is no new issue, so no new issue can have the bug label. The only issue labeled bug is the existing #1, \"Login button misaligned\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS1wUKEAgTGAI4AUIIdGhpbmtpbmcSDI/nX/CmAXAa7bYCXBoM6c8ra7WAqj1LZOvSIjDsP06AIE6t8VsYrAAymV4X+r7ly2Mug9KriYBBAXQdcJPPJOQcp+I62TpM5qtAq+4q9AShnbK4DLQldoFnMwzMCqiMZUyDvQgUy/GIN9VB5qs6+xD29ha4oLznhavGfrPAwmfZiFErj+hAAhhpH83Xnbe5LWXG6RhhtYyp11h6VehMNJaRj5aj5kjxbnDInQfcq5kcXFKX5LpamNw9T+nfV9b/lIuh+7xlpQJdZHS10TCTvuv1In5ypZY5rQQAjKzlXDcdZ3mXutOT3iF6VJVq8dddWbCrytJKvY533JFF8+UcTElAaykJ+HXJ9iYiefkkd9DUH/V5tQnNauVrTdCHLGU/qiASvhvodsKq/iKHET56+2yeDSR/GIwTbcVGfyL/9WC0oSbAI3ANHaKmO2ui5Z2yKvmDhQ8ty+o16jbR0EHel6wFU7TttlYEysCgI6Slx9Px+jlJAkI/rjZbvwm4gSbGI552QgsI2X47ed6/g/uUdWsR+jR7Mj6BR6P09O6Aig3/THY29zCPJP+IRAGWUaPqNXayu/iuktKtUo2X0sdatiWE3aN1lGY73g665Pj4CWwbrop5ybXaWGGDrDVIHaD53rLdoEQh4vXF8k2PXwLvPRkbfQ9ANrmpMoHh6U5vM2u2kSimYSH3HXr23dUWkv1RCrdBFX8gySH8dOULvbYAkzJOqsH+UI+Z4fAvXR7zmxyhktZUYz2aBpoi2sNpwPnCFWYzR6uq/ZHnclAWoBzvRDiIE3tr7lseENdAqQwCs+4wltgz9NU2l1BLMY6YFFL5YYR2YYBzlP4+WWmETLe0fFTzF4NmZob0lPe1R0+gIq70DRXTFq+arQ+PMWigJRyquXsfRcSznbKrMCXirj4bZlHkfTNFmwiRqyZxFmeP5t+cJWb7GAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01KZQ2Sr3HVDEewo6Wj1Moss",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "a new issue titled \"Checkout fails on Safari\" exists",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side issues probe lists only 3 issues (Login button misaligned, Add dark mode, Typo in docs). None is titled \"Checkout fails on Safari\". The network log has only a single GET and no create request. The page table shows the same 3 issues. The status banner says the issue was created, but nothing on the server backs that up."
+       },
+       {
+        "requirement": "the new issue has the bug label",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "There is no new issue, so no new issue can have the bug label. The only issue labeled bug is the existing #1, \"Login button misaligned\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3079,
+    "outputTokens": 326,
+    "cacheReadTokens": 1889,
+    "cacheWriteTokens": 1188
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:2d4b43dcecbaa0d629729ac7d4bd2110d201a5adab639560f8c84d7f16f283fd": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015dFDPdhEUWd91o45QPzM9c",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side issues probe lists only 3 issues (Login button misaligned, Add dark mode, Typo in docs). None is titled \"Checkout fails on Safari\". The network log has only a single GET and no create request. The page table shows the same 3 issues. The status banner says the issue was created, but nothing on the server backs that up."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "There is no new issue, so no new issue can have the bug label. The only issue labeled bug is the existing #1, \"Login button misaligned\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_015dFDPdhEUWd91o45QPzM9c",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The server-side issues probe lists only 3 issues (Login button misaligned, Add dark mode, Typo in docs). None is titled \"Checkout fails on Safari\". The network log has only a single GET and no create request. The page table shows the same 3 issues. The status banner says the issue was created, but nothing on the server backs that up."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "There is no new issue, so no new issue can have the bug label. The only issue labeled bug is the existing #1, \"Login button misaligned\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3481,
+    "outputTokens": 282,
+    "cacheReadTokens": 3077,
+    "cacheWriteTokens": 402
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

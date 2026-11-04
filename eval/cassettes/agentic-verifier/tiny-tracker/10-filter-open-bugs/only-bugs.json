@@ -1,0 +1,149 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:42:53.007Z",
+ "turns": {
+  "sha256:c69cc3876f75f5ce18da1c4e49a9285774589fb1322a2a0c85d72affc3b11732": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CzQ4wRvxCAaXyzbhdsnkS6",
+     "name": "page_outline",
+     "input": {}
+    },
+    {
+     "id": "toolu_015MNZ1C4o99ZhTdZCQ6iti5",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSqgUKEAgTGAI4AUIIdGhpbmtpbmcSDDiHwxyUVTFoJfEv0xoMucJdVk/QnWZct9pJIjBHd2cBySMhnsfr9I0LQvtsXBxdsGyz1Qe6iJS1Ko2gkp3oGJaqIAJMLXjXpTLN/yEqxwTpTjeEfXHMPbyIk2w6FCk0O+KABD1vZ2EP0gZfeTgY5aR+TaRfRnAyypiFBstNtveA3+bKDJpRDbN31pLwOVQCUEVckwfgl88IkzTXX7KQzEGH2/rQftQ/G+HvXfkq+dHmW9dVWWKALAmPcxjGdtrKJJmjBamjVR2dNq7HtIEMrOodSHzJABfT6pHS91McqOQb2otQFEkKbXjYp1nfYoHrBP3R+Vy9N1NRDgBma96gote8FmT/bzMVtUT1Vp0+J9nOT0U5hQ32hd/5FCIndezPtmGso4xNhSCYPyOosDy/Dq8DWRFy7hNUzw4Af5AjfmhudH1OM+jQ64IaShXhkXxeKUMs9SVdwZoGXgzV3ANXNAqM7KnVRseo8gRUS3TsozemGtq6GJcl2YV4upI05T9rp+YxsZyr1N2sQqBKHD2ZHfihRsJb5nzdzMVdJzAR9lixjvtb0teq/msVdsfIgp3p58pkh6NkWI+QhAOcM7bVmES7UUq7+swUO+0Qgo6vjadWVhx8egdBlZEo7ZOspbyBpEuPPg262iRyQHyfeK35ANYeJQHZTMv90qR8A/XsO2qJaYCLyH0f5wIA8dK0FvOUyT9knhQLX7hY8FBiHnPkce7ZJnXVBMWxTGsqeuJ3X1FoFS7m7hA1kvtfyE1pUFZJWYooboF5VT4xs+wPLuyaW0o1gRikVIg/0jZTwP78UnhzgISfjkgNpTqS1ttwNQV4Cin0VDYeBWTJsU9HZ9oJrTMTwwg7x1Nh3aijz1vbTNjSA67Upe87GAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01CzQ4wRvxCAaXyzbhdsnkS6",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_015MNZ1C4o99ZhTdZCQ6iti5",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1892,
+    "outputTokens": 73,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1888
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:169a1a7510adbf9273ceb5164f899d599f01cb18c750bd7461eb512cdb39f93b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FmXUiQqLJHuZ7YTnVp28e8",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The list shown has a single row, #1 'Login button misaligned', and its status is Open. The status filter was left on 'All', but the requirement is only about what the list shows, and it shows no non-open issues. The data probe confirms issue 1 is open."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The Label filter is set to bug (label=bug in the URL), and the only row shown is labelled bug. The probe confirms that issue 1 is the only issue with the bug label."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The list shows exactly one issue, #1, which is both open and labelled bug. The probe data shows it is the only open bug, so the list shows exactly the open bugs. The status filter was not set to Open, but because no closed bugs exist, the list still matches."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSnAoKEAgTGAI4AUIIdGhpbmtpbmcSDF/g5Jt7iVSh92zHgRoMkF4Xk4EZ9AgFki2YIjDsQK/2/L8m1sXqNlz4csreIVUY/5i1lZgaz9/sJtQ8BIMGyEFweeiDknKW89WdESMquQkfTArnikZGnpjA10qq7QIW48svJ43NneP3TZU+3unzyM2Bz76lsIIPiY6R+G6flZSYsx7VQzgck39dsJdNik2mOSTlKE4OjVn/rj3+dkBz+gjn7ROCi5RImNBh1awOk70PaAOdbBPtz6GHu2Xn2wW4fVyJido2t7DlXmK9iSTO2RxKXc8tFs4xdfBMC1rPvTbd/ZP0PsGmZ0DuzCqJ1f7x6daJ8FcTSnsNM6XoWiZH8U5mVU0yW85tfYQ/xnBzvxxKX1FsCHZ5Ro4yEXTlAnbvL9gNLYOuSKdl/U4166NutKFFluIzVNQ8UW5GhLa2BoJGX29hBeZFBXGKQrxolP/u4J9vM0Fvc32Ute/WSyZKIEvfCsKg+ueztNdr7vDnQLwXQ9dIGKRyBTmle1JTh+aRX6atWNLVpG6z2mJt6b/49jqbvRCnZT3b9uS0Rj7DNPcfFlWyUnfP2zaYLzCFcBzw9zzk1DnzajfN0iUysb1YWyINT9W8GdTkE5LKTfaEoVXqgmyBk9qL254iywbjI4fU19+vHKzGx2D4IvJbzq2F/ZB9PF/E0wp5VBxsqI1Nw20CiqpyUNC9GQ1iAamZy8J5w5aU/XakoXAAMoZZ1WodTvmFGh2y3EQcj886YUIIdWwf47qa9ORgJmrjyhJCYxc8l3foSt1pZiVoejVf6VZ+GUdWQjfKzikaNkO+ZEaodDTkV2ijpE3uy5hNqZ1OfgAOOcQeRx3AfFK+315gGG4F4gRABCxz4MOOr5PKBuNXS1CZAzRczRoLoPaFgmH7m8YdV80mg+utE/j/7MwYSfR32U9pxJ0DB7IVWvJXlxwlk1lSgK7gIePmBBurkP/V/UuoSftai8MfR8sBZp7lgs+L/1OqnGn+eBOq7X1jNnAY2IUskBB3NJnqzGwHTDyzFcYnQgLYW3N/yz1b4a1ll5i/FATg17WgIbp4QQnXduUYCtLHx7LgSv9i+cc+j3AiLLp7LKdue0KZsVbl3GrYbOOx3Hq7ubUnpUn4mj7DUu1nv9px1MAyTiMPuGfzzj89K1SErAnEJchpbEwVyEQw3XbSmUceySM94fO+xxw8NZwKasgIYYPfPRMbBSgc6Jcd8IjHSFxGzychRdm6yV03MHFJqgEu7st7DpFLS2Nf/BxAhCJK4YhhgCUn4fOqtfSz3+D/MD0O76xF9vmsVwTJYfXsZujrjm9kZGvF+3nAJIVTRUdd19xbbycHmjdQwCIT3Z7gyw7Izqk6VofMlhX33X00th/NYpO9LNjq3Isk8yEai2eCpMhVEwf3ft/e0Y+0XKdqOzTwPObY1bSvDBk3HU1nBCarB9ajnnl/Zpw4pUkvMSFfAicAcHgUaa5Gg5lK1e6q5fNk12EP6yjB0PqaxI5WI5H1uLMvzR5hDjc0XcXe+WkcZXmtZG6BRnA999cTmfieFS/cPxe29YqcBNXF/TDvihKoQ5Cy6fIX8hTAPfpWWLl78boIQlvoAD+tt8rOBgdQ6CakPT9ykFvWLGWL8fM6G+csV3Tvu2hcRCl2g1maQGUv5LUuFG/HRodC8faUaiYg1U5o5d76ju7tdER5YbbRAt3cf3NAAO8s7RET43JDN05FkrkytmCnW34YAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01FmXUiQqLJHuZ7YTnVp28e8",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The list shown has a single row, #1 'Login button misaligned', and its status is Open. The status filter was left on 'All', but the requirement is only about what the list shows, and it shows no non-open issues. The data probe confirms issue 1 is open."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The Label filter is set to bug (label=bug in the URL), and the only row shown is labelled bug. The probe confirms that issue 1 is the only issue with the bug label."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The list shows exactly one issue, #1, which is both open and labelled bug. The probe data shows it is the only open bug, so the list shows exactly the open bugs. The status filter was not set to Open, but because no closed bugs exist, the list still matches."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2818,
+    "outputTokens": 563,
+    "cacheReadTokens": 1888,
+    "cacheWriteTokens": 928
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

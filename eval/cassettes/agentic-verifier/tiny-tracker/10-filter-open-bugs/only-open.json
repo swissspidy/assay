@@ -1,0 +1,158 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:43:01.311Z",
+ "turns": {
+  "sha256:dde3816f0b7b9bda878dc2e8c52b2711d0471d3db386e7ecb87240ca191c2c02": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_012WJDyNKX6JDvBAE3AqjZU6",
+     "name": "page_outline",
+     "input": {}
+    },
+    {
+     "id": "toolu_01MdJEw7LATgYUgsnVGaM8Fw",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01PqjfQPCfdi3MRWGfSGwsUS",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_012WJDyNKX6JDvBAE3AqjZU6",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01MdJEw7LATgYUgsnVGaM8Fw",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01PqjfQPCfdi3MRWGfSGwsUS",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1891,
+    "outputTokens": 72,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1887
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:4f87c601b8d916f567de9a1a39dc488b56cc7ba5bdc8ed8cb11810c87ab49e94": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017FAY6a4FPyj2Ky1LUdVLUt",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The list was loaded with status=open, and both rows shown (#1 and #2) have status Open. The closed issue #3 does not appear."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The Label filter is still 'Any' (label= is empty in the URL). The list includes issue #2 'Add dark mode', which is labelled feature, not bug."
+       },
+       {
+        "requirement": "R3",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Only the status filter was applied. Without the bug label filter, the list shows a feature issue along with the bug, so it is not only the open bugs."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSvwUKEAgTGAI4AUIIdGhpbmtpbmcSDMr0H6Y66d8wCVwSjhoMeut+7wx7LCdCRHWbIjBoiXue98a4qnr/piJMf9a/xpoU5maVhATiBpu6vX48aZf42zunMzfPTiZiJl+tLrMq3AS2Lr5NnE2WieeCKeKhNva2hWLu05N5GOBcEYAdt5a5qwNcDe4ahbC15kI+SggrEidtTttAG+D/bn1KoedXODoXl6LTua8t/2x1B5XTwcm7mLj5DwyzfoYUjSLA5OUz451k6T1CF2KMnpoLvcu4+QkhkJXHO9bxF9Y9KiOx6byRL6HkvkG/HenMYh6iN9RDoBkJqe4cRA/XvUykiw46LfbjrOv0/voNKq9V9aEcmnE0dL9ktev0ucwQjlnD5Tq4aQR5A0ADFfl47oMVxv2/Mhg2DOBEtOWtm/++eNF1m4dwshhlPrYpwLBtDTkKd2PG0S2ek/84OdxwV6CvnVjuhMVbJ7sv5wWqgQ10t7a5lmxw+xXhJV1MVEGC3r73DgU1g7oMXYisUWJGqJvsF0hFgo7csyA81octGpVmv6dJLuQiavV1htH08EduUh+0CYgw8C6xEPQH17kJAvLky+RjHI2qM9zSr8eNzbNLo1wByCL871FjY4H0PMX856MA6fSLQBpHUZOD1IYDE0AzmADvu9i8GJT3ZfuqHv/c0wvrf1GWsfDgzEE7eBRxQy6oEJqsKLrArAC0H1QyLpF0f+7Z2KbQ7b4ydbUWKSsk72sAEN+g17gw9M/fnQ1uBwyXiQxjKfhglpZV+GnSFtceYfgf8h9+amLOQvLuI/1liRSgCOkh+sFa0kLt6W6esRz6Yr2Wf6Nb4yi8KmNEIaxGX9r/c0EFtONIyWKfDrxARkn+Iz/8tt5o7+lkTnZ6mUbzMzaeW/biD6SEcsErk01SFxw5Cgr9yWvd8At3X1Vg+f+AGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_017FAY6a4FPyj2Ky1LUdVLUt",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The list was loaded with status=open, and both rows shown (#1 and #2) have status Open. The closed issue #3 does not appear."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The Label filter is still 'Any' (label= is empty in the URL). The list includes issue #2 'Add dark mode', which is labelled feature, not bug."
+       },
+       {
+        "requirement": "R3",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Only the status filter was applied. Without the bug label filter, the list shows a feature issue along with the bug, so it is not only the open bugs."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2992,
+    "outputTokens": 319,
+    "cacheReadTokens": 1887,
+    "cacheWriteTokens": 1103
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

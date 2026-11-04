@@ -1,0 +1,198 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:48:20.342Z",
+ "turns": {
+  "sha256:a4a5f55de0c806b0706ba82ba099d9d81bb0c3c97565631a5eeb5e28a01e7df4": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015FPEDeFqMe5KRQ8xHLZioR",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_014CDajY1Vne64U8M5J1GYCq",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_015FPEDeFqMe5KRQ8xHLZioR",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_014CDajY1Vne64U8M5J1GYCq",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1878,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1874
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:1709b94e4603f1c4341553af99d0a61b591d4c886a6cb956098a15688387b4c9": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01L1dH8bWN9u3zCZUBPtf5GD",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 has the feature label",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "Probe shows issue #1 labels are only [\"bug\"]. The only write was POST /issues/3/labels, so the agent labelled issue #3 instead of #1."
+       },
+       {
+        "requirement": "issue #1 still has the bug label",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "Probe shows issue #1 labels include \"bug\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSjgYKEAgTGAI4AUIIdGhpbmtpbmcSDP//8b4inNDz+an0zRoMlsa7sOZKQyZqgdBKIjA240KTAVHA2w2xDZ/URySul+vXlxhckdcdwkf12uk6YMSFMIdQsW+1lYu1r0ln++8qqwWdMSKzDgrlIHJzgYEjdZ75qqvW6ibPLkEtWnm0o9fIaWvir/hteHHAJPHA78/S8s49aYoT+waO4avzZk+Tf6S9Wio/j/VEHlGjyxHITCKG1+wE0ysTPam1YuOgx856+wK/RoTDjNkKjDBa/LQR4O8J4kjtaN7BoFWPNlaGhHxQ6Th5pYBBq2mJeMZ7jz0FyB1bZ+9C9BNpk1RzuOExhFJR/4UzapVVziLdyC/Bi98lZ444uWTIdpECjvr2ZNsr70/EOfiujq9oADMdpbIZ8J2BVS/dns3a5EqSjG2Oef8mXuCnECbHzdZSafi4EacX98F9ZYTh4tJyFPHWuZTZTsa0qdws3RZGpi+hlzQGpjlp4JRWgSu4bjVhOzLNgMGFr80h6eEtJwGB0nSwe/bJvRRJTfQZ38CtrYgTUxikDivmAIcybI1OTHJGN1YoJH0ddJ3GfHGm4pwINhSPuui18z24yWCO93wMx/EWdqOpZTlpNlTPS2Gf8E1rI7DML+xbwU8dzBuQzYlnZDJWhe5/hbUY44thgUquWoyjNfkaC/NCwhzCtCO2DtfjAr2gEjAPafMjVS3JlwvkkL862YwD6WsInPppliR2yO06bOoNf/fFtovna87e463NdmA5APexxSBIPBJRQ7ibwGRh12v1WXKOUGJ87uDZWxLW/I6pCGywipCWDHdv7pXpgcQYHRobXNMGoFml2kQBCXNPDrYKOH046KsezYymd6tiAI/jmckRGPOQn2bzUJXiNlvARIdpgbvb5IKDQ5dITygQur+4CgvcID9M/Fue0XzU+MQshpwfjstfkwEIXWZNqUggqTtvBr+EOG2Ay34aNqVpCdqIKSkD8W1vAjYuBAO1Yf+g52WQwvXNEQeS3FbaNi6XLdk2rCTHKSr5JgwMMS5U9xgB"
+    },
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSiwkKEQgTGAI4AUIJbmFycmF0aW9uEgxWf5Vsg9smCsZjE88aDHHqrApVaE4NM0CXICIwqXEtiWZugYRiyc2HpvfxZx36rGeX9+9jGc7WyndpypFtFxquQG/4z8a7VbDVA0C/KqcIxUlnoAyqvNUWstm/6gOod/Z0TIJx8C6Tbvh9DJbMtolwWZ4AgIqbsT1TzPWcbQqPkqfJ0ijR7Dcqsp/HY9Aw2xi0u7D459KNRv9/xUbF339BhXrDE3TIfR0YvmKPFzL9Q+vByCvVsM1FyczIOw1gL7VzXR+PyAxj96+a7nIZWbqzeQoizjMg34Sp6wQDbtl5mTcTJuctblu+o6WdVEaeLnDuIEE8/pQyqTIf77V8AWmWanF4jDkc9a+E42MpMvlaVPNE9JbeRy0wzN/eaHk/L5RWnkYa0GJArL3NyYAg6COvKlBpkBakylpjkNLIviVfcgfl28BoTu2er3wkPu98LL2G59VSEmjIRHNgelfHuBN7OUPWD8u9H8ipsRxm3FrXuqIRHPffIJci6Iypx8/wbb5xdiFKxrMpnu2Wn7XNnTyPXfoRzzjSF1s7lslsH2HHanctAqPn5N0D2ZKlmzQzTkqXBMk66ni2+/HNmgBpwzdi/sL1ak18cLn3oZqk71zNn8M/FxxeufRjQz2VkXS5JFsNSsj1BfUPjuKLyX8s0rW6HMxrOWhEZ49iQyM1v1Gxr6Uo+hy+SAfQzvIcALlcFQQ0FVp+QaJqZZGtHGoehvju0gEwL5Yj8z5UwVxEivEk9LAJX/dIjenZ0A2YNPaZe9bFrKZP1qxvOTKmrUG9EQSiLYhLFq7vFyQjk1NbP+LLUc+Bw7hda0meE2fzIOVbEKgOSK387ZtMYT8lqFIU6vuO5FYTI8ANvlxozB/KJmTD8p26JboWTA4Le5JMloCrNmu2ACFrT28Ra+UbSkbM0ay1+m79y3wpiuuxmvRqgfZajDsd5YGRdAKhRoHeSteQck0EyXFxnIist0Hmwh7W9gz9jPLTL6or9Sbq3No0vRMSJnYeYJRW76Qp9W0qwAqKO+cHFRHQWNggvNhYAv8P2DTFXtxZzQAo9ZErTsreoyEi/ICaqixgPEJ79NIyUOmWYULlzeN2jrMMoafzykAlinkY7GnzywgpTlgW10/9QeSYOTgNk8rqM/G77DntKqwp3ZCeNe/ulTfwOXfDgONxzCDaED4WlTKcB/ozp7ikcOhKcA8JUq6AHnsEYJtT6n5DK+fhIn48pTmXOCHYPvdXSpep94Ua44d+GlVEY9XAQ8VZQZZIWx2bKtAAnA7NQ3U6eimAwY+qYCPi1hU2m36GRXfcQA5Ti2fV0mfxxbZOGwlhPyCrnbXEbvpqZpYnA1bFvnNM4zmwjfQ5v5TzYLGVkTwq37M3ej3pk8VIHp7bDwjWPIFuu1bUrulVTfxF4sb3SDYYQnIpVnWYQh88TRIxEWBCEB9DM817y0piYyCAHm2kp1CkqQomVSjkkjiGROjmayiynB3qjF6gQA7NtRLN2vEebstAQhfZ5gjKKJK6BlgMH2Yc5pNZXRgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01L1dH8bWN9u3zCZUBPtf5GD",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 has the feature label",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "Probe shows issue #1 labels are only [\"bug\"]. The only write was POST /issues/3/labels, so the agent labelled issue #3 instead of #1."
+       },
+       {
+        "requirement": "issue #1 still has the bug label",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "Probe shows issue #1 labels include \"bug\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2365,
+    "outputTokens": 436,
+    "cacheReadTokens": 1874,
+    "cacheWriteTokens": 489
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:045482f4a8eb7b1bc5383c6e25f256595f7c5301a17a5ed9b62c513976e0f09b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Ez26HFTHHFHBq2nzv8e6ed",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "Probe shows issue #1 labels are only [\"bug\"]. The only write was POST /issues/3/labels, so the agent labelled issue #3 instead of #1."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "Probe shows issue #1 labels include \"bug\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Ez26HFTHHFHBq2nzv8e6ed",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "Probe shows issue #1 labels are only [\"bug\"]. The only write was POST /issues/3/labels, so the agent labelled issue #3 instead of #1."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "Probe shows issue #1 labels include \"bug\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2867,
+    "outputTokens": 198,
+    "cacheReadTokens": 2363,
+    "cacheWriteTokens": 502
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

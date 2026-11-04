@@ -1,0 +1,178 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:49:04.668Z",
+ "turns": {
+  "sha256:205f67a419f9ae6625fa72ea9ef0618056c03679be114ad15352b4e59e4eb1c7": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01X4PuKcDnoJgwFPGzasioHq",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01NuVuojzD4uo1KfE56A73TJ",
+     "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_01JxYDc6qQfu8WXwGetDSvD3",
+     "name": "find_nodes",
+     "input": {
+      "text": "Working on it"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01X4PuKcDnoJgwFPGzasioHq",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01NuVuojzD4uo1KfE56A73TJ",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01JxYDc6qQfu8WXwGetDSvD3",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "text": "Working on it"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1847,
+    "outputTokens": 97,
+    "cacheReadTokens": 1843,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:95dff2312d333357d6dd62b0bba83624eb0a684d36dbd08286913ae49735d769": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01WCxWxsnfTtQsMMEN5Vg1Rr",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #2 has a comment \"Working on it\"",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "Probe shows issue #2 comments: []. The network log has only the page GET and no comment POST, and the page does not contain \"Working on it\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01WCxWxsnfTtQsMMEN5Vg1Rr",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #2 has a comment \"Working on it\"",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "Probe shows issue #2 comments: []. The network log has only the page GET and no comment POST, and the page does not contain \"Working on it\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2358,
+    "outputTokens": 150,
+    "cacheReadTokens": 1843,
+    "cacheWriteTokens": 513
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:3b130ff5ff69c67b52d2bb19c1328a81207c15455e33d45c88c4aa32d691a31a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_014HqgnEBJVkqroNnzTVE66n",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "Probe shows issue #2 comments: []. The network log has only the page GET and no comment POST, and the page does not contain \"Working on it\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_014HqgnEBJVkqroNnzTVE66n",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "Probe shows issue #2 comments: []. The network log has only the page GET and no comment POST, and the page does not contain \"Working on it\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2561,
+    "outputTokens": 139,
+    "cacheReadTokens": 2356,
+    "cacheWriteTokens": 203
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

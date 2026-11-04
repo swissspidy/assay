@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:27:38.077Z",
+ "turns": {
+  "sha256:d746be1d2f08bc3acc8d8ba9399ab9afe971e2598f82b7d9ad51200a145bdc53": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01X3mNQwp6NNKRv37TjVbm2K",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to rename issue #3 to \"Fix typo in README\", but the final page shows a different title: \"#3 Fix typo in READNE\". The page title, the h1 heading and the Title textbox all say \"READNE\" instead of \"README\". So the expected outcome was not met. The agent either typed the title wrong or saved a misspelled one, and its claim that it completed the task is not accurate."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01X3mNQwp6NNKRv37TjVbm2K",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to rename issue #3 to \"Fix typo in README\", but the final page shows a different title: \"#3 Fix typo in READNE\". The page title, the h1 heading and the Title textbox all say \"READNE\" instead of \"README\". So the expected outcome was not met. The agent either typed the title wrong or saved a misspelled one, and its claim that it completed the task is not accurate."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1317,
+    "outputTokens": 199,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1313
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

@@ -1,0 +1,266 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:48:45.247Z",
+ "turns": {
+  "sha256:3789ac8319dd467513374253f7208be868ed39fece407a218064e3e76970ddb7": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FLVt7S9RGMGngD9fJ2GU6X",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01XYtDoVgV4ejZc2T4r3AT1q",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01FLVt7S9RGMGngD9fJ2GU6X",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01XYtDoVgV4ejZc2T4r3AT1q",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1915,
+    "outputTokens": 48,
+    "cacheReadTokens": 1911,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:c567adf53fa35f384e951a043e46872b9fe47d0c261a849f92e1eade3139b6f8": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_016YehWGM5NXM8b9T3E5MT9Q",
+     "name": "network_entry",
+     "input": {
+      "seq": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS7AUKEAgTGAI4AUIIdGhpbmtpbmcSDIspmvy+rPqotcaJDRoMYAW3BmosfBcDrPF2IjC0kq9plOMEv1aN8wj8SgdLKXnCic84pz2dFdT6Dm3lS81trheFMn5Ym9Vdi7OJpqgqiQWAAtwtxvKbParaLZG8AKmezzQcO5hnrysmBe5Li72rjStvGjpLm6XjmUC0U7kjSb0gNPA3pSd4ysGwjcs5VC59c/Swt/5C1gq0FD2dZcY/9DwYN+5fOV+LSgG+CiNJe0Ed8pi5Dkl5WB0b4FTiZOmKCmNfj/UI+DeE7Kq8iZTI+AvsnsQI8UGvpb6PYetV+acWMJ7YpJS35H/O2l43ltzb65RzEuo3pMlNxyhXJCSgWxgYSQhuxLWxFWl6ndVwz4adsbnmcMcFhekqtnnKQwNHIczv5dLPS/BtC2stCm5UaYw5BS2lv/vwpQBZ8vRiJeP0t1K0VUjkBRQ6twfHyHU65jZNoFVDvw+U8mJrzB6Hs4p1mdYq3GAlkyeHUxLHw/a/OJhj0VnV36lsVx9/pUt6imxKm1IqDeHNnHHNH18v4cFLvFR8ln9yKid6vgjf1XMQxns0qkOSVsic7xb41fzQgav7O2TYhxpGo5AcTq1mb3JIIYy6O38Ll8YlknhD8iDlxXg2fH4XeSSA9l2T9KbINXenItE6gCBFk5ALeHkHkYxlj7+7+KZgPWU/g406n2ebah89ngWyhdoPoMuWtQNzvPHORNao1QH3pJnzG4OC5GnNWm+ZtooviLo73ukyiaX5ygQTqd/o5a4LmZAByI0/818YNG58k8wD49USH+NzrAl1+KrpysQ3BGbfg7Xlo2i7UnsPOcL6qEHcxl+Z9dnzNhUzBfCHCeRTK77LLRNFFlMQpX9SK9mFzrR1K3s7cL9bIi2DxSGNG22fUS+jNKha9ZDDq1c0h0EFYVdsmL6Y120tw/f7f+fjAcVTx2n1tIFjQ2Q+/tSuskD+QeLXKcIGDITfG8WfjwxkGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_016YehWGM5NXM8b9T3E5MT9Q",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 2
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2532,
+    "outputTokens": 89,
+    "cacheReadTokens": 1911,
+    "cacheWriteTokens": 619
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:6256e3aac1f2f6f5f2923d2a4b96c5296c004ab4545c3bb7debe41bbbe1a5243": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01VS85pLSmrxRArXpGQGdqFT",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "an event \"Workshop\" exists",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The events probe lists event id 4 with the title \"Workshop\". The POST to /api/events returned 201 and created it."
+       },
+       {
+        "requirement": "the workshop lasts 90 minutes",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored Workshop event has duration 90."
+       },
+       {
+        "requirement": "on November 12, 2026 at 10:00",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored Workshop event has date 2026-11-12 and time 10:00. The timezone setting is UTC."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01VS85pLSmrxRArXpGQGdqFT",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "an event \"Workshop\" exists",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The events probe lists event id 4 with the title \"Workshop\". The POST to /api/events returned 201 and created it."
+       },
+       {
+        "requirement": "the workshop lasts 90 minutes",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored Workshop event has duration 90."
+       },
+       {
+        "requirement": "on November 12, 2026 at 10:00",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored Workshop event has date 2026-11-12 and time 10:00. The timezone setting is UTC."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2852,
+    "outputTokens": 272,
+    "cacheReadTokens": 2530,
+    "cacheWriteTokens": 320
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:9dea199032baf483a098047741c84f8775562cdd9b9ecd1704fb04bff099bd02": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01QqVz7wNdqPM2tJfbxtgiLS",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The events probe lists event id 4 with the title \"Workshop\". The POST to /api/events returned 201 and created it."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored Workshop event has duration 90."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored Workshop event has date 2026-11-12 and time 10:00. The timezone setting is UTC."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01QqVz7wNdqPM2tJfbxtgiLS",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The events probe lists event id 4 with the title \"Workshop\". The POST to /api/events returned 201 and created it."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored Workshop event has duration 90."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored Workshop event has date 2026-11-12 and time 10:00. The timezone setting is UTC."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3215,
+    "outputTokens": 250,
+    "cacheReadTokens": 2850,
+    "cacheWriteTokens": 363
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

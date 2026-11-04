@@ -1,0 +1,217 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-04T09:46:50.187Z",
+ "turns": {
+  "sha256:61d542210157b1276f8c0e923fafeab66aeee4d0cf20fb1d791b46a9b5709f56": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Spqa1VSokKfwERoN2eyd5N",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01NdB2K2fhotwUAA4b3gZkSW",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Spqa1VSokKfwERoN2eyd5N",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01NdB2K2fhotwUAA4b3gZkSW",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1832,
+    "outputTokens": 48,
+    "cacheReadTokens": 1828,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:67c5840365b82b0b14f9b7e9228b3efc2fffbd63f844ef90d98db389b3306d43": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HbUcXmfei5gy4aJ7gbYydV",
+     "name": "network_entry",
+     "input": {
+      "seq": 3
+     }
+    },
+    {
+     "id": "toolu_01L8dRHs8PREhi32cDchxfFd",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01HbUcXmfei5gy4aJ7gbYydV",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 3
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01L8dRHs8PREhi32cDchxfFd",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 2335,
+    "outputTokens": 73,
+    "cacheReadTokens": 1828,
+    "cacheWriteTokens": 505
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:7b9042128ceabd5872fc340e0ddfe54a181eaadba093e3bb464508865e53476c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01UnsRR1fnGaNPg4HF7jXaEL",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the time zone setting is Berlin",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The settings probe shows timezone America/New_York. The only save request (PUT /api/settings) sent and got back America/New_York. The page's Time zone dropdown has New York selected, not Berlin, even though it shows 'Settings saved'."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS7QUKEAgTGAI4AUIIdGhpbmtpbmcSDJgcMEsHNUH5V6UQuBoMDqnviULTCWYAMxlBIjAYGOG9jzcJGJ3Pbwpl4XvmVL/B+y7WpC+qIivpYLvVERi9itFJGSgXF/B+kwlxGxAqigX+A/i0NKfytlKxtPeFgbd48DM8CfGqS3GnWINOewII/bTg7DSzr4DB3cU0PYZWlCCk2qElErtiRP9ksp2I/89wqwmHPyWTwkEutEViKZt2SmdFanlyzpC5T1elClnl+12lZu0bHlFRSBtS5NjYn3uQ4WJP7IfhauCytgLMVS/l0Tyj2vZjNGog+wKvSV1sDs0FxVCO6sdMbpQGt73r0GUPQyMtv5ufV0ps1gc3rEm5Yeh7Q58aTNeAd+KtGVZVPHdSK/iC35nVRn6EVKbPWStTZGzjwpHHxHexEXhpOfzoEQYbEQuoCszTUA80CQGUEvQS9MNdsBuFzkxxRrMpn29/wX6J22RVNfAvHRLSjRFhmkjLNPZJOnOuxY6EDdu4MvM/Y1J7HplhgV+cz8wAtMs4DXdwn5hNyCsp0/dry2OuLoW3mERwKyRqNimcUqBD9kDYj53GkVgmZkBZfd/tzeAoiqS1msnfRkauNEUijAjDQv2F9APYzOeBYS+GPFxuYwY/Nqu1itNGhFrtNKs5C5XOhd/nD6R69Hz/XLkNHqJNkC2y1EulKdPsGVjkER1Ve1fxdYWJsCaKP9q2ZOdJQJikOcefdtlCT4OvtxAwGTd4OIJtM0HmF81+T70fiZm/UBNEK5TGpMgl3C+Tlnz3ZxVTzEkqmwt5bHTr1UznVRYyUwTiP8gchANV+B8ysVYg8bn1d//lGZP3v9Sdk98hh6LE6Mbh88PScYlTFE9vdbq2+q9nuM+mv6ijjB8BqosL2be6X0ge4iqJUmCPem1VV6m8Rv8gdq7KaC9lE6kmfJlUGS8DVzkfhRHfnBDP7Y2UEN2MH8edtOGG2JpKoR88Qfu/3tr2D72ml0T03hgB"
+    },
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSpgoKEQgTGAI4AUIJbmFycmF0aW9uEgxkWK8KYCBOAchQ5O8aDGckKZppkoGA7WDvUyIwGszWsasr2LOJzBjzD2kLDbLHjCU9Q4eGuUD40UEUAavXdddjdylHEf6dNJnxgTb9KsIJLq1bbJwG0rrE4w9CjxhltAyoKXzMTB/D1AJpSalTxuIOXNZxwOuYB8+4dNRuLHhEZ/dc82OK8q2q9R7SCJEXin+34arifEfQKVmlrvJGio5Bz1EpAGKO/C0udH43ZZjWvyrRtPIN5cqPh1ZmjUkNLmH0//fGmOoblfgZ1yjgNujQv3D33R3IC5rZQXPItnCyryhxbIinUQ+Tp4amLwQUdgfHyQc9zERRQY0Ptba831DhuzpZhiBUAlz6cVakn2N90FfQeYFYOu7qgduK9Ng/VFiIuXEq8nkGQWTt9H99xSsmQQSkVCFFWk094wOs/XnVBTp0d0fRexT/+AE8PxbGtqQpr+0ccqnCydPEjwcRnlWfBN6iyoTp30vADdHiqujxAl3q/4bBE1EtqZ2TkIM+PfAwYVxAzY5IDkn5xixBORw5nznLXKGm58trF9h1WWERE0YEw+UjTZxRDVn7jufmv80I3Yx/OhdRoG463vVaz/safuXe7HjuWhyWGsLtu6lHApa2g6l64YaF8uXFe63Hp4HT06BC8OeuBBCdXziOZ3MyqwB/sF7dP6N9SIVbyTTMpGXRBy+lBnjbIKuOEqFPMu6JpYCDA6VPwd702EeQGI66S8+KIDgv7iSjvIh4WgUstGZVD99KKNE1P9WkzCWUqmw11c9IK/c/7cmzXwJvW9rLx3WPMHsllEeiRBt4Q/rrlcYiMM+69DDaXylXXq/cbqVHQq0Oa/iIkFUBocAVw301TTWzAI3LSFv+TdH7QSsKtxwkHdc3xaC9237Hc9bZfdRWrNM/5u5R1BnaM8r5jToQnfc9GIRS/USP1zr4Sjo5oDuujH5qZNawqHVMKMUznedyhXmswxjFaF0uEGMiGcGu0lkrrEFSYXQjzR6kQAytuuC7PlE4qZFPnsv9dILWfSIcwR2PzKqbxXk2rmHeMXUeBIZsmwSrF+WVTlibNLB5MEZ8c/+s+Oukrx1MMtmw05tnX0AUj9TgT0OVyjhoAFO0ALeu3jr0uJosieqc17lDO/2R1BxFQElAEzlmLtosw527Q6Be4DaAAvwIpepe0DxK2hmdZbFr56e3vdpXzpvRcqS+3NjDivhqukuzs4NXASdZ22z8SNx2IL1FE/TCHUKSJJBdabpgduoszebuCiMuMlJpDUm3UrUyiuShRNS6p4BrKpVJj9IDUA7mgFCV4nOtYFE8hIDYg5JrHGquxNuugD9zb9sHS9ugeYeH6lLji3jn/Yh/OO1oPVKwM+EdVjaKp0ERrOeZMFg1aXmmGzZzQgp2TXz+cp4DSJmptRTpdNYSClVw6uCkxXs+8K4sCNfrRpVn1r9C806EMsHcjraYyYbbBCFf6wUY6KDrFLGOVljxXQ46jKBxYmcBM4Gk4Twr/TZ9T95fJU19q0MGKjMtGz7uINnYEQgZdT8JUwNz8iamKdxpUE4DGx3xKc6ZdDGOa/fcQKpVya+aNmJYa6TQ4/y+rc40QDmEgWdSJ3UexZPtXubuVU6M2UTXngeN2lMK4kmjQFwfH0icZuOir5azswSg5GzOrOikCijQWdk9ZR12GiJ16IB/8TSGbb3gazozy5uf318Yh1A8fYUnDwLLBYnlM6jM2J0x2w7DGZ/SaJCRGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01UnsRR1fnGaNPg4HF7jXaEL",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "the time zone setting is Berlin",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The settings probe shows timezone America/New_York. The only save request (PUT /api/settings) sent and got back America/New_York. The page's Time zone dropdown has New York selected, not Berlin, even though it shows 'Settings saved'."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2894,
+    "outputTokens": 401,
+    "cacheReadTokens": 2333,
+    "cacheWriteTokens": 559
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:be9325e9c77b9d3353947dac632ef02312ace00412539b4edfb8ac556a95cec8": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HAzokWa7joZxJM9xGyqGBC",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The settings probe shows timezone America/New_York. The only save request (PUT /api/settings) sent and got back America/New_York. The page's Time zone dropdown has New York selected, not Berlin, even though it shows 'Settings saved'."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01HAzokWa7joZxJM9xGyqGBC",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The settings probe shows timezone America/New_York. The only save request (PUT /api/settings) sent and got back America/New_York. The page's Time zone dropdown has New York selected, not Berlin, even though it shows 'Settings saved'."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3345,
+    "outputTokens": 170,
+    "cacheReadTokens": 2892,
+    "cacheWriteTokens": 451
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}
