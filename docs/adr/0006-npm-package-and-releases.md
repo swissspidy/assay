@@ -30,9 +30,15 @@ on npm belongs to an unrelated package.
   - Pull requests that change what the package does add a changeset. On `main`, Changesets keeps a
     "Version packages" pull request that bumps `package.json` and writes `CHANGELOG.md`. Its pushes
     start no workflow, so the release workflow starts CI on that branch with `workflow_dispatch`.
-  - When `main`'s version has no tag (that pull request was merged), the workflow tests and packs
-    the package, stages the tarball on npm, then tags the version and creates its GitHub release from
-    its changelog section.
+  - Each run works out where `main`'s version stands. **Tagged**: nothing to do. **Neither on npm
+    nor drafted** (the version pull request was just merged): test and pack the package, stage the
+    tarball on npm, and create a draft GitHub release from its changelog section. A draft has no
+    tag. **Drafted but not on npm**: waiting for approval. **On npm but not tagged** (a maintainer
+    approved it): publish the draft, which creates the tag.
+  - So nothing is tagged or announced before npm has the version. In sandburg the tag and release
+    follow staging directly; a rejected stage then left a tag that stopped the version from ever
+    being staged again. Here, rejecting the stage and deleting the draft lets the next run stage it
+    again. The workflow also runs daily and by hand, so an approval is picked up without a push.
   - npm accepts the workflow's OIDC token, so the repository stores no npm token. The trusted
     publisher only allows staged publishes: a version goes public once a maintainer approves it with
     2FA, on npmjs.com (Staged Packages) or with `npm stage approve <stage-id>`.

@@ -1,7 +1,7 @@
 # Releases with Changesets and npm's trusted publishing (docs/adr/0006-npm-package-and-releases.md),
 # as in swissspidy/sandburg.
 #
-# On every push to main:
+# On every push to main (and daily, or by hand, to pick up an approval):
 # 1. version: Changesets keeps a "Version packages" pull request up to date with the pending
 #    changesets. Merging it bumps package.json and CHANGELOG.md, and package.json then names a
 #    version with no tag yet: that is a release.
@@ -9,21 +9,33 @@
 #    CI. version-ci starts ci.yml on its branch with workflow_dispatch, which that token can (its
 #    only permission is actions: write). The results show in Actions and on the branch's head
 #    commit, but not in the pull request's checks section.
-# 2. pack (a release only): installs, tests and packs the package. It cannot request an OIDC token.
-# 3. publish (a release only): stages that tarball on npm with the job's OIDC token (npm adds
-#    provenance), then tags the version and creates its GitHub release. It installs nothing, so no
-#    dependency's install script or test code runs where it could publish. A staged version goes
+#    It also works out where main's version stands (the "state" output):
+#    - done: the version is tagged.
+#    - finalize: npm has it (a maintainer approved the staged version) but it is not tagged yet.
+#    - pending: a draft GitHub release exists, npm does not have it: it waits for approval.
+#    - stage: none of these: test, pack and stage it.
+# 2. pack (stage only): installs, tests and packs the package. It cannot request an OIDC token.
+# 3. publish (stage only): stages that tarball on npm with the job's OIDC token (npm adds
+#    provenance) and creates a draft GitHub release, which has no tag yet. It installs nothing, so
+#    no dependency's install script or test code runs where it could publish. A staged version goes
 #    public only once a maintainer approves it with 2FA, on npmjs.com (Staged Packages) or with
-#    `npm stage approve <stage-id>`.
+#    `npm stage approve <stage-id>`. To reject it instead, reject the stage and delete the draft
+#    release: the next run stages main's version again.
+# 4. finalize (finalize only): publishes the draft release, which creates the tag. Nothing is
+#    tagged or announced before npm has the version.
 name: Release
 
 on:
   push:
     branches: [main]
+  # Picks up an approval on npm (finalize) without waiting for the next push.
+  schedule:
+    - cron: '23 5 * * *'
+  workflow_dispatch:
 
 permissions: {}
 
-# Queue rather than cancel: a release stopped halfway may have published without its tag.
+# Queue rather than cancel: a release stopped halfway may have staged without its draft release.
 concurrency:
   group: release
   cancel-in-progress: false
@@ -37,7 +49,7 @@ jobs:
       contents: write # push the "Version packages" branch
       pull-requests: write # open and update its pull request
     outputs:
-      release: ${{ steps.release.outputs.release }}
+      state: ${{ steps.release.outputs.state }}
       version: ${{ steps.release.outputs.version }}
       pr-number: ${{ steps.changesets.outputs.pr-number }}
     steps:
@@ -53,16 +65,24 @@ jobs:
       - run: npm ci --ignore-scripts
       # Before changesets/action, which leaves the checkout on its version branch with the
       # pending changesets applied: the check has to read main's version, not the next one.
-      - name: Is package.json's version unreleased?
+      - name: Where does package.json's version stand?
         id: release
+        env:
+          GH_TOKEN: ${{ github.token }} # sees draft releases (contents: write)
         run: |
           version="$(node -p 'require("./package.json").version')"
           echo "version=$version" >> "$GITHUB_OUTPUT"
           if git rev-parse -q --verify "refs/tags/v$version" >/dev/null; then
-            echo "release=false" >> "$GITHUB_OUTPUT"
+            state=done
+          elif npm view "@swissspidy/assay@$version" version >/dev/null 2>&1; then
+            state=finalize
+          elif [ "$(gh release view "v$version" --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft 2>/dev/null)" = true ]; then
+            state=pending
           else
-            echo "release=true" >> "$GITHUB_OUTPUT"
+            state=stage
           fi
+          echo "state=$state" >> "$GITHUB_OUTPUT"
+          echo "@swissspidy/assay@$version: $state" >> "$GITHUB_STEP_SUMMARY"
       - name: Create or update the "Version packages" pull request
         id: changesets
         uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
@@ -90,7 +110,7 @@ jobs:
   pack:
     name: Test and pack
     needs: version
-    if: needs.version.outputs.release == 'true'
+    if: needs.version.outputs.state == 'stage'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -133,7 +153,7 @@ jobs:
     # staged publishes.
     environment: npm
     permissions:
-      contents: write # the version's tag and GitHub release
+      contents: write # the version's draft GitHub release
       id-token: write # npm trusted publishing and provenance
     env:
       VERSION: ${{ needs.version.outputs.version }}
@@ -171,13 +191,37 @@ jobs:
             npm stage publish ./release/*.tgz > stage.log
             cat stage.log
             stage_id="$(sed -n 's/.*(staged with id \(.*\))$/\1/p' stage.log)"
-            echo "Staged @swissspidy/assay@$VERSION: approve it under Staged Packages on npmjs.com, or with \`npm stage approve ${stage_id:-<stage-id>}\`." >> "$GITHUB_STEP_SUMMARY"
+            echo "Staged @swissspidy/assay@$VERSION: approve it under Staged Packages on npmjs.com, or with \`npm stage approve ${stage_id:-<stage-id>}\`. The GitHub release is a draft until then; to reject, reject the stage and delete the draft." >> "$GITHUB_STEP_SUMMARY"
           fi
-      - name: Tag and create the GitHub release
+      # A draft has no tag: the tag and the public release follow npm's approval (finalize).
+      - name: Create the draft GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           # The version's section of CHANGELOG.md, or GitHub's generated notes without one.
           awk -v v="$VERSION" '$0 == "## " v { on = 1; next } on && /^## / { exit } on' CHANGELOG.md 2>/dev/null > notes.md || true
           if [ -s notes.md ]; then notes=(--notes-file notes.md); else notes=(--generate-notes); fi
-          gh release create "v$VERSION" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "v$VERSION" "${notes[@]}"
+          gh release create "v$VERSION" --repo "$GITHUB_REPOSITORY" --draft --target "$GITHUB_SHA" --title "v$VERSION" "${notes[@]}"
+
+  finalize:
+    name: Tag and publish the GitHub release
+    needs: version
+    if: needs.version.outputs.state == 'finalize'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write # the version's tag and GitHub release
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      # npm has the version: publish its draft release (which creates the tag at the staged commit),
+      # or create the release if there is no draft (e.g. a version published by hand).
+      - name: Publish the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$(gh release view "v$VERSION" --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft 2>/dev/null)" = true ]; then
+            gh release edit "v$VERSION" --repo "$GITHUB_REPOSITORY" --draft=false
+          else
+            gh release create "v$VERSION" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "v$VERSION" --generate-notes
+          fi

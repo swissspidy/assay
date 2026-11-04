@@ -26,9 +26,11 @@ Commit the file it writes in [`.changeset/`](.changeset/README.md). A change to 
 examples or scripts only needs none.
 
 The Release workflow gathers the changesets on `main` into a "Version packages" pull request. Merging
-it tests the package and stages that version on npm with npm's trusted publishing and provenance,
-tags it and creates its GitHub release. The version goes public once a maintainer approves the staged
-publish on npmjs.com ([ADR 0006](docs/adr/0006-npm-package-and-releases.md)).
+it tests the package, stages that version on npm with npm's trusted publishing and provenance, and
+opens a draft GitHub release. The version goes public once a maintainer approves the staged publish
+on npmjs.com; the workflow then tags it and publishes the release. To reject a staged version, reject
+the stage and delete the draft release, and the next run stages it again
+([ADR 0006](docs/adr/0006-npm-package-and-releases.md)).
 
 ## Architecture decision records
 

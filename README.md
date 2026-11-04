@@ -25,6 +25,9 @@ npm install -D @anthropic-ai/sdk
 
 Requires Node.js 24 or later. Releases and their notes: [CHANGELOG.md](CHANGELOG.md).
 
+TypeScript projects that don't install `@anthropic-ai/sdk` need `skipLibCheck: true` in
+`tsconfig.json` (the usual default): the Anthropic adapter's declarations name the SDK.
+
 ## Quick start
 
 ```ts
@@ -181,8 +184,9 @@ the package, installs it into an empty project and uses it from there; CI runs i
 A pull request that changes what the package does adds a changeset (`npm run changeset`; see
 [CONTRIBUTING.md](CONTRIBUTING.md)). The Release workflow turns the changesets on `main` into a
 "Version packages" pull request. Merging it tests the package, stages it on npm with npm's
-trusted publishing and provenance, and tags it and creates its GitHub release. A staged version
-goes public once a maintainer approves it with 2FA. See
+trusted publishing and provenance, and opens a draft GitHub release. A staged version goes public
+once a maintainer approves it with 2FA; the workflow then tags it and publishes the release (on the
+next push, its daily run, or by running it by hand). See
 [ADR 0006](docs/adr/0006-npm-package-and-releases.md).
 
 Milestone 1 acceptance lives in `tests/tasks.spec.ts`. It covers 10 tasks
