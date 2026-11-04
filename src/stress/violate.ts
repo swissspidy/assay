@@ -201,7 +201,9 @@ function dateLike(original: string, oldIso: string, newIso: string, locale: stri
   return newIso;
 }
 
-const ISO_IN_TEXT = /(\d{4}-\d{2}-\d{2})([T ])(\d{2}:\d{2})(:\d{2}(\.\d+)?)?(\s*)(Z|[+-]\d{2}:?\d{2})?/i;
+// The zone is Z, ±HH:MM, or a UTC/GMT label with an optional offset, as parseDateTime reads them.
+const ISO_IN_TEXT =
+  /(\d{4}-\d{2}-\d{2})([T ])(\d{2}:\d{2})(:\d{2}(\.\d+)?)?(\s*)(Z|[+-]\d{2}:?\d{2}|(?:UTC|GMT)(?:\s*[+-]\d{1,2}(?::?\d{2})?)?)?(?![\p{L}\d])/iu;
 
 /** The wall clock of instant `t` at a fixed offset (minutes), as ISO fields. */
 function isoAtOffset(t: number, offset: number): { date: string; hm: string; s: string; ms: string } {
@@ -234,10 +236,9 @@ function datetimeLike(
     if (zone === undefined) {
       if (!timezone) return undefined;
       offset = zoneOffset(t1, timezone) / 60_000;
-    } else if (/^z$/i.test(zone)) offset = 0;
-    else {
-      const z = /^([+-])(\d{2}):?(\d{2})$/.exec(zone)!;
-      offset = (z[1] === '-' ? -1 : 1) * (Number(z[2]) * 60 + Number(z[3]));
+    } else {
+      const z = /([+-])(\d{1,2})(?::?(\d{2}))?$/.exec(zone);
+      offset = z ? (z[1] === '-' ? -1 : 1) * (Number(z[2]) * 60 + Number(z[3] ?? 0)) : 0; // Z, UTC, GMT
     }
     const f = isoAtOffset(t1, offset);
     const rendered = `${f.date}${sep}${f.hm}${sec !== undefined ? ':' + f.s : ''}${frac !== undefined ? '.' + f.ms.padEnd(frac.length - 1, '0').slice(0, frac.length - 1) : ''}${gap}${zone ?? ''}`;

@@ -74,14 +74,8 @@ export function validateCheckSet(input: unknown): ValidationReport {
   }
   for (const r of cs.requirements) {
     const mine = cs.checks.filter((c) => c.requirement === r.id).map((c) => c.assert);
-    const readsNetwork = mine.some(
-      (a) =>
-        a.kind === 'value' &&
-        [a.source, ...('sameAs' in a.expect ? [a.expect.sameAs.source] : [])].some(
-          (src) => src.from === 'request' || src.from === 'response',
-        ),
-    );
-    const assertsExistence = mine.some((a) => a.kind !== 'value');
+    const readsNetwork = mine.some(readsNetworkValue);
+    const assertsExistence = mine.some(assertsPresence);
     if (readsNetwork && !assertsExistence)
       warnings.push(
         `requirement ${r.id}: its value checks abstain when no request matches; add a "request" check so a missing request fails`,
@@ -91,6 +85,25 @@ export function validateCheckSet(input: unknown): ValidationReport {
     if (!covered.has(r.id)) warnings.push(`requirement ${r.id} has no checks (it will abstain as "uncovered")`);
 
   return { ok: errors.length === 0, errors: dedupe(errors), warnings: dedupe(warnings) };
+}
+
+/** Some value read inside `a` (nested ones and sameAs operands included) comes from a request or response. */
+function readsNetworkValue(a: Assertion): boolean {
+  if (a.kind === 'allOf' || a.kind === 'anyOf') return a.of.some(readsNetworkValue);
+  if (a.kind !== 'value') return false;
+  return [a.source, ...('sameAs' in a.expect ? [a.expect.sameAs.source] : [])].some(
+    (src) => src.from === 'request' || src.from === 'response',
+  );
+}
+
+/**
+ * `a` fails, rather than abstains, when the thing it is about is absent: a non-value
+ * assertion, an allOf with such a part, or an anyOf whose every branch is one.
+ */
+function assertsPresence(a: Assertion): boolean {
+  if (a.kind === 'allOf') return a.of.some(assertsPresence);
+  if (a.kind === 'anyOf') return a.of.every(assertsPresence);
+  return a.kind !== 'value';
 }
 
 export function assertValidCheckSet(input: unknown): CheckSet {
@@ -220,6 +233,16 @@ const boundType = (b: unknown): VType =>
         : 'datetime'
       : 'money';
 
+/** A date compares with "YYYY-MM-DD" literals, a datetime with ISO instants that name their offset. */
+function checkTimeLiteral(t: VType, e: unknown, what: string, at: string, errors: string[]): void {
+  if (t === 'date' && (typeof e !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(e)))
+    errors.push(`${at}: a date normalizes to YYYY-MM-DD; ${what} ${JSON.stringify(e)} cannot match`);
+  if (t === 'datetime' && (typeof e !== 'string' || instantOf(e) === undefined))
+    errors.push(
+      `${at}: a datetime normalizes to an instant; ${what} ${JSON.stringify(e)} needs a valid ISO date-time with an offset (e.g. "2026-11-05T14:30:00+01:00")`,
+    );
+}
+
 function checkComparison(t: VType, cmp: Comparison, at: string, errors: string[], warnings: string[]): void {
   if ('regex' in cmp) checkRegex(cmp.regex, cmp.flags, at, errors);
   if (('regex' in cmp || 'contains' in cmp) && t !== 'string' && t !== 'unknown')
@@ -229,12 +252,7 @@ function checkComparison(t: VType, cmp: Comparison, at: string, errors: string[]
     const e = cmp.equals;
     if (t === 'number' && typeof e !== 'number')
       errors.push(`${at}: equals ${JSON.stringify(e)} cannot match a number`);
-    if (t === 'date' && (typeof e !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(e)))
-      errors.push(`${at}: a date normalizes to YYYY-MM-DD; equals ${JSON.stringify(e)} cannot match`);
-    if (t === 'datetime' && (typeof e !== 'string' || instantOf(e) === undefined))
-      errors.push(
-        `${at}: a datetime normalizes to an instant; equals ${JSON.stringify(e)} needs an ISO date-time with an offset (e.g. "2026-11-05T14:30:00+01:00")`,
-      );
+    checkTimeLiteral(t, e, 'equals', at, errors);
     if (t === 'money' && (typeof e !== 'object' || e === null || !('amount' in e)))
       errors.push(`${at}: equals needs {amount, currency} for a money value`);
     if (t === 'string' && typeof e !== 'string')
@@ -242,6 +260,8 @@ function checkComparison(t: VType, cmp: Comparison, at: string, errors: string[]
     if (t === 'money' || t === 'number')
       warnings.push(`${at}: exact equality on a ${t}; consider approx with a tolerance`);
   }
+  // null in oneOf stands for an unset storage key (§2.4), not a literal of the value's type.
+  if ('oneOf' in cmp) for (const e of cmp.oneOf) if (e !== null) checkTimeLiteral(t, e, 'oneOf entry', at, errors);
   const bounds: unknown[] =
     'approx' in cmp
       ? [cmp.approx.value]
@@ -253,6 +273,8 @@ function checkComparison(t: VType, cmp: Comparison, at: string, errors: string[]
       errors.push(`${at}: rel has no meaning for a ${t}; use abs (${t === 'date' ? 'days' : 'minutes'})`);
     for (const b of bounds) {
       const bt = boundType(b);
+      if (bt === 'datetime' && instantOf(b as string) === undefined)
+        errors.push(`${at}: bound ${JSON.stringify(b)} is not a valid ISO date-time`);
       if (t !== 'unknown' && t !== bt && !(t === 'money' && bt === 'number'))
         errors.push(`${at}: bound ${JSON.stringify(b)} is a ${bt} but the value is ${t}`);
     }
@@ -312,7 +334,8 @@ function walkAssertion(a: Assertion, at: string, errors: string[], warnings: str
 const before = (src: ValueSource) => (src.from === 'probe' || src.from === 'storage') && src.at === 'before';
 
 /** Identity of one side of a comparison: its source and normalizers. */
-const side = (src: ValueSource, n: Normalizer[] | undefined) => canonicalJson({ src, n: n ?? [] } as unknown as Json);
+const side = (src: ValueSource, n: Normalizer[] | undefined) =>
+  canonicalJson({ src, n: (n ?? []).map((x) => (typeof x === 'string' ? { op: x } : x)) } as unknown as Json);
 
 /** Checks one value source and its normalizers; returns the type the pipeline produces. */
 function checkValueSource(

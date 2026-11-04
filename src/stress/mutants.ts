@@ -377,9 +377,11 @@ function valueMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, {
       const rendered = renderLike(span, typed, cand, localeOf(a.normalize), timezoneOf(a.normalize));
       if (rendered === undefined) continue;
       next = (r.raw as string).replace(span, () => rendered);
-    } else if (!a.normalize?.length) {
+    } else {
+      // A JSON value is written as the candidate itself; the read-back below drops it
+      // unless the normalizers turn it back into exactly the candidate.
       next = cand.type === 'money' ? { ...cand.value } : (cand.value as Json);
-    } else continue;
+    }
     // The pipeline must read back exactly the intended near miss.
     try {
       if (key(applyNormalizers(fromJson(next), a.normalize)) !== key(cand)) continue;
