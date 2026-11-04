@@ -1,3 +1,4 @@
+/** `@swissspidy/assay/compiler`: compile a task and reference runs into a check set. */
 export {
   compileTask,
   rubricFromClauses,

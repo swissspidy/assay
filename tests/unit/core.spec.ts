@@ -1,17 +1,15 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync, readdirSync } from 'node:fs';
 import {
-  parseAriaSnapshot,
   evaluate,
-  evaluateAssertion,
-  kleeneAnd,
-  kleeneOr,
   validateCheckSet,
   snapshotDigest,
   type Assertion,
   type CheckSet,
   type EvidenceSnapshot,
 } from '../../src/index.ts';
+import { evaluateAssertion, kleeneAnd, kleeneOr } from '../../src/runtime/evaluate.ts';
+import { parseAriaSnapshot } from '../../src/snapshot/aria.ts';
 import { AXIndex, resolveTarget } from '../../src/runtime/axindex.ts';
 
 const YAML = `

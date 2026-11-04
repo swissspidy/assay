@@ -9,7 +9,8 @@
  * Writes examples/<app>/compiled/<task>.{checks,report,cassette}.json and SUMMARY.md.
  */
 import { mkdirSync, readdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
-import { compileTask, evaluate, type CheckSet, type EvidenceSnapshot } from '../src/index.ts';
+import { evaluate, type CheckSet, type EvidenceSnapshot } from '../src/index.ts';
+import { compileTask } from '../src/compiler/index.ts';
 import { APPS } from '../examples/apps.ts';
 import { compileReference } from '../examples/lib/scenario.ts';
 import { modelFromEnv } from './model-from-env.ts';

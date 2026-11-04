@@ -1,14 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { expect, type Page } from '@playwright/test';
-import {
-  evaluate,
-  loadSnapshot,
-  verifyPage,
-  type CaptureOptions,
-  type CheckSet,
-  type EvidenceSnapshot,
-  type Outcome,
-} from '../src/index.ts';
+import { evaluate, loadSnapshot, type CheckSet, type EvidenceSnapshot, type Outcome } from '../src/index.ts';
+import { verifyPage, type CaptureOptions } from '../src/playwright/index.ts';
 
 export function loadChecks(name: string): CheckSet {
   return JSON.parse(

@@ -1,7 +1,8 @@
 /** Milestone 5: metrics, cost accounting and the LLM-judge baseline (with a scripted model). */
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { costUsd, llmJudge, metrics, PRICING, type EvidenceSnapshot, type Prediction } from '../../src/index.ts';
+import type { EvidenceSnapshot } from '../../src/index.ts';
+import { costUsd, llmJudge, metrics, PRICING, type Prediction } from '../../src/eval/index.ts';
 import { call, scripted } from '../support/scripted.ts';
 import { decodeBody } from '../../src/snapshot/capture.ts';
 

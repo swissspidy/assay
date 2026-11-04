@@ -2,7 +2,8 @@
 import { spawn, type ChildProcess } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { chromium, type Browser } from '@playwright/test';
-import { EvidenceRecorder, captureSnapshot, type EvidenceSnapshot } from '../src/index.ts';
+import type { EvidenceSnapshot } from '../src/index.ts';
+import { EvidenceRecorder, captureSnapshot } from '../src/playwright/index.ts';
 import type { AppDef } from '../examples/apps.ts';
 import type { Scenario } from '../examples/lib/scenario.ts';
 

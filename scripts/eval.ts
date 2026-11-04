@@ -11,20 +11,9 @@
  * Writes eval/results/REPORT.md and results.json (compiled: eval/results/compiled/).
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import {
-  costUsd,
-  evaluate,
-  llmJudge,
-  metrics,
-  PRICING,
-  runVerifier,
-  verifyWithEscalation,
-  kleeneAnd,
-  type CheckSet,
-  type EvidenceSnapshot,
-  type Metrics,
-  type Prediction,
-} from '../src/index.ts';
+import { evaluate, runVerifier, verify, type CheckSet, type EvidenceSnapshot } from '../src/index.ts';
+import { costUsd, llmJudge, metrics, PRICING, type Metrics, type Prediction } from '../src/eval/index.ts';
+import { kleeneAnd } from '../src/runtime/evaluate.ts';
 import { APPS } from '../examples/apps.ts';
 import { compileReference } from '../examples/lib/scenario.ts';
 import { modelFromEnv } from './model-from-env.ts';
@@ -170,7 +159,7 @@ async function modelRun(system: string, r: Run): Promise<ModelOutcome> {
       verdict = k === 'pass' ? 'success' : k;
       usage = v.usage;
     } else {
-      const res = await verifyWithEscalation(r.checks, r.snapshot, { verifier: env.model, agentReport: AGENT_REPORT });
+      const res = await verify(r.checks, r.snapshot, { verifier: env.model, agentReport: AGENT_REPORT });
       verdict = res.outcome.verdict;
       usage = res.verifier?.usage ?? { inputTokens: 0, outputTokens: 0 };
       const err = res.record.escalation?.error;
