@@ -30,15 +30,18 @@ function load(path: string): Cassette | null {
 
 /** A recording or replaying client also exposes what is recorded: the model and when. */
 export interface ReplayModel extends ModelClient {
-  readonly recorded: { model: string; at?: string };
+  readonly recorded: { model: string; at: string };
 }
+
+/** Provenance time for cassettes recorded before `recordedAt` was kept: fixed, so replays stay identical. */
+export const UNRECORDED_AT = '1970-01-01T00:00:00.000Z';
 
 export function replayModel(path: string): ReplayModel {
   const cassette = load(path);
   if (!cassette) throw new ModelError(`No cassette at ${path}. Set ANTHROPIC_API_KEY to record one.`);
   return {
     id: `${cassette.model} (replay)`,
-    recorded: { model: cassette.model, ...(cassette.recordedAt ? { at: cassette.recordedAt } : {}) },
+    recorded: { model: cassette.model, at: cassette.recordedAt ?? UNRECORDED_AT },
     async turn(req) {
       const hit = cassette.turns[requestKey(req, cassette.model)];
       if (!hit) {

@@ -2,23 +2,23 @@
 
 | Task | Variants accepted | Mutants rejected (fail / abstain) | Over-constrained | Weak | Missed |
 |---|---|---|---|---|---|
-| tiny-shop/01-newsletter | 18/18 | 12/12 (12 / 0) | – | – | 0 |
+| tiny-shop/01-newsletter | 18/18 | 4/4 (4 / 0) | – | – | 0 |
 | tiny-shop/02-add-blue-mug | 22/22 | 2/2 (2 / 0) | – | – | 0 |
 | tiny-shop/03-cart-two-mugs | 24/24 | 14/14 (14 / 0) | – | – | 0 |
 | tiny-shop/04-remove-red-mug | 23/23 | 4/4 (4 / 0) | – | – | 0 |
 | tiny-shop/05-set-quantity | 22/22 | 4/4 (4 / 0) | – | – | 0 |
-| tiny-shop/06-cart-total | 30/30 | 28/28 (28 / 0) | – | – | 0 |
-| tiny-shop/07-express-order | 20/20 | 16/16 (16 / 0) | – | – | 0 |
-| tiny-shop/08-delivery-date | 18/20 | 26/26 (26 / 0) | – | – | 0 |
-| tiny-shop/09-gift-wrap | 20/20 | 10/10 (10 / 0) | – | – | 0 |
+| tiny-shop/06-cart-total | 30/30 | 30/30 (30 / 0) | – | – | 0 |
+| tiny-shop/07-express-order | 20/20 | 52/52 (52 / 0) | – | – | 0 |
+| tiny-shop/08-delivery-date | 28/28 | 36/36 (36 / 0) | – | – | 0 |
+| tiny-shop/09-gift-wrap | 20/20 | 20/20 (20 / 0) | – | – | 0 |
 | tiny-shop/10-dark-german | 16/16 | 12/12 (12 / 0) | – | – | 0 |
-| **tiny-shop** | **213/215** | **128/128** (128 / 0) | | | 0 |
+| **tiny-shop** | **223/223** | **178/178** (178 / 0) | | | 0 |
 
 ## tiny-shop/01-newsletter v1
 
 - Valid variants accepted: **18/18** (100%)
-- Mutants rejected: **12/12** (100%; 12 by fail, 0 by abstain)
-- Mutants with a success claim added still rejected: 12/12
+- Mutants rejected: **4/4** (100%; 4 by fail, 0 by abstain)
+- Mutants with a success claim added still rejected: 4/4
 ## tiny-shop/02-add-blue-mug v1
 
 - Valid variants accepted: **22/22** (100%)
@@ -45,26 +45,23 @@
 ## tiny-shop/06-cart-total v1
 
 - Valid variants accepted: **30/30** (100%)
-- Mutants rejected: **28/28** (100%; 28 by fail, 0 by abstain)
-- Mutants with a success claim added still rejected: 28/28
+- Mutants rejected: **30/30** (100%; 30 by fail, 0 by abstain)
+- Mutants with a success claim added still rejected: 30/30
 ## tiny-shop/07-express-order v1
 
 - Valid variants accepted: **20/20** (100%)
-- Mutants rejected: **16/16** (100%; 16 by fail, 0 by abstain)
-- Mutants with a success claim added still rejected: 16/16
+- Mutants rejected: **52/52** (100%; 52 by fail, 0 by abstain)
+- Mutants with a success claim added still rejected: 52/52
 ## tiny-shop/08-delivery-date v1
 
-- Valid variants accepted: **18/20** (90%)
-- Mutants rejected: **26/26** (100%; 26 by fail, 0 by abstain)
-- Mutants with a success claim added still rejected: 26/26
-
-**Fragile checks (abstain on a valid variant)**
-- R1-confirmation-delivery-date: express-order/spacing (non-breaking and doubled spaces in visible text); express-two-items/spacing (non-breaking and doubled spaces in visible text)
+- Valid variants accepted: **28/28** (100%)
+- Mutants rejected: **36/36** (100%; 36 by fail, 0 by abstain)
+- Mutants with a success claim added still rejected: 36/36
 ## tiny-shop/09-gift-wrap v1
 
 - Valid variants accepted: **20/20** (100%)
-- Mutants rejected: **10/10** (100%; 10 by fail, 0 by abstain)
-- Mutants with a success claim added still rejected: 10/10
+- Mutants rejected: **20/20** (100%; 20 by fail, 0 by abstain)
+- Mutants with a success claim added still rejected: 20/20
 ## tiny-shop/10-dark-german v1
 
 - Valid variants accepted: **16/16** (100%)

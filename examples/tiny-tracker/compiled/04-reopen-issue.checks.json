@@ -19,9 +19,9 @@
   ],
   "checks": [
     {
-      "id": "issue3-open-backend",
+      "id": "issue3-open-probe",
       "requirement": "R1",
-      "description": "The backend issues probe shows issue #3 with status \"open\".",
+      "description": "The backend issues probe shows issue #3 with status 'open'.",
       "assert": {
         "kind": "value",
         "source": {
@@ -33,6 +33,10 @@
             "type": "array",
             "contains": {
               "type": "object",
+              "required": [
+                "id",
+                "status"
+              ],
               "properties": {
                 "id": {
                   "const": 3
@@ -40,40 +44,8 @@
                 "status": {
                   "const": "open"
                 }
-              },
-              "required": [
-                "id",
-                "status"
-              ]
-            }
-          }
-        }
-      }
-    },
-    {
-      "id": "issue3-reopen-request",
-      "requirement": "R1",
-      "description": "A successful POST to /issues/3/state was sent with status \"open\".",
-      "assert": {
-        "kind": "request",
-        "match": {
-          "method": "POST",
-          "url": {
-            "path": "/issues/3/state"
-          },
-          "status": {
-            "lt": 400
-          },
-          "requestBody": {
-            "type": "object",
-            "properties": {
-              "status": {
-                "const": "open"
               }
-            },
-            "required": [
-              "status"
-            ]
+            }
           }
         }
       }
@@ -85,6 +57,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T09:29:09.185Z"
+    "at": "2026-11-04T10:09:55.735Z"
   }
 }

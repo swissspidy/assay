@@ -7,25 +7,25 @@
   ],
   "turns": {
     "rubric": 1,
-    "discovery": 4
+    "discovery": 5
   },
   "usage": {
-    "inputTokens": 61422,
-    "outputTokens": 2371,
-    "cacheReadTokens": 45210,
-    "cacheWriteTokens": 16198
+    "inputTokens": 78541,
+    "outputTokens": 2889,
+    "cacheReadTokens": 60753,
+    "cacheWriteTokens": 17772
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "the confirmation shows an estimated delivery of 5 November 2026",
       "checks": [
-        "R1-confirmation-delivery-date"
+        "R1-confirmation-date"
       ],
       "channels": [
-        "text"
+        "a11y"
       ],
-      "trust": "freetext"
+      "trust": "semantic"
     },
     {
       "requirement": "R2",
@@ -44,21 +44,29 @@
       "requirement": "R3",
       "quote": "with express shipping",
       "checks": [
-        "R3-express-request",
-        "R3-express-probe"
+        "R3-express-probe",
+        "R3-express-request"
       ],
       "channels": [
-        "network",
-        "probe"
+        "probe",
+        "network"
       ],
       "trust": "structured"
+    },
+    {
+      "requirement": "R4",
+      "quote": "show me the estimated delivery date",
+      "checks": [
+        "R4-delivery-shown"
+      ],
+      "channels": [
+        "a11y"
+      ],
+      "trust": "semantic"
     }
   ],
   "warnings": [
-    "check R1-confirmation-delivery-date: reads free page text, which is the easiest evidence to spoof; prefer a11y, network or probe evidence",
-    "requirement R3: its value checks abstain when no request matches; add a \"request\" check so a missing request fails",
-    "Requirement R1 is covered only by free page text, which a page can spoof.",
-    "R1-confirmation-delivery-date abstains on valid variants (non-breaking and doubled spaces in visible text [express-order/spacing]); consider more robust anchors."
+    "requirement R3: its value checks abstain when no request matches; add a \"request\" check so a missing request fails"
   ],
   "references": [
     {

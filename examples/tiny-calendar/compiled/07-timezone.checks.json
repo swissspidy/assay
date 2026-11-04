@@ -10,7 +10,7 @@
     {
       "id": "R1",
       "kind": "hard",
-      "text": "The calendar's time zone setting is Berlin.",
+      "text": "The calendar's time zone setting is set to Berlin.",
       "source": {
         "field": "outcomes",
         "quote": "the time zone setting is Berlin"
@@ -19,9 +19,9 @@
   ],
   "checks": [
     {
-      "id": "R1.probe-timezone",
+      "id": "R1-probe-timezone",
       "requirement": "R1",
-      "description": "The backend settings store the time zone as Europe/Berlin.",
+      "description": "The backend settings record has its time zone set to Europe/Berlin.",
       "assert": {
         "kind": "value",
         "source": {
@@ -33,7 +33,8 @@
           "trim"
         ],
         "expect": {
-          "equals": "Europe/Berlin"
+          "regex": "^(Europe/)?Berlin$",
+          "flags": "i"
         }
       }
     }
@@ -44,6 +45,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T09:30:00.111Z"
+    "at": "2026-11-04T10:10:43.734Z"
   }
 }

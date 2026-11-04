@@ -13,7 +13,7 @@ export interface EnvModel {
   model: ModelClient;
   mode: 'live' | 'replay';
   /** What to record as the model's provenance: the recorded model and time when replaying. */
-  provenance: { model: string; at?: string };
+  provenance: { model: string; at: string };
   save(): void;
 }
 

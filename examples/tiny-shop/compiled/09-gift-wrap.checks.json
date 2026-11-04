@@ -28,9 +28,9 @@
   ],
   "checks": [
     {
-      "id": "order-placed-request",
+      "id": "R2-order-request",
       "requirement": "R2",
-      "description": "A POST to /api/orders succeeded (2xx), placing an order.",
+      "description": "A POST to /api/orders succeeded, placing an order.",
       "assert": {
         "kind": "request",
         "match": {
@@ -46,45 +46,68 @@
       }
     },
     {
-      "id": "order-placed-probe",
+      "id": "R2-order-placed-probe",
       "requirement": "R2",
-      "description": "The backend's latest order has status 'placed'.",
+      "description": "The backend's latest order exists with status placed.",
       "assert": {
         "kind": "value",
         "source": {
           "from": "probe",
-          "probe": "latestOrder",
-          "pointer": "/status"
+          "probe": "latestOrder"
         },
         "expect": {
-          "equals": "placed"
+          "schema": {
+            "type": "object",
+            "required": [
+              "id",
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": "placed"
+              }
+            }
+          }
         }
       }
     },
     {
-      "id": "giftwrap-probe",
+      "id": "R1-giftwrap-probe",
       "requirement": "R1",
-      "description": "The backend's latest order has giftWrap set to true.",
+      "description": "The backend's latest placed order has giftWrap set to true.",
       "assert": {
         "kind": "value",
         "source": {
           "from": "probe",
-          "probe": "latestOrder",
-          "pointer": "/giftWrap"
+          "probe": "latestOrder"
         },
         "expect": {
-          "equals": true
+          "schema": {
+            "type": "object",
+            "required": [
+              "giftWrap",
+              "status"
+            ],
+            "properties": {
+              "giftWrap": {
+                "const": true
+              },
+              "status": {
+                "const": "placed"
+              }
+            }
+          }
         }
       }
     },
     {
-      "id": "giftwrap-request",
+      "id": "R1-giftwrap-response",
       "requirement": "R1",
-      "description": "The last successful order POST sent giftWrap true.",
+      "description": "The last successful order creation response shows giftWrap true.",
       "assert": {
         "kind": "value",
         "source": {
-          "from": "request",
+          "from": "response",
           "match": {
             "method": "POST",
             "url": {
@@ -110,6 +133,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T09:30:32.416Z"
+    "at": "2026-11-04T10:11:29.804Z"
   }
 }

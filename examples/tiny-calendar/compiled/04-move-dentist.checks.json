@@ -19,9 +19,9 @@
   ],
   "checks": [
     {
-      "id": "dentist-date-backend",
+      "id": "dentist-on-2026-11-07",
       "requirement": "R1",
-      "description": "The backend events list has the Dentist event dated 2026-11-07 and no Dentist event on any other date.",
+      "description": "The backend events store has the Dentist event dated 2026-11-07, with no Dentist event left on any other date.",
       "assert": {
         "kind": "value",
         "source": {
@@ -46,8 +46,8 @@
                 }
               }
             },
-            "not": {
-              "contains": {
+            "items": {
+              "not": {
                 "type": "object",
                 "required": [
                   "title",
@@ -76,6 +76,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T09:29:29.633Z"
+    "at": "2026-11-04T10:10:14.742Z"
   }
 }

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { mkdtempSync, readFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { AnthropicError } from '@anthropic-ai/sdk';
@@ -281,6 +281,11 @@ test('cassettes: a recorded compile replays identically without a model; changed
     at: rec.recorded.at,
   });
   expect(validateCheckSet(first.checkSet!).errors).toEqual([]);
+  // A cassette from before recordedAt was kept replays with a fixed time, not the replay's.
+  const legacy = JSON.parse(readFileSync(path, 'utf8'));
+  delete legacy.recordedAt;
+  writeFileSync(path, JSON.stringify(legacy));
+  expect(replayModel(path).recorded.at).toBe('1970-01-01T00:00:00.000Z');
   await expect(
     compileTask({ ...NEWSLETTER, instruction: 'Subscribe me to the newsletter, please.' }, refs, {
       model: replayModel(path),

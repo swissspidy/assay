@@ -1,14 +1,14 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T09:29:51.630Z",
+ "recordedAt": "2026-11-04T10:10:37.403Z",
  "turns": {
   "sha256:eacf63644527457e63499685cab63bbefc82204cbb23ce5f13902d768111aeed": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_012dY1Yvpette3nNRLsrdQcw",
+     "id": "toolu_01U15yMrrT2w8MMkrSy4z9Bn",
      "name": "submit_rubric",
      "input": {
       "requirements": [
@@ -26,7 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_012dY1Yvpette3nNRLsrdQcw",
+     "id": "toolu_01U15yMrrT2w8MMkrSy4z9Bn",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -47,22 +47,22 @@
    "usage": {
     "inputTokens": 1103,
     "outputTokens": 109,
-    "cacheReadTokens": 1099,
-    "cacheWriteTokens": 0
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1099
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:377b10d32d82de2ccc4f32d581f9c21f0fcc6ed44bb5160addf07f113cb4e15a": {
+  "sha256:a29f84c0d0bd28ba545b47854c4c2f7e73b454883888507b163789b0c227a87a": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01JauPAbf3xrEPqPX6UQneKG",
+     "id": "toolu_01K9Ayor2Se7vEDvHhPYdmhF",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_0161dsbuD8ARArLpZ8pVBEpC",
+     "id": "toolu_01GGP9uo8piM9KwFhAHTcCyS",
      "name": "network_log",
      "input": {}
     }
@@ -70,7 +70,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01JauPAbf3xrEPqPX6UQneKG",
+     "id": "toolu_01K9Ayor2Se7vEDvHhPYdmhF",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -79,7 +79,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_0161dsbuD8ARArLpZ8pVBEpC",
+     "id": "toolu_01GGP9uo8piM9KwFhAHTcCyS",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -88,48 +88,56 @@
     }
    ],
    "usage": {
-    "inputTokens": 13803,
+    "inputTokens": 13909,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 13799
+    "cacheWriteTokens": 13905
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:ea7613a6a050abeae81dbe87b7409c69b4ab8b49004adaa06c0f6f9c4b54da72": {
+  "sha256:70bfe4682169723083c7b174f45349c46b3b18bdd43e127fc1aea5f6a1b3ea7e": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_018nKSwXFcGSKnWmaXntYX6A",
-     "name": "try_assertion",
+     "id": "toolu_01QaDHhGeNsZPU6Ce4M6e2DX",
+     "name": "submit_checks",
      "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "events"
-       },
-       "expect": {
-        "schema": {
-         "type": "array",
-         "contains": {
-          "type": "object",
-          "required": [
-           "title",
-           "location"
-          ],
-          "properties": {
-           "title": {
-            "const": "Book club"
-           },
-           "location": {
-            "const": "City Library"
+      "checks": [
+       {
+        "id": "book-club-location-probe",
+        "requirement": "R1",
+        "description": "The backend events store has the Book club event with location City Library.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "events"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "title",
+             "location"
+            ],
+            "properties": {
+             "title": {
+              "const": "Book club"
+             },
+             "location": {
+              "type": "string",
+              "pattern": "^\\s*City Library\\s*$"
+             }
+            }
            }
           }
          }
         }
        }
-      }
+      ]
      }
     }
    ],
@@ -137,150 +145,59 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS8AgKEAgTGAI4AUIIdGhpbmtpbmcSDFV8q9iYt/hX0zpkVRoM6IKWE2I1rzbrmrthIjB8QTpM8FmG3uz3alof2lPE8/v2hrt1qIZAH8FV6w1/Ft3SiOsNtyw5Y0yPl1S396AqjQhpI9dUuRBvdPfeFkIVzo+0Htd0j6qFtxzmYOCIzWjifAfVfxEWICgsqHwuDKX9FznS5YyX0TW+3G9WCevX92YcjOzL+V67zBrphbA6N1xHf2QE5TBeJLFwNFmiRK8k0fNH2z4K+kaTaPddfQD9CQNFoL4SucuE94DCir/voAgIwTI98c6Zfm8wFmZXXb+JP7tGeRALe4FbfI6ln4KsQ90a9NIQ1uaNtdxOQj5ipI7oof5KIfTrQTCwQFdFx8TCHspx1omoByqCnsCX8D1xA6IQ0Al03flraL0JK7ggZ/AcBGdjSfFxGb/CMKxYlv3/Fg+jReq6WVp7unQ21KmubXTYyz9uICg6v5J7tPyc+RhLzP/92ArSvNoiidFMN5yA+4UK7qcihJHOQon4xIMbUM2WXjc7aBwi3+0nbNGzQfG5cL4Xdt3DFMYQbaUyOxBg1AIgusRhpX17YTRNEP8XrCeWkCV0a55348IB27Yzln7t+aWG4MQteSuwrcY0p6ITCzP8o7WasaMpvAF86nHvI02FCrphggFr0cS+ThKrxuDXczLHe8jEUIvAjhsGMELitG8M6HyWyhxH3NMysqX35JYuaWtYuyhTpqa976GJgjO8hThW2RIU4BArOpq05fPZRtfrVXKgAXqK6DDg/U7UCfqRlMjOYTSOnuB+Yw6qSzurVv0dH/hCqMoFhUV6zWiU27Vdl44nJ677xQnAT11RBplY/HgFv90CQuZzx/oMDgpx91Azal1o+EstHcY9Qd1nx5+oYkISwiQeyFxwVD2G2DNcxqk/NSIcHDCrFCNoP48gE1C8+EG4XZ2UKlKaTtgfzMfcu+aBGzDqFfL2BsTbHQjIl4+eiEDMbPBsot2wbZi9Itknx0BLFIZlQK3INw8+rJsvvBhf+VNzjSwFQTagj7pZql6Bm/vmYXZgsUYVkA7LaBleNWhbX0n7kNlTstc/apha8Eb9xWI9K4g+Mxy1bjtdmV3CdcH9sUXBfvFWi/1A8IY6KWch80LbKhfjv4qY0trDB6JNUOcQV4luZIfuF7Prxm6bwPAt3tAeZu/uUt7cBla0KBLxVuIh/V9MsqqdTSYJVq/vrW/PIPLimhJ439U9b/ojs0Pe3gvHWfy9/RzdKTyAGh9sr6RLoTQtTz2wCxHLpb3vB9ZB46kBN9EmAzwgi8m5p/ReR4Hl3VYLPPV9v0XiSTl9usbkni2eHg53waVdBDEZsk6V6A4vqNZPPCeohhE7oxp9fNfDeBnZyat75J/PjMbEZZhsB2JUhLY1ITUWb6nEoi864Wi7NADL7LwuClsXpuTjveGqF2jo1rWts13CZ0jphwWZ35izGCxGyLvkcv++fn4Ykit0sELSjJOiRBXWO5sETZoiAj2aphgB"
+     "signature": "CAQSpAcKEAgTGAI4AUIIdGhpbmtpbmcSDCZ6UIzDFGY8JFCofhoM5ItdiqZJ8zVo8R3zIjCgXTxUZH2NgQ8RAufutDVPpjLDcFa3f0TE57NyiUwjuLbUo6i/402DmQeBoNOhyrIqwQZnzh4LZXwcdX56470Wnu78LJNND8tb0/qf8qYvIv32jd/Pf9Qdc6y+FZ6eFTtXlbZJoxv164g3yWGrm+7rFROb4KhsBFreuOgxarzZOQQRcPBpxsNvMltWxHLfwsQGzsgAJM4xNZcqAypeFZqX/Ts8xzQSDs+xQtCT4VXkMNaqBxM7+gUlwpB9QFn32UQvYFLlMngfKIq5yoTr7wvYTJc6mnuDqqzDn82yKqz1ZdOMTQ23zABkLr8pBdyI4PgVtHMCdKDzUbIWL6fvXDI2sRREggwBggC3O3b1Q86/B7WOD/gtOny1K1WIyjVWxA7pMNhOfoxRAbCQy785+64kKg2QuKBdtsZTscWKF00SEPEeF4y4GT/FElyrGvNTfIYyw64TwVtwPmHNXna5Z+uBtd+eEB+V07EWUzEFQWYlJhMv+5glrmE4ZyCUITzYepXD36sIXJLCtbg/ZbKniMepC3GQeMVJ/iju7thiqeE41mBjfvWSjXCfll+ofR/myOUkjY/g03f+7zIp45fZMKyWPKy1Nnnj0gp4A3gpNPrESmvXGR475W4roSEwRBzlG/Lw5v+Tt6wbmTEK6p3EhiUjQCPo9KlMa0h2pfl/hcaGIFMZ0ITpvp5RHSoSYzMI6MqvYxfQA2KUp9D4BTfSiGi7iXMc6U8mTxpL1Rlx4imtaSKDWZSj2gSfmU8uNzccvMU3XTmXpOUIsWqfIaA9hCI9WwGneiqaqJyhSzRQPwutFTnSDs3KCzP1uV/Ke6T7fx4QId6XjMGvcfJaYRrY6x97xnOlOjHrLqzKVvQ5LBPAU6Bloxq53Ryedrt2B1F/xLQxSPh48icFkFV9xR0OvRVCeK6/HENjW2O6cndHoMQk7SaOxwb8ZPG4p08iRkS+TQnzZRAc8J2RgT0nyyv4lcWtH5QcKTWBJvJEy19NFFheOeibTUAjoZul0FOfZvZJUdE+AfQ1NwdSmstbyT8F3Vy3/D3GpHYlwMuk5ttlMBm/5yCvWAWPIx6DI1puJ5Up2YUBbmzsIGpaapPrQrcumvW2Is6vB6LdZC3k6eiY/ABFrlAD8XlBnz6qBmZNTuMjvIdsvN72rq2kenhASVLx/dJTBWh19hgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_018nKSwXFcGSKnWmaXntYX6A",
-     "name": "try_assertion",
+     "id": "toolu_01QaDHhGeNsZPU6Ce4M6e2DX",
+     "name": "submit_checks",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "events"
-       },
-       "expect": {
-        "schema": {
-         "type": "array",
-         "contains": {
-          "type": "object",
-          "required": [
-           "title",
-           "location"
-          ],
-          "properties": {
-           "title": {
-            "const": "Book club"
-           },
-           "location": {
-            "const": "City Library"
+      "checks": [
+       {
+        "id": "book-club-location-probe",
+        "requirement": "R1",
+        "description": "The backend events store has the Book club event with location City Library.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "events"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "title",
+             "location"
+            ],
+            "properties": {
+             "title": {
+              "const": "Book club"
+             },
+             "location": {
+              "type": "string",
+              "pattern": "^\\s*City Library\\s*$"
+             }
+            }
            }
           }
          }
         }
        }
-      }
+      ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 14349,
-    "outputTokens": 317,
-    "cacheReadTokens": 13799,
+    "inputTokens": 14455,
+    "outputTokens": 306,
+    "cacheReadTokens": 13905,
     "cacheWriteTokens": 548
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:449064842c1b64173c1f8923f233e441bbbdfae9bcf0e099d4f19fafd853bae3": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_01R6Prh4tUL9bK5wPHBrXFLr",
-     "name": "submit_checks",
-     "input": {
-      "checks": [
-       {
-        "id": "book-club-location-backend",
-        "requirement": "R1",
-        "description": "The backend events probe contains the Book club event with location exactly \"City Library\".",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "events"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "title",
-             "location"
-            ],
-            "properties": {
-             "title": {
-              "const": "Book club"
-             },
-             "location": {
-              "const": "City Library"
-             }
-            }
-           }
-          }
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_01R6Prh4tUL9bK5wPHBrXFLr",
-     "name": "submit_checks",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "checks": [
-       {
-        "id": "book-club-location-backend",
-        "requirement": "R1",
-        "description": "The backend events probe contains the Book club event with location exactly \"City Library\".",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "events"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "title",
-             "location"
-            ],
-            "properties": {
-             "title": {
-              "const": "Book club"
-             },
-             "location": {
-              "const": "City Library"
-             }
-            }
-           }
-          }
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 14746,
-    "outputTokens": 212,
-    "cacheReadTokens": 14347,
-    "cacheWriteTokens": 397
    },
    "model": "claude-opus-5-5"
   }

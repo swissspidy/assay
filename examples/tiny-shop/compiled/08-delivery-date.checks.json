@@ -28,62 +28,82 @@
     {
       "id": "R3",
       "kind": "hard",
-      "text": "The order uses express shipping.",
+      "text": "Express shipping is selected for the order.",
       "source": {
         "field": "instruction",
         "quote": "with express shipping"
+      }
+    },
+    {
+      "id": "R4",
+      "kind": "hard",
+      "text": "The user is shown the estimated delivery date.",
+      "source": {
+        "field": "instruction",
+        "quote": "show me the estimated delivery date"
       }
     }
   ],
   "checks": [
     {
-      "id": "R1-confirmation-delivery-date",
+      "id": "R1-confirmation-date",
       "requirement": "R1",
-      "description": "The order summary on the confirmation page shows an estimated delivery date of 5 November 2026.",
+      "description": "The order confirmation's 'Estimated delivery' line shows the date 5 November 2026.",
       "assert": {
         "kind": "value",
         "source": {
-          "from": "text",
-          "scope": {
+          "from": "node",
+          "target": {
             "anchors": [
               {
-                "role": "region",
-                "name": "Order summary"
-              },
-              {
-                "role": "region",
-                "name": {
-                  "contains": "summary",
+                "role": "paragraph",
+                "text": {
+                  "contains": "Estimated delivery",
                   "ignoreCase": true
                 },
-                "landmark": {
+                "within": {
+                  "role": "region",
+                  "name": {
+                    "contains": "Order"
+                  }
+                }
+              },
+              {
+                "role": "paragraph",
+                "text": {
+                  "contains": "Estimated delivery",
+                  "ignoreCase": true
+                },
+                "within": {
                   "role": "main"
                 }
               }
             ]
           },
-          "pattern": "Estimated delivery:?\\s*(\\d{1,2}(?:st|nd|rd|th)?\\s+[A-Za-z]+\\.?,?\\s+\\d{4}|[A-Za-z]+\\.?\\s+\\d{1,2}(?:st|nd|rd|th)?,?\\s+\\d{4}|\\d{4}-\\d{2}-\\d{2}|\\d{1,2}[/.]\\d{1,2}[/.]\\d{4})",
-          "flags": "i",
-          "group": 1
+          "field": "text"
         },
         "normalize": [
+          {
+            "op": "extract",
+            "regex": "delivery\\s*:?\\s*(.+)$",
+            "flags": "i",
+            "group": 1
+          },
+          "trim",
           {
             "op": "date",
             "locale": "en-GB"
           }
         ],
         "expect": {
-          "approx": {
-            "value": "2026-11-05",
-            "abs": 0
-          }
+          "equals": "2026-11-05"
         }
       }
     },
     {
       "id": "R2-order-request",
       "requirement": "R2",
-      "description": "A POST to /api/orders succeeded and the server returned a placed order containing items.",
+      "description": "A POST to /api/orders succeeded and returned a placed order containing at least one item.",
       "assert": {
         "kind": "request",
         "match": {
@@ -98,10 +118,13 @@
           "responseBody": {
             "type": "object",
             "required": [
-              "id",
+              "status",
               "items"
             ],
             "properties": {
+              "status": {
+                "const": "placed"
+              },
               "items": {
                 "type": "array",
                 "minItems": 1
@@ -114,7 +137,7 @@
     {
       "id": "R2-order-probe",
       "requirement": "R2",
-      "description": "The backend's latest order has status placed and contains at least one item.",
+      "description": "The backend's latest order has status 'placed' and contains at least one item.",
       "assert": {
         "kind": "value",
         "source": {
@@ -142,9 +165,39 @@
       }
     },
     {
+      "id": "R3-express-probe",
+      "requirement": "R3",
+      "description": "The backend's latest placed order uses express shipping.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "latestOrder"
+        },
+        "expect": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "status",
+              "shipping"
+            ],
+            "properties": {
+              "status": {
+                "const": "placed"
+              },
+              "shipping": {
+                "type": "string",
+                "pattern": "^[Ee][Xx][Pp][Rr][Ee][Ss][Ss]$"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "id": "R3-express-request",
       "requirement": "R3",
-      "description": "The order submission sent shipping set to express.",
+      "description": "The order submission request sent express as the shipping method.",
       "assert": {
         "kind": "value",
         "source": {
@@ -172,22 +225,24 @@
       }
     },
     {
-      "id": "R3-express-probe",
-      "requirement": "R3",
-      "description": "The backend's latest order is stored with express shipping.",
+      "id": "R4-delivery-shown",
+      "requirement": "R4",
+      "description": "The order confirmation page displays an 'Estimated delivery' line containing a date.",
       "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "latestOrder",
-          "pointer": "/shipping"
+        "kind": "contains",
+        "scope": {
+          "anchors": [
+            {
+              "role": "main"
+            }
+          ]
         },
-        "normalize": [
-          "trim",
-          "lowercase"
-        ],
-        "expect": {
-          "equals": "express"
+        "match": {
+          "role": "paragraph",
+          "text": {
+            "regex": "estimated delivery\\s*:?\\s*\\S+",
+            "flags": "i"
+          }
         }
       }
     }
@@ -198,6 +253,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T09:30:09.119Z"
+    "at": "2026-11-04T10:10:58.960Z"
   }
 }

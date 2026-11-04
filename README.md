@@ -12,7 +12,7 @@ expensive verifier.
 > stress testing, escalation and records, and the 30-task evaluation with
 > stability runs. On the 93 held-out runs, the compiled checks judge every run
 > correctly (balanced accuracy 1.000, no model at run time); an LLM judge
-> reaches 0.927 and the agentic verifier 0.959 ([report](eval/results/compiled/REPORT.md)).
+> reaches 0.927 and the agentic verifier 0.942 ([report](eval/results/compiled/REPORT.md)).
 
 - Design: [ADR 0001: Evidence snapshot format and check DSL](docs/adr/0001-evidence-snapshot-and-check-dsl.md)
 - Example check sets: [`examples/tiny-shop/tasks/`](examples/tiny-shop/tasks) (handwritten) and [`examples/tiny-shop/compiled/`](examples/tiny-shop/compiled) (compiled)
@@ -161,7 +161,7 @@ Three small apps (`examples/tiny-shop`, `examples/tiny-tracker`, `examples/tiny-
 | ---------------------------------------- | ----------------- | ----- | ----- | ---------- | -------------- |
 | checks                                   | 1.000             | 1.000 | 1.000 | $0         | 0.3 ms         |
 | LLM judge (`claude-opus-5-5`)            | 0.927             | 0.933 | 0.921 | $0.0119    | 4.3 s          |
-| agentic verifier (`claude-opus-5-5`)     | 0.959             | 0.933 | 0.984 | $0.0274    | 8.5 s          |
+| agentic verifier (`claude-opus-5-5`)     | 0.942             | 0.900 | 0.984 | $0.0273    | 8.3 s          |
 
 The LLM judge accepted 3 of 8 adversarial pages that only claim success; the checks and the verifier rejected all of them. The judge's latency is from the handwritten run, which recorded it.
 

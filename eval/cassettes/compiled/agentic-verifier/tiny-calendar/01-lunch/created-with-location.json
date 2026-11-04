@@ -1,24 +1,24 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T09:50:26.805Z",
+ "recordedAt": "2026-11-04T10:21:01.185Z",
  "turns": {
   "sha256:cb8b1f63478a5d50cbfeb69de6cb639d6c710aa99fa605c60848da93aa754d0c": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_019H6Vw7KQLHsiTGbCPmfZsD",
+     "id": "toolu_01EYD6S8wUrwqvuwjYods568",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01WncgvUz6kwTNv4KuhGZkh5",
+     "id": "toolu_01WZD8Fyn1tjcjMufuAqv4nW",
      "name": "page_outline",
      "input": {}
     },
     {
-     "id": "toolu_01U8B3AbgcSwo2f8rJa3igHx",
+     "id": "toolu_01QjyVXcCgnX95KV5Z1XD2MX",
      "name": "network_log",
      "input": {}
     }
@@ -26,7 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_019H6Vw7KQLHsiTGbCPmfZsD",
+     "id": "toolu_01EYD6S8wUrwqvuwjYods568",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -35,7 +35,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01WncgvUz6kwTNv4KuhGZkh5",
+     "id": "toolu_01WZD8Fyn1tjcjMufuAqv4nW",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -44,7 +44,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01U8B3AbgcSwo2f8rJa3igHx",
+     "id": "toolu_01QjyVXcCgnX95KV5Z1XD2MX",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -60,15 +60,33 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:64f317f95fdb965ea2b3a7632b168233bb8269b1de976a199f6562a2215c7ada": {
+  "sha256:dafb944eb121102a850c0a9449fee95df27fc14a2a1cbbf7ed20040a385357dc": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01RVDQJMvEHuPuNjbQo3xfmK",
-     "name": "network_entry",
+     "id": "toolu_01BNBz41KqpDYawTRS93v9xX",
+     "name": "submit_verdict",
      "input": {
-      "seq": 2
+      "verdicts": [
+       {
+        "requirement": "an event \"Lunch with Sam\" exists on November 5, 2026 at 12:30",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The events probe shows id 4 \"Lunch with Sam\" with date 2026-11-05 and time 12:30, in the UTC timezone. The network log shows it was created by a POST to /api/events that returned 201."
+       },
+       {
+        "requirement": "the event page shows the date November 5, 2026",
+        "status": "pass",
+        "cites": [
+         2
+        ],
+        "reasoning": "The page at /events/4 shows the heading \"Lunch with Sam\" and the When field \"Thursday, November 5, 2026, 12:30 PM\"."
+       }
+      ]
      }
     }
    ],
@@ -76,53 +94,71 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS/gUKEAgTGAI4AUIIdGhpbmtpbmcSDBc0P0yF4G3M045U1RoMVYSHDMuSvNQyonCmIjC68P5gGP/heZMSBDWqlFDOwT1EvxvJouGm83e72Zvjz8lpY2qSf4OgKNyaZ4Ad2AIqmwU6+qDkKEWOSCeXOFgGm5gBq7xbd7pST1ae/enEOsCptFJjB0rocIsiASu5EUKVsmCQbrQnTocUO6M3RGxJN4d7Vy6U1IETM8pTigBomEX93Mhzk/JaBp2067IgIuq/IjsNIR+0J4Mms+KxQDjTFNZlW6er0rVtT0iERhtJY0AS3RGxZdhTxNgxtUQ3UUPZBHG31sQmzFIpFVNss7LWNjZbo2ZI0tI4952c2Lts/wny7XVke0ZueiJyEOfLsd/DqT24+VwSSAJ0FwlQKcU03BaDNqxRmPg/qvQaF6MexEhHZhkWdEMvQ7zPmGZKZafluSSw/BokPGw3UuIyzyGS/4rwsRdMPYYzUxvUHMHa4zR/++KdrCEcpKZvdiTnqXpWeWKj+ze+tBr54UDY2JOA/3bUT4RmdC7uzRvcoLbsZrYawsUeLfGkJf3+QfyGKWxzeI0HUt+WK3vtWAX//53GkzCdeP83YhQxLCQS8XdjCrEbXGwjOqsK33BqC3K3zsaFPDP4HE3iFxniZL3h6d3X/y5ayBpqKBXfYYusEzM1qikAYDQCDadCQBdvsqFxp1EgVGQgDmPrC36q9mVWrVRRQYPZzF8Dm2Jx+1yeWeYK/pawVM79vv1OJg17qwsFYDUlXYjhvJzjrME4EswZER51WVHn8wa/MjqHM+dDL8p2bL0AQZafDIXAdqmwDcUQUYvvoSBzPnXmcG8a8Y+houTcE568HoKUog/4AckB1AIGYQuoR6INCZBu3a2EJnboVHMTT3K4PQzLuH6yuaEn7iSHbBmwwxTZa+ktSfY7NqvoqfGdEodxW4kdmDdZN79ynSWaSoy7hLvj0vt9pu+yaSQfb6VRMP6Z3Sb9v5hEOZ1YRhhtNZMCHnsafrlikQ9BGAE="
+     "signature": "CAQS9gUKEAgTGAI4AUIIdGhpbmtpbmcSDH5IXsqbiUqLFUET9RoM1fTk4to+QkJvhtu2IjA3i3qTX83MNcAVq1V3dE1lQ3mShV9OEZKCNLXg/p0ckNH9Ahs2ehPFAqd3Qq1z7bsqkwXgLqECWC1nbfL/JD5vWmbnMxEZt0e6KO7dYGuYyGplnBRCOTRD6O2b0ele+enzNX4u5AzUZFkcZGoyA7hilQHR/gfsRA2nTLYN8Shilg3pb/4DCk1HLgDqt9ZPXTn6sstC1n3ZKcqaWRyT7u+TxknT5JyLQIGZUkQR3yAjReolmAhT7R16zOrOO0LDOVfyPxbR+Rd4ASeyhhm7CBnO6hYdOcafqBzCn13gS6VAkq2eTbHg8qTC0aI0twibUas0hQkL2n+QmPh8LCCPxCZairexSEdkU0T9McoIcGY8gyAjMdWgIX56TxWe+TrwqO/HtAjrobcREBOB2yq8hTd+yOJQPc6GTv15ETEA6n5ANlvm1ywuOHMJyefhPejpbhbaSvg0ClK4eFqgH1n7QOeEETFyrBtEM8TKOzL8xPAg7cyT8K14RuEqG2xV+/g1uM3FpQa+tcQumuyo4mJdprPgCvddjcIrDGl6y6UkS1zSvNMET+puaQ3qo1/iNQuLKU8mJonHekxX7zDc+A/Eo8wqv9dMQphOdAgSvaqLr/FK7nMprdQlIqFoa2F+n2bxHZVEuIduhmBr+Oo+5Xu2qxbUxjMHDe+BXsaZOviQywSSDf99M2nE63cW2GPz8q9bS0+EVN1YIfyJbd5HWaUu3rHsQYLHpPFxQmna8OhE1Ebry+wrcBxbCWhnFCyHZvJvKbNFV0a9Kih4qDGxKmIJ0uYbEFTYf8UNw4wOZdkjtNj38bSsS8JKeaJ5VK8bjNma9/Z7NAijiyHxKxGWYzoqRgmRXbWv8n3NHWK3CuY/BV6xr16c19VmcbQR7lax0/abfbCFUcgdQAAOmu08XgPGUtjrJ3h7ZHverAlO8syhtcwKjcdIC5wL8xgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_01RVDQJMvEHuPuNjbQo3xfmK",
-     "name": "network_entry",
+     "id": "toolu_01BNBz41KqpDYawTRS93v9xX",
+     "name": "submit_verdict",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "seq": 2
+      "verdicts": [
+       {
+        "requirement": "an event \"Lunch with Sam\" exists on November 5, 2026 at 12:30",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The events probe shows id 4 \"Lunch with Sam\" with date 2026-11-05 and time 12:30, in the UTC timezone. The network log shows it was created by a POST to /api/events that returned 201."
+       },
+       {
+        "requirement": "the event page shows the date November 5, 2026",
+        "status": "pass",
+        "cites": [
+         2
+        ],
+        "reasoning": "The page at /events/4 shows the heading \"Lunch with Sam\" and the When field \"Thursday, November 5, 2026, 12:30 PM\"."
+       }
+      ]
      }
     }
    ],
    "usage": {
     "inputTokens": 3188,
-    "outputTokens": 93,
+    "outputTokens": 325,
     "cacheReadTokens": 1929,
     "cacheWriteTokens": 1257
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:f725e3ea122826f9e33933153c14704ae99a25d755ce48eee7a2f0c249bea882": {
+  "sha256:91267645b36886047392613f8c578f92fb59998b7b85af1878161d7e6be134be": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01JzLG2LnNBM42jp9W3p5pmw",
+     "id": "toolu_01SjLPJqshWi2E8rxMpJDhQB",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
        {
-        "requirement": "an event \"Lunch with Sam\" exists on November 5, 2026 at 12:30",
+        "requirement": "R1",
         "status": "pass",
         "cites": [
          1,
-         4
+         3
         ],
-        "reasoning": "The server probe lists event id 4 \"Lunch with Sam\" with date 2026-11-05 and time 12:30. The POST to /api/events returned 201 with those same values."
+        "reasoning": "The events probe shows id 4 \"Lunch with Sam\" with date 2026-11-05 and time 12:30, in the UTC timezone. The network log shows it was created by a POST to /api/events that returned 201."
        },
        {
-        "requirement": "the event page shows the date November 5, 2026",
+        "requirement": "R2",
         "status": "pass",
         "cites": [
          2
         ],
-        "reasoning": "The captured page /events/4 shows When: \"Thursday, November 5, 2026, 12:30 PM\"."
+        "reasoning": "The page at /events/4 shows the heading \"Lunch with Sam\" and the When field \"Thursday, November 5, 2026, 12:30 PM\"."
        }
       ]
      }
@@ -131,7 +167,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01JzLG2LnNBM42jp9W3p5pmw",
+     "id": "toolu_01SjLPJqshWi2E8rxMpJDhQB",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -139,100 +175,31 @@
      "input": {
       "verdicts": [
        {
-        "requirement": "an event \"Lunch with Sam\" exists on November 5, 2026 at 12:30",
+        "requirement": "R1",
         "status": "pass",
         "cites": [
          1,
-         4
+         3
         ],
-        "reasoning": "The server probe lists event id 4 \"Lunch with Sam\" with date 2026-11-05 and time 12:30. The POST to /api/events returned 201 with those same values."
+        "reasoning": "The events probe shows id 4 \"Lunch with Sam\" with date 2026-11-05 and time 12:30, in the UTC timezone. The network log shows it was created by a POST to /api/events that returned 201."
        },
        {
-        "requirement": "the event page shows the date November 5, 2026",
+        "requirement": "R2",
         "status": "pass",
         "cites": [
          2
         ],
-        "reasoning": "The captured page /events/4 shows When: \"Thursday, November 5, 2026, 12:30 PM\"."
+        "reasoning": "The page at /events/4 shows the heading \"Lunch with Sam\" and the When field \"Thursday, November 5, 2026, 12:30 PM\"."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 3526,
-    "outputTokens": 252,
+    "inputTokens": 3600,
+    "outputTokens": 247,
     "cacheReadTokens": 3186,
-    "cacheWriteTokens": 338
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:e1d5a9f6657c135c121464f852d23ad3decd88b518a3b2cc3c5a4cea6470c474": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_01QyLWLCKC3Aq9J5LBtgSchM",
-     "name": "submit_verdict",
-     "input": {
-      "verdicts": [
-       {
-        "requirement": "R1",
-        "status": "pass",
-        "cites": [
-         1,
-         4
-        ],
-        "reasoning": "The server probe lists event id 4 \"Lunch with Sam\" with date 2026-11-05 and time 12:30. The POST to /api/events returned 201 with those same values."
-       },
-       {
-        "requirement": "R2",
-        "status": "pass",
-        "cites": [
-         2
-        ],
-        "reasoning": "The captured page /events/4 shows When: \"Thursday, November 5, 2026, 12:30 PM\"."
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_01QyLWLCKC3Aq9J5LBtgSchM",
-     "name": "submit_verdict",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "verdicts": [
-       {
-        "requirement": "R1",
-        "status": "pass",
-        "cites": [
-         1,
-         4
-        ],
-        "reasoning": "The server probe lists event id 4 \"Lunch with Sam\" with date 2026-11-05 and time 12:30. The POST to /api/events returned 201 with those same values."
-       },
-       {
-        "requirement": "R2",
-        "status": "pass",
-        "cites": [
-         2
-        ],
-        "reasoning": "The captured page /events/4 shows When: \"Thursday, November 5, 2026, 12:30 PM\"."
-       }
-      ]
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 3865,
-    "outputTokens": 218,
-    "cacheReadTokens": 3524,
-    "cacheWriteTokens": 339
+    "cacheWriteTokens": 412
    },
    "model": "claude-opus-5-5"
   }

@@ -28,15 +28,16 @@
   ],
   "checks": [
     {
-      "id": "theme-dark",
+      "id": "theme-dark-storage",
       "requirement": "R1",
-      "description": "The localStorage 'theme' preference is set to dark.",
+      "description": "The theme preference stored in localStorage is 'dark'.",
       "assert": {
         "kind": "value",
         "source": {
           "from": "storage",
           "area": "local",
-          "key": "theme"
+          "key": "theme",
+          "origin": "http://localhost:4173"
         },
         "normalize": [
           "trim",
@@ -48,9 +49,9 @@
       }
     },
     {
-      "id": "lang-german",
+      "id": "lang-german-cookie",
       "requirement": "R2",
-      "description": "The 'lang' cookie preference is set to German (de).",
+      "description": "The language preference cookie 'lang' is set to German (de).",
       "assert": {
         "kind": "value",
         "source": {
@@ -63,7 +64,7 @@
           "lowercase"
         ],
         "expect": {
-          "regex": "^de([-_].*)?$"
+          "regex": "^de([-_][a-z]+)?$"
         }
       }
     }
@@ -74,6 +75,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T09:30:46.591Z"
+    "at": "2026-11-04T10:11:41.877Z"
   }
 }

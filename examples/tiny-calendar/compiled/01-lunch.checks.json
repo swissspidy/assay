@@ -10,7 +10,7 @@
     {
       "id": "R1",
       "kind": "hard",
-      "text": "An event titled \"Lunch with Sam\" exists on November 5, 2026 at 12:30.",
+      "text": "An event named \"Lunch with Sam\" exists on November 5, 2026 at 12:30.",
       "source": {
         "field": "outcomes",
         "quote": "an event \"Lunch with Sam\" exists on November 5, 2026 at 12:30"
@@ -19,7 +19,7 @@
     {
       "id": "R2",
       "kind": "hard",
-      "text": "The event page shows the date November 5, 2026.",
+      "text": "The event page displays the date November 5, 2026.",
       "source": {
         "field": "outcomes",
         "quote": "the event page shows the date November 5, 2026"
@@ -30,7 +30,7 @@
     {
       "id": "R1-event-stored",
       "requirement": "R1",
-      "description": "The backend events probe contains an event titled \"Lunch with Sam\" with date 2026-11-05 and time 12:30.",
+      "description": "The backend events list contains an event titled \"Lunch with Sam\" on 2026-11-05 at 12:30.",
       "assert": {
         "kind": "value",
         "source": {
@@ -55,7 +55,7 @@
                   "const": "2026-11-05"
                 },
                 "time": {
-                  "const": "12:30"
+                  "pattern": "^12:30"
                 }
               }
             }
@@ -66,39 +66,25 @@
     {
       "id": "R2-event-page-date",
       "requirement": "R2",
-      "description": "The event page for \"Lunch with Sam\" shows a detail with the date November 5, 2026.",
+      "description": "The browser is on an event page whose details show the date November 5, 2026.",
       "assert": {
         "kind": "allOf",
         "of": [
           {
-            "kind": "contains",
-            "scope": {
-              "anchors": [
-                {
-                  "role": "main"
-                }
-              ]
-            },
+            "kind": "url",
             "match": {
-              "role": "heading",
-              "name": {
-                "contains": "Lunch with Sam"
-              }
+              "path": "/events/*"
             }
           },
           {
             "kind": "contains",
             "scope": {
-              "anchors": [
-                {
-                  "role": "main"
-                }
-              ]
+              "role": "main"
             },
             "match": {
               "role": "definition",
               "text": {
-                "regex": "(Nov(ember)?\\.? 0?5,? 2026)|(0?5\\.? Nov(ember)?\\.?,? 2026)|(2026-11-05)|(11/0?5/2026)",
+                "regex": "(November|Nov\\.?)\\s+0?5(th)?,?\\s+2026|0?5(th)?\\s+(of\\s+)?(November|Nov\\.?),?\\s+2026|2026-11-05|11/0?5/2026",
                 "flags": "i"
               }
             }
@@ -113,6 +99,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T09:28:37.264Z"
+    "at": "2026-11-04T10:09:26.856Z"
   }
 }

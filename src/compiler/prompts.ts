@@ -37,6 +37,7 @@ Every check belongs to exactly one requirement and may only test what that requi
 - explicit normalizers for numbers, money and dates (locale required), with approx tolerances for numbers and money,
 - JSON Schema with only the required properties for bodies (extra fields must still pass).
 - text the user dictates as a message (a comment, a note, a reply) is prose: accept a final period or exclamation mark and surrounding whitespace, unless the task asks for the exact text. Names and titles (of an issue, an event, a location) are compared as given.
+- when several requirements are about one record (an event's title, date and time; an order's items and shipping), every check for them must select that record by all the identifying details the task states (e.g. title AND date AND time in one JSON Schema "contains" object), so that different records cannot meet the requirements between them. Selecting the record this way is not over-constraint.
 If a valid alternative way to complete the task exists, use anyOf. Every anyOf branch must read evidence that exists in the correct runs; a branch for evidence that is never there only turns failures into abstains, and is refused.
 
 ## DSL (assay.checks/v1)

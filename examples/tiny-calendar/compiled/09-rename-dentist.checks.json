@@ -10,7 +10,7 @@
     {
       "id": "R1",
       "kind": "hard",
-      "text": "The existing Dentist event's title is now \"Dentist (Dr. Lee)\".",
+      "text": "The Dentist event's title is now \"Dentist (Dr. Lee)\".",
       "source": {
         "field": "outcomes",
         "quote": "the Dentist event is called \"Dentist (Dr. Lee)\""
@@ -19,9 +19,9 @@
   ],
   "checks": [
     {
-      "id": "dentist-renamed-backend",
+      "id": "R1-probe-title",
       "requirement": "R1",
-      "description": "The backend events store has event id 2 (the original Dentist event) titled exactly \"Dentist (Dr. Lee)\".",
+      "description": "The backend events list contains the Dentist event (id 2, on 2026-11-06 at 14:30) with title exactly \"Dentist (Dr. Lee)\".",
       "assert": {
         "kind": "value",
         "source": {
@@ -35,7 +35,9 @@
               "type": "object",
               "required": [
                 "id",
-                "title"
+                "title",
+                "date",
+                "time"
               ],
               "properties": {
                 "id": {
@@ -43,6 +45,12 @@
                 },
                 "title": {
                   "const": "Dentist (Dr. Lee)"
+                },
+                "date": {
+                  "const": "2026-11-06"
+                },
+                "time": {
+                  "const": "14:30"
                 }
               }
             }
@@ -57,6 +65,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T09:30:20.321Z"
+    "at": "2026-11-04T10:10:59.988Z"
   }
 }

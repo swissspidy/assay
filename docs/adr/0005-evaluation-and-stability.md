@@ -102,20 +102,20 @@ The apps and the check sets do not change on their own, and the model ID is pinn
 
 Measured on 2026-11-04 with `claude-opus-5-5` at effort `high`, for the compiler, the LLM judge and the agentic verifier. Latency is per run after capture; model latency is from the live recordings.
 
-- **Compiling:** all 30 tasks compile from one correct run each, and the compiled sets judge every held-out labelled run correctly (`examples/<app>/compiled/SUMMARY.md`). The first live compile missed three: an `anyOf` branch reading a probe field no snapshot had (failed runs abstained), an exact comment text that rejected a correct "Working on it." and row-only checks for a list filter that the seed data already satisfied without the filter. The compiler now refuses `anyOf` branches that no correct run can read, and the discovery prompt covers dictated messages and filter state; the tasks were then re-recorded.
-- **Stress (compiled sets):** every near-miss mutant is rejected (216/216, all by fail). 615/617 valid variants are accepted; the two others make one free-text date check in `tiny-shop/08-delivery-date` abstain on doubled spaces (fragile, which escalates, not over-constrained).
+- **Compiling:** all 30 tasks compile from one correct run each, and the compiled sets judge every held-out labelled run correctly (`examples/<app>/compiled/SUMMARY.md`). The first live compile missed three: an `anyOf` branch reading a probe field no snapshot had (failed runs abstained), an exact comment text that rejected a correct "Working on it." and row-only checks for a list filter that the seed data already satisfied without the filter. The compiler now refuses `anyOf` branches that no correct run can read, and the discovery prompt covers dictated messages and filter state. Review then found checks for one event's title, date and time that could each be met by a different event; the prompt now has every such check select the record by all the details the task states. The tasks were then re-recorded.
+- **Stress (compiled sets):** every near-miss mutant is rejected (284/284, all by fail) and every valid variant is accepted (625/625).
 - **Eval, compiled checks** (93 held-out runs: 30 correct, 63 incorrect):
 
 | System            | Balanced accuracy | TPR   | TNR   | Cost / run | Latency (median / p95) |
 | ----------------- | ----------------- | ----- | ----- | ---------- | ---------------------- |
-| checks            | 1.000             | 1.000 | 1.000 | $0         | 0.3 ms / 4.2 ms        |
-| checks+escalation | 1.000             | 1.000 | 1.000 | $0         | 0.1 ms / 0.3 ms        |
+| checks            | 1.000             | 1.000 | 1.000 | $0         | 0.3 ms / 4.7 ms        |
+| checks+escalation | 1.000             | 1.000 | 1.000 | $0         | 0.2 ms / 0.6 ms        |
 | llm-judge         | 0.927             | 0.933 | 0.921 | $0.0119    | 4.3 s / 10.0 s         |
-| agentic-verifier  | 0.959             | 0.933 | 0.984 | $0.0274    | 8.5 s / 14.5 s         |
+| agentic-verifier  | 0.942             | 0.900 | 0.984 | $0.0273    | 8.3 s / 14.4 s         |
 
 - **Eval, handwritten checks** (all 123 runs): checks 1.000; LLM judge 0.944 ($0.0117 per run); agentic verifier 0.984 ($0.0244 per run). The checks row is circular here (see above).
 - No compiled check abstained on these runs, so escalation never called the model.
-- The LLM judge accepted three adversarial pages that only claim success (a spoofed delivery date, gift wrap and deletion), a wrong rename and the label-only filter, and rejected two correct runs. The agentic verifier, which reads probes and the network log, rejected every adversarial page. It shares two misses with the first compile: it rejected the comment ending in a period and accepted the label-only filter. With the compiled requirements it also rejected a correct express order that added gift wrap.
+- The LLM judge accepted three adversarial pages that only claim success (a spoofed delivery date, gift wrap and deletion), a wrong rename and the label-only filter, and rejected two correct runs. The agentic verifier, which reads probes and the network log, rejected every adversarial page. It shares two misses with the first compile: it rejected the comment ending in a period and accepted the label-only filter. With the compiled requirements it also rejected two correct orders that added gift wrap to an express order.
 - **Stability** (handwritten checks, no model):
 
 | Variant         | Correct | Abstain | Broken | Agent error | Regression runs caught |

@@ -30,35 +30,53 @@
     {
       "id": "R1-issue-exists",
       "requirement": "R1",
-      "description": "The backend issues list contains an issue titled exactly \"Checkout fails on Safari\".",
+      "description": "The backend issues list contains an issue titled \"Checkout fails on Safari\", and a POST creating an issue succeeded.",
       "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "issues"
-        },
-        "expect": {
-          "schema": {
-            "type": "array",
-            "contains": {
-              "type": "object",
-              "required": [
-                "title"
-              ],
-              "properties": {
-                "title": {
-                  "const": "Checkout fails on Safari"
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "issues"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "title"
+                  ],
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "pattern": "^\\s*Checkout fails on Safari\\s*$"
+                    }
+                  }
                 }
               }
             }
+          },
+          {
+            "kind": "request",
+            "match": {
+              "method": "POST",
+              "url": {
+                "path": "/issues"
+              },
+              "status": {
+                "lt": 400
+              }
+            }
           }
-        }
+        ]
       }
     },
     {
-      "id": "R2-issue-has-bug-label",
+      "id": "R2-bug-label",
       "requirement": "R2",
-      "description": "The backend issue titled \"Checkout fails on Safari\" has \"bug\" among its labels.",
+      "description": "The backend issue titled \"Checkout fails on Safari\" has the \"bug\" label.",
       "assert": {
         "kind": "value",
         "source": {
@@ -76,12 +94,14 @@
               ],
               "properties": {
                 "title": {
-                  "const": "Checkout fails on Safari"
+                  "type": "string",
+                  "pattern": "^\\s*Checkout fails on Safari\\s*$"
                 },
                 "labels": {
                   "type": "array",
                   "contains": {
-                    "const": "bug"
+                    "type": "string",
+                    "pattern": "^\\s*[Bb]ug\\s*$"
                   }
                 }
               }
@@ -97,6 +117,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T09:28:37.237Z"
+    "at": "2026-11-04T10:09:26.778Z"
   }
 }

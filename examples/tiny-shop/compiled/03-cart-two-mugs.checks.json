@@ -28,7 +28,7 @@
     {
       "id": "R3",
       "kind": "hard",
-      "text": "The cart is shown to the user.",
+      "text": "The cart is shown to the user at the end.",
       "source": {
         "field": "instruction",
         "quote": "show me the cart"
@@ -37,121 +37,131 @@
   ],
   "checks": [
     {
-      "id": "r1-cart-row-blue",
+      "id": "R1-blue-mug-listed",
       "requirement": "R1",
-      "description": "The Cart table on the cart page has a row containing Blue Mug.",
+      "description": "The backend cart contains a Blue Mug and the cart page's Cart table has a row for Blue Mug.",
       "assert": {
-        "kind": "contains",
-        "scope": {
-          "anchors": [
-            {
-              "role": "table",
-              "name": "Cart"
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "cart",
+              "pointer": "/items"
             },
-            {
-              "role": "table",
-              "landmark": {
-                "role": "main"
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "qty"
+                  ],
+                  "properties": {
+                    "name": {
+                      "const": "Blue Mug"
+                    },
+                    "qty": {
+                      "type": "number",
+                      "minimum": 1
+                    }
+                  }
+                }
               }
             }
-          ]
-        },
-        "match": {
-          "role": "row",
-          "text": {
-            "contains": "Blue Mug"
-          }
-        }
-      }
-    },
-    {
-      "id": "r1-backend-blue",
-      "requirement": "R1",
-      "description": "The backend cart contains an item named Blue Mug.",
-      "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "cart",
-          "pointer": "/items"
-        },
-        "expect": {
-          "schema": {
-            "type": "array",
-            "contains": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "const": "Blue Mug"
+          },
+          {
+            "kind": "contains",
+            "scope": {
+              "anchors": [
+                {
+                  "role": "table",
+                  "name": "Cart"
+                },
+                {
+                  "role": "table",
+                  "landmark": {
+                    "role": "main"
+                  }
                 }
-              },
-              "required": [
-                "name"
               ]
-            }
-          }
-        }
-      }
-    },
-    {
-      "id": "r2-cart-row-red",
-      "requirement": "R2",
-      "description": "The Cart table on the cart page has a row containing Red Mug.",
-      "assert": {
-        "kind": "contains",
-        "scope": {
-          "anchors": [
-            {
-              "role": "table",
-              "name": "Cart"
             },
-            {
-              "role": "table",
-              "landmark": {
-                "role": "main"
+            "match": {
+              "role": "row",
+              "text": {
+                "contains": "Blue Mug"
               }
             }
-          ]
-        },
-        "match": {
-          "role": "row",
-          "text": {
-            "contains": "Red Mug"
           }
-        }
+        ]
       }
     },
     {
-      "id": "r2-backend-red",
+      "id": "R2-red-mug-listed",
       "requirement": "R2",
-      "description": "The backend cart contains an item named Red Mug.",
+      "description": "The backend cart contains a Red Mug and the cart page's Cart table has a row for Red Mug.",
       "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "cart",
-          "pointer": "/items"
-        },
-        "expect": {
-          "schema": {
-            "type": "array",
-            "contains": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "const": "Red Mug"
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "cart",
+              "pointer": "/items"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "qty"
+                  ],
+                  "properties": {
+                    "name": {
+                      "const": "Red Mug"
+                    },
+                    "qty": {
+                      "type": "number",
+                      "minimum": 1
+                    }
+                  }
                 }
-              },
-              "required": [
-                "name"
+              }
+            }
+          },
+          {
+            "kind": "contains",
+            "scope": {
+              "anchors": [
+                {
+                  "role": "table",
+                  "name": "Cart"
+                },
+                {
+                  "role": "table",
+                  "landmark": {
+                    "role": "main"
+                  }
+                }
               ]
+            },
+            "match": {
+              "role": "row",
+              "text": {
+                "contains": "Red Mug"
+              }
             }
           }
-        }
+        ]
       }
     },
     {
-      "id": "r3-on-cart-page",
+      "id": "R3-cart-shown",
       "requirement": "R3",
       "description": "The browser ends on the cart page (/cart).",
       "assert": {
@@ -168,6 +178,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T09:28:57.113Z"
+    "at": "2026-11-04T10:09:50.943Z"
   }
 }

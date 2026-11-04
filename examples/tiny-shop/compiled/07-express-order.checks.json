@@ -37,27 +37,27 @@
     {
       "id": "R4",
       "kind": "hard",
-      "text": "The order is placed in the name of Ada Lovelace.",
+      "text": "The order contains the items in the user's cart.",
       "source": {
         "field": "instruction",
-        "quote": "in the name of Ada Lovelace"
+        "quote": "Order what is in my cart"
       }
     },
     {
       "id": "R5",
       "kind": "hard",
-      "text": "The order contains the items that were in the user's cart.",
+      "text": "The order is placed in the name of Ada Lovelace.",
       "source": {
         "field": "instruction",
-        "quote": "Order what is in my cart"
+        "quote": "in the name of Ada Lovelace"
       }
     }
   ],
   "checks": [
     {
-      "id": "R1-order-request",
+      "id": "R1.order-post",
       "requirement": "R1",
-      "description": "A POST to /api/orders succeeded with a 2xx status.",
+      "description": "A POST to /api/orders succeeded and returned a placed order.",
       "assert": {
         "kind": "request",
         "match": {
@@ -68,126 +68,186 @@
           "status": {
             "gte": 200,
             "lt": 300
-          }
-        },
-        "count": {
-          "gte": 1
-        }
-      }
-    },
-    {
-      "id": "R1-order-probe",
-      "requirement": "R1",
-      "description": "The backend's latest order exists with status placed.",
-      "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "latestOrder",
-          "pointer": "/status"
-        },
-        "expect": {
-          "equals": "placed"
-        }
-      }
-    },
-    {
-      "id": "R2-shipping-express",
-      "requirement": "R2",
-      "description": "The backend's latest order uses express shipping.",
-      "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "latestOrder",
-          "pointer": "/shipping"
-        },
-        "normalize": [
-          "trim",
-          "lowercase"
-        ],
-        "expect": {
-          "equals": "express"
-        }
-      }
-    },
-    {
-      "id": "R3-confirmation-page",
-      "requirement": "R3",
-      "description": "The browser is on an order page showing an 'Order confirmed' heading.",
-      "assert": {
-        "kind": "allOf",
-        "of": [
-          {
-            "kind": "url",
-            "match": {
-              "path": "/orders/*"
-            }
           },
-          {
-            "kind": "contains",
-            "scope": {
-              "role": "main"
-            },
-            "match": {
-              "role": "heading",
-              "name": {
-                "contains": "confirmed",
-                "ignoreCase": true
+          "responseBody": {
+            "type": "object",
+            "required": [
+              "id",
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": "placed"
               }
             }
           }
-        ]
-      }
-    },
-    {
-      "id": "R4-name",
-      "requirement": "R4",
-      "description": "The backend's latest order is in the name of Ada Lovelace.",
-      "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "latestOrder",
-          "pointer": "/name"
-        },
-        "normalize": [
-          "trim",
-          "collapseWhitespace"
-        ],
-        "expect": {
-          "equals": "Ada Lovelace"
         }
       }
     },
     {
-      "id": "R5-items",
-      "requirement": "R5",
-      "description": "The backend's latest order contains the cart item Blue Mug (MUG-BLUE), quantity 1.",
+      "id": "R1.probe-placed",
+      "requirement": "R1",
+      "description": "The backend's latest order has status placed.",
       "assert": {
         "kind": "value",
         "source": {
           "from": "probe",
-          "probe": "latestOrder",
-          "pointer": "/items"
+          "probe": "latestOrder"
         },
         "expect": {
           "schema": {
-            "type": "array",
-            "contains": {
-              "type": "object",
-              "properties": {
-                "sku": {
-                  "const": "MUG-BLUE"
-                },
-                "qty": {
-                  "const": 1
-                }
+            "type": "object",
+            "required": [
+              "id",
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": "placed"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R2.probe-express",
+      "requirement": "R2",
+      "description": "The backend's latest placed order for Ada Lovelace uses express shipping.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "latestOrder"
+        },
+        "expect": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "shipping",
+              "name",
+              "status"
+            ],
+            "properties": {
+              "shipping": {
+                "const": "express"
               },
-              "required": [
-                "sku",
-                "qty"
-              ]
+              "status": {
+                "const": "placed"
+              },
+              "name": {
+                "type": "string",
+                "pattern": "^\\s*Ada Lovelace\\s*$"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R3.url",
+      "requirement": "R3",
+      "description": "The browser ends on an order confirmation page /orders/<id>.",
+      "assert": {
+        "kind": "url",
+        "match": {
+          "path": "/orders/*"
+        }
+      }
+    },
+    {
+      "id": "R3.heading",
+      "requirement": "R3",
+      "description": "The main area shows an 'Order confirmed' heading.",
+      "assert": {
+        "kind": "contains",
+        "scope": {
+          "role": "main"
+        },
+        "match": {
+          "role": "heading",
+          "name": {
+            "contains": "Order confirmed",
+            "ignoreCase": true
+          }
+        }
+      }
+    },
+    {
+      "id": "R4.probe-items",
+      "requirement": "R4",
+      "description": "The latest placed order for Ada Lovelace contains the cart item Blue Mug (MUG-BLUE, qty 1).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "latestOrder"
+        },
+        "expect": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "items",
+              "name",
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": "placed"
+              },
+              "name": {
+                "type": "string",
+                "pattern": "^\\s*Ada Lovelace\\s*$"
+              },
+              "items": {
+                "type": "array",
+                "minItems": 1,
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "sku",
+                    "qty"
+                  ],
+                  "properties": {
+                    "sku": {
+                      "const": "MUG-BLUE"
+                    },
+                    "qty": {
+                      "const": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R5.probe-name",
+      "requirement": "R5",
+      "description": "The latest placed order is in the name of Ada Lovelace.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "latestOrder"
+        },
+        "expect": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "name",
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": "placed"
+              },
+              "name": {
+                "type": "string",
+                "pattern": "^\\s*Ada Lovelace\\s*$"
+              }
             }
           }
         }
@@ -200,6 +260,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T09:29:41.825Z"
+    "at": "2026-11-04T10:10:40.774Z"
   }
 }

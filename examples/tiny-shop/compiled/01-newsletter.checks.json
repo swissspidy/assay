@@ -28,9 +28,9 @@
   ],
   "checks": [
     {
-      "id": "r1-probe",
+      "id": "r1-settings-probe",
       "requirement": "R1",
-      "description": "The backend settings probe reports newsletter as true.",
+      "description": "The backend settings probe reports newsletter set to true.",
       "assert": {
         "kind": "value",
         "source": {
@@ -44,40 +44,7 @@
       }
     },
     {
-      "id": "r1-request",
-      "requirement": "R1",
-      "description": "A successful settings save request was sent with newsletter set to true.",
-      "assert": {
-        "kind": "request",
-        "match": {
-          "method": [
-            "PUT",
-            "POST",
-            "PATCH"
-          ],
-          "url": {
-            "path": "/api/settings"
-          },
-          "status": {
-            "gte": 200,
-            "lt": 300
-          },
-          "requestBody": {
-            "type": "object",
-            "properties": {
-              "newsletter": {
-                "const": true
-              }
-            },
-            "required": [
-              "newsletter"
-            ]
-          }
-        }
-      }
-    },
-    {
-      "id": "r2-checkbox",
+      "id": "r2-checkbox-checked",
       "requirement": "R2",
       "description": "The 'Email me the newsletter' checkbox in the Preferences form is checked.",
       "assert": {
@@ -92,16 +59,17 @@
               },
               "landmark": {
                 "role": "form",
-                "name": {
-                  "contains": "Preferences"
-                }
+                "name": "Preferences"
               }
             },
             {
               "role": "checkbox",
               "name": {
-                "contains": "Email me the newsletter",
+                "contains": "newsletter",
                 "ignoreCase": true
+              },
+              "landmark": {
+                "role": "main"
               }
             }
           ]
@@ -118,6 +86,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T09:28:37.246Z"
+    "at": "2026-11-04T10:09:26.843Z"
   }
 }

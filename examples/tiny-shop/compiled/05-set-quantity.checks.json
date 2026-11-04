@@ -19,7 +19,7 @@
   ],
   "checks": [
     {
-      "id": "r1-backend-cart-blue-mug-qty-3",
+      "id": "R1-probe-cart-blue-mug-qty-3",
       "requirement": "R1",
       "description": "The backend cart contains a Blue Mug line item with quantity 3.",
       "assert": {
@@ -34,10 +34,6 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "name",
-                "qty"
-              ],
               "properties": {
                 "name": {
                   "const": "Blue Mug"
@@ -45,16 +41,20 @@
                 "qty": {
                   "const": 3
                 }
-              }
+              },
+              "required": [
+                "name",
+                "qty"
+              ]
             }
           }
         }
       }
     },
     {
-      "id": "r1-ui-cart-blue-mug-qty-3",
+      "id": "R1-ui-blue-mug-qty-3",
       "requirement": "R1",
-      "description": "The cart page's quantity field for Blue Mug shows 3.",
+      "description": "The cart page's quantity input for Blue Mug shows 3.",
       "assert": {
         "kind": "state",
         "target": {
@@ -94,6 +94,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T09:29:23.045Z"
+    "at": "2026-11-04T10:10:18.828Z"
   }
 }

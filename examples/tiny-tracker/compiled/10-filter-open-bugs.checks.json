@@ -28,44 +28,25 @@
   ],
   "checks": [
     {
-      "id": "r1-status-filter",
+      "id": "R1-url-status-open",
       "requirement": "R1",
-      "description": "The status filter is set to Open (URL status=open or the Status dropdown shows Open selected).",
+      "description": "The issue list URL has the status filter set to open.",
       "assert": {
-        "kind": "anyOf",
-        "of": [
-          {
-            "kind": "url",
-            "match": {
-              "query": {
-                "status": {
-                  "equals": "open",
-                  "ignoreCase": true
-                }
-              }
-            }
-          },
-          {
-            "kind": "state",
-            "target": {
-              "role": "option",
-              "name": "Open",
-              "within": {
-                "role": "combobox",
-                "name": "Status"
-              }
-            },
-            "expect": {
-              "selected": true
+        "kind": "url",
+        "match": {
+          "query": {
+            "status": {
+              "equals": "open",
+              "ignoreCase": true
             }
           }
-        ]
+        }
       }
     },
     {
-      "id": "r1-no-closed-rows",
+      "id": "R1-no-closed-rows",
       "requirement": "R1",
-      "description": "The issues table contains no row whose status cell is Closed.",
+      "description": "The Issues table contains no rows whose status cell is Closed.",
       "assert": {
         "kind": "contains",
         "scope": {
@@ -89,44 +70,25 @@
       }
     },
     {
-      "id": "r2-label-filter",
+      "id": "R2-url-label-bug",
       "requirement": "R2",
-      "description": "The label filter is set to bug (URL label=bug or the Label dropdown shows bug selected).",
+      "description": "The issue list URL has the label filter set to bug.",
       "assert": {
-        "kind": "anyOf",
-        "of": [
-          {
-            "kind": "url",
-            "match": {
-              "query": {
-                "label": {
-                  "equals": "bug",
-                  "ignoreCase": true
-                }
-              }
-            }
-          },
-          {
-            "kind": "state",
-            "target": {
-              "role": "option",
-              "name": "bug",
-              "within": {
-                "role": "combobox",
-                "name": "Label"
-              }
-            },
-            "expect": {
-              "selected": true
+        "kind": "url",
+        "match": {
+          "query": {
+            "label": {
+              "equals": "bug",
+              "ignoreCase": true
             }
           }
-        ]
+        }
       }
     },
     {
-      "id": "r2-no-nonbug-rows",
+      "id": "R2-no-non-bug-rows",
       "requirement": "R2",
-      "description": "The issues table shows no rows for the non-bug issues 'Add dark mode' or 'Typo in docs'.",
+      "description": "The Issues table contains no issue rows that lack the bug label.",
       "assert": {
         "kind": "contains",
         "scope": {
@@ -139,9 +101,8 @@
         },
         "match": {
           "role": "row",
-          "text": {
-            "regex": "Add dark mode|Typo in docs",
-            "flags": "i"
+          "name": {
+            "regex": "^\\d+ (?!.*\\bbug\\b)"
           }
         },
         "count": {
@@ -156,6 +117,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T09:30:20.205Z"
+    "at": "2026-11-04T10:10:58.719Z"
   }
 }

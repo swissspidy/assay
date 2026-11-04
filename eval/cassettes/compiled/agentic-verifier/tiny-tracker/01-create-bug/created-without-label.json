@@ -1,24 +1,24 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T09:45:51.670Z",
+ "recordedAt": "2026-11-04T10:16:21.091Z",
  "turns": {
   "sha256:5ad1cab5185ae7b35589015160e82a1fa4a14eca153b48b7de370b47e08ae18d": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01VBR71bLT748XgW5jwf3UUB",
+     "id": "toolu_01Bq4f4T1tJ89Rcd1kHFksaV",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01WShkkQB2tSMnCs71pSfXim",
+     "id": "toolu_01DsZszU8fNvWWinQjH56urw",
      "name": "network_log",
      "input": {}
     },
     {
-     "id": "toolu_01HuTVUEoYkMXHSqT3nbsZJS",
+     "id": "toolu_01VtS3Vy9CnsQjsZUNdypZoB",
      "name": "page_outline",
      "input": {}
     }
@@ -26,7 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01VBR71bLT748XgW5jwf3UUB",
+     "id": "toolu_01Bq4f4T1tJ89Rcd1kHFksaV",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -35,7 +35,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01WShkkQB2tSMnCs71pSfXim",
+     "id": "toolu_01DsZszU8fNvWWinQjH56urw",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -44,7 +44,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01HuTVUEoYkMXHSqT3nbsZJS",
+     "id": "toolu_01VtS3Vy9CnsQjsZUNdypZoB",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -60,12 +60,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:91f9f2fd07fa95be11a3b12052cb4138a90bd04618e14cff0ab07348c91451a2": {
+  "sha256:2b6ad32fc9fbdb973f44a7a31b7613cb2a065f192bdbd52bb683470b019284c5": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01LFuo3TNrUDdEp2SjRizGBE",
+     "id": "toolu_01Hjo7aAC2qdAur6qDrZugk8",
      "name": "network_entry",
      "input": {
       "seq": 1
@@ -75,7 +75,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01LFuo3TNrUDdEp2SjRizGBE",
+     "id": "toolu_01Hjo7aAC2qdAur6qDrZugk8",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -93,12 +93,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:5f4ea2ca2cdbdc6a95fe30522196727fb69237097ca2b50c2589af0f746cb845": {
+  "sha256:ea4f162441b2b79d1135e2ee7a670605df092bb7cf1c48884425bb5e5d2b57f3": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_018YtZRdDXXrstnydQP9ti9j",
+     "id": "toolu_01NcoLETHLkB7F92pXqgN7H9",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -109,18 +109,17 @@
          1,
          4
         ],
-        "reasoning": "The probe shows a new issue #4 titled \"Checkout fails on Safari\". The POST /issues request carried that title and redirected to /issues/4."
+        "reasoning": "The server-side probe lists issue #4 with the title \"Checkout fails on Safari\". The POST /issues request carrying that title returned a 303 redirect to /issues/4."
        },
        {
         "requirement": "the new issue has the bug label",
         "status": "fail",
         "cites": [
          1,
-         2,
          3,
          4
         ],
-        "reasoning": "In the server probe, issue #4 has an empty labels list ([]). The page shows Labels: None. The create request sent no labels, and no request to save labels was ever made."
+        "reasoning": "The probe shows issue #4 with labels: [], and the page shows Labels: None. The creation POST sent no labels field, and no save-labels request appears in the network log."
        }
       ]
      }
@@ -129,7 +128,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_018YtZRdDXXrstnydQP9ti9j",
+     "id": "toolu_01NcoLETHLkB7F92pXqgN7H9",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -143,18 +142,17 @@
          1,
          4
         ],
-        "reasoning": "The probe shows a new issue #4 titled \"Checkout fails on Safari\". The POST /issues request carried that title and redirected to /issues/4."
+        "reasoning": "The server-side probe lists issue #4 with the title \"Checkout fails on Safari\". The POST /issues request carrying that title returned a 303 redirect to /issues/4."
        },
        {
         "requirement": "the new issue has the bug label",
         "status": "fail",
         "cites": [
          1,
-         2,
          3,
          4
         ],
-        "reasoning": "In the server probe, issue #4 has an empty labels list ([]). The page shows Labels: None. The create request sent no labels, and no request to save labels was ever made."
+        "reasoning": "The probe shows issue #4 with labels: [], and the page shows Labels: None. The creation POST sent no labels field, and no save-labels request appears in the network log."
        }
       ]
      }
@@ -162,18 +160,18 @@
    ],
    "usage": {
     "inputTokens": 3300,
-    "outputTokens": 252,
+    "outputTokens": 258,
     "cacheReadTokens": 3122,
     "cacheWriteTokens": 176
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:51ca2549f333e88a6d915d540ed11a3b65ce189e7d72ea1ef500f5aa8d0b3fdb": {
+  "sha256:f42114efadacd937fc1010ff832361fe876066a4badd5ba53186eb01198a2b84": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_017wFX8RkerwhcnW9MyvCVnG",
+     "id": "toolu_011eEXw1povWTohargvas1tP",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -184,18 +182,17 @@
          1,
          4
         ],
-        "reasoning": "The probe shows a new issue #4 titled \"Checkout fails on Safari\". The POST /issues request carried that title and redirected to /issues/4."
+        "reasoning": "The server-side probe lists issue #4 with the title \"Checkout fails on Safari\". The POST /issues request carrying that title returned a 303 redirect to /issues/4."
        },
        {
         "requirement": "R2",
         "status": "fail",
         "cites": [
          1,
-         2,
          3,
          4
         ],
-        "reasoning": "In the server probe, issue #4 has an empty labels list ([]). The page shows Labels: None. The create request sent no labels, and no request to save labels was ever made."
+        "reasoning": "The probe shows issue #4 with labels: [], and the page shows Labels: None. The creation POST sent no labels field, and no save-labels request appears in the network log."
        }
       ]
      }
@@ -204,7 +201,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_017wFX8RkerwhcnW9MyvCVnG",
+     "id": "toolu_011eEXw1povWTohargvas1tP",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -218,28 +215,27 @@
          1,
          4
         ],
-        "reasoning": "The probe shows a new issue #4 titled \"Checkout fails on Safari\". The POST /issues request carried that title and redirected to /issues/4."
+        "reasoning": "The server-side probe lists issue #4 with the title \"Checkout fails on Safari\". The POST /issues request carrying that title returned a 303 redirect to /issues/4."
        },
        {
         "requirement": "R2",
         "status": "fail",
         "cites": [
          1,
-         2,
          3,
          4
         ],
-        "reasoning": "In the server probe, issue #4 has an empty labels list ([]). The page shows Labels: None. The create request sent no labels, and no request to save labels was ever made."
+        "reasoning": "The probe shows issue #4 with labels: [], and the page shows Labels: None. The creation POST sent no labels field, and no save-labels request appears in the network log."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 3629,
-    "outputTokens": 234,
+    "inputTokens": 3634,
+    "outputTokens": 239,
     "cacheReadTokens": 3298,
-    "cacheWriteTokens": 329
+    "cacheWriteTokens": 334
    },
    "model": "claude-opus-5-5"
   }

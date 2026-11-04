@@ -1,14 +1,14 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T09:29:20.055Z",
+ "recordedAt": "2026-11-04T10:10:05.410Z",
  "turns": {
   "sha256:be47a49f253fe2873f46e49b3ef9a00c3f1f2d55de628dd00bfbfd9afa011c94": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_016LHoMiURZY7y325ZyqUEEi",
+     "id": "toolu_01UNPNSKh34EvVFRsKcxz5df",
      "name": "submit_rubric",
      "input": {
       "requirements": [
@@ -26,7 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_016LHoMiURZY7y325ZyqUEEi",
+     "id": "toolu_01UNPNSKh34EvVFRsKcxz5df",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -47,22 +47,22 @@
    "usage": {
     "inputTokens": 1106,
     "outputTokens": 112,
-    "cacheReadTokens": 1102,
-    "cacheWriteTokens": 0
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1102
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:a3b9f78cfe952f39fb848b41368186544726e562611dc2192a1d196ca8918411": {
+  "sha256:21f12a9f58886dd8aa7b03c92a761354b56e4e4c968ab30a02c06d3ccaef8562": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_018xYZ3556UfPzkHhEJFe25C",
+     "id": "toolu_011egNzjfWHojXYC3TFKuD3v",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01JZe457dXhYXrMCvEsdapP2",
+     "id": "toolu_01Ka1Q5HxnZbMsJrKo1bNfdR",
      "name": "network_log",
      "input": {}
     }
@@ -70,7 +70,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_018xYZ3556UfPzkHhEJFe25C",
+     "id": "toolu_011egNzjfWHojXYC3TFKuD3v",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -79,7 +79,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01JZe457dXhYXrMCvEsdapP2",
+     "id": "toolu_01Ka1Q5HxnZbMsJrKo1bNfdR",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -88,48 +88,22 @@
     }
    ],
    "usage": {
-    "inputTokens": 13845,
+    "inputTokens": 13951,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 13841
+    "cacheWriteTokens": 13947
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:4269caec719066ff1ca3974ee1f9bc3b94e169e45a587d14db54b3f6ab42cffb": {
+  "sha256:93e78f01aa5c8bd7c3a5cdc1be0e87091091e1c22a42f2ac4e3b2c38f15aa761": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Jb36Q6wjbGWYV1JJiJtira",
-     "name": "try_assertion",
+     "id": "toolu_015puwpJWLCJGh5tYmK8pdBa",
+     "name": "network_entry",
      "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "issues"
-       },
-       "expect": {
-        "schema": {
-         "type": "array",
-         "contains": {
-          "type": "object",
-          "required": [
-           "id",
-           "assignee"
-          ],
-          "properties": {
-           "id": {
-            "const": 1
-           },
-           "assignee": {
-            "const": "bob"
-           }
-          }
-         }
-        }
-       }
-      }
+      "seq": 1
      }
     }
    ],
@@ -137,67 +111,41 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSiQgKEAgTGAI4AUIIdGhpbmtpbmcSDK4cQA3+N4TlnH771hoMn4Jn7AfGowdBB8Y6IjBtzALqPc3+RF5+/1D6q+8kGuj8ONWz6nxse8V8iroM75cN5WS9WhkkNUPExUvZwR4qpgc7ckO8NmGuXA0ZepxTPaAqErrIFU1DH9a5pxLNSBluJY4RJU3sWOLptefphPxJR/3Zp1OrsNHPjAFBJkz3vFwLtuilnu3xdAoFM5CCg1ksTgZ60nUE7jy6kr5SQD5QOGuFpZnYVOKC1X4VXlfKGfE54iAYCwA9iC4Pu/8S8aqqCGBYBKrz6n1fASnVOjjhhsKdVkQ7+1EsPN8GhULDPX8ULqYddmOrh0kMKoiBMCVvlQvbdtwasQnLYBkcAUayVh3VKoGcWa8g8USEH+3yL7kMIxvVrVyBCxUut9/Z5NDijY1Wb+O+NO4eHPcMyeOMgbrFusSxWoDY5M9qm0Xp1GByvD+7ZumO4xsyuzlRPjxGffBOGDLbfrbO2SXSppfH0HnPR4xlfpSKMO/7zoK0me8/orPcItOMm/cs/YWJnUsMxsihfFl3ifEKMVcClXEL4mznDj3wIDe3PpJzawDjqtfzXFLJUk/Uu8GxtIdgOAhAovO4TfG3YxC8iL5H9zYPQyTsjy1U6Yg9aFcACr9cBWetVfEpwSeL0lVEp701ZZHR/6biPIE0F7Wuw9cG8RLZ6ZhhibqLyNJmCBvZ5qKKKRs/paDTQgM4VnSSf6QsJxKiQTZkoxpTBF+2H5muA2AW4yx++OgOQQT5K3UCzNAcqy2zUCEVAJ9FtNpyvG5LfMSfPMHoyOwlqUyB0uyq84h20BYWAUV+8ibL/yStrJwieGwdWKQBGGnH3e5fnQZzeVaY2wBCaPD3Com36BFRV2SPL4HNZBrjdCuiK3QEW6aGb7zJiWFRCW7OFtA7DqRQSybAsZ7McuYBPSCa1vv4ErIlP/zYY719MXi/UQdw1G4zxibL18oU4NULlKWpxAs7WUe37vLJm/lF5EXmERoVGV+gmMaX7q/JjzahOwadIFIBf09c6FQCBzcfnHxEKrHGuS4KOwjiNE19HB+hlowECb13klsXRueN9DYgWbev56wENrbFK9hXG5N8M0VbRgbEbcW7xJFhe1ZbgnM/X3ifnZWhHAdy8dKVh9nrNnsgFH8B4bbw84mql5WwR1BknPWmmQLzH/ZqmEH4w3COFAugU1Ckl89EqzwV78It2PTaKKNfM+bYn8mLPJU8CossM7YYb45wbBzSHo6n/6/QZQkWi44t8PBic1pqdV6CUxNyjuWUMUgjJtFnd17cZk9JKTNKLlIpNQjzLfoXZXrBNYFlcC+hLYtcHQOkN7pr6bfOakT22VDdT1bAPCmdGAE="
+     "signature": "CAQS0gYKEAgTGAI4AUIIdGhpbmtpbmcSDP4amorJPe/+MvjLBBoMEiyKAo8fZxvXjN/vIjBY1iGkhIYBxpQDLoHOR+GotgzLSo91NIRY8nDYCnT8k5BRmDZyitxGtIiQ5/NrhwIq7wV4ZPKYjMJgjTzOprPDJmEK5CuH1o/lLLAqfhMl4x7aFEpoh7RxD0clpGueNBTxHJ5zOQiJdyoSZFntTzuZgM55YixYTvvjYcjkNlcgCEGPxl7I+jHIW2jcOyeNyKYEb+UG9lzxUaPaiP+qFVOlGu2Ja7XxswvKndvE+wzFW8eV41eHCvXkWsCx54rbh8ErYA9A32EnTiP6dKD1iYiFJGai2SN6XMJk0W2q84LN/lLR8mtXrHdDPhdlB0xAJOCUfwIbihan25koIQKQ87D5LOKoAn4dbO7Ak9tc3yzNEART+mfKo8sKKGOm44kY9MfmZ1QqrKc+iSVKl4AVl3DsrJAzV38ZpHbJDSfjGTQz2aA25OlxSFc2JdMwN8KWf0pmgPAfeC+5SN6nicKWTImPUd12aV1HiKLii77DNjbGRZiRH+mP073UoDzCKqzKT00aQ58QVaPZSPsEwBhx/OWIL+XuwxRnQ4BKh2jBR0M7ouI/VraGHMLzEqX6GdcevdZOdVdng0ZcaTuoPzX1gryFYKLZLIk2ld2oucRx94R08esxP0NnXmdzbWDCyBm0zYxfIRS+sk6X2PoPBSMbsF53FRB7186QNR0HQAc56rAPjJzsg+ZY19090gYkeOYbhoEvj28QbYrz8+oU4hXz4u8QXsPEOwvCUpUIoUxU0J+SAORaRFQl5xAnXiXzWHzte/8uQ6tg0VlC8xJ4yblBY+ZvDXhqEcs5YIJJ0Tw9W94M2JBmiOlFdFp5+Uz+eiOE03Dy6wpMR0NWEqI9uKuD0RBw6pzcOQQvgx0UwfEqv/Zc7Z63afXTPEORmhsAx+NvKujiFXR+ADXB+PLb1hY49VAzS860mcOJ7yrRbqBmPcPXQJhAY7xgbKRatuipdORSQ0KaLUO8tC9sSQa9KoH2Y3m0KpYY4bxTo3tnMzpnsyTpPoMfBCyQ99Sy0x2YpE1Nl6HngrVYZpenS9igDUKJMPCY2XHBnlIcjgq/HNHphnOgmWq7GAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Jb36Q6wjbGWYV1JJiJtira",
-     "name": "try_assertion",
+     "id": "toolu_015puwpJWLCJGh5tYmK8pdBa",
+     "name": "network_entry",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "issues"
-       },
-       "expect": {
-        "schema": {
-         "type": "array",
-         "contains": {
-          "type": "object",
-          "required": [
-           "id",
-           "assignee"
-          ],
-          "properties": {
-           "id": {
-            "const": 1
-           },
-           "assignee": {
-            "const": "bob"
-           }
-          }
-         }
-        }
-       }
-      }
+      "seq": 1
      }
     }
    ],
    "usage": {
-    "inputTokens": 14314,
-    "outputTokens": 288,
-    "cacheReadTokens": 13841,
+    "inputTokens": 14420,
+    "outputTokens": 120,
+    "cacheReadTokens": 13947,
     "cacheWriteTokens": 471
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:04010e46ab8300cf7b326ea3f01f2bafbb4e959effbf5b0d3ef6fa0de1731198": {
+  "sha256:e988d23254dedee890cca310859b96680d829539dad398ebd922c3f96b1a0e91": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_015tcBLhms7iKNJvHe77x8HH",
+     "id": "toolu_01F8c261EENEEHueefnoscJk",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "issue1-assignee-bob",
+        "id": "issue1-assignee-bob-probe",
         "requirement": "R1",
-        "description": "The backend issues probe shows issue with id 1 has assignee \"bob\".",
+        "description": "The backend issues list contains issue id 1 with assignee 'bob'.",
         "assert": {
          "kind": "value",
          "source": {
@@ -233,7 +181,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_015tcBLhms7iKNJvHe77x8HH",
+     "id": "toolu_01F8c261EENEEHueefnoscJk",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -241,9 +189,9 @@
      "input": {
       "checks": [
        {
-        "id": "issue1-assignee-bob",
+        "id": "issue1-assignee-bob-probe",
         "requirement": "R1",
-        "description": "The backend issues probe shows issue with id 1 has assignee \"bob\".",
+        "description": "The backend issues list contains issue id 1 with assignee 'bob'.",
         "assert": {
          "kind": "value",
          "source": {
@@ -277,10 +225,10 @@
     }
    ],
    "usage": {
-    "inputTokens": 14680,
-    "outputTokens": 216,
-    "cacheReadTokens": 14312,
-    "cacheWriteTokens": 366
+    "inputTokens": 14642,
+    "outputTokens": 205,
+    "cacheReadTokens": 14418,
+    "cacheWriteTokens": 222
    },
    "model": "claude-opus-5-5"
   }

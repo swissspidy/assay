@@ -19,7 +19,7 @@
     {
       "id": "R2",
       "kind": "hard",
-      "text": "All other items stay in the cart.",
+      "text": "All other items remain in the cart.",
       "source": {
         "field": "outcomes",
         "quote": "the other items stay in the cart"
@@ -30,7 +30,7 @@
     {
       "id": "r1-probe-no-red-mug",
       "requirement": "R1",
-      "description": "The backend cart probe has no item with SKU MUG-RED or named Red Mug.",
+      "description": "The backend cart has no item with SKU MUG-RED or name Red Mug.",
       "assert": {
         "kind": "value",
         "source": {
@@ -76,7 +76,7 @@
     {
       "id": "r1-ui-no-red-mug-row",
       "requirement": "R1",
-      "description": "The Cart table shows no row containing Red Mug.",
+      "description": "The Cart table shows no row for Red Mug.",
       "assert": {
         "kind": "contains",
         "scope": {
@@ -89,7 +89,7 @@
         },
         "match": {
           "role": "row",
-          "text": {
+          "name": {
             "contains": "Red Mug"
           }
         },
@@ -101,7 +101,7 @@
     {
       "id": "r2-probe-blue-mug-kept",
       "requirement": "R2",
-      "description": "The backend cart probe still contains the Blue Mug (SKU MUG-BLUE) with quantity at least 1.",
+      "description": "The backend cart still contains the Blue Mug (SKU MUG-BLUE) with a positive quantity.",
       "assert": {
         "kind": "value",
         "source": {
@@ -139,6 +139,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T09:29:09.584Z"
+    "at": "2026-11-04T10:10:02.818Z"
   }
 }
