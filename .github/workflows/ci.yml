@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  # release.yml starts it on the "Version packages" branch, whose pushes start no workflow.
   workflow_dispatch:
 
 permissions:
@@ -31,6 +32,22 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run build
+
+  pack:
+    name: Package (packed, installed, used)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # npm pack (which builds dist/), installed into an empty project and used from there.
+      - run: npm run test:pack
 
   test:
     name: Test (Node ${{ matrix.node }})
