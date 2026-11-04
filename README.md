@@ -2,44 +2,37 @@
 
 Compiled outcome verification for web agent tasks.
 
-A model verifies a task outcome once, at authoring time. The result is
-compiled into deterministic checks that run in milliseconds with no model. A
-check returns **pass**, **fail** or **abstain**. Abstain means the check
-couldn't find or read its evidence, and it triggers escalation to an
-expensive verifier.
-
-> Status: all five milestones are in: snapshot format and check DSL, compiler,
-> stress testing, escalation and records, and the 30-task evaluation with
-> stability runs. On the 93 held-out runs, the compiled checks judge every run
-> correctly (balanced accuracy 1.000, no model at run time); an LLM judge
-> reaches 0.927 and the agentic verifier 0.942 ([report](eval/results/compiled/REPORT.md)).
-
-- Design: [ADR 0001: Evidence snapshot format and check DSL](docs/adr/0001-evidence-snapshot-and-check-dsl.md)
-- Example check sets: [`examples/tiny-shop/tasks/`](examples/tiny-shop/tasks) (handwritten) and [`examples/tiny-shop/compiled/`](examples/tiny-shop/compiled) (compiled)
+Did the agent actually do what it was asked? Asking a model to judge every run is slow, costs money
+and can be talked into a pass by a page that only claims success. Assay asks a model once, when you
+author the task: it compiles the task into checks, which are plain JSON. The checks then run against
+an evidence snapshot of the page in milliseconds, with no model. A check returns **pass**, **fail**
+or **abstain**. Abstain means it could not find or read its evidence; only then does Assay escalate
+to an agentic verifier.
 
 ## Install
 
 ```sh
 npm install -D @swissspidy/assay @playwright/test
-# Only for compiling, escalation and model baselines:
-npm install -D @anthropic-ai/sdk
 ```
 
-Requires Node.js 24 or later. Releases and their notes: [CHANGELOG.md](CHANGELOG.md).
-
-TypeScript projects that don't install `@anthropic-ai/sdk` need `skipLibCheck: true` in
-`tsconfig.json` (the usual default): the Anthropic adapter's declarations name the SDK.
+Requires Node.js 24 or later. Models are only needed to compile checks and to escalate; for those,
+also install [`@anthropic-ai/sdk`](#model-providers) or the [Vercel AI SDK](#model-providers).
+Releases: [CHANGELOG.md](CHANGELOG.md).
 
 ## Quick start
 
+In a Playwright test:
+
 ```ts
+import { readFileSync } from 'node:fs';
 import { test, expectOutcome } from '@swissspidy/assay/playwright';
-import checks from './checks/express-order.checks.json';
+
+const checks = JSON.parse(readFileSync('checks/express-order.checks.json', 'utf8'));
 
 test('agent ordered with express shipping', async ({ page }) => {
   await runMyAgent(page, 'Order what is in my cart with express shipping.');
-  // Records the network from context start (auto fixture). Captures a
-  // snapshot and evaluates the checks, polling until success or timeout.
+  // The `test` fixture records the network from the start of the test. expectOutcome captures a
+  // snapshot and runs the checks, polling until the expected verdict (success) or the timeout.
   await expectOutcome(page, checks, {
     probes: { latestOrder: () => page.request.get('/api/orders/latest').then((r) => r.json()) },
   });
@@ -49,51 +42,54 @@ test('agent ordered with express shipping', async ({ page }) => {
 Offline, against a stored snapshot:
 
 ```ts
-import { loadSnapshot, verifySnapshot, formatOutcome } from '@swissspidy/assay';
-const outcome = verifySnapshot(checks, loadSnapshot(json));
+import { readFileSync } from 'node:fs';
+import { formatOutcome, loadSnapshot, verify } from '@swissspidy/assay';
+
+const checks = JSON.parse(readFileSync('checks/express-order.checks.json', 'utf8'));
+const { outcome } = await verify(checks, loadSnapshot(readFileSync('snapshot.json', 'utf8')));
 console.log(formatOutcome(outcome));
 ```
 
-## A check
+`verify` validates the check set first and throws `CheckSetError` if it is invalid. `evaluate` is
+the same check run without validation or a record, for hot loops.
 
-Checks are JSON data, not code. Every check traces to a requirement, and
-every requirement quotes the task text it comes from:
+## Concepts
 
-```json
-{
-  "id": "C1",
-  "requirement": "R1",
-  "description": "The 'Cart total' output shows US$21.50 (to the cent).",
-  "assert": {
-    "kind": "value",
-    "source": {
-      "from": "node",
-      "field": "text",
-      "target": {
-        "anchors": [
-          { "role": "status", "name": "Cart total" },
-          { "role": "status", "landmark": { "role": "region", "name": "Cart summary" } }
-        ]
-      }
-    },
-    "normalize": [{ "op": "currency", "locale": "en-US", "currency": "USD" }],
-    "expect": { "approx": { "value": { "amount": 21.5, "currency": "USD" }, "abs": 0.005 } }
+- **Evidence snapshot.** What a run left behind: the accessibility tree, visible text, URL, network
+  log, storage and the results of backend probes you define. Captured with `captureSnapshot` (or by
+  `expectOutcome`), stored as JSON, and evaluated the same way live or offline.
+- **Requirements and checks.** A check set lists requirements, each quoting the task text it comes
+  from, and checks, each tracing to one requirement:
+
+  ```json
+  {
+    "id": "C1",
+    "requirement": "R1",
+    "description": "The 'Cart total' output shows US$21.50 (to the cent).",
+    "assert": {
+      "kind": "value",
+      "source": {
+        "from": "node",
+        "field": "text",
+        "target": { "anchors": [{ "role": "status", "name": "Cart total" }] }
+      },
+      "normalize": [{ "op": "currency", "locale": "en-US", "currency": "USD" }],
+      "expect": { "approx": { "value": { "amount": 21.5, "currency": "USD" }, "abs": 0.005 } }
+    }
   }
-}
-```
+  ```
 
-Assertion kinds: `state`, `contains` (with an optional `witness`), `value`
-(read from `node`, `text`, `url`, `request`/`response`, `storage` or `probe`,
-then normalized, then compared), `url`, `request`, and `allOf`/`anyOf`
-(Kleene logic). The JSON Schema is exported as `checkSetSchema`, and
-`validateCheckSet` adds semantic checks: traceable quotes, requirement
-references, regex and schema compilation, and normalizer and comparison
-type flow.
+  Assertion kinds: `state`, `contains`, `value` (read from a node, text, the URL, a request or
+  response, storage or a probe, then normalized and compared), `url`, `request`, and `allOf`/`anyOf`.
+  The JSON Schema is exported as `checkSetSchema`; `validateCheckSet` adds semantic checks.
 
-## A report
+- **Pass, fail, abstain.** Checks combine with three-valued logic. A requirement passes when its
+  checks pass; the run succeeds when every hard requirement passes. Abstain is never turned into a
+  pass or a fail silently.
+- **Escalation.** Requirements the checks abstained on can go to an agentic verifier, which explores
+  the snapshot (and, live, the page) with read-only tools and must cite what it observed.
 
-A page that only _claims_ an order was placed (spoofed heading and URL, no
-order request):
+A report for a page that only _claims_ an order was placed:
 
 ```
 Verdict: FAIL  (tiny-shop/express-order v1, snapshot sha256:2f7375b64494…)
@@ -107,105 +103,134 @@ Verdict: FAIL  (tiny-shop/express-order v1, snapshot sha256:2f7375b64494…)
     ✔ C3: The browser is on an order page, or an 'Order confirmed' heading is shown.
 ```
 
-## Compiling checks (milestone 2)
+Design details: [ADR 0001](docs/adr/0001-evidence-snapshot-and-check-dsl.md).
+
+## Authoring checks
+
+1. **Compile** the task and one or more reference runs into a check set:
+
+   ```ts
+   import { compileTask } from '@swissspidy/assay/compiler';
+   import { anthropicModel } from '@swissspidy/assay/models';
+
+   const { checkSet, report } = await compileTask(
+     { id: 'shop/express-order', instruction, outcomes }, // outcomes: Gherkin "Then" steps, a Markdown list or plain lines
+     [{ name: 'reference', kind: 'success', snapshot }],
+     { model: await anthropicModel() },
+   );
+   ```
+
+   A model writes the requirements, each quoting the task. An agent then explores the reference
+   snapshots and submits checks; a submission is accepted only once it validates, succeeds on every
+   correct reference, does not succeed on any negative one, and accepts the stress test's valid
+   variants ([ADR 0002](docs/adr/0002-compiler.md)).
+
+2. **Stress-test** a check set against edited copies of correct runs: valid variants (reordered rows,
+   other number and date formats, extra fields, network noise) that must still pass, and near-miss
+   mutants (wrong item, missing request, pages that only claim success) that must not
+   ([ADR 0003](docs/adr/0003-stress-testing.md)):
+
+   ```ts
+   import { formatStressReport, stressTest } from '@swissspidy/assay/stress';
+
+   console.log(formatStressReport(stressTest(checkSet, [{ name: 'reference', snapshot }])));
+   ```
+
+3. **Review and lock.** `reviewSheet` renders each check in plain language next to what it actually
+   tests. `lockCheckSet` records who confirmed it; any later edit breaks the lock:
+
+   ```ts
+   import { lockCheckSet, reviewSheet } from '@swissspidy/assay';
+
+   console.log(reviewSheet(checkSet));
+   const locked = lockCheckSet(checkSet, 'reviewer@example.com');
+   ```
+
+## Escalation and records
 
 ```ts
-import { anthropicModel, compileTask, loadSnapshot } from '@swissspidy/assay';
+import { verify } from '@swissspidy/assay';
+import { anthropicModel } from '@swissspidy/assay/models';
 
-const { checkSet, report } = await compileTask(
-  { id: 'shop/express-order', instruction, outcomes }, // outcomes: Gherkin "Then" clauses, a Markdown list or plain lines
-  [{ name: 'reference', kind: 'success', snapshot: loadSnapshot(json) }],
-  { model: await anthropicModel() }, // or any ModelClient
-);
-```
-
-The compiler writes a rubric of requirements, each quoting the task text. An agent then explores the reference snapshots and submits checks, which are accepted only once they validate and pass on every correct reference. See [ADR 0002](docs/adr/0002-compiler.md). `npm run compile:examples` compiles the 30 example tasks from one correct run each and judges the held-out runs; all 30 compile and judge every held-out run correctly (`examples/<app>/compiled/SUMMARY.md`). It replays the committed cassettes and records missing ones when `ANTHROPIC_API_KEY` is set (`ASSAY_MODEL_MODE=record` re-records all). Every compiled set records its provenance in `compiled`: compiler version, model and date.
-
-## Stress testing (milestone 3)
-
-```ts
-import { stressTest, formatStressReport } from '@swissspidy/assay';
-const report = stressTest(checkSet, [{ name: 'reference', snapshot }]);
-console.log(formatStressReport(report)); // acceptance/rejection rates, over-constrained, fragile and weak checks
-```
-
-The stress test edits correct snapshots into valid variants (reordered rows, unrelated content, extra JSON fields, other number, money and date formats, network noise) and into near-miss mutants (flipped states, missing items, perturbed values, failed or missing requests, pages that only claim success). A check that rejects a valid variant is flagged as over-constrained, and the compiler sends that back to the model as an error. See [ADR 0003](docs/adr/0003-stress-testing.md). `npm run stress` writes `examples/<app>/stress/handwritten/REPORT.md` for each app.
-
-## Escalation, records and locking (milestone 4)
-
-```ts
-import { anthropicModel, lockCheckSet, reviewSheet, verifyWithEscalation, writeOutcomeRecord } from '@swissspidy/assay';
-
-console.log(reviewSheet(checkSet)); // plain-language review for a human
-const locked = lockCheckSet(checkSet, 'reviewer@example.com'); // tamper-evident
-
-const { outcome, record, proposal } = await verifyWithEscalation(locked, snapshot, {
+const { outcome, record, written } = await verify(locked, snapshot, {
   verifier: await anthropicModel(), // decides only what the checks abstained on
   requireLocked: true,
   agentReport: 'I placed the order.', // recorded as agent-claimed, never evidence
+  recordDir: 'assay-records',
 });
-writeOutcomeRecord('assay-records', record, snapshot, locked, proposal);
 ```
 
-In Playwright: `await expectOutcome(page, locked, { escalate: { verifier }, recordDir: 'assay-records' })`. See [ADR 0004](docs/adr/0004-escalation-and-records.md).
+The verifier sees only the escalated requirements, gets read-only tools, and must cite the tool
+outputs it relies on; uncited verdicts are rejected. Its decisions are merged into the outcome and
+marked `decidedBy: "verifier"`. The outcome record (`assay.record/v1`) keeps who decided each
+requirement and on what evidence, the agent's claims labelled as claims, the verifier's
+observations, and content-addressed copies of the snapshot and check set. With a `proposer` model,
+a run the verifier rescued yields a recompiled check set, recorded as pending approval.
 
-## Evaluation and stability (milestone 5)
+In Playwright, `expectOutcome` and `verifyPage` take the same options, and the verifier also gets
+read-only live access to the page:
 
-Three small apps (`examples/tiny-shop`, `examples/tiny-tracker`, `examples/tiny-calendar`) provide 30 tasks and 123 labelled runs. The runs are correct, wrong item, partial, undone, over-completion, or adversarial pages that only claim success.
-
-- `npm run eval` compares checks, checks with escalation, an LLM judge and the agentic verifier on balanced accuracy, TPR, TNR, cost and latency. Results go to `eval/results/REPORT.md`.
-  - Add `-- --checks compiled` to use the compiled check sets. The run each set was compiled from is then left out. Results go to `eval/results/compiled/REPORT.md`.
-  - Model rows replay the committed cassettes; missing ones are recorded when `ANTHROPIC_API_KEY` is set.
-
-| Held-out runs (compiled checks, 93 runs) | Balanced accuracy | TPR   | TNR   | Cost / run | Median latency |
-| ---------------------------------------- | ----------------- | ----- | ----- | ---------- | -------------- |
-| checks                                   | 1.000             | 1.000 | 1.000 | $0         | 0.3 ms         |
-| LLM judge (`claude-opus-5-5`)            | 0.927             | 0.933 | 0.921 | $0.0119    | 4.3 s          |
-| agentic verifier (`claude-opus-5-5`)     | 0.942             | 0.900 | 0.984 | $0.0273    | 8.3 s          |
-
-The LLM judge accepted 3 of 8 adversarial pages that only claim success; the checks and the verifier rejected all of them. The judge's latency is from the handwritten run, which recorded it.
-
-- `npm run stability` judges every run against five releases of each app, and against the regression alone, (renamed copy, new layout with look-alike content, extra API fields, and a real regression), with checks written for the first. Results go to `stability/results/REPORT.md`. CI runs it on every change and fails on any wrong verdict.
-- The Model baselines workflow (run by hand) measures the model rows live with fresh recordings, when the API key secret is set. Run it after changing the model, a prompt or the model adapter.
-
-See [ADR 0005](docs/adr/0005-evaluation-and-stability.md).
-
-## Development
-
-Requires **Node.js 24+** (see `.nvmrc`). Tooling: [tsrs](https://github.com/oxc-project/tsrs)
-for typechecking and builds, [oxlint](https://oxc.rs/docs/guide/usage/linter) and
-[oxfmt](https://oxc.rs/docs/guide/usage/formatter) for linting and formatting.
-
-```sh
-npm install
-npx playwright install --with-deps chromium
-npm run check        # format:check + lint + typecheck + build + test (what CI runs)
-npm test             # unit tests + live tests against the Tiny Shop demo app (auto-started)
-npm run format       # oxfmt --write
-npm run build        # tsrs -> dist/
-npm run shop         # run the demo app on :4173
+```ts
+await expectOutcome(page, locked, { verifier, recordDir: 'assay-records' });
 ```
 
-CI (`.github/workflows/ci.yml`) runs format, lint, typecheck and build, then the
-full test suite on Node 24 and the latest Node release. `npm run test:pack` packs
-the package, installs it into an empty project and uses it from there; CI runs it too.
+`writeOutcomeRecord(dir, result)` writes a `verify` result's record by hand. Details:
+[ADR 0004](docs/adr/0004-escalation-and-records.md).
 
-### Releases
+## Model providers
 
-A pull request that changes what the package does adds a changeset (`npm run changeset`; see
-[CONTRIBUTING.md](CONTRIBUTING.md)). The Release workflow turns the changesets on `main` into a
-"Version packages" pull request. Merging it stages that version on npm with npm's trusted
-publishing and provenance, then tags it and creates its GitHub release. The version goes public once
-a maintainer approves the staged publish with 2FA. Any other push to `main` only updates the
-"Version packages" pull request. See
-[ADR 0006](docs/adr/0006-npm-package-and-releases.md).
+Any object with an `id` and a `turn(request)` method is a `ModelClient`. Two adapters come with the
+package:
 
-Milestone 1 acceptance lives in `tests/tasks.spec.ts`. It covers 10 tasks
-and 20 checks. Each task has a correct run (success), incorrect runs (fail:
-wrong item, partial or over-completion, spoofed success) and anchor or
-evidence removal (abstain), both on the live page and on edited snapshots.
-Every live evaluation is also run on the serialized snapshot, and the test
-asserts both give identical results.
+- **Anthropic** (`@swissspidy/assay/models`, needs `@anthropic-ai/sdk`): `await anthropicModel()`
+  streams requests with an explicit effort, prompt caching and server-side refusal fallbacks. It is
+  what the measured numbers below use.
+- **Vercel AI SDK** (`@swissspidy/assay/ai-sdk`, needs `ai` 7 or later and a provider package):
+  `aiSdkModel` wraps any AI SDK language model. Each turn is one `generateText` call whose tools
+  have no `execute`, so Assay's own loop still validates inputs, enforces citations and records
+  cassettes ([ADR 0007](docs/adr/0007-vercel-ai-sdk-adapter.md)).
+
+  ```ts
+  import { anthropic } from '@ai-sdk/anthropic'; // or any other AI SDK provider
+  import { aiSdkModel } from '@swissspidy/assay/ai-sdk';
+
+  const verifier = aiSdkModel(anthropic(process.env.ASSAY_MODEL!), { maxOutputTokens: 32000 });
+  ```
+
+**Cassettes** make model steps reproducible. `recordingModel(model, path)` records every turn under
+a digest of the full request; `replayModel(path)` replays them without a key and fails loudly if a
+request changed. Both are in `@swissspidy/assay/models`.
+
+## How well it works
+
+Three small example apps (`examples/tiny-shop`, `tiny-tracker`, `tiny-calendar`) provide 30 tasks
+and 123 labelled runs: correct, wrong item, partial, undone, over-completion, and adversarial pages
+that only claim success. Each task was compiled from one correct run; on the 93 held-out runs:
+
+| System           | Balanced accuracy | Cost / run | Model at run time |
+| ---------------- | ----------------- | ---------- | ----------------- |
+| compiled checks  | 1.000             | $0         | no                |
+| LLM judge        | 0.927             | $0.0119    | yes               |
+| agentic verifier | 0.942             | $0.0273    | yes               |
+
+The LLM judge accepted 3 of 8 adversarial pages; the checks and the verifier rejected all of them.
+Full results: [eval/results/compiled/REPORT.md](eval/results/compiled/REPORT.md). Against simulated
+later releases of each app (renamed copy, new layout, extra API fields, a real regression), checks
+written for the first release give no wrong verdict: they abstain where renamed text breaks an
+anchor, and catch every regression run ([stability report](stability/results/REPORT.md),
+[ADR 0005](docs/adr/0005-evaluation-and-stability.md)).
+
+## Further reading
+
+- [ADR 0001](docs/adr/0001-evidence-snapshot-and-check-dsl.md): snapshot format and check DSL
+- [ADR 0002](docs/adr/0002-compiler.md): compiler, agent loop and cassettes
+- [ADR 0003](docs/adr/0003-stress-testing.md): stress testing
+- [ADR 0004](docs/adr/0004-escalation-and-records.md): escalation, records and locking
+- [ADR 0005](docs/adr/0005-evaluation-and-stability.md): evaluation and stability
+- [ADR 0006](docs/adr/0006-npm-package-and-releases.md): the npm package and releases
+- [ADR 0007](docs/adr/0007-vercel-ai-sdk-adapter.md): the Vercel AI SDK adapter
+- Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
+- Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## License
 

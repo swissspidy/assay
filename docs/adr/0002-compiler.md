@@ -59,7 +59,7 @@ An accepted set carries its provenance in `compiled`: the compiler (`assay/<vers
   - it checks for refusal and `max_tokens` before running anything,
   - it stops running calls once one finishes the task, so later calls in the same turn can't contradict the accepted result,
   - it never sends back an empty assistant turn.
-- The bundled adapter, `anthropicModel`, uses the official Anthropic SDK (an optional peer dependency) with these defaults:
+- The bundled adapter, `anthropicModel` (in `@swissspidy/assay/models`), uses the official Anthropic SDK (an optional peer dependency) with these defaults:
   - model `claude-opus-5-5`,
   - adaptive thinking (the model's default),
   - explicit effort `high`,
@@ -68,7 +68,7 @@ An accepted set carries its provenance in `compiled`: the compiler (`assay/<vers
   - prompt caching (`cache_control`), because agent loops re-send a long stable prefix every turn; usage reports cache reads and writes,
   - up to two retries when a streamed tool input arrives as invalid JSON (a client-side SDK error, not an API error).
 
-  Other providers implement the same interface.
+  Other providers implement the same interface; `aiSdkModel` covers the providers of the Vercel AI SDK (ADR 0007).
 
 - **Cassettes** make model steps reproducible. A live run records each turn under a digest of the full request plus the model ID, which includes the effort. Later runs replay it without a key. The cassette is written after every turn, so an error mid-run keeps what was already paid for. Tools are deterministic (fixed snapshots, pure evaluation), so a replayed run issues exactly the recorded requests. If the prompt, tools or inputs change, the replay fails loudly instead of drifting. A cassette records when it was recorded, and a replayed compile writes that time, not the replay's, into `compiled.at`, so replaying reproduces the committed file byte for byte. The scripts replay an existing cassette and record only missing ones; `ASSAY_MODEL_MODE=record` re-records all of them, and `ASSAY_MODEL_MODE=replay` never calls the model.
 
