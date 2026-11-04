@@ -10,6 +10,8 @@ const server = (dir: string, port: number) => ({
 
 export default defineConfig({
   testDir: 'tests',
+  // The packed-package test runs with node:test (npm run test:pack), not Playwright.
+  testIgnore: ['pack/**'],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   // Verification must be deterministic: no retries to hide flakiness.

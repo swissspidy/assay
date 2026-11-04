@@ -15,10 +15,23 @@ expensive verifier.
 - Design: [ADR 0001: Evidence snapshot format and check DSL](docs/adr/0001-evidence-snapshot-and-check-dsl.md)
 - Example check sets: [`examples/tiny-shop/tasks/`](examples/tiny-shop/tasks)
 
+## Install
+
+```sh
+npm install -D @swissspidy/assay @playwright/test
+# Only for compiling, escalation and model baselines:
+npm install -D @anthropic-ai/sdk
+```
+
+Requires Node.js 24 or later. Releases and their notes: [CHANGELOG.md](CHANGELOG.md).
+
+TypeScript projects that don't install `@anthropic-ai/sdk` need `skipLibCheck: true` in
+`tsconfig.json` (the usual default): the Anthropic adapter's declarations name the SDK.
+
 ## Quick start
 
 ```ts
-import { test, expectOutcome } from 'assay/playwright';
+import { test, expectOutcome } from '@swissspidy/assay/playwright';
 import checks from './checks/express-order.checks.json';
 
 test('agent ordered with express shipping', async ({ page }) => {
@@ -34,7 +47,7 @@ test('agent ordered with express shipping', async ({ page }) => {
 Offline, against a stored snapshot:
 
 ```ts
-import { loadSnapshot, verifySnapshot, formatOutcome } from 'assay';
+import { loadSnapshot, verifySnapshot, formatOutcome } from '@swissspidy/assay';
 const outcome = verifySnapshot(checks, loadSnapshot(json));
 console.log(formatOutcome(outcome));
 ```
@@ -95,7 +108,7 @@ Verdict: FAIL  (tiny-shop/express-order v1, snapshot sha256:2f7375b64494…)
 ## Compiling checks (milestone 2)
 
 ```ts
-import { anthropicModel, compileTask, loadSnapshot } from 'assay';
+import { anthropicModel, compileTask, loadSnapshot } from '@swissspidy/assay';
 
 const { checkSet, report } = await compileTask(
   { id: 'shop/express-order', instruction, outcomes }, // outcomes: Gherkin "Then" clauses, a Markdown list or plain lines
@@ -109,7 +122,7 @@ The compiler writes a rubric of requirements, each quoting the task text. An age
 ## Stress testing (milestone 3)
 
 ```ts
-import { stressTest, formatStressReport } from 'assay';
+import { stressTest, formatStressReport } from '@swissspidy/assay';
 const report = stressTest(checkSet, [{ name: 'reference', snapshot }]);
 console.log(formatStressReport(report)); // acceptance/rejection rates, over-constrained, fragile and weak checks
 ```
@@ -119,7 +132,7 @@ The stress test edits correct snapshots into valid variants (reordered rows, unr
 ## Escalation, records and locking (milestone 4)
 
 ```ts
-import { anthropicModel, lockCheckSet, reviewSheet, verifyWithEscalation, writeOutcomeRecord } from 'assay';
+import { anthropicModel, lockCheckSet, reviewSheet, verifyWithEscalation, writeOutcomeRecord } from '@swissspidy/assay';
 
 console.log(reviewSheet(checkSet)); // plain-language review for a human
 const locked = lockCheckSet(checkSet, 'reviewer@example.com'); // tamper-evident
@@ -163,7 +176,18 @@ npm run shop         # run the demo app on :4173
 ```
 
 CI (`.github/workflows/ci.yml`) runs format, lint, typecheck and build, then the
-full test suite on Node 24 and the latest Node release.
+full test suite on Node 24 and the latest Node release. `npm run test:pack` packs
+the package, installs it into an empty project and uses it from there; CI runs it too.
+
+### Releases
+
+A pull request that changes what the package does adds a changeset (`npm run changeset`; see
+[CONTRIBUTING.md](CONTRIBUTING.md)). The Release workflow turns the changesets on `main` into a
+"Version packages" pull request. Merging it tests the package, stages it on npm with npm's
+trusted publishing and provenance, and opens a draft GitHub release. A staged version goes public
+once a maintainer approves it with 2FA; the workflow then tags it and publishes the release (on the
+next push, its daily run, or by running it by hand). See
+[ADR 0006](docs/adr/0006-npm-package-and-releases.md).
 
 Milestone 1 acceptance lives in `tests/tasks.spec.ts`. It covers 10 tasks
 and 20 checks. Each task has a correct run (success), incorrect runs (fail:

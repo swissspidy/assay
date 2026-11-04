@@ -4,14 +4,20 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # A week before a new release is proposed, so a compromised or broken release is likely caught first.
+    cooldown:
+      default-days: 7
     ignore:
       # Node 24 is the supported floor; keep its types on 24.x.
       - dependency-name: '@types/node'
         update-types: ['version-update:semver-major']
     groups:
       dev-tooling:
-        patterns: ['oxlint', 'oxfmt', 'tsrs', '@types/*', '@playwright/*']
+        patterns: ['oxlint', 'oxfmt', 'tsrs', '@types/*', '@playwright/*', '@changesets/*']
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    # A week before a new release is proposed, so a compromised or broken release is likely caught first.
+    cooldown:
+      default-days: 7
