@@ -235,6 +235,57 @@ await expectOutcome(page, locked, { verifier, recordDir: 'assay-records' });
 `writeOutcomeRecord(dir, result)` writes a `verify` result's record by hand. Details:
 [ADR 0004](docs/adr/0004-escalation-and-records.md).
 
+## Command line
+
+The package installs an `assay` executable (`npx assay <command> --help` for every option):
+
+```sh
+assay compile "Add a Blue Mug to my cart." --outcomes "Then the cart contains a Blue Mug" \
+  --reference runs/added-blue-mug.json --out checks/add-blue-mug.checks.json
+assay validate checks/*.checks.json          # schema, semantic errors, loose-match warnings, lock
+assay review checks/add-blue-mug.checks.json # the review sheet: every check in plain language
+assay stress checks/add-blue-mug.checks.json --reference runs/
+assay verify checks/add-blue-mug.checks.json snapshot.json --record assay-records
+assay capture http://localhost:4173/cart --out runs/
+```
+
+- **`compile <task>`**: the task is the instruction text, a text file, or a JSON file with
+  `{ "id", "instruction", "outcomes", "skipVariants" }` (or a check set, whose task is recompiled).
+  `--reference` (repeatable) is a snapshot file or a directory of them; `--negative` adds incorrect
+  runs. A refused compile prints its reason and warnings.
+- **`verify <checks> <snapshot>`** prints each requirement and check with its evidence.
+  `--escalate` sends abstained requirements to the agentic verifier, `--record <dir>` writes the
+  outcome record, `--require-locked` refuses an unlocked set.
+- **`stress <checks> --reference <path>`** reports over-constrained, fragile and weak checks and
+  missed mutants. **`validate <checks...>`** (`--strict` fails on warnings) and **`review <checks>`**
+  need no snapshot.
+- **`capture <url>`** opens the URL in headless Chromium and writes a snapshot (needs
+  `@playwright/test` and `npx playwright install chromium`). It sees what loading the page shows; for
+  probes, a baseline or a task run first, capture from a Playwright test.
+
+A snapshot file is a snapshot, or a labelled run `{ "label": { "expected": "fail" }, "snapshot" }`
+as in `examples/*/references` (`compile` treats it as a negative, `stress` skips it).
+
+| Exit status | Meaning                                                                       |
+| ----------- | ----------------------------------------------------------------------------- |
+| 0           | success; valid; no stress problems; compiled                                  |
+| 1           | verdict fail; invalid check set; stress problems; compile refused             |
+| 2           | verdict abstain (inconclusive)                                                |
+| 3           | usage error (unknown command or option, missing argument)                     |
+| 4           | other error (unreadable or invalid input, missing dependency or key, a model) |
+
+Output is for people by default and JSON with `--json`; colour only on a terminal (`NO_COLOR`,
+`--no-color`). Models, for `compile` and `verify --escalate`:
+
+| Option / variable              | Effect                                                                                                                                                                   |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `--provider`, `ASSAY_PROVIDER` | `anthropic` (default; `@anthropic-ai/sdk`, `ANTHROPIC_API_KEY`) or `ai-sdk` (`ai`; the model id goes to the AI SDK's default provider, the AI Gateway unless configured) |
+| `--model`, `ASSAY_MODEL`       | Model id (Anthropic default `claude-opus-5-5`)                                                                                                                           |
+| `--cassette <file>`            | Replay the cassette if it exists, else record the live run to it                                                                                                         |
+| `ASSAY_MODEL_MODE`             | `replay`: never call a model (needs `--cassette`); `record`: re-record the cassette                                                                                      |
+
+Design: [ADR 0010](docs/adr/0010-command-line-tool.md).
+
 ## Model providers
 
 Any object with an `id` and a `turn(request)` method is a `ModelClient`. Two adapters come with the
@@ -299,6 +350,7 @@ asked to remove.
 - [ADR 0007](docs/adr/0007-vercel-ai-sdk-adapter.md): the Vercel AI SDK adapter
 - [ADR 0008](docs/adr/0008-per-record-checks.md): per-record checks and paired item fields
 - [ADR 0009](docs/adr/0009-real-site-evaluation.md): evaluation on real web apps
+- [ADR 0010](docs/adr/0010-command-line-tool.md): the `assay` command-line tool
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
 - Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)
 
