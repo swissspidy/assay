@@ -371,4 +371,25 @@ test.describe('review findings', () => {
     expect(r.stderr).toContain('outcomes file not found: outcomes.md');
   });
 
+  test('stress fails when a correct reference run is not passed, even with no check to blame', async () => {
+    const cs = JSON.parse(readFileSync(BLUE_MUG, 'utf8')) as CheckSet;
+    cs.requirements.push({
+      id: 'R2',
+      kind: 'hard',
+      text: 'A Blue Mug is added',
+      source: { field: 'instruction', quote: 'Add a Blue Mug' },
+    });
+    const file = join(tmp(), 'uncovered.checks.json');
+    writeFileSync(file, JSON.stringify(cs));
+    const r = await assay(['stress', file, '-r', ADDED_BLUE]);
+    expect(r.code).toBe(1);
+    expect(r.stdout).toContain('Problems: 1 reference run(s) not passed');
+  });
+
+  test('stress rejects two references with the same name', async () => {
+    const r = await assay(['stress', BLUE_MUG, '-r', ADDED_BLUE, '-r', ADDED_BLUE]);
+    expect(r.code).toBe(4);
+    expect(r.stderr).toContain('two references are named "added-blue-mug"');
+  });
+
 });

@@ -18,6 +18,9 @@ import {
 export function problems(r: StressReport): string[] {
   const out: string[] = [];
   const add = (n: number, what: string) => n && out.push(`${n} ${what}`);
+  // A correct run the checks do not pass. Its failing checks also count as over-constrained or
+  // fragile, but one that abstains without a check (an uncovered requirement) names none.
+  add(r.variants.filter((v) => v.id === 'reference' && !v.accepted).length, 'reference run(s) not passed');
   add(r.overConstrained.length, 'over-constrained');
   add(r.fragile.length, 'fragile');
   add(r.weak.length, 'weak');
@@ -40,6 +43,8 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
     .flatMap(readSnapshots)
     .filter((f) => f.expected !== 'fail')
     .map((f) => ({ name: f.name, snapshot: toSnapshot(f) }));
+  const dup = refs.find((r, i) => refs.findIndex((x) => x.name === r.name) !== i);
+  if (dup) throw new CliError(`two references are named "${dup.name}"`);
   if (!refs.length) throw new CliError('no correct reference run (runs labelled "fail" are skipped)');
 
   const report = stressTest(cs, refs, {
