@@ -37,11 +37,25 @@ export interface AgentRun<R> {
 
 const ajv = new Ajv({ strict: false, allErrors: true });
 
-/** Provider-neutral tool-use loop. Tool inputs are validated before a tool runs. */
+/**
+ * Provider-neutral tool-use loop. Tool inputs are validated before a tool runs. A tool may
+ * replace its `spec` between turns (e.g. to accept more input); every turn sends the
+ * current specs and validates against them.
+ */
 export async function runAgent<R>(opts: AgentOptions<R>): Promise<AgentRun<R>> {
-  const validators = new Map<string, ValidateFunction>();
-  for (const t of opts.tools) validators.set(t.spec.name, ajv.compile(t.spec.inputSchema));
   const byName = new Map(opts.tools.map((t) => [t.spec.name, t] as const));
+  const compiled = new WeakMap<object, ValidateFunction>();
+  const validators = {
+    get(name: string): ValidateFunction | undefined {
+      const schema = byName.get(name)?.spec.inputSchema;
+      if (!schema) return undefined;
+      let v = compiled.get(schema);
+      if (!v) compiled.set(schema, (v = ajv.compile(schema)));
+      return v;
+    },
+  };
+  // Compile the initial schemas up front, so an invalid one fails before the first turn.
+  for (const t of opts.tools) validators.get(t.spec.name);
   const messages: ModelMessage[] = [{ role: 'user', text: opts.prompt }];
   const usage = { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheWriteTokens: 0 };
   const models = new Set<string>();
@@ -103,7 +117,7 @@ export async function runAgent<R>(opts: AgentOptions<R>): Promise<AgentRun<R>> {
 async function runTool<R>(
   call: ToolCall,
   byName: Map<string, AgentTool<R>>,
-  validators: Map<string, ValidateFunction>,
+  validators: { get(name: string): ValidateFunction | undefined },
 ): Promise<ToolOutcome<R>> {
   const tool = byName.get(call.name);
   if (!tool) return { content: `Unknown tool ${call.name}`, isError: true };

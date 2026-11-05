@@ -82,5 +82,19 @@ Use it for requirements that relate the end state to the start: "keep everything
 - "order what is in my cart": the order's items (from the order response or a probe) sameAs the cart's items before the task, both through {op:"items"}.
 - "pointer" keeps one field of each item: use it only when that one field is all the task is about (e.g. which items are kept). When several fields matter together (a product and its quantity), compare whole items ({op:"items"} without a pointer) in one check, never separate checks per field. "pick" drops every field it does not name, so a change to those fields passes: use it only when the two sides' items have different fields (order lines with a lineTotal the cart lacks), to keep the fields both have together, e.g. {op:"items", pick:["/sku", "/qty"]} on both sides. When both sides hold items with the same fields (the cart after and the cart before; order lines shaped like the cart's items), compare whole items; pick there is refused.`;
 
+/**
+ * Sent with the first refused submission in which a sameAs binding fails on a correct
+ * reference by a small difference of numbers, money, dates or date-times. Only then do
+ * submit_checks and try_assertion accept a tolerance, so compiles (and the recordings
+ * keyed on them) that never meet one are unchanged.
+ */
+export const DISCOVERY_TOLERANCE = `## Tolerance on sameAs (now accepted by submit_checks and try_assertion)
+A sameAs binding fails on a correct run only because its two sides differ by a small amount (listed below). Exact equality stays right for identifiers, statuses, quantities and almost every value: first make sure both sides read the same record and field, normalized the same way. Only when the task or the references show that correct runs differ like this, give the binding an explicit tolerance: {sameAs: {source, normalize?, tolerance: {abs?, rel?, because}}}. It reads like approx with the other side's value as its value: |a − b| ≤ max(abs, rel × |b|).
+- numbers and money: abs in the value's unit, rel a fraction of the other side's value (at most 0.05). E.g. a total the page rounds to the cent while the backend keeps more decimals: {abs: 0.01}.
+- date-times: abs in minutes, at most 60. E.g. a time the page shows to the minute and the backend stores to the second: {abs: 1}; a timestamp the server sets moments after the request: {abs: 2}.
+- dates: abs in whole days, at most 7. rel applies to numbers and money only; text, booleans and collections take no tolerance.
+- "because" is required: what in the task or in the references makes the difference valid (e.g. "the page shows the time to the minute; the probe stores seconds"). A reviewer reads it next to the check.
+- Use the smallest tolerance that covers what the references show and the reason allows, never one wide enough to accept a value the task distinguishes (another item's price, another day or time slot). Values just past it are stress-tested as near misses, values inside it as valid variants.`;
+
 export const DISCOVERY_NUDGE =
   'Continue exploring if needed, then call submit_checks with your checks. Every requirement needs at least one check.';

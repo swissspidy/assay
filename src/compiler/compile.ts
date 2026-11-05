@@ -22,9 +22,12 @@ import type {
   ValueSource,
 } from '../types.ts';
 import { CHECKS_SCHEMA, CHANNEL_TRUST } from '../types.ts';
-import { checkSetSchema } from '../dsl/schema.ts';
+import { MAX_TOLERANCE, checkSetSchema } from '../dsl/schema.ts';
 import { looseMatches, pickOnSameShape, sameCollection, usesPick, validateCheckSet } from '../dsl/validate.ts';
-import { evaluate, evaluateAssertion, readValue, type EvalCtx } from '../runtime/evaluate.ts';
+import { bindingSides, evaluate, evaluateAssertion, readValue, type EvalCtx } from '../runtime/evaluate.ts';
+import { compareValues, tolerable } from '../runtime/compare.ts';
+import { describeValue, type TypedValue } from '../runtime/values.ts';
+import { scalarOf } from '../stress/mutants.ts';
 import { AXIndex, resolveTarget } from '../runtime/axindex.ts';
 import { canonical } from '../text.ts';
 import { ASSAY_VERSION } from '../version.ts';
@@ -33,7 +36,13 @@ import type { ModelClient } from '../model/types.ts';
 import { parseOutcomes, parseOutcomesDetailed, type Clause } from './outcomes.ts';
 import { stressTest, type FindingRef } from '../stress/stress.ts';
 import { findNodes, networkEntry, networkLog, outline, probesView, storageView, summary } from './explore.ts';
-import { DISCOVERY_BASELINE, DISCOVERY_NUDGE, DISCOVERY_SYSTEM, RUBRIC_SYSTEM } from './prompts.ts';
+import {
+  DISCOVERY_BASELINE,
+  DISCOVERY_NUDGE,
+  DISCOVERY_SYSTEM,
+  DISCOVERY_TOLERANCE,
+  RUBRIC_SYSTEM,
+} from './prompts.ts';
 
 export interface TaskInput {
   id: string;
@@ -563,6 +572,75 @@ function withOrigin(src: ValueSource, ctx: EvalCtx): ValueSource {
   }
 }
 
+/** Every sameAs binding inside `a` (also in each records and allOf/anyOf), with where it is and the contexts it is read in. */
+function bindings(
+  a: Assertion,
+  at: string,
+  ctxs: EvalCtx[],
+  out: { a: Extract<Assertion, { kind: 'value' }>; at: string; ctxs: EvalCtx[] }[] = [],
+) {
+  if (a.kind === 'allOf' || a.kind === 'anyOf') a.of.forEach((b, i) => bindings(b, `${at}.${a.kind}[${i}]`, ctxs, out));
+  else if (a.kind === 'each') bindings(a.assert, `${at}.assert`, recordContexts(ctxs, a), out);
+  else if (a.kind === 'value' && 'sameAs' in a.expect) out.push({ a, at, ctxs });
+  return out;
+}
+
+/** How far apart a binding's two sides are, in their unit, when a tolerance could cover it; else undefined. */
+function nearGap(left: TypedValue, right: TypedValue): { diff: number; unit: string } | undefined {
+  if (left.type !== right.type || !tolerable(left.type)) return undefined;
+  if (left.type === 'money' && right.type === 'money' && left.value.currency !== right.value.currency) return undefined;
+  const x = scalarOf(left)!;
+  const y = scalarOf(right)!;
+  const diff = Math.abs(x - y);
+  if (diff === 0) return undefined;
+  if (left.type === 'datetime') return diff <= MAX_TOLERANCE.minutes ? { diff, unit: ' minutes' } : undefined;
+  if (left.type === 'date') return diff <= MAX_TOLERANCE.days ? { diff, unit: ' days' } : undefined;
+  return diff <= MAX_TOLERANCE.rel * Math.abs(y) ? { diff, unit: '' } : undefined;
+}
+
+/**
+ * sameAs bindings without a tolerance that fail on a correct reference only by a difference
+ * a tolerance could cover (DISCOVERY_TOLERANCE), one line each; empty when there are none.
+ */
+export function toleranceHints(cs: CheckSet, refs: Reference[]): string[] {
+  const out: string[] = [];
+  for (const ref of refs.filter((r) => r.kind === 'success')) {
+    const top: EvalCtx[] = [{ snapshot: ref.snapshot, index: new AXIndex(ref.snapshot.a11y) }];
+    for (const c of cs.checks)
+      for (const { a, at, ctxs } of bindings(c.assert, `check ${c.id}`, top)) {
+        if (!('sameAs' in a.expect) || a.expect.sameAs.tolerance) continue;
+        for (const ctx of ctxs) {
+          const sides = bindingSides(ctx, a);
+          const gap = sides && nearGap(sides.left, sides.right);
+          if (!sides || !gap) continue;
+          out.push(
+            `${at}: on correct run "${ref.name}" the two sides differ by ${+gap.diff.toFixed(6)}${gap.unit} (${describeValue(sides.left)} vs ${describeValue(sides.right)}).`,
+          );
+          break;
+        }
+      }
+  }
+  return [...new Set(out)];
+}
+
+/** A tolerance must be needed: some correct reference shows the two sides differ. */
+export function unneededTolerances(cs: CheckSet, refs: Reference[]): string[] {
+  const top: EvalCtx[] = refs
+    .filter((r) => r.kind === 'success')
+    .map((r) => ({ snapshot: r.snapshot, index: new AXIndex(r.snapshot.a11y) }));
+  const errors: string[] = [];
+  for (const c of cs.checks)
+    for (const { a, at, ctxs } of bindings(c.assert, `check ${c.id}`, top)) {
+      if (!('sameAs' in a.expect) || !a.expect.sameAs.tolerance) continue;
+      const read = ctxs.map((ctx) => bindingSides(ctx, a)).filter((x) => x !== undefined);
+      if (read.length && read.every(({ left, right }) => compareValues(left, right).ok))
+        errors.push(
+          `${at}: its tolerance is not needed: the two sides are equal on every correct run. Remove it; a tolerance is only for a difference the references show.`,
+        );
+    }
+  return errors;
+}
+
 export function verifyCandidate(cs: CheckSet, refs: Reference[], stress = true, skipVariants?: string[]): Verification {
   const v = validateCheckSet(cs);
   // A warning on an accepted submission ends the discovery run unread, so the loose
@@ -595,7 +673,7 @@ export function verifyCandidate(cs: CheckSet, refs: Reference[], stress = true, 
       warnings.push(`On incorrect run "${ref.name}" the verdict is abstain rather than fail.`);
     }
   }
-  errors.push(...unreadableBranches(cs, refs), ...pickOnSameShapes(cs, refs));
+  errors.push(...unreadableBranches(cs, refs), ...pickOnSameShapes(cs, refs), ...unneededTolerances(cs, refs));
   for (const cov of coverage(cs)) {
     if (cov.trust === 'freetext')
       warnings.push(`Requirement ${cov.requirement} is covered only by free page text, which a page can spoof.`);
@@ -626,21 +704,40 @@ export function verifyCandidate(cs: CheckSet, refs: Reference[], stress = true, 
   return { errors, warnings, references };
 }
 
-const CHECKS_TOOL_SCHEMA = {
-  type: 'object',
-  additionalProperties: false,
-  required: ['checks'],
-  properties: { checks: { type: 'array', minItems: 1, items: { $ref: '#/definitions/check' } } },
-  definitions: checkSetSchema.definitions,
-};
+/**
+ * The DSL without sameAs tolerance. The tools offer it until a submission shows a binding
+ * that a tolerance could be for (DISCOVERY_TOLERANCE); a compile that never meets one
+ * sends exactly the requests it sent before tolerance existed, so its recordings replay.
+ */
+function withoutTolerance(defs: typeof checkSetSchema.definitions): Record<string, unknown> {
+  const d = structuredClone(defs) as unknown as Record<string, Record<string, unknown>>;
+  delete d.tolerance;
+  const comparison = d.comparison as {
+    oneOf: { properties: Record<string, { properties: Record<string, unknown> }> }[];
+  };
+  for (const alt of comparison.oneOf) delete alt.properties.sameAs?.properties.tolerance;
+  return d;
+}
 
-const ASSERT_TOOL_SCHEMA = {
-  type: 'object',
-  additionalProperties: false,
-  required: ['assert'],
-  properties: { assert: { $ref: '#/definitions/assertion' } },
-  definitions: checkSetSchema.definitions,
-};
+const toolSchemas = (definitions: Record<string, unknown>) => ({
+  checks: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['checks'],
+    properties: { checks: { type: 'array', minItems: 1, items: { $ref: '#/definitions/check' } } },
+    definitions,
+  },
+  assert: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['assert'],
+    properties: { assert: { $ref: '#/definitions/assertion' } },
+    definitions,
+  },
+});
+
+const BASE_TOOL_SCHEMAS = toolSchemas(withoutTolerance(checkSetSchema.definitions));
+const TOLERANCE_TOOL_SCHEMAS = toolSchemas(checkSetSchema.definitions);
 
 const show = (f: FindingRef) => `${f.description} [${f.reference}/${f.id}]`;
 
@@ -663,6 +760,8 @@ function discoveryTools(
     reference: { type: 'string', enum: refNames, description: 'Reference snapshot name (default: the first one).' },
   };
   type In<T> = T & { reference?: string };
+  /** Whether submit_checks and try_assertion accept a sameAs tolerance yet (see toleranceHints). */
+  let offered = false;
 
   const tools: AgentTool<CheckSet>[] = [
     {
@@ -723,7 +822,7 @@ function discoveryTools(
         name: 'try_assertion',
         description:
           'Evaluate one assertion against every reference snapshot and report pass/fail/abstain with the reason.',
-        inputSchema: ASSERT_TOOL_SCHEMA,
+        inputSchema: BASE_TOOL_SCHEMAS.assert,
       },
       run(i: { assert: Assertion }) {
         const lines = refs.map((r) => {
@@ -738,7 +837,7 @@ function discoveryTools(
         name: 'submit_checks',
         description:
           'Submit the complete list of checks. They are validated and run against all references; you get errors to fix, or acceptance.',
-        inputSchema: CHECKS_TOOL_SCHEMA,
+        inputSchema: BASE_TOOL_SCHEMAS.checks,
       },
       run(i: { checks: Check[] }) {
         const cs: CheckSet = {
@@ -751,8 +850,21 @@ function discoveryTools(
         };
         const v = verifyCandidate(cs, refs, true, task.skipVariants);
         if (v.errors.length) {
+          // A binding that fails a correct run by a small difference: offer a tolerance from now on.
+          const hints = toleranceHints(cs, refs);
+          let tolerance = '';
+          if (hints.length) {
+            tolerance = `\n\n${offered ? 'sameAs differences on correct runs:' : DISCOVERY_TOLERANCE + '\n\nThe differences:'}\n- ${hints.join('\n- ')}`;
+            if (!offered) {
+              offered = true;
+              for (const t of tools)
+                if (t.spec.name === 'submit_checks') t.spec = { ...t.spec, inputSchema: TOLERANCE_TOOL_SCHEMAS.checks };
+                else if (t.spec.name === 'try_assertion')
+                  t.spec = { ...t.spec, inputSchema: TOLERANCE_TOOL_SCHEMAS.assert };
+            }
+          }
           return {
-            content: `Not accepted. Fix these and resubmit all checks:\n- ${v.errors.join('\n- ')}${v.warnings.length ? `\nWarnings:\n- ${v.warnings.join('\n- ')}` : ''}`,
+            content: `Not accepted. Fix these and resubmit all checks:\n- ${v.errors.join('\n- ')}${v.warnings.length ? `\nWarnings:\n- ${v.warnings.join('\n- ')}` : ''}${tolerance}`,
             isError: true,
           };
         }
