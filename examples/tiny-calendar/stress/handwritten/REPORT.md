@@ -2,7 +2,7 @@
 
 | Task | Variants accepted | Mutants rejected (fail / abstain) | Over-constrained | Weak | Missed |
 |---|---|---|---|---|---|
-| tiny-calendar/lunch | 28/28 | 28/28 (20 / 8) | – | – | 0 |
+| tiny-calendar/lunch | 28/28 | 30/30 (20 / 10) | – | – | 0 |
 | tiny-calendar/reminder | 22/22 | 6/6 (6 / 0) | – | – | 0 |
 | tiny-calendar/rsvp | 22/22 | 2/2 (2 / 0) | – | – | 0 |
 | tiny-calendar/move-dentist | 22/22 | 10/10 (10 / 0) | – | – | 0 |
@@ -12,13 +12,13 @@
 | tiny-calendar/week-start | 18/18 | 4/4 (4 / 0) | – | – | 0 |
 | tiny-calendar/rename-dentist | 22/22 | 8/8 (8 / 0) | – | – | 0 |
 | tiny-calendar/workshop | 22/22 | 6/6 (6 / 0) | – | – | 0 |
-| **tiny-calendar** | **222/222** | **80/80** (72 / 8) | | | 0 |
+| **tiny-calendar** | **222/222** | **82/82** (72 / 10) | | | 0 |
 
 ## tiny-calendar/lunch v1
 
 - Valid variants accepted: **28/28** (100%)
-- Mutants rejected: **28/28** (100%; 20 by fail, 8 by abstain)
-- Mutants with a success claim added still rejected: 28/28
+- Mutants rejected: **30/30** (100%; 20 by fail, 10 by abstain)
+- Mutants with a success claim added still rejected: 30/30
 ## tiny-calendar/reminder v1
 
 - Valid variants accepted: **22/22** (100%)

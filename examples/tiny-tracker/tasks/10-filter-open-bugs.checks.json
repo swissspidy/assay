@@ -53,7 +53,7 @@
     {
       "id": "C2",
       "requirement": "R1",
-      "description": "The Issues table shows no closed issue.",
+      "description": "The Issues table shows no closed issue (no Closed in the Status column).",
       "assert": {
         "kind": "contains",
         "scope": {
@@ -76,7 +76,8 @@
         },
         "match": {
           "role": "cell",
-          "name": "Closed"
+          "name": "Closed",
+          "column": "Status"
         },
         "count": {
           "eq": 0
@@ -100,7 +101,7 @@
     {
       "id": "C4",
       "requirement": "R3",
-      "description": "The Issues table has the row of the open bug, issue #1 \"Login button misaligned\", and that row shows the status Open and the label bug.",
+      "description": "The Issues table has the row of the open bug, issue #1 \"Login button misaligned\", and that row shows Open in its Status column and bug in its Labels column.",
       "assert": {
         "kind": "each",
         "scope": {
@@ -137,7 +138,8 @@
               "kind": "contains",
               "match": {
                 "role": "cell",
-                "name": "Open"
+                "name": "Open",
+                "column": "Status"
               }
             },
             {
@@ -146,7 +148,8 @@
                 "role": "cell",
                 "name": {
                   "regex": "^(.+, )?bug(, .+)?$"
-                }
+                },
+                "column": "Labels"
               }
             }
           ]
