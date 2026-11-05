@@ -46,7 +46,9 @@ page:
   hidden element is empty. If the count differs from the tree's iframe nodes (the page changed in
   between), no frame is attached and every iframe node is marked `props.frame: "unavailable"`. So
   is a frame that cannot be read or is over the limits. An empty iframe node without the marker
-  is an empty frame, or a snapshot from before this change.
+  is an empty frame, or a snapshot from before this change. A `contains`, `each` or text source
+  scoped to an unavailable iframe abstains (`evidence_unavailable`) instead of searching an empty
+  node. The accessible name resolves `aria-labelledby` in the iframe's own root (a shadow root).
 - **Form state.** Values and states inside frames come from the same aria snapshot. Playwright gives
   values only to inputs and textareas, so the text of a `role="textbox"` contenteditable element (the
   block editor's title) becomes the value of the textbox node with its name, when exactly one such
@@ -78,22 +80,30 @@ probes and the network.
 ones: field → string, a repeated field → array in order. A file becomes
 `{"filename", "type", "size"}`; its content is never stored. `requestBodyRaw` keeps the body as
 sent for both form encodings, with file contents left out; checks do not read it, but records and
-the verifier can. The body limit applies to the text kept, not to file content.
+the verifier can. The body limit applies to the text kept, not to file content. A multipart body that
+does not parse is not kept at all, since its text could hold a file's bytes; it is marked unavailable.
+Truncation of the request and the response body is recorded apart (`requestBodyTruncated`,
+`responseBodyTruncated`, with `bodyTruncated` set for older readers), so a cut response no longer
+leaves a request body check undecided; an entry with neither reads `bodyTruncated` as before.
 
 Chromium does not report an upload's body at all. The page tap (ADR 0001 §1) also reports the
 fields of multipart `FormData` the page sends, through a form submission (`formdata` event; Chromium
 fires it twice per submission, so identical reports from one form within a second count once),
-`fetch` or `XMLHttpRequest`. As for response bodies, a report only fills a request the browser
+`fetch` (`init.body`, or a `Request` built with one, read from a copy) or `XMLHttpRequest`. Report ids
+are unique per document, so one frame's `fetch` superseding its own report never hides another's.
+As for response bodies, a report only fills a request the browser
 reported, and only when the multipart requests to that method and URL from that frame pair one to
 one with identical reports; otherwise the body stays unavailable. A body that was sent but not read
-is marked `requestBodyUnavailable`, and `requestBody` matching on it is `unknown` (abstain) instead
+is marked `requestBodyUnavailable` (multipart only: a POST may set a JSON content type and send no
+body), and `requestBody` matching on it is `unknown` (abstain) instead
 of `no` (fail). Under `onMissing: "abstain"` (ADR 0011) that stays `value_unavailable`, not
 `route_missing`: the request shows the route was taken, only its body could not be read.
 
 ### 4. Open pages: the active page by default, others by a `page` assertion
 
 `captureSnapshot` records the context's other open pages as `pages: [{url, title, a11y, text}]` (in
-opening order, frames included; a page that cannot be read within 5 s is `unavailable`). The
+opening order, frames included; a page that cannot be read within 5 s in all is `unavailable`, keeping its URL and, when it could
+be read, its title, so a `page` assertion that selects it by title abstains as unreadable). The
 snapshot's own `page`, `a11y` and `text` describe the **active page**: the page passed in, or a
 popup or tab it opened (directly or through another popup) that opened or navigated more
 recently, as the recorder saw it. Pages opened with `context.newPage()` (by the test, a sign-in
@@ -130,12 +140,17 @@ A check reads another page with one new assertion kind:
 ### 5. Stress testing
 
 - `frame:unloaded` (mutant): a captured frame that never loaded, emptied and marked unavailable,
-  its text removed. Generated for checks whose result it changes or that address an iframe; an
-  absence check scoped to a frame without a witness is flagged weak by it.
+  its text removed. Generated for checks that read the frame: their result changes, or one of their
+  iframe locators matches it; an anyOf reads it only when every alternative does. A check scoped to
+  the unloaded frame abstains; an absence check reaching into it through `within` is flagged weak.
+  Also made on the page a `page` assertion selects. Frame text is removed by its last occurrence
+  (frame text follows the page's); a frame string that is not in the frame's `innerText` but is
+  in the page's can take the page's copy instead, which can only hide a weakness, not report one.
 - `page` assertions: the nested assertion's mutants are made on the page it selects, plus
   `page:closed` for a page other than the active one.
-- `extra-frame` and `extra-page` (valid variants): an unrelated ad frame with its own content, and
-  an unrelated extra tab of the site. A page selected by its origin alone becomes ambiguous and is
+- `extra-frame` and `extra-page` (valid variants): an unrelated ad frame with its own content, put
+  outside existing frames on every open page whose frames were captured, and an unrelated extra tab
+  of the site. A page selected by its origin alone becomes ambiguous and is
   flagged fragile.
 - Parsed form fields are objects, so the existing request body schema and pointer mutants cover
   them.
