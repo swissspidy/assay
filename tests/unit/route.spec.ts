@@ -181,6 +181,23 @@ test.describe('onMissing "abstain": route evidence', () => {
     );
   });
 
+  test('anyOf over routes: when both were taken, the route used last decides', () => {
+    const branch = (path: string): Assertion => ({
+      kind: 'value',
+      source: { from: 'request', match: { method: 'POST', url: { path } }, pick: 'last' },
+      expect: { schema: { type: 'object', properties: { d: { const: 'ok' } }, required: ['d'] } },
+    });
+    const cs = set([check({ kind: 'anyOf', of: [branch('/a'), branch('/b')] }, 'abstain')]);
+    const a = (d: string) => post('/a', { d });
+    const b = (d: string) => post('/b', { d });
+    // Set right through /a, then overwritten wrongly through /b: the final state is wrong.
+    expect(status(cs, snap([a('ok'), b('bad')]))).toBe('fail');
+    expect(status(cs, snap([b('bad'), a('ok')]))).toBe('pass');
+    expect(status(cs, snap([a('bad'), b('ok')]))).toBe('pass');
+    // The sequence number is internal: it does not appear in the check results.
+    expect(Object.keys(evaluate(cs, snap([a('ok')])).checks[0]!)).not.toContain('seq');
+  });
+
   test('the requirement abstains (and escalates) unless other evidence fails it: near misses still fail', () => {
     const cs = set([check({ kind: 'request', match: AJAX_ROUTE }, 'abstain'), stored]);
     const otherRoute = evaluate(cs, snap([PUBLIC_REPLY('6')]));
