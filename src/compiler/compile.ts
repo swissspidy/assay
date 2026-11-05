@@ -866,7 +866,8 @@ export function dslDefinitions(withPages: boolean) {
   return { ...rest, assertion: { oneOf } };
 }
 
-const checksToolSchema = (withPages: boolean) => ({
+/** @internal Exported for tests: the submit_checks input schema. */
+export const checksToolSchema = (withPages: boolean) => ({
   type: 'object',
   additionalProperties: false,
   required: ['checks'],
@@ -874,7 +875,8 @@ const checksToolSchema = (withPages: boolean) => ({
   definitions: dslDefinitions(withPages),
 });
 
-const assertToolSchema = (withPages: boolean) => ({
+/** @internal Exported for tests: the try_assertion input schema. */
+export const assertToolSchema = (withPages: boolean) => ({
   type: 'object',
   additionalProperties: false,
   required: ['assert'],

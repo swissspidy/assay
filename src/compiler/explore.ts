@@ -31,16 +31,26 @@ export function outline(snapshot: EvidenceSnapshot, maxLines = 300): string {
     for (const c of n.children ?? []) walk(c, depth + 1);
   };
   for (const c of snapshot.a11y.children ?? []) walk(c, 0);
+  const activeTruncated = truncated;
+  truncated = false;
   // Other open pages (tabs, popups) follow, each under a heading; checks read them with a
   // `page` assertion (ADR 0012). Snapshots of one page render as before.
-  for (const [i, p] of (snapshot.pages ?? []).entries()) {
+  const pages = snapshot.pages ?? [];
+  let shown = 0;
+  for (const [i, p] of pages.entries()) {
     if (lines.length >= maxLines) break;
     lines.push(
       `=== other open page ${i + 1}: ${p.url} — title ${JSON.stringify(p.title)}${p.unavailable ? ' (could not be read)' : ''}; read it with a page assertion ===`,
     );
+    shown++;
     for (const c of p.a11y.children ?? []) walk(c, 0);
   }
-  if (truncated) lines.push(`… (truncated at ${maxLines} lines; use find_nodes to search)`);
+  if (activeTruncated) lines.push(`… (truncated at ${maxLines} lines; use find_nodes to search)`);
+  // find_nodes searches the active page only, so it cannot stand in for other pages' trees.
+  if (truncated || shown < pages.length)
+    lines.push(
+      `… (other open pages truncated at ${maxLines} lines: ${pages.length - shown} not shown${truncated ? ', the last one shown is cut' : ''}; find_nodes searches only the active page)`,
+    );
   return lines.join('\n');
 }
 

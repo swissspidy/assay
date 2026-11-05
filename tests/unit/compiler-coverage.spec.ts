@@ -2,7 +2,7 @@
 import { expect, test } from '@playwright/test';
 import type { EvidenceSnapshot } from '../../src/index.ts';
 import { checkSetSchema } from '../../src/dsl/schema.ts';
-import { discoverySystem, dslDefinitions } from '../../src/compiler/compile.ts';
+import { assertToolSchema, checksToolSchema, discoverySystem, dslDefinitions } from '../../src/compiler/compile.ts';
 import { outline, summary } from '../../src/compiler/explore.ts';
 import {
   DISCOVERY_ABSENCE,
@@ -74,4 +74,41 @@ test('frames, other pages and form bodies each add their section', () => {
     'other open pages (read with a page assertion): https://shop.test/receipt "Receipt"',
   );
   expect(outline(paged)).toContain('=== other open page 1: https://shop.test/receipt — title "Receipt"');
+});
+
+test('both tool schemas the compiler emits offer the page assertion only with pages; try_assertion keeps onMissing', () => {
+  for (const schema of [checksToolSchema, assertToolSchema]) {
+    const without = JSON.stringify(schema(false));
+    expect(without).not.toContain('"pageMatch"');
+    expect(without).not.toContain('"const":"page"');
+    expect(JSON.stringify(schema(false).definitions)).toBe(JSON.stringify(dslDefinitions(false)));
+    const withPages = JSON.stringify(schema(true));
+    expect(withPages).toContain('"pageMatch"');
+    expect(withPages).toContain('"const":"page"');
+  }
+  expect(checksToolSchema(false).properties).toEqual({
+    checks: { type: 'array', minItems: 1, items: { $ref: '#/definitions/check' } },
+  });
+  expect(assertToolSchema(true).properties).toMatchObject({ onMissing: { enum: ['fail', 'abstain'] } });
+});
+
+test('the outline says when other pages were cut, and that find_nodes cannot search them', () => {
+  const tree = (n: number): EvidenceSnapshot['a11y'] => ({
+    role: 'document',
+    children: Array.from({ length: n }, (_, i) => ({ role: 'paragraph', name: `p${i}` })),
+  });
+  const page = (url: string, n: number) => ({ url, title: '', a11y: tree(n), text: '' });
+  // The active tree fills the limit exactly: the other pages are reported, not silently left out.
+  const full: EvidenceSnapshot = { ...plain, a11y: tree(5), pages: [page('https://shop.test/a', 1)] };
+  expect(outline(full, 5).split('\n').at(-1)).toBe(
+    '… (other open pages truncated at 5 lines: 1 not shown; find_nodes searches only the active page)',
+  );
+  const cut: EvidenceSnapshot = { ...plain, a11y: tree(1), pages: [page('https://shop.test/a', 9)] };
+  expect(outline(cut, 5)).toContain('0 not shown, the last one shown is cut; find_nodes searches only the active page');
+  // One page, cut: as before.
+  expect(
+    outline({ ...plain, a11y: tree(9) }, 5)
+      .split('\n')
+      .at(-1),
+  ).toBe('… (truncated at 5 lines; use find_nodes to search)');
 });
