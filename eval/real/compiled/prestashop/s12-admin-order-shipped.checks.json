@@ -1,0 +1,62 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "prestashop/s12-admin-order-shipped",
+  "version": "1",
+  "task": {
+    "instruction": "In the back office, mark order FFATNOMMJ as shipped."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Order FFATNOMMJ is marked as shipped in the back office.",
+      "source": {
+        "field": "instruction",
+        "quote": "In the back office, mark order FFATNOMMJ as shipped."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "order-ffatnommj-shipped",
+      "requirement": "R1",
+      "description": "The backend orders probe shows order FFATNOMMJ with state 'Shipped'.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "orders"
+        },
+        "normalize": [
+          {
+            "op": "items",
+            "where": {
+              "properties": {
+                "reference": {
+                  "const": "FFATNOMMJ"
+                }
+              },
+              "required": [
+                "reference"
+              ]
+            },
+            "pointer": "/state"
+          }
+        ],
+        "expect": {
+          "equals": [
+            "Shipped"
+          ]
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:19:34.752Z"
+  }
+}

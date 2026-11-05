@@ -1,0 +1,168 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "prestashop/s15-admin-cart-rule",
+  "version": "1",
+  "task": {
+    "instruction": "In the back office, create a discount code WINTER15 that gives 15% off the whole order."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "A discount code named WINTER15 is created in the back office.",
+      "source": {
+        "field": "instruction",
+        "quote": "create a discount code WINTER15"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The discount is 15% off.",
+      "source": {
+        "field": "instruction",
+        "quote": "gives 15% off"
+      }
+    },
+    {
+      "id": "R3",
+      "kind": "hard",
+      "text": "The discount applies to the whole order.",
+      "source": {
+        "field": "instruction",
+        "quote": "the whole order"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-cart-rule-created",
+      "requirement": "R1",
+      "description": "The back office accepted (302 redirect) a POST to AdminCartRules saving a cart rule with code WINTER15.",
+      "assert": {
+        "kind": "request",
+        "match": {
+          "method": "POST",
+          "url": {
+            "path": "/admin-dev/index.php",
+            "query": {
+              "controller": "AdminCartRules"
+            }
+          },
+          "status": 302,
+          "requestBody": {
+            "type": "object",
+            "required": [
+              "code"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "pattern": "^\\s*WINTER15\\s*$"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R1-listed",
+      "requirement": "R1",
+      "description": "The cart rules table lists a row with code WINTER15.",
+      "assert": {
+        "kind": "contains",
+        "scope": {
+          "role": "table",
+          "text": {
+            "contains": "Code"
+          }
+        },
+        "match": {
+          "role": "cell",
+          "name": "WINTER15"
+        }
+      }
+    },
+    {
+      "id": "R2-15-percent",
+      "requirement": "R2",
+      "description": "The accepted save of cart rule WINTER15 applies a percent discount of 15.",
+      "assert": {
+        "kind": "request",
+        "match": {
+          "method": "POST",
+          "url": {
+            "path": "/admin-dev/index.php",
+            "query": {
+              "controller": "AdminCartRules"
+            }
+          },
+          "status": 302,
+          "requestBody": {
+            "type": "object",
+            "required": [
+              "code",
+              "apply_discount",
+              "reduction_percent"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "pattern": "^\\s*WINTER15\\s*$"
+              },
+              "apply_discount": {
+                "const": "percent"
+              },
+              "reduction_percent": {
+                "type": "string",
+                "pattern": "^\\s*15([.,]0*)?\\s*$"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R3-whole-order",
+      "requirement": "R3",
+      "description": "The accepted save of cart rule WINTER15 applies the discount to the whole order (apply_discount_to=order).",
+      "assert": {
+        "kind": "request",
+        "match": {
+          "method": "POST",
+          "url": {
+            "path": "/admin-dev/index.php",
+            "query": {
+              "controller": "AdminCartRules"
+            }
+          },
+          "status": 302,
+          "requestBody": {
+            "type": "object",
+            "required": [
+              "code",
+              "apply_discount_to"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "pattern": "^\\s*WINTER15\\s*$"
+              },
+              "apply_discount_to": {
+                "const": "order"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:23:36.707Z"
+  }
+}

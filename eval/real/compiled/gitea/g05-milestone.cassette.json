@@ -1,0 +1,279 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:12:34.061Z",
+ "turns": {
+  "sha256:b5357d7b295292f6d1046320a017e20869fc024b3103f5467bb6e18bed03708d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01VebF133pv3S3JFJqAsBBWK",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "A milestone titled \"v2.0\" is created in the acme/webapp repository.",
+        "field": "instruction",
+        "quote": "Create a milestone \"v2.0\" in acme/webapp"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
+        "text": "The milestone's due date is December 31, 2026.",
+        "field": "instruction",
+        "quote": "with the due date December 31, 2026"
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01VebF133pv3S3JFJqAsBBWK",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "A milestone titled \"v2.0\" is created in the acme/webapp repository.",
+        "field": "instruction",
+        "quote": "Create a milestone \"v2.0\" in acme/webapp"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
+        "text": "The milestone's due date is December 31, 2026.",
+        "field": "instruction",
+        "quote": "with the due date December 31, 2026"
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1072,
+    "outputTokens": 192,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1068
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:da239d35dbc6b2b401c2f799ecf86668fbdafb91ead122e12b95245856f328a0": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01WzHbADrjfDXJXdqCqfK6xo",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_016BYRbJC9qD2ZG7dQL8ePKk",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01WzHbADrjfDXJXdqCqfK6xo",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_016BYRbJC9qD2ZG7dQL8ePKk",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 16946,
+    "outputTokens": 70,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 16942
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:96588e584a9151389c881571ef0618859f13b772fccda4ba01471faecbe62485": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017spdDwSdYHHAnWdDjtSjjT",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "r1-milestone-exists",
+        "requirement": "R1",
+        "description": "The acme/webapp milestones probe contains a milestone titled exactly \"v2.0\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "milestones"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "title": {
+              "const": "v2.0"
+             }
+            },
+            "required": [
+             "title"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r2-milestone-due-date",
+        "requirement": "R2",
+        "description": "The milestone titled \"v2.0\" has a due date on 2026-12-31.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "milestones"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "title": {
+              "const": "v2.0"
+             },
+             "due_on": {
+              "type": "string",
+              "pattern": "^2026-12-31"
+             }
+            },
+            "required": [
+             "title",
+             "due_on"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSsQkKEAgTGAI4AUIIdGhpbmtpbmcSDMChsGu1+SinfzhOjxoM8xVJ9H0FsrTXa4ieIjC7MaSna4OS/CWkEz07WrE/8KUvKl8uYZsJPkdwdhj23CkJZyckfsYuwoXBZWIYph8qzgiE6Vn2kVSzNp3KZpZxB52BpSdivg4EotkanGKNXCfiLT46gTh+5+1OyAygAlA79Kx0csMZ907zaTYggrEyDOoPuL4RXtVmlqB1PuDJgWcEdVG//ut4wSweYQ3nXy3xQtUldpstMrquz8Or3Tm0p2X2rCz7ZNM7MiuxgXn5rnKDCs0gnaKIZ0Ta/umIxWQeuv3+QaN6dmH5a6TQpcfVzcTr/SaPdCINMcQSt98+wB1JZ+VNKGrRYQCGNdFWhnf2Fan4gzbmDo4lHowA/Nhcj+KaOlS4bh81DTxbFcSrbHlWIUsJefF5IZq2kvfqRGGziEh59Dn4VKX573++skGZdPWbxQFijmoBg5JQ6Mtq4CCSB3nwi+yznGLO19QWIzfS2wWUYr4U70h7bJsc+rqbzDAYiAs/Z8Vxq2eYIdUJXmMw8/Sf6FN2udcWnEmtfLy5ZsKlku5qIQgtOhGv37AqCfkJA7xVNkkIxsIl6t4Xmmt5J8ng4cS+MSpCSB1oH/ZvMn+MzRxaGP3IqFcChPuDtF6BbM9ypycRbpSJK6AHF14qH2dbgVlBY9UQfnDnQl6edOa8Viyx0VDU4ICzVvORbhQkVBhURPRMUmoF6f3zCqvgOGotAnah0Eo6K/djib+RLIz7lwKnPLT4by12gLgZekxF4hGUSjPnM09iOJggAOWgHQdfjrWBt3dNV25zbiCvjXhvl8LouqZeTsPrv4dJ5zhWiq3UYgYpkVhD+Miexu3JxDaPu2LR6QP73OnZjYKlsHU5gVE9Cw1by9Xx/tnIBfnLi3spFnzOQ0dfhoqmPkA/L0uRKxfPT4J302otN3KIfi+ShT2+I2cs6idcwNvTEYrI7AsiOo0nmNKsmSA4IAms3Rb1gZPR3ohO648LCmMpMeYObV7AvSfxRC1w65j5U/p9n2Y/CJ0YJNHUmikUu/Ji0XU8Ayw8f71diaePbZgnAN6lIuxYvxWXi5R4L7WNa2fJ7kAmSo0aRhCNtQapq2GzziXfNHFOOUVRb9dXxJNXmUcV/1eozik+iNz8oCwvfYA4Oc9Mvfk8QTQsS0cJdgKqxGYmi1C1y7o1iT+nf2Sih1G2RUNOrI2qdz+mEbhiOcmt3n6kSZeEEmodK44bWXYbZ9hRH8b/Z3YQA97Eq9W1c6Tla/Vg5dXVpbHSE7U8YLinNxPGCGiRrSTdrkuqdJfY97YhJtjK+eSawdt3zb1gct7PCZ38s39MiEq0Mo4vIncxssBLFWs4stVopwBzpJi09NKhNSQW7FhW4MCnlHYP1/+IBoPIkVSl39nO+8WIsKpisGfKpahUQuAXELnkbbebTpGAHJPpzfQm2eYoiFalwAj+9QOStuMIgsCOIHlHX3JUI6Evttw9HC2giEupz58Noq37LQMvRXfXbgEXmRVe9KlWSQiU4R4H6AW6I4xfAqg0A2/y5RNImT3lhp2CB1zvS3c0SU2sdmG4VdXyzXwXGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_017spdDwSdYHHAnWdDjtSjjT",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "r1-milestone-exists",
+        "requirement": "R1",
+        "description": "The acme/webapp milestones probe contains a milestone titled exactly \"v2.0\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "milestones"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "title": {
+              "const": "v2.0"
+             }
+            },
+            "required": [
+             "title"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r2-milestone-due-date",
+        "requirement": "R2",
+        "description": "The milestone titled \"v2.0\" has a due date on 2026-12-31.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "milestones"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "title": {
+              "const": "v2.0"
+             },
+             "due_on": {
+              "type": "string",
+              "pattern": "^2026-12-31"
+             }
+            },
+            "required": [
+             "title",
+             "due_on"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20388,
+    "outputTokens": 580,
+    "cacheReadTokens": 16942,
+    "cacheWriteTokens": 3444
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

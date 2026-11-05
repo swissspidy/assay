@@ -1,0 +1,155 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "wordpress/w12-filter-drafts",
+  "version": "1",
+  "task": {
+    "instruction": "Show me the list of draft posts."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The list of draft posts is shown to the user.",
+      "source": {
+        "field": "instruction",
+        "quote": "Show me the list of draft posts."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "r1-url-draft-filter",
+      "requirement": "R1",
+      "description": "The browser is on the WordPress admin posts list (edit.php) filtered by post_status=draft for posts (post_type post or default).",
+      "assert": {
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "url",
+            "match": {
+              "path": "/wp-admin/edit.php",
+              "query": {
+                "post_status": {
+                  "equals": "draft"
+                }
+              }
+            }
+          },
+          {
+            "kind": "anyOf",
+            "of": [
+              {
+                "kind": "url",
+                "match": {
+                  "query": {
+                    "post_type": {
+                      "equals": "post"
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "url",
+                "match": {
+                  "query": {
+                    "post_type": null
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "r1-drafts-listed",
+      "requirement": "R1",
+      "description": "The posts table in the main area lists the draft posts Spring meetup recap, Roadmap 2027 and Pricing update for teams.",
+      "assert": {
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "contains",
+            "scope": {
+              "role": "table",
+              "landmark": {
+                "role": "main"
+              }
+            },
+            "match": {
+              "role": "row",
+              "name": {
+                "contains": "Spring meetup recap"
+              }
+            }
+          },
+          {
+            "kind": "contains",
+            "scope": {
+              "role": "table",
+              "landmark": {
+                "role": "main"
+              }
+            },
+            "match": {
+              "role": "row",
+              "name": {
+                "contains": "Roadmap 2027"
+              }
+            }
+          },
+          {
+            "kind": "contains",
+            "scope": {
+              "role": "table",
+              "landmark": {
+                "role": "main"
+              }
+            },
+            "match": {
+              "role": "row",
+              "name": {
+                "contains": "Pricing update for teams"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "r1-no-published-listed",
+      "requirement": "R1",
+      "description": "The posts table shows no published posts, only drafts.",
+      "assert": {
+        "kind": "contains",
+        "scope": {
+          "role": "table",
+          "landmark": {
+            "role": "main"
+          }
+        },
+        "witness": {
+          "role": "columnheader",
+          "name": "Author"
+        },
+        "match": {
+          "role": "row",
+          "name": {
+            "regex": "Getting started with Assay|Writing your first check|Flaky tests and how to avoid them|Old pricing announcement|Community call: November|Release 0\\.1 notes|Why outcome verification matters"
+          }
+        },
+        "count": {
+          "eq": 0
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:16:17.902Z"
+  }
+}

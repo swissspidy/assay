@@ -1,0 +1,69 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "prestashop/s01-add-cushions",
+  "version": "1",
+  "task": {
+    "instruction": "Add two Mountain fox cushions to my cart."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The cart has two Mountain fox cushions added to it.",
+      "source": {
+        "field": "instruction",
+        "quote": "Add two Mountain fox cushions to my cart."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "cart-two-mountain-fox-cushions",
+      "requirement": "R1",
+      "description": "The backend cart holds Mountain fox cushion lines totalling a quantity of two (one line of 2, or two variant lines of 1 each).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+        },
+        "normalize": [
+          {
+            "op": "items",
+            "where": {
+              "properties": {
+                "product": {
+                  "const": "Mountain fox cushion"
+                }
+              },
+              "required": [
+                "product"
+              ]
+            },
+            "pointer": "/quantity"
+          }
+        ],
+        "expect": {
+          "oneOf": [
+            [
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T11:39:15.127Z"
+  }
+}

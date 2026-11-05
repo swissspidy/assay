@@ -1,0 +1,649 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:18:46.788Z",
+ "turns": {
+  "sha256:997ee38d7f24611087d27d85a374284144638f299dc5a8148ef8937600f57cca": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01ACs6RqgYkjckiTef1Mo575",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The shop's mugs are shown to the user.",
+        "field": "instruction",
+        "quote": "Show me the mugs in the shop"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
+        "text": "The mugs are sorted by price, lowest first.",
+        "field": "instruction",
+        "quote": "cheapest first"
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01ACs6RqgYkjckiTef1Mo575",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The shop's mugs are shown to the user.",
+        "field": "instruction",
+        "quote": "Show me the mugs in the shop"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
+        "text": "The mugs are sorted by price, lowest first.",
+        "field": "instruction",
+        "quote": "cheapest first"
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1059,
+    "outputTokens": 163,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1055
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:f45d33e5cc549a952843c8985dbcf60ea05de8f9f970c522874fea26c1cd068e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FJ8onX1Vmus8cc7NLfKfe2",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSjgUKEAgTGAI4AUIIdGhpbmtpbmcSDIu2r6GymNKzU33/iRoMvRAlLbd1ifQnyzDOIjCFHg6ykd66eJ+/hd2vxK88YQSXuGsV3AczfcFIR0/fD5ihShEZZZv4lr4o5ys4uCUqqwRMrK/Xtdpa6wJ/30F4bzKf5R4UPzfQ33n8dK+sYQPa1dtvxRt/i037lWLebvmKT+yfTiqXXRvzlT8WR0HBBRJZNy3zFNd2W4//ZxN4iKkiANRqurpL/RXSx+77keK8GKp14qfiIGJBXtlOUqaFAvo/f733qYCH4GjOLB6GpduKf71mQwOEomLtPzfcBwdHYf4JT0qx4u6/Dr3nAm0yc+GloNRnrl83aB684JvfD6RrZGMDgLG1zzouOBwXu4/cqGyb2EQ5YN2vz8B8AJ1qSm4y4AgkQ9P1BIjjgMfj4TE1qLjjzW3EBsXvi+7ye53r8Gc4+be+FqCO/7yz3cldTLwtSFmRKrap43R1tAOF1losnMXch+eOy+LfgBAQSh3Sn2KM9cA/Hs9TugnwWAcSd1ikbzFc1s9oBWVlIlloErCHUMDVyYPtUwEe3HWxen2HK24dli3GetGTF36HkZc0z6SYoZBfelpa4QNuQLr2c5KG3fwB2G/0rv9lNQmaPf4MEKfPWWc1FcqiO6A90bhHjC5OqVeDTLHORLCX+lLYjXIfPjceTuleGZGFbsdWSSZKd3u8qt09fLi1wrtTkPleZw8ALKamf4LYmZMdLQ3k5f11z1mrrlLc7bf1tB1x2YW4Muh11I1irMkamzns1v2sXMXwvpd7XuH8Mx0w9IQEDm17P/5Z1EBmeh4vNk5Ef/swxTnVYL6569hkxgc9+Ab1PtGL4s0k9xpHu+uDu04YAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01FJ8onX1Vmus8cc7NLfKfe2",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 16890,
+    "outputTokens": 39,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 16886
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:cdf4a3f6396c5f318077d786f2d01a3a5825804b682bf91e9026507b23af0903": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01TF14iuDepvuxhYcaieRirt",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "allOf",
+       "of": [
+        {
+         "kind": "url",
+         "match": {
+          "path": "/search",
+          "query": {
+           "s": {
+            "regex": "mug",
+            "flags": "i"
+           }
+          }
+         }
+        },
+        {
+         "kind": "contains",
+         "scope": {
+          "landmark": {
+           "role": "main"
+          },
+          "role": "main"
+         },
+         "match": {
+          "role": "heading",
+          "level": 2,
+          "name": {
+           "contains": "mug",
+           "ignoreCase": true
+          }
+         }
+        },
+        {
+         "kind": "url",
+         "match": {
+          "query": {
+           "order": {
+            "equals": "product.price.asc"
+           }
+          }
+         }
+        },
+        {
+         "kind": "state",
+         "target": {
+          "role": "button",
+          "name": {
+           "contains": "Sort by"
+          }
+         },
+         "expect": {
+          "text": {
+           "contains": "Price, low to high"
+          }
+         }
+        }
+       ]
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "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"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01TF14iuDepvuxhYcaieRirt",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "allOf",
+       "of": [
+        {
+         "kind": "url",
+         "match": {
+          "path": "/search",
+          "query": {
+           "s": {
+            "regex": "mug",
+            "flags": "i"
+           }
+          }
+         }
+        },
+        {
+         "kind": "contains",
+         "scope": {
+          "landmark": {
+           "role": "main"
+          },
+          "role": "main"
+         },
+         "match": {
+          "role": "heading",
+          "level": 2,
+          "name": {
+           "contains": "mug",
+           "ignoreCase": true
+          }
+         }
+        },
+        {
+         "kind": "url",
+         "match": {
+          "query": {
+           "order": {
+            "equals": "product.price.asc"
+           }
+          }
+         }
+        },
+        {
+         "kind": "state",
+         "target": {
+          "role": "button",
+          "name": {
+           "contains": "Sort by"
+          }
+         },
+         "expect": {
+          "text": {
+           "contains": "Price, low to high"
+          }
+         }
+        }
+       ]
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 19421,
+    "outputTokens": 625,
+    "cacheReadTokens": 16886,
+    "cacheWriteTokens": 2533
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:347065c232839f36dabd3eb392cb3ce96abe885506ae9ff27ce2501b2f6440d5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01PrcF79LkaBxBQgD7xDipGN",
+     "name": "network_log",
+     "input": {
+      "pathContains": "search"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS4QYKEAgTGAI4AUIIdGhpbmtpbmcSDA2aoH+qQMS+0h3goRoMxkVgvHSbxsGDeMe6IjC5yR0xx8/m/+FEV66VO8bNPDJhzLWSj6oEgortT7lCxieXVOn1uFnF1uZ205DCsUkq/gWCESMkQwhwRck36KLKymCbCykDpKYD6RdEY+cg/waj/Q5BiP0TTLxsxTEpSNWL/Uqws5iUxpqReN76nH0A0veEe6CZ2J75okwkiymOznLAx3yKJE+piM7J8nOy34CVmACPNfLXmx4g6x5UNf0kNj2BxDCdut1iPcu6cvAmjhaSDs6HTTwM9EQqXfbszKbWypH7EGexJAqn0x3+IRi6gWpQY4PcmJXvD9tMkDMZFKNys1P4piag80DdZB1ml/Wj1guoOuqBeexL1CNeIFnRJQb8exVA8o3zDrUbS7YisL421P2xQR2s+F0Td2T9XxSQ188y2vIFTbevb7VNjLLWdzejNH8nBF5+ZfqR0QwA+ii3/2vhSdm/4uztixZWgg2iti1wVAGIOEYrFPLcYtEoVSbhpoh4tmWs8JCyzO/uo4uHuML5p5+fRcMkkfEqF/UzXjZzxDFa/OSGsExPhbkdLsYJBCeslqjLkGZ4tAdHUMKrFdPvAr1ifYFa3Gp2u7aQMgWfv5DnbXsuX1LFFb3PmmwytAQxyYaJiP8A2zJWx4nv06g+5PUx++BrMIw2d14s3ga6thfWAB3UoSe2p7XjsN7yEhF1IUO4nefjrElc7ZRAxQaQke+gj2JL9QFjaqlaeMCJ+zwwkIvjio1fdJGZcKe9qwNUXP85oLO1qipKLmWnmQKDkXpkjCk2gjK/P0ZuaZ9QyWzTEnQMMmy/ca+/FeMb4R3aZDykhBr7kUS3amm5d22eBBJr7ke9jol6I1FArpX1Wub5Q4Vt3OTxY+StvkhM9lpBGYifRbkZRQsbaqZtB1icZ/dtPCvlfTrm/g3M6rOItxFa03KmXm3XtGtlh6API5cewMGMQo/SxMPsGevE8Y3K5f2DxNvd7g9UPbeHlP2UkIW8D5IuDW2lP+Ad/4pl8Nwe5ZVF+6xQ0CcXT4wA1p8Rrgkz1NwzswozgYJpsaOsLF2lWPqTzz4hJu2W/gEyonv5PLfxOdLE3jyzevHQKO0HmFvBUv8hnbhTvQXZGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01PrcF79LkaBxBQgD7xDipGN",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "pathContains": "search"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20226,
+    "outputTokens": 101,
+    "cacheReadTokens": 19419,
+    "cacheWriteTokens": 805
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:7a4c4cad89c32204a03820d0a31a17a70e56f497ec33bdae99967d6a01033ae5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CNS3H6JYScNtCyXhm1GBi5",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "R1-search-mugs-url",
+        "requirement": "R1",
+        "description": "The current page is the shop search results for a query containing 'mug'.",
+        "assert": {
+         "kind": "url",
+         "match": {
+          "path": "/search",
+          "query": {
+           "s": {
+            "regex": "mug",
+            "flags": "i"
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "R1-mug-products-listed",
+        "requirement": "R1",
+        "description": "The main content lists at least one product whose title contains 'mug'.",
+        "assert": {
+         "kind": "contains",
+         "scope": {
+          "role": "main"
+         },
+         "match": {
+          "role": "heading",
+          "level": 2,
+          "name": {
+           "contains": "mug",
+           "ignoreCase": true
+          }
+         }
+        }
+       },
+       {
+        "id": "R2-order-price-asc-url",
+        "requirement": "R2",
+        "description": "The page URL has the sort order set to price ascending.",
+        "assert": {
+         "kind": "url",
+         "match": {
+          "query": {
+           "order": {
+            "equals": "product.price.asc"
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "R2-sort-control",
+        "requirement": "R2",
+        "description": "The sort-by control shows 'Price, low to high'.",
+        "assert": {
+         "kind": "state",
+         "target": {
+          "role": "button",
+          "name": {
+           "contains": "Sort by"
+          }
+         },
+         "expect": {
+          "text": {
+           "contains": "Price, low to high"
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSgQcKEAgTGAI4AUIIdGhpbmtpbmcSDJIzA82HtC2YetB7YBoMf5AIxDctrhcnG+/8IjDKIBQyEbzEZv/u6Fq2D4TRQbj+kqExrbdD4WfAtBcBY8/R6Zl3e7F5wiMUuvf1IQ0qngYZwLh837i6/doKXkgCnUVBAPamsCYwZBdsUWfTVQxdGvAvrDLg6K4CRUnplLJPKkgCOQYWiFHzPuMGVkhnk2Od6AoETay/7AxYVxCA1SyIHPjUQQqOdi0leCJQwGQkMGFGrtMUeONv2VXEcBSytPbE2hig+GIIigTaFEEl1qgD+G5FISjuJTVO6S237E2nDMyBFGT/c7EoB6iSjW7QGaI0x37rwoWfgNJ+DmJ764PYtSRa4tqiNJDbFNobDcEv6tXl6vmssHPLW202R0yId4jU/1O/M+rr9q8Rzb8+mkA1m0uDO4UPWmWOssVfJEl6AR+7FbaeDU+pR+Oo/6/zD8ELZwhJQvYhnySbKD6t61zpaG7wcHGAoL8qgQLBXd+91O1D60MnUR2WsvX3GvuKobctUXzGrHh3S03gl9CYgDwnL01NJ/FoXG1MD2tu4olsqR7zCgFwRT4QPalYp5v9DH8KguKJuLGx0nT4srJKylTGbN4jgvxQKmVd/GIag27aye0iBAMeVA1sKTMoGiD+0sA6g0j21vb/tPLptBgsvuk1kSuZaA+6gz6ZBWq0TGvXoeLXuQlMiCaKCPiV78++7GhSJvxpGobR7tK1nFPHZlbwsgbznh6DcyC3vpfvTp0QyWnrO/XByxq9JNDemCZu44kREWgehOj+aY8FEqwcOhbtpNjrG+PrryUQpQDZLFC+CoQe3yjh2zbqOzSYCP+0cqsp8v6cL3oXzfzzpErLgXpYfQVFSuVSMY3keLpdKkwH8sMEZVX9f/aSXx4iakk2dplN4ln8SEX6o8kRfH0CqJWX/M7JzqDmnzxBkU25Ur82CMoTRXOyoHmzCJfA2vcwUCSdteQV+fICkc3vbQQTp5rsoRCvIjs1IOqxg/reyHByKZEuu+ghUfhMe2tVP0D/IeRlrT2cluDRyHU4lAiyd9cVmQHT5dfJx59zM0oNXy5lXyHEbPu5x/lM4kq81Te1X2EzYWTTqWs8GW9VdZGOLWpXK5M3rgTd94oUmcsTlpLUrs4G83uuh+AqA1C+JfIwqe1x8w5q7EzOzGOV7aM3SKwYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01CNS3H6JYScNtCyXhm1GBi5",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "R1-search-mugs-url",
+        "requirement": "R1",
+        "description": "The current page is the shop search results for a query containing 'mug'.",
+        "assert": {
+         "kind": "url",
+         "match": {
+          "path": "/search",
+          "query": {
+           "s": {
+            "regex": "mug",
+            "flags": "i"
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "R1-mug-products-listed",
+        "requirement": "R1",
+        "description": "The main content lists at least one product whose title contains 'mug'.",
+        "assert": {
+         "kind": "contains",
+         "scope": {
+          "role": "main"
+         },
+         "match": {
+          "role": "heading",
+          "level": 2,
+          "name": {
+           "contains": "mug",
+           "ignoreCase": true
+          }
+         }
+        }
+       },
+       {
+        "id": "R2-order-price-asc-url",
+        "requirement": "R2",
+        "description": "The page URL has the sort order set to price ascending.",
+        "assert": {
+         "kind": "url",
+         "match": {
+          "query": {
+           "order": {
+            "equals": "product.price.asc"
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "R2-sort-control",
+        "requirement": "R2",
+        "description": "The sort-by control shows 'Price, low to high'.",
+        "assert": {
+         "kind": "state",
+         "target": {
+          "role": "button",
+          "name": {
+           "contains": "Sort by"
+          }
+         },
+         "expect": {
+          "text": {
+           "contains": "Price, low to high"
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20418,
+    "outputTokens": 501,
+    "cacheReadTokens": 20224,
+    "cacheWriteTokens": 192
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:406b14913b22288b000f5534655c963306db4a931ba73af8f4587a9f4171635a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018XaH7SJKp5kFDu4naD75NP",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "R1-search-mugs-url",
+        "requirement": "R1",
+        "description": "The current page is the shop search results for the query 'mug' or 'mugs'.",
+        "assert": {
+         "kind": "url",
+         "match": {
+          "path": "/search",
+          "query": {
+           "s": {
+            "regex": "^\\s*mugs?\\s*$",
+            "flags": "i"
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "R1-mug-products-listed",
+        "requirement": "R1",
+        "description": "The main content lists at least one product whose title contains 'mug'.",
+        "assert": {
+         "kind": "contains",
+         "scope": {
+          "role": "main"
+         },
+         "match": {
+          "role": "heading",
+          "level": 2,
+          "name": {
+           "contains": "mug",
+           "ignoreCase": true
+          }
+         }
+        }
+       },
+       {
+        "id": "R2-order-price-asc-url",
+        "requirement": "R2",
+        "description": "The page URL has the sort order set to price ascending.",
+        "assert": {
+         "kind": "url",
+         "match": {
+          "query": {
+           "order": {
+            "equals": "product.price.asc"
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "R2-sort-control",
+        "requirement": "R2",
+        "description": "The sort-by control shows 'Price, low to high'.",
+        "assert": {
+         "kind": "state",
+         "target": {
+          "role": "button",
+          "name": {
+           "contains": "Sort by"
+          }
+         },
+         "expect": {
+          "text": {
+           "contains": "Price, low to high"
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_018XaH7SJKp5kFDu4naD75NP",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "R1-search-mugs-url",
+        "requirement": "R1",
+        "description": "The current page is the shop search results for the query 'mug' or 'mugs'.",
+        "assert": {
+         "kind": "url",
+         "match": {
+          "path": "/search",
+          "query": {
+           "s": {
+            "regex": "^\\s*mugs?\\s*$",
+            "flags": "i"
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "R1-mug-products-listed",
+        "requirement": "R1",
+        "description": "The main content lists at least one product whose title contains 'mug'.",
+        "assert": {
+         "kind": "contains",
+         "scope": {
+          "role": "main"
+         },
+         "match": {
+          "role": "heading",
+          "level": 2,
+          "name": {
+           "contains": "mug",
+           "ignoreCase": true
+          }
+         }
+        }
+       },
+       {
+        "id": "R2-order-price-asc-url",
+        "requirement": "R2",
+        "description": "The page URL has the sort order set to price ascending.",
+        "assert": {
+         "kind": "url",
+         "match": {
+          "query": {
+           "order": {
+            "equals": "product.price.asc"
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "R2-sort-control",
+        "requirement": "R2",
+        "description": "The sort-by control shows 'Price, low to high'.",
+        "assert": {
+         "kind": "state",
+         "target": {
+          "role": "button",
+          "name": {
+           "contains": "Sort by"
+          }
+         },
+         "expect": {
+          "text": {
+           "contains": "Price, low to high"
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 21065,
+    "outputTokens": 487,
+    "cacheReadTokens": 20416,
+    "cacheWriteTokens": 647
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

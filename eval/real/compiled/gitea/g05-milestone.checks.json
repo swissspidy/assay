@@ -1,0 +1,99 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "gitea/g05-milestone",
+  "version": "1",
+  "task": {
+    "instruction": "Create a milestone \"v2.0\" in acme/webapp with the due date December 31, 2026."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "A milestone titled \"v2.0\" is created in the acme/webapp repository.",
+      "source": {
+        "field": "instruction",
+        "quote": "Create a milestone \"v2.0\" in acme/webapp"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The milestone's due date is December 31, 2026.",
+      "source": {
+        "field": "instruction",
+        "quote": "with the due date December 31, 2026"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "r1-milestone-exists",
+      "requirement": "R1",
+      "description": "The acme/webapp milestones probe contains a milestone titled exactly \"v2.0\".",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "milestones"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "const": "v2.0"
+                }
+              },
+              "required": [
+                "title"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r2-milestone-due-date",
+      "requirement": "R2",
+      "description": "The milestone titled \"v2.0\" has a due date on 2026-12-31.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "milestones"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "const": "v2.0"
+                },
+                "due_on": {
+                  "type": "string",
+                  "pattern": "^2026-12-31"
+                }
+              },
+              "required": [
+                "title",
+                "due_on"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:12:34.061Z"
+  }
+}

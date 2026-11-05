@@ -1,0 +1,50 @@
+{
+  "task": "prestashop/s03-remove-poster",
+  "status": "compiled",
+  "model": "anthropic:claude-opus-5-5@high (replay)",
+  "modelsUsed": [
+    "claude-opus-5-5"
+  ],
+  "turns": {
+    "rubric": 1,
+    "discovery": 3
+  },
+  "usage": {
+    "inputTokens": 61126,
+    "outputTokens": 1420,
+    "cacheReadTokens": 38033,
+    "cacheWriteTokens": 23081
+  },
+  "coverage": [
+    {
+      "requirement": "R1",
+      "quote": "Remove the poster from my cart",
+      "checks": [
+        "R1-no-poster-in-cart"
+      ],
+      "channels": [
+        "probe"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R2",
+      "quote": "keep everything else",
+      "checks": [
+        "R2-others-kept"
+      ],
+      "channels": [
+        "probe"
+      ],
+      "trust": "structured"
+    }
+  ],
+  "warnings": [],
+  "references": [
+    {
+      "name": "reference",
+      "kind": "success",
+      "verdict": "success"
+    }
+  ]
+}

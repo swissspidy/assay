@@ -1,0 +1,212 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "gitea/g09-filter-bugs",
+  "version": "1",
+  "task": {
+    "instruction": "Show me the open issues in acme/webapp that are labelled bug."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The issues shown are from the acme/webapp repository.",
+      "source": {
+        "field": "instruction",
+        "quote": "Show me the open issues in acme/webapp"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The issues shown are only open issues.",
+      "source": {
+        "field": "instruction",
+        "quote": "open issues"
+      }
+    },
+    {
+      "id": "R3",
+      "kind": "hard",
+      "text": "The issues shown are only ones labelled bug.",
+      "source": {
+        "field": "instruction",
+        "quote": "labelled bug"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "r1-repo-issues-path",
+      "requirement": "R1",
+      "description": "The current page is the issue list of the acme/webapp repository.",
+      "assert": {
+        "kind": "url",
+        "match": {
+          "path": "/acme/webapp/issues"
+        }
+      }
+    },
+    {
+      "id": "r2-state-open",
+      "requirement": "R2",
+      "description": "The issue list's state filter is open (explicitly or by default with no state parameter).",
+      "assert": {
+        "kind": "anyOf",
+        "of": [
+          {
+            "kind": "url",
+            "match": {
+              "path": "/acme/webapp/issues",
+              "query": {
+                "state": {
+                  "equals": "open"
+                }
+              }
+            }
+          },
+          {
+            "kind": "url",
+            "match": {
+              "path": "/acme/webapp/issues",
+              "query": {
+                "state": null
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "r2-no-closed-rows",
+      "requirement": "R2",
+      "description": "The closed bug issues 'Session expires too early' and 'Login fails with SSO' are not listed.",
+      "assert": {
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "contains",
+            "scope": {
+              "role": "main"
+            },
+            "witness": {
+              "role": "link",
+              "name": "New Issue"
+            },
+            "match": {
+              "role": "link",
+              "name": {
+                "equals": "Session expires too early"
+              }
+            },
+            "count": {
+              "eq": 0
+            }
+          },
+          {
+            "kind": "contains",
+            "scope": {
+              "role": "main"
+            },
+            "witness": {
+              "role": "link",
+              "name": "New Issue"
+            },
+            "match": {
+              "role": "link",
+              "name": {
+                "equals": "Login fails with SSO"
+              }
+            },
+            "count": {
+              "eq": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "r3-label-filter-bug",
+      "requirement": "R3",
+      "description": "The issue list is filtered by exactly the bug label (label id 1).",
+      "assert": {
+        "kind": "url",
+        "match": {
+          "path": "/acme/webapp/issues",
+          "query": {
+            "labels": {
+              "regex": "^1$"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r3-no-nonbug-rows",
+      "requirement": "R3",
+      "description": "Open non-bug issues such as 'Add CSV export' and 'Rate limit API endpoints' are not listed, while bug issues are.",
+      "assert": {
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "contains",
+            "scope": {
+              "role": "main"
+            },
+            "witness": {
+              "role": "link",
+              "name": "New Issue"
+            },
+            "match": {
+              "role": "link",
+              "name": {
+                "equals": "Add CSV export"
+              }
+            },
+            "count": {
+              "eq": 0
+            }
+          },
+          {
+            "kind": "contains",
+            "scope": {
+              "role": "main"
+            },
+            "witness": {
+              "role": "link",
+              "name": "New Issue"
+            },
+            "match": {
+              "role": "link",
+              "name": {
+                "equals": "Rate limit API endpoints"
+              }
+            },
+            "count": {
+              "eq": 0
+            }
+          },
+          {
+            "kind": "contains",
+            "scope": {
+              "role": "main"
+            },
+            "match": {
+              "role": "link",
+              "name": {
+                "equals": "Crash when uploading large file"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:13:26.089Z"
+  }
+}

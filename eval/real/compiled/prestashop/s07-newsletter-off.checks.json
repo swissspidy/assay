@@ -1,0 +1,48 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "prestashop/s07-newsletter-off",
+  "version": "1",
+  "task": {
+    "instruction": "Unsubscribe me from the newsletter."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The user is unsubscribed from the newsletter.",
+      "source": {
+        "field": "instruction",
+        "quote": "Unsubscribe me from the newsletter."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "newsletter-off",
+      "requirement": "R1",
+      "description": "The backend account record shows the customer's newsletter subscription is off (newsletter = 0).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "account",
+          "pointer": "/newsletter"
+        },
+        "normalize": [
+          "boolean"
+        ],
+        "expect": {
+          "equals": false
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:18:38.336Z"
+  }
+}

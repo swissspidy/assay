@@ -1,0 +1,249 @@
+{
+  "schema": "assay.cassette/v1",
+  "model": "anthropic:claude-opus-5-5@high",
+  "recordedAt": "2026-11-05T11:38:53.507Z",
+  "turns": {
+    "sha256:f793f21d58e8f2eb99e110d8049009e4269bd0c5f391dd409f73fb2ea7bfb0de": {
+      "stop": "tool_use",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "toolu_01XTaJUMAjxHjZbKqXG7s5bk",
+          "name": "submit_rubric",
+          "input": {
+            "requirements": [
+              {
+                "id": "R1",
+                "kind": "hard",
+                "text": "A new post category named \"Case Studies\" is created.",
+                "field": "instruction",
+                "quote": "Create a new post category named \"Case Studies\""
+              },
+              {
+                "id": "R2",
+                "kind": "hard",
+                "text": "The new category has the slug case-studies.",
+                "field": "instruction",
+                "quote": "with the slug case-studies"
+              }
+            ]
+          }
+        }
+      ],
+      "raw": [
+        {
+          "type": "tool_use",
+          "id": "toolu_01XTaJUMAjxHjZbKqXG7s5bk",
+          "name": "submit_rubric",
+          "caller": {
+            "type": "direct"
+          },
+          "input": {
+            "requirements": [
+              {
+                "id": "R1",
+                "kind": "hard",
+                "text": "A new post category named \"Case Studies\" is created.",
+                "field": "instruction",
+                "quote": "Create a new post category named \"Case Studies\""
+              },
+              {
+                "id": "R2",
+                "kind": "hard",
+                "text": "The new category has the slug case-studies.",
+                "field": "instruction",
+                "quote": "with the slug case-studies"
+              }
+            ]
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 1064,
+        "outputTokens": 169,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 1060
+      },
+      "model": "claude-opus-5-5"
+    },
+    "sha256:a5ba3e69aaa0aa58d1eaa89412e1787214725476e0eae47063d12cc11bdba470": {
+      "stop": "tool_use",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "toolu_01Prj4GYc4Fjzy4uhJ2GkFkR",
+          "name": "probes",
+          "input": {}
+        }
+      ],
+      "raw": [
+        {
+          "type": "tool_use",
+          "id": "toolu_01Prj4GYc4Fjzy4uhJ2GkFkR",
+          "name": "probes",
+          "caller": {
+            "type": "direct"
+          },
+          "input": {}
+        }
+      ],
+      "usage": {
+        "inputTokens": 16897,
+        "outputTokens": 25,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 16893
+      },
+      "model": "claude-opus-5-5"
+    },
+    "sha256:c963e081201c92a22c2a94c65f88604ee6781181e3345a68de729e9a67c040a0": {
+      "stop": "tool_use",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "toolu_01AqEaN6Uba6CaT3CgNf8JbR",
+          "name": "submit_checks",
+          "input": {
+            "checks": [
+              {
+                "id": "r1-category-exists",
+                "requirement": "R1",
+                "description": "The backend categories list contains a category named exactly \"Case Studies\".",
+                "assert": {
+                  "kind": "value",
+                  "source": {
+                    "from": "probe",
+                    "probe": "categories"
+                  },
+                  "expect": {
+                    "schema": {
+                      "type": "array",
+                      "contains": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "const": "Case Studies"
+                          }
+                        },
+                        "required": ["name"]
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "id": "r2-category-slug",
+                "requirement": "R2",
+                "description": "The backend holds a category named \"Case Studies\" whose slug is exactly case-studies.",
+                "assert": {
+                  "kind": "value",
+                  "source": {
+                    "from": "probe",
+                    "probe": "categories"
+                  },
+                  "expect": {
+                    "schema": {
+                      "type": "array",
+                      "contains": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "const": "Case Studies"
+                          },
+                          "slug": {
+                            "const": "case-studies"
+                          }
+                        },
+                        "required": ["name", "slug"]
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "raw": [
+        {
+          "type": "thinking",
+          "thinking": "",
+          "signature": "CAQS+ggKEAgTGAI4AUIIdGhpbmtpbmcSDIWPWKknGGnUG0YMZRoMNvo4HNCvBwTamM4rIjApPyHzUTozMBIXGgXdCCP5Vqf5M09a5qfVlABZXviAZ88p243FENRwqIMG+7/RbV0qlwjx7++rKdqnsrIV+6WSjBbJ01sy8UwUaAyqN74iGI4qPyhD4cYVkVW8guK7ALbQ9c/VLrK6kImfrC17gRmt6siPRtKZNKWjmlyBqGtvsVbHNQO8Ie8k8kybvPEjg0aTz+PlfjEHqVJJ//LtZlv6fPuJ6dAh7OTOUb6WVjD20wX+XB0hpNFDyu7XYeAYg6ECLuWeAzg13Astdn8LRChFZ2ag/eFpjyZWXIxb6ndXQCWB4IMa6llo+FPZB9MRbm+xGjaM8kITd4Vzf8mBSx/rvGmBW+k/8RAtGd1kCptdBLYd684RnCU978Wrx8CvKR8jsIePwW59Eex0kFKO/OhNzej7Ng41Evjn7TMuCXr4mwgii+48old1ELKx+g/70uxsrhcWKb6sXnH9AD/52l0E+srzCxChVD/cVDfYlmm2qR5ky6a+zehddHZ1wQsZAKaKfk2AQu64d1CJ0T312B/leLbbKa2ROPfK+JwoHhKmMSSlNo7yR8F3u9F56DWYu0sObh2eJVddBgakq5eW10AAHPVpjiaVsfUMUUCSbJRxhMVxbD2VBW5ozTjxWiHoSCPvYT8ISm5CRttMspqihqL4WLZmdgaxrgS7W0BnsiIJsVnZBF3axcA9eAp4RyI6nSCUVYvjk6CG7KH3Jg+4j6lAqf3V97JpyzG0nPZYkXPOXmMqcYcSs/SUBvRpm6lH8d8CYTOpIy3GsXTZtZqqwVpPiGibsARWhgE7HpzcQDyxOLao4OjcQY4FSOWuMnlSBmJvXQJNedkd5FjFsDTfoxetIIw02TBNb6sqakDlQXaQJL5Sg2LLJZa24MayQiC8xjGJQbPF+zhuIFeHGVA/tmQykLPfgd9BTCwPWuS3jIczUO5bZlCXo+bqU6DYJPG32YQiRfdfbkW+va4z8y2MHOJLx+k9s6WscrXH5Y12V0jUUDbs25Thq/Do/ktAGawganwV0dPuqITGvrSJVZrK73tPv4iXnNf0IIiv0KQr5/Dr54fHrWibXLHQc/doO4Oa0kiI9rrbAuJt+ul+HCqVmpIBZVXtzW12Be08lYjdUVcRn63Dv7sc7Bp2jePtSwtnmGcSHPG7Yply3D6u1LxYy6SBnQv6DJ7iV5wN+3/OvfGTiKZu2CM+Ml84VppbOWclCV7WzbeorZMpk909llEckKOw2zqYxD0TzO8nRqN1c/q6F7HQGRNoxDhaGugSFu2oXXRznrtaOu/O4opV76wlSZ3pqwibqvxAfsSWQomPAIBR0UWDOM6vD0YBBqYOMwquaDhGtZDMvqDziqypsPUuvhshy0jNWfg2jmRBfQQR1eeGo7sHzcne7zIQWAAn2R6Py6VHrbGZ3BBicdab75guvxaUAKLs9cEBWURuEntWyxBHR3wSmXosm6nuFTwYAQ=="
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_01AqEaN6Uba6CaT3CgNf8JbR",
+          "name": "submit_checks",
+          "caller": {
+            "type": "direct"
+          },
+          "input": {
+            "checks": [
+              {
+                "id": "r1-category-exists",
+                "requirement": "R1",
+                "description": "The backend categories list contains a category named exactly \"Case Studies\".",
+                "assert": {
+                  "kind": "value",
+                  "source": {
+                    "from": "probe",
+                    "probe": "categories"
+                  },
+                  "expect": {
+                    "schema": {
+                      "type": "array",
+                      "contains": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "const": "Case Studies"
+                          }
+                        },
+                        "required": ["name"]
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "id": "r2-category-slug",
+                "requirement": "R2",
+                "description": "The backend holds a category named \"Case Studies\" whose slug is exactly case-studies.",
+                "assert": {
+                  "kind": "value",
+                  "source": {
+                    "from": "probe",
+                    "probe": "categories"
+                  },
+                  "expect": {
+                    "schema": {
+                      "type": "array",
+                      "contains": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "const": "Case Studies"
+                          },
+                          "slug": {
+                            "const": "case-studies"
+                          }
+                        },
+                        "required": ["name", "slug"]
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 20353,
+        "outputTokens": 527,
+        "cacheReadTokens": 16893,
+        "cacheWriteTokens": 3458
+      },
+      "model": "claude-opus-5-5"
+    }
+  }
+}

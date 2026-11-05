@@ -1,0 +1,118 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "wordpress/w03-approve-comment",
+  "version": "1",
+  "task": {
+    "instruction": "Approve the pending comment by Dana on the post \"Getting started with Assay\"."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The pending comment by Dana on the post \"Getting started with Assay\" is approved.",
+      "source": {
+        "field": "instruction",
+        "quote": "Approve the pending comment by Dana on the post \"Getting started with Assay\"."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "dana-comment-approved",
+      "requirement": "R1",
+      "description": "The backend comments probe shows Dana's comment on post 4 (\"Getting started with Assay\") with status approved, and no Dana comment on that post still held.",
+      "assert": {
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "posts"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "const": 4
+                    },
+                    "title": {
+                      "const": "Getting started with Assay"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "title"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "comments"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "post": {
+                      "const": 4
+                    },
+                    "author": {
+                      "const": "Dana"
+                    },
+                    "status": {
+                      "const": "approved"
+                    }
+                  },
+                  "required": [
+                    "post",
+                    "author",
+                    "status"
+                  ]
+                },
+                "not": {
+                  "contains": {
+                    "type": "object",
+                    "properties": {
+                      "post": {
+                        "const": 4
+                      },
+                      "author": {
+                        "const": "Dana"
+                      },
+                      "status": {
+                        "const": "hold"
+                      }
+                    },
+                    "required": [
+                      "post",
+                      "author",
+                      "status"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T11:39:03.456Z"
+  }
+}

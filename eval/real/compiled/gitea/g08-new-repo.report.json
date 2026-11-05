@@ -1,0 +1,61 @@
+{
+  "task": "gitea/g08-new-repo",
+  "status": "compiled",
+  "model": "anthropic:claude-opus-5-5@high (replay)",
+  "modelsUsed": [
+    "claude-opus-5-5"
+  ],
+  "turns": {
+    "rubric": 1,
+    "discovery": 3
+  },
+  "usage": {
+    "inputTokens": 59120,
+    "outputTokens": 1140,
+    "cacheReadTokens": 37335,
+    "cacheWriteTokens": 21773
+  },
+  "coverage": [
+    {
+      "requirement": "R1",
+      "quote": "Create a new private repository called \"meeting-notes\" under my account",
+      "checks": [
+        "r1-repo-exists"
+      ],
+      "channels": [
+        "probe"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R2",
+      "quote": "private",
+      "checks": [
+        "r2-repo-private"
+      ],
+      "channels": [
+        "probe"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R3",
+      "quote": "initialized with a README",
+      "checks": [
+        "r3-repo-initialized"
+      ],
+      "channels": [
+        "probe"
+      ],
+      "trust": "structured"
+    }
+  ],
+  "warnings": [],
+  "references": [
+    {
+      "name": "reference",
+      "kind": "success",
+      "verdict": "success"
+    }
+  ]
+}

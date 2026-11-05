@@ -1,0 +1,57 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "prestashop/s06-wishlist",
+  "version": "1",
+  "task": {
+    "instruction": "Add the Brown bear notebook to my wishlist."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The Brown bear notebook is added to the user's wishlist.",
+      "source": {
+        "field": "instruction",
+        "quote": "Add the Brown bear notebook to my wishlist."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "wishlist-has-brown-bear-notebook",
+      "requirement": "R1",
+      "description": "The backend wishlist probe contains an entry for the product 'Brown bear notebook'.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "wishlist"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "product": {
+                  "const": "Brown bear notebook"
+                }
+              },
+              "required": [
+                "product"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:18:28.419Z"
+  }
+}

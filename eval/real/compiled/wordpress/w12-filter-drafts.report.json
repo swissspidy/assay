@@ -1,0 +1,44 @@
+{
+  "task": "wordpress/w12-filter-drafts",
+  "status": "compiled",
+  "model": "anthropic:claude-opus-5-5@high (replay)",
+  "modelsUsed": [
+    "claude-opus-5-5"
+  ],
+  "turns": {
+    "rubric": 1,
+    "discovery": 4
+  },
+  "usage": {
+    "inputTokens": 91539,
+    "outputTokens": 2330,
+    "cacheReadTokens": 63594,
+    "cacheWriteTokens": 27931
+  },
+  "coverage": [
+    {
+      "requirement": "R1",
+      "quote": "Show me the list of draft posts.",
+      "checks": [
+        "r1-url-draft-filter",
+        "r1-drafts-listed",
+        "r1-no-published-listed"
+      ],
+      "channels": [
+        "url",
+        "a11y"
+      ],
+      "trust": "structured"
+    }
+  ],
+  "warnings": [
+    "Advisory: the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable [reference/claims-only]"
+  ],
+  "references": [
+    {
+      "name": "reference",
+      "kind": "success",
+      "verdict": "success"
+    }
+  ]
+}

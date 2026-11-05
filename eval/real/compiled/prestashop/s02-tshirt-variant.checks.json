@@ -1,0 +1,166 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "prestashop/s02-tshirt-variant",
+  "version": "1",
+  "task": {
+    "instruction": "Put a Hummingbird printed t-shirt in size L, color black, into my cart."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "A Hummingbird printed t-shirt is in the user's cart.",
+      "source": {
+        "field": "instruction",
+        "quote": "Put a Hummingbird printed t-shirt"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The t-shirt in the cart is size L.",
+      "source": {
+        "field": "instruction",
+        "quote": "in size L"
+      }
+    },
+    {
+      "id": "R3",
+      "kind": "hard",
+      "text": "The t-shirt in the cart is black.",
+      "source": {
+        "field": "instruction",
+        "quote": "color black"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-cart-has-tshirt",
+      "requirement": "R1",
+      "description": "The backend cart contains a line for the Hummingbird printed t-shirt with quantity at least 1.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "product": {
+                  "const": "Hummingbird printed t-shirt"
+                },
+                "quantity": {
+                  "type": "number",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "product",
+                "quantity"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R2-tshirt-size-L",
+      "requirement": "R2",
+      "description": "The backend cart has a Hummingbird printed t-shirt line whose attributes include Size - L.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "product": {
+                  "const": "Hummingbird printed t-shirt"
+                },
+                "attributes": {
+                  "type": "string",
+                  "pattern": "(^|,\\s*)Size - L\\s*(,|$)"
+                },
+                "quantity": {
+                  "type": "number",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "product",
+                "attributes",
+                "quantity"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R3-tshirt-color-black",
+      "requirement": "R3",
+      "description": "The backend cart has a Hummingbird printed t-shirt line in size L whose attributes include Color - Black.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "product": {
+                  "const": "Hummingbird printed t-shirt"
+                },
+                "attributes": {
+                  "type": "string",
+                  "allOf": [
+                    {
+                      "pattern": "(^|,\\s*)Color - Black\\s*(,|$)"
+                    },
+                    {
+                      "pattern": "(^|,\\s*)Size - L\\s*(,|$)"
+                    }
+                  ]
+                },
+                "quantity": {
+                  "type": "number",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "product",
+                "attributes",
+                "quantity"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T11:39:28.411Z"
+  }
+}

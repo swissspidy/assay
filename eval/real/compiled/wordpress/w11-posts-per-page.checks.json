@@ -1,0 +1,46 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "wordpress/w11-posts-per-page",
+  "version": "1",
+  "task": {
+    "instruction": "Make the blog show at most 5 posts per page."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The blog's posts-per-page setting is set so that no more than 5 posts are shown per page.",
+      "source": {
+        "field": "instruction",
+        "quote": "Make the blog show at most 5 posts per page."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "posts-per-page-at-most-5",
+      "requirement": "R1",
+      "description": "The backend settings probe shows posts_per_page is between 1 and 5 (at most 5 posts per page).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "settings",
+          "pointer": "/posts_per_page"
+        },
+        "expect": {
+          "gte": 1,
+          "lte": 5
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:16:08.507Z"
+  }
+}

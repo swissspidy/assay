@@ -1,0 +1,156 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "wordpress/w15-schedule-post",
+  "version": "1",
+  "task": {
+    "instruction": "Schedule the draft post \"Roadmap 2027\" to be published on January 5, 2027 at 9:00."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The draft post \"Roadmap 2027\" is set to scheduled publication, not published right away.",
+      "source": {
+        "field": "instruction",
+        "quote": "Schedule the draft post \"Roadmap 2027\""
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The post's scheduled publish date and time is January 5, 2027 at 9:00.",
+      "source": {
+        "field": "instruction",
+        "quote": "to be published on January 5, 2027 at 9:00"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "r1-status-future",
+      "requirement": "R1",
+      "description": "The backend post titled \"Roadmap 2027\" has status \"future\" (scheduled), not published or draft.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "posts"
+        },
+        "normalize": [
+          {
+            "op": "items",
+            "where": {
+              "properties": {
+                "title": {
+                  "const": "Roadmap 2027"
+                }
+              },
+              "required": [
+                "title"
+              ]
+            },
+            "pointer": "/status"
+          }
+        ],
+        "expect": {
+          "equals": [
+            "future"
+          ]
+        }
+      }
+    },
+    {
+      "id": "r2-date-0905",
+      "requirement": "R2",
+      "description": "The last save of post 12 submitted the publish date 2027-01-05 09:00, or the posts list shows Roadmap 2027 scheduled for 2027/01/05 at 9:00 am.",
+      "assert": {
+        "kind": "anyOf",
+        "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "request",
+              "match": {
+                "method": "POST",
+                "requestBody": {
+                  "type": "object",
+                  "properties": {
+                    "post_ID": {
+                      "const": "12"
+                    },
+                    "aa": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "post_ID",
+                    "aa"
+                  ]
+                }
+              },
+              "pick": "last"
+            },
+            "expect": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "aa": {
+                    "const": "2027"
+                  },
+                  "mm": {
+                    "type": "string",
+                    "pattern": "^0?1$"
+                  },
+                  "jj": {
+                    "type": "string",
+                    "pattern": "^0?5$"
+                  },
+                  "hh": {
+                    "type": "string",
+                    "pattern": "^0?9$"
+                  },
+                  "mn": {
+                    "type": "string",
+                    "pattern": "^0{1,2}$"
+                  }
+                },
+                "required": [
+                  "aa",
+                  "mm",
+                  "jj",
+                  "hh",
+                  "mn"
+                ]
+              }
+            }
+          },
+          {
+            "kind": "state",
+            "target": {
+              "role": "row",
+              "name": {
+                "contains": "“Roadmap 2027” (Edit)"
+              },
+              "within": {
+                "role": "table"
+              }
+            },
+            "expect": {
+              "name": {
+                "regex": "Scheduled\\s+2027/01/05 at 9:00 am"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:22:27.731Z"
+  }
+}

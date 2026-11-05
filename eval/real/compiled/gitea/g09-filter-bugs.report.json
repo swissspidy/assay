@@ -1,0 +1,67 @@
+{
+  "task": "gitea/g09-filter-bugs",
+  "status": "compiled",
+  "model": "anthropic:claude-opus-5-5@high (replay)",
+  "modelsUsed": [
+    "claude-opus-5-5"
+  ],
+  "turns": {
+    "rubric": 1,
+    "discovery": 4
+  },
+  "usage": {
+    "inputTokens": 89268,
+    "outputTokens": 2900,
+    "cacheReadTokens": 59135,
+    "cacheWriteTokens": 30119
+  },
+  "coverage": [
+    {
+      "requirement": "R1",
+      "quote": "Show me the open issues in acme/webapp",
+      "checks": [
+        "r1-repo-issues-path"
+      ],
+      "channels": [
+        "url"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R2",
+      "quote": "open issues",
+      "checks": [
+        "r2-state-open",
+        "r2-no-closed-rows"
+      ],
+      "channels": [
+        "url",
+        "a11y"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R3",
+      "quote": "labelled bug",
+      "checks": [
+        "r3-label-filter-bug",
+        "r3-no-nonbug-rows"
+      ],
+      "channels": [
+        "url",
+        "a11y"
+      ],
+      "trust": "structured"
+    }
+  ],
+  "warnings": [
+    "Advisory: the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable [reference/claims-only]"
+  ],
+  "references": [
+    {
+      "name": "reference",
+      "kind": "success",
+      "verdict": "success"
+    }
+  ]
+}

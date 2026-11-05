@@ -1,0 +1,58 @@
+{
+  "task": "prestashop/s08-mugs-by-price",
+  "status": "compiled",
+  "model": "anthropic:claude-opus-5-5@high (replay)",
+  "modelsUsed": [
+    "claude-opus-5-5"
+  ],
+  "turns": {
+    "rubric": 1,
+    "discovery": 5
+  },
+  "usage": {
+    "inputTokens": 99079,
+    "outputTokens": 1916,
+    "cacheReadTokens": 76945,
+    "cacheWriteTokens": 22118
+  },
+  "coverage": [
+    {
+      "requirement": "R1",
+      "quote": "Show me the mugs in the shop",
+      "checks": [
+        "R1-search-mugs-url",
+        "R1-mug-products-listed"
+      ],
+      "channels": [
+        "url",
+        "a11y"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R2",
+      "quote": "cheapest first",
+      "checks": [
+        "R2-order-price-asc-url",
+        "R2-sort-control"
+      ],
+      "channels": [
+        "url",
+        "a11y"
+      ],
+      "trust": "structured"
+    }
+  ],
+  "warnings": [
+    "R1-mug-products-listed still passes when its own evidence is broken (one matching item is missing (partial completion) [reference/R1-mug-products-listed:contains:one-fewer]; heading \"Search results\" is there instead [reference/R1-mug-products-listed:contains:wrong-item]).",
+    "Near-miss runs accepted as success: one matching item is missing (partial completion) [reference/R1-mug-products-listed:contains:one-fewer]; heading \"Search results\" is there instead [reference/R1-mug-products-listed:contains:wrong-item].",
+    "Advisory: the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable [reference/claims-only]"
+  ],
+  "references": [
+    {
+      "name": "reference",
+      "kind": "success",
+      "verdict": "success"
+    }
+  ]
+}
