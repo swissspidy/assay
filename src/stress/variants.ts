@@ -16,6 +16,8 @@ import type {
   NetworkEntry,
   AXNode,
   ProbeResult,
+  Redacted,
+  StorageRecord,
   ValueSource,
 } from '../types.ts';
 import { AXIndex, readNodeField, resolveTarget, type INode } from '../runtime/axindex.ts';
@@ -40,6 +42,7 @@ export const GENERIC_VARIANTS = [
   'spacing',
   'extra-json-fields',
   'json-array-order',
+  'nested-array-order',
   'network-noise',
   'retry',
   'extra-storage',
@@ -203,6 +206,55 @@ const reverseArrays = (v: Json): Json =>
     : v && typeof v === 'object'
       ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, reverseArrays(x)]))
       : v;
+
+/** Arrays inside an array's items (each line's options, each record's tags) reversed; the outer arrays keep their order. */
+const reverseNested = (v: Json, inArray = false): Json =>
+  Array.isArray(v)
+    ? ((xs: Json[]) => (inArray ? xs.toReversed() : xs))(v.map((x) => reverseNested(x, true)))
+    : v && typeof v === 'object'
+      ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, reverseNested(x, inArray)]))
+      : v;
+
+/**
+ * `nested-array-order`: the arrays nested inside records reversed in JSON bodies, probe
+ * results (before and after the task) and JSON text in local and session storage. Unlike
+ * `json-array-order` it keeps the outer lists' order, so a task that asks for an order of
+ * its records (and skips that variant) still has the order inside each record tested.
+ */
+function nestedArrayOrder(s: EvidenceSnapshot): EvidenceSnapshot | null {
+  const out = mapBodies(s, (v) => reverseNested(v)) ?? s;
+  const storage = mapStorageJson(out.storage, reverseNested);
+  const baseline = out.baseline
+    ? { ...out.baseline, storage: mapStorageJson(out.baseline.storage, reverseNested) }
+    : undefined;
+  const next = { ...out, storage, ...(baseline ? { baseline } : {}) };
+  return JSON.stringify(next) === JSON.stringify(s) ? null : next;
+}
+
+/** Local and session storage with `fn` applied to every value that is JSON text of an object or array. */
+function mapStorageJson(st: StorageRecord | null, fn: (v: Json) => Json): StorageRecord | null {
+  if (!st) return st;
+  const value = (x: string | Redacted): string | Redacted => {
+    if (typeof x !== 'string') return x;
+    let parsed: Json;
+    try {
+      parsed = JSON.parse(x) as Json;
+    } catch {
+      return x;
+    }
+    if (!isObj(parsed)) return x;
+    const next = JSON.stringify(fn(parsed));
+    return next === JSON.stringify(parsed) ? x : next;
+  };
+  const area = (a: StorageRecord['local']): StorageRecord['local'] =>
+    Object.fromEntries(
+      Object.entries(a).map(([origin, kv]) => [
+        origin,
+        Object.fromEntries(Object.entries(kv).map(([k, x]) => [k, value(x)])),
+      ]),
+    );
+  return { ...st, local: area(st.local), session: area(st.session) };
+}
 
 function networkNoise(s: EvidenceSnapshot): EvidenceSnapshot | null {
   if (!s.network) return null;
@@ -575,6 +627,11 @@ export function generateVariants(cs: CheckSet, s: EvidenceSnapshot): Variant[] {
     ['spacing', 'non-breaking and doubled spaces in visible text', spacing(s)],
     ['extra-json-fields', 'extra fields in JSON bodies and probe results', mapBodies(s, addFields)],
     ['json-array-order', 'arrays in JSON bodies and probe results in reverse order', mapBodies(s, reverseArrays)],
+    [
+      'nested-array-order',
+      'arrays nested inside JSON records (bodies, probe results, storage) in reverse order',
+      nestedArrayOrder(s),
+    ],
     ['network-noise', 'an analytics beacon and repeated GET requests', networkNoise(s)],
     ['retry', 'each state-changing request first failed with HTTP 503 and was retried', retry(s)],
     ['extra-storage', 'unrelated cookies and storage keys', extraStorage(s, cs)],

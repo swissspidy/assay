@@ -136,14 +136,14 @@ export function readSpan(raw: string, steps: Normalizer[] | undefined): string |
   return span && raw.includes(span) ? span : undefined;
 }
 
-/** The array in a raw string that the pipeline parses first ("json"), if it is one. */
-function jsonArrayText(raw: Json, steps: Normalizer[] | undefined): Json[] | undefined {
+/** The array or object in a raw string that the pipeline parses first ("json"), if it is one. */
+function jsonText(raw: Json, steps: Normalizer[] | undefined): Json | undefined {
   const first = steps?.[0];
   if (typeof raw !== 'string' || !(first === 'json' || (typeof first === 'object' && first.op === 'json')))
     return undefined;
   try {
     const v = JSON.parse(raw) as Json;
-    return Array.isArray(v) ? v : undefined;
+    return v !== null && typeof v === 'object' ? v : undefined;
   } catch {
     return undefined;
   }
@@ -166,6 +166,57 @@ function arrayEdits(arr: Json[]): { what: string; value: Json; pairing?: boolean
 
 /** Pairing swaps kept per value, after the check's own comparison filtered them. */
 const MAX_PAIRING_SWAPS = 3;
+
+/** Nested arrays edited per value, and nested edits kept per value after filtering. */
+const MAX_NESTED_ARRAYS = 6;
+const MAX_NESTED_EDITS = 8;
+
+/**
+ * Arrays nested inside a JSON value (an order's items, each item's options, a record's
+ * tags), not the value itself, with their JSON pointers: depth first, the first items of
+ * each array, a few levels deep.
+ */
+function nestedArrays(v: Json, pointer = '', depth = 0, out: { pointer: string; arr: Json[] }[] = []) {
+  if (out.length >= MAX_NESTED_ARRAYS || depth > 5 || v === null || typeof v !== 'object') return out;
+  if (Array.isArray(v)) {
+    if (depth > 0) out.push({ pointer, arr: v });
+    v.slice(0, 4).forEach((x, i) => nestedArrays(x, `${pointer}/${i}`, depth + 1, out));
+  } else
+    for (const [k, x] of Object.entries(v))
+      nestedArrays(x, `${pointer}/${k.replace(/~/g, '~0').replace(/\//g, '~1')}`, depth + 1, out);
+  return out;
+}
+
+/**
+ * Edits of the arrays nested inside a JSON value: one item removed, duplicated or changed
+ * (a near miss of a nested value), and two nested records swapping one field. Reordering
+ * is never a near miss here: a check that reads order where the task does not ask for one
+ * is over-constrained, which the `nested-array-order` variant finds.
+ */
+function nestedArrayEdits(root: Json): { what: string; value: Json }[] {
+  const perArray: { what: string; value: Json }[][] = [];
+  for (const { pointer, arr } of nestedArrays(root)) {
+    const out: { what: string; value: Json }[] = [];
+    perArray.push(out);
+    const edits: { what: string; value: Json[] }[] = [];
+    arr.slice(0, 3).forEach((item, i) => {
+      edits.push({ what: `item ${i} removed`, value: arr.filter((_, j) => j !== i) });
+      if (i < 2)
+        edits.push({ what: `item ${i} duplicated`, value: [...arr.slice(0, i + 1), clone(item), ...arr.slice(i + 1)] });
+      const changed = nearMiss(item);
+      if (changed !== undefined)
+        edits.push({ what: `item ${i} changed`, value: arr.map((x, j) => (j === i ? changed : x)) });
+    });
+    edits.push(...pairingSwaps(arr).map((x) => ({ ...x, value: x.value as Json[] })));
+    for (const e of edits) {
+      const value = clone(root);
+      if (setPointer(value, pointer, e.value)) out.push({ what: `at ${pointer}: ${e.what}`, value });
+    }
+  }
+  // Interleaved, so the cap on kept edits spreads over every nested array.
+  const n = Math.max(0, ...perArray.map((x) => x.length));
+  return Array.from({ length: n }, (_, i) => perArray.flatMap((x) => (i < x.length ? [x[i]!] : []))).flat();
+}
 
 const isRecord = (x: Json | undefined): x is { [key: string]: Json } =>
   !!x && typeof x === 'object' && !Array.isArray(x);
@@ -552,21 +603,34 @@ function valueMutants(
   // A JSON array (a cart, an order's items): one item removed, changed or added. Kept
   // only when the check's own normalizers and comparison read it as a violation.
   // JSON text holding an array (a cart in localStorage) read through "json": the same
-  // edits, written back as JSON text.
-  const parsed = jsonArrayText(r.raw, a.normalize);
-  const arr = Array.isArray(r.raw) ? r.raw : parsed;
-  if (arr) {
+  // edits, written back as JSON text. Arrays nested inside the value (each item's
+  // options, a record's tags) get their own edits, with the same filter and a cap.
+  const parsed = jsonText(r.raw, a.normalize);
+  const doc = parsed ?? (r.raw !== null && typeof r.raw === 'object' ? r.raw : undefined);
+  if (doc) {
+    const violates = (next: Json) => {
+      try {
+        return !compare(applyNormalizers(fromJson(next), a.normalize), a.expect).ok;
+      } catch {
+        return false;
+      }
+    };
     let pairings = 0;
-    for (const edit of arrayEdits(arr)) {
+    for (const edit of Array.isArray(doc) ? arrayEdits(doc) : []) {
       if (edit.pairing && pairings >= MAX_PAIRING_SWAPS) continue;
       const next: Json = parsed ? JSON.stringify(edit.value) : edit.value;
-      try {
-        if (compare(applyNormalizers(fromJson(next), a.normalize), a.expect).ok) continue;
-      } catch {
-        continue;
-      }
+      if (!violates(next)) continue;
       if (edit.pairing) pairings++;
       add(next, edit.what);
+    }
+    let nested = 0;
+    for (const edit of nestedArrayEdits(doc)) {
+      if (nested >= MAX_NESTED_EDITS) break;
+      const next: Json = parsed ? JSON.stringify(edit.value) : edit.value;
+      if (!violates(next)) continue;
+      const before = out.length;
+      add(next, edit.what);
+      if (out.length > before) nested++;
     }
   }
   const src = a.source;
