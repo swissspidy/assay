@@ -36,37 +36,68 @@
   ],
   "checks": [
     {
-      "id": "r1-repo-exists",
+      "id": "repo-created",
       "requirement": "R1",
-      "description": "The backend lists a repository alice/meeting-notes under alice's account.",
+      "description": "Alice's repository list now contains alice/meeting-notes, which did not exist before the task.",
       "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "aliceRepos"
-        },
-        "expect": {
-          "schema": {
-            "type": "array",
-            "contains": {
-              "type": "object",
-              "properties": {
-                "full_name": {
-                  "const": "alice/meeting-notes"
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "aliceRepos"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "full_name": {
+                      "const": "alice/meeting-notes"
+                    }
+                  },
+                  "required": [
+                    "full_name"
+                  ]
                 }
-              },
-              "required": [
-                "full_name"
-              ]
+              }
+            }
+          },
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "aliceRepos",
+              "at": "before"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "not": {
+                  "contains": {
+                    "type": "object",
+                    "properties": {
+                      "full_name": {
+                        "const": "alice/meeting-notes"
+                      }
+                    },
+                    "required": [
+                      "full_name"
+                    ]
+                  }
+                }
+              }
             }
           }
-        }
+        ]
       }
     },
     {
-      "id": "r2-repo-private",
+      "id": "repo-private",
       "requirement": "R2",
-      "description": "The repository alice/meeting-notes is private in the backend.",
+      "description": "The stored alice/meeting-notes repository is private.",
       "assert": {
         "kind": "value",
         "source": {
@@ -96,9 +127,9 @@
       }
     },
     {
-      "id": "r3-repo-initialized",
+      "id": "repo-initialized",
       "requirement": "R3",
-      "description": "The repository alice/meeting-notes is not empty (initialized with a README).",
+      "description": "The stored alice/meeting-notes repository is not empty (it was initialized with an initial commit).",
       "assert": {
         "kind": "value",
         "source": {
@@ -126,6 +157,54 @@
           }
         }
       }
+    },
+    {
+      "id": "repo-create-readme",
+      "requirement": "R3",
+      "description": "The repository creation form for meeting-notes was submitted with auto-init and a README template selected.",
+      "onMissing": "abstain",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "request",
+          "match": {
+            "method": "POST",
+            "url": {
+              "path": "/repo/create"
+            },
+            "requestBody": {
+              "type": "object",
+              "properties": {
+                "repo_name": {
+                  "const": "meeting-notes"
+                }
+              },
+              "required": [
+                "repo_name"
+              ]
+            }
+          },
+          "pick": "last"
+        },
+        "expect": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "auto_init": {
+                "const": "on"
+              },
+              "readme": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "auto_init",
+              "readme"
+            ]
+          }
+        }
+      }
     }
   ],
   "compiled": {
@@ -134,6 +213,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:13:10.103Z"
+    "at": "2026-11-05T21:04:14.133Z"
   }
 }

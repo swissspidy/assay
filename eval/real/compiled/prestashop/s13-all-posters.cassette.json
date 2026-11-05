@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T12:22:55.328Z",
  "turns": {
   "sha256:20955619209806675ca26afdcf99a619a154338b394fcb56df048cbd208a275c": {
    "stop": "tool_use",
@@ -71,20 +70,25 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:c6cd539ac27b88ec383da21c77ee46e2f2e9ca1fd3c70522500b20caedc53caf": {
+  "sha256:2dbf85c06cdccad5bd5080c036dcc1d9a978548f2786fde6b920cc1c4e6c7045": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_017sKZRw2hdMZu6joLNKXh4v",
+     "id": "toolu_01T9G9Q5ARB75aNy7fe49SmN",
      "name": "probes",
      "input": {}
     }
    ],
    "raw": [
     {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSkQUKEAgTGAI4AUIIdGhpbmtpbmcSDN81DD7kPxRDcc5IMRoMK+zjtAu2qT2o7+YTIjDa03I0Jxfb+nLbVXFQ3u2O4UpxnlJ/sZN8j2MRZO+UmbUo7UJGNZoY8XHcMkWmtm8qrgT65+3nlyozump3yxnbiMO2niDmsdLSoGzqd/Zyfm7ge481wF608scL3CDWR1rFhhDHOorf/jTLTLG63QgEiOHaB1oeGmYY4u0VaZyoOOqE5UqV4v62/TzIG8P4CCCoY/a8QYuVUpoG5vO+385MQgPgIP3TW6UPqKJQJn3+dnwlJW7sXTTrfKIEjiYkYkKyBJiCvKNH+ck3vuKJ3xLvLYS5MU1Fu/reyvnnYdoxQUxX+a4YYYbUCHLs6fbDUZFwSvk22QZxzYqTqAjzvlv2utnRUOmnuUYGCGv/ViiNTaZ8ogV/aVbpyLKEFl1DNUKfZyYJQoxy0gbW1uDABdpR4w5XlsfBVsbZBhxWdaVvsz5fhvDo/QM6uy9MAgeNynuIwnYDG7D0whim59zcGLx3YWO/ijHR0gfynwoYz92geFKS/Si+EjiFhk1PEnDAMeiF7JdAioL7LfYkmvWNrfnTf4KthYL3gdE0W2U8xAVn92CBTiHq+cb0aoOR+Pw+BZQgEGnuzni89raN8O0zoxsU1d2Z4P/OyxrRMzZzII5o1SEwd6Kji7Ll8QNVEAli+y9UncwAvXWNUqbE2mfTwl1Xu2goIureXZCC+NJO1HrhUNs0QaZOivHogulI0iGqVfOKtt+vflE+xON7KvGKnkDKDrrjf7+DHTQ0Vdb5cshbthLpZexFCJWWrOLyMEbuKuqglpNtbPMR6nUZC+uLiHiJFfJsSIryyEFWAKvEpJq7tCkYAQ=="
+    },
+    {
      "type": "tool_use",
-     "id": "toolu_017sKZRw2hdMZu6joLNKXh4v",
+     "id": "toolu_01T9G9Q5ARB75aNy7fe49SmN",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -93,122 +97,19 @@
     }
    ],
    "usage": {
-    "inputTokens": 16906,
-    "outputTokens": 25,
+    "inputTokens": 19770,
+    "outputTokens": 38,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16902
+    "cacheWriteTokens": 19766
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:b7f2e50401e18addc76accee7c70e79699de6ccc3c061e0b0c8db4d8138a362c": {
+  "sha256:c1438293128e162ff7b4e318ada23071182459f0e586b4cc75285c641c0e185d": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01FCkD5VFfhmV6xMDCYuSgEq",
-     "name": "try_assertion",
-     "input": {
-      "assert": {
-       "kind": "allOf",
-       "of": [
-        {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "cart",
-          "pointer": "/lines"
-         },
-         "normalize": [
-          {
-           "op": "items",
-           "where": {
-            "properties": {
-             "product": {
-              "pattern": "Framed poster$",
-              "not": {
-               "const": "Pack Mug + Framed poster"
-              }
-             }
-            },
-            "required": [
-             "product"
-            ]
-           },
-           "pointer": "/product"
-          }
-         ],
-         "expect": {
-          "sameAs": {
-           "source": {
-            "from": "probe",
-            "probe": "catalog"
-           },
-           "normalize": [
-            {
-             "op": "items",
-             "where": {
-              "properties": {
-               "name": {
-                "pattern": "Framed poster$",
-                "not": {
-                 "const": "Pack Mug + Framed poster"
-                }
-               }
-              },
-              "required": [
-               "name"
-              ]
-             },
-             "pointer": "/name"
-            }
-           ]
-          }
-         }
-        },
-        {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "cart",
-          "pointer": "/lines"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "items": {
-            "if": {
-             "properties": {
-              "product": {
-               "pattern": "Framed poster$",
-               "not": {
-                "const": "Pack Mug + Framed poster"
-               }
-              }
-             },
-             "required": [
-              "product"
-             ]
-            },
-            "then": {
-             "properties": {
-              "quantity": {
-               "const": 1
-              }
-             },
-             "required": [
-              "quantity"
-             ]
-            }
-           }
-          }
-         }
-        }
-       ]
-      }
-     }
-    },
-    {
-     "id": "toolu_01YGQekrdnop8EdX9SsPSqQm",
+     "id": "toolu_01FaxFL44t3WbupghXv2swLb",
      "name": "try_assertion",
      "input": {
       "assert": {
@@ -218,45 +119,48 @@
         "probe": "cart",
         "pointer": "/lines"
        },
+       "normalize": [
+        {
+         "op": "items",
+         "where": {
+          "properties": {
+           "product": {
+            "type": "string",
+            "pattern": "Framed poster$"
+           }
+          },
+          "required": [
+           "product"
+          ]
+         },
+         "pointer": "/product"
+        }
+       ],
        "expect": {
-        "schema": {
-         "type": "array",
-         "allOf": [
+        "sameAs": {
+         "source": {
+          "from": "probe",
+          "probe": "catalog"
+         },
+         "normalize": [
           {
-           "contains": {
+           "op": "items",
+           "where": {
             "properties": {
-             "product": {
-              "const": "The best is yet to come' Framed poster"
+             "name": {
+              "type": "string",
+              "pattern": "Framed poster$"
+             },
+             "active": {
+              "const": 1
              }
             },
             "required": [
-             "product"
+             "name",
+             "active"
             ]
-           }
-          },
-          {
-           "contains": {
-            "properties": {
-             "product": {
-              "const": "The adventure begins Framed poster"
-             }
-            },
-            "required": [
-             "product"
-            ]
-           }
-          },
-          {
-           "contains": {
-            "properties": {
-             "product": {
-              "const": "Today is a good day Framed poster"
-             }
-            },
-            "required": [
-             "product"
-            ]
-           }
+           },
+           "pointer": "/name"
           }
          ]
         }
@@ -269,118 +173,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "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"
+     "signature": "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"
     },
     {
      "type": "tool_use",
-     "id": "toolu_01FCkD5VFfhmV6xMDCYuSgEq",
-     "name": "try_assertion",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "assert": {
-       "kind": "allOf",
-       "of": [
-        {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "cart",
-          "pointer": "/lines"
-         },
-         "normalize": [
-          {
-           "op": "items",
-           "where": {
-            "properties": {
-             "product": {
-              "pattern": "Framed poster$",
-              "not": {
-               "const": "Pack Mug + Framed poster"
-              }
-             }
-            },
-            "required": [
-             "product"
-            ]
-           },
-           "pointer": "/product"
-          }
-         ],
-         "expect": {
-          "sameAs": {
-           "source": {
-            "from": "probe",
-            "probe": "catalog"
-           },
-           "normalize": [
-            {
-             "op": "items",
-             "where": {
-              "properties": {
-               "name": {
-                "pattern": "Framed poster$",
-                "not": {
-                 "const": "Pack Mug + Framed poster"
-                }
-               }
-              },
-              "required": [
-               "name"
-              ]
-             },
-             "pointer": "/name"
-            }
-           ]
-          }
-         }
-        },
-        {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "cart",
-          "pointer": "/lines"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "items": {
-            "if": {
-             "properties": {
-              "product": {
-               "pattern": "Framed poster$",
-               "not": {
-                "const": "Pack Mug + Framed poster"
-               }
-              }
-             },
-             "required": [
-              "product"
-             ]
-            },
-            "then": {
-             "properties": {
-              "quantity": {
-               "const": 1
-              }
-             },
-             "required": [
-              "quantity"
-             ]
-            }
-           }
-          }
-         }
-        }
-       ]
-      }
-     }
-    },
-    {
-     "type": "tool_use",
-     "id": "toolu_01YGQekrdnop8EdX9SsPSqQm",
+     "id": "toolu_01FaxFL44t3WbupghXv2swLb",
      "name": "try_assertion",
      "caller": {
       "type": "direct"
@@ -393,45 +190,48 @@
         "probe": "cart",
         "pointer": "/lines"
        },
+       "normalize": [
+        {
+         "op": "items",
+         "where": {
+          "properties": {
+           "product": {
+            "type": "string",
+            "pattern": "Framed poster$"
+           }
+          },
+          "required": [
+           "product"
+          ]
+         },
+         "pointer": "/product"
+        }
+       ],
        "expect": {
-        "schema": {
-         "type": "array",
-         "allOf": [
+        "sameAs": {
+         "source": {
+          "from": "probe",
+          "probe": "catalog"
+         },
+         "normalize": [
           {
-           "contains": {
+           "op": "items",
+           "where": {
             "properties": {
-             "product": {
-              "const": "The best is yet to come' Framed poster"
+             "name": {
+              "type": "string",
+              "pattern": "Framed poster$"
+             },
+             "active": {
+              "const": 1
              }
             },
             "required": [
-             "product"
+             "name",
+             "active"
             ]
-           }
-          },
-          {
-           "contains": {
-            "properties": {
-             "product": {
-              "const": "The adventure begins Framed poster"
-             }
-            },
-            "required": [
-             "product"
-            ]
-           }
-          },
-          {
-           "contains": {
-            "properties": {
-             "product": {
-              "const": "Today is a good day Framed poster"
-             }
-            },
-            "required": [
-             "product"
-            ]
-           }
+           },
+           "pointer": "/name"
           }
          ]
         }
@@ -441,26 +241,210 @@
     }
    ],
    "usage": {
-    "inputTokens": 21122,
-    "outputTokens": 1434,
-    "cacheReadTokens": 16902,
-    "cacheWriteTokens": 4218
+    "inputTokens": 23999,
+    "outputTokens": 992,
+    "cacheReadTokens": 19766,
+    "cacheWriteTokens": 4231
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:adef61ffd7e88afc6268136dec0973b7036a4c4268a6baf9c0c8851e4657bf9d": {
+  "sha256:fae5cf10ffb6f135b6f9428b095414f2dcc904623b44550ad15c45e2d8c8958f": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_014xCtgm8rzADE4qRxZX2eUX",
+     "id": "toolu_01Ppfe2rad2GE3e33bezVJM6",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "cart",
+        "pointer": "/lines"
+       },
+       "normalize": [
+        {
+         "op": "items",
+         "where": {
+          "properties": {
+           "product": {
+            "type": "string",
+            "pattern": "Framed poster$"
+           }
+          },
+          "required": [
+           "product"
+          ],
+          "not": {
+           "properties": {
+            "product": {
+             "pattern": "^Pack"
+            }
+           },
+           "required": [
+            "product"
+           ]
+          }
+         },
+         "pointer": "/product"
+        }
+       ],
+       "expect": {
+        "sameAs": {
+         "source": {
+          "from": "probe",
+          "probe": "catalog"
+         },
+         "normalize": [
+          {
+           "op": "items",
+           "where": {
+            "properties": {
+             "name": {
+              "type": "string",
+              "pattern": "Framed poster$"
+             },
+             "active": {
+              "const": 1
+             }
+            },
+            "required": [
+             "name",
+             "active"
+            ],
+            "not": {
+             "properties": {
+              "name": {
+               "pattern": "^Pack"
+              }
+             },
+             "required": [
+              "name"
+             ]
+            }
+           },
+           "pointer": "/name"
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSnggKEAgTGAI4AUIIdGhpbmtpbmcSDHbQOidF1X0tj2nliRoMARodWPdj3fmjnJy7IjBym0FhNaYyia3YMx56lsGwvM8NZXDbg9AbfRxU9HB9zbQtliZ4L+60kxyuNdMgm80quwcqgJx4P/IuR3jy7S+hHYrkx9KMblIyfzn3x+PBq7K0DGT7Dq6/9gVukJ5aPC5NhQlQkSBt8Nmob8Jc+tM2cHCXK495SkLlc6ZG0AXzOErKTkHHLt4usF/I91ypUTRfwiqW8MRSY9J3WgrsIaNNMJWVHzSeE6xX4TRey4kesx1bKhG1d5lLQuBA0dz7r9T2+KmN0R796LZMBaVAYoEy8ZyCDO6YfPgM4UQyq27gevoNz97YqpJitJo+6T+UzqGhWdukk6FyHufByCkotLr3NIl6zIA8ZuV+rOoT8ai5lRsOqU9R1ReTeAOEhLS2W4HxuIADBOettUCDcPj5FwciriOjNii90eynzCAlEs/l/QsTaB+dL9jrjYnB3o8Fc0A83GLO4QaqQa8rPcV+F++FB9nfCrl3qcQmHcP0PAMFH1MH84Sl5NZxcFKMLe3CXjjdrokIbn+6PQrOoXmMoiQ9imqmA3fTgRtCxmc8HpxdFE+PMviKOezaqS2sBq5568lY78xs/9zfOL6xlZaJAlo7j2GxNEfbigAxH+ZhBj/wnnlXyyoNbMfPOQDnGSvJeKN6Oa3Gfxb/V4uSYjlqyaWDJL8mtXai4dL96T/In8vfT/fXUJfA4wXBQbiFFNlPloKVkpGlhRt2JiGyVtLzmxg11Rtw7HiDkoSn/pzmLn42owtVGf9cQNgtyAX/39kZK3ho/1VC4PWFwblsWaup9bMHQ8H3JrS7Fdb/riv9Jj9U9Fsyu6XaFYviDn6nxEIjJU6JTCbd3cGT0fTeZUAU9kylFxjIX8jqfJNbHHqCyU5ks5LygxoS+sXJva38NsD2fQmVx08far0ntfIEEdhSo9rng2v/edzE4V3QWuoKafPNVK/zGjWfiN65z+A4KI3UEczYT6N2aQvFJ8VCJddNj1S3xeOwELd+W9kTRCjXTghINjbCbwKQ1HKTdFndeu8tT83Kejg1W1tMdlXz89uObm5IA0M5XYWw9ZbH/lsqRXZcb9tX622LU9/psB+VY4kjty3CiBO+DxGMBcENT/hYd8VSZ+x8h5Q/66htOfMnMtBlVakMcBv4TFQse5VkcRfO2aDDfF/f07fEyEU84rNo2mjDFsxoSW7vo2HPgeWf+h7ccd9D/AOwZNiTcfSyaVT4yVDexJ3DVErrvMj9ICuvUNsWV3dtPXv4CivPHeAsJ8PAyU47MIADfDqWpe/2ZyEK5Lr+Vlfd4eLMg1OGLEGDmDdrDgvy1LcGSQNG+K1996P95nkT10EORcXyqrr0omDHGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Ppfe2rad2GE3e33bezVJM6",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "cart",
+        "pointer": "/lines"
+       },
+       "normalize": [
+        {
+         "op": "items",
+         "where": {
+          "properties": {
+           "product": {
+            "type": "string",
+            "pattern": "Framed poster$"
+           }
+          },
+          "required": [
+           "product"
+          ],
+          "not": {
+           "properties": {
+            "product": {
+             "pattern": "^Pack"
+            }
+           },
+           "required": [
+            "product"
+           ]
+          }
+         },
+         "pointer": "/product"
+        }
+       ],
+       "expect": {
+        "sameAs": {
+         "source": {
+          "from": "probe",
+          "probe": "catalog"
+         },
+         "normalize": [
+          {
+           "op": "items",
+           "where": {
+            "properties": {
+             "name": {
+              "type": "string",
+              "pattern": "Framed poster$"
+             },
+             "active": {
+              "const": 1
+             }
+            },
+            "required": [
+             "name",
+             "active"
+            ],
+            "not": {
+             "properties": {
+              "name": {
+               "pattern": "^Pack"
+              }
+             },
+             "required": [
+              "name"
+             ]
+            }
+           },
+           "pointer": "/name"
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 25733,
+    "outputTokens": 488,
+    "cacheReadTokens": 23997,
+    "cacheWriteTokens": 1734
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:367fd5ae86b02065129450d10cea051f8aec62ded08bc779c488a778d772b108": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01T5ggjEwXMwEr8yrBGxK7fX",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "R1-cart-has-all-framed-posters",
+        "id": "r1-all-posters-in-cart",
         "requirement": "R1",
-        "description": "The backend cart contains a line for each of the three framed posters: 'The best is yet to come' Framed poster', 'The adventure begins Framed poster' and 'Today is a good day Framed poster'.",
+        "description": "The cart (backend probe) has a line for each of the three framed posters: The best is yet to come', The adventure begins, and Today is a good day.",
         "assert": {
          "kind": "value",
          "source": {
@@ -474,6 +458,7 @@
            "allOf": [
             {
              "contains": {
+              "type": "object",
               "properties": {
                "product": {
                 "const": "The best is yet to come' Framed poster"
@@ -486,6 +471,7 @@
             },
             {
              "contains": {
+              "type": "object",
               "properties": {
                "product": {
                 "const": "The adventure begins Framed poster"
@@ -498,6 +484,7 @@
             },
             {
              "contains": {
+              "type": "object",
               "properties": {
                "product": {
                 "const": "Today is a good day Framed poster"
@@ -514,105 +501,134 @@
         }
        },
        {
-        "id": "R2-one-of-each-poster",
+        "id": "r2-one-line-per-poster",
         "requirement": "R2",
-        "description": "The cart has exactly one line per framed poster in the catalog (excluding the mug+poster pack), and every framed-poster line has quantity 1.",
+        "description": "The cart's framed-poster lines are exactly one per framed poster in the active catalog (no poster duplicated in a second line).",
         "assert": {
-         "kind": "allOf",
-         "of": [
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+         },
+         "normalize": [
           {
-           "kind": "value",
+           "op": "items",
+           "where": {
+            "properties": {
+             "product": {
+              "type": "string",
+              "pattern": "Framed poster$"
+             }
+            },
+            "required": [
+             "product"
+            ],
+            "not": {
+             "properties": {
+              "product": {
+               "pattern": "^Pack"
+              }
+             },
+             "required": [
+              "product"
+             ]
+            }
+           },
+           "pointer": "/product"
+          }
+         ],
+         "expect": {
+          "sameAs": {
            "source": {
             "from": "probe",
-            "probe": "cart",
-            "pointer": "/lines"
+            "probe": "catalog"
            },
            "normalize": [
             {
              "op": "items",
              "where": {
               "properties": {
-               "product": {
-                "pattern": "Framed poster$",
-                "not": {
-                 "const": "Pack Mug + Framed poster"
+               "name": {
+                "type": "string",
+                "pattern": "Framed poster$"
+               },
+               "active": {
+                "const": 1
+               }
+              },
+              "required": [
+               "name",
+               "active"
+              ],
+              "not": {
+               "properties": {
+                "name": {
+                 "pattern": "^Pack"
                 }
+               },
+               "required": [
+                "name"
+               ]
+              }
+             },
+             "pointer": "/name"
+            }
+           ]
+          }
+         }
+        }
+       },
+       {
+        "id": "r2-quantity-one",
+        "requirement": "R2",
+        "description": "Every framed-poster line in the cart has quantity 1.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "items": {
+            "if": {
+             "type": "object",
+             "properties": {
+              "product": {
+               "type": "string",
+               "pattern": "Framed poster$"
+              }
+             },
+             "required": [
+              "product"
+             ],
+             "not": {
+              "properties": {
+               "product": {
+                "pattern": "^Pack"
                }
               },
               "required": [
                "product"
               ]
-             },
-             "pointer": "/product"
-            }
-           ],
-           "expect": {
-            "sameAs": {
-             "source": {
-              "from": "probe",
-              "probe": "catalog"
-             },
-             "normalize": [
-              {
-               "op": "items",
-               "where": {
-                "properties": {
-                 "name": {
-                  "pattern": "Framed poster$",
-                  "not": {
-                   "const": "Pack Mug + Framed poster"
-                  }
-                 }
-                },
-                "required": [
-                 "name"
-                ]
-               },
-               "pointer": "/name"
+             }
+            },
+            "then": {
+             "properties": {
+              "quantity": {
+               "const": 1
               }
+             },
+             "required": [
+              "quantity"
              ]
             }
            }
-          },
-          {
-           "kind": "value",
-           "source": {
-            "from": "probe",
-            "probe": "cart",
-            "pointer": "/lines"
-           },
-           "expect": {
-            "schema": {
-             "type": "array",
-             "items": {
-              "if": {
-               "properties": {
-                "product": {
-                 "pattern": "Framed poster$",
-                 "not": {
-                  "const": "Pack Mug + Framed poster"
-                 }
-                }
-               },
-               "required": [
-                "product"
-               ]
-              },
-              "then": {
-               "properties": {
-                "quantity": {
-                 "const": 1
-                }
-               },
-               "required": [
-                "quantity"
-               ]
-              }
-             }
-            }
-           }
           }
-         ]
+         }
         }
        }
       ]
@@ -623,11 +639,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSxQYKEAgTGAI4AUIIdGhpbmtpbmcSDLWb/1y3JUf8TTfwKhoMHxtZEXOep6KEIRlHIjDXzTk1bWNMuGZCkd32i2FgltEL9K9sWXeomO7pepFwUC8nHpdHUUUrlE3S+QvY+54q4gUVll1vF+cqSwBYdBStrHTzYlRQd2X8jSXIJPC7ZL1CG9eF61LKrZp4JULFomnED2qk/oGE8NHmF+VCMAOifPt+mBQn5YG1kI9ozPCwyZQykgGJVXVFs+0kylzqGgYyF9Jh5+WjYfgbx7Z1eLdFrxi6ivVEhyK2L5HXRVqINT5CKSpaozVTfRomwyfUBXSFjgqppPR3Ln2LKmmfA0kpFgcNjmzVZ8Bw8LswHTZD8KQvVnH9NNO/XOWgv8dgswjl+NIVpuAqlXR1PUIGWV6K1CH31bJrbwBgf0TcULDw1RWmLykwX/a1npdRxuY0Hq0YqFEG4pNTst5p2iyV6/K51aDzXz37i/gMxH46AoouOn5s4MpH5+PSVYUq9tQKDrOTsAEzXkWm1hgYnemJ9hdY3B/DWC6ckuXD+rBerqlziw/in7K8ptmGggzmfIkXiichz+aq3klyGLGqK2/7mTY2/Xz1yWnHz3p5gI6BAwIFiYgE8kSHN0f1mbWbMrh7onZBxFGs6VbP+XR4Acc8G40+5aniaDfdUjVdmx7PQMSxVRl+LMpOW4RRYNPv77Yi8p1wBv3A6HkVie+353SvFas3Q1GoEUVobGdGFjkWlPHC083cZnNi+vwTaT/hTYbJEwP1v3mTyX85CObooNhrGlOaZh9PZKu9/38d45+9Mq5xoZb4E8KK+ePlV/ixFcYRYlAgaoRzIYM3TXKvBVuFKWpGJq0uTiRYCJ4mf/ErqP4icx1xZBx49q/8pwDWWqiJeKLieOXVoHqRvpdFDAirLb4Ue+5WRBLFNpIUxAoEaz/vpeIKsVl3u/KApmKWWonhXBf/U4nYHvBEl3StMeli4xQ9+k0C1Lv5kF1OYx5Mf1h59ZuIUSBhM28fj8CMNMqCYSUZp5jhtFkzi5HssX8ZbvRhKKvsGWSoyW2ZQM+Ux1HeONeQLv0Ss4xc0lsgs9pdd8Unz5nRjv5H8fsNOxxU4NMUTtVDrJEYAQ=="
+     "signature": "CAQS3AkKEAgTGAI4AUIIdGhpbmtpbmcSDGq9q8JxBXOtCA8PlBoMBzUcaekIT2+mp/suIjC3WS085ocAtvU+hNOg5njMhbdNpB3G2b9RbLSz1+e+ybkucSLhyXJHZPQl24IIIEcq+QiHuLKxUONonasuSsRYgAAHWQW5Lf67AViUaDJWuQslJOgUHb3ONn8bditYnWmZPTrv5v4wki9S5AQzHznsOAOufpSosLQWX0EtyWFuB3f+HRgae4oWzuoOP1ywbWED01Q+KPCYFzBKrPr8KGrfgfrLOgv9ccg5rDC8G3vl9DAHjF5mpAJin8D/kQOKeDtl66+AajpvOlE7bvqQIY0fzL9WaJZT2HG6TCts4o0ge+OFG7/DKuNPZklVfrJRLm+0T2whSIrB8TBlcNixOVwuEbzbNESHmFctoh3YOmrcKDVD6a6rpNw7SiodBj8EzQOtXfapZJMvcjLkUtQCULMU0AcodzFC+EdQXJr4v/17Xkh3BLN2f3wJXGbcizW5vtqN6VR/s5ZJtytb0+NannTXIHgqtsyPGlPSU22rLtHW8F5SA6ofHEcl2isWwzdTcB11OCmQwu70bRXHzSTulxtC8Wu93fhgfkTdudLDTI6KQtZnBWV9BGErgmTNX7f6AlmLn5m2agEFXXk31XpP7Pq9vLsMmw1hnKGeoEeAdZbP3rvGIhjFTO1jpmKPmoGdmgZ9ao0BqR2tO4P6tZeagXg47ivaodcOCicu6NWbvCqPkop8l1r9HgTQklr6+tzub5iNlZjtAKMAHsSN9OesZem/EkNhvkzh5NELUFABRpC8GfVpkGIIzBFQ9bHeUs5vZCP7wHfZE51kcBiAenKxjE8hk1azZ7y2m042Mbp4UUaGt+ZGQGQ0hj6bAUABmTFcUdMqyX3mcUIAMojeFHWkFvJH04JOjimBZdiTNlVmLWC4nqQQTWcocJXt9bcKOGWVD1EXGHPW0pxPAXSk3SoU5InVETQZPFVGgu7AuV2S/K5t5UB8iIDuaibREsvoidjfCgKrO4xv5Ye1tTgBgYZGEnAOEvLvhfRnIwyw/zfjc9CLOlaNmYvZ82gaBaz3enTnLScat5SQFMcRA9czG0zQ0Cqe4KofPJOhkBApuE6sfiTFrwLDwp7usk5EGFeJbMUQ1C5hEb/TlaXPLLTdlcyOFvP9zUYkKlqdMr8IdAKbU1wSdxHhmDVttAYONzrexSH2yxr6RhSh4yVdWH6KvfWDNR/7QQX5MxpGc9454Bt6T5JiohysH/gVA8wp7iLtCNJi0nOW1Ryx/UXEZ99H4Ut36nl99QME+WyW2knl9HnQfId/E6OgByhNZqyHwR3yJB/lkvcaLRrfMC+vfuRaGthxpK5PEosvJdb6g/RZi0hM2+g4o6fLpYaURfdnEFQYHH9Laqw/iG/hbehWgtguuIdEjxtzLgp7CaEfQccefrf7k4HDdQqnXLnIbYKaTgfT/WxmcmocgAjOsiJG3TGe8DUp1G//NRxNpI4Z57iIytHftAb6EaNOxRqdwe+LN6Mxoue5ab+3CxK7CJ4QvS9DBCifFjzfqj6puQstoWiPfYt+6sbKUfNxN6lfE97szWmiCPT3dKJo7x3T/eHsO5fKLFhAzbigiDkyv4k4ljdNGn2K/77FDuhDBTsqYswTDrMpvhgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_014xCtgm8rzADE4qRxZX2eUX",
+     "id": "toolu_01T5ggjEwXMwEr8yrBGxK7fX",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -635,9 +651,9 @@
      "input": {
       "checks": [
        {
-        "id": "R1-cart-has-all-framed-posters",
+        "id": "r1-all-posters-in-cart",
         "requirement": "R1",
-        "description": "The backend cart contains a line for each of the three framed posters: 'The best is yet to come' Framed poster', 'The adventure begins Framed poster' and 'Today is a good day Framed poster'.",
+        "description": "The cart (backend probe) has a line for each of the three framed posters: The best is yet to come', The adventure begins, and Today is a good day.",
         "assert": {
          "kind": "value",
          "source": {
@@ -651,6 +667,7 @@
            "allOf": [
             {
              "contains": {
+              "type": "object",
               "properties": {
                "product": {
                 "const": "The best is yet to come' Framed poster"
@@ -663,6 +680,7 @@
             },
             {
              "contains": {
+              "type": "object",
               "properties": {
                "product": {
                 "const": "The adventure begins Framed poster"
@@ -675,6 +693,7 @@
             },
             {
              "contains": {
+              "type": "object",
               "properties": {
                "product": {
                 "const": "Today is a good day Framed poster"
@@ -691,105 +710,134 @@
         }
        },
        {
-        "id": "R2-one-of-each-poster",
+        "id": "r2-one-line-per-poster",
         "requirement": "R2",
-        "description": "The cart has exactly one line per framed poster in the catalog (excluding the mug+poster pack), and every framed-poster line has quantity 1.",
+        "description": "The cart's framed-poster lines are exactly one per framed poster in the active catalog (no poster duplicated in a second line).",
         "assert": {
-         "kind": "allOf",
-         "of": [
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+         },
+         "normalize": [
           {
-           "kind": "value",
+           "op": "items",
+           "where": {
+            "properties": {
+             "product": {
+              "type": "string",
+              "pattern": "Framed poster$"
+             }
+            },
+            "required": [
+             "product"
+            ],
+            "not": {
+             "properties": {
+              "product": {
+               "pattern": "^Pack"
+              }
+             },
+             "required": [
+              "product"
+             ]
+            }
+           },
+           "pointer": "/product"
+          }
+         ],
+         "expect": {
+          "sameAs": {
            "source": {
             "from": "probe",
-            "probe": "cart",
-            "pointer": "/lines"
+            "probe": "catalog"
            },
            "normalize": [
             {
              "op": "items",
              "where": {
               "properties": {
-               "product": {
-                "pattern": "Framed poster$",
-                "not": {
-                 "const": "Pack Mug + Framed poster"
+               "name": {
+                "type": "string",
+                "pattern": "Framed poster$"
+               },
+               "active": {
+                "const": 1
+               }
+              },
+              "required": [
+               "name",
+               "active"
+              ],
+              "not": {
+               "properties": {
+                "name": {
+                 "pattern": "^Pack"
                 }
+               },
+               "required": [
+                "name"
+               ]
+              }
+             },
+             "pointer": "/name"
+            }
+           ]
+          }
+         }
+        }
+       },
+       {
+        "id": "r2-quantity-one",
+        "requirement": "R2",
+        "description": "Every framed-poster line in the cart has quantity 1.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "items": {
+            "if": {
+             "type": "object",
+             "properties": {
+              "product": {
+               "type": "string",
+               "pattern": "Framed poster$"
+              }
+             },
+             "required": [
+              "product"
+             ],
+             "not": {
+              "properties": {
+               "product": {
+                "pattern": "^Pack"
                }
               },
               "required": [
                "product"
               ]
-             },
-             "pointer": "/product"
-            }
-           ],
-           "expect": {
-            "sameAs": {
-             "source": {
-              "from": "probe",
-              "probe": "catalog"
-             },
-             "normalize": [
-              {
-               "op": "items",
-               "where": {
-                "properties": {
-                 "name": {
-                  "pattern": "Framed poster$",
-                  "not": {
-                   "const": "Pack Mug + Framed poster"
-                  }
-                 }
-                },
-                "required": [
-                 "name"
-                ]
-               },
-               "pointer": "/name"
+             }
+            },
+            "then": {
+             "properties": {
+              "quantity": {
+               "const": 1
               }
+             },
+             "required": [
+              "quantity"
              ]
             }
            }
-          },
-          {
-           "kind": "value",
-           "source": {
-            "from": "probe",
-            "probe": "cart",
-            "pointer": "/lines"
-           },
-           "expect": {
-            "schema": {
-             "type": "array",
-             "items": {
-              "if": {
-               "properties": {
-                "product": {
-                 "pattern": "Framed poster$",
-                 "not": {
-                  "const": "Pack Mug + Framed poster"
-                 }
-                }
-               },
-               "required": [
-                "product"
-               ]
-              },
-              "then": {
-               "properties": {
-                "quantity": {
-                 "const": 1
-                }
-               },
-               "required": [
-                "quantity"
-               ]
-              }
-             }
-            }
-           }
           }
-         ]
+         }
         }
        }
       ]
@@ -797,12 +845,13 @@
     }
    ],
    "usage": {
-    "inputTokens": 23488,
-    "outputTokens": 909,
-    "cacheReadTokens": 21120,
-    "cacheWriteTokens": 2366
+    "inputTokens": 26928,
+    "outputTokens": 1151,
+    "cacheReadTokens": 25731,
+    "cacheWriteTokens": 1195
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:11:45.079Z"
 }

@@ -379,6 +379,24 @@ async function commentAction(page: Page, author: string, action: 'Approve' | 'Sp
   await page.waitForTimeout(1500);
 }
 
+/** Opens a post in the block editor from the admin post list, with the Post settings tab shown. */
+async function openInEditor(page: Page, title: string): Promise<void> {
+  await page.goto(`${BASE}/wp-admin/edit.php?post_type=post&post_status=all`);
+  await page.locator('#the-list a.row-title', { hasText: title }).click();
+  await page.waitForURL(/post\.php/);
+  await page
+    .getByRole('tab', { name: 'Post', exact: true })
+    .click()
+    .catch(() => {});
+}
+
+/** Clicks the editor's publish button and the confirming one in the pre-publish panel. */
+async function editorPublish(page: Page, label: 'Publish' | 'Schedule', done: string): Promise<void> {
+  await page.getByRole('button', { name: label, exact: true }).first().click();
+  await page.getByRole('region', { name: 'Editor publish' }).getByRole('button', { name: label, exact: true }).click();
+  await page.getByText(done).first().waitFor();
+}
+
 async function newPost(page: Page, o: { title: string; body: string; category: string }) {
   await page.goto(`${BASE}/wp-admin/post-new.php`);
   const canvas = page.frameLocator('iframe[name="editor-canvas"]');
@@ -404,11 +422,22 @@ const TASKS: RealTask[] = [
     start: '/wp-admin/',
     user: 'admin',
     oracleDoc: 'The post "Spring meetup recap" has status publish; no other post changed status.',
+    route: 'through Quick Edit in the post list',
     async reference(page) {
       await quickEdit(page, 'Spring meetup recap', (form) =>
         form.locator('select[name=_status]').selectOption('publish'),
       );
     },
+    alternatives: [
+      {
+        name: 'block-editor',
+        route: 'through the block editor',
+        async run(page) {
+          await openInEditor(page, 'Spring meetup recap');
+          await editorPublish(page, 'Publish', 'is now live');
+        },
+      },
+    ],
     perturbations: [
       {
         name: 'perturbed-pending-review',
@@ -613,6 +642,25 @@ const TASKS: RealTask[] = [
     start: '/wp-admin/',
     user: 'admin',
     oracleDoc: 'The post "Old pricing announcement" has status trash; no other post changed status.',
+    route: "through the post list's Trash link",
+    alternatives: [
+      {
+        name: 'block-editor',
+        route: "through the block editor's Actions menu",
+        async run(page) {
+          await openInEditor(page, 'Old pricing announcement');
+          await page.getByRole('button', { name: 'Actions' }).click();
+          await page.getByRole('menuitem', { name: 'Move to Trash' }).click();
+          const dialog = page.getByRole('dialog');
+          if (await dialog.isVisible().catch(() => false))
+            await dialog
+              .getByRole('button', { name: /Trash|Delete|OK/ })
+              .last()
+              .click();
+          await page.waitForURL(/edit\.php/);
+        },
+      },
+    ],
     async reference(page) {
       await openPostRow(page, 'Old pricing announcement');
       const row = postRow(page, 'Old pricing announcement');
@@ -722,6 +770,24 @@ const TASKS: RealTask[] = [
     user: 'admin',
     oracleDoc:
       "The post's tags are exactly its seeded [performance] plus testing; its categories are unchanged ([Tutorials]) and it is still published.",
+    route: 'through Quick Edit in the post list',
+    alternatives: [
+      {
+        name: 'block-editor',
+        route: "through the block editor's Tags panel",
+        async run(page) {
+          await openInEditor(page, 'Flaky tests and how to avoid them');
+          const input = page.getByRole('combobox', { name: 'Add New Tag' });
+          if (!(await input.isVisible())) await page.getByRole('button', { name: 'Tags', exact: true }).click();
+          // The panel loads the post's tags after it opens; a tag added before they arrive replaces them.
+          await page.locator('.components-form-token-field__token', { hasText: 'performance' }).waitFor();
+          await input.fill('testing');
+          await input.press('Enter');
+          await page.getByRole('button', { name: 'Save', exact: true }).click();
+          await page.getByText('Post updated.').first().waitFor();
+        },
+      },
+    ],
     async reference(page) {
       await quickEdit(page, 'Flaky tests and how to avoid them', async (form) => {
         const tags = form.locator('textarea[name="tax_input[post_tag]"]');
@@ -845,6 +911,20 @@ TASKS.push(
     user: 'admin',
     oracleDoc:
       "Exactly one new comment exists: by the admin, approved, a reply to Priya's comment (comment_parent), with the dictated text (final period optional); no other comment changed status.",
+    route: 'through Reply in the admin comment list',
+    alternatives: [
+      {
+        name: 'public-form',
+        route: "through the Reply link under Priya's comment on the public post page",
+        async run(page) {
+          await page.goto(`${BASE}/flaky-tests-and-how-to-avoid-them/`);
+          await page.getByRole('link', { name: 'Reply to Priya' }).click();
+          await page.locator('#comment, textarea[name=comment]').first().fill(REPLY);
+          await page.locator('#submit, .wp-block-post-comments-form input[type=submit]').first().click();
+          await page.waitForLoadState('load');
+        },
+      },
+    ],
     async reference(page) {
       await page.goto(`${BASE}/wp-admin/edit-comments.php`);
       const row = page.locator('#the-comment-list tr').filter({ hasText: 'Do you have an example for network waits' });
@@ -935,6 +1015,26 @@ TASKS.push(
     user: 'admin',
     oracleDoc:
       'The post "Roadmap 2027" has status future and post_date 2027-01-05 09:00 (site time, UTC); no other post changed status.',
+    route: 'through Quick Edit in the post list',
+    alternatives: [
+      {
+        name: 'block-editor',
+        route: "through the block editor's publish date picker",
+        async run(page) {
+          await openInEditor(page, 'Roadmap 2027');
+          await page.getByRole('button', { name: /^Change date/ }).click();
+          const pop = page.locator('.components-popover').filter({ has: page.getByRole('group', { name: 'Date' }) });
+          await pop.getByRole('combobox', { name: 'Month' }).selectOption('01');
+          await pop.getByRole('spinbutton', { name: 'Day' }).fill('5');
+          await pop.getByRole('spinbutton', { name: 'Year' }).fill('2027');
+          await pop.getByRole('spinbutton', { name: 'Hours' }).fill('9');
+          await pop.getByRole('spinbutton', { name: 'Minutes' }).fill('00');
+          await pop.getByRole('button', { name: 'AM', exact: true }).click();
+          await pop.getByRole('button', { name: 'Close' }).click();
+          await editorPublish(page, 'Schedule', 'is now scheduled');
+        },
+      },
+    ],
     async reference(page) {
       await schedule(page, 'Roadmap 2027', { mm: '01', jj: '05', aa: '2027', hh: '09', mn: '00' });
     },

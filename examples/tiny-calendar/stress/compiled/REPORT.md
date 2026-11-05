@@ -2,9 +2,9 @@
 
 | Task | Variants accepted | Mutants rejected (fail / abstain) | Over-constrained | Weak | Missed |
 |---|---|---|---|---|---|
-| tiny-calendar/01-lunch | 30/30 | 28/28 (18 / 10) | – | – | 0 |
+| tiny-calendar/01-lunch | 28/28 | 26/26 (16 / 10) | – | – | 0 |
 | tiny-calendar/02-reminder | 22/22 | 8/8 (8 / 0) | – | – | 0 |
-| tiny-calendar/03-rsvp | 22/22 | 12/12 (12 / 0) | – | – | 0 |
+| tiny-calendar/03-rsvp | 22/22 | 4/4 (4 / 0) | – | – | 0 |
 | tiny-calendar/04-move-dentist | 22/22 | 10/10 (10 / 0) | – | – | 0 |
 | tiny-calendar/05-delete-standup | 24/24 | 14/14 (14 / 0) | – | – | 0 |
 | tiny-calendar/06-location | 22/22 | 4/4 (4 / 0) | – | – | 0 |
@@ -12,13 +12,13 @@
 | tiny-calendar/08-week-start | 18/18 | 4/4 (4 / 0) | – | – | 0 |
 | tiny-calendar/09-rename-dentist | 22/22 | 8/8 (8 / 0) | – | – | 0 |
 | tiny-calendar/10-workshop | 22/22 | 6/6 (6 / 0) | – | – | 0 |
-| **tiny-calendar** | **224/224** | **96/96** (86 / 10) | | | 0 |
+| **tiny-calendar** | **222/222** | **86/86** (76 / 10) | | | 0 |
 
 ## tiny-calendar/01-lunch v1
 
-- Valid variants accepted: **30/30** (100%)
-- Mutants rejected: **28/28** (100%; 18 by fail, 10 by abstain)
-- Mutants with a success claim added still rejected: 28/28
+- Valid variants accepted: **28/28** (100%)
+- Mutants rejected: **26/26** (100%; 16 by fail, 10 by abstain)
+- Mutants with a success claim added still rejected: 26/26
 ## tiny-calendar/02-reminder v1
 
 - Valid variants accepted: **22/22** (100%)
@@ -27,8 +27,8 @@
 ## tiny-calendar/03-rsvp v1
 
 - Valid variants accepted: **22/22** (100%)
-- Mutants rejected: **12/12** (100%; 12 by fail, 0 by abstain)
-- Mutants with a success claim added still rejected: 12/12
+- Mutants rejected: **4/4** (100%; 4 by fail, 0 by abstain)
+- Mutants with a success claim added still rejected: 4/4
 ## tiny-calendar/04-move-dentist v1
 
 - Valid variants accepted: **22/22** (100%)
@@ -41,7 +41,7 @@
 - Mutants with a success claim added still rejected: 14/14
 
 **Checks without a targeted mutant**
-- r1-standup-gone
+- R1-standup-gone
 ## tiny-calendar/06-location v1
 
 - Valid variants accepted: **22/22** (100%)

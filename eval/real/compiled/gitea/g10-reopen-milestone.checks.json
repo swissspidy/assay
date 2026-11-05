@@ -27,9 +27,9 @@
   ],
   "checks": [
     {
-      "id": "r1-issue-open",
+      "id": "r1-issue5-open",
       "requirement": "R1",
-      "description": "The backend issues probe for acme/webapp shows the issue titled 'Session expires too early' with state open.",
+      "description": "Backend probe shows issue #5 \"Session expires too early\" has state open.",
       "assert": {
         "kind": "value",
         "source": {
@@ -42,6 +42,9 @@
             "contains": {
               "type": "object",
               "properties": {
+                "number": {
+                  "const": 5
+                },
                 "title": {
                   "const": "Session expires too early"
                 },
@@ -50,6 +53,7 @@
                 }
               },
               "required": [
+                "number",
                 "title",
                 "state"
               ]
@@ -59,9 +63,9 @@
       }
     },
     {
-      "id": "r2-issue-milestone",
+      "id": "r2-issue5-milestone-v11",
       "requirement": "R2",
-      "description": "The backend issues probe shows the issue titled 'Session expires too early' assigned to milestone v1.1.",
+      "description": "Backend probe shows issue #5 \"Session expires too early\" is in milestone v1.1.",
       "assert": {
         "kind": "value",
         "source": {
@@ -74,6 +78,9 @@
             "contains": {
               "type": "object",
               "properties": {
+                "number": {
+                  "const": 5
+                },
                 "title": {
                   "const": "Session expires too early"
                 },
@@ -82,6 +89,7 @@
                 }
               },
               "required": [
+                "number",
                 "title",
                 "milestone"
               ]
@@ -97,6 +105,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:13:54.200Z"
+    "at": "2026-11-05T21:04:47.517Z"
   }
 }

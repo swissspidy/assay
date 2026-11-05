@@ -7,26 +7,23 @@
   ],
   "turns": {
     "rubric": 1,
-    "discovery": 3
+    "discovery": 4
   },
   "usage": {
-    "inputTokens": 60068,
-    "outputTokens": 1542,
-    "cacheReadTokens": 37470,
-    "cacheWriteTokens": 22586
+    "inputTokens": 92152,
+    "outputTokens": 1924,
+    "cacheReadTokens": 66657,
+    "cacheWriteTokens": 25481
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "In the acme/webapp repository, open a new issue",
       "checks": [
-        "r1-issue-created-open",
-        "r1-issue-is-new",
-        "r1-create-request"
+        "r1-new-issue-created"
       ],
       "channels": [
-        "probe",
-        "network"
+        "probe"
       ],
       "trust": "structured"
     },
@@ -53,9 +50,7 @@
       "trust": "structured"
     }
   ],
-  "warnings": [
-    "check r1-issue-is-new: reads only the state before the task, which does not depend on what the agent did; compare it with the state after (sameAs)"
-  ],
+  "warnings": [],
   "references": [
     {
       "name": "reference",

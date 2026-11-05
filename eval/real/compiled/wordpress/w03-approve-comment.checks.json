@@ -20,90 +20,41 @@
     {
       "id": "dana-comment-approved",
       "requirement": "R1",
-      "description": "The backend comments probe shows Dana's comment on post 4 (\"Getting started with Assay\") with status approved, and no Dana comment on that post still held.",
+      "description": "In the backend comments probe, comment id 3 by Dana on post 4 (\"Getting started with Assay\") has status approved.",
       "assert": {
-        "kind": "allOf",
-        "of": [
-          {
-            "kind": "value",
-            "source": {
-              "from": "probe",
-              "probe": "posts"
-            },
-            "expect": {
-              "schema": {
-                "type": "array",
-                "contains": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "const": 4
-                    },
-                    "title": {
-                      "const": "Getting started with Assay"
-                    }
-                  },
-                  "required": [
-                    "id",
-                    "title"
-                  ]
-                }
-              }
-            }
-          },
-          {
-            "kind": "value",
-            "source": {
-              "from": "probe",
-              "probe": "comments"
-            },
-            "expect": {
-              "schema": {
-                "type": "array",
-                "contains": {
-                  "type": "object",
-                  "properties": {
-                    "post": {
-                      "const": 4
-                    },
-                    "author": {
-                      "const": "Dana"
-                    },
-                    "status": {
-                      "const": "approved"
-                    }
-                  },
-                  "required": [
-                    "post",
-                    "author",
-                    "status"
-                  ]
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "comments"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "const": 3
                 },
-                "not": {
-                  "contains": {
-                    "type": "object",
-                    "properties": {
-                      "post": {
-                        "const": 4
-                      },
-                      "author": {
-                        "const": "Dana"
-                      },
-                      "status": {
-                        "const": "hold"
-                      }
-                    },
-                    "required": [
-                      "post",
-                      "author",
-                      "status"
-                    ]
-                  }
+                "post": {
+                  "const": 4
+                },
+                "author": {
+                  "const": "Dana"
+                },
+                "status": {
+                  "const": "approved"
                 }
-              }
+              },
+              "required": [
+                "id",
+                "post",
+                "author",
+                "status"
+              ]
             }
           }
-        ]
+        }
       }
     }
   ],
@@ -113,6 +64,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T11:39:03.456Z"
+    "at": "2026-11-05T21:06:09.704Z"
   }
 }

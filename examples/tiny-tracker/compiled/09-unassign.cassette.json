@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T11:32:49.835Z",
  "turns": {
   "sha256:555e2539b4caea75fb759ca96609e2850877e15d458f266a7f563f0bd2828f0e": {
    "stop": "tool_use",
@@ -52,17 +51,17 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:d64353dc2bc0af7bf80a06a7cdd48e7e03a17659a7df65863b1ec9874d6d2978": {
+  "sha256:8dbacc58c6632c2cbb91ad0fd3d3f24c8df6b73ec3a1a99e5c4585c878939386": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Ufi7kdof7wtD8zaPXZFY1y",
+     "id": "toolu_01G751zZ7RhYPkHw5oKqKVJD",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_0137JHhopCp4hETFJGakCCYh",
+     "id": "toolu_01PTPg2wpnfwnDfjEQfSdk3g",
      "name": "network_log",
      "input": {}
     }
@@ -70,7 +69,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01Ufi7kdof7wtD8zaPXZFY1y",
+     "id": "toolu_01G751zZ7RhYPkHw5oKqKVJD",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -79,7 +78,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_0137JHhopCp4hETFJGakCCYh",
+     "id": "toolu_01PTPg2wpnfwnDfjEQfSdk3g",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -88,26 +87,116 @@
     }
    ],
    "usage": {
-    "inputTokens": 17766,
+    "inputTokens": 18775,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 17762
+    "cacheWriteTokens": 18771
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:b681ccb4f5afa2ab75aed67dfcdaf3ccf5cf2c9f03f4beeb2422519f64223845": {
+  "sha256:c438c3bea0b687a574acf404aa75b1cbb17907ffaafc9ce0049cbec9740fba30": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01CeeHKtDs5YbjPFrCB7jhdA",
+     "id": "toolu_013ebfrPa86N7U4ohDUJxR2w",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "id",
+           "assignee"
+          ],
+          "properties": {
+           "id": {
+            "const": 2
+           },
+           "assignee": {
+            "type": "null"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQStgcKEAgTGAI4AUIIdGhpbmtpbmcSDMZmRjeF9xHuhfXx0BoMdqhPVSc+W+sGJZd5IjB5bKPjgl34bD77ZMdK0wDI1rsdvea7+UL52hZlmHNx8bThXmFGuMlTajuIuY4BoXEq0wbHAqr2OOJqpHPwoHmLuI+mREi2ZlD9O3+ZY53i2+5BTp7ziIg9auvlQ8jWIOgN/Ulkl8JF9et+BzpIcLUfKylxZbrqLWpxjyCEhKbrsJ89bHcqIsztUF07H4e9SZwmixTiLxGe8TtE4n5oVkR7px7mbIBodn+L1mI8U6Gwdm5Inl/5dnz1Aw2SAPiZ8fUk4Tj4o7oRowMCc38cIBw1PqxkHmqXAa3vcCGBm2jW0kJvzMZEnG/wXovOJY2knFqGch5ntfTaj12LtO9rHgcF/OPO5+mDNCovFeadtdWJQQwbg1X1pcpRlT6J7lBXyDEFJTcamh2CfWxWB6UbWvV+qjxBLLYZ1JwqBZhCI+X/aRiVEy4MB1Ch/X+d5ADq9VlKVSwLUrT4gzAXRaLZ3DNvMb9n1teW0vp3JPgbpqU4Wj2syp+XvwyRoKWaDdtE8takqsRbkQs0zK3Oa+vL8NN2kO3S/wtKX7HVQlelh83/AeQDEkZhBlK3zbra42POoMQxFfke8unINwhTJ8Xbf3EnT+q1us/XIRHhMI+cJEuiIlK97r76NJj70EK3kImpFaTUV3CXaybP7ffRdXRcPUQz9XWAscdjYujEMF5Mwfbl4Lw0T38wfEyaTrD8neTtH2mfZUsFKlLfzzXBcWs1zVwjps9sku+JV8HsYxFLn+0r23fOwOowYki2S0z02rgGeLE1JxatedIDBf61aX21bO150qpT+fCfWkljj0CJ+xr8VJickpx9tFwfU6J+FA9+TfomymKTRMjDz+vzgZ/X9aXibXu0aqUONTZF8XyAmg4QEleHKyDR20QhKraq2E73VmnkSpXbyAWdCqu/rY+VAciLysKZUAI7Pk53xYCDmO4Ffew7ajpP7Y7g2a5Acoe0w96dj3/wsgcztvsI8kOApavQE8tlc2mOi+AFwIH+ybOds1dDWHKwtqJiWmaIpyDEa7Pk5ur+YnZpuh3aejnpudxSWUuYKhcfU8u71BbrVoXk+H1soCpRujHpfF9lIZhvl3wfEN1uuV7pVMIH8JYgwj0GE0Pofr0j9K6BO1m3G//9gsXL/OmNyEdE4qqNzEgvbFnApJoViHEaiZZxhGdwWE2REHEL8EKP3DF40CF3GBG9n+xfqErrfxgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_013ebfrPa86N7U4ohDUJxR2w",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "id",
+           "assignee"
+          ],
+          "properties": {
+           "id": {
+            "const": 2
+           },
+           "assignee": {
+            "type": "null"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 19240,
+    "outputTokens": 254,
+    "cacheReadTokens": 18771,
+    "cacheWriteTokens": 467
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:62f6219f8dd33909755af95c0fd222a1495e30812b7268259b817dd6e69b56c0": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Upe19T2z92jZzvF8UwTfJu",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "issue2-unassigned-probe",
+        "id": "issue2-unassigned",
         "requirement": "R1",
-        "description": "The backend issues list holds issue id 2 with a null (or missing) assignee.",
+        "description": "The backend issues list holds issue #2 with its assignee set to null.",
         "assert": {
          "kind": "value",
          "source": {
@@ -120,39 +209,15 @@
            "contains": {
             "type": "object",
             "required": [
-             "id"
+             "id",
+             "assignee"
             ],
             "properties": {
              "id": {
               "const": 2
-             }
-            }
-           },
-           "items": {
-            "if": {
-             "type": "object",
-             "required": [
-              "id"
-             ],
-             "properties": {
-              "id": {
-               "const": 2
-              }
-             }
-            },
-            "then": {
-             "properties": {
-              "assignee": {
-               "anyOf": [
-                {
-                 "type": "null"
-                },
-                {
-                 "type": "string",
-                 "maxLength": 0
-                }
-               ]
-              }
+             },
+             "assignee": {
+              "type": "null"
              }
             }
            }
@@ -168,11 +233,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS4gYKEAgTGAI4AUIIdGhpbmtpbmcSDAE2+kYCx2xD0jaXnRoMpf/4MfsZo3gy9H9VIjAlbh3gmWK+eeRMkLVI9TP3uklsKj/fzlkxdgwxMIfFLG+blcLH3BFtPnv6rOU5Imcq/wUsR+s5qZsLK7J90E92irkCaX97tSvKJcfhWbfaqI3YOogP8YgHbqaJB2pdQtrlvFcigcViiNM6jo87IV9pshFmeAK8r6ZxnSyy0FiQf0pef1KW24gNlWOFUtQvSblgmnIBb8Fxbm2kc+Iuia1kulpDyEfkDyY3uKTVuWow+N0tpQv3CUy0b7R86vK2sfAUykvJPQB8MN62zSoCMVtR3sh70lCKHLMwO8lnW2XxYXoXH7HzONPVeB8iNtMoj5Vdh+RaFKh0NWrpO0nHHzyCaXwLQHWZdEz0ZJj6MxKjHEXbWF8EsVVBf7EMvyKs29NUXF18d6gpcPcFEGIQOEeGkVg+Zz7fnX/xDA4OoeTHdb7+RVrt/QlDKcA4wg1qZR55ydTLdQpyuV3p3jyrt/BvK3zQpZCS/Qkd9HLvPSf15SBuabvqDlBRqB3fikI+laXAfpeJ/z8TDYbE/so0EhPiiNosMf61p0rjsGCWcRak/rN2BtZJUfoa0OyqMDMm9kFuUy22o4wac1W+wMPps97b8OlHGJXYUJcv5GV4y6rV2pJXxwv8tyc0HRMy80RL4+gu02RCVZen4AN2v86WgLuZvBqzkNuyH7cM7TvVluzSUWTS1YucjXE3eYNUq5If5il1To1Yy9wRoKzO86Cq3s0TYO+jgUrymcSqK8YWVPEg6ytLPkthssNnU7msuIUScmiGCBGrA8xnJwXg9Z6aSgGzmtO/cOZobDFZpU2FfQSw6w3Ezu6r0t2ii7Hvlko5FEQtaVR+6OKsoV4T+kl5KEZ/Nrp7gPgD8ghwL+7ZV9/cYB7yV3vsoPHDIE6rJRAhpSTrpQJAR9pixyzhsVfya0GArM7hw88Hqr6jS/rkL7R8TDYBBYv28gJJUH61DXlWQd17B6xEP9Fm2a5ZboRyaB13QaN+WjAZWGh6nLVaRMg1jadvmUyRl+rSxHYT0PfHiQyHBHcxcsBf4Qic3TR30n64ZX0C/CezImxhT4APc5gKrJVgSBqlo3+FCWYNTvAhkhKLOxgB"
+     "signature": "CAQShgYKEAgTGAI4AUIIdGhpbmtpbmcSDLfANIepErpSvyh+fBoMpM7j0I42mgZKWLUzIjCpJI4zquQ686L/mQHcn4CVrJQxq7TuPKo9IywTO8BHyuNxmlyj6SVTWgWbMV3o1cIqowVisM8lfiNR6pA5LFf4VrPz0sqcd0Q1P3KeqO3ZFwXW4b3IeFM8NJ3Srt3ilwtPaPezEDQWHYbyJKR4VDjUalfkkD78QKvCi8DVmmrr0Xb59muReen2Ud9OAktftcZ//KnVx0jFIJzt+/2MsNy108f1bChU863CgX7N5TRfE3W0YPF99J1CcEZwwj3HUp2EWosbPJgls9zXoI4qHYOh4SLO9MZ40xazw6vtodnRgOVk0JeJb+3QWH+8x7DbzsSEM6AwfaXaCmdFL+MITQXTM0qWeW5wb+PMs9c/Zb+V+avv0KXsPXl6rlym5vR2r2qH9YtdDv+a/4OqmjMQOFhcqGZySa50XRzXpq3nEGbBarK5u68SE43kxO2agZ7qOPspRC++Ty+meuA4X6nG3Aae8zetWQYYm/ViKcrF6EDdafqtJNztvb5Hr+C5oGc1Hl00YLd4woeHkO6j8PO5iHAcKcBeoOAEcjdJmzAeZOYNucXPTG6NoUYLF0TDOeQaXjmJpwRqn0eb6DVxjQyOB0rP9RcDjiMjKx6l3i0P2uQ3h/TUB0xImaD6NTYSHNgjWAYZvSTEyqeGfYQ8L2VUq9/tX7bWmS9N3RwzyrzH7Et/Dpq6THFLaohRP+OQIIee9r6EklGEVxZHA+YQAinA7N3U1vsU1H5XVgwTb3NeDTN5iPr23g7lnQz1MO6HgFVDs2sgjFN2ak/Q2wbAr5nR7p3bq1NQhZq+8WweT8feUPjm4sZVEDdpoMARAv9HlKSxCOSbIJjW6ptlu+2/ZhRsWNWou6ciO1R/h/oPeMyJo52CSno95MSpKZrvpsyHXf0oqd8yUWC1sTzNiUVNpMqkpQy3otWK8e9ZJ00ykz/wtBBPuNa8zC3UGJmrDCmDSTpxVTq75WQSUBIYAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01CeeHKtDs5YbjPFrCB7jhdA",
+     "id": "toolu_01Upe19T2z92jZzvF8UwTfJu",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -180,9 +245,9 @@
      "input": {
       "checks": [
        {
-        "id": "issue2-unassigned-probe",
+        "id": "issue2-unassigned",
         "requirement": "R1",
-        "description": "The backend issues list holds issue id 2 with a null (or missing) assignee.",
+        "description": "The backend issues list holds issue #2 with its assignee set to null.",
         "assert": {
          "kind": "value",
          "source": {
@@ -195,39 +260,15 @@
            "contains": {
             "type": "object",
             "required": [
-             "id"
+             "id",
+             "assignee"
             ],
             "properties": {
              "id": {
               "const": 2
-             }
-            }
-           },
-           "items": {
-            "if": {
-             "type": "object",
-             "required": [
-              "id"
-             ],
-             "properties": {
-              "id": {
-               "const": 2
-              }
-             }
-            },
-            "then": {
-             "properties": {
-              "assignee": {
-               "anyOf": [
-                {
-                 "type": "null"
-                },
-                {
-                 "type": "string",
-                 "maxLength": 0
-                }
-               ]
-              }
+             },
+             "assignee": {
+              "type": "null"
              }
             }
            }
@@ -240,12 +281,13 @@
     }
    ],
    "usage": {
-    "inputTokens": 18231,
-    "outputTokens": 354,
-    "cacheReadTokens": 17762,
-    "cacheWriteTokens": 467
+    "inputTokens": 19570,
+    "outputTokens": 235,
+    "cacheReadTokens": 19238,
+    "cacheWriteTokens": 330
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:10:14.970Z"
 }

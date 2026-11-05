@@ -7,22 +7,22 @@
   ],
   "turns": {
     "rubric": 1,
-    "discovery": 4
+    "discovery": 5
   },
   "usage": {
-    "inputTokens": 91539,
-    "outputTokens": 2330,
-    "cacheReadTokens": 63594,
-    "cacheWriteTokens": 27931
+    "inputTokens": 123370,
+    "outputTokens": 1858,
+    "cacheReadTokens": 92806,
+    "cacheWriteTokens": 30548
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "Show me the list of draft posts.",
       "checks": [
-        "r1-url-draft-filter",
-        "r1-drafts-listed",
-        "r1-no-published-listed"
+        "url-draft-filter",
+        "rows-are-drafts",
+        "draft-posts-listed"
       ],
       "channels": [
         "url",
@@ -32,6 +32,7 @@
     }
   ],
   "warnings": [
+    "rows-are-drafts still passes when its own evidence is broken (one matching item is missing (partial completion) [reference/rows-are-drafts:records:one-fewer]; row \"Select All Title Sort ascending. Author Categories Tags Date\" is there instead [reference/rows-are-drafts:records:wrong-item]).",
     "Advisory: the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable [reference/claims-only]"
   ],
   "references": [

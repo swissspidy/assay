@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T11:29:27.040Z",
  "turns": {
   "sha256:91d57a1c002d1c4d527a3ffb22860a77d1e8596635e71de70e87624d726d132b": {
    "stop": "tool_use",
@@ -66,35 +65,21 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:7f6c2eef50577614526c3d22c91a436d1dafb66819b9afc70835211f98e72361": {
+  "sha256:3e1e51352ef09b527e5d509fadd8dea82daca06e51d9524c7766da6a8fa21595": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01WvsdtEhi3iRcDHRaVUM14s",
+     "id": "toolu_016jdsrskur6rLEkXTfR2Vt9",
      "name": "probes",
-     "input": {}
-    },
-    {
-     "id": "toolu_01KX1NFgLpraPa9QUdfk2Ltw",
-     "name": "network_log",
      "input": {}
     }
    ],
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01WvsdtEhi3iRcDHRaVUM14s",
+     "id": "toolu_016jdsrskur6rLEkXTfR2Vt9",
      "name": "probes",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {}
-    },
-    {
-     "type": "tool_use",
-     "id": "toolu_01KX1NFgLpraPa9QUdfk2Ltw",
-     "name": "network_log",
      "caller": {
       "type": "direct"
      },
@@ -102,26 +87,26 @@
     }
    ],
    "usage": {
-    "inputTokens": 18676,
-    "outputTokens": 48,
+    "inputTokens": 19985,
+    "outputTokens": 25,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 18672
+    "cacheWriteTokens": 19981
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:6e881d284727abff03e7406790de073c61196b1d9c23c0e8c21ca680bdb50e31": {
+  "sha256:5bc00029b71f19c1c2a25ccdb27f9c4f712fd26d499a5c3a1f7113b320a20841": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01FVgh9NPP1amQb3eXUpLKy4",
+     "id": "toolu_01BftsQAbf81Gyeduw8YokKP",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
         "id": "r1-no-red-mug",
         "requirement": "R1",
-        "description": "The backend cart probe holds no item with SKU MUG-RED or named Red Mug.",
+        "description": "The cart stored by the backend holds no item named Red Mug or with SKU MUG-RED.",
         "assert": {
          "kind": "value",
          "source": {
@@ -136,18 +121,6 @@
             "contains": {
              "anyOf": [
               {
-               "type": "object",
-               "properties": {
-                "sku": {
-                 "const": "MUG-RED"
-                }
-               },
-               "required": [
-                "sku"
-               ]
-              },
-              {
-               "type": "object",
                "properties": {
                 "name": {
                  "const": "Red Mug"
@@ -155,6 +128,16 @@
                },
                "required": [
                 "name"
+               ]
+              },
+              {
+               "properties": {
+                "sku": {
+                 "const": "MUG-RED"
+                }
+               },
+               "required": [
+                "sku"
                ]
               }
              ]
@@ -167,7 +150,7 @@
        {
         "id": "r2-others-kept",
         "requirement": "R2",
-        "description": "Every non-Red-Mug item in the cart after the task matches the cart's non-Red-Mug items before the task, as whole records.",
+        "description": "The cart items after the task, ignoring any Red Mug, equal the cart items before the task without the Red Mug (same products and quantities).",
         "assert": {
          "kind": "value",
          "source": {
@@ -183,22 +166,22 @@
              "anyOf": [
               {
                "properties": {
-                "sku": {
-                 "const": "MUG-RED"
-                }
-               },
-               "required": [
-                "sku"
-               ]
-              },
-              {
-               "properties": {
                 "name": {
                  "const": "Red Mug"
                 }
                },
                "required": [
                 "name"
+               ]
+              },
+              {
+               "properties": {
+                "sku": {
+                 "const": "MUG-RED"
+                }
+               },
+               "required": [
+                "sku"
                ]
               }
              ]
@@ -222,22 +205,22 @@
                "anyOf": [
                 {
                  "properties": {
-                  "sku": {
-                   "const": "MUG-RED"
-                  }
-                 },
-                 "required": [
-                  "sku"
-                 ]
-                },
-                {
-                 "properties": {
                   "name": {
                    "const": "Red Mug"
                   }
                  },
                  "required": [
                   "name"
+                 ]
+                },
+                {
+                 "properties": {
+                  "sku": {
+                   "const": "MUG-RED"
+                  }
+                 },
+                 "required": [
+                  "sku"
                  ]
                 }
                ]
@@ -257,11 +240,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSlgsKEAgTGAI4AUIIdGhpbmtpbmcSDIqy27ur+yMz3cwFeRoMIL6+K84HSIJXdTCxIjBCbS/bs+suI6XHi7HW7CpW5HbjzKRGUdvAhhF9EKaD9KcsEI+yhjNzSzTVFvlk7O8qswpjZ/ce9mIf6KV+1wUQjKpeWR7v6aTVej0FbNtRnU50/3IiC68GiH2kYSciIEikUfq3tW5DkeRIk/P1VN/R1jm+Oz7UZQrknulG8W/Mf9DAsCslQnSmzi5Y7wu5ku4JWHVp1f62yHgxuvZjcAqv1M4KVfLSWjMyOlPxFUatJ78timKaSEbd9+7GDN7sIdp3nHcoSkglsFZW7S2nxkqn5D3ed8lY0z/VjtYq2kDhmY57wzmuIf5iNCnTpMb2UNBfAU1qfuCViW6pH7FK0iKUurVAicnzU1ATsgzGWBk2NTEO6KikdhIms4ftDRv4n41wuqQZBIdO2CdBzcrRMy+uvtYDvORTSfcGmDbtv+4Hjg9lcgS/tZn8pzUnmWPDltkbH4d2DrmXqQL4TC411Nn2Wj3lMcRUigAfetui8yBF+6H+JVFEuok3hGQSi1uqNeafwyjldzRVT2zPlHI7do0f/wdJ7Rny7RMM4u79of2Sj5cO5LL5dHUCkbwrwANtU03Vio3S0BJBgBag/Q2/9kWbz7K78t1amdlHvsbNEsfGYMHLTfd3DEkGmdU0vTfwSZrjx53wM+9BaVEh7fQzr97iFyu3NE/yyvfducmoE0WdkxCEgTNGXYBEX+BbX3VjOzNhvEOTExtIRcVOfkB+hBOBggJTjdNVnXfndU0x2+kIAZ/d7MDp0Zj7KOwq6YnbHiVqPvlGWXooQXLzfbvBGIq8/wkl0zFQw2FT7ktrz77ob5YXpNsAsCMzKxSaxuIEf2GIY4nOB7r47WrcuIUmMVubnvvqGlcjcParRr8JAR+SRdVRN5vOjR5TV//BsdrP/i/rvN4uWnHkvFk6OtPlPR3dr3+/qp0keogjJyo4VHBp+CnYkHTP9T+giIZwrAMDhsezsn0JFEt2dbwFaSLhxf/9FnUFzuV5Zyi/1BW72Jz4DGHdhLSMiF5Y3UlNLVx45boeNbj7YCE+8x/6+0ZevHg+UqqouDi7UpalIKBlL5KYplBFzJQdAnzzjn6jX+8h136bV9DJMZW/uueO6xhARp7+mgdyPNG+YWHkADJRcbcNT0M0FI0wwmtkf7WhT+3z5nwWKhzob92gmCxmhqYXetngkKF4i6S8YovrxVNsa+1swWgth0PKUzDnDBQlzB0dzKSnh+9tyfjNEiz5VeJkEtesAd23JFrK3AHPY1TI5xxFOUEguzi1PeFe9jzBBajPL4aNLX/Se16maGizBCDdQw9Kcxr5xGEIynv2LC4/F7Yl+TfH8OUIXknKZHdcuxYANsKb26ADC9K1a/FJS2BG11SWJH2xeK+b5HGpRj/gp6eMeoiQby4ip9m+hTWcwF/hfSUHiDQZq8YQMHeQSknoLwfqT7kOcFPRni/cCu7YXjtuFV2UNx+X3fbSwI9dX33aUY3WfkRhrRiR1Th4B3EfH8gaHSQEvDLDNW6OWYfBPdHJ/WAh7+TgcGP4h6f5hKMePT/f9dtjnyvdhWDMcr4/mrd/lQGz+wBuScLEpi8aKx04t3Yrz1ktmpApfF49eiWMSTs6LrvwG3Pg2CbK4dC29Usy0GbKjZVVz7uLWeRzKZuGkYTfth4Ra+AQYGDZ5ji5ZTCvBqlTE/bOoXwI+JHILHoFd2ZV5aMz35Gj0DWvV/yFzD59x1aVbjJF184G3gZ8f8zPUuZ9ZGfY0ZqJW6Li5V6G3v3+sfhzYI/oVWgfrDaZodw7gvV+Rwiwh3Ep2vt1ASxJXzAbY5byXyCqTlsuoN+sMWk5Tle7oHVBeNWuIG1nm/lU8l2cBhgB"
+     "signature": "CAQS/gYKEAgTGAI4AUIIdGhpbmtpbmcSDJiEwTBUtfrZqqzPQxoMKj2WWeL8L7I5KTDQIjChytM0wqoXZ1Rb1ANXCQ04dHMxrRo95xbWKJQj1Klj7Nv+Dle8yB12hlW0Qq1VWTAqmwZTSzQL163kUFRMvcUgHXeqY2tysRr7LgVpAIjdQF6mm2PXQC1fLG4+MtEk6WSsgXmuGtdieXe8QEE/N8h2kMOpynlpqNulbgOwW3hfUgm4qOgxDyonpG3D9IWEl+sTvzdmH4Z4AtD9fe48vdteBMjRmVUIZTdKwPOcac0Ic8w8EBb/aQ/iz9qXckikEiNIWKMlvy8PkRjXplNNZL4o0DM1h6NGsTLEIdsxu/BnuEey6Blwg55n0mXsS+JpBbf6A3+EZl+fgCHgL9fX5ekTPTr2mPpF6sgnjJsL/VUFFPKlf/DFu8P//VhID0UwMN+sXWJE8x1w6fF5OWtC4gSX8XFdJHyYxrKZ2L6i1ciKKJFZx6C/LjT/bfu3Ga2Mim7aA4YmPjfE8+Yef7br6Vwen1cyWqkPJgyHoZsKZASGi4x2zD3PjEV/IqZlxQN2BZ9iu8KSCWn/stGL5goBSB3ZVbHcInGhZD7pP0HjbqNystojuuDGs/8tMZ1C1RiaIkSfQ+uu4GE2FdUAK05tMTZ7PJltpHPDFKSh2DFy8K8Pb5OAJ5ynjZw/Jn2ggSMoh0jhgUVsX2bitf9cJX1/yfC4/YYrJWvx1QWZHZALimtaIVnUaV8qyo3JscPhJCCF8olNGrmUi/4oYi5cZTB8KUFdqg/I25Gb3S4pkKbqm2XUGkuo0xunGXjC3KlRbg/Pv5bFnEBOBuc1TtQE8vLT+EJketDFh3mIxxKNpPRg2eeVy0w9ChUwA+4YxLiTYZolhNQeCcr1seb2fl7eGk1dqKMUewp+s8fwf8q83Rabdd6wjSDJEwtcWb55HijxWxym6dX61tmilmVdokbkG19eDt/w37/bGazTU1SKcFzO7rKhVyHyb+jLOs8Z6xeCc6+hXV+uF0KGZ3fZFf8N3mFYo/K4PbgzIkAy0UUfsYyIwJMhdo0wxnjeCnaRCWL12rCGPUHnrAuxzsIlU8mk6OrQan6AHQfU0DQ1apG/QD5rlJL/NgzTiXetKdg2ECRW/jb5qwf5/BsONFpLGRnp4Pc5Isgn+pY2FFt8ICv8nDJMQpYYAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01FVgh9NPP1amQb3eXUpLKy4",
+     "id": "toolu_01BftsQAbf81Gyeduw8YokKP",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -271,7 +254,7 @@
        {
         "id": "r1-no-red-mug",
         "requirement": "R1",
-        "description": "The backend cart probe holds no item with SKU MUG-RED or named Red Mug.",
+        "description": "The cart stored by the backend holds no item named Red Mug or with SKU MUG-RED.",
         "assert": {
          "kind": "value",
          "source": {
@@ -286,18 +269,6 @@
             "contains": {
              "anyOf": [
               {
-               "type": "object",
-               "properties": {
-                "sku": {
-                 "const": "MUG-RED"
-                }
-               },
-               "required": [
-                "sku"
-               ]
-              },
-              {
-               "type": "object",
                "properties": {
                 "name": {
                  "const": "Red Mug"
@@ -305,6 +276,16 @@
                },
                "required": [
                 "name"
+               ]
+              },
+              {
+               "properties": {
+                "sku": {
+                 "const": "MUG-RED"
+                }
+               },
+               "required": [
+                "sku"
                ]
               }
              ]
@@ -317,7 +298,7 @@
        {
         "id": "r2-others-kept",
         "requirement": "R2",
-        "description": "Every non-Red-Mug item in the cart after the task matches the cart's non-Red-Mug items before the task, as whole records.",
+        "description": "The cart items after the task, ignoring any Red Mug, equal the cart items before the task without the Red Mug (same products and quantities).",
         "assert": {
          "kind": "value",
          "source": {
@@ -333,22 +314,22 @@
              "anyOf": [
               {
                "properties": {
-                "sku": {
-                 "const": "MUG-RED"
-                }
-               },
-               "required": [
-                "sku"
-               ]
-              },
-              {
-               "properties": {
                 "name": {
                  "const": "Red Mug"
                 }
                },
                "required": [
                 "name"
+               ]
+              },
+              {
+               "properties": {
+                "sku": {
+                 "const": "MUG-RED"
+                }
+               },
+               "required": [
+                "sku"
                ]
               }
              ]
@@ -372,22 +353,22 @@
                "anyOf": [
                 {
                  "properties": {
-                  "sku": {
-                   "const": "MUG-RED"
-                  }
-                 },
-                 "required": [
-                  "sku"
-                 ]
-                },
-                {
-                 "properties": {
                   "name": {
                    "const": "Red Mug"
                   }
                  },
                  "required": [
                   "name"
+                 ]
+                },
+                {
+                 "properties": {
+                  "sku": {
+                   "const": "MUG-RED"
+                  }
+                 },
+                 "required": [
+                  "sku"
                  ]
                 }
                ]
@@ -404,12 +385,13 @@
     }
    ],
    "usage": {
-    "inputTokens": 19368,
-    "outputTokens": 914,
-    "cacheReadTokens": 18672,
-    "cacheWriteTokens": 694
+    "inputTokens": 20376,
+    "outputTokens": 702,
+    "cacheReadTokens": 19981,
+    "cacheWriteTokens": 393
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:08:25.912Z"
 }

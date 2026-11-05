@@ -20,7 +20,7 @@
     {
       "id": "posts-per-page-at-most-5",
       "requirement": "R1",
-      "description": "The backend settings probe shows posts_per_page is between 1 and 5 (at most 5 posts per page).",
+      "description": "The stored blog posts-per-page setting is between 1 and 5 after the task.",
       "assert": {
         "kind": "value",
         "source": {
@@ -28,6 +28,12 @@
           "probe": "settings",
           "pointer": "/posts_per_page"
         },
+        "normalize": [
+          {
+            "op": "number",
+            "locale": "en"
+          }
+        ],
         "expect": {
           "gte": 1,
           "lte": 5
@@ -41,6 +47,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:16:08.507Z"
+    "at": "2026-11-05T21:07:34.078Z"
   }
 }

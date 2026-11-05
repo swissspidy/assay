@@ -214,13 +214,29 @@ test.describe('validate, review, stress', () => {
     const ok = await assay(['stress', BLUE_MUG, '-r', shop('references/02-add-blue-mug')]);
     expect(ok.code).toBe(0);
     expect(ok.stdout).toContain('No problems found.');
-    const weak = await assay([
-      'stress',
-      shop('compiled/04-remove-red-mug.checks.json'),
-      '-r',
-      shop('references/04-remove-red-mug'),
-      '--json',
-    ]);
+    // A tolerance so wide nothing can fail is weak (the compiled sets have no weak check to borrow).
+    const total = JSON.parse(readFileSync(shop('tasks/06-cart-total.checks.json'), 'utf8'));
+    const lax = join(tmp(), 'lax.checks.json');
+    writeFileSync(
+      lax,
+      JSON.stringify({
+        ...total,
+        checks: [
+          {
+            id: 'C1',
+            requirement: total.requirements[0].id,
+            description: 'The cart total is about $21.50.',
+            assert: {
+              kind: 'value',
+              source: { from: 'node', target: { role: 'status', name: 'Cart total' }, field: 'text' },
+              normalize: [{ op: 'currency', locale: 'en-US', currency: 'USD' }],
+              expect: { approx: { value: { amount: 21.5, currency: 'USD' }, abs: 1000 } },
+            },
+          },
+        ],
+      }),
+    );
+    const weak = await assay(['stress', lax, '-r', shop('references/06-cart-total'), '--json']);
     expect(weak.code).toBe(1);
     expect(JSON.parse(weak.stdout).weak.length).toBeGreaterThan(0);
     const none = await assay(['stress', BLUE_MUG, '-r', ADDED_RED]);

@@ -148,9 +148,20 @@ function items(v: TypedValue, step: Extract<Normalizer, { op: 'items' }>): Json[
   const out: Json[] = [];
   for (const [i, item] of v.value.entries()) {
     if (keep && !keep(item)) continue;
-    out.push(
-      step.pick ? Object.fromEntries(step.pick.map((p) => [p, field(item, p, i)])) : field(item, step.pointer, i),
-    );
+    const x = step.pick
+      ? Object.fromEntries(step.pick.map((p) => [p, field(item, p, i)]))
+      : field(item, step.pointer, i);
+    if (!step.flatten) {
+      out.push(x);
+      continue;
+    }
+    // flatten: the field is a collection of its own (a post's tags); its members are the items.
+    if (!Array.isArray(x))
+      throw new NormalizeError(
+        `items: flatten needs an array at ${step.pointer ?? '/'} of item ${i}, got ${describeValue({ type: 'json', value: x })}`,
+        'type_mismatch',
+      );
+    out.push(...x);
   }
   return out
     .map((x) => [canonicalJson(x), x] as const)

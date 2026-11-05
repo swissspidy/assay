@@ -1,526 +1,479 @@
 {
-  "schema": "assay.cassette/v1",
-  "model": "anthropic:claude-opus-5-5@high",
-  "recordedAt": "2026-11-05T11:39:41.538Z",
-  "turns": {
-    "sha256:8050d7c4102761c39d2896b0caa978e365d356066dc70e65305869e5a5a1759f": {
-      "stop": "tool_use",
-      "text": "",
-      "toolCalls": [
-        {
-          "id": "toolu_014fZQ78qpFtnLg2jTKyzyeR",
-          "name": "submit_rubric",
-          "input": {
-            "requirements": [
-              {
-                "id": "R1",
-                "kind": "hard",
-                "text": "The poster is no longer in the cart.",
-                "field": "instruction",
-                "quote": "Remove the poster from my cart"
-              },
-              {
-                "id": "R2",
-                "kind": "hard",
-                "text": "All other items in the cart stay there.",
-                "field": "instruction",
-                "quote": "keep everything else"
-              }
-            ]
-          }
-        }
-      ],
-      "raw": [
-        {
-          "type": "tool_use",
-          "id": "toolu_014fZQ78qpFtnLg2jTKyzyeR",
-          "name": "submit_rubric",
-          "caller": {
-            "type": "direct"
-          },
-          "input": {
-            "requirements": [
-              {
-                "id": "R1",
-                "kind": "hard",
-                "text": "The poster is no longer in the cart.",
-                "field": "instruction",
-                "quote": "Remove the poster from my cart"
-              },
-              {
-                "id": "R2",
-                "kind": "hard",
-                "text": "All other items in the cart stay there.",
-                "field": "instruction",
-                "quote": "keep everything else"
-              }
-            ]
-          }
-        }
-      ],
-      "usage": {
-        "inputTokens": 1059,
-        "outputTokens": 155,
-        "cacheReadTokens": 0,
-        "cacheWriteTokens": 1055
-      },
-      "model": "claude-opus-5-5"
-    },
-    "sha256:f2be66bf56b7581f0c0d71cbf0607ae76b347f873972df14b6aac05c6e8e324b": {
-      "stop": "tool_use",
-      "text": "",
-      "toolCalls": [
-        {
-          "id": "toolu_01ECwTCWiWYLUMAktm8yXfdK",
-          "name": "probes",
-          "input": {}
-        }
-      ],
-      "raw": [
-        {
-          "type": "tool_use",
-          "id": "toolu_01ECwTCWiWYLUMAktm8yXfdK",
-          "name": "probes",
-          "caller": {
-            "type": "direct"
-          },
-          "input": {}
-        }
-      ],
-      "usage": {
-        "inputTokens": 16874,
-        "outputTokens": 25,
-        "cacheReadTokens": 0,
-        "cacheWriteTokens": 16870
-      },
-      "model": "claude-opus-5-5"
-    },
-    "sha256:8023e2d8e400711af2a0424f29a94dc03a05385ee8156f434a129dc1941e45f6": {
-      "stop": "tool_use",
-      "text": "",
-      "toolCalls": [
-        {
-          "id": "toolu_01F18LpGDV66pW5Znr1F2Wts",
-          "name": "submit_checks",
-          "input": {
-            "checks": [
-              {
-                "id": "R1-no-poster-in-cart",
-                "requirement": "R1",
-                "description": "The backend cart no longer contains any line whose product is a poster.",
-                "assert": {
-                  "kind": "value",
-                  "source": {
-                    "from": "probe",
-                    "probe": "cart",
-                    "pointer": "/lines"
-                  },
-                  "expect": {
-                    "schema": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "required": ["product"],
-                        "properties": {
-                          "product": {
-                            "type": "string",
-                            "not": {
-                              "pattern": "(?i)poster"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "id": "R1-no-poster-in-cart-ci",
-                "requirement": "R1",
-                "description": "No cart line product name contains 'poster' or 'Poster'.",
-                "assert": {
-                  "kind": "value",
-                  "source": {
-                    "from": "probe",
-                    "probe": "cart",
-                    "pointer": "/lines"
-                  },
-                  "expect": {
-                    "schema": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "required": ["product"],
-                        "properties": {
-                          "product": {
-                            "type": "string",
-                            "not": {
-                              "pattern": "[Pp][Oo][Ss][Tt][Ee][Rr]"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "id": "R2-others-kept",
-                "requirement": "R2",
-                "description": "The cart lines after the task equal the cart lines before the task minus the poster lines (same products, attributes and quantities).",
-                "assert": {
-                  "kind": "value",
-                  "source": {
-                    "from": "probe",
-                    "probe": "cart",
-                    "pointer": "/lines"
-                  },
-                  "normalize": [
-                    {
-                      "op": "items"
-                    }
-                  ],
-                  "expect": {
-                    "sameAs": {
-                      "source": {
-                        "from": "probe",
-                        "probe": "cart",
-                        "pointer": "/lines",
-                        "at": "before"
-                      },
-                      "normalize": [
-                        {
-                          "op": "items",
-                          "where": {
-                            "not": {
-                              "properties": {
-                                "product": {
-                                  "pattern": "[Pp][Oo][Ss][Tt][Ee][Rr]"
-                                }
-                              },
-                              "required": ["product"]
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "raw": [
-        {
-          "type": "thinking",
-          "thinking": "",
-          "signature": "CAQSuwcKEAgTGAI4AUIIdGhpbmtpbmcSDMZ/4wNXVBWDSiODNBoMc37lJENyi/eGD8lNIjASDv03ggImkC4C1mzgLlQ6RX+VmYlBMA4cXZcTHyRt+/CoC+Si8EHClopCLVgusy0q2AZXZuhXfprwGkLviEPA1HvTU4wOyJPBS4WjzRPkcwVfOzRiY9WhGjIhHr6t1g0rfB/NTA+zc74tKCxisNsSS2Xg/xZIZonFME82UmDFpGunHVGDAQ1KpAgnUM46vrqAG1DWzO7V8zNc44mdRrfdoW7ZD3K2X0PTP/dWYZ0V+SmFGxvemucUyrmG0o+7l4Bogh30Grw7Ew4/az4A1LHXMScwEuBlC48J+UQj0MLzmpE67e8j7lPGgpA7G/6EsjeXiMyuouwWPEjH7+JQ9LHZRSI9Y8tpTIx8xrnuhZbAQIFa+F4Narntan9KxZkpXxkPdtdo8YrGLI2uI/BTbKkaTsiuICpQICmua1NBCFVCZkOWx+oloiOLHlJ6UdAZgnH3IibaXJWAl9ifokfB0KoxQR6Zeg5D/OF4IlX6Faggv6EPHfk8hQFz/WkouMNPIFGQaycyg8XqqsWK3ZNF3jEHR13WVzxlqpRR4RxyezeiSjmpMjrL/yML0vBlUFCgXjajp81e11acCHId8bJXpWQyw9tLY96RYmnExjmJqlsgkTD/JC6+H+2U6jF3eqtZ0Xt5BXtGAO2QQWUq7fQPq1gFgVoWom/Ixp33zNR+62P2vfmnJ2Gnvrj3cMleIT3GDWw83AsqZiIZKc+qw1vCBi0dQay/r0rWeirT9H45/QL4fS4QAYVGcIXsV27f74P0o+/6i9qoZUj8JkVEbcssAHIKB0kstV59vXHKhZ3OZC2uXnZIyIR7Zwja2k78SvBN0Eg/Bi2K9+E9GqbS3TyejQwYt7g8A5ownQgp/zCV0/spKzsFt1PG2ZZodyeisYvqbao4VNB73J8DvjzrCA6XtjtZPznpgGlV3AoyQFsX6NuAJY/2NU425HtPrwjDNpZTVvvlQfUcW8Da6t933MiynJBcrbtBQOGQxI+LbiXFxqObiRw93zBvEGAiOZbZTjVEs4rKp5unWhBKv4ENGJwnkAbLE2E4h3IU88HhhVrLaH3yLQZkY81yj5Hpaqh/4ANIo0kuJStfPEp2wnCuZKzk9P/2PYxbj+6AiYh52UxutOFhYHy20V3DzWfEJALeG1nzr0XlwQ9QATWpBbVLMWst276IJZxmGr441/+FVQRwG5nRJOKE8q+6xlzSI17/GAE="
-        },
-        {
-          "type": "tool_use",
-          "id": "toolu_01F18LpGDV66pW5Znr1F2Wts",
-          "name": "submit_checks",
-          "caller": {
-            "type": "direct"
-          },
-          "input": {
-            "checks": [
-              {
-                "id": "R1-no-poster-in-cart",
-                "requirement": "R1",
-                "description": "The backend cart no longer contains any line whose product is a poster.",
-                "assert": {
-                  "kind": "value",
-                  "source": {
-                    "from": "probe",
-                    "probe": "cart",
-                    "pointer": "/lines"
-                  },
-                  "expect": {
-                    "schema": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "required": ["product"],
-                        "properties": {
-                          "product": {
-                            "type": "string",
-                            "not": {
-                              "pattern": "(?i)poster"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "id": "R1-no-poster-in-cart-ci",
-                "requirement": "R1",
-                "description": "No cart line product name contains 'poster' or 'Poster'.",
-                "assert": {
-                  "kind": "value",
-                  "source": {
-                    "from": "probe",
-                    "probe": "cart",
-                    "pointer": "/lines"
-                  },
-                  "expect": {
-                    "schema": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "required": ["product"],
-                        "properties": {
-                          "product": {
-                            "type": "string",
-                            "not": {
-                              "pattern": "[Pp][Oo][Ss][Tt][Ee][Rr]"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "id": "R2-others-kept",
-                "requirement": "R2",
-                "description": "The cart lines after the task equal the cart lines before the task minus the poster lines (same products, attributes and quantities).",
-                "assert": {
-                  "kind": "value",
-                  "source": {
-                    "from": "probe",
-                    "probe": "cart",
-                    "pointer": "/lines"
-                  },
-                  "normalize": [
-                    {
-                      "op": "items"
-                    }
-                  ],
-                  "expect": {
-                    "sameAs": {
-                      "source": {
-                        "from": "probe",
-                        "probe": "cart",
-                        "pointer": "/lines",
-                        "at": "before"
-                      },
-                      "normalize": [
-                        {
-                          "op": "items",
-                          "where": {
-                            "not": {
-                              "properties": {
-                                "product": {
-                                  "pattern": "[Pp][Oo][Ss][Tt][Ee][Rr]"
-                                }
-                              },
-                              "required": ["product"]
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "usage": {
-        "inputTokens": 21165,
-        "outputTokens": 745,
-        "cacheReadTokens": 16870,
-        "cacheWriteTokens": 4293
-      },
-      "model": "claude-opus-5-5"
-    },
-    "sha256:9cb42e67322d428c46a7e5bf652c5d35819686392b66291b62b2d7c5d99bd266": {
-      "stop": "tool_use",
-      "text": "",
-      "toolCalls": [
-        {
-          "id": "toolu_016T6SRTQw7BNssHborVeE9w",
-          "name": "submit_checks",
-          "input": {
-            "checks": [
-              {
-                "id": "R1-no-poster-in-cart",
-                "requirement": "R1",
-                "description": "No line in the backend cart has a product name containing 'poster' (any case).",
-                "assert": {
-                  "kind": "value",
-                  "source": {
-                    "from": "probe",
-                    "probe": "cart",
-                    "pointer": "/lines"
-                  },
-                  "expect": {
-                    "schema": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "required": ["product"],
-                        "properties": {
-                          "product": {
-                            "type": "string",
-                            "not": {
-                              "pattern": "[Pp][Oo][Ss][Tt][Ee][Rr]"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "id": "R2-others-kept",
-                "requirement": "R2",
-                "description": "The cart lines after the task equal the cart lines before the task minus the poster lines (same products, attributes and quantities).",
-                "assert": {
-                  "kind": "value",
-                  "source": {
-                    "from": "probe",
-                    "probe": "cart",
-                    "pointer": "/lines"
-                  },
-                  "normalize": [
-                    {
-                      "op": "items"
-                    }
-                  ],
-                  "expect": {
-                    "sameAs": {
-                      "source": {
-                        "from": "probe",
-                        "probe": "cart",
-                        "pointer": "/lines",
-                        "at": "before"
-                      },
-                      "normalize": [
-                        {
-                          "op": "items",
-                          "where": {
-                            "not": {
-                              "properties": {
-                                "product": {
-                                  "pattern": "[Pp][Oo][Ss][Tt][Ee][Rr]"
-                                }
-                              },
-                              "required": ["product"]
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "raw": [
-        {
-          "type": "tool_use",
-          "id": "toolu_016T6SRTQw7BNssHborVeE9w",
-          "name": "submit_checks",
-          "caller": {
-            "type": "direct"
-          },
-          "input": {
-            "checks": [
-              {
-                "id": "R1-no-poster-in-cart",
-                "requirement": "R1",
-                "description": "No line in the backend cart has a product name containing 'poster' (any case).",
-                "assert": {
-                  "kind": "value",
-                  "source": {
-                    "from": "probe",
-                    "probe": "cart",
-                    "pointer": "/lines"
-                  },
-                  "expect": {
-                    "schema": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "required": ["product"],
-                        "properties": {
-                          "product": {
-                            "type": "string",
-                            "not": {
-                              "pattern": "[Pp][Oo][Ss][Tt][Ee][Rr]"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "id": "R2-others-kept",
-                "requirement": "R2",
-                "description": "The cart lines after the task equal the cart lines before the task minus the poster lines (same products, attributes and quantities).",
-                "assert": {
-                  "kind": "value",
-                  "source": {
-                    "from": "probe",
-                    "probe": "cart",
-                    "pointer": "/lines"
-                  },
-                  "normalize": [
-                    {
-                      "op": "items"
-                    }
-                  ],
-                  "expect": {
-                    "sameAs": {
-                      "source": {
-                        "from": "probe",
-                        "probe": "cart",
-                        "pointer": "/lines",
-                        "at": "before"
-                      },
-                      "normalize": [
-                        {
-                          "op": "items",
-                          "where": {
-                            "not": {
-                              "properties": {
-                                "product": {
-                                  "pattern": "[Pp][Oo][Ss][Tt][Ee][Rr]"
-                                }
-                              },
-                              "required": ["product"]
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "usage": {
-        "inputTokens": 22028,
-        "outputTokens": 495,
-        "cacheReadTokens": 21163,
-        "cacheWriteTokens": 863
-      },
-      "model": "claude-opus-5-5"
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "turns": {
+  "sha256:8050d7c4102761c39d2896b0caa978e365d356066dc70e65305869e5a5a1759f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_014fZQ78qpFtnLg2jTKyzyeR",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The poster is no longer in the cart.",
+        "field": "instruction",
+        "quote": "Remove the poster from my cart"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
+        "text": "All other items in the cart stay there.",
+        "field": "instruction",
+        "quote": "keep everything else"
+       }
+      ]
+     }
     }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_014fZQ78qpFtnLg2jTKyzyeR",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The poster is no longer in the cart.",
+        "field": "instruction",
+        "quote": "Remove the poster from my cart"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
+        "text": "All other items in the cart stay there.",
+        "field": "instruction",
+        "quote": "keep everything else"
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1059,
+    "outputTokens": 155,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1055
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:aed7305dcbf3b8460805fc040a732791fe20864f8222be8c4fb9601750743eef": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_012czNv7fy3nyzMPNDGcwSxS",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_012czNv7fy3nyzMPNDGcwSxS",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 19738,
+    "outputTokens": 25,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 19734
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:b4a86857bc2d75383cbb4a42475fa0f8b2ac59454686d6d2b45c0c68134ca470": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01GHHKfnveKpTMygcdJbpizw",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "cart",
+        "pointer": "/lines"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "not": {
+           "properties": {
+            "product": {
+             "type": "string",
+             "pattern": "(?i)poster"
+            }
+           },
+           "required": [
+            "product"
+           ]
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "id": "toolu_01H8f9Wz8on5qDYmTijk5eSy",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "cart",
+        "pointer": "/lines"
+       },
+       "normalize": [
+        {
+         "op": "items"
+        }
+       ],
+       "expect": {
+        "sameAs": {
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines",
+          "at": "before"
+         },
+         "normalize": [
+          {
+           "op": "items",
+           "where": {
+            "not": {
+             "properties": {
+              "product": {
+               "type": "string",
+               "pattern": "[Pp]oster"
+              }
+             },
+             "required": [
+              "product"
+             ]
+            }
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS/gkKEAgTGAI4AUIIdGhpbmtpbmcSDBhpSoETliZW6pNXvhoM2eq4iPQqBAbwI7TrIjBs4HpiAmG+rU10zYT6Q6KUCjl5AjYDAYKM4VEOQ0RKY+4q+2SKVMuKAHMnT0Ww+ioqmwl6vfp5ii8Ft4msrL8aixeh8cJE+n8IkYORvszfHnoqlAqj9iPvwVOpVKHUOWlaj8hnRGJY5O3ouWt7L7PKML+p59nBRAbF2RByEnc5ELPwWqpdaFWNKrnKhQvQGshB5IzYd+amkUWZZjnTxlPbm70M3mK19Me7mFkC1ck7kFZVbbOjOpY3xK8hQXEunJNxHUUSz7OgYvlWBd2IMsAl7rOMMsXtEooZT1eGfz7dAyomEtS6wQ+/n8HoyRuZbiqV1Hajd72VQg001UbhG/Fb/KUYG5P6xaQvtYpgLjPAOjKmr9b8k1fiCQfF9Leuu/BFrcERiOC/kt73EaInnavTH+RibG/tWNO3yBqqcv7fzdCFbATjQocYMa42vftXcC83WVp1m7zI+CjaxyDhRHxbWJNvEcl0TTQmjaSv8SALCNnAd3Vom/70ax+llpRISpnJnmSy93j3k4Z/6Fbf+LjliwoQUnfyrL9/KYKUL/RAu37ZD2mr+iheruzYbZng22P46rBx6lgPnKcTv1XC419zm+LUSXhsAmToO2vSFvQyv6wmLTrCKALlz6QJ/NeT8MBocbM1c64l+ziCxThiEYZoKTWgpVmqtMWNC0A8fS7JKyncKFNsyYRo2P5M19KxMp/2+7QUTgyl7jzDsYIL/O2rWiV8ZlAPkAqqadFhWGa+HraxEUVAF2m5N71RHMN9/3xQN8zSV55OTv3JwlJCb24wcrikCRNQ1Nb5LE7qyaqOw1X1T2lgyQwy/wN1kVqDb8dghiJk15vntLn8ziyWO6lKkibguiniT/aWcP51fEXXdk/kMmyFcqybKXJLFyYDT7xpE3UmtiqIQD2xK07/gbkH16dEivtwHk1Cw/xvikDc2UgOTyLTBsUTd8UekztM4uuV6LQ2wzu7D8CHN9HUJopWSXtEhv9IFsdwqZGXnzZ4G6LOHVooB1L8GrWYj28Bhzdzz7SICLjtY3iFlUJtJAakJRBjm0tkF6//UsPTXtu1haMYgalQa0QfG8bLrcEBHg7dciyAwT2wzF8Q86fi2B3PHgkPb6+EK5I3JEuCqQYFgICCiRLVL6CoJqCuKuEWEz05Fv1b1qPJ+MZ+FMd0Ziq58AmOvyw+fcek18cQzhWGXHQwyd2xLDI7dAPdDOS8U0nPT/uT0nLL5KNlEE+zROET15nAluibqEBuxeJnMrrTsflWoHGfuDdVNSHi8rN3DC8qOjGP0sP/O/1M03EtWqeI+g1uxxpgMxhtKWkSK+zhsayQu3aL90sTCRtW5/Q6v76r072iA0ETRq0XTodlTQ9DA0PWYFKr7z2ZmZMqUZMKZDySseTWvXcnLqkRXIU8xXUjhgGZO/r19niOPf+u6+5GJ5MRTclSY1VKntUQaEAzT8Hdums5IWHnM825ml+pItGJzeKBwqy2AthzjWHYcd8oGYAkHJxbdh0Fuzvz2JjEuC6jrK/XB/IviUFwACpl4eVpsL38S2thZJc/zNHx+U1Y4J/R9pHgJab7eM+31us00zGrWG9B1U+RPDZozn1ywK+WalGqkrKv27BHDFup03Io5Z9U1wo7n50VDvKuaAEYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01GHHKfnveKpTMygcdJbpizw",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "cart",
+        "pointer": "/lines"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "not": {
+           "properties": {
+            "product": {
+             "type": "string",
+             "pattern": "(?i)poster"
+            }
+           },
+           "required": [
+            "product"
+           ]
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01H8f9Wz8on5qDYmTijk5eSy",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "cart",
+        "pointer": "/lines"
+       },
+       "normalize": [
+        {
+         "op": "items"
+        }
+       ],
+       "expect": {
+        "sameAs": {
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines",
+          "at": "before"
+         },
+         "normalize": [
+          {
+           "op": "items",
+           "where": {
+            "not": {
+             "properties": {
+              "product": {
+               "type": "string",
+               "pattern": "[Pp]oster"
+              }
+             },
+             "required": [
+              "product"
+             ]
+            }
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 24029,
+    "outputTokens": 586,
+    "cacheReadTokens": 19734,
+    "cacheWriteTokens": 4293
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:dcd0f4f444461aa63aad0e48441b1b970f90a5dbdba12d6c395cedd7c178e327": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01RTXqojrAyzXur7CySL3GKE",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "R1-no-poster-in-cart",
+        "requirement": "R1",
+        "description": "After the task, no cart line in the backend cart is a poster product.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "items": {
+            "not": {
+             "properties": {
+              "product": {
+               "type": "string",
+               "pattern": "[Pp]oster"
+              }
+             },
+             "required": [
+              "product"
+             ]
+            }
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "R2-others-kept",
+        "requirement": "R2",
+        "description": "The cart lines after the task equal the cart lines before the task minus the poster line(s), with same products, attributes and quantities.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+         },
+         "normalize": [
+          {
+           "op": "items"
+          }
+         ],
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "cart",
+            "pointer": "/lines",
+            "at": "before"
+           },
+           "normalize": [
+            {
+             "op": "items",
+             "where": {
+              "not": {
+               "properties": {
+                "product": {
+                 "type": "string",
+                 "pattern": "[Pp]oster"
+                }
+               },
+               "required": [
+                "product"
+               ]
+              }
+             }
+            }
+           ]
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSiwcKEAgTGAI4AUIIdGhpbmtpbmcSDLM9P8SlHsumQ/NUThoMIk1HsRxzWBrnsnPFIjCBuYJB+SM78s8GQQH9A9cPqcPbeuB5FHAjxbwaweGyxG2Dy/ycYDYOeVjZdBDM2A0qqAaHLa64Q8KH3YcOiYtpEAT18pLd+Gn9/ssysCwOcmMaBugOXBwGaNFXD6HYZerZKN52Wc4JMki1LzttGhwuaV9wNbItt+sdN0u0MagAFrcTXZgKJqTvb/79JyjUg2qQHq8OlBxeBwF2yVqll9w1VtM9DM5dwPUQeHvBmZueTKUOnehH3VAJEoGGGUY9iV9ff9YZDJI2viOB5lV8Er8QYIb4qOxV+0fe5Fqjnauod0c/WLlCkejrK/qiylpvJMjxfi6JE9Bf5AU5ZZWPCrOtX0CfPlsds9FKdrp+g9bbyWzs8kaf4HlyBTl6cp2G0+P7UbmhKOKPcwtCi3bfrwkNhB3XwiRv7NpSte/1dBqnkPhIafHT23O2QeSD44WLGHRUvoFdFiRzab1gONU/Lq6Ztg6HzmfbtE18TLukQhT9HyRperB8GiPBv/MB97ppCKoxBl20GgUAXpaC45NbqlHlZ083+zb0M2FAK+f46UR4tNfmxMCyJntXuMAX6zQP3ejypKInLnZil40EGGG1SNzFGTQL8agwujslW7Z6T4frfxebf5RCTAguLFVwBjnefqp6P/7VB23uNJ811aLNJGIoWgXODOISj++QRRJANoIxqrHBU1lqivtQ+2Mip90++MoBilqwiXZLY2IGzD2NkbmUTZrNwaZxLMcCLfh1UxCq0OF3j4EndukuDWPfU5UHwrSw16nt+kI1O+mcIFBuGyqsPgo1J2xJAMxCQ3CyhalqzlYTJfs4FzJfOWNh0ruF2Ym1Tsuaa9NkQxL+20iD0qzrr9vTYVXjdIqGpiwvt+3bN68QVsOjLCxcitdZGTv0a3PLcEq9RCMHftBWG6VEQ9FBTMV1hoUIkQlIVUBtDpP8G3nxRWwm59MeTADJJ85oqNrrilESoMFWZ/pXXdi4cd9T/avDdARkztApRYBPvGlUBD8XmmZdnZomAGlNcYBfnNfn87LdOWUGml1IxbfYflM53MR+4dx00VugtllZEoEd+jaJLagPHmKjVNBzzuEJXAYsQtoRWTeZmZ8DPcDM0tZWtfithByIXSfz9PGfN2e45T2Z/hDvx1Yjah6uGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01RTXqojrAyzXur7CySL3GKE",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "R1-no-poster-in-cart",
+        "requirement": "R1",
+        "description": "After the task, no cart line in the backend cart is a poster product.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "items": {
+            "not": {
+             "properties": {
+              "product": {
+               "type": "string",
+               "pattern": "[Pp]oster"
+              }
+             },
+             "required": [
+              "product"
+             ]
+            }
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "R2-others-kept",
+        "requirement": "R2",
+        "description": "The cart lines after the task equal the cart lines before the task minus the poster line(s), with same products, attributes and quantities.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+         },
+         "normalize": [
+          {
+           "op": "items"
+          }
+         ],
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "cart",
+            "pointer": "/lines",
+            "at": "before"
+           },
+           "normalize": [
+            {
+             "op": "items",
+             "where": {
+              "not": {
+               "properties": {
+                "product": {
+                 "type": "string",
+                 "pattern": "[Pp]oster"
+                }
+               },
+               "required": [
+                "product"
+               ]
+              }
+             }
+            }
+           ]
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 24987,
+    "outputTokens": 499,
+    "cacheReadTokens": 24027,
+    "cacheWriteTokens": 958
+   },
+   "model": "claude-opus-5-5"
   }
+ },
+ "recordedAt": "2026-11-05T21:09:07.558Z"
 }

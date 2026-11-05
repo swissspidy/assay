@@ -10,17 +10,17 @@
     "discovery": 3
   },
   "usage": {
-    "inputTokens": 62172,
-    "outputTokens": 2979,
-    "cacheReadTokens": 37343,
-    "cacheWriteTokens": 24817
+    "inputTokens": 70820,
+    "outputTokens": 3329,
+    "cacheReadTokens": 43058,
+    "cacheWriteTokens": 27750
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "Create a category \"Community\"",
       "checks": [
-        "community-category-exists"
+        "R1-community-category-exists"
       ],
       "channels": [
         "probe"
@@ -31,7 +31,7 @@
       "requirement": "R2",
       "quote": "add every post of the Events category to it",
       "checks": [
-        "events-posts-in-community"
+        "R2-events-posts-in-community"
       ],
       "channels": [
         "probe"
@@ -42,7 +42,7 @@
       "requirement": "R3",
       "quote": "as well",
       "checks": [
-        "events-posts-keep-events"
+        "R3-events-posts-keep-events"
       ],
       "channels": [
         "probe"
@@ -50,9 +50,7 @@
       "trust": "structured"
     }
   ],
-  "warnings": [
-    "events-posts-keep-events still passes when its own evidence is broken (probe posts is what it was before the task [reference/events-posts-keep-events:baseline:no-op])."
-  ],
+  "warnings": [],
   "references": [
     {
       "name": "reference",

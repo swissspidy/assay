@@ -36,37 +36,68 @@
   ],
   "checks": [
     {
-      "id": "r1-user-jordan-exists",
+      "id": "r1-user-jordan-created",
       "requirement": "R1",
-      "description": "The backend users list contains a user with username jordan after the task.",
+      "description": "The users probe holds a user with username jordan, who did not exist before the task.",
       "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "users"
-        },
-        "expect": {
-          "schema": {
-            "type": "array",
-            "contains": {
-              "type": "object",
-              "properties": {
-                "username": {
-                  "const": "jordan"
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "users"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "const": "jordan"
+                    }
+                  },
+                  "required": [
+                    "username"
+                  ]
                 }
-              },
-              "required": [
-                "username"
-              ]
+              }
+            }
+          },
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "users",
+              "at": "before"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "not": {
+                  "contains": {
+                    "type": "object",
+                    "properties": {
+                      "username": {
+                        "const": "jordan"
+                      }
+                    },
+                    "required": [
+                      "username"
+                    ]
+                  }
+                }
+              }
             }
           }
-        }
+        ]
       }
     },
     {
       "id": "r2-jordan-email",
       "requirement": "R2",
-      "description": "The user jordan in the backend has the email jordan@example.com.",
+      "description": "The stored user jordan has the email jordan@example.com.",
       "assert": {
         "kind": "value",
         "source": {
@@ -98,7 +129,7 @@
     {
       "id": "r3-jordan-author-role",
       "requirement": "R3",
-      "description": "The user jordan in the backend has the author role.",
+      "description": "The stored user jordan has the Author role (roles is exactly author).",
       "assert": {
         "kind": "value",
         "source": {
@@ -115,10 +146,9 @@
                   "const": "jordan"
                 },
                 "roles": {
-                  "type": "array",
-                  "contains": {
-                    "const": "author"
-                  }
+                  "const": [
+                    "author"
+                  ]
                 }
               },
               "required": [
@@ -137,6 +167,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:15:35.859Z"
+    "at": "2026-11-05T21:07:22.789Z"
   }
 }

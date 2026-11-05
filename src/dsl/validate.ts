@@ -1,4 +1,5 @@
 import { Ajv } from 'ajv';
+import { schemaAjv } from '../runtime/json.ts';
 import type {
   Assertion,
   CheckSet,
@@ -21,7 +22,7 @@ import { checkSetSchema } from './schema.ts';
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 const validateShape = ajv.compile(checkSetSchema);
-const schemaCompiler = new Ajv({ strict: false, validateFormats: false });
+const schemaCompiler = schemaAjv();
 
 export interface ValidationReport {
   ok: boolean;
@@ -74,11 +75,18 @@ export function validateCheckSet(input: unknown): ValidationReport {
     if (!reqIds.has(c.requirement)) errors.push(`${at}: unknown requirement ${c.requirement}`);
     covered.add(c.requirement);
     walkAssertion(c.assert, at, errors, warnings, false);
+    if (c.onMissing === 'abstain' && !readsRoute(c.assert))
+      warnings.push(
+        `${at}: onMissing "abstain" has no effect: it applies to request and url assertions and to values read from requests or responses, and this check has none`,
+      );
   }
   for (const r of cs.requirements) {
-    const mine = cs.checks.filter((c) => c.requirement === r.id).map((c) => c.assert);
+    // Route evidence marked onMissing "abstain" is meant to abstain when the run went another way.
+    const mine = cs.checks.filter((c) => c.requirement === r.id && c.onMissing !== 'abstain').map((c) => c.assert);
     const readsNetwork = mine.some(readsNetworkValue);
-    const assertsExistence = mine.some(assertsPresence);
+    const assertsExistence = cs.checks
+      .filter((c) => c.requirement === r.id)
+      .some((c) => assertsPresence(c.assert, c.onMissing === 'abstain'));
     if (readsNetwork && !assertsExistence)
       warnings.push(
         `requirement ${r.id}: its value checks abstain when no request matches; add a "request" check so a missing request fails`,
@@ -334,11 +342,12 @@ function itemsSide(src: ValueSource, n: Normalizer[] | undefined) {
   if (!step) return undefined;
   const rest = steps.map((x) => {
     if (typeof x === 'string') return { op: x };
-    if (x.op !== 'items') return x;
+    // A flattened field is a collection of its own (a post's tags, not its categories): keep it.
+    if (x.op !== 'items' || x.flatten) return x;
     const { pointer: _, pick: __, ...keep } = x;
     return keep;
   });
-  const fields = step.pick ? step.pick.toSorted() : step.pointer ? [step.pointer] : [];
+  const fields = step.flatten ? [] : step.pick ? step.pick.toSorted() : step.pointer ? [step.pointer] : [];
   return { key: canonicalJson({ src, n: rest } as unknown as Json), fields };
 }
 
@@ -395,13 +404,37 @@ function readsNetworkValue(a: Assertion): boolean {
   );
 }
 
+/** A leaf that reads route evidence: a request or url assertion, or a value read from a request or response. */
+function routeLeaf(a: Assertion): boolean {
+  if (a.kind === 'request' || a.kind === 'url') return true;
+  return a.kind === 'value' && readsNetworkValue(a);
+}
+
+const leaves = (a: Assertion): Assertion[] =>
+  a.kind === 'allOf' || a.kind === 'anyOf' ? a.of.flatMap(leaves) : a.kind === 'each' ? leaves(a.assert) : [a];
+
+/** Some part of `a` reads route evidence (what `onMissing` applies to). */
+export function readsRoute(a: Assertion): boolean {
+  return leaves(a).some(routeLeaf);
+}
+
+/**
+ * Every part of `a` reads route evidence: requests, responses or the page URL, which
+ * show how one run did the task rather than the state it left (ADR 0011).
+ */
+export function routeOnly(a: Assertion): boolean {
+  return leaves(a).every(routeLeaf);
+}
+
 /**
  * `a` fails, rather than abstains, when the thing it is about is absent: a non-value
  * assertion, an allOf with such a part, or an anyOf whose every branch is one.
  */
-function assertsPresence(a: Assertion): boolean {
-  if (a.kind === 'allOf') return a.of.some(assertsPresence);
-  if (a.kind === 'anyOf') return a.of.every(assertsPresence);
+function assertsPresence(a: Assertion, routeAbstains = false): boolean {
+  if (a.kind === 'allOf') return a.of.some((b) => assertsPresence(b, routeAbstains));
+  if (a.kind === 'anyOf') return a.of.every((b) => assertsPresence(b, routeAbstains));
+  // With onMissing "abstain", a missing request or a URL elsewhere abstains too.
+  if (routeAbstains && routeLeaf(a)) return false;
   return a.kind !== 'value';
 }
 
@@ -483,6 +516,10 @@ function flowType(t: VType, steps: Normalizer[] | undefined, at: string, errors:
       if (step.where !== undefined) checkSchema(step.where, `${at} items where`, errors);
       if (step.pick !== undefined && step.pointer !== undefined)
         errors.push(`${at}: items takes either pointer (one field) or pick (several fields), not both`);
+      if (step.flatten && step.pick !== undefined)
+        errors.push(`${at}: items flatten takes the array at pointer; pick makes objects, which cannot be flattened`);
+      if (step.flatten && !step.pointer)
+        errors.push(`${at}: items flatten needs a pointer to the array field of each item (e.g. "/tags")`);
       if (t !== 'unknown') errors.push(`${at}: normalizer items needs a JSON array, but the value is ${t}`);
       t = 'unknown';
       continue;

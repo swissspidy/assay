@@ -18,9 +18,9 @@
   ],
   "checks": [
     {
-      "id": "wishlist-has-brown-bear-notebook",
+      "id": "wishlist-has-notebook",
       "requirement": "R1",
-      "description": "The backend wishlist probe contains an entry for the product 'Brown bear notebook'.",
+      "description": "The backend wishlist contains an entry for the product Brown bear notebook.",
       "assert": {
         "kind": "value",
         "source": {
@@ -44,6 +44,61 @@
           }
         }
       }
+    },
+    {
+      "id": "wishlist-kept-others",
+      "requirement": "R1",
+      "description": "All wishlist entries that existed before the task are still there unchanged (apart from the Brown bear notebook).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "wishlist"
+        },
+        "normalize": [
+          {
+            "op": "items",
+            "where": {
+              "not": {
+                "properties": {
+                  "product": {
+                    "const": "Brown bear notebook"
+                  }
+                },
+                "required": [
+                  "product"
+                ]
+              }
+            }
+          }
+        ],
+        "expect": {
+          "sameAs": {
+            "source": {
+              "from": "probe",
+              "probe": "wishlist",
+              "at": "before"
+            },
+            "normalize": [
+              {
+                "op": "items",
+                "where": {
+                  "not": {
+                    "properties": {
+                      "product": {
+                        "const": "Brown bear notebook"
+                      }
+                    },
+                    "required": [
+                      "product"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
     }
   ],
   "compiled": {
@@ -52,6 +107,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:18:28.419Z"
+    "at": "2026-11-05T21:10:26.310Z"
   }
 }

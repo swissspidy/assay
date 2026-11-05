@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T12:16:08.507Z",
  "turns": {
   "sha256:2db60c65114f4bd399ce0ddc7535984def6231f8e46b707fed6ed5e867e93701": {
    "stop": "tool_use",
@@ -52,12 +51,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:8e247e518193fb666fd431398680265260b7c6ea2142fdb06d6217078eff9cf7": {
+  "sha256:a0381903bca015fbf7517d437fe43da2dd052ab739534ba02a9d988a7a47d108": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Hc7k6dcK5H4dcXXi6CG9n3",
+     "id": "toolu_01Q41gFooyiCRjtRF6B8HHBQ",
      "name": "probes",
      "input": {}
     }
@@ -65,7 +64,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01Hc7k6dcK5H4dcXXi6CG9n3",
+     "id": "toolu_01Q41gFooyiCRjtRF6B8HHBQ",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -74,33 +73,46 @@
     }
    ],
    "usage": {
-    "inputTokens": 16867,
+    "inputTokens": 19731,
     "outputTokens": 25,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16863
+    "cacheWriteTokens": 19727
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:636245421d68ffa217007aa56361ea850c0ffbfe4c521422a4041be16eaf13e1": {
+  "sha256:367579e7a7168feda6ebd83b9c5842e8e57f6ab9bf3b0594479e60299be6e1cb": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01JhScs3KGfgKaPXiaJikz9U",
-     "name": "try_assertion",
+     "id": "toolu_01B4vg7PoBEjYRDQppuCgfWb",
+     "name": "submit_checks",
      "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "settings",
-        "pointer": "/posts_per_page"
-       },
-       "expect": {
-        "gte": 1,
-        "lte": 5
+      "checks": [
+       {
+        "id": "posts-per-page-at-most-5",
+        "requirement": "R1",
+        "description": "The stored blog posts-per-page setting is between 1 and 5 after the task.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "settings",
+          "pointer": "/posts_per_page"
+         },
+         "normalize": [
+          {
+           "op": "number",
+           "locale": "en"
+          }
+         ],
+         "expect": {
+          "gte": 1,
+          "lte": 5
+         }
+        }
        }
-      }
+      ]
      }
     }
    ],
@@ -108,107 +120,52 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS/wcKEAgTGAI4AUIIdGhpbmtpbmcSDJvT4MOnAGdIaWzUqhoMtkRrrpkNGRR1gCMXIjBVXhGgHwTb2gssdXaa/3X3f+VzAyNtDqD21hdgkpiFg0jPY146rUfcLxZ1kp4eJz8qnAeOUXosadjUj1OKALgs8P5X2AbHPd/MN2KQaJMk722/ZEcGwc5pCQQXLczr7mev1UCpy1PbXfVSxyvwgBbvC4oRnjfPDNWQxgsjbRSNbhGte60BmYceGYTKFgH91miREk/hZqoMyYCveDHdRm6AO/XolUf97ZV3TaPMABMlHWz9JPiaOANpxSwm7ODoruz/FqWCkf7FDNf2odhjNtvIeBBRgRO6Mhj688FmKN0UZ0E+G6xlySSkJqCuKPucxqCKV6YT29Tz/kf4mYbs/7vKnWwiKCo4cl1/hazlOPvChUvDC0ADcyBz1xUfHE1ASZzr17WhKqd9gwXI/hg9qmZo5LNQ0hj3tGkjrmkSzdcEwEkmCgl1eXUuvr+v5ejrjCUSQLewq/ThuS8tIaxI3LBSFRvkHvOMZ2nmUB2nJZX2b0X3M8ELrnBMRUi3iPNigXSUM95ckGWuSMEiBZu7EHnyn//IUHIddSk+L1Y5K7GXPiHAqvcRnlUptldSU/rAIWHTiqsRbpTzTU1bD8jqqu8unL+6kL2fui9iSBt1M/WPRzrdUnreFSYPig4Kd2qCvKvoRkQE6jBv5/xteT7Kzl/4SPOIDLk5PDL80qtCy58sR5331P0hbaC9LHPRNLtLAu/8kmNtgdjCk3fRDlN+bQiahwKzxXF690/Xo/fofQA0eH7LUoMEFg/oHrIraeB0y0Md/V8MYW7QiYX2VBgpD5HNT+8ytn1ji9i+vRGWOREFvNML5B5kEEP03eUuSpwa6G3AavEZ+K5rM3vCFUQW7ZCAe0hBYzZcym0p/CLZXiLZMkvmrh03Zx9wrNC834cKfbJVlEd1nOCgFQr0N04emrpjus1AYQTGZvWssF8Ubh4L7kVJqtIEHIJbm0f2zFxZyDuUOgdU1gBqgan/Y2/Snvj7zK11rvI53UxX+ie2tlTSV4VfJEx69q1mf1OIhJXARKpzbdqPMEBYQ6LPxDYz91WTC0MVkP/sWbZA2F3a3lAjBBSX557I3k2LkOJcBRdhhsjG9yJbYwLLPzJrfgUwzvzebbePpoN6LJ33J+iUR46EWA4xQDisJXs9r0kIKse4Um6VER+MDet9/1T8E6Tk6xk5lPsN2EbfsL/5SRqM2CZWOBOPXZOry6wfaL7DcPCHyWtSTdsDUgOM7m+nioVhmRrFbH4pH77x1L0LkJoz3x1c59wPy5JWMh+hySY4UCZDJL515M0aIIi6wYwJwS3lO9YYAQ=="
+     "signature": "CAQSwwYKEAgTGAI4AUIIdGhpbmtpbmcSDJjOBtx5jxttFcB81xoMOxgrp2hNC0hfE9W5IjDCDPUYuO5PScbyPE79Z3uqjt1fKENxANAGf1X8ancoXoOKW41hi0O+f2VPKy0f33gq4AWByMvYa/PC1mR9pxn0QcvHeN26WG/GCNAPJZm4PsTGsY6Dc8FJPeP/1LKQbrm3ogXkiFOfRz+l93ygu3pSj6cXzbDOuXbto+aMtRTZ2dzxNbgY3iOVQmcMo+GTfuXsn1vezmpVoz5duIcQyCexjoVX4yS3eu7jeZnWCZNWWVKyCPGQ80erXpVNJU5TsDgJSRwMWcQrk5qkgUvUQzZrby9Av6jQCyVjWgG1eIhgbYQ8W/lz3H9LiFh0U3746t9UpHNzu5XVqwILwW6ac27xoer3h2Iu+3jesKo40Ndry4uO1HdQ0FBdCaNRNcQSfmzzsZ9Kk4bj5QV4EHojAUnGrO1zBds21kHQ0zKLCMSBooUFGVsR7xv1RY8R55xv5m68QvD/gPsozR9hyuqu8X2bJLJivC+8GScTZP7lCH1yKBIX2w56c8Rk+mYCzUbS1D0GuwlzA7Gqfk9bMkmWnlt8GGqhO5sxWjAoQ6+TS5aihvL/ohhHP+CA7S1gZyQRR5uFjpADPABOMvLHvM3slwDlmHNxRMep7bLNL73g8TJi5mDS/DgztrbbvYuDAZ78Zsweooe/asdRpqI67NL6DY1yFaTNe+YCKaMFQHy0eeFkA3kfcuUpAZcxDXw2ITRfybRMDwkfomduaPWF36pSk5eYw0MTi5jMPjZ9FfwVxlAGWoH14pZJRroSnNtRpAPpjEKYk3jABQUWr+OG64wsDt2Qu2JatVh1zYFTKsS5Ia7jN4uy58gSY9EedqdaBKClKBjpKhsVDMS0i8KxN0EWpkF9FmA/VNtdJacT7UvVEc3KENqqG+IpTNptwgKD9uBuhqJ7fuDoYI/uZ5exdB1XEQwLfNOzBicQL4cPYhZTBKshJHAH4fsB6PRv9eEr4dkPvi0CPauiTDvuN8HBo7gg4q5GZyJ/ZZqoA6fCNDT6LUNra1G7Je+afmhVAeDbbXHsOUhWO7l8hqOOdUf42oQRf7jUNB42GAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01JhScs3KGfgKaPXiaJikz9U",
-     "name": "try_assertion",
+     "id": "toolu_01B4vg7PoBEjYRDQppuCgfWb",
+     "name": "submit_checks",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "settings",
-        "pointer": "/posts_per_page"
-       },
-       "expect": {
-        "gte": 1,
-        "lte": 5
+      "checks": [
+       {
+        "id": "posts-per-page-at-most-5",
+        "requirement": "R1",
+        "description": "The stored blog posts-per-page setting is between 1 and 5 after the task.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "settings",
+          "pointer": "/posts_per_page"
+         },
+         "normalize": [
+          {
+           "op": "number",
+           "locale": "en"
+          }
+         ],
+         "expect": {
+          "gte": 1,
+          "lte": 5
+         }
+        }
        }
-      }
+      ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 20285,
-    "outputTokens": 261,
-    "cacheReadTokens": 16863,
+    "inputTokens": 23149,
+    "outputTokens": 287,
+    "cacheReadTokens": 19727,
     "cacheWriteTokens": 3420
    },
    "model": "claude-opus-5-5"
-  },
-  "sha256:3ce758b3888c9f06ef204e8d4ed51ef1590f3cef6ceab8d915f071daf816aee9": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_011yRfGy3pTjZ1fnK5TXwvSx",
-     "name": "submit_checks",
-     "input": {
-      "checks": [
-       {
-        "id": "posts-per-page-at-most-5",
-        "requirement": "R1",
-        "description": "The backend settings probe shows posts_per_page is between 1 and 5 (at most 5 posts per page).",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "settings",
-          "pointer": "/posts_per_page"
-         },
-         "expect": {
-          "gte": 1,
-          "lte": 5
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_011yRfGy3pTjZ1fnK5TXwvSx",
-     "name": "submit_checks",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "checks": [
-       {
-        "id": "posts-per-page-at-most-5",
-        "requirement": "R1",
-        "description": "The backend settings probe shows posts_per_page is between 1 and 5 (at most 5 posts per page).",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "settings",
-          "pointer": "/posts_per_page"
-         },
-         "expect": {
-          "gte": 1,
-          "lte": 5
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 20583,
-    "outputTokens": 186,
-    "cacheReadTokens": 20283,
-    "cacheWriteTokens": 298
-   },
-   "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:07:34.078Z"
 }

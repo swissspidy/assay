@@ -18,9 +18,9 @@
   ],
   "checks": [
     {
-      "id": "csv-export-assigned-bob",
+      "id": "issue2-assigned-bob",
       "requirement": "R1",
-      "description": "The backend issues probe for acme/webapp shows the issue titled \"Add CSV export\" with bob among its assignees.",
+      "description": "In the backend, acme/webapp issue #2 \"Add CSV export\" has bob among its assignees.",
       "assert": {
         "kind": "value",
         "source": {
@@ -33,6 +33,9 @@
             "contains": {
               "type": "object",
               "properties": {
+                "number": {
+                  "const": 2
+                },
                 "title": {
                   "const": "Add CSV export"
                 },
@@ -44,6 +47,7 @@
                 }
               },
               "required": [
+                "number",
                 "title",
                 "assignees"
               ]
@@ -59,6 +63,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:12:25.542Z"
+    "at": "2026-11-05T21:03:34.348Z"
   }
 }

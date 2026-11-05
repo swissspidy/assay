@@ -21,8 +21,17 @@ import { kleeneAnd } from '../src/runtime/evaluate.ts';
 import { APPS } from '../examples/apps.ts';
 import { compileReference } from '../examples/lib/scenario.ts';
 import { APPS as REAL_APPS } from '../eval/real/apps.ts';
-import { compiledFile, realApps, realRuns, realTasks, runKind, TRAINING_RUN } from '../eval/real/dataset.ts';
+import {
+  compiledFile,
+  isTrainingRun,
+  realApps,
+  realRuns,
+  realTasks,
+  runKind,
+  TRAINING_RUN,
+} from '../eval/real/dataset.ts';
 import { modelFromEnv } from './model-from-env.ts';
+import { NO_RECORDING } from '../src/model/replay.ts';
 
 const arg = (name: string, dflt: string) => {
   const i = process.argv.indexOf(`--${name}`);
@@ -124,7 +133,7 @@ for (const app of REAL ? realApps() : []) {
     const stored = realRuns(app, task);
     if (!stored.some((r) => r.name === TRAINING_RUN)) throw new Error(`${app}/${task}: no ${TRAINING_RUN} run`);
     for (const r of stored) {
-      if (r.name === TRAINING_RUN) {
+      if (isTrainingRun(r.name)) {
         trainingRuns.push(`${app}/${task}/${r.name}`);
         continue;
       }
@@ -183,7 +192,7 @@ type ModelOutcome = { row: Row; model: string } | { unavailable: string };
 
 const errorText = (e: unknown) => (e instanceof Error ? e.message : String(e));
 /** A replayed request that the cassette has no recording for: the inputs changed since recording. */
-const isStale = (msg: string | undefined) => !!msg && msg.includes('has no recording for this request');
+const isStale = (msg: string | undefined) => !!msg && msg.includes(NO_RECORDING);
 
 /** The LLM judge never sees the check set, so its recordings serve both modes; the others are kept per mode. */
 const cassetteDir = (system: string) =>
@@ -251,8 +260,13 @@ async function modelRun(system: string, r: Run): Promise<ModelOutcome> {
     note = `model error: ${errorText(e)}`;
   }
   // In replay, a request the cassette never saw is a stale recording, not a model outcome.
-  if (env.mode === 'replay' && isStale(note))
-    return { unavailable: 'stale cassette (re-record with ANTHROPIC_API_KEY)' };
+  // Also with a key: a turn that could not be recorded (model mismatch, API failure) is no outcome either.
+  if (isStale(note))
+    return {
+      unavailable: process.env.ANTHROPIC_API_KEY
+        ? 'stale cassette that could not be re-recorded (model mismatch or API error)'
+        : 'stale cassette (re-record with ANTHROPIC_API_KEY)',
+    };
   const ms = performance.now() - t0;
   env.save();
   return {
@@ -366,7 +380,7 @@ function writeReport(): string {
       .map(([k, v]) => `- **${k}** used ${v.model}.`),
     CHECKS === 'handwritten'
       ? `- **Caveat:** these are the handwritten check sets, written by the same author as the labelled runs, so the checks rows are an upper bound and partly circular. The real measure is \`--checks compiled\` (checks compiled by the model from one correct run per task; all other runs held out).`
-      : `- Compiled check sets: each was compiled from one correct run per task. Those ${trainingRuns.length} runs are left out for every system, so all scored runs are held out.`,
+      : `- Compiled check sets: each was compiled from ${REAL ? 'its scripted correct runs (one per task, two where the task has a second UI route, ADR 0011)' : 'one correct run per task'}. Those ${trainingRuns.length} runs are left out for every system, so all scored runs are held out.`,
     ...(unscoredTasks.length
       ? [
           `- **Not scored** (no ${CHECKS} check set): ${unscoredTasks.join(', ')}. The comparison covers the other tasks only.`,

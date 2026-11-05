@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T12:18:28.419Z",
  "turns": {
   "sha256:f4379c987d963c5dcf1193f3629e3a9f1fc6dc32594df528c536d88b3a14fb9f": {
    "stop": "tool_use",
@@ -52,12 +51,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:91aa89e3df57cf6b67e9b3647e2ce69246b9c9593c9e69dae29e7fb40a883104": {
+  "sha256:2c98f739e0c2de9e7cc927247a98c0e61d5539780a6214fafb64dc13bd26c930": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01P97zpztRwRzEZi8yfdapGQ",
+     "id": "toolu_01VxzczgCd3QDRGL3eyhyPdL",
      "name": "probes",
      "input": {}
     }
@@ -65,7 +64,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01P97zpztRwRzEZi8yfdapGQ",
+     "id": "toolu_01VxzczgCd3QDRGL3eyhyPdL",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -74,26 +73,26 @@
     }
    ],
    "usage": {
-    "inputTokens": 16865,
+    "inputTokens": 19729,
     "outputTokens": 25,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16861
+    "cacheWriteTokens": 19725
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:b86a198d9be61d78239c3a4b30d9dbbd85968cf9a4c01b559ebc120f2e4c0cb7": {
+  "sha256:ed8a5311f1e7c449fe34fcfd973bbdb7a1699b99291451860fdaeb8f00c91733": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Pg5mDQk44J7fgE42SrUQyU",
+     "id": "toolu_01TAeuFquk67CT7AzYtyihau",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "wishlist-has-brown-bear-notebook",
+        "id": "wishlist-has-notebook",
         "requirement": "R1",
-        "description": "The backend wishlist probe contains an entry for the product 'Brown bear notebook'.",
+        "description": "The backend wishlist contains an entry for the product Brown bear notebook.",
         "assert": {
          "kind": "value",
          "source": {
@@ -114,6 +113,61 @@
              "product"
             ]
            }
+          }
+         }
+        }
+       },
+       {
+        "id": "wishlist-kept-others",
+        "requirement": "R1",
+        "description": "All wishlist entries that existed before the task are still there unchanged (apart from the Brown bear notebook).",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "wishlist"
+         },
+         "normalize": [
+          {
+           "op": "items",
+           "where": {
+            "not": {
+             "properties": {
+              "product": {
+               "const": "Brown bear notebook"
+              }
+             },
+             "required": [
+              "product"
+             ]
+            }
+           }
+          }
+         ],
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "wishlist",
+            "at": "before"
+           },
+           "normalize": [
+            {
+             "op": "items",
+             "where": {
+              "not": {
+               "properties": {
+                "product": {
+                 "const": "Brown bear notebook"
+                }
+               },
+               "required": [
+                "product"
+               ]
+              }
+             }
+            }
+           ]
           }
          }
         }
@@ -126,11 +180,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSrgYKEAgTGAI4AUIIdGhpbmtpbmcSDB3TGPKL0HEwbd0f5BoMLePH6YsT0P3QEZcAIjDfPQ38weg2Y2AUxII4ugjJ70F7vJcNmNyw8AZSxgAlrOYp+qCxgbdonrM0UObI9k8qywUkY+Id6mP4WVSHEpjEuuWbv5i6jAujI1150aHn5JkZN9bvErwtLD8hYgqoTHMyUUiUkFT1H9QpNynf1DepBVRltxY26CFen6DYj8Ez8pIuQ2s+O/bIpRY8xfmtbHv611bZogqbDZDVRmfnc2SHYl71tYXCUQOqHMWQ8UIsloHuXLs1rwylFDcJvKkleoM8/uBhGT6gqBV+tq4/Tf8L2BT+/n9KSauvPxQRT34I8EV0s4sd9g0/qT5awJrYRg78OC5RwvkU21oQkYrUer9wEfHmvV2nRQOzSRS3tJqmPlP78P7KiTArEdlsRCjDvgrwXGo0M+hvJrFo6PUWz3PAyLEuvwUd2eQ5ivJmkoMfC5J3xZuubBgnCYfZHMulM+5Nn0vb/4/W1ZS0+a2eWZnRaPehLFKUliwf5HdEEgW2V0uZ+Rc01CiyTyjZRdhdT1JdoAoVwbbr4FIY0ltikFqdFNbBFDYa6K/65EIiMluP+u7GaZUnGOaNKEBjEXI/N/mefWbLpTDhihkVFG+ILVJ7WyLm5jTXeCut0F4VD2PAxor+rTJX3qM8eSelXezqN9icKwhTXPUrkXvdsiuYn7xg+QmXJZEKo7ulgqFNPzD+vq/modfSjAb9p+/kfAnENiN+IcYpzeXewTNuG9+btMXKE8m6Z0kgNijiufiKkVJEfm2e/SDSB3y9xs9ABw6LuooOHsw4Og40Dh/UVWUktFJNPd2B9ZBiRE+K7DsQiQoOJQsd/1DeN9UKwR9YjHAItZbQ9pBJVD5vdhnxOww+dkOxV0CeIyp+WK4bsa+1bxzmbtO13U5LI14nM2eaokWCQewQY1RKTCymJDa3yHkdyLgoBZgmNVsiwe2UKKN9ZYU8srYbakBvUD963yE+ey9Kmx+cPqJhPw8ghflZjL4SImVnLdM6314XgPOlzsU7jAmTCyYJMES6OpjCpaMRtO8aGAE="
+     "signature": "CAQS9QYKEAgTGAI4AUIIdGhpbmtpbmcSDGPApUD40hYYHL9T4hoMQTd58y1wd7AcPzp/IjDQxXo3UowSyjLSfYpBQ+ByrmNS3mgqLP5Cuzaik2FiMv8I/ZxcDX/RTqzl+hth9iYqkgZa8wuFGGLLvobO+uyHJTDeXViZfoVIYEdh1KsH8sa9dNnsBbQd4/G+S5sbuIl1VieVIBClGTewrl6/IqgsGk74P/zX8yqhABoZFVOW7A/p6g6U9xp4SwBEW3uAvcDZN/Oqp5iP8NsoE6wlBqLcj90fTtlQEY6jropeLGYUHlXXnIufLAfB63VNkfPEa65JV174lHFglORjIMYfkxy0t7uc9RKtqMiuuMdaNto1hZdYYT+OK5WIyvK5uEfeuMb4zIOBg5wGNAeSxUlK/Ln9qdH9QDL1sIQJenkNHJDYAl5GIq1QX9aVGs4FlKNowR9SaYnJ1IqRm04l2hEVnSJyuaTjJ2shbnb6MgFPnEhjcarE6zMv2AQZLVBlCPEuMDBiXHhx9ZHPYDcHIzR4bgfLHJF5PadB2TTHWKTsZWO3K5BZcIBuzFxPC8N2h8I/FgamQDtsT0WAFrZ+Qq+Jv3x1310jENP41OwvbxGc6CDLfXY+SQKNeAR0QbURHNCYPv2IW4Lk584+fIiXq+r3fEH56peDHrKevYBqecfSc74jNAtZYtuI5gbbOKSOonjplIORSLZzC7I5SFaa66Bzav9r8w63FjqEh2QC0oiHwKF5AzSIjRxswL/+9NeztvhB3hk8PlusW+v0kKfMpBs+b45TchsrR62alV6Al0pdFfMOCk0lEktURXDvXRx0/sKlCIQiYhL4fOYOymrnsT2EyhzqexjzV+PXQe7QoYuz2I4wlKrnuTcl8k53zlxpx9zOBbuPv9vIWGKU0wQKioIptJhyyha+mHXBBN9O+APZVschgKliGZWH01dpEk5I5/ZGQ1U7o4dkPzkAYbPE+QpL05YNfDwPWMQCloAGGr9vYPiYqHKkzJvNfWYjZo1d6VhcWvMkgOiES7GiKvlruaR7vkXrwLtc7Vj1p9I+WMfIKAEJksUigwyko7LPxhWTUnnnGkE3EZttpfAmtGhOJOZeG+CTWSIcDD2Gq73KgqGzZ6bJYGQXQhAI/3+dY/huEgmL98MNYaYkfu10jfx9fHZ3ss5We4saXtkYAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Pg5mDQk44J7fgE42SrUQyU",
+     "id": "toolu_01TAeuFquk67CT7AzYtyihau",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -138,9 +192,9 @@
      "input": {
       "checks": [
        {
-        "id": "wishlist-has-brown-bear-notebook",
+        "id": "wishlist-has-notebook",
         "requirement": "R1",
-        "description": "The backend wishlist probe contains an entry for the product 'Brown bear notebook'.",
+        "description": "The backend wishlist contains an entry for the product Brown bear notebook.",
         "assert": {
          "kind": "value",
          "source": {
@@ -164,18 +218,74 @@
           }
          }
         }
+       },
+       {
+        "id": "wishlist-kept-others",
+        "requirement": "R1",
+        "description": "All wishlist entries that existed before the task are still there unchanged (apart from the Brown bear notebook).",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "wishlist"
+         },
+         "normalize": [
+          {
+           "op": "items",
+           "where": {
+            "not": {
+             "properties": {
+              "product": {
+               "const": "Brown bear notebook"
+              }
+             },
+             "required": [
+              "product"
+             ]
+            }
+           }
+          }
+         ],
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "wishlist",
+            "at": "before"
+           },
+           "normalize": [
+            {
+             "op": "items",
+             "where": {
+              "not": {
+               "properties": {
+                "product": {
+                 "const": "Brown bear notebook"
+                }
+               },
+               "required": [
+                "product"
+               ]
+              }
+             }
+            }
+           ]
+          }
+         }
+        }
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 20980,
-    "outputTokens": 272,
-    "cacheReadTokens": 16861,
+    "inputTokens": 23844,
+    "outputTokens": 529,
+    "cacheReadTokens": 19725,
     "cacheWriteTokens": 4117
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:10:26.310Z"
 }

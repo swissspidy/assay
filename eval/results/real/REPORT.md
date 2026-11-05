@@ -1,13 +1,13 @@
 # Evaluation: compiled checks vs. model baselines
 
-Generated 2026-11-05T13:19:56.459Z · dataset: **real apps** (ADR 0009) · check sets: **compiled** · 177 labelled runs over 44 tasks (129 correct, 48 incorrect) in 3 apps.
+Generated 2026-11-05T21:14:39.688Z · dataset: **real apps** (ADR 0009) · check sets: **compiled** · 177 labelled runs over 44 tasks (129 correct, 48 incorrect) in 3 apps.
 
 Positive = the run really completed the task. TPR = correct runs judged success; TNR = incorrect runs judged not success (an abstain counts as not success). The agent always reports success, as agents usually do.
 
 | System | Balanced accuracy | TPR | TNR | Abstain rate | Cost / run | Latency (median / p95) |
 |---|---|---|---|---|---|---|
-| checks | 0.974 | 0.969 | 0.979 | 0.017 | $0.0000 | 1.3 ms / 6.3 ms |
-| checks+escalation | 0.986 | 0.992 | 0.979 | 0.000 | $0.0007 | 749 µs / 3.7 ms (174 of 177 runs timed) |
+| checks | 1.000 | 1.000 | 1.000 | 0.000 | $0.0000 | 1.1 ms / 5.7 ms |
+| checks+escalation | 1.000 | 1.000 | 1.000 | 0.000 | $0.0000 | 789 µs / 3.6 ms |
 | llm-judge | 0.942 | 0.946 | 0.938 | 0.000 | $0.0238 | n/a (replayed) / n/a (replayed) (0 of 177 runs timed) |
 | agentic-verifier | 0.990 | 1.000 | 0.979 | 0.000 | $0.0467 | n/a (replayed) / n/a (replayed) (0 of 177 runs timed) |
 
@@ -15,44 +15,34 @@ Positive = the run really completed the task. TPR = correct runs judged success;
 
 | Kind | Runs | checks | checks+escalation | llm-judge | agentic-verifier |
 |---|---|---|---|---|---|
-| agent: correct | 129 | 125/129 | 128/129 | 122/129 | 129/129 |
+| agent: correct | 129 | 129/129 | 129/129 | 122/129 | 129/129 |
 | perturbed: wrong-item | 29 | 29/29 | 29/29 | 28/29 | 29/29 |
 | perturbed: partial | 13 | 13/13 | 13/13 | 13/13 | 13/13 |
-| perturbed: over-completion | 2 | 1/2 | 1/2 | 0/2 | 1/2 |
+| perturbed: over-completion | 2 | 2/2 | 2/2 | 0/2 | 1/2 |
 | agent: incorrect | 3 | 3/3 | 3/3 | 3/3 | 3/3 |
 | perturbed: no-op | 1 | 1/1 | 1/1 | 1/1 | 1/1 |
 
 ## Notes
 
-- **checks+escalation** used anthropic:claude-opus-5-5@high (replay).
 - **llm-judge** used anthropic:claude-opus-5-5@high (replay).
 - **agentic-verifier** used anthropic:claude-opus-5-5@high (replay).
-- Compiled check sets: each was compiled from one correct run per task. Those 44 runs are left out for every system, so all scored runs are held out.
+- Compiled check sets: each was compiled from its scripted correct runs (one per task, two where the task has a second UI route, ADR 0011). Those 51 runs are left out for every system, so all scored runs are held out.
 - The LLM judge is shown the agent's report, as typical LLM judges are; Assay's checks never see it, and the agentic verifier gets it marked as context, not evidence.
 - Model latency is only measured when recording; replayed runs show none.
 - Checks-only latency is in-process evaluation of a captured snapshot (no model). Capture itself takes about 20-60 ms per page and is shared by every system.
 - The LLM judge sees the final page as an accessibility outline plus visible text (no screenshots, no network or backend access).
 - The agentic verifier explores the captured snapshot (accessibility tree, network log, storage, probe results) without live access.
-- Checks wrong on: wordpress/w10-add-tag/perturbed-replaced-tags (success), wordpress/w13-reply-comment/agent-haiku-1 (fail), wordpress/w15-schedule-post/agent-haiku-1 (abstain), wordpress/w15-schedule-post/agent-haiku-2 (abstain), wordpress/w15-schedule-post/agent-sonnet-1 (abstain).
+- Checks gave the labelled verdict on every run.
 
 ## Misjudged runs
 
-### checks (5)
+### checks (0)
 
-| Run | Kind | Label (oracle) | Verdict | Why |
-|---|---|---|---|---|
-| wordpress/w10-add-tag/perturbed-replaced-tags | perturbed: over-completion | fail: tags are [testing] | success | all hard requirements passed |
-| wordpress/w13-reply-comment/agent-haiku-1 | agent: correct | success: replied to Priya | fail | R1 fail: r1-reply-request fail: 0 request(s) match POST, path /wp-admin/admin-ajax.php, status at least 200 and fewer than 300, request body matching schema (expected at least 1) \| R2 fail: r2-reply-text-request fail: 0 request(s) match POST, path /wp-admin/admin-ajax.php, status at least 200 and fewer than 300, request body matching schema (expected at least 1) |
-| wordpress/w15-schedule-post/agent-haiku-1 | agent: correct | success: scheduled for 2027-01-05 09:00 | abstain | R2 abstain: r2-date-0905 abstain (subcheck_abstained): anyOf: [abstain] no request matches POST, request body matching schema \| [abstain] Anchor not found: row named containing "“Roadmap 2027” (Edit)" within table |
-| wordpress/w15-schedule-post/agent-haiku-2 | agent: correct | success: scheduled for 2027-01-05 09:00 | abstain | R2 abstain: r2-date-0905 abstain (subcheck_abstained): anyOf: [abstain] no request matches POST, request body matching schema \| [abstain] Anchor not found: row named containing "“Roadmap 2027” (Edit)" within table |
-| wordpress/w15-schedule-post/agent-sonnet-1 | agent: correct | success: scheduled for 2027-01-05 09:00 | abstain | R2 abstain: r2-date-0905 abstain (subcheck_abstained): anyOf: [abstain] no request matches POST, request body matching schema \| [abstain] Anchor not found: row named containing "“Roadmap 2027” (Edit)" within table |
+None.
 
-### checks+escalation (2)
+### checks+escalation (0)
 
-| Run | Kind | Label (oracle) | Verdict | Why |
-|---|---|---|---|---|
-| wordpress/w10-add-tag/perturbed-replaced-tags | perturbed: over-completion | fail: tags are [testing] | success | all hard requirements passed |
-| wordpress/w13-reply-comment/agent-haiku-1 | agent: correct | success: replied to Priya | fail | R1 fail: r1-reply-request fail: 0 request(s) match POST, path /wp-admin/admin-ajax.php, status at least 200 and fewer than 300, request body matching schema (expected at least 1) \| R2 fail: r2-reply-text-request fail: 0 request(s) match POST, path /wp-admin/admin-ajax.php, status at least 200 and fewer than 300, request body matching schema (expected at least 1) |
+None.
 
 ### llm-judge (10)
 

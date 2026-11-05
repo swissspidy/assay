@@ -36,9 +36,9 @@
   ],
   "checks": [
     {
-      "id": "R1-cart-rule-created",
+      "id": "r1-cart-rule-created",
       "requirement": "R1",
-      "description": "The back office accepted (302 redirect) a POST to AdminCartRules saving a cart rule with code WINTER15.",
+      "description": "The back office saved a cart rule with code WINTER15 (POST to AdminCartRules with code WINTER15 answered with a success redirect).",
       "assert": {
         "kind": "request",
         "match": {
@@ -49,109 +49,117 @@
               "controller": "AdminCartRules"
             }
           },
-          "status": 302,
+          "status": {
+            "gte": 300,
+            "lt": 400
+          },
           "requestBody": {
             "type": "object",
+            "properties": {
+              "code": {
+                "const": "WINTER15"
+              }
+            },
             "required": [
               "code"
-            ],
-            "properties": {
-              "code": {
-                "type": "string",
-                "pattern": "^\\s*WINTER15\\s*$"
-              }
-            }
+            ]
           }
         }
       }
     },
     {
-      "id": "R1-listed",
-      "requirement": "R1",
-      "description": "The cart rules table lists a row with code WINTER15.",
-      "assert": {
-        "kind": "contains",
-        "scope": {
-          "role": "table",
-          "text": {
-            "contains": "Code"
-          }
-        },
-        "match": {
-          "role": "cell",
-          "name": "WINTER15"
-        }
-      }
-    },
-    {
-      "id": "R2-15-percent",
+      "id": "r2-15-percent",
       "requirement": "R2",
-      "description": "The accepted save of cart rule WINTER15 applies a percent discount of 15.",
+      "description": "The last saved WINTER15 cart rule applies a percentage discount of 15%.",
+      "onMissing": "abstain",
       "assert": {
-        "kind": "request",
-        "match": {
-          "method": "POST",
-          "url": {
-            "path": "/admin-dev/index.php",
-            "query": {
-              "controller": "AdminCartRules"
+        "kind": "value",
+        "source": {
+          "from": "request",
+          "match": {
+            "method": "POST",
+            "url": {
+              "path": "/admin-dev/index.php",
+              "query": {
+                "controller": "AdminCartRules"
+              }
+            },
+            "requestBody": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "const": "WINTER15"
+                }
+              },
+              "required": [
+                "code"
+              ]
             }
           },
-          "status": 302,
-          "requestBody": {
+          "pick": "last"
+        },
+        "expect": {
+          "schema": {
             "type": "object",
-            "required": [
-              "code",
-              "apply_discount",
-              "reduction_percent"
-            ],
             "properties": {
-              "code": {
-                "type": "string",
-                "pattern": "^\\s*WINTER15\\s*$"
-              },
               "apply_discount": {
                 "const": "percent"
               },
               "reduction_percent": {
                 "type": "string",
-                "pattern": "^\\s*15([.,]0*)?\\s*$"
+                "pattern": "^\\s*15([.,]0+)?\\s*$"
               }
-            }
+            },
+            "required": [
+              "apply_discount",
+              "reduction_percent"
+            ]
           }
         }
       }
     },
     {
-      "id": "R3-whole-order",
+      "id": "r3-whole-order",
       "requirement": "R3",
-      "description": "The accepted save of cart rule WINTER15 applies the discount to the whole order (apply_discount_to=order).",
+      "description": "The last saved WINTER15 cart rule applies its discount to the whole order.",
+      "onMissing": "abstain",
       "assert": {
-        "kind": "request",
-        "match": {
-          "method": "POST",
-          "url": {
-            "path": "/admin-dev/index.php",
-            "query": {
-              "controller": "AdminCartRules"
+        "kind": "value",
+        "source": {
+          "from": "request",
+          "match": {
+            "method": "POST",
+            "url": {
+              "path": "/admin-dev/index.php",
+              "query": {
+                "controller": "AdminCartRules"
+              }
+            },
+            "requestBody": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "const": "WINTER15"
+                }
+              },
+              "required": [
+                "code"
+              ]
             }
           },
-          "status": 302,
-          "requestBody": {
+          "pick": "last"
+        },
+        "expect": {
+          "schema": {
             "type": "object",
-            "required": [
-              "code",
-              "apply_discount_to"
-            ],
             "properties": {
-              "code": {
-                "type": "string",
-                "pattern": "^\\s*WINTER15\\s*$"
-              },
               "apply_discount_to": {
                 "const": "order"
               }
-            }
+            },
+            "required": [
+              "apply_discount_to"
+            ]
           }
         }
       }
@@ -163,6 +171,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:23:36.707Z"
+    "at": "2026-11-05T21:12:29.032Z"
   }
 }

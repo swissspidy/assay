@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T11:32:02.817Z",
  "turns": {
   "sha256:634cb3e747b8d36f92560ff5c66b078610448de11c8e7c1de9bd6ca84a273b4b": {
    "stop": "tool_use",
@@ -52,17 +51,17 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:d63f4367ed68f5752ea987143a8cc44f1f4badb975dfeac675befad0b91f4050": {
+  "sha256:bc6eb797a0acf1bc4b2fde486aa8af8f37dcee64fafe1d4639db80fa39765d2a": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_013GexJ5cNEYJf6gvdRAsaxG",
+     "id": "toolu_01Ur6wDez1YGEd8oJJRRDyDG",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01CSMgCs6iKAfRhwBHEtqFYi",
+     "id": "toolu_01KeQG3CW8PptNeV2HSX3nEc",
      "name": "network_log",
      "input": {}
     }
@@ -70,7 +69,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_013GexJ5cNEYJf6gvdRAsaxG",
+     "id": "toolu_01Ur6wDez1YGEd8oJJRRDyDG",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -79,7 +78,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01CSMgCs6iKAfRhwBHEtqFYi",
+     "id": "toolu_01KeQG3CW8PptNeV2HSX3nEc",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -88,55 +87,48 @@
     }
    ],
    "usage": {
-    "inputTokens": 17770,
+    "inputTokens": 18779,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 17766
+    "cacheWriteTokens": 18775
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:efccdfd3ff2ded382d58ee412bbc60aab0434bc61bebc58e42a004043574658f": {
+  "sha256:17cca2d5c3f10d442e2cb6d4e902713de201b83c8f78557e46621f138c459dff": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01G938K83pHgUrGZEhvYVNjm",
-     "name": "submit_checks",
+     "id": "toolu_01QLneSdHcCx2X2688rHbEW9",
+     "name": "try_assertion",
      "input": {
-      "checks": [
-       {
-        "id": "issue3-open-probe",
-        "requirement": "R1",
-        "description": "The backend stores issue #3 with status \"open\".",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "issues"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "properties": {
-             "id": {
-              "const": 3
-             },
-             "status": {
-              "const": "open"
-             }
-            },
-            "required": [
-             "id",
-             "status"
-            ]
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "id": {
+            "const": 3
+           },
+           "status": {
+            "const": "open"
            }
-          }
+          },
+          "required": [
+           "id",
+           "status"
+          ]
          }
         }
        }
-      ]
+      }
      }
     }
    ],
@@ -144,11 +136,103 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSiwYKEAgTGAI4AUIIdGhpbmtpbmcSDMRYwPh4QzbxdWra6RoMahilHbT2U05QHzp6IjBBG6afPdHDxXyP5b2eY9ZSiF1y8XEMVy26DlJMvlzlRREFhzIEJqee2+DK4lR8sfEqqAV1B7/PoLRz6NUS3AFb3U0K7HUwN34TjawYUkETKf8tURfUs83KdMMQBPjYlWPVN+iRPP738r9vOM5gtDdJnEQMS+MpQdewUxAJXAGkCKaaUVMQUUZHFrWe5tIfL6t4gL174mUNjj7ITfO1rcHGQPruT6UDzd8t3KKlhlsBKEAmcuXNl5i172LEhQEBqDL0/DWgiFgDXX2EDPoHT0YG6e7/uah94ejG1S4waBOBFj9IGmkry3n+i8VnZBe8obElo3trr2Ks/zOxNEiIFY9+5VDvzFoyPjoXfjGuMUCMf9VsdULAocxFQWtvuSqhDpBag9dY5eFHmOE2Go/vvboh1I4kgMq91PDtr7wufp+0H/Q7kWT6sCQ/GYQHBRA7jqEPSDYabzcj1+cNhyL/XB7jpd+wPaipcMgrdWhTqfiLctjxq+iMTtQXIUj1AugnGzu6UJXSh0SvD38OEGikNQ88A7k28MDj1onrzUgDxLQLE0eBMXvvrzv0fY7RTeT9URiS0ovSe1AVdWgucALPx/0sJ/ABaN4hZxaICkAl8lJNgek3kWWCZCooZb2aLSaQFd2f+waKKqn7z8chqir60GVpj6wOnkU0/p9vkJMG4TY5HadSRAIXo5UetEle1gTyCgo6vJ/Fk3dr6clZ6ph7ZHzLoQDGpvKMFw0wOIBxU0PfctSHrM6z2hXykd/Vj3bdqLNiGJO0ZeBd5qZzE8XFeWLxG+5siQVUfqabBuSmQw/Mpur1/Uh21erXbt1QUtLSHG7JYKsxbQQ2j460rz+xuKjYMZK2t/4lRKnXxLXrbxSxKW1y0qRcaF2qb9+zptfjykrRH4EtCveS6l86UojHeFyFCqxGlhZo/nGHGYMaytQ++5qPPhxhQwf71mOCpfM8cDag98w+KISTVX7bAxgB"
+     "signature": "CAQS/wUKEAgTGAI4AUIIdGhpbmtpbmcSDLQDzElXm0FbwQbBQhoManGzyiuXVsIyYskXIjBPw+4tu2wZo82opGT0Oz5JDlUXttO1begJlL/seD68n1KE9sA4xwM/c2AECw7i1bEqnAV8HA5TgxZQnW9zqVe40bKE2iw2uRDnAnHFsT+HMxHj8zYN+s332GyT7P+tRbIYop9g/JG3AziZfxqHPHCytRLC7R9aFU3AUQLkEkBdcKpAY4ly+Hg9F7yDwrC9iUHmebZ+ZlvoFOz33D/5Rzq2QVL0SxZYbB+6uaACAgfFWBrSiasOmqMCpGQC0Lcl8tA8/8Sl9eFd0J8ylaPkOLdZvFApxuLmE3WxwS105/yCjLqDwOZWmLrx5QS5a672XcfcD4+Ka+ALzgcq6ma+kdWR2zuwnGzZJ+f/O4vGwvElght8t4nYefZWWkT2pp7V6sM1nbHa8WmBo1ReGutvAX0Ia2A6UPyQEvwsDCGQSiBXabbxEg5QXBPsckmFImrdcZqNDr4CFh3R5P9711+ywe65fRzCUBRhHwb2VQyymc9tQ/0aL2ztBYWXh6RLN+yn3O7gGFClGJKnxUdPEw6qJjZaXBhGnd7JZFqByn9nfP5pJvB6zCX2ru76Div5Oscg7AG50wT6Ke2C8HxWvLkGsQMAn74xURNe8tleh6Jn5FnwHjpZhmDhO/cJkSnZj7KAH69UtgZoJyS1skieQrbrcnWU6OTO1ue4DdtSN2+JJo83apprZyJAfzITWiRvwsWerfieb1hNjHo+VGwaPfCoP4CrOPEuVOMfNNGe0NROTZ9/WVtJJkthF+Uk5+Oq5XAALF5ZqmVBA+09BthM7xk5AjeL41TblZ9YP2z81XuWxs69EHkzi6PbIF+FOiGeaaVlLQOu7ioIxn2xELrqkzF7bOLoBZ+zirLdufxmXc+gVOHNzIJELyEqvcPpMSsrWE7b29rZFBjv0ushhWFqSld+bdXZnqg6KnyQ72J0gQjJWx33hJLTT1NhXyBkVyShW2Q/7hgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_01G938K83pHgUrGZEhvYVNjm",
+     "id": "toolu_01QLneSdHcCx2X2688rHbEW9",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "id": {
+            "const": 3
+           },
+           "status": {
+            "const": "open"
+           }
+          },
+          "required": [
+           "id",
+           "status"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 19244,
+    "outputTokens": 185,
+    "cacheReadTokens": 18775,
+    "cacheWriteTokens": 467
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:39d3911a3bab4277ce8546d78d2e33cbaeb3ddc37b465d1d9f8835a1de3505a1": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FdfbxTuXTaG1xFx1bT6jBm",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "issue3-open",
+        "requirement": "R1",
+        "description": "The backend issues list holds issue #3 with status \"open\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "const": 3
+             },
+             "status": {
+              "const": "open"
+             }
+            },
+            "required": [
+             "id",
+             "status"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01FdfbxTuXTaG1xFx1bT6jBm",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -156,9 +240,9 @@
      "input": {
       "checks": [
        {
-        "id": "issue3-open-probe",
+        "id": "issue3-open",
         "requirement": "R1",
-        "description": "The backend stores issue #3 with status \"open\".",
+        "description": "The backend issues list holds issue #3 with status \"open\".",
         "assert": {
          "kind": "value",
          "source": {
@@ -192,12 +276,13 @@
     }
    ],
    "usage": {
-    "inputTokens": 18235,
-    "outputTokens": 236,
-    "cacheReadTokens": 17766,
-    "cacheWriteTokens": 467
+    "inputTokens": 19508,
+    "outputTokens": 201,
+    "cacheReadTokens": 19242,
+    "cacheWriteTokens": 264
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:09:34.402Z"
 }

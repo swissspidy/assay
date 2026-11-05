@@ -1,281 +1,306 @@
 {
-  "schema": "assay.cassette/v1",
-  "model": "anthropic:claude-opus-5-5@high",
-  "recordedAt": "2026-11-05T11:39:03.456Z",
-  "turns": {
-    "sha256:4a7080d9266d342dbff5d120d5e847d9f6e776938e698641204d2feaed8da0bd": {
-      "stop": "tool_use",
-      "text": "",
-      "toolCalls": [
-        {
-          "id": "toolu_01YMYiSCScYPWh7pSDG3dwRW",
-          "name": "submit_rubric",
-          "input": {
-            "requirements": [
-              {
-                "id": "R1",
-                "kind": "hard",
-                "text": "The pending comment by Dana on the post \"Getting started with Assay\" is approved.",
-                "field": "instruction",
-                "quote": "Approve the pending comment by Dana on the post \"Getting started with Assay\"."
-              }
-            ]
-          }
-        }
-      ],
-      "raw": [
-        {
-          "type": "tool_use",
-          "id": "toolu_01YMYiSCScYPWh7pSDG3dwRW",
-          "name": "submit_rubric",
-          "caller": {
-            "type": "direct"
-          },
-          "input": {
-            "requirements": [
-              {
-                "id": "R1",
-                "kind": "hard",
-                "text": "The pending comment by Dana on the post \"Getting started with Assay\" is approved.",
-                "field": "instruction",
-                "quote": "Approve the pending comment by Dana on the post \"Getting started with Assay\"."
-              }
-            ]
-          }
-        }
-      ],
-      "usage": {
-        "inputTokens": 1066,
-        "outputTokens": 140,
-        "cacheReadTokens": 0,
-        "cacheWriteTokens": 1062
-      },
-      "model": "claude-opus-5-5"
-    },
-    "sha256:7907e74f7d8cdfe7a75146f9a0b9e8529e03ae8a6f06ec2a9283ba28768900db": {
-      "stop": "tool_use",
-      "text": "",
-      "toolCalls": [
-        {
-          "id": "toolu_01HC9okKLfJW5r9feuYekCgX",
-          "name": "probes",
-          "input": {}
-        }
-      ],
-      "raw": [
-        {
-          "type": "tool_use",
-          "id": "toolu_01HC9okKLfJW5r9feuYekCgX",
-          "name": "probes",
-          "caller": {
-            "type": "direct"
-          },
-          "input": {}
-        }
-      ],
-      "usage": {
-        "inputTokens": 16893,
-        "outputTokens": 25,
-        "cacheReadTokens": 0,
-        "cacheWriteTokens": 16889
-      },
-      "model": "claude-opus-5-5"
-    },
-    "sha256:69f70b071c09176a6c16a55e68436a5ce8a1c47689487fc8a7bb920f56a5d703": {
-      "stop": "tool_use",
-      "text": "",
-      "toolCalls": [
-        {
-          "id": "toolu_014pFiTbyq2G6j3q8EQtKEwH",
-          "name": "submit_checks",
-          "input": {
-            "checks": [
-              {
-                "id": "dana-comment-approved",
-                "requirement": "R1",
-                "description": "The backend comments probe shows Dana's comment on post 4 (\"Getting started with Assay\") with status approved, and no Dana comment on that post still held.",
-                "assert": {
-                  "kind": "allOf",
-                  "of": [
-                    {
-                      "kind": "value",
-                      "source": {
-                        "from": "probe",
-                        "probe": "posts"
-                      },
-                      "expect": {
-                        "schema": {
-                          "type": "array",
-                          "contains": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "const": 4
-                              },
-                              "title": {
-                                "const": "Getting started with Assay"
-                              }
-                            },
-                            "required": ["id", "title"]
-                          }
-                        }
-                      }
-                    },
-                    {
-                      "kind": "value",
-                      "source": {
-                        "from": "probe",
-                        "probe": "comments"
-                      },
-                      "expect": {
-                        "schema": {
-                          "type": "array",
-                          "contains": {
-                            "type": "object",
-                            "properties": {
-                              "post": {
-                                "const": 4
-                              },
-                              "author": {
-                                "const": "Dana"
-                              },
-                              "status": {
-                                "const": "approved"
-                              }
-                            },
-                            "required": ["post", "author", "status"]
-                          },
-                          "not": {
-                            "contains": {
-                              "type": "object",
-                              "properties": {
-                                "post": {
-                                  "const": 4
-                                },
-                                "author": {
-                                  "const": "Dana"
-                                },
-                                "status": {
-                                  "const": "hold"
-                                }
-                              },
-                              "required": ["post", "author", "status"]
-                            }
-                          }
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "raw": [
-        {
-          "type": "thinking",
-          "thinking": "",
-          "signature": "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"
-        },
-        {
-          "type": "tool_use",
-          "id": "toolu_014pFiTbyq2G6j3q8EQtKEwH",
-          "name": "submit_checks",
-          "caller": {
-            "type": "direct"
-          },
-          "input": {
-            "checks": [
-              {
-                "id": "dana-comment-approved",
-                "requirement": "R1",
-                "description": "The backend comments probe shows Dana's comment on post 4 (\"Getting started with Assay\") with status approved, and no Dana comment on that post still held.",
-                "assert": {
-                  "kind": "allOf",
-                  "of": [
-                    {
-                      "kind": "value",
-                      "source": {
-                        "from": "probe",
-                        "probe": "posts"
-                      },
-                      "expect": {
-                        "schema": {
-                          "type": "array",
-                          "contains": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "const": 4
-                              },
-                              "title": {
-                                "const": "Getting started with Assay"
-                              }
-                            },
-                            "required": ["id", "title"]
-                          }
-                        }
-                      }
-                    },
-                    {
-                      "kind": "value",
-                      "source": {
-                        "from": "probe",
-                        "probe": "comments"
-                      },
-                      "expect": {
-                        "schema": {
-                          "type": "array",
-                          "contains": {
-                            "type": "object",
-                            "properties": {
-                              "post": {
-                                "const": 4
-                              },
-                              "author": {
-                                "const": "Dana"
-                              },
-                              "status": {
-                                "const": "approved"
-                              }
-                            },
-                            "required": ["post", "author", "status"]
-                          },
-                          "not": {
-                            "contains": {
-                              "type": "object",
-                              "properties": {
-                                "post": {
-                                  "const": 4
-                                },
-                                "author": {
-                                  "const": "Dana"
-                                },
-                                "status": {
-                                  "const": "hold"
-                                }
-                              },
-                              "required": ["post", "author", "status"]
-                            }
-                          }
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "usage": {
-        "inputTokens": 20311,
-        "outputTokens": 724,
-        "cacheReadTokens": 16889,
-        "cacheWriteTokens": 3420
-      },
-      "model": "claude-opus-5-5"
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "turns": {
+  "sha256:4a7080d9266d342dbff5d120d5e847d9f6e776938e698641204d2feaed8da0bd": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01YMYiSCScYPWh7pSDG3dwRW",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The pending comment by Dana on the post \"Getting started with Assay\" is approved.",
+        "field": "instruction",
+        "quote": "Approve the pending comment by Dana on the post \"Getting started with Assay\"."
+       }
+      ]
+     }
     }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01YMYiSCScYPWh7pSDG3dwRW",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The pending comment by Dana on the post \"Getting started with Assay\" is approved.",
+        "field": "instruction",
+        "quote": "Approve the pending comment by Dana on the post \"Getting started with Assay\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1066,
+    "outputTokens": 140,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1062
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:13967ded315dc676370d23985a6debcbaf19b77b414237e414cd2dcf6cbb6e74": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CUBFJKTMpGAdsGWURf5fZw",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01CUBFJKTMpGAdsGWURf5fZw",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 19757,
+    "outputTokens": 25,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 19753
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:6062cafeae63aa9a9997797e91217413d28034345f57349e90b83a724bb999ed": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HLWvJiU3fQBfujV8c2iDFT",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "comments"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "id": {
+            "const": 3
+           },
+           "post": {
+            "const": 4
+           },
+           "author": {
+            "const": "Dana"
+           },
+           "status": {
+            "const": "approved"
+           }
+          },
+          "required": [
+           "id",
+           "post",
+           "author",
+           "status"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQShwgKEAgTGAI4AUIIdGhpbmtpbmcSDN9CeojWErQCZGiG6hoMOjYVXzrnqk1sj/pDIjAfNdFKDoTEGJk2EMOEGHyqSYHXqvYseXuses13hZ7rh1zdZj4hnr09TENKfv5aogMqpAcPZS6cSIajm119ViY/Tkwl+SqPvPZTrqWIKquKlMjSILDFoIENM+6NveO2QNs/F4QO51aBG7+4q6gnmjKP5nZF3HofDzM3NzqCzTWF4HlxCTEmXTQG7/oJnTh3Vw2T7HLikYY9Wt/DfocWdyUWoKJb1K4VX6IDFdfGKi+PKluAJWaIx5Gi7ZJeH+jm+S4FUNkKNWj8bIk1RGZimip9po/C1pYG1vrYOVoQXfS4DWTA2voLBSVDwD4Gj1Vb7T/LVVNk++5KfKe74GR+3eYPHhRwgHhM55mg8u2iSsGiWngCasmGamg+vjf3F5ztvYMPM3UfWWvxzmrqQDh+GTBvIO0wlDxKpE9T0WshYuZH/1MbjMqnXTDpct2E6TRYf5P3S9V2qwB4//pS5g+sBYRALU+wp9XMlLQj6k+NmG/5LipoMujrYfANLKcImzq/zUvg+FF1DjpL1SXCcW/6zR5xvnUmLzvFGBv1krcCQEsK+uIVkIjo1UnBRvtbNeuxUnqEtXKghCy8Y/4aWPdBsIKN06CtxXQhKtNg8JIhHb9eC2y8Q9tSAhvmjTZfkQgmG4+kawIt78Zwlg44cDxgWXGapNexrb1Km3qob1JO0mCJaWBrHMY1gUQr0cPaK38zICI1gsllumXXeek34avqWgBSUW7kSCdSoOe4eqhLew++gLZQrYIgCG919BYm5V5+/QUghfVzBQWnx7JO1fZXBiX6VCcRfpweB9HhEkugRfMjs2hCX/V2V1xNeutSW1SvHK/PMUOASEBlqMAeeYf7WUbv4aTcmihpF2UxpQ9HZ97fU45imspoTSAU/RRrzvsTJMCp+sKOOkmadbAj8hkzp35ujQN5TYBqk2xZKsVKsbshAeJSSay6NbMCtjxVXYR8+wTGcpn2Af7AhQ8oCLTKc6uaiwe5khq9muQagIEpVl3LjK1K2RfNhCviAqRxkuwxJau1/ha1w5Se5bwq4j7HeSGh1LJ+oTmtASWAdbt8tA8jPo0bosSmATBwHUQKRiwu6aeUW0Z1RaVv3WXocVl+e9+MqYuurJO36yHYy/4Q2w31taY/h77a6XwjJUNFrHls+7Jqcxtd3eDHZUs6YEZX7f2aWNXwPAyZNMMVmUK22GQVMPPYfR8w3jdJ4Ai8IT1Z5eSuACIb4Wfqneap9efpFR35jTP66tJEEB43TahxV/AmRd8LfO5yZIdnAi9PA6cEExcjwqkXYVM4t3N4tRflaUX/Jnhj4Ja7hRgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01HLWvJiU3fQBfujV8c2iDFT",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "comments"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "id": {
+            "const": 3
+           },
+           "post": {
+            "const": 4
+           },
+           "author": {
+            "const": "Dana"
+           },
+           "status": {
+            "const": "approved"
+           }
+          },
+          "required": [
+           "id",
+           "post",
+           "author",
+           "status"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 23175,
+    "outputTokens": 306,
+    "cacheReadTokens": 19753,
+    "cacheWriteTokens": 3420
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:91375f4b452f30266847a01067f71e9043388388d5073a4129f54a456872389d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011JECswbvVPGVvGAvVJ7dRV",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "dana-comment-approved",
+        "requirement": "R1",
+        "description": "In the backend comments probe, comment id 3 by Dana on post 4 (\"Getting started with Assay\") has status approved.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "comments"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "const": 3
+             },
+             "post": {
+              "const": 4
+             },
+             "author": {
+              "const": "Dana"
+             },
+             "status": {
+              "const": "approved"
+             }
+            },
+            "required": [
+             "id",
+             "post",
+             "author",
+             "status"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_011JECswbvVPGVvGAvVJ7dRV",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "dana-comment-approved",
+        "requirement": "R1",
+        "description": "In the backend comments probe, comment id 3 by Dana on post 4 (\"Getting started with Assay\") has status approved.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "comments"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "const": 3
+             },
+             "post": {
+              "const": 4
+             },
+             "author": {
+              "const": "Dana"
+             },
+             "status": {
+              "const": "approved"
+             }
+            },
+            "required": [
+             "id",
+             "post",
+             "author",
+             "status"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 23567,
+    "outputTokens": 258,
+    "cacheReadTokens": 23173,
+    "cacheWriteTokens": 392
+   },
+   "model": "claude-opus-5-5"
   }
+ },
+ "recordedAt": "2026-11-05T21:06:09.704Z"
 }
