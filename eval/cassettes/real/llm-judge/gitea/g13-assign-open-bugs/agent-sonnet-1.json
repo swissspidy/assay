@@ -1,0 +1,51 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:29:07.095Z",
+ "turns": {
+  "sha256:65f8efa8365062abc5014b39bc5897759d4a856f5c841567223aeb8061b3790d": {
+   "stop": "tool_use",
+   "text": "I judge this a success. With the filter on open issues labelled bug (labels=1), the final page lists 6 open bugs, and each row shows an assignee avatar. Issues #12, #10, #4, #3 and #1 are assigned to dave, and #13 is assigned to bob. No open bug is left without an assignee. Since #13 still shows bob, the agent appears to have left an already-assigned issue alone, as it should. No issue shows two avatars, so dave was not added on top of someone else. One limit: this page only shows the final state. If one of the dave issues originally belonged to someone else and the agent swapped dave in, that wouldn't be visible here, but nothing suggests it happened.",
+   "toolCalls": [
+    {
+     "id": "toolu_01GZW2gtvUCoECMzw47zuvBz",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "success",
+      "reasoning": "The final page filters acme/webapp issues to open issues with the bug label (labels=1) and lists 6 open bugs. Each row shows an assignee avatar: #12, #10, #4, #3 and #1 are assigned to dave, and #13 is assigned to bob. No open bug is left unassigned. Because #13 still shows bob, the agent appears to have left an already-assigned issue alone, as it should. No issue shows two avatars, so dave was not added on top of an existing assignee. One limit: the page shows only the final state, so it can't rule out that one of the dave issues originally had a different assignee that was replaced, but nothing suggests this. The final state matches the task: every previously unassigned open bug is now assigned to dave."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "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"
+    },
+    {
+     "type": "text",
+     "text": "I judge this a success. With the filter on open issues labelled bug (labels=1), the final page lists 6 open bugs, and each row shows an assignee avatar. Issues #12, #10, #4, #3 and #1 are assigned to dave, and #13 is assigned to bob. No open bug is left without an assignee. Since #13 still shows bob, the agent appears to have left an already-assigned issue alone, as it should. No issue shows two avatars, so dave was not added on top of someone else. One limit: this page only shows the final state. If one of the dave issues originally belonged to someone else and the agent swapped dave in, that wouldn't be visible here, but nothing suggests it happened."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01GZW2gtvUCoECMzw47zuvBz",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "success",
+      "reasoning": "The final page filters acme/webapp issues to open issues with the bug label (labels=1) and lists 6 open bugs. Each row shows an assignee avatar: #12, #10, #4, #3 and #1 are assigned to dave, and #13 is assigned to bob. No open bug is left unassigned. Because #13 still shows bob, the agent appears to have left an already-assigned issue alone, as it should. No issue shows two avatars, so dave was not added on top of an existing assignee. One limit: the page shows only the final state, so it can't rule out that one of the dave issues originally had a different assignee that was replaced, but nothing suggests this. The final state matches the task: every previously unassigned open bug is now assigned to dave."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3258,
+    "outputTokens": 1196,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 3254
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

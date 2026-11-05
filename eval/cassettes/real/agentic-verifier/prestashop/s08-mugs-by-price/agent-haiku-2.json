@@ -1,0 +1,124 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:59:44.784Z",
+ "turns": {
+  "sha256:b3bc9a4175679c2ead00498b5bd970e7be20ccc748765ddd35488dc702019ac4": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CkADZ8QfGHTCg4pryy5cb7",
+     "name": "page_outline",
+     "input": {}
+    },
+    {
+     "id": "toolu_01HjbMG2D8fKbxh8J6doCSqe",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01CkADZ8QfGHTCg4pryy5cb7",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01HjbMG2D8fKbxh8J6doCSqe",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1872,
+    "outputTokens": 49,
+    "cacheReadTokens": 1868,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:76c08e33cb3f010aedcd3ed2f4866855b7dfc4b1a330c509a36e43ebe56f0e14": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0178Vb8WhrZMimTxfkHNAZLV",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The final page is the shop search results for \"mug\" and lists 5 products. These include all four mugs in the catalog (ids 6, 7, 8 and 19) plus the Pack Mug + Framed poster bundle."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The URL includes order=product.price.asc and the sort control reads \"Price, low to high\". The listed prices go from lowest to highest: €11.90, €11.90, €11.90, €13.90, €35.00."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSgQYKEAgTGAI4AUIIdGhpbmtpbmcSDD16jswYNvmwnmyovhoMADqRu2qXeuvP0t/MIjDkp5M1p2bhhQ9VgsSU3KA8Tam8KbMU8fpNNgQeE+LXKB2ZyqX5oFM/biAGO/2xE58qngVoZzszDEHhD93vEG1De61cOSSouliOwB1qUk3c9h2o9UTDnIsoPWFb5E2pZ1w6wLYVelLhhZFeal0AxoEIlqjV1V7D7t7O+A+JVNM4IDBQv6auzI8klEKnijQqKnyyxDsIoLPE9AZEhWkDWuYwxR+6VXuyXQMRhGUbKD6NhfepTMvv4vJ9EnPCANUnta036VGEEIPDGIKn1hIn8bFm3s2RP26n92gucyjmZ7KEZid+jYvFPO6AF1VbzAruYf6V6ZTWLkeUe6gsqtNEbCQnUozR7yH81NypS5DZ6yQdViGmledH/gs+vsiUo6r1faNfNemlyelErdOWbJJuMb8Ky739wGDnF2EeqArI/0j5SFsOlVII3S1suhfD3aNaW07v8jokJ/a3pdsOXI7na7zCIgsOzwVIsID2ikNgxFzTW+XhXHAhCPz/B6xDMqASPVyu4WwebJ/URmq44eB77Ez+uOkONoZ3gNadNrhIGIfWwZaWWLbO60GX5WPMxBvJ6lfDJipz0VcJ1TwQk/dKTyWXwPFk43bk9HT+SOIOiao4ZpGLfTu/zWKGj/i7HAr2Wqe8AnmTY7REZH3E9gDefpVWQWqD5wdNZhK18RioMVJsWt7XXsFsg/TDFSp1n9BypF1QiUiH/t2vWozJtWOTkpNi1/lD+FBSrKwDPYjHTQvmpYQ8aBRDqJO4l5R2V7LcJW8BOOSUFcJ4rf6FPiYSnPWsMRxJku49SZ4DOQb5lzuPhDwdfBtMrzPHQQwG4KOT+Q8KDNYdrewDepAZ0V27jlJ3GICEtOIk0gsjs2Ptw1F/D5bn0PEnLifjPxRtbFo8LxYHY8wfVt/y2Q5eg5JDtCLfwqPrqlNR1t8M3VXeQ/laFDe6QfprdOiNPWd3vdzcubSOGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_0178Vb8WhrZMimTxfkHNAZLV",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The final page is the shop search results for \"mug\" and lists 5 products. These include all four mugs in the catalog (ids 6, 7, 8 and 19) plus the Pack Mug + Framed poster bundle."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The URL includes order=product.price.asc and the sort control reads \"Price, low to high\". The listed prices go from lowest to highest: €11.90, €11.90, €11.90, €13.90, €35.00."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 5632,
+    "outputTokens": 309,
+    "cacheReadTokens": 1868,
+    "cacheWriteTokens": 3762
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

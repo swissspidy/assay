@@ -1,0 +1,106 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "gitea/g03-comment",
+  "version": "1",
+  "task": {
+    "instruction": "On the acme/webapp issue about the dark mode setting not being saved, add the comment \"I can reproduce this in Firefox 128.\""
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "A comment with the text \"I can reproduce this in Firefox 128.\" is added to the acme/webapp issue about the dark mode setting not being saved.",
+      "source": {
+        "field": "instruction",
+        "quote": "On the acme/webapp issue about the dark mode setting not being saved, add the comment \"I can reproduce this in Firefox 128.\""
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-comment-stored",
+      "requirement": "R1",
+      "description": "The backend holds a comment on issue #3 (Dark mode toggle does not persist) whose body is 'I can reproduce this in Firefox 128.' (allowing surrounding whitespace / final punctuation), and the comment was posted to acme/webapp issue 3.",
+      "assert": {
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "issueComments"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "issue",
+                    "body"
+                  ],
+                  "properties": {
+                    "issue": {
+                      "const": 3
+                    },
+                    "body": {
+                      "type": "string",
+                      "pattern": "^\\s*I can reproduce this in Firefox 128[.!]?\\s*$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "issues"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "number",
+                    "title"
+                  ],
+                  "properties": {
+                    "number": {
+                      "const": 3
+                    },
+                    "title": {
+                      "const": "Dark mode toggle does not persist"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "kind": "request",
+            "match": {
+              "method": "POST",
+              "url": {
+                "path": "/acme/webapp/issues/3/comments"
+              },
+              "status": {
+                "lt": 400
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T11:38:23.585Z"
+  }
+}

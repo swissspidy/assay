@@ -1,0 +1,341 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:55:15.136Z",
+ "turns": {
+  "sha256:8a7fc29f0bf0284bd163dbacf8b665b646698959b9c02b85dba46cac8258e0d0": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01PEgVwecGL9vsVkvEfSuTF3",
+     "name": "show_part",
+     "input": {
+      "part": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01PEgVwecGL9vsVkvEfSuTF3",
+       "toolName": "show_part",
+       "input": {
+        "part": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7137,
+    "outputTokens": 47,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7133
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:9097e23c36e2b8fc5cd285bff7090a0e2fd9a5c24d25220033fc15f3f4532319": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01EugwQkxypbA2M42cx6TTSp",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/alice/dotfiles/settings"
+     }
+    },
+    {
+     "id": "toolu_01BzXTpQEGUVf3J81PM5nkv7",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/alice/dotfiles"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01EugwQkxypbA2M42cx6TTSp",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/alice/dotfiles/settings"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01BzXTpQEGUVf3J81PM5nkv7",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/alice/dotfiles"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7909,
+    "outputTokens": 124,
+    "cacheReadTokens": 7133,
+    "cacheWriteTokens": 774
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:c05e30ea263752e265a93d4d41d5c539d592c0bc39a29c970e1a2a0537cb54aa": {
+   "stop": "tool_use",
+   "text": "The settings page for alice/dotfiles is open with the Description field showing \"My dotfiles\". I'll replace it and save.",
+   "toolCalls": [
+    {
+     "id": "toolu_018cN1En3W5SUS2mSwKMZTy3",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/alice/dotfiles/settings"
+     }
+    },
+    {
+     "id": "toolu_01Kyf4omb2sLjGheZ5z7egNA",
+     "name": "fill",
+     "input": {
+      "ref": "f1e149",
+      "text": "Shell and editor configuration"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The settings page for alice/dotfiles is open with the Description field showing \"My dotfiles\". I'll replace it and save."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_018cN1En3W5SUS2mSwKMZTy3",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/alice/dotfiles/settings"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Kyf4omb2sLjGheZ5z7egNA",
+       "toolName": "fill",
+       "input": {
+        "ref": "f1e149",
+        "text": "Shell and editor configuration"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 16462,
+    "outputTokens": 181,
+    "cacheReadTokens": 7133,
+    "cacheWriteTokens": 9327
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:4c5620fb5d4490c182d0fc6a7c4d35cda6d1d75f7cc8b16c2556edd2eb7d5e32": {
+   "stop": "tool_use",
+   "text": "The fill failed because I used a stale ref. The Description field in the current snapshot is f3e149.",
+   "toolCalls": [
+    {
+     "id": "toolu_01FKjLeNrLaQLA4jsN36U73D",
+     "name": "fill",
+     "input": {
+      "ref": "f3e149",
+      "text": "Shell and editor configuration"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The fill failed because I used a stale ref. The Description field in the current snapshot is f3e149."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01FKjLeNrLaQLA4jsN36U73D",
+       "toolName": "fill",
+       "input": {
+        "ref": "f3e149",
+        "text": "Shell and editor configuration"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 19079,
+    "outputTokens": 111,
+    "cacheReadTokens": 7133,
+    "cacheWriteTokens": 11944
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:5c955ce4d90ac5a0f4e1e7bcf851ec8921923af2f04eeadf91951a72e7265b4e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011wVPNwNXHSkGnXqGnPCLVg",
+     "name": "click",
+     "input": {
+      "ref": "f3e154"
+     }
+    },
+    {
+     "id": "toolu_019xiap6qrWfjHv8EmFrMvaY",
+     "name": "wait",
+     "input": {
+      "seconds": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_011wVPNwNXHSkGnXqGnPCLVg",
+       "toolName": "click",
+       "input": {
+        "ref": "f3e154"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_019xiap6qrWfjHv8EmFrMvaY",
+       "toolName": "wait",
+       "input": {
+        "seconds": 1
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13673,
+    "outputTokens": 94,
+    "cacheReadTokens": 7133,
+    "cacheWriteTokens": 6538
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:3bf4adf9ab5651c2da0da4b904fc1dbfdb1390263055f0665551fd72e0555f40": {
+   "stop": "tool_use",
+   "text": "I changed the description of alice/dotfiles to \"Shell and editor configuration\" and saved it. The settings page now shows \"The repository settings have been updated.\" with the new description in place.",
+   "toolCalls": [
+    {
+     "id": "toolu_01NrNgcqH3KghEwgaiFcadfe",
+     "name": "finish",
+     "input": {
+      "report": "I changed the description of your alice/dotfiles repository to \"Shell and editor configuration\" and saved it; the settings page confirmed the update."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "I changed the description of alice/dotfiles to \"Shell and editor configuration\" and saved it. The settings page now shows \"The repository settings have been updated.\" with the new description in place."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01NrNgcqH3KghEwgaiFcadfe",
+       "toolName": "finish",
+       "input": {
+        "report": "I changed the description of your alice/dotfiles repository to \"Shell and editor configuration\" and saved it; the settings page confirmed the update."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 19395,
+    "outputTokens": 147,
+    "cacheReadTokens": 7133,
+    "cacheWriteTokens": 12260
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

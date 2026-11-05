@@ -1,0 +1,190 @@
+{
+  "schema": "assay.cassette/v1",
+  "model": "anthropic:claude-haiku-5-5@low",
+  "recordedAt": "2026-11-05T11:38:24.533Z",
+  "turns": {
+    "sha256:e919d2e104a4f631ae866259a496eeaecbebef2a25599c41887950a9e1638620": {
+      "stop": "tool_use",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "toolu_01PUr9MAggo28WrLtYWUezGg",
+          "name": "goto",
+          "input": {
+            "url": "http://localhost:4330/cart?action=show"
+          }
+        },
+        {
+          "id": "toolu_01BzsvYbSqE9RWkd6qwUKxAx",
+          "name": "show_part",
+          "input": {
+            "part": 2
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01PUr9MAggo28WrLtYWUezGg",
+              "toolName": "goto",
+              "input": {
+                "url": "http://localhost:4330/cart?action=show"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01BzsvYbSqE9RWkd6qwUKxAx",
+              "toolName": "show_part",
+              "input": {
+                "part": 2
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 7394,
+        "outputTokens": 104,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 7390
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:bd623ce75c2d028287f5941be2c010ee4970ea827f04b43b7bf512c9014de86f": {
+      "stop": "tool_use",
+      "text": "The cart contains a framed poster (\"The adventure begins Framed poster\"). I'll remove that line using its delete link.",
+      "toolCalls": [
+        {
+          "id": "toolu_01AQhB4oNgS7i61W3kCdCCNX",
+          "name": "click",
+          "input": {
+            "ref": "f5e119"
+          }
+        },
+        {
+          "id": "toolu_012BevXEL7Mn3TtB5RLj4Smo",
+          "name": "wait",
+          "input": {
+            "seconds": 2
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "reasoning",
+              "text": "",
+              "providerOptions": {
+                "anthropic": {
+                  "signature": "CAQSoAYKEAgTGAI4AUIIdGhpbmtpbmcSDPaUPV/F1D6Mw4uE9BoMNJFG5CA3nLqHomMIIjC+l2iLvNp8eCJQdJDpoJ5FO0aVqExzWUieaKJYk6beMvM5ZkVEsqk+6I25VWYYWAsqvQWoc9qdynPnf5sxcZaIHIlTi1aaWw88oy2ElxrUWAnhElG6dRj1CcoRwo+M5A/CZU8belUenVoFkWYK1zw7gzq6vV2GIZyma40TyTFwd1IIGg7hD64Hm/2RlZ4HUPj8MrJ/yNlOdnVFIEmYXK1XHrMcmIJqcs0IagdtCA9MliWopyxmMbAP8cRv42xTIlfF8W+YxQh8/43N0egC/ReRjxm5adxm/dysP9gM2XGfoCkzRJHEnvwj7qIgsAF3mPJTFGEMVuEJ5x59aCmH6fMTbTza5VZIARXFuLi5/ux491PtqRdiqyCwi020mtASbePe4WO8GVO4+oFF0LJcfZ8CPgr32t0NbNGKqYguiCJlZBVKK1V8OdHolSKQiYWs6W6j67OGZ7ecxSNhnekmw985DYLKcHnqEQS/PW+OLMeBmZK7O9jUKMCMNpqDQB6LMxBzBOeehPM6liXmRXu+J9vOxPzfGNmnQoxn9iGL2famu4Wq/tD8J2BX674/J9yZ5+Orxl8BL3CbfG1QJysu9GD4KJdWnCHAXUcAnEEPs1EoiZq5XOmLB1HK0+h1iQ/yS9Ht62TreFkV9Y0BZh1aP832puhjehIjV8dxZ8GDx+qlH8i0lh+ksG0fpFm68BMj4iN7VkSvh8eTv1Cl2utyzZCc8F0RFcg8J0XOTC+G5VkxrJO/KCW54Ghbn8a9zc+tzTkwwwN5taUmOP5OLEH9eCyC2pJ5KMtUqdriSErAKazXeuElW5+brnNMPtUa+LsbefyTx1JvpYK4zMEiWXdhVQxI04JRPq8GRpa5pfaz3m5kKAUSGnzCT01aGaw/tqsbA9O5RUYtgseJUoNN0dr2CLH2wIl98Or6AlazxrqZcRUWkI+1ugbf959G77SKQh9h9e2PfqX9EQQtZQm+vgQBCHo1UWA2dFmvaEprTKmFMorRuhgB"
+                }
+              }
+            },
+            {
+              "type": "text",
+              "text": "The cart contains a framed poster (\"The adventure begins Framed poster\"). I'll remove that line using its delete link."
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01AQhB4oNgS7i61W3kCdCCNX",
+              "toolName": "click",
+              "input": {
+                "ref": "f5e119"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_012BevXEL7Mn3TtB5RLj4Smo",
+              "toolName": "wait",
+              "input": {
+                "seconds": 2
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 12443,
+        "outputTokens": 192,
+        "cacheReadTokens": 7390,
+        "cacheWriteTokens": 5051
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:f26377315e5519b5917d1696338a983271266e8c60273a908405a3026f8eaf69": {
+      "stop": "tool_use",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "toolu_01Foc85zApUordUgxWSCR7eL",
+          "name": "finish",
+          "input": {
+            "report": "I removed the \"The adventure begins Framed poster\" (40x60cm) from your cart. The Mug (€11.90, qty 1) and Brown bear notebook (€12.90, qty 2) remain, and the cart now shows 3 items totaling €37.70."
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01Foc85zApUordUgxWSCR7eL",
+              "toolName": "finish",
+              "input": {
+                "report": "I removed the \"The adventure begins Framed poster\" (40x60cm) from your cart. The Mug (€11.90, qty 1) and Brown bear notebook (€12.90, qty 2) remain, and the cart now shows 3 items totaling €37.70."
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 17135,
+        "outputTokens": 131,
+        "cacheReadTokens": 7390,
+        "cacheWriteTokens": 9743
+      },
+      "model": "claude-haiku-5-5"
+    }
+  }
+}

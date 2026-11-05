@@ -1,0 +1,148 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:15:53.460Z",
+ "turns": {
+  "sha256:3653934b4e5ef2a7229a27c20999b26ec8ac16face939454e059e55026ed6db1": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01EgA4yDSs6hJ2ZJtzUtjSxw",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01EgA4yDSs6hJ2ZJtzUtjSxw",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1853,
+    "outputTokens": 27,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1849
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:9499bded564be6da05375e78a5a85613dab515146874556db402b7af84675fb7": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CtmffNgU2NoU1WmtzhRqhN",
+     "name": "find_nodes",
+     "input": {
+      "role": "row"
+     }
+    },
+    {
+     "id": "toolu_012AvsgUkvJDHwDy9F32qgLa",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSmAUKEAgTGAI4AUIIdGhpbmtpbmcSDMkrtHGjp+VLcpm1yBoMnqkFxtcNVEOyQpjvIjCexXVLzUz8jSuzH5e7DE2Xuj+EZIllNrc1goZF755GVqPHlwBVrzDMKfA3ay4dzN0qtQTqPreltUt2I/oISSSfM4PPHovjUkIaxwjYxkjnB2Z0rx3d1nILI/2nYOZMId2TcCdXQzXLOi4N7iXUj4ap2/TFZblc7S62eEjqyqIKGz3Vgp9uM/enJf+fdp3wzEDDYdlmK30V9VkNMHXdK1zRM29CCZt+C4uF5MqDKv2gKAJlrOD5g3S8fEaZJW7Yfts3QIuxsZMK0rDu5V+nhQbobymOq7saEX+wA+gC/qs9QeqAkhr5PcepCxaLQwHK8Pol2hsmb5AJLpWPQsxUEm4OxcRboVgVOP9lv6f641ZEyf9lcIHZQvvlkOKDN7RgfkBDBGIovsnMv2zAXNtRFLuxphZOqjnjf6O8HPbj2TNH17eb/9Sx2UrHZvKtRlk+6b38YwzV2xCKWh8+OO96RiEakCGCO664uifRLDaPvHsbL9voPf5ZD1RZc3acayXfk6n9SIpDPImdh0AbZSPtYGzdOWh1ogC+b5jldnDKPdbX2DSp/brXXRSkQ4vStB61ETlx5Pm4C0y3N0crELVLTVdklfjEYYueL4AfD4yxUSotTRWqnULztU5y5jOxUAqHYPAKAo5EEr/mqbQfchlaHqocJiuD9AeyppbNJu04fX1iockIPw6GIhFcdmUXbxqde97YFpJayFzlsAl9WwO82veTZ2asmFTspMVjdyCTeS9Qq/483fvRq1RtRVQDMei2NdnsClbsnvPr5iWKVh8RboKput5ar0T0nYpoagKaMk8IjebdEw/JaxtDGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01CtmffNgU2NoU1WmtzhRqhN",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "role": "row"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_012AvsgUkvJDHwDy9F32qgLa",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 3381,
+    "outputTokens": 86,
+    "cacheReadTokens": 1849,
+    "cacheWriteTokens": 1530
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:79ba3a0e4e44c5fe2abb755975045b3ba9bc557af79187ca76b32450db9bc5f3": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01J4gyffDJXmpa5pZQ3nx29Q",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The final page is the WordPress Posts list filtered to post_status=draft. Its table has exactly three rows: Pricing update for teams, Roadmap 2027 and Spring meetup recap. The posts probe shows these are the only three posts with status \"draft\" (ids 11–13), so the page shows the full list of draft posts."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS2gcKEAgTGAI4AUIIdGhpbmtpbmcSDOV3pC8UgAs+MHXNzhoMdWN7MH/5mwxyuxUeIjAY2SxgNuk4HP+Nf9GyNPJh9vZ2rEgFPM2hwwtdt5gflOHr/gqBoGQIAuPsEJrLatcq9wbRsj9XauzaZaGtx26J+Ucyc568RDCCcsjBWcO1u1hFCi7jaHsRHAujwnHbJ8Nl+r650oWUeAx8cC4u2ygrkhIDd4PTiwl5Z6Iv57sk2fgSEiDE//A94vg1H4L0ZUSQB49YR8AKZL0uCws+Zt3VJjAKjNFTh1sGOBLASb3ECkuLPVN5RMpmztuDR5HUgTO74UYVXl/AkVpnP13dUnl5gE+VIRMJxZigzCtDn3weHoOvP/wrRLWLOc6AuNbYkyOmFmcW/RLftZcda89daSi6HIGg50FJhrImQb3YP5b0oTYiQp0kcJKUqN8KkG5A5zgSSIV0uMueVvgDf15uOhXUHUkqLCTBa3haW2D9Qnxma7FP/MeMy6CSw/tNl4ixq41HtuCFeHLH43bOyO54Z3Z5e6U4A+D0OS8C288NFauaVkZP7+fWcTbm/+BgctW+U6EjXArKmsDbl6D1bNqSRHsIGYDvUCTTFduPM5GDXAw6P9Kyzp/uiolJX38Ahmy1RgialEd5V9AK6GLe4CF+v1/0TFJMNs8hS/FLhJj/V+yp4tfKBkMITb0r+RxGGyBRWiM2bsJq+s7madLEN9QH/7orfSECFqhmhNW/qvdSi/3KBN5hQfc/Ne71QVgU2fNHYEFZ6JqvxDzJ8+RM3Dqh1p0qumqqO1s9gPWBIZ3ydQmeZ/oiV/fYxdgvou8QaDum8FqnrME603a5Ev95JhhucI+4E8xjnp/35ZQ7WiRJn1Pm5pl0bqFg9gXdIeep0DyOFfnP+kC4h2VabqPmVFUvLU7TT9HN32R6ePJYHRyHkY8NRFCmzqj1BzxEZ3bOM+xzFav01v5Erb4j2SDdyKPsIZ/aBnJYrVMriEyeNZWFdRATonXw9SQ//mZKXKuCqwqu6JQZWLTbhPPppUAZKYitCn4u5941qK4IAHMLlh3HYGQFfWZmii2iBIv3sw2c5pIQ35kCWEa+/Ppjyh6JZq8CTKrpNk0KAvtLyQ06zLZT9xSC+MpJF2Zaj8pQJGqfQbh4UoG8zqLAxruIbKMfiqQ8wBCPp9izopzZf02Xrx7bE0DdjHwV0IDRqCkYFrcCy2w8cZduyA9fvWnY3wSkj0A+X0Y8MSa/jEU070ami5fu20NAyZfrp7eK/RZIdDzvgK9hqdl74qgFO96DLVrSIQTLDNO6iPsyAP9eOmmpdxgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01J4gyffDJXmpa5pZQ3nx29Q",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The final page is the WordPress Posts list filtered to post_status=draft. Its table has exactly three rows: Pricing update for teams, Roadmap 2027 and Spring meetup recap. The posts probe shows these are the only three posts with status \"draft\" (ids 11–13), so the page shows the full list of draft posts."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 6162,
+    "outputTokens": 290,
+    "cacheReadTokens": 3379,
+    "cacheWriteTokens": 2781
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

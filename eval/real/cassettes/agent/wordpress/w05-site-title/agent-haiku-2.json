@@ -1,0 +1,225 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:44:22.397Z",
+ "turns": {
+  "sha256:497c756a42f9f962deb4d3a0bb5d646dc9ebc74cfa792ac19b9bc9b09a08e34f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018xwpnYTjPkJ13tNYKcesDf",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4320/wp-admin/options-general.php"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_018xwpnYTjPkJ13tNYKcesDf",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4320/wp-admin/options-general.php"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7254,
+    "outputTokens": 65,
+    "cacheReadTokens": 7250,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:7860a6c45ceb31fa123649f2e6c9ddbf17ecdfc53337c63edca031fea4468ce6": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017CN4ZxGbZ22J4MzAPQgrT9",
+     "name": "fill",
+     "input": {
+      "ref": "f1e159",
+      "text": "Assay Field Notes"
+     }
+    },
+    {
+     "id": "toolu_01F1sS9SSRRpg3NixLyGj7jE",
+     "name": "show_part",
+     "input": {
+      "part": 3
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_017CN4ZxGbZ22J4MzAPQgrT9",
+       "toolName": "fill",
+       "input": {
+        "ref": "f1e159",
+        "text": "Assay Field Notes"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01F1sS9SSRRpg3NixLyGj7jE",
+       "toolName": "show_part",
+       "input": {
+        "part": 3
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12988,
+    "outputTokens": 122,
+    "cacheReadTokens": 12986,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:1339c72e6894cc351eecd4a128057d3285d8405e9d0555277eee1a38f4c06ae0": {
+   "stop": "tool_use",
+   "text": "The field now shows the new title. Saving next.",
+   "toolCalls": [
+    {
+     "id": "toolu_01HnbRUopXqxTUqmYmnjFZHj",
+     "name": "click",
+     "input": {
+      "ref": "f1e242"
+     }
+    },
+    {
+     "id": "toolu_014By2s8DTSEfp6BfX8nZWQG",
+     "name": "wait",
+     "input": {
+      "seconds": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The field now shows the new title. Saving next."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01HnbRUopXqxTUqmYmnjFZHj",
+       "toolName": "click",
+       "input": {
+        "ref": "f1e242"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_014By2s8DTSEfp6BfX8nZWQG",
+       "toolName": "wait",
+       "input": {
+        "seconds": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14494,
+    "outputTokens": 109,
+    "cacheReadTokens": 14492,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:d41599432046dcb1e6628b97a2b9d1adcced093048e636d67e0e3119ad591440": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HJ5rpQCqp9HFq2W2rDpaG8",
+     "name": "finish",
+     "input": {
+      "report": "Changed the site title from \"Assay Journal\" to \"Assay Field Notes\" in Settings > General and saved; the page confirmed \"Settings saved.\" and the tagline and other settings were left unchanged."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01HJ5rpQCqp9HFq2W2rDpaG8",
+       "toolName": "finish",
+       "input": {
+        "report": "Changed the site title from \"Assay Journal\" to \"Assay Field Notes\" in Settings > General and saved; the page confirmed \"Settings saved.\" and the tagline and other settings were left unchanged."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 19186,
+    "outputTokens": 110,
+    "cacheReadTokens": 7250,
+    "cacheWriteTokens": 11934
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

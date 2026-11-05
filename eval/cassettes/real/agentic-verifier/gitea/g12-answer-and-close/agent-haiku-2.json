@@ -1,0 +1,244 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:49:46.314Z",
+ "turns": {
+  "sha256:f99c0d2cc08ee481606daec2ed3d2a3e94ab5901ca97678dbf56655306be3d99": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01YPzRvKVAyQ8abpXZg3MNnS",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01Vp4yNsKpLaRarE6Ahwx8wh",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01YPzRvKVAyQ8abpXZg3MNnS",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Vp4yNsKpLaRarE6Ahwx8wh",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1974,
+    "outputTokens": 70,
+    "cacheReadTokens": 1970,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:c187c2183e81a3f715837ef516841e37ce187fea924adb10c8e99138425a0ad5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017tRvyDYissyZBY1g1sFW9E",
+     "name": "network_entry",
+     "input": {
+      "seq": 30
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS3gUKEAgTGAI4AUIIdGhpbmtpbmcSDHUTRm57nBkfDp3CyhoMmKEHj8lpMh8oW9buIjBhsOZtw5u4f/pKPNU+EFQhIVdkUv6XGzgUekFjPsWFcQhgo0Q7y/QknncFzNIaCAgq+wSOJBYOpYHTvccpfM1di2Kt0dzpNJ4xmev1/hrfugBVddSzprYG5/6gThz20PyN8toRdjluxqzFeQSX9P6PzHtUMbXCqS/zsf9vQoN793WkyCgc8QvACixBZmC9mR+S5Ia6IZ4Pnj5SyR3w3Qbq4qw3aC2uLE6g3YwX+gvc2TEzY233KeSuvY770DEz5hRZKWUqx70ZspRQ1XEKkievXwglcRh990BOWGK0RgSB615SGeUbD/Jm4WzYl+fFwnlUHphPhFybHtw8bPRYvfyjbNF/6fjw8kOl0rLAbU1i4gUej9LfxkAvNdm3ySu8RB1cqR20bvyLsGeZ/VGNhXKjp45Z2+b8XFDVQ3taaUco+DIzfbrdquKvihfivCkti6wl00jJrbT/JQ3nefFjEYLobOTH/ZJizdsw8kPw3GRLS4UxLPMN3oWb7Pxk7egE0wt8+ZFR4Gt3itG96JOjKRMCVUAnjeoJ0gYrXyrk8ykuHlJM9mYKIbnrBZtduK76WMDDOplYIkj4mZFoJDgqES4fV1Wj5iNvLv1AswQ006g26n3QgK1l0p4CJGqak6Uwz868qQMt9gsghv2oVVkNA2NP2PYaMzV+ovTGXpTbjsRMoUz7QK66GO7I9PiJzBm0zlVqwD+AHVgYFz7LIBaDe0h3YoRyNS+Ia3n88fZruaGHRAP7HBfnsijCBU5TRn+q/F/Q6WSk0TRCQs5/EpgG5PhkOl647ArI4/jEWIp4bnkFzFFmbqoqP/8rtFB9r/gpBdlb/3r478GcrxHF6a8w2+ghmOUb0E3r1SSnGSmcvS0Wd4BMA4/BBDAl/9eJNI131FPEWoUxBjrQ0udp1Fx0AxgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_017tRvyDYissyZBY1g1sFW9E",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 30
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4142,
+    "outputTokens": 84,
+    "cacheReadTokens": 4140,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:b02e9747ca63b30971daff6eda30fd16dff22b2c30ba13d53660e756e5715a1e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KXJi2yMihaRdqCfK6SpNHB",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Answer the question about resetting an API token in acme/webapp with the comment \"Go to Settings > Applications to regenerate it.\"",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The probe shows that issue #14 ('How do I reset my API token?', question label) in acme/webapp now has a comment from alice with the exact text 'Go to Settings > Applications to regenerate it.' The POST to /acme/webapp/issues/14/comments carried that content and got a 200 response."
+       },
+       {
+        "requirement": "then close that issue",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The comment POST included status=close (Gitea's 'Comment and close'), which saves the comment and then closes the issue. The after-task probe shows issue #14 is closed."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS2AYKEAgTGAI4AUIIdGhpbmtpbmcSDLRY29DLonyuOgJFOhoMdt64sk0kzJ9mowEdIjBgMq55M4DKx08FrEiULzMRS2dbk/TzhOdtzoDDXgeduvVGZTIi+FKIaRUzzm51jhUq9QX/guenR0lb0oUDykefbklUHRKs6hzh5jRg9TCre30rKmpPcqsCDu+mFovJ5dGrg2HRJZca6ueGj1i48vL/kh44t8LZoC9WV/6jvEb2CZsFeD+aMdV5mt6NKEJ9LakqVzobKnboE9V5QunyEHFEfYRyj8d+UtHu4fHh0OrtbWV45/Rkjs09fn66HZ3X7CE65wXoLJOqVydWyv3mAgSFOv5HSFDxmV9+s0UNtsH25D2fJjlQzbQL6sa+D/o/dejFD2L7N/517TsHL+IlSgr7xDhDuk7uUZgp4UEiqHNri/ruLEXqNIFT+C0G5+wTMsMT3lGS9nob7F4OtxdhQ187RR4vPXEWgnsBoLiNPItho5GlUnEgNlR64XCrzrXkbvSdkAIcvKyIlUDr49KCzcBfbbEOpmMKArKfSiw7t64JlG+i/gcQ5y9moJWhEuizg+4wC7AYzyBMHk/xF3NQBTfYQkIkd6ffQo2uusFN19JAQkud0Vs+GQhmgcCVp/yEcw7OiO9mtu/EENA7ttInMa9/O8e4wFcG3MXshxEFZsUec9YprD3rmQIC/PlUxFGkcXN1a3FcSjCP++n+mp5jYM5OzIuGPj57a8nSdpPD4XiYi4b634CljNL6kRJkJrkMmNWiy3VlvSmwUdhzCexwQIxfhGzR/USwCNUZF0isvQ5GMvthkf1sEZo8yws3XaKucJ8LfyQ4RkDoEbQAR6f4OzRJ5uCMSael86S3GegX19U5C6aMqXrdO62Siyx3L4KWNbw8bAJsGZIM6o+2G/JmHKfDSiOo7RfICoRDIDAquAekUxUV5tqJYYazc3WQGSRZIGIeHQXSAO/CjcwHZoe/49j1s8swdoVcslxtXNlvcvD3XmrgmFsNLSCgDzgrJ8a3uZq95YH3LJmHxG8HKaCPSenp5sEG7QpgBVpn4PLQXTlvhBUTAjKQyiEzAzVCr4gDUO8OTncKHxMXUXmfjA5zmyiJ+FxQACmt6j5oaxG/605dVVrlKESGOugTGAE="
+    },
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSowsKEQgTGAI4AUIJbmFycmF0aW9uEgxnm+1ch8s1fcEl9lsaDCLoujwS/MHUbPTR2yIwg82KTGPmUXa0RRHaNUU2kzDYXlNgdbqw66Z3KrDHOviy9ZntdWwdb4I7FkBTf7tAKr8KHS/pskajhjzYQQxNu241I+RLAPRR5nAG0uYFkPEGn4EU2pR2wkB+BYH2Dm9ebVbcecJtvQuinO1WBCHP0/6/WVibP1u//Wx/f3xG9CpSpYupvPRzf5KxCrRml7bLmUCr+/8Brhd7rdPpno/Le5QyVcI7ZJoQ65SV9ELhHXdFsq5dBXHsem0HLWvdd5uu4R6v7nGG3LckttuP8BCiMOtYc6AOM9n1MGg4MU10xkZ9uTKOoY8G8nHbXFSie6JcU0ZayZT17cbXNGZZFkC0j0Tu26XU0QK4rfBP0ktBhxpJGO+yr4iQn+HXaXeCVCxbV02Y2Wl2+2ND752SZh6D+6hNNsb1wX7tksCVvTfwb3xURtZIOijhGY4IH/y75YiDni8xzjFxYkOB0+dENRAq/y9+jGyrpq5qBOpJoxMNyLrEK9vxOMqa9dB9d9sYDxBKCAXJWB6sCJYGJVd2/SeY2x0IFUhQVGvHAELi13pkvtNipjB33/TNGbBEBwJt0UjKwd+ZoXX3nHXirM13DkDpHoIdDLwNtf/+OqKWw7HojRrUMHuGRFx4FlioDEuPjgOHTlK62j1wX5I4bV4e20mIBJl0Bm7vNNisyDKVC2zTxIKyxWxpKlKCEIgz6NZIZTjEJyg5oVtVn6ZwxOW4cQ1m4aFwfztNPSpox4Lc8W6/ZNQjnom3ydlO81KCXy3ZppQVjiZZkpNUS8oXZdFLaCHK13/4DWnXFHej16ggOGg/E2pxTeiWbdMT/piZbI2qzF3Lugr4GQ1RMriq2imyXlQZLVyBguPgh1rPfQU7u8QK7UtCvEemLwg2RDkmvYR3PYOYijTxu501ALObb+80UvbJkXDF1CtHbT1kVm52kij1ZoczOwKV6O/ql8wV4miIUEyOEX5bMQTJdLHYJDZN0kbtGahAV5Q1Hshsnm3cFda8kNAy02NOqKqXM+8LhuCrgbmSR0IiUtWeCaP8HecIuNgo6qn4HPhSo2bdwwh0c5ORu0tAXQVsJabuBSVTv9ldGsuUe7aM3TqMeIuFSWFX4darTBg/NwtnJAGjLROSwqzekLRUfCGP2pWgogprd0zFy6yBls+nPntqng5uenlU8vf4sLbT04h0Po8bA14rNwGSoHozWwTo+49kmJfr7HveyBvmmS8C7E9hug1K50vsvb7fCcKe+rSHANyHFU4zdBibrGp//JpBv6cX3e8XqoCPv65Tjym1lUrxhIoYfcM/r+eeqS8F2Ag65Jbg/eDwaIf5FAo5TyR5owroEWiEHSdY9tP2o45ruhVp6mIQcjzZrUwKObccQXABcDlJ+QLNXNC1q7yexhzW985NOuwA/YZciGoYCh+SZi/A4Lfabig/AvQx3LY4ot4Rp2PiUrw5uC4CZntGHkSnriLNAM0kpl7fQW/PmSfu7cFD65tsnxkLgKDxDGqWIzp9gRMkzj+4bAIwutwoVB1ShOcNGZHMe0INqvkJtICbvA0cUVUWlbo8EEA6DaDEfsAoWPL4I//tqCV6lRzc95VmbcL7zzBTS0T5xfata8q/5CeSMDCyOOcdwrpJsCc0QOLbYX4uRGmSm7RnLH1SofJLkob8xM+MVw8GqFy/lBWoBEzjjpisKK8if47IIhpvmh8brZQcD7OhCP5cpSEBWObFpPwnMOdu0Qdf5l/E0XUWyja5uS9cxWoxJpbtAOa6rd1L8jCQWNOdSg8t5ZXEPfjVcYTalr9cf4kq9X0t+ubShxCNjit1NxsRpngJ3PlW6WcDxfQm/yADoJG1+AYAdOi2ymg1rubZn03xFAYX7/AYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01KXJi2yMihaRdqCfK6SpNHB",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Answer the question about resetting an API token in acme/webapp with the comment \"Go to Settings > Applications to regenerate it.\"",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The probe shows that issue #14 ('How do I reset my API token?', question label) in acme/webapp now has a comment from alice with the exact text 'Go to Settings > Applications to regenerate it.' The POST to /acme/webapp/issues/14/comments carried that content and got a 200 response."
+       },
+       {
+        "requirement": "then close that issue",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The comment POST included status=close (Gitea's 'Comment and close'), which saves the comment and then closes the issue. The after-task probe shows issue #14 is closed."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4625,
+    "outputTokens": 604,
+    "cacheReadTokens": 4140,
+    "cacheWriteTokens": 483
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:1e2b398e62b6a280f76f3d15b39d68364900fd588f002f1b57847a89a0c405ff": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01EZzTq24Bf1PVG63NBbHKtR",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The probe shows that issue #14 ('How do I reset my API token?', question label) in acme/webapp now has a comment from alice with the exact text 'Go to Settings > Applications to regenerate it.' The POST to /acme/webapp/issues/14/comments carried that content and got a 200 response."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The comment POST included status=close (Gitea's 'Comment and close'), which saves the comment and then closes the issue. The after-task probe shows issue #14 is closed."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01EZzTq24Bf1PVG63NBbHKtR",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The probe shows that issue #14 ('How do I reset my API token?', question label) in acme/webapp now has a comment from alice with the exact text 'Go to Settings > Applications to regenerate it.' The POST to /acme/webapp/issues/14/comments carried that content and got a 200 response."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The comment POST included status=close (Gitea's 'Comment and close'), which saves the comment and then closes the issue. The after-task probe shows issue #14 is closed."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 5321,
+    "outputTokens": 277,
+    "cacheReadTokens": 4623,
+    "cacheWriteTokens": 696
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

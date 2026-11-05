@@ -1,0 +1,212 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-sonnet-5-5@low",
+ "recordedAt": "2026-11-05T12:04:58.482Z",
+ "turns": {
+  "sha256:6b6bc189a14b27475a31a8e27e132e575599f05ab7b4485aae90703a49778c21": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LF5T1nAqaT4fwMsg4QjPDk",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/addresses"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01LF5T1nAqaT4fwMsg4QjPDk",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/addresses"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7156,
+    "outputTokens": 57,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7152
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:dcb1ab7abc5cdf3a3fb36c1215f34788c03450292cbca166fc69af35e809445d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KbGocTtxfNWWu6oi8RH4fh",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/address?id_address=5"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01KbGocTtxfNWWu6oi8RH4fh",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/address?id_address=5"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 11066,
+    "outputTokens": 61,
+    "cacheReadTokens": 7152,
+    "cacheWriteTokens": 3912
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:62ea41fdf2c726c2eec727d2b1a763d30dda5575506e387506be9bff41057e2f": {
+   "stop": "tool_use",
+   "text": "Lucky guess worked; alias matches.",
+   "toolCalls": [
+    {
+     "id": "toolu_015hd7JSMQ7a9y2iwf9XRs1C",
+     "name": "fill",
+     "input": {
+      "ref": "f2e119",
+      "text": "305-555-0199"
+     }
+    },
+    {
+     "id": "toolu_01LnXrMJsHRZ2WeF17Vyd4H2",
+     "name": "click",
+     "input": {
+      "ref": "f2e122"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Lucky guess worked; alias matches."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_015hd7JSMQ7a9y2iwf9XRs1C",
+       "toolName": "fill",
+       "input": {
+        "ref": "f2e119",
+        "text": "305-555-0199"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01LnXrMJsHRZ2WeF17Vyd4H2",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e122"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 11970,
+    "outputTokens": 137,
+    "cacheReadTokens": 7152,
+    "cacheWriteTokens": 4816
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:b7b80e349ce2aa6ae5ed6b4cd442bd7fc1c57e958ec66fe5aff5cb1f2509f6bc": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01EkwvMzd6TYAS55uPWu8wfz",
+     "name": "finish",
+     "input": {
+      "report": "I changed the phone number on \"My address\" to 305-555-0199. The addresses page confirmed \"Address successfully updated\" and now shows that number under \"My address\". The other address, \"Mon adresse\", is unchanged."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSxwYKEAgTGAI4AUIIdGhpbmtpbmcSDFkyQG9GMT/P0ul9oRoM9o6ewooI4aJODdWKIjCVf6tR1wvvo+8MWPyQYAl3ShT4ZX1ovB9iXN/BW7k9yXOww075f0iYlelwfIDgIToq5AXR0lIexHHCmfviLqUZo2rZTZMK5SvuzZFnGW8TsU+0pzZHVGW2DAEYnyZUYg4sUNUM3HzeUa8BiPRKJcFsnYW1xwUHdNAszwUntxxMxjRog5+TpyII8NgcVOHesar7faApLat1e+U5B30l7fOz5REzbPKyOdBIFmrNW43IsLz01trIjP4nBiaASVEsaJZ3ZrakuRLBC+2jiqNwCwMg8/DpOnbGSnM2XNnqxxir/LjbHKllkHc9acBkjsr52ls2f6gjHMaIT8ely9njjWAulUFQYAgW3W9PoDQE44OYBvJ2n7HjamoJJASUgfgmpEhcVuvGE1YIg6WdiWccDG978RBd59HGSjzcVNzohoIysbEkDS+ZSaZNU9DV0vwD4DTchZ9KO2Bj7xItyLvlmTbXwwgDN/tcW/GIZrBi26o64B1bWt0ktemea+Law4lgYWLUHYhXpvi0DhpG4+rt44ZBp5EjWI947YkMrs5W5M2IG2UIXf/x5pOT/dCirbx7+Yvy7hv3olmz0ZKy1nDaU4QddGMPh60jIONGScSEpFsJKQTthbjTe1wbhGF0wXnRq2BiaacERK1c1Ut554oOF+aOPAJhcOkXQImd0mztboyMjDDNyB8NBy1i1f1r/iVh9YQLMFUWcFXX610CG81A+nmi1FLbpF6q39lDLLNiytqoxk9PeGF9sBmB3EJ/GXEh0Bht0cyVE/2e+WZwmDBZFm4zDue3+0HztL3K8n4VaCK3dbls2eey+889fMDQrEgd20TO0Bd04R8DzOLsBvd2oTMTci9WXpxC8/P7JF+VMLytmtFpkgJBlQ0Hp81CbFOW0ulyZ/xFRjKMEt75eoKuFYNx/xeVgPi68dv7ouVwb32JJ8hC4oTUgaxBdR0RPzCsjZytEE3/GXcqL9zZVGCu7jjrPGMJOauODh1HL1RHQYAlBVetSNEivBv8Z4XTjxQVb3kgtx6vwmtq1yiSNamEouJMy/EhrZsjNBgB"
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01EkwvMzd6TYAS55uPWu8wfz",
+       "toolName": "finish",
+       "input": {
+        "report": "I changed the phone number on \"My address\" to 305-555-0199. The addresses page confirmed \"Address successfully updated\" and now shows that number under \"My address\". The other address, \"Mon adresse\", is unchanged."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 16112,
+    "outputTokens": 181,
+    "cacheReadTokens": 7152,
+    "cacheWriteTokens": 8958
+   },
+   "model": "claude-sonnet-5-5"
+  }
+ }
+}

@@ -1,0 +1,61 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "wordpress/w07-trash-post",
+  "version": "1",
+  "task": {
+    "instruction": "Move the post \"Old pricing announcement\" to the trash."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The post \"Old pricing announcement\" is moved to the trash.",
+      "source": {
+        "field": "instruction",
+        "quote": "Move the post \"Old pricing announcement\" to the trash."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-post-trashed",
+      "requirement": "R1",
+      "description": "The backend posts probe shows the post titled \"Old pricing announcement\" with status \"trash\".",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "posts"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "const": "Old pricing announcement"
+                },
+                "status": {
+                  "const": "trash"
+                }
+              },
+              "required": [
+                "title",
+                "status"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:15:04.480Z"
+  }
+}

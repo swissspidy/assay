@@ -1,0 +1,378 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:50:30.362Z",
+ "turns": {
+  "sha256:8f4dda61d776b1d817686171565b864c1c70b91efda8bcf2e8eacc4be8878ad1": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01G7PecU7yM6Cknv5wASKBmZ",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/admin-dev/index.php/sell/catalog/products?_token=iABTFiP59lhV_LDnkaCO8X5UNad1m_9R6DfM4mUpWRI&productFilter_name=Brown%20bear%20cushion"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01G7PecU7yM6Cknv5wASKBmZ",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/admin-dev/index.php/sell/catalog/products?_token=iABTFiP59lhV_LDnkaCO8X5UNad1m_9R6DfM4mUpWRI&productFilter_name=Brown%20bear%20cushion"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7729,
+    "outputTokens": 136,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7725
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:1c910eb803bcbe382c42512e40d3fd1bc5b033cf33e2795710697841e1cc91cc": {
+   "stop": "tool_use",
+   "text": "Let me filter by name using the search box.",
+   "toolCalls": [
+    {
+     "id": "toolu_01YNkiJCAc6BEo44R3Nx4oGa",
+     "name": "fill",
+     "input": {
+      "ref": "f1e188",
+      "text": "Brown bear cushion",
+      "submit": true
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Let me filter by name using the search box."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01YNkiJCAc6BEo44R3Nx4oGa",
+       "toolName": "fill",
+       "input": {
+        "ref": "f1e188",
+        "text": "Brown bear cushion",
+        "submit": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14540,
+    "outputTokens": 113,
+    "cacheReadTokens": 7725,
+    "cacheWriteTokens": 6813
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:6a9fe5a43bb1b4b3a15fa34bb601a8f1c6523c61d63e6c6c2a1bc8b6bf50bc89": {
+   "stop": "tool_use",
+   "text": "Found one product (ID 10). Opening its edit page's pricing tab.",
+   "toolCalls": [
+    {
+     "id": "toolu_015jtQjizy4Xicn9XSex9tSr",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/admin-dev/index.php/sell/catalog/products-v2/10/edit?_token=iABTFiP59lhV_LDnkaCO8X5UNad1m_9R6DfM4mUpWRI#tab-product_pricing-tab"
+     }
+    },
+    {
+     "id": "toolu_01KHAbZ2Rt6TFcPR2WNUX8vj",
+     "name": "wait",
+     "input": {
+      "seconds": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Found one product (ID 10). Opening its edit page's pricing tab."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_015jtQjizy4Xicn9XSex9tSr",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/admin-dev/index.php/sell/catalog/products-v2/10/edit?_token=iABTFiP59lhV_LDnkaCO8X5UNad1m_9R6DfM4mUpWRI#tab-product_pricing-tab"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01KHAbZ2Rt6TFcPR2WNUX8vj",
+       "toolName": "wait",
+       "input": {
+        "seconds": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14773,
+    "outputTokens": 206,
+    "cacheReadTokens": 7725,
+    "cacheWriteTokens": 7046
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:347afe8131bac5a9a601b946dbbbdf8e447bf2237e33f1c13c70f404984ff782": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01G5qRQTpaLVxz4kULjk2DkR",
+     "name": "fill",
+     "input": {
+      "ref": "f3e197",
+      "text": "21.90"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01G5qRQTpaLVxz4kULjk2DkR",
+       "toolName": "fill",
+       "input": {
+        "ref": "f3e197",
+        "text": "21.90"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 21489,
+    "outputTokens": 73,
+    "cacheReadTokens": 7725,
+    "cacheWriteTokens": 13762
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:e8b1a388aa2687ce0eeace2ec99f5fb6bd0fd833c9c7674713a02deb75dd70d2": {
+   "stop": "tool_use",
+   "text": "The price field now reads 21.90, but the Save button still looks disabled and the summary hasn't updated. I'll trigger the field's change event and check again.",
+   "toolCalls": [
+    {
+     "id": "toolu_01QUcUDvCJJFe6npRWvjxJWR",
+     "name": "press",
+     "input": {
+      "key": "Tab",
+      "ref": "f3e197"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS2QcKEAgTGAI4AUIIdGhpbmtpbmcSDBsqmRri88sP+GtfgRoMWFdFMUzm70CMsqiLIjBmZCgVG/xtSBs3ALJR9cxzAYslA20inu1wkTwWZJ6ocC3DOkZ4kqdgMtbW/4+6oEsq9gY5bg2bSsHxgwNtXbYOzXiJxn66hmqlZ81NQOjitz1ZJXfF7KXNyjSs+U6fugTAxvTJJrmz0hGDghtVz+UawruSJ0ReWtknZUSdNmU7r1RUlVHSIUnlNTdmryXTmVilkLqAKPFx+q/FwU++Dx71HC0ZXf8PRqYIOYs2kUlfHUYTCU9PJrDLeKBS2zPR76aKbhXOPoNZH9+rhRcjaanCv8lTp85MohvxldvAggFgpQ/vWyQ/N1jgy/b3t7oVmUmTJJzXVY0O51LIsAJR785IbBXgoeGk/YsfGL1eY8GVU1RCua/ChByjf6ei942qy/joPFYaLRHkW7yMf3xwV5E9Q1hI5KCmQpx6C5naHoqzaVNEUQtAg+VVooMFRdKxDfDtXwvP0nGpSKbWlgru/K7mJUjCYN43y0nX3Prm8HF/mWPHXqFMdWhSZ2D6ODGAPpwyx2yp/PiCNEEyi2JNFE67ZLYmneFObjEHD9hwgS8rJi8YypWqF/vUQAIXx8gm8+OGK2dJMDktYm7GhVVPrMSzOmd5eP4pbpyMyzhxv+45xkFsDo1jirn1WrdDTTCxuhDPSMiYWvzcnmDJzgFr4dSR0IsICH0D/aIXMfFQyJ8/Y73DfIZLL4vk9UoWJEQXdYSSZT0twAmAaKG0KSq1NYCkAfvpOaq7+UWgHfYPrmhinIYmHUkt5chMs9XECy0L/ST0Yj1d8kbdGsAZZbmB0eFj96hsbBmp17TD+BsvYWRp6XXiAUQ8OAx2YDdXcdu0vcfgswPG2CASnTNtxbPryDHoMjskx8NLdx+iAMp5RJaPtUrpdI/X+YX6FBE5ZnDHdjXjcL0PgfI2Z2A54UdoDurxSmrlE4hSvMRIG5XU85Cpo8Drws8nnbe80+LJyRpmqVr7o8jAp/zd9+52mizLNCahTIZj2ZAJASv6HI6VSDhYkZN4HT9HZDTiXUfXtYuapwWI66CS2aIiZDWAxzaUK+fFY9qhLXwd++qVdspHfdodo+tq7BhG+iw0jKxKnc82u9R+ChWlnpU/6B3Xt3ZXHBvcApwDoQyf2tDGkYdWwdrC1Xu0VTm2ysF47iA6mf22Zgm/iwlUcmIfVwDdBkoDTxtIv4xEqZyvenOXDA/aeWaZihsrfG+umb1svMUDrx7sQZbpqQAreZET4c2zq6vxMvwjcSI6pwCMGnsRGAE="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The price field now reads 21.90, but the Save button still looks disabled and the summary hasn't updated. I'll trigger the field's change event and check again."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01QUcUDvCJJFe6npRWvjxJWR",
+       "toolName": "press",
+       "input": {
+        "key": "Tab",
+        "ref": "f3e197"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 15297,
+    "outputTokens": 231,
+    "cacheReadTokens": 7725,
+    "cacheWriteTokens": 7570
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:7300380e7a57338cb006d094ce5021172209840b24fdce50a61dc1ac3eae23d6": {
+   "stop": "tool_use",
+   "text": "The price now shows €21.90 tax excl. (tax incl. also €21.90 at a 0% tax rule), so I'll save.",
+   "toolCalls": [
+    {
+     "id": "toolu_0187UFFqikRsnoBcZmrgt3jd",
+     "name": "click",
+     "input": {
+      "ref": "f3e159"
+     }
+    },
+    {
+     "id": "toolu_012dCH45RqVSZyjKNK9FdMWV",
+     "name": "wait",
+     "input": {
+      "seconds": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The price now shows €21.90 tax excl. (tax incl. also €21.90 at a 0% tax rule), so I'll save."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_0187UFFqikRsnoBcZmrgt3jd",
+       "toolName": "click",
+       "input": {
+        "ref": "f3e159"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_012dCH45RqVSZyjKNK9FdMWV",
+       "toolName": "wait",
+       "input": {
+        "seconds": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 15645,
+    "outputTokens": 138,
+    "cacheReadTokens": 7725,
+    "cacheWriteTokens": 7918
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:b47312db2111e62669447e3d037e1949379de32a3c05f4b53d885d52aed0d10c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_013fyEbruujWEuMzDRRQXfsU",
+     "name": "finish",
+     "input": {
+      "report": "I changed the retail price (tax excl.) of \"Brown bear cushion\" to €21.90 and saved; the page confirmed \"Successful update\" and the summary shows €21.90 tax excl."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_013fyEbruujWEuMzDRRQXfsU",
+       "toolName": "finish",
+       "input": {
+        "report": "I changed the retail price (tax excl.) of \"Brown bear cushion\" to €21.90 and saved; the page confirmed \"Successful update\" and the summary shows €21.90 tax excl."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 22480,
+    "outputTokens": 108,
+    "cacheReadTokens": 7725,
+    "cacheWriteTokens": 14753
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

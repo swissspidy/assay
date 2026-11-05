@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:36:25.706Z",
+ "turns": {
+  "sha256:0f223ffcb7ad1d9a2b14826635a7e0265a9ce71ed00128a75c1c363420823076": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CQLdcqQiWbTz5EEngdWcVo",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to make a post category, but the agent made a tag. The final page is the Tags screen (taxonomy=post_tag) showing a \"Tag added.\" notice. \"Case Studies\" with slug case-studies appears in the Tags list, and its View link points to /tag/case-studies/. Nothing on the page shows that a category named \"Case Studies\" exists. The term went into the wrong taxonomy, so the task was not done, even though the agent said it was."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01CQLdcqQiWbTz5EEngdWcVo",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to make a post category, but the agent made a tag. The final page is the Tags screen (taxonomy=post_tag) showing a \"Tag added.\" notice. \"Case Studies\" with slug case-studies appears in the Tags list, and its View link points to /tag/case-studies/. Nothing on the page shows that a category named \"Case Studies\" exists. The term went into the wrong taxonomy, so the task was not done, even though the agent said it was."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4585,
+    "outputTokens": 220,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 4581
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

@@ -1,0 +1,229 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:57:51.971Z",
+ "turns": {
+  "sha256:b9e154aaf1c7552cca21349851f796f6676eb93e3732ac362c10d6871c3f2097": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01DjXZknZFUphZCB8EPRWxon",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01FKuWkZMWDq1Zq3kDCu3Pap",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01DjXZknZFUphZCB8EPRWxon",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01FKuWkZMWDq1Zq3kDCu3Pap",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1973,
+    "outputTokens": 70,
+    "cacheReadTokens": 1969,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:5cdd31af92cb38bdc498f8fc2493f22cbbf101d1c7772b70ec603cc01889b7f2": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01BmcKqyBQmJz2bTjsDeTpA4",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The address probe shows a new third address, \"Office\", next to the two existing ones. The network log has a create POST to /address?id_address=0."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The alias is \"Office\"."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "address1 is \"500 Market Street\"."
+       },
+       {
+        "requirement": "R4",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "city is \"San Francisco\"."
+       },
+       {
+        "requirement": "R5",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "state is \"California\"."
+       },
+       {
+        "requirement": "R6",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "postcode is \"94105\"."
+       },
+       {
+        "requirement": "R7",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "country is \"United States\"."
+       },
+       {
+        "requirement": "R8",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "phone is \"415-555-0100\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSigYKEAgTGAI4AUIIdGhpbmtpbmcSDLTQbpaB8XGknshl/BoMENAPBzG/qTyDyCg1IjAfN7RhmR2e6+4MspsI40tHQ6la50ZOOiD9hO0tAc466pTu5xVW6UlQB8HrR3n4j+YqpwWiiphOEGJDL0M8Vr3XMSXZwsZBvlqYLWAoi8caMh/91B82r9iyldjUjy2cb1zM9xMSV2uYfrzwlef8UDuUtETnx1gbeC88aZYok1t4OXE7yeAHZtkYGWodmDZE5szOpB983qIRA73Wz2HUMfqnkAJwiaPBmtjAj2Lu2hXQjV6D4rlNzSi58FicakbP4VS98aDeJjG0sexYB5C/NswlM4aefNiI7njwFAXZTpGF0Yr4it4UYUtvuFuSEfEsASuAfPlE0BkQUfQbQ+0IQFbAh6Eh2KTdhmGZxTznm2SffcWOVwU8LvOdT3FboLmhSxOFDU7Re3lJPntX8R6ZFftKndvxzKmwsXZderxmwgeH7zaomdGe2KCuSlSFjKLYZoeBABsLY8k1irYLhMJsni0afzWOJdHLvT5+U1r76A87QL2Z/lA1rl59N/pUkYCmGD9OdA/k+YVw6pExdUzvcd3M1BgI++SD9OxJpxgpA2J4HBXeja8z8HThDInyJ3j6+yyATADhxF9kUm3D24cL8HBCLHGemkTQbEZ8dsT8mabOmAUg+iKTYo2bxyqGoZCaFw3MWBxakmHabozFAQr+BqE1cBnNDsKM8mK6eWHR8ohUrIO52mbjcTZUT6Lt8QBD6gv19fie0Jw/vOWUcTXBzwxSO0HF7EScr5RpDc+qglVBZlompMgp6Cer7/08XNK1/ZpHiQ+xKOV+lQNEr088rv36j2qjSM1bEoQcCgPWJVt+XgYx1vDaauBgqdmu4CJLgKSofdeYawaO2MfMdXDmjHPmdqyd/LdkBzJoncG8ZZ0WHEucDadWngCzGVeAeDetKWR8mh4rby3CLFhtKoFkNaYcGEscDu04wMTXXzJPvNUXVRzv/l9JbDFTFMlH+kNjBC8aNRdMzga+dO2aGAE="
+    },
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSrQgKEQgTGAI4AUIJbmFycmF0aW9uEgzvr9lnb/qnySCjHKMaDOzhh/4/YY8qzA3Y5CIwmqnNgqdiwZBxYlWisPtVd2+uqc68fhM9pFPewbInd/e11ez1HugF3jodOvnDW5XPKskHvxndlTE5lnZVospf/cnmjoSqhh2kZbE2JKw+Ko2iZ05NRH+pIKeD+xc6VzmEGQTSdU/9Wnv+PaVz5Urq3gMDL7+ypfevTK9zo/UVD2p4HC1f9Yo+zYbIE0JbKb3GJvkFFkH6/5uUp6vzQVsQcvGt3+JRSw1yKSKvwPKv3NhMF8ABacSJUIRqnO34lZAJHxrTGIgDwHdO0THjQhItLtBCFHsJ9rUlhCWAAuvG0e3AACCN47i7926NO1pqGSpRd9wYP8cq3C2mxYJJwDbWmtwWiRShkKQqsyejr5BbkU0TfpqTb/S8oujfzHMjwvjvKg4m9fICo2dZJGDTUsVaOjn8eMFjY7gGHoBhyTFs/OrPAMZ58sciZ9HyoWpU/Wpiwgbi0WyQVfpRiFDgRyxRayqAT9ujjssyS2jFQWbITnc5WWgqBNv43WVQr/XEYeb2QaXhBMQnpB6zWdASi1M5O8myoubOfuTS1oZQkLV7m+sf1BO0s12UvvJjrWz3RUdpFuvIh6OddLx6U5A5vazqaEyw1qHkPDYJiu5osTPpvaebiBp/K26gOrFPG8QtnOei1S8Mm/fb6rs0m8uZgYlm/JO40B6lq6lf6wtZvhU60hYYgjg65Sf/cTz6DK3sc3h17v4YpzTebbi1bVFDiscCVnj3DtmJ9K7PWxcIVq368bGr3jFr3Xc9PytR5IUUY/mk+uycEi7kxhy0D+vyWkiNzziYE1ZMGQidm89fM4yIOAmW+kNjhC1IC3haI66oHR/46vsycDW7yI2Jfrc/bXhf68TMH9oWeCveb/EcjDNir9uxYxQ+XhsvLpcCueNzi2cgnxDqGZ4ORB/Pu7c2DfKvneTTqwVhoYPVuu+YC5TQF4GAVc3tZPNb+SMLHK+MeAqiqYExeIs78hwQvRj+pcPvbxupQcnr1Bx2fjUBS/w+WUmZZPkheZyeJXwM3U8FJj7UDeoS3DH56Zua5BYOFsvxPjF58VF2NVbn4qCINhvLIUYLquLj8ausp1l6hoWCluqOz5cktBA7Qjnf9LpBCEgY9cdBWFrDANm4og1MT8/6hJvXj1H6lfsxsd0BBPlnEiM4rrjIziHhUZMJ9IU5f0JiaPn8bk5958UPOryDmLJ8jX+oNTQaBkzlHgyVtbZDYDesszXi6G5RNXm64zfQoWi7nMn43P9CZgCV/z6Zv4qIL5scvQo+IdJAqxJACVgukSiojMlX1Rk2ZGtbyg9Z9WaytK9gWX084451JNuHDjIaxjomCN9L1xTQz0cHrDM80WCjHDC3AdsfFTfYofYjGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01BmcKqyBQmJz2bTjsDeTpA4",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The address probe shows a new third address, \"Office\", next to the two existing ones. The network log has a create POST to /address?id_address=0."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The alias is \"Office\"."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "address1 is \"500 Market Street\"."
+       },
+       {
+        "requirement": "R4",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "city is \"San Francisco\"."
+       },
+       {
+        "requirement": "R5",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "state is \"California\"."
+       },
+       {
+        "requirement": "R6",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "postcode is \"94105\"."
+       },
+       {
+        "requirement": "R7",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "country is \"United States\"."
+       },
+       {
+        "requirement": "R8",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "phone is \"415-555-0100\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4125,
+    "outputTokens": 588,
+    "cacheReadTokens": 1969,
+    "cacheWriteTokens": 2154
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

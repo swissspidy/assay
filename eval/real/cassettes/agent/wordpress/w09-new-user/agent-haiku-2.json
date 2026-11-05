@@ -1,0 +1,242 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:50:25.000Z",
+ "turns": {
+  "sha256:de9f2e6878da2a5d15f9c03c2a93fa4238b9e0021516f00d28d767c1591be138": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0179Mwq3VpcK1zBfAmf4habp",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4320/wp-admin/user-new.php"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_0179Mwq3VpcK1zBfAmf4habp",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4320/wp-admin/user-new.php"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7265,
+    "outputTokens": 65,
+    "cacheReadTokens": 7261,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:75a2f9c4553ff96b20399c0142749372b256d30935cb314a5dafab04834de720": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HgCahVKv4ebUHURBd5TYX3",
+     "name": "fill",
+     "input": {
+      "ref": "f1e161",
+      "text": "jordan"
+     }
+    },
+    {
+     "id": "toolu_01VchesgPqvCNctm55LN3mGu",
+     "name": "fill",
+     "input": {
+      "ref": "f1e163",
+      "text": "jordan@example.com"
+     }
+    },
+    {
+     "id": "toolu_015ozXvNrYAxXrv8xudEMH8D",
+     "name": "select",
+     "input": {
+      "ref": "f1e176",
+      "options": [
+       "Author"
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01HgCahVKv4ebUHURBd5TYX3",
+       "toolName": "fill",
+       "input": {
+        "ref": "f1e161",
+        "text": "jordan"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01VchesgPqvCNctm55LN3mGu",
+       "toolName": "fill",
+       "input": {
+        "ref": "f1e163",
+        "text": "jordan@example.com"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_015ozXvNrYAxXrv8xudEMH8D",
+       "toolName": "select",
+       "input": {
+        "ref": "f1e176",
+        "options": [
+         "Author"
+        ]
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 11761,
+    "outputTokens": 218,
+    "cacheReadTokens": 7261,
+    "cacheWriteTokens": 4498
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:054ebf126397411c1d0a6a3e19f5bee4074224d8e510f5ff59178c740247ce8d": {
+   "stop": "tool_use",
+   "text": "The form is filled in with the username, email and Author role. Submitting now.",
+   "toolCalls": [
+    {
+     "id": "toolu_01YamiqZxYR5rHhEW5nPTLxx",
+     "name": "click",
+     "input": {
+      "ref": "f1e178"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The form is filled in with the username, email and Author role. Submitting now."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01YamiqZxYR5rHhEW5nPTLxx",
+       "toolName": "click",
+       "input": {
+        "ref": "f1e178"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 20989,
+    "outputTokens": 72,
+    "cacheReadTokens": 7261,
+    "cacheWriteTokens": 13726
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:f2eacf0eaf3fb4fd6138ab1ace2aef46b0c79fc1a6592e2d56b909bccca36e5f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01VizoXXj4r5AvDQRBpLDK14",
+     "name": "finish",
+     "input": {
+      "report": "I created the new user \"jordan\" with email jordan@example.com and the Author role; WordPress confirmed \"New user created,\" and the Author count went from 1 to 2."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS6AYKEAgTGAI4AUIIdGhpbmtpbmcSDOVLXSYbDpgajGP/txoMEyKsL6a5POBGjAdpIjAdGWnjuCxrTjiiLPIzMsdpiL/YgcAWiwx4UQkUj18JfI5XZO6Ez6w/pwHr+7B6cVYqhQY9qFEN7yo2N0COIsVFYh6Fu9PFkzm+JcPgr39uhrEZ1koyCgS/v2kmwcOLJGwMeJLnEu0LehUJ6YW22zyK+YZiXAfMU9rSyWWrk0FC0lYDrDNU7f3qBzI5k/57McfQDlknU6HQ0bIsIy8hURFYNX6ARQeuKgNNBZILiQd5cltOKP5UXZ9LFt02DYvfIKQpNf/QrcfUidVm5p4hSwiHBGNJfXAyLL4gCXQH4Yk8isJix6CFyz3suLwCZq/KeO/5EnKldpWhDYwaN4XPY4SgHsvIQOQSHRLKC0PFq7JqpVB3FAfu3eonI3Y2AEubyrWgApyyA3hdS0R/zgF3Vkcf3qck+JKtd/cA853Skub+VPAvVEqYi5VDn/dk87xG8pPBfDAOM3QhCbwWCqTAdW3NeA5h9uBbK9+Fy5ZckDmbDbwYCfg0RV9Vfhzgc3bV71VDPIMocmxBEvKojPPmZ6L+mFyOoSBCIbxbAqOv+ZNJxamkraA4RMknNxPN27uXhceJIH3Z2n9nbiK56baX5hbrI+iElclkpV7FOW7eadO2a3jpVsg4SXmpZZhbXb9ZmIE1DHyuzmk/o7SjNkMfCZXCsqmH327M3UYU77KjpBUtYzqwxcQ3oha6FDtkJ4ZJ8qbf6YWs5HYKuiugM340RSRbvAupcV5wu/lpYaNUrqd/3Oaj//xKT1yXRuqkvc/cqRNxjJlFRAkf48/PsHI3fNx3cAApio1hnaILAa4vqIsWi3ooofBY4mhWMsSVhCtx8ZthX6Ir+BacvnFdmd+lJIdzwXlaO4BibOOR0T7d3Gz+yhdIHqIq+yon+r0/5+kfXQAdoD1mw4QvfyuXnFa0t8kwIrHJ3avvJNhGp68PySKxXA9OYE8OKUWDTa4d73jXDXHAeQv2HkaGMk25IStBNAIjLoGKS6Jtohdpt+Kfch0oFDzrCR826qnxyWY0NBPG3EAp8Yc7nEIvrEPvMJwWBZIknkZMtkIBMWeopap0IQ4p7F1Kuhf9ZgGBwxMFhi2blib1cszeqf0UnxgB"
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01VizoXXj4r5AvDQRBpLDK14",
+       "toolName": "finish",
+       "input": {
+        "report": "I created the new user \"jordan\" with email jordan@example.com and the Author role; WordPress confirmed \"New user created,\" and the Author count went from 1 to 2."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13933,
+    "outputTokens": 170,
+    "cacheReadTokens": 7261,
+    "cacheWriteTokens": 6670
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

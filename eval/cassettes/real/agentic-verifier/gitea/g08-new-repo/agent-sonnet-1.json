@@ -1,0 +1,291 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:46:43.669Z",
+ "turns": {
+  "sha256:4591d97e14b93454b8ff8c8613cd3178d96508740fec27095d648be89bff62d0": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01VjFvMyuY1m13gmRE4yDyRX",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01C1xBgptjhrqYqHswgRSKV2",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01VjFvMyuY1m13gmRE4yDyRX",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01C1xBgptjhrqYqHswgRSKV2",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1932,
+    "outputTokens": 70,
+    "cacheReadTokens": 1928,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:ad334f9b129f422976c27ff8f12b58e556bf407d841dd9575e6d53ef8758237d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01YUCfjwkJWk5m5x3YbCa1h2",
+     "name": "network_entry",
+     "input": {
+      "seq": 28
+     }
+    },
+    {
+     "id": "toolu_01X5QM9WmP7moLUcUrJJpPEU",
+     "name": "find_nodes",
+     "input": {
+      "text": "README"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01YUCfjwkJWk5m5x3YbCa1h2",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 28
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01X5QM9WmP7moLUcUrJJpPEU",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "text": "README"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4049,
+    "outputTokens": 95,
+    "cacheReadTokens": 4047,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:86c44f939fd3a8ed7e270e51748fdc280d8f315d7b07b763f2261376056f134c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_013FHh1ehQ7AhMPWxuAD3AFt",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Create a new private repository called \"meeting-notes\" under my account",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The probe shows a new repo, alice/meeting-notes, with private=true. The POST to /repo/create used uid 2 and repo_name meeting-notes, and it redirected to /alice/meeting-notes."
+       },
+       {
+        "requirement": "private",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The request body had private=on, the probe reports private: true, and the page shows a 'Private' badge."
+       },
+       {
+        "requirement": "initialized with a README",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The request had auto_init=on and readme=Default. The probe reports empty=false, and the page lists README.md in an initial commit."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_013FHh1ehQ7AhMPWxuAD3AFt",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Create a new private repository called \"meeting-notes\" under my account",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The probe shows a new repo, alice/meeting-notes, with private=true. The POST to /repo/create used uid 2 and repo_name meeting-notes, and it redirected to /alice/meeting-notes."
+       },
+       {
+        "requirement": "private",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The request body had private=on, the probe reports private: true, and the page shows a 'Private' badge."
+       },
+       {
+        "requirement": "initialized with a README",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The request had auto_init=on and readme=Default. The probe reports empty=false, and the page lists README.md in an initial commit."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 5100,
+    "outputTokens": 317,
+    "cacheReadTokens": 4047,
+    "cacheWriteTokens": 1051
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:3bef73ebd5732fd00d1fb47074add1668300111734d741c8de5dec0d178acb06": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018SD4VUi5CM2UsstFu9NEUC",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The probe shows a new repo, alice/meeting-notes, with private=true. The POST to /repo/create used uid 2 and repo_name meeting-notes, and it redirected to /alice/meeting-notes."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The request body had private=on, the probe reports private: true, and the page shows a 'Private' badge."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The request had auto_init=on and readme=Default. The probe reports empty=false, and the page lists README.md in an initial commit."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_018SD4VUi5CM2UsstFu9NEUC",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The probe shows a new repo, alice/meeting-notes, with private=true. The POST to /repo/create used uid 2 and repo_name meeting-notes, and it redirected to /alice/meeting-notes."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The request body had private=on, the probe reports private: true, and the page shows a 'Private' badge."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The request had auto_init=on and readme=Default. The probe reports empty=false, and the page lists README.md in an initial commit."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 5499,
+    "outputTokens": 308,
+    "cacheReadTokens": 5098,
+    "cacheWriteTokens": 399
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

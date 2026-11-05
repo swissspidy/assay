@@ -1,0 +1,61 @@
+{
+  "task": "prestashop/s02-tshirt-variant",
+  "status": "compiled",
+  "model": "anthropic:claude-opus-5-5@high (replay)",
+  "modelsUsed": [
+    "claude-opus-5-5"
+  ],
+  "turns": {
+    "rubric": 1,
+    "discovery": 2
+  },
+  "usage": {
+    "inputTokens": 39110,
+    "outputTokens": 1180,
+    "cacheReadTokens": 16962,
+    "cacheWriteTokens": 22138
+  },
+  "coverage": [
+    {
+      "requirement": "R1",
+      "quote": "Put a Hummingbird printed t-shirt",
+      "checks": [
+        "R1-cart-has-tshirt"
+      ],
+      "channels": [
+        "probe"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R2",
+      "quote": "in size L",
+      "checks": [
+        "R2-tshirt-size-L"
+      ],
+      "channels": [
+        "probe"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R3",
+      "quote": "color black",
+      "checks": [
+        "R3-tshirt-color-black"
+      ],
+      "channels": [
+        "probe"
+      ],
+      "trust": "structured"
+    }
+  ],
+  "warnings": [],
+  "references": [
+    {
+      "name": "reference",
+      "kind": "success",
+      "verdict": "success"
+    }
+  ]
+}

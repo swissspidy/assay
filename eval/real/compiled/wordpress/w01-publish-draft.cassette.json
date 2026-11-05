@@ -1,0 +1,429 @@
+{
+  "schema": "assay.cassette/v1",
+  "model": "anthropic:claude-opus-5-5@high",
+  "recordedAt": "2026-11-05T11:38:37.417Z",
+  "turns": {
+    "sha256:e4b257a94eb73159c1912b9ed3bf3972718ffff924c9e504f89ca95b6edcda1f": {
+      "stop": "tool_use",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "toolu_01HxcCqAMk1ca3uDJCEq7BiT",
+          "name": "submit_rubric",
+          "input": {
+            "requirements": [
+              {
+                "id": "R1",
+                "kind": "hard",
+                "text": "The draft post \"Spring meetup recap\" is published.",
+                "field": "instruction",
+                "quote": "Publish the draft post \"Spring meetup recap\"."
+              }
+            ]
+          }
+        }
+      ],
+      "raw": [
+        {
+          "type": "tool_use",
+          "id": "toolu_01HxcCqAMk1ca3uDJCEq7BiT",
+          "name": "submit_rubric",
+          "caller": {
+            "type": "direct"
+          },
+          "input": {
+            "requirements": [
+              {
+                "id": "R1",
+                "kind": "hard",
+                "text": "The draft post \"Spring meetup recap\" is published.",
+                "field": "instruction",
+                "quote": "Publish the draft post \"Spring meetup recap\"."
+              }
+            ]
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 1058,
+        "outputTokens": 123,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 1054
+      },
+      "model": "claude-opus-5-5"
+    },
+    "sha256:aa9a6b2678d0056a1df2e9461dccea3bb2bb2c446db2b6c2672d500fe455518e": {
+      "stop": "tool_use",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "toolu_01WVEeNJ6j1ufHKdyz1pcE6d",
+          "name": "probes",
+          "input": {}
+        }
+      ],
+      "raw": [
+        {
+          "type": "tool_use",
+          "id": "toolu_01WVEeNJ6j1ufHKdyz1pcE6d",
+          "name": "probes",
+          "caller": {
+            "type": "direct"
+          },
+          "input": {}
+        }
+      ],
+      "usage": {
+        "inputTokens": 16865,
+        "outputTokens": 25,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 16861
+      },
+      "model": "claude-opus-5-5"
+    },
+    "sha256:ca8a946b7b0acbec0e06e75f2489bb27e4447e6b89d1614fd7d417a86b9786b1": {
+      "stop": "tool_use",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "toolu_01AsjHSRM1VtcLh8FfYZyBA3",
+          "name": "try_assertion",
+          "input": {
+            "assert": {
+              "kind": "value",
+              "source": {
+                "from": "probe",
+                "probe": "posts"
+              },
+              "normalize": [
+                {
+                  "op": "items",
+                  "where": {
+                    "properties": {
+                      "title": {
+                        "const": "Spring meetup recap"
+                      },
+                      "status": {
+                        "const": "publish"
+                      }
+                    },
+                    "required": ["title", "status"]
+                  },
+                  "pointer": "/id"
+                }
+              ],
+              "expect": {
+                "sameAs": {
+                  "source": {
+                    "from": "probe",
+                    "probe": "posts",
+                    "at": "before"
+                  },
+                  "normalize": [
+                    {
+                      "op": "items",
+                      "where": {
+                        "properties": {
+                          "title": {
+                            "const": "Spring meetup recap"
+                          },
+                          "status": {
+                            "enum": ["draft", "publish"]
+                          }
+                        },
+                        "required": ["title", "status"]
+                      },
+                      "pointer": "/id"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "raw": [
+        {
+          "type": "thinking",
+          "thinking": "",
+          "signature": "CAQSmAoKEAgTGAI4AUIIdGhpbmtpbmcSDAAZKM3ChyHR2IMTpxoM0PgJISpA5NevE+kwIjBLIb3Gx+1agBAxrErxWWaYYOn98uMoR+zugAU33+zzqJb+f5xdht/M0qeCOX/N3IwqtQkgudITpo+3oDE8YZkvM3WHnUc+PGvSQdKEVQcKEXFB+Cw7F4c2Ec2j9t8Uw0KQiLfInaK9uXzXW8I0eZB84fLI01ORoq89++wyJsIWiyYI9eF1ObAQwcM3iqmf9ejqdeZlJI/bvQ6h82mhFzCNvS0a0Z7uo0ZQOBAl3VjkvbVzZ9XkYxOJ0dmhAwmawRD0cjecN0642TfncP+zIOSJM66ClJLrRg8Se49z6Xz1Y4eXs1AXBMFglFL1CyOHgvwnRWJZFaekfVIxyzBB+6UFp/i5TNZ20K6V5H8+pPNXegHG76IdZYQJWSrTby7eZyubUCxUxOx7nB3jjn+qxOsPCvm7gg7P1iiLY4Jnrf+Sju49lnXJ0iCFyFxTciQ48OhTFpM2qzQ+QSiE//pSNsuFeVu89cKB0c2gELZnEmPPe9/GUmKSdlwub39t+SfBYc6zGqjV25cOfxezMn4PscxO8rpQ6gHnhiVW9kAhqmLO4Ivr9kxLM1CP/HqW2Mi5ZjOrEVzF7JG+JWwFpUxgeasoBvObx37G1pzpcnf7HIfszqHbiW2ugOO9AshelKJr4KUiHbsXSy7Vpi15qcfbWA1ISLpcM4apB+NBF7UyK34SsE1fXmUf7v8JgfjPyTxTiDbj3BMY7scSgIqWc2jblqf0TqGKZXdsE3A5i9SGJqvSlarDunyfTdj+1ACTIWMfsFifeF/2HgC7XmsXPsyRYvdY3KA8vnU3aHHyTFtREuvxOA3sWUQNXg88B7nztNaAvX01T17jMrtXEknM1NFtJcZ98ab5udD4HzZuVltWU3Jh9PmkRDk5DbNkW3vOX/+8pnas///NFe+bFs2NR2ovsXjh94jB6gkV96DwyjoLYHppiywKIXx4krLs3vWkh8N61NjrdOkRgA9AQRgkHRqMTYql1rMu9ShRL85wMA29TWegR70OTONBiro8mY2njeUlNOWo6K2MBQus3LRYepMCvdCiVkOFXOVGzqqOFyiSdM+7NP8i6tqk2k6m53ZFzAalREOdqFrjy6EmLlNDwc6Q86JJ+TwNt55o3TdjVyx33LYoYMhKz3D/XleBfkUKgSMbTRjkeVbdnwrXLfZvlhNUYXEb5OwPmpd68LPnqG0Y/81KZ/5kPCFlWT83QU9WrW+LMg80oYLef5Is5Z3biTnEAxiR7ZFUzHUziylr2Vvn+jJ9t5lI/0KAyi2zaCVDoGBWwirZ7wcbWV8C277QDIbF31zBOSRcH8W5VW/iDoG8p8/nhyukfgGP24x0raZpfO7TVo1wlugcHm2HjcR0G2cEi4VJMNwRcmmjVCVwCqU5DpoAUcfd8bov5+LigKQP3g5FFPz2Yl3CQxcKNXhCM65WnaHIUS+OmANAs0GDLg+krXw/RVVd2iPovYpAbRW0PRxVQ0utMdMtAILycGNObexWVogKq0HiEHLm39ZvMSC/zEpO8kT5SV+54D1RUFLz4wbiv8FHIQYVrcssD+jKwKDXZXi4H7wEnDkz5uBIEPF5erpF/hJ32Kh/htVwWe8/cCuagG0H8940DlSwGBsjNl2l5UFFs05Zj79TMlTSuOENcm98bWf686LkWWUY7WuwVlL/7GoR76sKd7Xa4RgB"
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_01AsjHSRM1VtcLh8FfYZyBA3",
+          "name": "try_assertion",
+          "caller": {
+            "type": "direct"
+          },
+          "input": {
+            "assert": {
+              "kind": "value",
+              "source": {
+                "from": "probe",
+                "probe": "posts"
+              },
+              "normalize": [
+                {
+                  "op": "items",
+                  "where": {
+                    "properties": {
+                      "title": {
+                        "const": "Spring meetup recap"
+                      },
+                      "status": {
+                        "const": "publish"
+                      }
+                    },
+                    "required": ["title", "status"]
+                  },
+                  "pointer": "/id"
+                }
+              ],
+              "expect": {
+                "sameAs": {
+                  "source": {
+                    "from": "probe",
+                    "probe": "posts",
+                    "at": "before"
+                  },
+                  "normalize": [
+                    {
+                      "op": "items",
+                      "where": {
+                        "properties": {
+                          "title": {
+                            "const": "Spring meetup recap"
+                          },
+                          "status": {
+                            "enum": ["draft", "publish"]
+                          }
+                        },
+                        "required": ["title", "status"]
+                      },
+                      "pointer": "/id"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 20283,
+        "outputTokens": 468,
+        "cacheReadTokens": 16861,
+        "cacheWriteTokens": 3420
+      },
+      "model": "claude-opus-5-5"
+    },
+    "sha256:c67612a7f22e45341169f56e0e7ddd60fe5e8d62a68bb340fdecbbfe5222691b": {
+      "stop": "tool_use",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "toolu_01QL8kXoST2zTfUPaMbqhk3h",
+          "name": "submit_checks",
+          "input": {
+            "checks": [
+              {
+                "id": "r1-draft-now-published",
+                "requirement": "R1",
+                "description": "The posts that existed before the task titled \"Spring meetup recap\" (the draft) are exactly the posts with that title now in status publish, i.e. the original draft itself was published.",
+                "assert": {
+                  "kind": "value",
+                  "source": {
+                    "from": "probe",
+                    "probe": "posts"
+                  },
+                  "normalize": [
+                    {
+                      "op": "items",
+                      "where": {
+                        "properties": {
+                          "title": {
+                            "const": "Spring meetup recap"
+                          },
+                          "status": {
+                            "const": "publish"
+                          }
+                        },
+                        "required": ["title", "status"]
+                      },
+                      "pointer": "/id"
+                    }
+                  ],
+                  "expect": {
+                    "sameAs": {
+                      "source": {
+                        "from": "probe",
+                        "probe": "posts",
+                        "at": "before"
+                      },
+                      "normalize": [
+                        {
+                          "op": "items",
+                          "where": {
+                            "properties": {
+                              "title": {
+                                "const": "Spring meetup recap"
+                              },
+                              "status": {
+                                "enum": ["draft", "publish"]
+                              }
+                            },
+                            "required": ["title", "status"]
+                          },
+                          "pointer": "/id"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "id": "r1-post-status-publish",
+                "requirement": "R1",
+                "description": "The backend posts list contains a post titled \"Spring meetup recap\" with status publish.",
+                "assert": {
+                  "kind": "value",
+                  "source": {
+                    "from": "probe",
+                    "probe": "posts"
+                  },
+                  "expect": {
+                    "schema": {
+                      "type": "array",
+                      "contains": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "const": "Spring meetup recap"
+                          },
+                          "status": {
+                            "const": "publish"
+                          }
+                        },
+                        "required": ["title", "status"]
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "raw": [
+        {
+          "type": "thinking",
+          "thinking": "",
+          "signature": "CAQSmwcKEAgTGAI4AUIIdGhpbmtpbmcSDMgCLWhvUhOGYxa3UhoM5g/i5iGzJ6WD9WfkIjBXXFJG/GgBvylxwEshhqaYExB753Pft2co/91rMl9dSFiuX5PFKyAu1G7Dffckk2wquAYQyeei/fDXbUM0CiS70/czN1iiM4wB0nyRboGpJsWLWVyNRuYJAfWdimgmsTxJ2dIybKUlsIkARob0DgIke7H3K59/YERqhBvmwYUMyxtq5FZMX9avr+XqPDMwBbLvxetxfW0xBb2GkoqRPTckbuQ+wBGf0JJebJA1deZAJeNz4ntcg12NJWlu3V353chDPT/AmdIuLlAfIYYFzFJigcYst5bim6/Ulv3v7WdC4Tylo61oVoV7dlpBGbX9w2lNWnhDOP8/h3PrbtPi2Oi7s+kof9gFyH/d5MDShfcgADPefzN9AUip7Z/boNGHRuEfNTdvKbSszJmX7erYv3KIJvF1AkK5DOIr60nBt+gubbdc5kJ0yPOr4sugGYz8ukC8SDyBx717cNUExajopDMJdjwwRQ8q9FQxRsaFG37ENrwHDSfsD++erRq+XZcIbdoGuSQ+1BCPce+UuhqhkGy/uqr/dA/XE/3lPZIPuc66v23wibcSVoWsc17xOjCr4V/SHXOmjIGIZXB4eaob8U7sVaJ11LMD5H/ENc970LTpZmPzStEh2ieeCyXr/KeDUQ3dO9seLurLjUr/V3pgds7DHzRiVH16I78TIz2LBWcnJgbw29StK+ncsxthSl7SOC5iBHGyECVekvbo3wYANtl35LrVyca1ultZckZO3Bz4Lft8wcm2DyqzrJlJAjvMKcr4pBKtfOyDpI9cmwHk0LaPBhnD/HiN5PgPIckUkinMkV/dVsrHjgL1tGlqwjAIHBB+8nTFM37n/zqVHxFpbzQqIg4TTBY4wo1RjMqlJfs2h/MXdkyv+SoOaagcXMsYM7KvgZtvgdP1D0f9OnF2VX8RPz3/ElNB3sT4ORpbL/j1eoMMdZOrl04zfxW3/m/nPItT9R5z9gNAv2eygfSz2805+rO2qbL82eaSmbDO8MRsBTBB9gKckxNUKx0E0XrOYQ9hz0XfxSQyudPZ0yk4dSkQHrjSpHnSuUn0I9CRe3ogJ3d1MPSZzwFR94ue7DOtzP5a7mOwZmqgGWYojxA1nozf9Uxr8+CrCqgp4aIRnWiyBK6QiULxT2W8fhKmuTxEXBrX9oqmPlPkvEUjvhgB"
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_01QL8kXoST2zTfUPaMbqhk3h",
+          "name": "submit_checks",
+          "caller": {
+            "type": "direct"
+          },
+          "input": {
+            "checks": [
+              {
+                "id": "r1-draft-now-published",
+                "requirement": "R1",
+                "description": "The posts that existed before the task titled \"Spring meetup recap\" (the draft) are exactly the posts with that title now in status publish, i.e. the original draft itself was published.",
+                "assert": {
+                  "kind": "value",
+                  "source": {
+                    "from": "probe",
+                    "probe": "posts"
+                  },
+                  "normalize": [
+                    {
+                      "op": "items",
+                      "where": {
+                        "properties": {
+                          "title": {
+                            "const": "Spring meetup recap"
+                          },
+                          "status": {
+                            "const": "publish"
+                          }
+                        },
+                        "required": ["title", "status"]
+                      },
+                      "pointer": "/id"
+                    }
+                  ],
+                  "expect": {
+                    "sameAs": {
+                      "source": {
+                        "from": "probe",
+                        "probe": "posts",
+                        "at": "before"
+                      },
+                      "normalize": [
+                        {
+                          "op": "items",
+                          "where": {
+                            "properties": {
+                              "title": {
+                                "const": "Spring meetup recap"
+                              },
+                              "status": {
+                                "enum": ["draft", "publish"]
+                              }
+                            },
+                            "required": ["title", "status"]
+                          },
+                          "pointer": "/id"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "id": "r1-post-status-publish",
+                "requirement": "R1",
+                "description": "The backend posts list contains a post titled \"Spring meetup recap\" with status publish.",
+                "assert": {
+                  "kind": "value",
+                  "source": {
+                    "from": "probe",
+                    "probe": "posts"
+                  },
+                  "expect": {
+                    "schema": {
+                      "type": "array",
+                      "contains": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "const": "Spring meetup recap"
+                          },
+                          "status": {
+                            "const": "publish"
+                          }
+                        },
+                        "required": ["title", "status"]
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 21464,
+        "outputTokens": 577,
+        "cacheReadTokens": 20281,
+        "cacheWriteTokens": 1181
+      },
+      "model": "claude-opus-5-5"
+    }
+  }
+}

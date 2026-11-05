@@ -1,0 +1,343 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:15:35.859Z",
+ "turns": {
+  "sha256:6b65d8c691b0e2b1d8a11ce94afa473178df954435882ac05bf8855aa77f34d2": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017jfgKZvkk579E9BBTQ98b7",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "A new user with username jordan is created.",
+        "field": "instruction",
+        "quote": "Add a new user with the username jordan"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
+        "text": "The new user's email is jordan@example.com.",
+        "field": "instruction",
+        "quote": "the email jordan@example.com"
+       },
+       {
+        "id": "R3",
+        "kind": "hard",
+        "text": "The new user has the Author role.",
+        "field": "instruction",
+        "quote": "the Author role"
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_017jfgKZvkk579E9BBTQ98b7",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "A new user with username jordan is created.",
+        "field": "instruction",
+        "quote": "Add a new user with the username jordan"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
+        "text": "The new user's email is jordan@example.com.",
+        "field": "instruction",
+        "quote": "the email jordan@example.com"
+       },
+       {
+        "id": "R3",
+        "kind": "hard",
+        "text": "The new user has the Author role.",
+        "field": "instruction",
+        "quote": "the Author role"
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1068,
+    "outputTokens": 207,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1064
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:3923b472be7046e045a09a4a105845a15dea360bd369f160d74a0198183e63a3": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01S3DuwGwnkayN8HPNk2g2B6",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01S3DuwGwnkayN8HPNk2g2B6",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 16918,
+    "outputTokens": 25,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 16914
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:fbf0ab624cb6dd0fbdc39895eb7a2aa8e400f4b85ab42eed8ffc88e5152a8b15": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KXS8eb8PiyVrDdNY2cpuqC",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "r1-user-jordan-exists",
+        "requirement": "R1",
+        "description": "The backend users list contains a user with username jordan after the task.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "users"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "username": {
+              "const": "jordan"
+             }
+            },
+            "required": [
+             "username"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r2-jordan-email",
+        "requirement": "R2",
+        "description": "The user jordan in the backend has the email jordan@example.com.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "users"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "username": {
+              "const": "jordan"
+             },
+             "email": {
+              "const": "jordan@example.com"
+             }
+            },
+            "required": [
+             "username",
+             "email"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r3-jordan-author-role",
+        "requirement": "R3",
+        "description": "The user jordan in the backend has the author role.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "users"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "username": {
+              "const": "jordan"
+             },
+             "roles": {
+              "type": "array",
+              "contains": {
+               "const": "author"
+              }
+             }
+            },
+            "required": [
+             "username",
+             "roles"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSwAwKEAgTGAI4AUIIdGhpbmtpbmcSDGxeyBrOe9rZUUjwDhoMWV+/qK7AWFietGuzIjAlnf0Xqgqa7qo7YMrp11jp4kVfauE5o3yAvyC9RSSvzHmrCsyAsSQzokyBItWizcIq3Qs3RcIbTg96fohi8ELVhbR964va4JkrFnzMI8vWQXn5Q/EVUbhh5kb3P1SEFhbVR2Thf/1YHzgGRysPYkqLsmsvFqv16pNN0GVUY2yPPOJ0tJf9YKLQGIYhl6UlNvRckUl31Kc9sHhph+J3/PPlBt8Cd4qg0S+IPWOS/HSMi80X/M2g+cNcx40rbpbphi1HXA6qCg6qirbepqoHMUnyGP7+Y2VPZA4XsK4e+QpOZnDozpRk1Zin/7q+rR70VOaqkkSTdGEXWIYT+kRrraToEfJo11Mt+rfGkFWDAOQH6xgBJdbvd3vo7e3tTHaRSty2/a1fhSJrrhEIs62vdwoHknyut3ypXmrfBrZwCvdmFRJAEoyuTCtP3a3B6RfP9xVKZgaX+k6GGadkFAE8XaxbSa4xMQSKvHTeoo9RJ9i01NG+VF6ND9xYI8hrw3ODO4tB5wpJdnnnY3Aw2Z1MgJJS9Y6kL8UfU9G7B4T5i7mrUzf+dX3+g8ptp7K2BVbdhkbubw8Vm0AMpDHeGDpdsGxozRgKtY8wCxi01H7O0MUVE5G2S2jak9iqfrmAVpiNnh/vnm+0iPCjq6TdUmrqcLf0PmQUfwlyhdoZLhKFpzj5f0vOrVpgzIVWRRYt32JSY2CGYFAQFVm7xnP7P5pG3xs/BmCegGCGLeNVoddGtGTIutaYpDjKV/6J0dW286CN/4pYf8POQUh6ydGAGcH/R9JX4j7wRxk3ml1N8zwmheqtgm2y4cfMkw81waYbcPHfD32Xus1DzfTqfumBalg9FPul+q1Le6RnYy63nqB+rJCvYYar1rUFjU0R4R9bxn7dekRDQCaMJo5pCja26Gm3KfXaGesNfjMeUTWg1Lzsm2gBaHeFq/WQc6pifWMJSzkRa9KaU52UI7B0HeksEYboawn4gGBdnVmuxxbXpq9Bk6nK0lrR8dUx6IOq27IJxXVEVcS0SKaHpoLzUZJElwMCUN9JvWgArwPIyrjzMWVdeqzbOPvgQiH2vYPISL+BzsFPGzCdwqAIY/0n9sW41ffF+9BXY5+WJFC9wn1CjwZ/51XDwQz9FaVUDsNDkoBHSDFcJDRCsE1f+v7zdLBr47jjYv+LJwWlgmAR9vjYL0s3uQHAQufRHas/nZNj2FUKIfXRHgFtL7gnT2CLirt+/D6wqqZhJUMU5Cf1sVNI3hJHqQYu52wkJKlhFoRZInqlAAQ21NPK1CchG7LY8FkVxtas13eqjFQMivupDXU9MZ8b/u9ZekAReOhxDS+7Vnguj3JEj/T0EfvE7WX0H3g1Ja3WC8iMadrJpxcBDwMDfXDT1C/xVyx1E2FXs8LLXmxT2Nx10a6Ygoo1NOoTW+bZM3ah+Jf6NoqfnZxU/RvZJhaQzxpecYuADMzRBdoK442fnCkjQURSiqa9okd+fRvWxgtQg52+C2hTnib88tnAs4+I/tOzdipc3HQhRd8BZa2eyVQ9zG+93Em8NtkNCQJvE7kvJPbSfxqJMbyO0T1TQbkxa4b0Xq2iu14jr4iySNRm46gsa/YMuVrAM3/4MGSFbecNZZSMxKI6bP7ZxRibtRudiwcpCBNKZRgmyqO1/2uPWHbo9i1609NPC2vJ1bnyN42KDZLOpVfsb/0KAiRA8bg1uqVR7rCxCT7Iu4kZwsur+Uj4+nbUj9mXnXsoKAftB64KlgMkr2yh/YnL+ZRLcJAea7z6lk5Y/5lDsCqar5jZVSoDsqKHBIEBweiXbb1TnmbE6Zl66FvniPEzpHkxYVjGyAQ6Kdis3kOv4OBdIOFWVIAt0N81Jt2s+K3gg203l89ob9YzNbbmZUnrufx+tokVbRI5g45fTz6n/zcaDFcexf34FHup5n+xzPpPaL2VB8KL2OKwMVsUB0EIy7hJqthElpWM4yi7s/4/cJOEvS9DmVI7UGH5ThHzuwifAcgDPyts1fjaq7BkKMqRoT3TBIiopmD47sPdcEgcknHzNf3FLhR5WuMJYgfzfRCUppgBEL+8HsjQGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01KXS8eb8PiyVrDdNY2cpuqC",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "r1-user-jordan-exists",
+        "requirement": "R1",
+        "description": "The backend users list contains a user with username jordan after the task.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "users"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "username": {
+              "const": "jordan"
+             }
+            },
+            "required": [
+             "username"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r2-jordan-email",
+        "requirement": "R2",
+        "description": "The user jordan in the backend has the email jordan@example.com.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "users"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "username": {
+              "const": "jordan"
+             },
+             "email": {
+              "const": "jordan@example.com"
+             }
+            },
+            "required": [
+             "username",
+             "email"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r3-jordan-author-role",
+        "requirement": "R3",
+        "description": "The user jordan in the backend has the author role.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "users"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "username": {
+              "const": "jordan"
+             },
+             "roles": {
+              "type": "array",
+              "contains": {
+               "const": "author"
+              }
+             }
+            },
+            "required": [
+             "username",
+             "roles"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20382,
+    "outputTokens": 810,
+    "cacheReadTokens": 16914,
+    "cacheWriteTokens": 3466
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

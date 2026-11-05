@@ -1,0 +1,181 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-sonnet-5-5@low",
+ "recordedAt": "2026-11-05T11:45:06.348Z",
+ "turns": {
+  "sha256:a8a68030c408ff8d188a1647ef1c1460c85951e6aa2dace8902de46a3bba0002": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01AQrQhyCmkNqSH36LMo2t4N",
+     "name": "goto",
+     "input": {
+      "url": "/acme/webapp/milestones/new"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01AQrQhyCmkNqSH36LMo2t4N",
+       "toolName": "goto",
+       "input": {
+        "url": "/acme/webapp/milestones/new"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7501,
+    "outputTokens": 58,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7497
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:05cbbf96ca175a8afc2dc3ca5233165c4fac4c8b7fe6cf59c5477ad8fa5cc7bc": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011hSFPSm8WJBnp3VRt9VJyJ",
+     "name": "fill",
+     "input": {
+      "ref": "f1e124",
+      "text": "v2.0"
+     }
+    },
+    {
+     "id": "toolu_01FVesC1beKYuEJZNWwCkkdy",
+     "name": "fill",
+     "input": {
+      "ref": "f1e127",
+      "text": "2026-12-31"
+     }
+    },
+    {
+     "id": "toolu_01PNL8rChcrjvTtzj3y3KyCc",
+     "name": "click",
+     "input": {
+      "ref": "f1e133"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_011hSFPSm8WJBnp3VRt9VJyJ",
+       "toolName": "fill",
+       "input": {
+        "ref": "f1e124",
+        "text": "v2.0"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01FVesC1beKYuEJZNWwCkkdy",
+       "toolName": "fill",
+       "input": {
+        "ref": "f1e127",
+        "text": "2026-12-31"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01PNL8rChcrjvTtzj3y3KyCc",
+       "toolName": "click",
+       "input": {
+        "ref": "f1e133"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 9772,
+    "outputTokens": 193,
+    "cacheReadTokens": 7497,
+    "cacheWriteTokens": 2273
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:b7f1457ece83c03b081899bd9e59c38df46eb07635ebfa88feace87807267f85": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_019BhboHdzWjG4X6JEgDqpCg",
+     "name": "finish",
+     "input": {
+      "report": "I created the milestone \"v2.0\" in acme/webapp with a due date of December 31, 2026. It now appears in the repository's milestone list with that date."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_019BhboHdzWjG4X6JEgDqpCg",
+       "toolName": "finish",
+       "input": {
+        "report": "I created the milestone \"v2.0\" in acme/webapp with a due date of December 31, 2026. It now appears in the repository's milestone list with that date."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 15535,
+    "outputTokens": 94,
+    "cacheReadTokens": 7497,
+    "cacheWriteTokens": 8036
+   },
+   "model": "claude-sonnet-5-5"
+  }
+ }
+}

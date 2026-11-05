@@ -1,0 +1,53 @@
+{
+  "task": "wordpress/w15-schedule-post",
+  "status": "compiled",
+  "model": "anthropic:claude-opus-5-5@high (replay)",
+  "modelsUsed": [
+    "claude-opus-5-5"
+  ],
+  "turns": {
+    "rubric": 1,
+    "discovery": 5
+  },
+  "usage": {
+    "inputTokens": 105760,
+    "outputTokens": 2470,
+    "cacheReadTokens": 81089,
+    "cacheWriteTokens": 24655
+  },
+  "coverage": [
+    {
+      "requirement": "R1",
+      "quote": "Schedule the draft post \"Roadmap 2027\"",
+      "checks": [
+        "r1-status-future"
+      ],
+      "channels": [
+        "probe"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R2",
+      "quote": "to be published on January 5, 2027 at 9:00",
+      "checks": [
+        "r2-date-0905"
+      ],
+      "channels": [
+        "network",
+        "a11y"
+      ],
+      "trust": "semantic"
+    }
+  ],
+  "warnings": [
+    "requirement R2: its value checks abstain when no request matches; add a \"request\" check so a missing request fails"
+  ],
+  "references": [
+    {
+      "name": "reference",
+      "kind": "success",
+      "verdict": "success"
+    }
+  ]
+}

@@ -1,0 +1,279 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:42:04.941Z",
+ "turns": {
+  "sha256:acbb8c0bc3d62618c8eb4b8891f3d7abb1bb434f997a96bbd998a6b8113ae3c6": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HPcRuJ6wKjA29wi9SfJik6",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01J87vRmArkyRykrXLQ6bkEb",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01HPcRuJ6wKjA29wi9SfJik6",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01J87vRmArkyRykrXLQ6bkEb",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1948,
+    "outputTokens": 70,
+    "cacheReadTokens": 1944,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:9d0f31c26e1323c9ba0c061ed6d63eabbdffafe21a94b4050bb69926b00d5168": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015uGmzLPZVtKuEtXbjyE8PL",
+     "name": "network_entry",
+     "input": {
+      "seq": 25
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSzAUKEAgTGAI4AUIIdGhpbmtpbmcSDOSJl3TdbBsRiNZPxxoMTm028RLbn1maJ0J0IjA8K+IJchEMnWRCVnq+OFpVzFc4TUBUMWPqSGW+DPBSiiFHddNapnXbBM07DW2pk8kq6QQTjQrG0I62SNgJwBOiugdiX+gd6J91mZZj6DNVwKX/PR+Tw5Iu8K/qJq6HRX+vNK/v14R8cciHRrWjjOSypPx4xEV1s4qoJG0D5IdJboyO32FTANgRa57HLA7irkFz1WGfbgMv//jgUp5rK2p7KbER3ZuhKURf7Tk6UURdE2Tq3v0BIxkkmjc0n2u693BxoG6cPj8edjT6w/5VDcrUXPsBYkDI4eqsT5U2vh81Q3sBDFo61sL3TqMPANmSlGZKrHUHk4sLeCNhj5QXn8lmMGeIoNBh/f5tE9Wkgpldk4fGA0nU2AhrMS33GVZ7uHYHLiGKgmbULjQBUeWtdUvC9qG7Cd5U/b42BFBAjJURM47+MnQbAxlpm2J7BYOBrVZlwopcfywxlVRPaO/WhqgpyiHZKlNnpsrRqCq4QXGeKHcFpOo2m+BmBFX+KKbWzJqKeyGjLKmJ6ykB75RGv/qnPoX5Z6Z7AemDvdB6Jdm72nB3eHkBOS2nPfF8IZsRXLMsnnWavNv+kQiWbqqkrBcf07ceuRjAXumxvteSHR09d/ayYDlcXXh3lvJSdWqURxbWQ8rnKarw8S7a3W2LiDAX1um5CdCJhfYervUxzMoD4bbUCHEg4FbtoSJAq6R+XM41VoboMAL3Fig1dFxVvY2P+6FShQeq84fitG2xZ1pnwhjGF8KRp9e66N0OGqcbExQ5rFvQUTShNsrPNRT4zwgTArCEAQVCdsshynaepIyCKePXXMyeZBt4sLsN2Z8ipfEbWnjen3nw4sKwVbxylptKmef9pXtfWSTb0r+4Gn2Rd95otGYbE3ngxaUPvxgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_015uGmzLPZVtKuEtXbjyE8PL",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 25
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4111,
+    "outputTokens": 80,
+    "cacheReadTokens": 4109,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:6423b09e1f7336a360ee77731acd2551de9d4dc1f05f565ed928f57dc3abd6af": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01J29LQEkDDBoAvTknqAKuTr",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "In the acme/webapp repository, open a new issue",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "There is a POST to /acme/webapp/issues/new, and the server redirected to /acme/webapp/issues/15. The probe after the task shows issue #15 in an open state; it is new compared with the baseline."
+       },
+       {
+        "requirement": "titled \"Search results ignore accents\"",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The request body title is \"Search results ignore accents\", and the probe shows issue #15 with exactly that title."
+       },
+       {
+        "requirement": "with the label bug",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The probe shows issue #15 with labels [\"bug\"]. The request included label_ids=1."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSmwYKEAgTGAI4AUIIdGhpbmtpbmcSDB22or0fjefUKyLy/BoM47BHakrSi1zBgyB5IjAzpoOc1ZnfZshMMq/ShkIr/qlBv9f2jLW+HAJ8/qkBd7n/ICJlWLYclZap4+vmTRgquAXi5PII9aCCiDgG9QaYWLbNruxmh6OP0yiOSbrEwIISVIs9cfBkJ9LZGscncSsQb4FkUe/n4depuPJiOv9K7oj+aUrqY2+dA0oHufk8IoCY9lDX7nubpNPRb7g8R6W2osCWu9/HC7b7YXJkAMqA/VsWcQaDDlfWCkEqNiF38MPmfyCypkl0nzbddnEuYqOJFv5MfjznNkbjiUX+qYRiGMUsTxmMKImPhnHu80F9X9s1tF6SBMqhhhmPFpTYKAqAeAfLiYS0ihUedxSY4LU1AvAmmNl2EWKIuUhX3a7yGAuk7cmR6c+isdE5XEn7W+rFsjinWdCFxp7Q8bd+GpQzyFWj2tHGbGDUT8lDJMJcezzCyYONK1EWvC7cvwkgmy4BlxY5ivHiUsLw2yKIP4QX+qcRWIxpqXMkCxod7M2vdppNH2Rv26adwjeR6taDbc9FG8PI503knTdbn5eofZMq8mlDymAdVR457oF/rRToSM9QAlwwg2NwukgE4nouRH9zhtB+zTtTkZZ+bLbMPwcBp2f1qzALFYv5yN1lg03+ArNgg0UN/XAAqx/ZbMEemrr3Axfkj7UjNW2FxEsKWlVNPYthRCqKjWAKHFH2a82vToQU8DU9YkZHLOr9e3KlVBrBkrfzX/bFNpq7dY8e+Alz9syrtizDDmVNH1ZC8tcvH64wqFRIEPYLCZ8qCNywi1BY7SUEhEJUeDfwffk4S4Ql23KQOpudxg5Y5sA3zfpNHQtbwy2ZY8k/tWnnuHhamHFoqzudn6NREDedmC+f6m6Dr1Xn5HK/KpyAy5rywSZFOMKeGZbqbFr0slXfHNOGDWY3vuWiAY+JhGoaj80L8VnGMPc75ju/N9g+EnLR32ZL/JM5WCXLaDDeBlCAmYTLImCUb2w8xpDOJO+fx1ZbNl9nC2VS+97YwQ8sHd0YAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01J29LQEkDDBoAvTknqAKuTr",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "In the acme/webapp repository, open a new issue",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "There is a POST to /acme/webapp/issues/new, and the server redirected to /acme/webapp/issues/15. The probe after the task shows issue #15 in an open state; it is new compared with the baseline."
+       },
+       {
+        "requirement": "titled \"Search results ignore accents\"",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The request body title is \"Search results ignore accents\", and the probe shows issue #15 with exactly that title."
+       },
+       {
+        "requirement": "with the label bug",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The probe shows issue #15 with labels [\"bug\"]. The request included label_ids=1."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4918,
+    "outputTokens": 350,
+    "cacheReadTokens": 4109,
+    "cacheWriteTokens": 807
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:db20a09c1d385f50b8b3773ebfa7e56f13f5b750326cf226014053916b671cf8": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01A3aN2uasq6iDvGuyx9jDzz",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "There is a POST to /acme/webapp/issues/new, and the server redirected to /acme/webapp/issues/15. The probe after the task shows issue #15 in an open state; it is new compared with the baseline."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The request body title is \"Search results ignore accents\", and the probe shows issue #15 with exactly that title."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The probe shows issue #15 with labels [\"bug\"]. The request included label_ids=1."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01A3aN2uasq6iDvGuyx9jDzz",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "There is a POST to /acme/webapp/issues/new, and the server redirected to /acme/webapp/issues/15. The probe after the task shows issue #15 in an open state; it is new compared with the baseline."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The request body title is \"Search results ignore accents\", and the probe shows issue #15 with exactly that title."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The probe shows issue #15 with labels [\"bug\"]. The request included label_ids=1."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 5355,
+    "outputTokens": 299,
+    "cacheReadTokens": 4916,
+    "cacheWriteTokens": 437
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

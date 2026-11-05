@@ -1,0 +1,141 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:52:31.714Z",
+ "turns": {
+  "sha256:c01e5dc60a8491d0d2822b4756706f6e27e6829f0b8d8ba35359e36bdbaece59": {
+   "stop": "tool_use",
+   "text": "I'll navigate to the Posts list filtered to drafts.",
+   "toolCalls": [
+    {
+     "id": "toolu_01Ehr6bj7V8L83dxRRCyYB5g",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4320/wp-admin/edit.php?post_status=draft&post_type=post"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "I'll navigate to the Posts list filtered to drafts."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Ehr6bj7V8L83dxRRCyYB5g",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4320/wp-admin/edit.php?post_status=draft&post_type=post"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7249,
+    "outputTokens": 98,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7245
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:9fa0fc67cfe1c154cc2f6942bb15b3ea86f6c4a853ced1bc3f9dd916ef1fa180": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Ebj3c8Ey65Z2kLBbPf2MbF",
+     "name": "show_part",
+     "input": {
+      "part": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Ebj3c8Ey65Z2kLBbPf2MbF",
+       "toolName": "show_part",
+       "input": {
+        "part": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13283,
+    "outputTokens": 47,
+    "cacheReadTokens": 7245,
+    "cacheWriteTokens": 6036
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:db047a9990542dc68916567767a127c532b436943fc982dd8cf6c4a6a1b5a8ef": {
+   "stop": "tool_use",
+   "text": "The draft posts list is now open at Posts → Drafts (`edit.php?post_status=draft&post_type=post`), showing 3 items. I loaded it by URL and did not change any posts.",
+   "toolCalls": [
+    {
+     "id": "toolu_01WGgY3bRq1YFtioHDN1rnzD",
+     "name": "finish",
+     "input": {
+      "report": "I opened the Posts list filtered to drafts (edit.php?post_status=draft&post_type=post), which shows 3 draft posts, including \"Roadmap 2027\" and \"Spring meetup recap\"."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The draft posts list is now open at Posts → Drafts (`edit.php?post_status=draft&post_type=post`), showing 3 items. I loaded it by URL and did not change any posts."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01WGgY3bRq1YFtioHDN1rnzD",
+       "toolName": "finish",
+       "input": {
+        "report": "I opened the Posts list filtered to drafts (edit.php?post_status=draft&post_type=post), which shows 3 draft posts, including \"Roadmap 2027\" and \"Spring meetup recap\"."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 10163,
+    "outputTokens": 175,
+    "cacheReadTokens": 7245,
+    "cacheWriteTokens": 2916
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

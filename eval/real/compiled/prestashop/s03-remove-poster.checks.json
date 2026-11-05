@@ -1,0 +1,115 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "prestashop/s03-remove-poster",
+  "version": "1",
+  "task": {
+    "instruction": "Remove the poster from my cart, but keep everything else."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The poster is no longer in the cart.",
+      "source": {
+        "field": "instruction",
+        "quote": "Remove the poster from my cart"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "All other items in the cart stay there.",
+      "source": {
+        "field": "instruction",
+        "quote": "keep everything else"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-no-poster-in-cart",
+      "requirement": "R1",
+      "description": "No line in the backend cart has a product name containing 'poster' (any case).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "product"
+              ],
+              "properties": {
+                "product": {
+                  "type": "string",
+                  "not": {
+                    "pattern": "[Pp][Oo][Ss][Tt][Ee][Rr]"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R2-others-kept",
+      "requirement": "R2",
+      "description": "The cart lines after the task equal the cart lines before the task minus the poster lines (same products, attributes and quantities).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+        },
+        "normalize": [
+          {
+            "op": "items"
+          }
+        ],
+        "expect": {
+          "sameAs": {
+            "source": {
+              "from": "probe",
+              "probe": "cart",
+              "pointer": "/lines",
+              "at": "before"
+            },
+            "normalize": [
+              {
+                "op": "items",
+                "where": {
+                  "not": {
+                    "properties": {
+                      "product": {
+                        "pattern": "[Pp][Oo][Ss][Tt][Ee][Rr]"
+                      }
+                    },
+                    "required": [
+                      "product"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T11:39:41.538Z"
+  }
+}

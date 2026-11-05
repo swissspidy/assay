@@ -1,0 +1,243 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:00:04.388Z",
+ "turns": {
+  "sha256:e04cbad19bdd201911de77bdec0f04447b2a0cfbe15ed1ae00bc2c166c23b1e5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017hFq9LKmWEPGvMfPpNNeV6",
+     "name": "page_outline",
+     "input": {}
+    },
+    {
+     "id": "toolu_01GLX5T1e9ZJbboVn7sTQHMM",
+     "name": "network_log",
+     "input": {
+      "pathContains": "search"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_017hFq9LKmWEPGvMfPpNNeV6",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01GLX5T1e9ZJbboVn7sTQHMM",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "pathContains": "search"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1853,
+    "outputTokens": 74,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1849
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:5c5327b6e8d9a37901f783c6b8b054b05867bf9f7ca0b6b6326a9ed87685dcdf": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01PuJYVgkda8VGcynbLjovJy",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS/gUKEAgTGAI4AUIIdGhpbmtpbmcSDOTWpTl0gbPnHzVlOBoMEAsTGsYNC4eH4YjiIjB3hn1vzqxLv+OER0FBh1k7EKTH1IrgFmFY5FaLWtrgjTyLV3lBcUS7vKEGFzIjl7cqmwVq3yafUEua4UgU7oEEHguzQDJnLIvQeZfdka41AoTQNyadUdHhRUtkK/GEoexvJCgzSFHAEnvXahRWyX0tTrfcdbExg2+rE5UMRoOFFDXV/EnFqAbx08z7p3YTIo8XR7UmdmdWbuDHtRQUY54I9Tjg1mXI6GL0EMJFNeyDyh8NjMFysJDn79XGysmseb7AI20b8FzhaIcLo3grfH+a6s4//GbHVtlY8YSMV0Fl/VHDj8kiyMUCrChdtuPonCgAAB+7v5VlkWueCxAI8hWRVIOavlR2GHPDASZAmIFspO+llencbOCBpTsEyTNjAOOGabAzyEXVB15RgvnKxt/wnck9zbuVsi0giQJVNinRK4dykci3Oku4ikHp6RAVURprGI5iF07xCxgtqYKWZ4N+9gZFN//IlYxJ4O9NaSqcf6SEfZFlclpHdX0SQUf9/05XthhRwbhPW4j6l/JwC5w7BtTgmAnIhzt+bvF00ivU1jEfAqYgQOmJxoFgr639V5kfkRAeJ8Sp4NmM5yQSbItU9RfSgC7X98Wl+PwqyVE9dP0AsZiiNoFDB+ddGrEa/UF7CdhLrGQGt61XuR+tODZUvGzz/gsu7CoPnw1nbSHNtEBHVsOlcyCCCJ8iQ+vL/CMgIk5QmlMYVCp5uAQ/uRv8Oyfebm7dSihzS/d0NB/Pb6E0K5jrHGrKLDt9l+nGMlEsmgxpOJUnNrOgjPZnOVXDxorQivoYy122r80BT8xYPJKKX5S0R5dnwE0MvGOMQFJamtnet/wTPxj86BVUdouhAjTWXjoWxmX6VcUwuBsSDfc8ffYMNVFPqdy74gf6cIqicNXWWAlJlZmIeFNIk1y/jtlgZfSZvdqcvsgaN3QukzkK9dl1GP/oAIQehh5JGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01PuJYVgkda8VGcynbLjovJy",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 3527,
+    "outputTokens": 62,
+    "cacheReadTokens": 1849,
+    "cacheWriteTokens": 1676
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:285089eacdfb07cff5359f61567b2b2929f5bd69dfb25082eef03619212fe84d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01XxJ47mhmnVrswoHW4chdjy",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1 \"Show me the mugs in the shop\"",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The final page is /search with \"No matches were found for your search\" and no products listed. The agent's search request (s=mug) redirected (302) to a bare /search, so no mugs are shown."
+       },
+       {
+        "requirement": "R2 \"cheapest first\"",
+        "status": "fail",
+        "cites": [
+         2,
+         3,
+         1
+        ],
+        "reasoning": "The only search request used order=product.price.desc, which puts the most expensive first, not the cheapest. The final page shows no sorted results at all."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSswYKEAgTGAI4AUIIdGhpbmtpbmcSDAZ1AO39toG8Db4HfxoM01KqgE5aV7WSFO3yIjACXC0iOKboj1zK3E15YCkmqgWeomUfLCWq6amP4qHnVgR9OZsT1PndSnaoCNhCfFIq0AViLRHxBbKyosMeZz5zRPJS7x9FO/qcOFICFWGYFfzFHhzWKIyw+oofb00RgsxpT8mN4HbC3EZ2oEOgtZ2gAF+k7KZEuDYvjqNOlIJrOvEQV4fyb8arhCdjZAgTgGeFIJoH/7FEJjUPVxs9qRz9W5yevC4rmy0zWuvwE75yCgqcS8wyWnqyfASYtFS6E78aZthRH4A+l8q3NxjvsbAgQPgqHPgeetf8otJJN48aiqdln2cVd7rWH4l33834vfBct2jWUH72H3BQ1GrmlcSvBNy7CQiVLFIPCWxvjkTZ8AgQZ/HE1XXqf/DQKW1E6c7wgCTKD3S7B5zyjlpGNHUyLwAj1154mY83zcXR84olUwh2BLIoz41zHxa4UnysaAb35WJVBMYMK/2CpayYbAM98FzcRzBRs7zHV8Jc03E9AKx2sNFJO84i4RTwNjmVnPUU36koxFndv6h4Zrrusi1YkerZUZwBPF9o3HyNPW7w3MiDTV0dkZPSEP2gbKPdLkWKdIwMVDHLGiMvgkyPKGOup4MWixdd3f8VwYPsgD9s8gLWEJ1GCc9HHIhY7gKbzPPB6X8ItJQ8zKAdm1Ft94qA4vTZ9lIjGMoOKNuWRoEefYMSKgRT6tlOiqdWbTU6lfTt7+KevNDj+k6l7/5t6rC2bEpC2Vvw50zMDJ+twMVAD8Qa+CirurCzmESSnGUrNLJmyIpqdb1PwFTfoVisCnBVv4lxirruOXEmRRdTFhNZPwZ30jQWtfeT4+HU9hC8irWxSkQ4SdCT+AMYRt+DhkMeLIzDuPZ9jd4TFDWPgOVArXaGCznJcAZ4i5uIXSOt6ToVJkqWSfVEnkXNmhsaNcd3su1w85feHAYNtIyyUGj8WxFS/tzJwhip7gfOgdq9329guPHwtoQgDNK38wHzKwnD9tyzfgDV4YbOmK9MvY318546xw9f2zKbfwxbtXBj4dtjKmcYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01XxJ47mhmnVrswoHW4chdjy",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1 \"Show me the mugs in the shop\"",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The final page is /search with \"No matches were found for your search\" and no products listed. The agent's search request (s=mug) redirected (302) to a bare /search, so no mugs are shown."
+       },
+       {
+        "requirement": "R2 \"cheapest first\"",
+        "status": "fail",
+        "cites": [
+         2,
+         3,
+         1
+        ],
+        "reasoning": "The only search request used order=product.price.desc, which puts the most expensive first, not the cheapest. The final page shows no sorted results at all."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3924,
+    "outputTokens": 283,
+    "cacheReadTokens": 3525,
+    "cacheWriteTokens": 397
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:2b4e7841f88102182f60d71c4d49da30eeb48fdc5d418b5e755441c96c456d87": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015pEcpW4EVAuUgcfSNrqHfG",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The final page is /search with \"No matches were found for your search\" and no products listed. The agent's search request (s=mug) redirected (302) to a bare /search, so no mugs are shown."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         2,
+         3,
+         1
+        ],
+        "reasoning": "The only search request used order=product.price.desc, which puts the most expensive first, not the cheapest. The final page shows no sorted results at all."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_015pEcpW4EVAuUgcfSNrqHfG",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "The final page is /search with \"No matches were found for your search\" and no products listed. The agent's search request (s=mug) redirected (302) to a bare /search, so no mugs are shown."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         2,
+         3,
+         1
+        ],
+        "reasoning": "The only search request used order=product.price.desc, which puts the most expensive first, not the cheapest. The final page shows no sorted results at all."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4279,
+    "outputTokens": 234,
+    "cacheReadTokens": 3922,
+    "cacheWriteTokens": 355
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

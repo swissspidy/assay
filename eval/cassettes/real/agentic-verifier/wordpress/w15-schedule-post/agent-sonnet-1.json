@@ -1,0 +1,254 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:18:56.106Z",
+ "turns": {
+  "sha256:d2ad7d1ea3a5333d57d22af6dfdae1824410380f4bdba302f7cda26e4151be58": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01JjkCSfMeHGvoxN4UuvmsqH",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01JjkCSfMeHGvoxN4UuvmsqH",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1922,
+    "outputTokens": 25,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1918
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:d8dbf64acb9a7b60e70e5d2abc07c195dfebfb79f06dc7ebb240c197c3223a17": {
+   "stop": "tool_use",
+   "text": "The probe doesn't show the date. Check network.",
+   "toolCalls": [
+    {
+     "id": "toolu_01EEHrnaZBXT6ZPZqPDFVQ96",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "text",
+     "text": "The probe doesn't show the date. Check network."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01EEHrnaZBXT6ZPZqPDFVQ96",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3815,
+    "outputTokens": 64,
+    "cacheReadTokens": 1918,
+    "cacheWriteTokens": 1895
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:49a4ce4846115ef772a96aecf6ee31c3a6d4559eb1de0f60d30e0a9263c52fa6": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01RBQz9npTjhfLStdEf2U2Hi",
+     "name": "network_entry",
+     "input": {
+      "seq": 213
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01RBQz9npTjhfLStdEf2U2Hi",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 213
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4081,
+    "outputTokens": 49,
+    "cacheReadTokens": 3813,
+    "cacheWriteTokens": 266
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:382b4e1767c83d4aa8380dc54617b309118df4dedd8c1166657055ad21ac5e78": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_012yfmTDAfspUsgx8Dt4H4i1",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Schedule the draft post \"Roadmap 2027\"",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "After the task, the posts probe shows post 12 \"Roadmap 2027\" with status \"future\" (scheduled). The REST save request for post 12 set status \"future\", and the server response confirms it."
+       },
+       {
+        "requirement": "to be published on January 5, 2027 at 9:00",
+        "status": "pass",
+        "cites": [
+         3
+        ],
+        "reasoning": "The server response for the save of post 12 shows date 2027-01-05T09:00:00 with status future."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQStQYKEAgTGAI4AUIIdGhpbmtpbmcSDBe67Y84n4YGlcdFRxoMr7QctcOcs/b9Chx4IjB97IW/xZ552H04qersC5IVrjxLlHLjwsios6uEMm5pFWE+DqcjxUw0nMTysR49Tvcq0gWqoPgwTzRMg5w9oakcxkfq/XazVluvnlybWDX2oyvsoAOqs8AJV8ZHzmCqt4dfoLwwMNyaDTVBez3FYkZNqArZgTJNGEIHvOWUL9lkryvL0yPNg6YbQxwCZ6S8UOSsMz8VBpppxinBp5QEw6torJPSSvC6JuWLDoDGVmG55pIF+h8pME5fVnRzE4TH4pburU8EuHQrE+aQ/j/Kfsjgs+Vy2DmGr+7YXyxoQjWHhV48QORq6jCNuzADT7oFkXxBXyH006/pvk4w0kAUTziXjeb8TZxRA2wth8MipoHZQrtn9+8TlzXoZKJckhAqPzDb4IXlBcpm7TWC53omhHI4vkFGO/kpeFM2dAI0gEb1GnwGoizO/8rGAp4CVaycA6CViajKKlBlAcWpTos1S1jakf2Tu+GL7E7OjAfRIS7Y74q3wKOe5KTgBZ6dOUdmh4dBg4hthkGb3JnwXxKs1VLZQbKQXohQOjjtPiw5K1m8R/m4ZhFFwf/O36e67cy7opq2q0munfGUO8HxDp6bYMhzHFGI6EtGkLdU24bjorqFsGOKOcxgK1QuBOiyyUo4nPeKZQlmJtE6eB99oQ34av9EyqSxWKMkPtcCK8iQfV3ni39nF0ITy6iixal0uAZqOemahIgoD1LLYkAvhMjDEgZqbehcIUf3hMT/+/vRod10edMQaJK9lIZapL6Wp+oaYnnfvlyhhgE4K2gxTEnVaCv+67AH0beTaeMU++2H5x2U/qZ0wqtzGgUqA+8PCeg6LELLfQwQdw6O+HXICBOLg2YFuHzCV+1UhmO2NE+awq6pmRc6NVP94qAFas8IQFdYeGN3B54BN9kWBWNQYJMf+Xr4jxaCb3yGeRP3enUEpFKcdLsCf5jaemrCXDyFf2F2Hq4ZfEf0ql2dKKJXKLj9ETxEWcBmAoPTBLDjlYVWUu4bYnAcjbQXrmvV8v8w7H8wBRVp+/m0ShgB"
+    },
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS5QoKEQgTGAI4AUIJbmFycmF0aW9uEgwIzO2p7cez+oTQVlwaDJ1D4NdbY/iqOZIebiIwqJjBgoBbU7BVrlCuRJzpKXRZUsXlCQQ8qm0KyU/osiJifCqGwu7GjEWfZaYNrfXVKoEKyccpUTLb5UVgiXdyIrucwNmXigiaYxhFw6xSWzC/Z+AF8FP7q5Nr0ZQ33mhABM1V866t1b5DBwD559TBmLSUYVYJrySeB8a21SyXpDwj000V1A2TYevsjBldXfXcQ2kzJAFHiJBFhCSKh1vqoNJFL5/yyxGBh2QEt3RM5uZZShEdJyKfUMkh+pjBECoPkFJ5DC1xDMdVgaV2ZBBhwtoZRQCaERGeCIfyNDVkeD56oCVU//me7Zz9u3acyI2JFbdH3yN5e09XWYnwcRGaOZNM7Y+mEDJAd7H1i/XHHRvwU4YiIVyNtJNrVJQhCTNO7VVSo+hSleHBgR4skmQph57TU2/9/yfPygEFCjdklsFez/E3Ps+57OdEgkjT5HYfWv2TZidR7moTyWt9QJK92wthDVJrkKboG90+HuXoKGaLphWnZ52YXITTfzIrrQ5WKNeuzhwzVi0ZRwkgahahq2Zmo9/GflFKBQ07pATPcc3IRbi9LNXreoeUiMWJuYlYL79iHkq2qTYHFLECSyEwMpVxTFl9SD5NLZMmT34ERx0SuMUWVW6/NTJ/RgyKsxg8U4RP4UGIRvkzbhdkeckyVBCMA2GkPDeklU2EnkDSCruiAq5T74+6v3wFQzSJvXPs3TuiBy4OWhZUKJk4eVzgMN5mT1goXiKtWV3dAUQ8QH5JDH6MPQMnbqeiUYMMIQVe+/JcQp3/Ev2R8NtEDftR3ueCyd2wM+Ks3VmU1XDhc9odaMxpyE+o0FtSqJLfW8XKKAvmvotcQJX8h/6PyQ8eOqTpwXc5zcZnR04gZkEeJQAcLpTIgwAvs26qKTyd/451995RfMlxIzKVXgX1zEIeMQSjGVwpwTm6kKZjuqJQVQRqQmh1Whv8wJ7qSpG0XgMis6ZNSbsAMrc6FnFg2aszvxwyr3PV3a4QUKRfKSBeD+curp3w4LZxXiYYNyXLSOnbc6bZRGFZdE/rnl45ov51Y5C4fLVDyQ7bIkH71H1Wew5TskomfIrd1kfG6uj3kUfbWjHrQKkdakS7psdKzhijYENHPCuhBJn6IFkjwnf0OM0nP/3RG1LEqCUog+fVbSPkLRVREKjsgUmODKeE9cVE47FqYFI/tyJPu5XAESeTgfM4NEP+MWQvQcpO8tI2+WojVLSDnfPDRfk0wKx1ivbZqj1PoMx6EvZDCKe3+aGBkxiMImRSjGIxdOKbT+gD1DKeGpbJUoJZDZnRrZDu+kHn05tS6WreBpT+Eihe7TvE0N8zJ5tRdAHKytMPBnWJUlX56lHAXXLYyWmeZWSCmdIvqigljt0Yj4ctNZaXTMukWi2tYcG3y+tefa1HEOh6AKccNMnZ0GwlpA9B6U6FegYS6m7QOhqOnVaJT7tYoshpxIBFMqx/0Y2EfUmXOEGvh+srFH5Fs1mZJiQ9jjyyFTox0CKXlkCpZZ0wxi3sMEw17j+Z+FVSsoPOMqZ/YNiVWIj7DlhCT+NH60elQ0qvEYK3AoK2Z62ls1gzIbd0Ey+8wR1XXFt4MkgNEY6m9W1uk2UfQgmOX4vbJwoY139OdjKR+Zyg9tO96KtiCu4mZYslayex9eEJMvTYdaZavfkHvVPSoN8Ns3+1CIeiSEbUzvnZo7R02yoej+2kIELDuRgYQmMTS/U6R4IroN4uL5osAJbSf3K3Lfs3tojI+O73YLfosuTzY3WqerpcOqxn9BfHru1DKU3uGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_012yfmTDAfspUsgx8Dt4H4i1",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Schedule the draft post \"Roadmap 2027\"",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "After the task, the posts probe shows post 12 \"Roadmap 2027\" with status \"future\" (scheduled). The REST save request for post 12 set status \"future\", and the server response confirms it."
+       },
+       {
+        "requirement": "to be published on January 5, 2027 at 9:00",
+        "status": "pass",
+        "cites": [
+         3
+        ],
+        "reasoning": "The server response for the save of post 12 shows date 2027-01-05T09:00:00 with status future."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 5874,
+    "outputTokens": 526,
+    "cacheReadTokens": 4079,
+    "cacheWriteTokens": 1793
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:b4f5fba31abe94a6c1cd154c462fe60effea553dae1bbe1057eace9afc80cbdc": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CBTNFkrN6Z5Zuy5d3qRfmq",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "After the task, the posts probe shows post 12 \"Roadmap 2027\" with status \"future\" (scheduled). The REST save request for post 12 set status \"future\", and the server response confirms it."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         3
+        ],
+        "reasoning": "The server response for the save of post 12 shows date 2027-01-05T09:00:00 with status future."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01CBTNFkrN6Z5Zuy5d3qRfmq",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "After the task, the posts probe shows post 12 \"Roadmap 2027\" with status \"future\" (scheduled). The REST save request for post 12 set status \"future\", and the server response confirms it."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         3
+        ],
+        "reasoning": "The server response for the save of post 12 shows date 2027-01-05T09:00:00 with status future."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 6479,
+    "outputTokens": 220,
+    "cacheReadTokens": 5872,
+    "cacheWriteTokens": 605
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

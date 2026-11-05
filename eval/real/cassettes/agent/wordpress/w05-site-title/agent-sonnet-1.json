@@ -1,0 +1,137 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-sonnet-5-5@low",
+ "recordedAt": "2026-11-05T11:43:56.285Z",
+ "turns": {
+  "sha256:8cb129a60fada4cb8d1d62425ba3f82a0cb8e2001afa643d1b01858906ef341a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KSqGWX4x6Zdp6R2SN7QaNn",
+     "name": "goto",
+     "input": {
+      "url": "/wp-admin/options-general.php"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01KSqGWX4x6Zdp6R2SN7QaNn",
+       "toolName": "goto",
+       "input": {
+        "url": "/wp-admin/options-general.php"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7254,
+    "outputTokens": 57,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7250
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:c1760b8f4d2b1e3861f432218554e630cdbe24c9c5062226def85fec7212609b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Gao2skG8RMSNfAqMezUfjT",
+     "name": "fill",
+     "input": {
+      "ref": "f1e159",
+      "text": "Assay Field Notes",
+      "submit": true
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Gao2skG8RMSNfAqMezUfjT",
+       "toolName": "fill",
+       "input": {
+        "ref": "f1e159",
+        "text": "Assay Field Notes",
+        "submit": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12980,
+    "outputTokens": 100,
+    "cacheReadTokens": 7250,
+    "cacheWriteTokens": 5728
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:8fc9b532fcf144a317e320856d99160ec5c23095ab1b13e1e261c91e1b77183e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01MPKztrmxJY6Fj8DVXjL4s3",
+     "name": "finish",
+     "input": {
+      "report": "I changed the Site Title from \"Assay Journal\" to \"Assay Field Notes\" in Settings > General. The page showed \"Settings saved.\" and the admin bar now shows the new title."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01MPKztrmxJY6Fj8DVXjL4s3",
+       "toolName": "finish",
+       "input": {
+        "report": "I changed the Site Title from \"Assay Journal\" to \"Assay Field Notes\" in Settings > General. The page showed \"Settings saved.\" and the admin bar now shows the new title."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13166,
+    "outputTokens": 104,
+    "cacheReadTokens": 7250,
+    "cacheWriteTokens": 5914
+   },
+   "model": "claude-sonnet-5-5"
+  }
+ }
+}

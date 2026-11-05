@@ -1,0 +1,51 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:36:16.017Z",
+ "turns": {
+  "sha256:f54f0e39ddcb9353c6d7c9f3332c6fc7e4d144c11c7e0bcd0b330809df565891": {
+   "stop": "tool_use",
+   "text": "I judge this a success. The final Categories page shows the \"Category added.\" notice, and the categories table has a new \"Case Studies\" row (tag_ID=8) with slug \"case-studies\" and a count of 0. Its \"View\" link points to /category/case-studies/. The name has no \"—\" prefix, which WordPress would add for a child category, so it was created at the top level, and there is only one \"Case Studies\" entry, so no duplicate was made. The list header still says \"4 items\" while five rows show. That matches how WordPress adds categories without reloading the page: the header count isn't refreshed. It doesn't mean the category is missing. The category exists with the requested name and slug.",
+   "toolCalls": [
+    {
+     "id": "toolu_01Rmkq1EWw2thzGweJySGdJZ",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "success",
+      "reasoning": "This is a success. The final Categories page shows the \"Category added.\" notice, and the categories table has a new \"Case Studies\" row (tag_ID=8) with slug \"case-studies\", a count of 0 and a View link to /category/case-studies/. The name has no \"—\" prefix, which WordPress would add for a child category, so it was created at the top level, and there is only one \"Case Studies\" entry, so no duplicate was made. The header still says \"4 items\" while five rows show. That matches how WordPress adds categories without reloading the page: the header count isn't refreshed. It doesn't mean the category is missing. The category exists with the requested name and slug."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "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"
+    },
+    {
+     "type": "text",
+     "text": "I judge this a success. The final Categories page shows the \"Category added.\" notice, and the categories table has a new \"Case Studies\" row (tag_ID=8) with slug \"case-studies\" and a count of 0. Its \"View\" link points to /category/case-studies/. The name has no \"—\" prefix, which WordPress would add for a child category, so it was created at the top level, and there is only one \"Case Studies\" entry, so no duplicate was made. The list header still says \"4 items\" while five rows show. That matches how WordPress adds categories without reloading the page: the header count isn't refreshed. It doesn't mean the category is missing. The category exists with the requested name and slug."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Rmkq1EWw2thzGweJySGdJZ",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "success",
+      "reasoning": "This is a success. The final Categories page shows the \"Category added.\" notice, and the categories table has a new \"Case Studies\" row (tag_ID=8) with slug \"case-studies\", a count of 0 and a View link to /category/case-studies/. The name has no \"—\" prefix, which WordPress would add for a child category, so it was created at the top level, and there is only one \"Case Studies\" entry, so no duplicate was made. The header still says \"4 items\" while five rows show. That matches how WordPress adds categories without reloading the page: the header count isn't refreshed. It doesn't mean the category is missing. The category exists with the requested name and slug."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4582,
+    "outputTokens": 839,
+    "cacheReadTokens": 4578,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

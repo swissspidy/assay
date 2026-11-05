@@ -1,0 +1,209 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-sonnet-5-5@low",
+ "recordedAt": "2026-11-05T11:49:26.612Z",
+ "turns": {
+  "sha256:51e23ae9a72b7314212dfac0150e4f4e5c3c970e2e3812060792c992f98f96cd": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CUzJXFih4sFWcMeE5egNNC",
+     "name": "goto",
+     "input": {
+      "url": "/wp-admin/user-new.php"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01CUzJXFih4sFWcMeE5egNNC",
+       "toolName": "goto",
+       "input": {
+        "url": "/wp-admin/user-new.php"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7265,
+    "outputTokens": 57,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7261
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:bba3b7b5fef804b0e0445d2c7e9acfff1c06238c360352f492a3031ac41128ef": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_016mt7CHbKvQqvVPyCRgDDqG",
+     "name": "fill",
+     "input": {
+      "ref": "f1e161",
+      "text": "jordan"
+     }
+    },
+    {
+     "id": "toolu_01EvKivDGEqQBr2SKSesSuJD",
+     "name": "fill",
+     "input": {
+      "ref": "f1e163",
+      "text": "jordan@example.com"
+     }
+    },
+    {
+     "id": "toolu_01DiPcUydcrD1r9L9CmJdZph",
+     "name": "select",
+     "input": {
+      "ref": "f1e176",
+      "options": [
+       "Author"
+      ]
+     }
+    },
+    {
+     "id": "toolu_01Mba3zRQi7aRrjJyDQn4h9n",
+     "name": "click",
+     "input": {
+      "ref": "f1e178"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_016mt7CHbKvQqvVPyCRgDDqG",
+       "toolName": "fill",
+       "input": {
+        "ref": "f1e161",
+        "text": "jordan"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01EvKivDGEqQBr2SKSesSuJD",
+       "toolName": "fill",
+       "input": {
+        "ref": "f1e163",
+        "text": "jordan@example.com"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01DiPcUydcrD1r9L9CmJdZph",
+       "toolName": "select",
+       "input": {
+        "ref": "f1e176",
+        "options": [
+         "Author"
+        ]
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Mba3zRQi7aRrjJyDQn4h9n",
+       "toolName": "click",
+       "input": {
+        "ref": "f1e178"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 11752,
+    "outputTokens": 264,
+    "cacheReadTokens": 7261,
+    "cacheWriteTokens": 4489
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:50dfad949875e30ffc338635a6ed9532c797ab350e0bfe9ae87fe35add5ebb2e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01JrxaQrQ3YHUeCzgtksRFkA",
+     "name": "finish",
+     "input": {
+      "report": "I added the user jordan (jordan@example.com) with the Author role. WordPress confirmed \"New user created.\" I left the password WordPress generated and the \"send the new user an email\" box ticked, since you didn't specify either."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01JrxaQrQ3YHUeCzgtksRFkA",
+       "toolName": "finish",
+       "input": {
+        "report": "I added the user jordan (jordan@example.com) with the Author role. WordPress confirmed \"New user created.\" I left the password WordPress generated and the \"send the new user an email\" box ticked, since you didn't specify either."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 27049,
+    "outputTokens": 114,
+    "cacheReadTokens": 7261,
+    "cacheWriteTokens": 19786
+   },
+   "model": "claude-sonnet-5-5"
+  }
+ }
+}

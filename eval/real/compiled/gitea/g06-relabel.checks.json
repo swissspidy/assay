@@ -1,0 +1,134 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "gitea/g06-relabel",
+  "version": "1",
+  "task": {
+    "instruction": "The issue \"Typo in README\" in acme/webapp was labelled bug by mistake. Replace that label with docs."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The bug label is removed from the issue \"Typo in README\" in acme/webapp.",
+      "source": {
+        "field": "instruction",
+        "quote": "The issue \"Typo in README\" in acme/webapp was labelled bug by mistake. Replace that label"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The docs label is added to the issue \"Typo in README\" in acme/webapp.",
+      "source": {
+        "field": "instruction",
+        "quote": "Replace that label with docs."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "r1-bug-removed",
+      "requirement": "R1",
+      "description": "In the backend issues of acme/webapp, the issue titled \"Typo in README\" exists and no longer carries the bug label.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "const": "Typo in README"
+                },
+                "labels": {
+                  "type": "array"
+                }
+              },
+              "required": [
+                "title",
+                "labels"
+              ]
+            },
+            "items": {
+              "if": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "const": "Typo in README"
+                  }
+                },
+                "required": [
+                  "title"
+                ]
+              },
+              "then": {
+                "type": "object",
+                "properties": {
+                  "labels": {
+                    "type": "array",
+                    "not": {
+                      "contains": {
+                        "const": "bug"
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "labels"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r2-docs-added",
+      "requirement": "R2",
+      "description": "In the backend issues of acme/webapp, the issue titled \"Typo in README\" carries the docs label.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "const": "Typo in README"
+                },
+                "labels": {
+                  "type": "array",
+                  "contains": {
+                    "const": "docs"
+                  }
+                }
+              },
+              "required": [
+                "title",
+                "labels"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:12:45.341Z"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "task": "wordpress/w04-spam-comment",
+  "status": "compiled",
+  "model": "anthropic:claude-opus-5-5@high (replay)",
+  "modelsUsed": [
+    "claude-opus-5-5"
+  ],
+  "turns": {
+    "rubric": 1,
+    "discovery": 4
+  },
+  "usage": {
+    "inputTokens": 80171,
+    "outputTokens": 1092,
+    "cacheReadTokens": 58001,
+    "cacheWriteTokens": 22156
+  },
+  "coverage": [
+    {
+      "requirement": "R1",
+      "quote": "Mark the comment that advertises watches as spam.",
+      "checks": [
+        "watch-comment-spam"
+      ],
+      "channels": [
+        "probe"
+      ],
+      "trust": "structured"
+    }
+  ],
+  "warnings": [],
+  "references": [
+    {
+      "name": "reference",
+      "kind": "success",
+      "verdict": "success"
+    }
+  ]
+}

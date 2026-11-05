@@ -1,0 +1,91 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-sonnet-5-5@low",
+ "recordedAt": "2026-11-05T11:52:24.267Z",
+ "turns": {
+  "sha256:18c16b776e5ded9a08b73dae68d4585910e9bf6eda1f44e72e1e1d6d89dbfd1b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01SYCGVvbVvW7c5AZ691SEnV",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4320/wp-admin/edit.php?post_status=draft&post_type=post"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01SYCGVvbVvW7c5AZ691SEnV",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4320/wp-admin/edit.php?post_status=draft&post_type=post"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7249,
+    "outputTokens": 77,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7245
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:bbca3993e8809e9d2a100a91eb047087e84fad3148c689d01d09e0fdd0e56928": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Wv4VsJ5mShsURzA9pQZi5i",
+     "name": "finish",
+     "input": {
+      "report": "I opened the Posts list filtered to drafts, which shows 3 draft posts. The first one is \"Pricing update for teams\". I didn't read the titles of the other two."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Wv4VsJ5mShsURzA9pQZi5i",
+       "toolName": "finish",
+       "input": {
+        "report": "I opened the Posts list filtered to drafts, which shows 3 draft posts. The first one is \"Pricing update for teams\". I didn't read the titles of the other two."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13263,
+    "outputTokens": 99,
+    "cacheReadTokens": 7245,
+    "cacheWriteTokens": 6016
+   },
+   "model": "claude-sonnet-5-5"
+  }
+ }
+}

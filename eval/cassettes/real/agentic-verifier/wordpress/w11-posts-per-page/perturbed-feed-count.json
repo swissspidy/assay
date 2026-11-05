@@ -1,0 +1,220 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:15:42.047Z",
+ "turns": {
+  "sha256:df97fdf59976e2340dd270304bf7392d192898f3d1e3acd1506626c1d858158f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Kb5Jk8cY4vtoXCZNwcqd6N",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_012bBYLy88F2mRjsV7cCergE",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Kb5Jk8cY4vtoXCZNwcqd6N",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_012bBYLy88F2mRjsV7cCergE",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1855,
+    "outputTokens": 70,
+    "cacheReadTokens": 1851,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a544c92ceda5bce95e6eff8d842e4bc7f38f8e90c5fd9ab753edf4191e8e132a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FUUjjt3Sc2pchqFgK1RV4C",
+     "name": "network_entry",
+     "input": {
+      "seq": 72
+     }
+    },
+    {
+     "id": "toolu_01NkvbVRKCkJRJ1iMcBD3Evb",
+     "name": "find_nodes",
+     "input": {
+      "name": "Blog pages show at most"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01FUUjjt3Sc2pchqFgK1RV4C",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 72
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01NkvbVRKCkJRJ1iMcBD3Evb",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "name": "Blog pages show at most"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3931,
+    "outputTokens": 102,
+    "cacheReadTokens": 1851,
+    "cacheWriteTokens": 2078
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:6c4c00c0c8ab016b2e75930e6a5221b429997de78684a924f60d931cc5494cf3": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01N83ai7ZZGgq9mDEQzskyhh",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Make the blog show at most 5 posts per page.",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The only time the Reading settings were saved (POST #72), the agent sent posts_per_page=10 and posts_per_rss=5. That changed the feed setting, not the number of posts per blog page. After the task, the settings probe still shows posts_per_page: 10, and the 'Blog pages show at most' field on the page shows 10."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSrgYKEAgTGAI4AUIIdGhpbmtpbmcSDPvFqBfqYUUoOr7x9xoMMHd6G74207yJK6WWIjCYsjrZepZqkE528PhWU+qZoK2ImKrHE6opHdOekRPuhXposs8uj8wYjKki+7xO3AwqywXWa/fTdIINTu5fqYYU8zqH974mrumzqEPG+d7zrJJ9rSoQdMgSwNaF65CJ/qQ5FFL25wOUoPJLgxfThRFLiCVRQdj5JoDV1b4eYo3UN9k4EePkIH2xUMmvDChqq2TTjSdg8fJMbT+kEzEW3ej7oHf+d380IGKlRy22qAicdxgyMBeFxRBIoCBZoJ4Fj7m6fXJOCg0TJoBV1IzTKOMP81Fqt3UPgNUt8AH8H3lZbDYekQ9ryoeFlZp9aQ/Xt+WjpjEwNBo7gop4xnF4OeDbapoRyWE/0zE6sCfxa6xH6u0A5AygdO6veYDMRV7RYudl6Y5pj2oxv/kej24A0vtoiLY1ImqeF7tf7HHLe2HCSf3JzYySHsmqGptordGCbFKj+V5AunWpq2wNuopUh8I7WCPaDknupKhRRacYRn85FWY4gSmPutPGgPSrdQ6RdT4aeXdyBvmkGZR64UAcC2l4p39JM/aEsrTytdBv1bhNH2eiGc5P8FVhzdd1X2v2cj5Yj7BvJ2LkYZMZ6yALtyFYoY242WLOA23AtxPj1DHQlELjWtsg6FgLZXT5Ax/7+yHK5Duwk1ma5q5X2pqXR2pk2iVHMQQDWGzy65X9CF5luE/d34T6qXmbLzSo90hEHOGq5CGU3aYEmAl76h+qNHms6DjDeZIHVtHw7LiDbztnvvl1EeplZAfINm/J69Z4Sae5BRvpENFD4+myIGOQUzPNMpj3vF9rliyynViJgKvouG/QPIbsKNAJ/H36V6Olx4XnXGLPJeIX3ia47YJzyADYGfgBUPlhOX5ECxQ+Vor4E9l1jqSDCUWhRD34QhQGWah5Zh5PEyExSbh6sPzLZ/efEpbfBjrifhBLxhv88r07DmSvMSmkxiSaFnfFI77Cq/OxTxrzkG5xx7VzMZ1TsBUJxQdv3Zh1FRDoVkdAl4Cu1qv3VrjdDxFNnSdL9sJyGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01N83ai7ZZGgq9mDEQzskyhh",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Make the blog show at most 5 posts per page.",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The only time the Reading settings were saved (POST #72), the agent sent posts_per_page=10 and posts_per_rss=5. That changed the feed setting, not the number of posts per blog page. After the task, the settings probe still shows posts_per_page: 10, and the 'Blog pages show at most' field on the page shows 10."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4425,
+    "outputTokens": 277,
+    "cacheReadTokens": 3929,
+    "cacheWriteTokens": 494
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:394825a9aa4a6026fcacc55305a33116ea69980c81c2e54489a99fbb84ad9251": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01PnR2CLFgqEJaeSMCRyiuYW",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The only time the Reading settings were saved (POST #72), the agent sent posts_per_page=10 and posts_per_rss=5. That changed the feed setting, not the number of posts per blog page. After the task, the settings probe still shows posts_per_page: 10, and the 'Blog pages show at most' field on the page shows 10."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01PnR2CLFgqEJaeSMCRyiuYW",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The only time the Reading settings were saved (POST #72), the agent sent posts_per_page=10 and posts_per_rss=5. That changed the feed setting, not the number of posts per blog page. After the task, the settings probe still shows posts_per_page: 10, and the 'Blog pages show at most' field on the page shows 10."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4756,
+    "outputTokens": 199,
+    "cacheReadTokens": 4423,
+    "cacheWriteTokens": 331
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

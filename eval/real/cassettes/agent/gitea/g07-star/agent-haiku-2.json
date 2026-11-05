@@ -1,0 +1,210 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:49:03.643Z",
+ "turns": {
+  "sha256:d78c10540a601268da259c629cef6248bf526513c3bdd066be4019374ee0aefb": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01EMcnhG3LLWRAMtYanuC3LM",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/docs"
+     }
+    },
+    {
+     "id": "toolu_01VDVA2d23uEBKd7HDXGHw96",
+     "name": "show_part",
+     "input": {
+      "part": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01EMcnhG3LLWRAMtYanuC3LM",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/docs"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01VDVA2d23uEBKd7HDXGHw96",
+       "toolName": "show_part",
+       "input": {
+        "part": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7123,
+    "outputTokens": 103,
+    "cacheReadTokens": 7119,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:9f8cf26d47bcc1d49d1345e4e9db83e44e8bd1d5bc735deb19de9ccef7bb0ac7": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011ocrm962nBEKW95NzU3iCR",
+     "name": "click",
+     "input": {
+      "ref": "e55"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_011ocrm962nBEKW95NzU3iCR",
+       "toolName": "click",
+       "input": {
+        "ref": "e55"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 10662,
+    "outputTokens": 47,
+    "cacheReadTokens": 7119,
+    "cacheWriteTokens": 3541
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:72ed55b6cab626a98a53a7f657df3ac01ee8ebb18ac7340d027ff973d4b52aee": {
+   "stop": "tool_use",
+   "text": "The ref was stale from the previous page. I'm clicking the Star button using the fresh ref.",
+   "toolCalls": [
+    {
+     "id": "toolu_019dV7RSFWwo3CfX7W5M97b6",
+     "name": "click",
+     "input": {
+      "ref": "f1e55"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The ref was stale from the previous page. I'm clicking the Star button using the fresh ref."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_019dV7RSFWwo3CfX7W5M97b6",
+       "toolName": "click",
+       "input": {
+        "ref": "f1e55"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 10805,
+    "outputTokens": 80,
+    "cacheReadTokens": 7119,
+    "cacheWriteTokens": 3684
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:08ec5e49a45ade5b62e8f91701534b1c90ea481baeb0887a42ee075d95d85012": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_014aGnRTfqdnrEpGHYRLGUQP",
+     "name": "finish",
+     "input": {
+      "report": "The acme/docs repository now shows \"Unstar\" with a star count of 1, so it is starred. One caveat: my first click used a stale element reference and timed out, and my retry used a ref I had not read from a fresh snapshot, so I can't fully confirm that click landed only on the Star button."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "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"
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_014aGnRTfqdnrEpGHYRLGUQP",
+       "toolName": "finish",
+       "input": {
+        "report": "The acme/docs repository now shows \"Unstar\" with a star count of 1, so it is starred. One caveat: my first click used a stale element reference and timed out, and my retry used a ref I had not read from a fresh snapshot, so I can't fully confirm that click landed only on the Star button."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 10954,
+    "outputTokens": 479,
+    "cacheReadTokens": 7119,
+    "cacheWriteTokens": 3833
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

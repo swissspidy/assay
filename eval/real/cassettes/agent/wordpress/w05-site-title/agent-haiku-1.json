@@ -1,0 +1,225 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:44:09.742Z",
+ "turns": {
+  "sha256:497c756a42f9f962deb4d3a0bb5d646dc9ebc74cfa792ac19b9bc9b09a08e34f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01S1gDsgpMVy1XL6HDf3KbJR",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4320/wp-admin/options-general.php"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01S1gDsgpMVy1XL6HDf3KbJR",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4320/wp-admin/options-general.php"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7254,
+    "outputTokens": 65,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7250
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:a0d4673369fa8c36ee301d970f146d6d5a18fda735897d59d09a85fa91e9c271": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LHYkDL5aGMHtqktjXSJW22",
+     "name": "fill",
+     "input": {
+      "ref": "f1e159",
+      "text": "Assay Field Notes"
+     }
+    },
+    {
+     "id": "toolu_016Pg8zXCngERDWjVVUy2sen",
+     "name": "show_part",
+     "input": {
+      "part": 3
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01LHYkDL5aGMHtqktjXSJW22",
+       "toolName": "fill",
+       "input": {
+        "ref": "f1e159",
+        "text": "Assay Field Notes"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_016Pg8zXCngERDWjVVUy2sen",
+       "toolName": "show_part",
+       "input": {
+        "part": 3
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12988,
+    "outputTokens": 122,
+    "cacheReadTokens": 7250,
+    "cacheWriteTokens": 5736
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:3120b43c18c90de7b2ea30e6d12ec4a302792eef74907e8fd0aacbdaae976a87": {
+   "stop": "tool_use",
+   "text": "The field now reads \"Assay Field Notes\" but isn't saved yet. I'll click Save Changes.",
+   "toolCalls": [
+    {
+     "id": "toolu_01T3XrWcxYm6Q8Lt7QRmCpAY",
+     "name": "click",
+     "input": {
+      "ref": "f1e242"
+     }
+    },
+    {
+     "id": "toolu_01C6gBio7uvjbSmk651HWKRS",
+     "name": "wait",
+     "input": {
+      "seconds": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The field now reads \"Assay Field Notes\" but isn't saved yet. I'll click Save Changes."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01T3XrWcxYm6Q8Lt7QRmCpAY",
+       "toolName": "click",
+       "input": {
+        "ref": "f1e242"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01C6gBio7uvjbSmk651HWKRS",
+       "toolName": "wait",
+       "input": {
+        "seconds": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14494,
+    "outputTokens": 129,
+    "cacheReadTokens": 7250,
+    "cacheWriteTokens": 7242
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:64d459c644a7183ba32f323bc066373d9928f82a3d5e8f9e57c68ba416acf1a3": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01AZ98AcUAJ7BVprFTYToUNi",
+     "name": "finish",
+     "input": {
+      "report": "Changed the site title from \"Assay Journal\" to \"Assay Field Notes\" in Settings > General and saved; WordPress confirmed \"Settings saved.\" and the tagline and other fields were left unchanged."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01AZ98AcUAJ7BVprFTYToUNi",
+       "toolName": "finish",
+       "input": {
+        "report": "Changed the site title from \"Assay Journal\" to \"Assay Field Notes\" in Settings > General and saved; WordPress confirmed \"Settings saved.\" and the tagline and other fields were left unchanged."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 19206,
+    "outputTokens": 112,
+    "cacheReadTokens": 7250,
+    "cacheWriteTokens": 11954
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

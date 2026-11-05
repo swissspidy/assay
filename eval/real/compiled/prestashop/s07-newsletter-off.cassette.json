@@ -1,0 +1,163 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:18:38.336Z",
+ "turns": {
+  "sha256:aa00975e36194d3fc6e55bc7621d45675715ff254addb7459204ce9259c29c8b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_012z3Pfwm8dkRLsftbV9YMrb",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The user is unsubscribed from the newsletter.",
+        "field": "instruction",
+        "quote": "Unsubscribe me from the newsletter."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_012z3Pfwm8dkRLsftbV9YMrb",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The user is unsubscribed from the newsletter.",
+        "field": "instruction",
+        "quote": "Unsubscribe me from the newsletter."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1056,
+    "outputTokens": 115,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1052
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:0ea730d611a83ffd5d183d81b220842f338cf72d8b51c39bf9b3ca2210eff704": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0153xu6EWbsBvWw7XVAS8Dkm",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_0153xu6EWbsBvWw7XVAS8Dkm",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 16837,
+    "outputTokens": 25,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 16833
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:10e3091844a200de03f944683f2d6d254d99f2e28a3b6c5210d8da0a84bb68b8": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CXoTYiMXMUBvnzhyrXaxPf",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "newsletter-off",
+        "requirement": "R1",
+        "description": "The backend account record shows the customer's newsletter subscription is off (newsletter = 0).",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "account",
+          "pointer": "/newsletter"
+         },
+         "normalize": [
+          "boolean"
+         ],
+         "expect": {
+          "equals": false
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS9wUKEAgTGAI4AUIIdGhpbmtpbmcSDG4YfwlE1NJ4zEZdYhoMkRU4Aue3K7QPMiONIjAutpmij309wOxQ3ae2D5R+BgA3yrO8+u5myV++RULnk3UIRt7DHGJ06dA656dAeOQqlAXYwE2aHkNCiXh9qZMXHkedCdOqOIO/7hetxuY1WiCU8agAS6k2gwiky6SqJ7zZq2i6i7XKtpRm557/2QMOBepVj4IPInIYCJ8Yd0nUftVwl24wY4dTZM7//Q7W1/1kIIs5zC4BQUYD5UjE90kAGbhyurALepXABeHQerlSPOBCJbwaSxk7fCLNHX9zBKCFDpq0gn87ySegte9akaDB1JJm+U5gQLD8GwY3+Y21QaPbbflE10flAvq6PlLHDdEiRx+1d/C9lDeUxEQPzHJojaMpBcRpuQccVfp9hkZJXgEQNO18tdXLAdM8nFSH3Tx6UJO3TjmC2UipAngfvdj7CO22iH3r3IY0fyRPWECkadLeA2Dp/w75KDWz+4KEAFPngbXFRGSmIgo0aRgACROmsHJfw+v1DjIE/40UzxKR5aF38W/b5HTl2/PmGnOYf0Zq8PVumNqSj/NUBHUDdqFl4YcqMGMkqy2Gr8HI1EvSvUo4ADhMLwOEnjqXBRqKTiCed0B5fl3zFkPAUaNfgUJepDt55w43hjjDAwuq0xBOC2P4qlgHb/LtUffvJG6Cmpm+0p0CT9SieHT+9jkt+rIK+lAgFDVWprUwbme+EmvnpwCL1GKwugB5Tg/K5i+TiK/HQwr1KTAdJfU+9uhtMgMfdviHvA7nm/zvSui8nyh6CHSuNCt8kRRQ47RMHk4HJpt6dzfMDoUIplStRlb9ZoqAJkYKrexy0OG6cYWQgNyyIOee3xUYRs+U6L3qVHVEBH7btLFZgAqMt3meimLqdTDx4yUYkYAWos7B9SEubZmBUHXFK+DvB09qbpf7ucJQeM4JHYX4u8XWO8a8EdxUoi5RTHCLMQZlLd5JSocAqeniUo+pPs7EWNIYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01CXoTYiMXMUBvnzhyrXaxPf",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "newsletter-off",
+        "requirement": "R1",
+        "description": "The backend account record shows the customer's newsletter subscription is off (newsletter = 0).",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "account",
+          "pointer": "/newsletter"
+         },
+         "normalize": [
+          "boolean"
+         ],
+         "expect": {
+          "equals": false
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20889,
+    "outputTokens": 211,
+    "cacheReadTokens": 16833,
+    "cacheWriteTokens": 4054
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

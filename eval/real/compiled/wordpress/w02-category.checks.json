@@ -1,0 +1,98 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "wordpress/w02-category",
+  "version": "1",
+  "task": {
+    "instruction": "Create a new post category named \"Case Studies\" with the slug case-studies."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "A new post category named \"Case Studies\" is created.",
+      "source": {
+        "field": "instruction",
+        "quote": "Create a new post category named \"Case Studies\""
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The new category has the slug case-studies.",
+      "source": {
+        "field": "instruction",
+        "quote": "with the slug case-studies"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "r1-category-exists",
+      "requirement": "R1",
+      "description": "The backend categories list contains a category named exactly \"Case Studies\".",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "categories"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "const": "Case Studies"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r2-category-slug",
+      "requirement": "R2",
+      "description": "The backend holds a category named \"Case Studies\" whose slug is exactly case-studies.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "categories"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "const": "Case Studies"
+                },
+                "slug": {
+                  "const": "case-studies"
+                }
+              },
+              "required": [
+                "name",
+                "slug"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T11:38:53.507Z"
+  }
+}

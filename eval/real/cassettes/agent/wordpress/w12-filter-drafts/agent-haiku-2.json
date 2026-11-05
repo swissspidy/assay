@@ -1,0 +1,99 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:52:39.441Z",
+ "turns": {
+  "sha256:c01e5dc60a8491d0d2822b4756706f6e27e6829f0b8d8ba35359e36bdbaece59": {
+   "stop": "tool_use",
+   "text": "I'll navigate to the Posts list filtered to drafts.",
+   "toolCalls": [
+    {
+     "id": "toolu_016194CVWDdFV17wWfUtWKyE",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4320/wp-admin/edit.php?post_status=draft&post_type=post"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "I'll navigate to the Posts list filtered to drafts."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_016194CVWDdFV17wWfUtWKyE",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4320/wp-admin/edit.php?post_status=draft&post_type=post"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7249,
+    "outputTokens": 98,
+    "cacheReadTokens": 7245,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:370884451ca1b8087b9785cee052f691d57b45505cf48090cd05a920ab1c0349": {
+   "stop": "tool_use",
+   "text": "The draft posts list is now showing in the WordPress admin, filtered to Drafts (3 items).",
+   "toolCalls": [
+    {
+     "id": "toolu_013tm9NtTMN3gj3PFZP6EAAA",
+     "name": "finish",
+     "input": {
+      "report": "I opened the Posts list filtered to Drafts, which shows 3 draft posts, starting with \"Pricing update for teams\"."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The draft posts list is now showing in the WordPress admin, filtered to Drafts (3 items)."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_013tm9NtTMN3gj3PFZP6EAAA",
+       "toolName": "finish",
+       "input": {
+        "report": "I opened the Posts list filtered to Drafts, which shows 3 draft posts, starting with \"Pricing update for teams\"."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13285,
+    "outputTokens": 119,
+    "cacheReadTokens": 7245,
+    "cacheWriteTokens": 6038
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

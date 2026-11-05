@@ -1,0 +1,185 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-sonnet-5-5@low",
+ "recordedAt": "2026-11-05T11:46:23.965Z",
+ "turns": {
+  "sha256:bd295b5146042b6f588a9c5ac4d13adec5c8a79ec51f3b2ccb62c6bbc7a8cf7f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01T8CxeANzGgRm4bqSVrgmjS",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4320/wp-admin/edit.php?s=Old+pricing+announcement"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01T8CxeANzGgRm4bqSVrgmjS",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4320/wp-admin/edit.php?s=Old+pricing+announcement"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7257,
+    "outputTokens": 77,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7253
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:455671f0b86f19321a8e23e455b5613675068fc5298821a37923221a16785ca1": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01WRLkLwNRBFxErC48tMJ5AF",
+     "name": "set_checked",
+     "input": {
+      "ref": "f1e228",
+      "checked": true
+     }
+    },
+    {
+     "id": "toolu_01SkzHiKexcMbUEddN15oFvN",
+     "name": "select",
+     "input": {
+      "ref": "f1e181",
+      "options": [
+       "Move to Trash"
+      ]
+     }
+    },
+    {
+     "id": "toolu_01Qt1xRM1FEeRUcdzuudn6bh",
+     "name": "click",
+     "input": {
+      "ref": "f1e182"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01WRLkLwNRBFxErC48tMJ5AF",
+       "toolName": "set_checked",
+       "input": {
+        "ref": "f1e228",
+        "checked": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01SkzHiKexcMbUEddN15oFvN",
+       "toolName": "select",
+       "input": {
+        "ref": "f1e181",
+        "options": [
+         "Move to Trash"
+        ]
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Qt1xRM1FEeRUcdzuudn6bh",
+       "toolName": "click",
+       "input": {
+        "ref": "f1e182"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13302,
+    "outputTokens": 195,
+    "cacheReadTokens": 7253,
+    "cacheWriteTokens": 6047
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:6e00caf5db3f7a68190fa77a3b8b41ca6c064d546604629c1f6ca7ad36da7974": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01JiUd4Hqh8oMekEdvYR6rhP",
+     "name": "finish",
+     "input": {
+      "report": "Moved the post \"Old pricing announcement\" to the Trash. WordPress confirmed \"1 post moved to the Trash.\""
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01JiUd4Hqh8oMekEdvYR6rhP",
+       "toolName": "finish",
+       "input": {
+        "report": "Moved the post \"Old pricing announcement\" to the Trash. WordPress confirmed \"1 post moved to the Trash.\""
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 25632,
+    "outputTokens": 86,
+    "cacheReadTokens": 7253,
+    "cacheWriteTokens": 18377
+   },
+   "model": "claude-sonnet-5-5"
+  }
+ }
+}

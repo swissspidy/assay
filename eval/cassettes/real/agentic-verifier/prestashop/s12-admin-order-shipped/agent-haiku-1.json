@@ -1,0 +1,203 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:03:36.053Z",
+ "turns": {
+  "sha256:c59569a1cd0de50facba9d6f77c5246a9501f6cb0d53fa7f67d7bc4dd598bb77": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Joh7KMRzHe948P3SmJWNaC",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01N3U6RjDFEToFSo5pbeJ13a",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Joh7KMRzHe948P3SmJWNaC",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01N3U6RjDFEToFSo5pbeJ13a",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1938,
+    "outputTokens": 70,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1934
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:acc3e14438ea3e8f7c4d1e17e6125f7cdd8f7a928a093cb01a14816b6f127b76": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CdieZD6QbFQ5xTBhAmn97U",
+     "name": "network_entry",
+     "input": {
+      "seq": 243
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS0wUKEAgTGAI4AUIIdGhpbmtpbmcSDGdfHy3Jt3fgJed11xoM/fMkqJ29tfsLUf+jIjCs11ndNptHd8knZShjqSuHfEP/1RAEHW3OPDcAz3NKf+/avzMYS6+6Ab3F0f0W8V0q8ASDjdN+RjkztsXsJmhYr2bT7v2tqYofulKFzx8cjeveYYoREw7Aykpa2kp0fN1vZypsJPDUNH0O+a1qa8m+Ky6S5CId91vxnxxSJHX8habvHb2DWQAOcyOUNuhSNuMxWzJgZldzdVTXmAxk2EbffCBzLCHLNsgYvsHjYBZYo9jmBF1IteQJmn90MQz/wPQdEDzwI1+gV7+/5Yn+YMPS4Zs0r9WfNY7AZRBTudOSwlT/irnnCbr+ONl0R6vjU11/2UShPLIAQoQWK2ucDQaksbqQQvd1X+wM3p8IuXb6QsUsCTIRmIVj2IjKNe+vtMJ2CHwLKc8ViSShYl+FNoj+s8NjtGwGO2bGeDMpAvVLh60lHNghIrFuS/upkrKMQc4Aou3CKmRRqthSoy29bXc1/7hXuXrnCKNHvUVbRaE9AdL7ohPnw8A9loA2YXvRX4LjqHvIAg3/mP/Uy53Q8YHRNOJLLCjeY1XUOs4owBPLRFXqeXsKMaqYffzo2+azkpSfuzTvD5PS6ktpecy5ZXKmn/qyoFGVf5a2y3X0B6qgFkndcLth4D9geH2YRxzXRDPU5EFQnkG18RHFxdn0wU38IiidFecPMsEtWLs5L19UifncMUCROahOcmdBuMxGFO8SJsX4uRFDUrxfK/Jtn2u2jR256t7RFm4Jx5lcVpp2VCwdBOdf47GxNkHVwLcSGY+esex6p3dSH5iPPf185RR+snR0b3BWxaYH92nCmEHssitVVDIlZbIMhahtAQjEM79RJ0+gOrO7Jt9IHq12JTja2Z1rOHD5fSh2yHyNAqeHrv7cyc9hfSbaRUnqudViIUkNm4EYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01CdieZD6QbFQ5xTBhAmn97U",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 243
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 5290,
+    "outputTokens": 83,
+    "cacheReadTokens": 1934,
+    "cacheWriteTokens": 3354
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:9c61ef640a03a3dea544243eb15a9e21c1780c13eca14e33fbdd27e9fc91a626": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01DCN4FU75G67ibZJqUpvk9m",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "In the back office, mark order FFATNOMMJ as shipped.",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "In the back office, the agent sent a POST to /admin-dev/index.php/sell/orders/4/status with new_order_status_id=4, which is PrestaShop's Shipped status, and was redirected back to the order 4 view page (obs 3). The captured page title shows order 4 is FFATNOMMJ. The orders probe taken after the task shows FFATNOMMJ in state \"Shipped\" (obs 1). No other order was changed."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSxwYKEAgTGAI4AUIIdGhpbmtpbmcSDNBrMMgO+UuA4YdNlRoMltBqGqfTfXk31bj8IjCq0nBpjSp0bCsQSgKP57cqCQPXgeQxPXJTmvzdsFTWXcvQ2mjvYTXo2vmv3ROzzhQq5AUgwMTLfC0HuX9upYFQxhxi2bXdZP/Qkg/6sj9+oQeEnyvtuvsnqVfGWuPw41sXlxpPYODOWpSGs2IKZSno74MqNe6PF+c5mlCMB3+s9PV8mhw6INx861PuulImC0Kj+3zmZ0kRJ8BgYrwaJRhETjJtj4766WIlA5QTUCOlIl/YtVGioKzO5P9ixPi4xOv3PekeqoDeC1EiVgsojfaVMW9kpsqLTxeVnkf7wIKyWg1rpQ5nnxMFHyhxqOt6z/+f7NqwALo9tW5Ka76RKf9GZEd2w+LheeawPxgTok8fzjzUXH8WnoHUNaa6YqJ6ki8il9Ck/6Vj945hWFOVIlLUUMpMGbeKX9Rni+iUA1l3sWfA1zYo4d7mPfnzxVqKS7pigDK+6gO9Ivn9m1AJIljHelp+OEZAz2aOVVi1s5PzYiPsZHi4GRVeSpGqQ5/k4BjlJmGnYVYKafDV8aOFtG9erCXAEMukAFrlgCszSX793kGbt8OuLIqd0AUEWhuNJSzc52CVkgPJCwZW4NL83jsV9/pt3n/RyQkWBQQ3QsLf2NH8lpRgf6cAVmWSzpH7gPOC5jjvLaGs9vVCdvTEru133LhiEWH06dJisuMJcK830wSdlnj7C7163Wm5eJpdwEf3/Zbdwh/RSMEamlbD4LgrlvT5dnwB4BbXvZmBT3HNs8LO7obxUs8xQPUq44Ras3gtW1/q9+pIWycCB7YGKtsE2Ye3AH5ngqRjmW+FOlPZth+4BpUE4I5bahzHYEXaDoM7hKtCqQRNJMEvRLe2al6dXkpOUwKaPmoIWUL7B2TULkkJGRibhhlIg7mq39LMt4G6e4wqIMPwza9T9MJqTTgR8jvC0Q7JjYfb8w7LMj4tZ+RC6jLRhiD2Pi577HZLo/blSWTfnYVNfb+SSHiX6yYW/PO2PuUGUykaBm3eczLvPgPctN7gEFF3lUA5Rid8rgIVsL+8jP191/5tGjlV/xPjr/1Fbf0bpxgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01DCN4FU75G67ibZJqUpvk9m",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "In the back office, mark order FFATNOMMJ as shipped.",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "In the back office, the agent sent a POST to /admin-dev/index.php/sell/orders/4/status with new_order_status_id=4, which is PrestaShop's Shipped status, and was redirected back to the order 4 view page (obs 3). The captured page title shows order 4 is FFATNOMMJ. The orders probe taken after the task shows FFATNOMMJ in state \"Shipped\" (obs 1). No other order was changed."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 5693,
+    "outputTokens": 304,
+    "cacheReadTokens": 5288,
+    "cacheWriteTokens": 403
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:bfaa1737a0e169bb74efc609f535ba96bb01de47938455435dc1970d78156e54": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01GboSkADoNGpdhdYUu4tfPq",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "In the back office, the agent sent a POST to /admin-dev/index.php/sell/orders/4/status with new_order_status_id=4, which is PrestaShop's Shipped status, and was redirected back to the order 4 view page (obs 3). The captured page title shows order 4 is FFATNOMMJ. The orders probe taken after the task shows FFATNOMMJ in state \"Shipped\" (obs 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01GboSkADoNGpdhdYUu4tfPq",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "In the back office, the agent sent a POST to /admin-dev/index.php/sell/orders/4/status with new_order_status_id=4, which is PrestaShop's Shipped status, and was redirected back to the order 4 view page (obs 3). The captured page title shows order 4 is FFATNOMMJ. The orders probe taken after the task shows FFATNOMMJ in state \"Shipped\" (obs 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 6056,
+    "outputTokens": 229,
+    "cacheReadTokens": 5691,
+    "cacheWriteTokens": 363
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

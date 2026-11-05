@@ -1,0 +1,274 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:14:04.732Z",
+ "turns": {
+  "sha256:6aaaab992cf8eb1f9df47552ce7442bfc2420507583107b0c363648a6f25b288": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01BJQca4rCkAr56e7Rc5pz3F",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The dotfiles repository's description is changed to \"Shell and editor configuration\".",
+        "field": "instruction",
+        "quote": "Change the description of my dotfiles repository to \"Shell and editor configuration\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01BJQca4rCkAr56e7Rc5pz3F",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The dotfiles repository's description is changed to \"Shell and editor configuration\".",
+        "field": "instruction",
+        "quote": "Change the description of my dotfiles repository to \"Shell and editor configuration\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1066,
+    "outputTokens": 139,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1062
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:52d4e120c790f0d21a39e2b06b1c3600bb33e314a2c4d93caaf5d8a2d5c80474": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01QMy8ucj8ZM8JbyfhhFqnqt",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01QMy8ucj8ZM8JbyfhhFqnqt",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 16906,
+    "outputTokens": 25,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 16902
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:9bdc68593c7f1b24162b7572248e13d8db3ee67feb65dcb24357c5a0763f1d34": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01TrUeHN4AaBbsQnxn2UL8fW",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "aliceRepos"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "full_name": {
+            "const": "alice/dotfiles"
+           },
+           "description": {
+            "const": "Shell and editor configuration"
+           }
+          },
+          "required": [
+           "full_name",
+           "description"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS0gYKEAgTGAI4AUIIdGhpbmtpbmcSDByF7VSKPPwxeoOZSRoMg1hT5ZHjdB4ij89hIjDksTUAMHQuEPfe2AHXLoeqzuevS6Bf66LUGqt6xuIQJoBRFqzOAXGxOcxcd6DQtK4q7wVaQGwnwUMulDDfn31z+Vkg4jfqik5JbEMREb+i0o+BKAz4O9bdCzdOO7lfTKZ896Rze/B3vZ5/8N8KDcv4BgRtg3mFXMpWb9UBTdVOFXee20eCFcaqhsMdlxhHJlJc9u2pYZteKZNZ2aXsTwyyz+5uXof9uj3pWbS9OOobVqvWEBrTdg3oT9j71JltO3R/c3ZONQAQF51w8ErhleMiEKV6N4YRA1qhRaJBLgpIB/nBXi4FhxNekwygVOhpO6hfG4DhCoq6/KPF0WMvNBGgnyZX8ofi6oZNh2HzWg2DCGkTT3pj2DLfnWiMYWMdQ0kOKsQvHO2Z7YOhXlrifPXj+HGFWahqL1aB+XDJ8umlSct22UoDIlS293pjTKamdvZTYIoPjFpGYXg3QcbbHTBSwx10TN39Bzdf2Ot5C5T3awKSQxvJxI4rzv3aggb2N43gT0VqtucgLGclovsGXLYAundW6e6mEkhcX29cCniYOxMnTa017UwyPkyWD/IlvB848QFC+tM5/kj3Azu9/aTA7dRRh/ImrmesjsF8OX3hzSL32GbsLU42l3OB5ACSTSJyVhGVsDFIC1m0+drcuyAA9+7JOLAYMeuZ1NM4xB5J2Y8w0NEeFHammPw7YiEmhgVvnyWKVC1xDowD6ZDH9NC+VxN+FHK8BzWm3i9cvUd0gLAe9FDgJo75wuStpkcYpjUvq3tRrYh42MnUwsftKoXyUfkNDuK15zohaQh3O2r9hXV4MJml7+gkwWspoXTCZJ/f8Gjk7+Y4aPlkPzbp/FdmBRvW0GslQszy0ck5zb6y9bjml/BNXsrTTwZxwNH743Aw2C7+aFE2BapsVTDPaFU5x5EuIFC0K/qImL0nki907+fW7tnL+Uz7DpFV6xffsMnkRX6wXaAUnhk7Cpn1DY/xKXHUihyMfemgfDOMuCqIvkyV8AbLqtQ9CY9unnOnUJKBouNYUKwRXijYPsLZV06UktCRAJTsTV7vlPpXYstWAGBuGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01TrUeHN4AaBbsQnxn2UL8fW",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "aliceRepos"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "full_name": {
+            "const": "alice/dotfiles"
+           },
+           "description": {
+            "const": "Shell and editor configuration"
+           }
+          },
+          "required": [
+           "full_name",
+           "description"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20163,
+    "outputTokens": 237,
+    "cacheReadTokens": 16902,
+    "cacheWriteTokens": 3259
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:caed107f34e82fd92dfbcce5028e1c480a84d6e49a39d12cfa90ab60744d2838": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01H62pYvroVBR4YZYK8fpMZZ",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "dotfiles-description-updated",
+        "requirement": "R1",
+        "description": "The backend shows the alice/dotfiles repository with the description \"Shell and editor configuration\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "aliceRepos"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "full_name": {
+              "const": "alice/dotfiles"
+             },
+             "description": {
+              "const": "Shell and editor configuration"
+             }
+            },
+            "required": [
+             "full_name",
+             "description"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01H62pYvroVBR4YZYK8fpMZZ",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "dotfiles-description-updated",
+        "requirement": "R1",
+        "description": "The backend shows the alice/dotfiles repository with the description \"Shell and editor configuration\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "aliceRepos"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "full_name": {
+              "const": "alice/dotfiles"
+             },
+             "description": {
+              "const": "Shell and editor configuration"
+             }
+            },
+            "required": [
+             "full_name",
+             "description"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20473,
+    "outputTokens": 242,
+    "cacheReadTokens": 20161,
+    "cacheWriteTokens": 310
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

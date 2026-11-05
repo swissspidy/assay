@@ -1,0 +1,181 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:18:28.419Z",
+ "turns": {
+  "sha256:f4379c987d963c5dcf1193f3629e3a9f1fc6dc32594df528c536d88b3a14fb9f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FuXnLXyXyos6j3eY8xp66J",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The Brown bear notebook is added to the user's wishlist.",
+        "field": "instruction",
+        "quote": "Add the Brown bear notebook to my wishlist."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01FuXnLXyXyos6j3eY8xp66J",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The Brown bear notebook is added to the user's wishlist.",
+        "field": "instruction",
+        "quote": "Add the Brown bear notebook to my wishlist."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1059,
+    "outputTokens": 122,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1055
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:91aa89e3df57cf6b67e9b3647e2ce69246b9c9593c9e69dae29e7fb40a883104": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01P97zpztRwRzEZi8yfdapGQ",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01P97zpztRwRzEZi8yfdapGQ",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 16865,
+    "outputTokens": 25,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 16861
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:b86a198d9be61d78239c3a4b30d9dbbd85968cf9a4c01b559ebc120f2e4c0cb7": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Pg5mDQk44J7fgE42SrUQyU",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "wishlist-has-brown-bear-notebook",
+        "requirement": "R1",
+        "description": "The backend wishlist probe contains an entry for the product 'Brown bear notebook'.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "wishlist"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "product": {
+              "const": "Brown bear notebook"
+             }
+            },
+            "required": [
+             "product"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSrgYKEAgTGAI4AUIIdGhpbmtpbmcSDB3TGPKL0HEwbd0f5BoMLePH6YsT0P3QEZcAIjDfPQ38weg2Y2AUxII4ugjJ70F7vJcNmNyw8AZSxgAlrOYp+qCxgbdonrM0UObI9k8qywUkY+Id6mP4WVSHEpjEuuWbv5i6jAujI1150aHn5JkZN9bvErwtLD8hYgqoTHMyUUiUkFT1H9QpNynf1DepBVRltxY26CFen6DYj8Ez8pIuQ2s+O/bIpRY8xfmtbHv611bZogqbDZDVRmfnc2SHYl71tYXCUQOqHMWQ8UIsloHuXLs1rwylFDcJvKkleoM8/uBhGT6gqBV+tq4/Tf8L2BT+/n9KSauvPxQRT34I8EV0s4sd9g0/qT5awJrYRg78OC5RwvkU21oQkYrUer9wEfHmvV2nRQOzSRS3tJqmPlP78P7KiTArEdlsRCjDvgrwXGo0M+hvJrFo6PUWz3PAyLEuvwUd2eQ5ivJmkoMfC5J3xZuubBgnCYfZHMulM+5Nn0vb/4/W1ZS0+a2eWZnRaPehLFKUliwf5HdEEgW2V0uZ+Rc01CiyTyjZRdhdT1JdoAoVwbbr4FIY0ltikFqdFNbBFDYa6K/65EIiMluP+u7GaZUnGOaNKEBjEXI/N/mefWbLpTDhihkVFG+ILVJ7WyLm5jTXeCut0F4VD2PAxor+rTJX3qM8eSelXezqN9icKwhTXPUrkXvdsiuYn7xg+QmXJZEKo7ulgqFNPzD+vq/modfSjAb9p+/kfAnENiN+IcYpzeXewTNuG9+btMXKE8m6Z0kgNijiufiKkVJEfm2e/SDSB3y9xs9ABw6LuooOHsw4Og40Dh/UVWUktFJNPd2B9ZBiRE+K7DsQiQoOJQsd/1DeN9UKwR9YjHAItZbQ9pBJVD5vdhnxOww+dkOxV0CeIyp+WK4bsa+1bxzmbtO13U5LI14nM2eaokWCQewQY1RKTCymJDa3yHkdyLgoBZgmNVsiwe2UKKN9ZYU8srYbakBvUD963yE+ey9Kmx+cPqJhPw8ghflZjL4SImVnLdM6314XgPOlzsU7jAmTCyYJMES6OpjCpaMRtO8aGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Pg5mDQk44J7fgE42SrUQyU",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "wishlist-has-brown-bear-notebook",
+        "requirement": "R1",
+        "description": "The backend wishlist probe contains an entry for the product 'Brown bear notebook'.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "wishlist"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "product": {
+              "const": "Brown bear notebook"
+             }
+            },
+            "required": [
+             "product"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20980,
+    "outputTokens": 272,
+    "cacheReadTokens": 16861,
+    "cacheWriteTokens": 4117
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

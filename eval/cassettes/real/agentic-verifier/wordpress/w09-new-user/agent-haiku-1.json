@@ -1,0 +1,275 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:13:36.762Z",
+ "turns": {
+  "sha256:2b64e61bee38c2a3f9f927c0bf2558379cb70cce10b717e8d74abc0959631cf2": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_012u7WkDfQ6x1dD3obbNdYhY",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01BU24nt48DnLehFC8c7RfoX",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_012u7WkDfQ6x1dD3obbNdYhY",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01BU24nt48DnLehFC8c7RfoX",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1895,
+    "outputTokens": 70,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1891
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:7453cda497f71c18793911efe491e44a43c97cead66ca572ea8593a43bda0a77": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017gZqdaCS5N27DV4xvVK5HW",
+     "name": "network_entry",
+     "input": {
+      "seq": 79
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS3AUKEAgTGAI4AUIIdGhpbmtpbmcSDHMLUB+mq6oM8LZJbBoMYU+ukF72NMah2U3oIjB2L1n2kgwZgw6KnoDbDkfo9SvggOnRwlitY38Du0EzJcP4jp3vA/ztxS1XD+fB4YIq+QTjaXa2TLQjmgl0dXrbgXpa4B7EHak97+W+A9nQJ98znxq3mgb6GTc+n9CuAAk22K5mCLkWfgVCsxmHpb4E1K6E6WzornUiyozqlgLTvPSmjBa94b/jIeAKb2+lfBb4F90HvTDm3Sc4V8o2SiVsJBnkQPW8k+1L/FYVjOw/xnoScdfr0ieAsoXPZoehYMD92CZ4D9yToxNhpF0g3ncW6Nhs6vsprflvkWvSxDO+IZyUu2G/v2Qupohjkt8rTs+GZbLDCKe6wKE7ird1Le6uBYzSV9GT7blQ4AE5SXNDqiDPfz+wL+TiGSDCS0hkNkuRsxlWraGPfJoYbqU3sK7m6/YtLi2z45sbyaXQUT4eCxo5ektrmrHCM6zCTVdt1wBNRDDzpqaIUqmM8c6bVu5Is4yrVW6EeLWMdt7APa56OF4rqgtfgg1lGL0T6WrMu/oUYWu1qEoiwljF55eXYX+XCq7a7yhreYw5g004Yhz748PEiBRzphmDqp453LErcry05ZY4q0M57dBvlp0FlT791C6te7gpYS7OZHdkmUbMnGR4ZgPQlW+aMSv6uLt/MXmJ2pddhPLawL/X1nBf4he7YXfn1gdPpFs06KBz6NdOorTOJjZxEtcgXYuUMOlP0J2E/lTkbtX3LRMCBTaFEF8rVZxTFkJVN41Wsx6E4cosp9VU62gJQQ7GxD1mH1RSUPOkYagqovwxCvm7mdU0i5Bg6nqO8KJmgIOeOj+vP2/GporHPHHulSJV8i10FVia+KiUkpEcibEz827VmnYkaIvaMRUnG7/idIGmDQutTsSDXFXSCqDmHw3Cus3EN8zHdhgZKB1GzkxjiI7rM64YAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_017gZqdaCS5N27DV4xvVK5HW",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 79
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3976,
+    "outputTokens": 82,
+    "cacheReadTokens": 1891,
+    "cacheWriteTokens": 2083
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:2b7826a544587f974e28bfe57365958c03163245e15a386f321240525e6de230": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01W5fRL5nsHxSVj7cdSeGTt4",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1 \"Add a new user with the username jordan\"",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server got a createuser POST with user_login=jordan and redirected to users.php?update=add&id=4. The users probe after the task lists the user jordan."
+       },
+       {
+        "requirement": "R2 \"the email jordan@example.com\"",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST body has email=jordan@example.com, and the probe shows jordan with email jordan@example.com."
+       },
+       {
+        "requirement": "R3 \"the Author role\"",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST body has role=author, and the probe shows jordan with roles [\"author\"]."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSkgYKEAgTGAI4AUIIdGhpbmtpbmcSDHVraohIjNJ4fBSrLRoMuMiZ2nEL1AF+X78BIjAuBPGEzJzK0g5OT8JJ+drjXx9qLjmeu2PM43sSRgqTUh8P3/KYe3xZeHmYVHGvutoqrwWE5AMI9mlwAINrEYZ6OlAETzNlEqLidKyNgSnYmLuEAPF+K+Ah8pOXqZrrOk7Iu1xG5iAFLYO+93t0CuNAc7T8msBPEXGuCRvwhsK+/ElIsi5jQi4diBmoUB9qB38HC6d8oWmN2+7NvI7chXKbdt+B0bE+egEwioidk1Cuk7M0GvnIUSqtqebn6JKOEZNAtzzkPnKhtkE0DVRalgohnOiPZMeosMp6FA+SrRrHsyMa1Y9dSC7R/YWBeKBvgzC6E6fxSVML5F4LP4jfTkFdwRmVFEnvzPW2BhrR3yd09cQhcpndeFLeeDz9FNk4+ycHc4d06N5yTcqz+Da/5vjHk1NaKfrh61Ylu/841ANOvDXO60LMCIHhtqkujiOJZM9fIoYQo9kcrZePGuDOMqZoYy8LhjvEzyq1MJ7X7vJ7cMk9zSsVEU5Vh/2TJ+NWKfQqSLX5zd/HnR4JaXzj4xJQXIhJJwGxXE+SP5yAbaOFxNhKMDn8W34/a2krA0Z1iB1jL62w+Wxn0KI4XPCoSY2TRLOiq3TMLd30nRiiiP0rTWuCzL5JsTWfPGpbJgkr1AokZshHAy7Bwgzc8vkYTaFq5693r+3zijCI8GLmjZUAkFFivet7lDpKvtj6IhcO7gtVUgFjc/KZ1Q1zrKLQbNGViYT29Q4dqxwGdaTMc0znlJXLeGPcPQ12aDYbMOUv4spMkXgiJPBxN5QDtTYMjNQLTAb39b2YrA1xYkDoecf2kYOfOgtvbMU+xkhH3OjhJ3Xwrn6CKwAXfmH/ld0S1fTMLCPUJsrNQ7CZwv8pas9gd38XMPKjyfiBZI+rCvT+EO0Q6q2PA0y+ql3cLVNMOab4UcZThISnuMoSwPL0j3z5DaK9IH1wJA4DNAK1RtnDpEBCFp96wo87AUPHLLF4blZHsTIYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01W5fRL5nsHxSVj7cdSeGTt4",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1 \"Add a new user with the username jordan\"",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server got a createuser POST with user_login=jordan and redirected to users.php?update=add&id=4. The users probe after the task lists the user jordan."
+       },
+       {
+        "requirement": "R2 \"the email jordan@example.com\"",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST body has email=jordan@example.com, and the probe shows jordan with email jordan@example.com."
+       },
+       {
+        "requirement": "R3 \"the Author role\"",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST body has role=author, and the probe shows jordan with roles [\"author\"]."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4385,
+    "outputTokens": 331,
+    "cacheReadTokens": 3974,
+    "cacheWriteTokens": 409
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:35b37ee0e70350eedfa6091dca28e6b610a668b352eaf245ab73236782353369": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LiacwzEP3JeAnC9cfhjMvZ",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server got a createuser POST with user_login=jordan and redirected to users.php?update=add&id=4. The users probe after the task lists the user jordan."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST body has email=jordan@example.com, and the probe shows jordan with email jordan@example.com."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST body has role=author, and the probe shows jordan with roles [\"author\"]."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01LiacwzEP3JeAnC9cfhjMvZ",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server got a createuser POST with user_login=jordan and redirected to users.php?update=add&id=4. The users probe after the task lists the user jordan."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST body has email=jordan@example.com, and the probe shows jordan with email jordan@example.com."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST body has role=author, and the probe shows jordan with roles [\"author\"]."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4806,
+    "outputTokens": 273,
+    "cacheReadTokens": 4383,
+    "cacheWriteTokens": 421
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

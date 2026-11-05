@@ -1,0 +1,219 @@
+{
+  "schema": "assay.cassette/v1",
+  "model": "anthropic:claude-haiku-5-5@low",
+  "recordedAt": "2026-11-05T11:36:45.443Z",
+  "turns": {
+    "sha256:f019b938142aa41fe58ef903d00978aff6b2e16d60fa18286b7195609cdc84fc": {
+      "stop": "tool_use",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "toolu_01Pa6i4fFRco2UYRbafSM1XJ",
+          "name": "goto",
+          "input": {
+            "url": "http://localhost:4310/acme/webapp/issues?q=&type=all&sort=&state=closed&labels=&milestone=0&project=0&assignee=0&poster=0&archived=false"
+          }
+        },
+        {
+          "id": "toolu_01Q6BszEeADjqSwKUrPqzi1L",
+          "name": "goto",
+          "input": {
+            "url": "http://localhost:4310/acme/webapp/issues?q=empty+file&type=all&state=all"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "reasoning",
+              "text": "",
+              "providerOptions": {
+                "anthropic": {
+                  "signature": "CAQS8wYKEAgTGAI4AUIIdGhpbmtpbmcSDEbduYq/i68OLztpohoMp2/FufwKCWqVb6PnIjDS09FsGCzipF0rAN4bSzNoMV6a0bXJYj8/qt0AaxY30SrfjTTrJ96IA5sNWAO3bVEqkAZOivHxnLOm/gKi7mP307sxTC5bAsy6fC2MoONa/nIItulzWzAYuwcvFQcPVNFU5BaJIyC84jCHqDOW2I/kgBDtba+vHQNwfX7va//SPuHoOtqCWcjMWqrJkaME+lAfr6YBHzyCjCUIVSIAZ4UFP/U6Nj3/ozIVFFShJE+qGctOlenljQ/PdTdZOT5Zc0SOxwDUrYshGghtgB7C6klwBxPB5627HkyqBAKvmI96sOnGV6imGgl65GyXJXm+f3Bp3TH/RoQqHONScehMGHFDGfeRsRuhaqo6NTQFm9HTcTmYr6ZHkb/QimF3l66yW3JtlK7Xrrw2lIsoFfr64oouUav0D4DgayF9h0LAdjcXIWBB9NeFAkZiyni3MqyC8xmEVDi0vqWuPrS8sPmlhOitRdXyxQAZsPrauZPs3eL98lp3mJCnT9aKWx8NugU9nfGW4+SMi0uU9AkovOZzOoli2Gy2n6jQhEgHgCLhDp/Dh5oTC8uJwuk6Rk2EYxN25Q/AWvJ7jBIDjEXi2XyT9wW42AGpyd9NlyfEvYBKtnMwgPDgVo2jo+nb6na3kTcJViqLVXnaRYd1bbnYbLj8VI7Ao3k6BviZ6iUWVw+WvkeUXvK8l7QNbsrc5Bd2p4TSRizCAPU5zPpKlWcLMr2dLxRb/9bdKtSUEh27Y2NMgGon/bqHIn6KcV6HagOQpKIbavH07siRHDAx+HblZYZRiZg5R8ufqCJip309BU5H5nAMKEDFiMEb0JMrYXjRffMq5oH/sje1610P6sXiqQ9bzRhy+NLYqD/pA7fiQ0i+7MQ8IQX3vTC2VESEj8Fo/ZjtwTgFfFW2j9NXwUGkl24CfRni1Fj3l/3zfMOVESiumAgOmnWPJF2Z7TcuX240kqLU5TxF+EuVlmf5ZUHRuR1aWiYDegJhkLBDjDgspoLqzWIFK7uRcEYG35FKkVYOT3RgGf3ryIf1PWz/HxiThuL9KZsVJPwW17fa2olbNwbyeBbx3SyJ3vQpzmrecG15oGdstzkF76nIdL+uncDPvVoxDb8D9ymTGAE="
+                }
+              }
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01Pa6i4fFRco2UYRbafSM1XJ",
+              "toolName": "goto",
+              "input": {
+                "url": "http://localhost:4310/acme/webapp/issues?q=&type=all&sort=&state=closed&labels=&milestone=0&project=0&assignee=0&poster=0&archived=false"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01Q6BszEeADjqSwKUrPqzi1L",
+              "toolName": "goto",
+              "input": {
+                "url": "http://localhost:4310/acme/webapp/issues?q=empty+file&type=all&state=all"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 7495,
+        "outputTokens": 269,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 7491
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:9b906c762a7ceed8c26b594edeaee45999c6064243839a104bc8388ac9305a9d": {
+      "stop": "tool_use",
+      "text": "Found it: issue #1. Opening it to close.",
+      "toolCalls": [
+        {
+          "id": "toolu_018Y2ioLFk6MdSqPFS5ykLL2",
+          "name": "goto",
+          "input": {
+            "url": "http://localhost:4310/acme/webapp/issues/1"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "Found it: issue #1. Opening it to close."
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_018Y2ioLFk6MdSqPFS5ykLL2",
+              "toolName": "goto",
+              "input": {
+                "url": "http://localhost:4310/acme/webapp/issues/1"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 14668,
+        "outputTokens": 82,
+        "cacheReadTokens": 7491,
+        "cacheWriteTokens": 7175
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:b35d2d72a38dfb993b945b490cdf6e4ff9f5b9d3de7a8af6bea3a606bd00d6be": {
+      "stop": "tool_use",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "toolu_01MAc7bbb9QUCCtnAqcCByok",
+          "name": "click",
+          "input": {
+            "ref": "f3e253"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01MAc7bbb9QUCCtnAqcCByok",
+              "toolName": "click",
+              "input": {
+                "ref": "f3e253"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 13218,
+        "outputTokens": 49,
+        "cacheReadTokens": 7491,
+        "cacheWriteTokens": 5725
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:0bbe1ff99c1165d86e53a913d35a80fa614956db443a0c29d910836b61927102": {
+      "stop": "tool_use",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "toolu_01FXzGZMs6JAi7RXMwf12a8C",
+          "name": "finish",
+          "input": {
+            "report": "Issue #1 \"Crash when uploading empty file\" in acme/webapp is now closed (it was not in the open list, so I located it via search and opened it). Note: I clicked using a ref I guessed rather than one from a current snapshot, and that click is what closed the issue, so the timeline shows it closed by alice just now; the page also still reports it as closed and the open-issue count dropped from 12 to 11."
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "reasoning",
+              "text": "",
+              "providerOptions": {
+                "anthropic": {
+                  "signature": "CAQSzAsKEAgTGAI4AUIIdGhpbmtpbmcSDLRK/2eUVtEWe1PIOhoM0kM8nd+atbvNRLLiIjBDc7H0R3KNxfh8DDjpqejwz7Htuy7WKDATEJsycBGAevlFaifIOXWNYLZgwA+mvqEq6QrkXw/OPtqYH+R4dkc7ukMQ3hOuaDabmMhtT+X5lKcmTL5heE50kb+nWma6/3IwvCT+6vyi8pR0+4HJ56YECG4YowmlA1XoGDwktEMe5jk2Xb0eqJpjHV7RybZh1bxfgJOAgNNS3nI+iuIFgmowHAf+KB30AMBd5AnliwXVHUVi6IjmB5hsAlP1FXlE0adeO6e0OYYABciUO6fObGfrVORO0cKc3tJ2idG6M+nmIRdkLTIN3FJmGp6AMKloV+GAbuxUXMfGhGSo24lqq6rLpMiJumdDzS+V6RkgS14Dm7sXCaKEvNrhSEig5MaDPuiwbqNMgmr7oNKUiI62+2X8ydxSpc9b4ewrezV/8aP0kcn09P1ux0m+Iy4l2JuZlGBFw/UE21FsxEcfL51k/FxvzA9XFZSHxzB0RmLkU+bQ8i3voZY5R5C5Cu+/CsQx8iFzBf45P9hMpYczQspyCk0paj9kGAv/Yscl/LQKGqp6OYqGsTcLlxODd8m/MsobKUXugQxItFdDTP6vj5qcAhC3x4TOGBp8wbTTE4KmHeP/aeuSFMYUKTIP2xg8bHVcydG8LQehl2p1B9mCaESOwvj0ttkxn1SeyHv5rEZhiPLLax+ZDiklLTyJztpu/6bORogn62iJUevh1Ol+PGPH+cLG54rOFxUPYOKvS6JEIDjlpBQqGQOKzPl01uuzSu1gspWbngCkdEspTXuFDRWodrzqAa/wd8o/FN4HxyrHDWzhJVW3ynXfNUvBkJWGiXPwyGBQVsJ5v423y3n7Zbapiuvv0JPpzTrIIp31URcqcI6ns2MTWogJwBVUAkRtpY5QM3++WRTY98aQuJpkcPmlOwjrlA2Ca/BnpxUb/sURrmkvzQJzV1b6R6n7nvdM9Prfe7vK4vcbdE2xDZs4JyUTof9qio1jCg+LG4N52NvYneBndwreVXmGWPuOWzL4qdst10jJFobu12d+FjjxW5RGJaGqpeZiot6l/rznRglJYaL65JUycrPjoJv6b8OPOZZlrfIX772mOXJsEnXGcq/ezde/l17bqyRzQtF49bTi68rh19ay2f2glje8sdJ5i+y9HGeNaeE17ljJvJ+0pQt73Jnr25kBSDa6eh1eef2OmCNghIFSrQ3JyuBfIzYZEB5hyog7X0EPHAjcqRsDWUUyqpg3VNwjQJnR8MdGUgoA8fDnepxJ6k8y/PqczTfTAU52zoC6e4ct1LMexxR7P/oICOTd/MeHnAZbXo7n5FBdKx0XvZ5/IxF7ce/LBOzf3CZoYxy9SZHDdfip0aEXgt4aHl9EbMHniluhN90cSpQ1c4+oA+jLdOGy92KMk1WGEvyLH4AaR0ZW+Eil4TiB/cLROH/tRVpA8bTOfz/Fa0jBU3xCiKA/lPQ+NXUwaeKn7ZXSgEHWskUlH3gYqDGLIyskQWlCf8j1VDHAhnJCLOIznah1oulP2a6ql9SX0PEZWRgeM1qd4HC9XueyNRbiwjP+wE7P/U/zG3s3Ax8h6V0hJh3th2sP5mLwo2yCWiJ5kEjBnwOarh8gVgw1oUkJqsYCjkwMFiM0G4ErEnq93Rfiw49iepN/GaBrvpoONWNSkUacMOCXcttGy1XoQEtgtinMeOfM0Eof6RAj32isxtaz5hhGPUgdBU2KsY2Z/jJFHZXhdBbEIldBDyLt5tfaa7VrTmC02TodToRtb+M9r3NZB4W6nasnu6QnpzcgaG3DDt8ScKWJuUkHrQgYCygPZF+ajtQSAUD9nvg0pD7G9+iIJAqULodXG8aQ5dL7s7ingcFCw4iCVfxyGMMioPXiJCnf3nsMyE23vLxU8AONmspGUpaLl01J2qErIpu2oiPOoBgB"
+                }
+              }
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01FXzGZMs6JAi7RXMwf12a8C",
+              "toolName": "finish",
+              "input": {
+                "report": "Issue #1 \"Crash when uploading empty file\" in acme/webapp is now closed (it was not in the open list, so I located it via search and opened it). Note: I clicked using a ref I guessed rather than one from a current snapshot, and that click is what closed the issue, so the timeline shows it closed by alice just now; the page also still reports it as closed and the open-issue count dropped from 12 to 11."
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 13596,
+        "outputTokens": 426,
+        "cacheReadTokens": 7491,
+        "cacheWriteTokens": 6103
+      },
+      "model": "claude-haiku-5-5"
+    }
+  }
+}

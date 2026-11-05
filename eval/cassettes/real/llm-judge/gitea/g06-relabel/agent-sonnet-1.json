@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:27:00.313Z",
+ "turns": {
+  "sha256:047de546288c303798009f94b0972facbb77fd6943f392f109a6a292d995bf0a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0119a28pkuGoLrHYMagRAcR2",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "success",
+      "reasoning": "The final page is issue #4, \"Typo in README,\" in acme/webapp, so the agent changed the right issue. The timeline has a new entry from alice reading \"added docs and removed bug labels,\" timestamped \"now.\" The Labels sidebar lists only \"docs,\" so bug was removed and docs was added, which is exactly the swap the task asked for. Nothing else on the issue changed: it is still open, has no milestone or assignees, and alice left no comment."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_0119a28pkuGoLrHYMagRAcR2",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "success",
+      "reasoning": "The final page is issue #4, \"Typo in README,\" in acme/webapp, so the agent changed the right issue. The timeline has a new entry from alice reading \"added docs and removed bug labels,\" timestamped \"now.\" The Labels sidebar lists only \"docs,\" so bug was removed and docs was added, which is exactly the swap the task asked for. Nothing else on the issue changed: it is still open, has no milestone or assignees, and alice left no comment."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3003,
+    "outputTokens": 219,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2999
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

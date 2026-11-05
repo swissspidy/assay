@@ -1,0 +1,388 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:13:10.103Z",
+ "turns": {
+  "sha256:0307c2f7a40685eee9788ba15bc7b570f78e0391bb09281444f6ce354958633c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018W8Rsqd31inubMakDvovDZ",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "A new repository named \"meeting-notes\" is created under the user's account.",
+        "field": "instruction",
+        "quote": "Create a new private repository called \"meeting-notes\" under my account"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
+        "text": "The repository is private.",
+        "field": "instruction",
+        "quote": "private"
+       },
+       {
+        "id": "R3",
+        "kind": "hard",
+        "text": "The repository is initialized with a README.",
+        "field": "instruction",
+        "quote": "initialized with a README"
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_018W8Rsqd31inubMakDvovDZ",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "A new repository named \"meeting-notes\" is created under the user's account.",
+        "field": "instruction",
+        "quote": "Create a new private repository called \"meeting-notes\" under my account"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
+        "text": "The repository is private.",
+        "field": "instruction",
+        "quote": "private"
+       },
+       {
+        "id": "R3",
+        "kind": "hard",
+        "text": "The repository is initialized with a README.",
+        "field": "instruction",
+        "quote": "initialized with a README"
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1068,
+    "outputTokens": 217,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1064
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:ee851ac2650d1c62369628893f9564948260749072e0e901bf193179bba1ec97": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01APNjN84sZnHHrPP2ERx5Fb",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_018VkXxZJb4hJ6Txu2dPxBWC",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01APNjN84sZnHHrPP2ERx5Fb",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_018VkXxZJb4hJ6Txu2dPxBWC",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 16959,
+    "outputTokens": 70,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 16955
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:5996ec95f682121936e398410f0ae7bdc9f1cdf835015a942c5e4be0dbd06e14": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KRm4ekJrMhyxJ43nzjYyiV",
+     "name": "network_entry",
+     "input": {
+      "seq": 28
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01KRm4ekJrMhyxJ43nzjYyiV",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 28
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20382,
+    "outputTokens": 49,
+    "cacheReadTokens": 16955,
+    "cacheWriteTokens": 3425
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:6094e9700ea0c07ef4c0e6d2167bdb5527ed807c450c34fd7b81897091900059": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HbHxBamN294KgaVVQGLDbb",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "r1-repo-exists",
+        "requirement": "R1",
+        "description": "The backend lists a repository alice/meeting-notes under alice's account.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "aliceRepos"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "full_name": {
+              "const": "alice/meeting-notes"
+             }
+            },
+            "required": [
+             "full_name"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r2-repo-private",
+        "requirement": "R2",
+        "description": "The repository alice/meeting-notes is private in the backend.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "aliceRepos"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "full_name": {
+              "const": "alice/meeting-notes"
+             },
+             "private": {
+              "const": true
+             }
+            },
+            "required": [
+             "full_name",
+             "private"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r3-repo-initialized",
+        "requirement": "R3",
+        "description": "The repository alice/meeting-notes is not empty (initialized with a README).",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "aliceRepos"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "full_name": {
+              "const": "alice/meeting-notes"
+             },
+             "empty": {
+              "const": false
+             }
+            },
+            "required": [
+             "full_name",
+             "empty"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSygsKEAgTGAI4AUIIdGhpbmtpbmcSDCrWyeKk5dEVKs3VvxoMaqKqB+lDTQzJ7jScIjCHzmd2XFxOIXvY0oJ09VkOpDsZcG581s3mL6XLEMu+D8bzlELzYLRMeCLN1ZGgQocq5wrqJukc+CI+YP4nBQ9R7zWs09Tk+WZxjPR2r5XPHsoBQhRBXeuZmtMkjwsq+0ji3oqHeLSvFwqWZP/lRHo732Yu31EPLNrFw/mYeL5b5ocAyosjCsMR/cmxJ7fLhqNpBrZZKnY83P2JxfJmNhnwsxTrul7rB9vOzg0r4tJo4yNZCl2usOZxAXlNlY4O5KCqDplUQcpke3f6gCZWL1znsUlML2DQKK/C+Kp0qCfYzYWnr8rNk3fEVYPA13LDs8Y1LcTJjVMGtHXG3g1rkSOq4omAmUFn9yQyVYKYTU2tu+T0NEL/Eww9U+MIZMXOsur20+ibmQYZMIOQgV2nYTTIFvBWgaI0gh0TYkl98+vg3Okun6vwRuVcYbkFpPG4oFvwpsprxSMkihbrbHMmBpspY7LDZ7gRN1/sjAgwx15nbsz7G5CAX7YXv//EwQxOVSd0r6pD1IldgJ2aNivfdWUdNTpABmBfYQkku3X4cvlf9tkfPi19IA1vx4L9G7RzLbnMl1JVGkkQTZ8QxT7RB9oe1/VAj039zLEWPNkllh6HGpkczyPWVrvG/PYuIRiyRxKxepaQPeJqHZ5jLH91oW3fWqTJ2KX4E+mR7OlrYNqf3ybjmNh7mVCXbRPyotTZFpOz8iaKiRQxP6SohpoeHmzOqnT8vi8YSWwk7hae45G6lXmuISyLI+4wik3b9u54lsI1OQeOrCFdAgcIiyoDttlEzZzUYDzIvcm9GilHZMxuw0hwcMOXS/AbwOkJydtUA21sOBqbMH9tfIhsD5p7ZXnFfdD7tNPNxgMP20nBZSDn6otQLYGvTiu/am3EbMvSnKrX/66DhJD4BI/ynjiWZHVshLYU4mu/lsHpX5HJn6VypWwgSs/bak36yk7DawGv7OUGuEHO1mOvpajU49kIM6lNd8HK8A2W9hlYUK8ZJOLisy8OM9IF9vlGvSn3PeQ+3LiBYJe2qYGT7Lyw4aJseUoodNerA/J+8jb8CDAo77eIdFVCGC4nhPhbUJ47YELJSxEY2Flveimx7krqJmMgwYNL12/X+PiVUtKioM4WJqBKuvDW1TdujPzCHfihjX15rwferQarkg6Vy7adDGdB45UwmtrvzogOi9fqGhJBUV3cGFBsTJ9yuOEjpQu/nI7C4Zb6nK6J6TOZ8oszSoW4X3qrE/AkyBpHMS4fVEX0wnuWutg4G43jd4rd4FcfRxdkhQbIFRBaeJANX60PGuaoscSwxfYtPbuAFPtq3901RVg1LV+S5T/CI7m0BXWuMP0NDKJwQaKoNjkeUhxGzxKkhG9mamZALswaXurykFSD7eHLidvwAfOCCOEutFqQz89wvg0rJ5S/bYz1tQaoAlhx3oTCNq0FsZzf5YKBM5DnPHM5CoXATI5vlsVEpFAdkj2ME50lBvHhaIEVvL/K+uWCVHB4Qlb2luYFUZg6LVLPW8n0HgpH/g5B87CYP1Xtz278Folx4CNeS2RFlBNaA8o99+dzrs6rfCmZimPuxOmXbo6gqEG6FBzs+jffU8avNsiByDCxwctj5lyOYSbBBqRU38cANuj7EM8SavD/1OEeBq9v8nkMjyGT4erE0D8PBVXRRWqkTqE2EZH146lsKHAKJupOT4fxC+t9gVBiJQ2zPH68cbUPfS57nK9c3NCn0xdhNE3ybzcGgzQR+/8FoIN++GMeV9tJsuBADFHFqXEZZKKg2jnU02ic4YzmK2xaqnXNWaRoXM1na29oKEB8EcWqM4ROifueKuJkMSjeYkfTIywEG7r6Lg50wP0PgzN1MTwsv/TvG3/lLP9wLmoEpce95btgJJmWtEDNSx8i6HeCBaw7jiKGvJtkViYB8D4YAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01HbHxBamN294KgaVVQGLDbb",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "r1-repo-exists",
+        "requirement": "R1",
+        "description": "The backend lists a repository alice/meeting-notes under alice's account.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "aliceRepos"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "full_name": {
+              "const": "alice/meeting-notes"
+             }
+            },
+            "required": [
+             "full_name"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r2-repo-private",
+        "requirement": "R2",
+        "description": "The repository alice/meeting-notes is private in the backend.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "aliceRepos"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "full_name": {
+              "const": "alice/meeting-notes"
+             },
+             "private": {
+              "const": true
+             }
+            },
+            "required": [
+             "full_name",
+             "private"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r3-repo-initialized",
+        "requirement": "R3",
+        "description": "The repository alice/meeting-notes is not empty (initialized with a README).",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "aliceRepos"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "full_name": {
+              "const": "alice/meeting-notes"
+             },
+             "empty": {
+              "const": false
+             }
+            },
+            "required": [
+             "full_name",
+             "empty"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20711,
+    "outputTokens": 804,
+    "cacheReadTokens": 20380,
+    "cacheWriteTokens": 329
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

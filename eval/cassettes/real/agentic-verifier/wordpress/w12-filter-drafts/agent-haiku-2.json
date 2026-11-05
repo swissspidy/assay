@@ -1,0 +1,213 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:16:01.167Z",
+ "turns": {
+  "sha256:57183843e76d8746124749bd2dcb73af962061b1bd72b927f99b0620b746532b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_016tRnoaEcq9UiuUn9QpKkwF",
+     "name": "find_nodes",
+     "input": {
+      "role": "link",
+      "name": "Draft"
+     }
+    },
+    {
+     "id": "toolu_011jutMmN3r3FBdosV8E1jYc",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_016tRnoaEcq9UiuUn9QpKkwF",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "role": "link",
+      "name": "Draft"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_011jutMmN3r3FBdosV8E1jYc",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1853,
+    "outputTokens": 94,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1849
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:0965e9b824df1c1d9fc4e6f593fea760660a94a3b5885b625767aee3ba4795d1": {
+   "stop": "tool_use",
+   "text": "Let me check the list table contents on the page.",
+   "toolCalls": [
+    {
+     "id": "toolu_01MX8PNSA5gKg7mob67eodrP",
+     "name": "find_nodes",
+     "input": {
+      "role": "row"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "text",
+     "text": "Let me check the list table contents on the page."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01MX8PNSA5gKg7mob67eodrP",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "role": "row"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3926,
+    "outputTokens": 63,
+    "cacheReadTokens": 1849,
+    "cacheWriteTokens": 2075
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:4bad8190826a9545b81ee52417733ca7df107e4a99d8c79ed176b026f7263e94": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Jj4DPmvCPQpBreDVaUnVfu",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Show me the list of draft posts.",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         2
+        ],
+        "reasoning": "Final page is the Posts screen filtered to post_status=draft. The 'Drafts (3)' link points to it (obs 1). The table lists exactly 'Pricing update for teams', 'Roadmap 2027' and 'Spring meetup recap' (obs 3). These match the three posts with draft status in the server probe (obs 2)."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS/gUKEAgTGAI4AUIIdGhpbmtpbmcSDNhJ/2Un95B22kIPmxoMnbvc33RkLH03waVLIjBMMoEuXrmXuq1LzaBvmgZ+eOTFzNIOWVpSFY+bfaCEbywto0AdcGPXdq7TmEuP6AgqmwUvGNOPzTnPwfHLJmRKEDIZ/ANg326j1Wzew6s3brhD1zxFKFsKH6U3rHDpbMU9btxH9a6uFqL3JWfX6s/pp0gSASFXcARYZrUV+foOykt6RiCFlVgdAOcNClwuA0g31peFaXSISCUGi6RAuWTjn7AMlqddGXeky7dondovqnGlzWr0zt/wdD2oXOx7XXKHWWFUJ+dcvTMxuQI3zer7xhNblZWxZ615g1FyV2jaUTZ+Kv/nxn7DKhXwfxmOOmvRK3GEBlQH8JIClgqGiRuwcxbSlfX3Iw4OpJQcifaqVp+Os9BOWYPIliWDUJZ0AgykJno52bIHztbl65hI4zqoCjBVTgPBD/Ux847ab37Dnx9Gv0BhV8XeIERzsZUN+Lnil/cpHRkhi4OTv9hiUymfiUEAx4hjBgoJr2aH/O7eE9ZWxcdsCZTAHuaGUpJT14hVCK7VlG2EXbrngrjTemP2eydzW9do1EHpVm0+XNIHLVzbQ4SUMOZZYI1qzikhq6n8sioPV/ebyCZKNXJVJugCEnNiA0ylIApNa7RQZ+BbMk8K3Jd3DbpbccQ+ckYtyzCHSiDnk7P1OJ7xpZVAYbZR4SjbQ9apx8LaHFHuFXVeDLe+eFd+3SZb0ma5vcu8wAtifHjQI8rLoGUSMuze6lBM5r1cS8p57vhg5aQc+m0+v4GFwoO8tboq4wwca3PiAOeXQ2PdvXIGcUL4X6xYiu5ijp45xb+IZHz4MtguGTaSHAUod196R57LgUH9UGsWI8mdCvsmZ9pRG4PlZmdncHirlaOijtEEW3EyDW9HrNyzPieTMKRAq2bhQw97qZ4/lFC8sPCO1h9ZNg8vbwbPRcrk1Q6MTHPCnULkvGpy7EewtxHf5Bqvqp6LkIT+eOYRGAE="
+    },
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSpQoKEQgTGAI4AUIJbmFycmF0aW9uEgzbl1njE6LghGxpvQkaDCbp8VPX7ZAySslfcCIw+RQCXZ8HLGPLB4V85YtzWY7Ahi8V5cd418d/vSWJHaHNzM0i+Dg/8sQs1GERbku8KsEJZMTxcfrJI8V9OUBjbFjeIdF13LoiPgsBXU5duBT+XFVUwGeTV60GvpN6XJhfNaus8Z1k7+VcklP32RSgLJSMd09Slr3fWrulpB17a9zXFkHesAh5tFhpcuKzMw5u0L4yCmQN/MBZSHF1authcWbMn7cEsJbVtc5m1MZ8ps1YSOxgsnCJqbzaMVc//7wR9+9cbbL7Nmo4rT4yWkGN45btNW4SSE4A+G0YBZAUI/Rfn3boHXpKhSmh2hoTjLB5xmEINAM8vbh2UOcZrUa7lYH2YGOYTLoQ9sriVrZ/mcc+DiuMKvFB9r6xLvuKdvBj9uAFmn6zlaHhsEJJbx178hFwJ7cRf/gfOUEZyCECx2pNsm2ZH4+e1rTC0mN4r3wC6tagD/PV4V2ljaq7384qwl6Zd6nIllHHVFdFxZlY0pbTlVgp14DgssCPQdn3KdBuSfTt5dpDRWSBaeugPRFvRoeLimdbFSne3Z91/C29Wlqt74ecTXxudg8prT0yz3nkWntPcPjEXDU6JgZYIlX5vIipo6M7xlJWcojZAnZN4K4VT7QvahaSMOBSOudVn7L14Q4bCHKJ/ItG7/7+34sgUv1gWZDLT22z4ASYiitH/eELFpGhqcExGrqLwWIbtDYaND+d35OfEr29sMEz2CvtZAcYnnTe66sm1/X/kR4IfVjhAadu9eoruljuHmPpY9q2zzKQn6N0aMu+pntGpD9WQupFMOAbl3OgcPiBO0IFCtz2aR4lVeuyPF7/SSJSXD3chcdxN6dXW2F7pkyog08himK+2NIKsdAbuJs5TIOlWQLA+Z0QJAFZIXTeEXn8Z4lx6lutNj3CZNWHPedCWF8Ic3mpsI6QMQOt1K3eDKgmmbe9eENHm2uslolMTh4tdE0/9PRLQVrTPCLE5nJSJr/c5E2tUvvMsayRQnsq53Km0Z0uKyd9Oa9d0hklb71fai4UZSI0i4BfRHvht/ePoXH7cRGxmgvImnRQD6NWVupwCsUz7I54HNn672wuXt35ybRA9Qlq2r/gGB1M0ozAeqQoGmchhUlqsjwQuO4S7CbFJmWMW9q1AXMt+D1IeMk6BnvCK3n/x4IlyRJTk2doGd/xAiicq/ox6Gv+rcC5NxU37twPiJ5GmfcSejVbXOJqehdbmxv9oJqVqI9CrYqV0vI+cV7I0Xy35gEomUsx+G9pDl+7L8bBjf+UfdWB/tdutG79GBl9QxalbOP8xsBlrZBvrImljxphnnGFSlItZGo4r/7bA25rrr4GhWr5KYr6B0/I/tOzXYE6e1z1611BZbTiCMB4tXfgl9HGXh+ch0VTwYem1qhkDpjeKtceaT/e4p/kWccu4U52zZyORB1QAxwv5wUcvRdkVraWBbkTFxlmHc52K0Tk9RTAkXk/aYyfgn9wciwuT6sNcDtTRFmWokU3hLzRnFu1ncuZej7h00CflF0cc7pdCfjCA2Qq4j0ZakF04+SxKuMN01GmpQX/4gRhO51MDg4SaRkJh51vvqG9Vr+UoYwLeYWEbn9lAUvmb0mmMMzrZZLRQxdbJeqzpZhMVq8FaLQ7B6cWzfK4jOjx0q5TAOybogy6vdkKijAS45g2uRj5OaKVuZzPLrF610jY2APtavsYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Jj4DPmvCPQpBreDVaUnVfu",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Show me the list of draft posts.",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         2
+        ],
+        "reasoning": "Final page is the Posts screen filtered to post_status=draft. The 'Drafts (3)' link points to it (obs 1). The table lists exactly 'Pricing update for teams', 'Roadmap 2027' and 'Spring meetup recap' (obs 3). These match the three posts with draft status in the server probe (obs 2)."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4768,
+    "outputTokens": 464,
+    "cacheReadTokens": 3924,
+    "cacheWriteTokens": 842
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:e9d409342408a03b77e509b17f200d33d8d0a8bc063b5c5a7296e8b035b52eda": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01PUFnAP54SsvVYY6BiR8cwU",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         2
+        ],
+        "reasoning": "Final page is the Posts screen filtered to post_status=draft. The 'Drafts (3)' link points to it (obs 1). The table lists exactly 'Pricing update for teams', 'Roadmap 2027' and 'Spring meetup recap' (obs 3). These match the three posts with draft status in the server probe (obs 2)."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01PUFnAP54SsvVYY6BiR8cwU",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3,
+         2
+        ],
+        "reasoning": "Final page is the Posts screen filtered to post_status=draft. The 'Drafts (3)' link points to it (obs 1). The table lists exactly 'Pricing update for teams', 'Roadmap 2027' and 'Spring meetup recap' (obs 3). These match the three posts with draft status in the server probe (obs 2)."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 5281,
+    "outputTokens": 203,
+    "cacheReadTokens": 4766,
+    "cacheWriteTokens": 513
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

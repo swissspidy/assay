@@ -1,0 +1,181 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:13:54.111Z",
+ "turns": {
+  "sha256:2b64e61bee38c2a3f9f927c0bf2558379cb70cce10b717e8d74abc0959631cf2": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01XSeB5NViukHP6EE52eR8nb",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01AKBSqwFRUwzzS5DojQiAwi",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01XSeB5NViukHP6EE52eR8nb",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01AKBSqwFRUwzzS5DojQiAwi",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1895,
+    "outputTokens": 70,
+    "cacheReadTokens": 1891,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:32885741cd690b35a95e7933fb5ce47bfa2fc8bb6fc16631c43ebf5f954af3b0": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HMSaC7gF2RBrXggU9zUFiS",
+     "name": "network_entry",
+     "input": {
+      "seq": 79
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS+QUKEAgTGAI4AUIIdGhpbmtpbmcSDMurwz1ZQGEt79UEKRoMQdTObITn3pZkji1jIjCw84KwJ9tRN0EMJ5vaKtgNpQnP8i9mp6RP3DFWStMjz+eMk4i8G5++jvtAZCsHpTwqlgVrPPOdx1DNYbLVLGSIH7pDVukoozJF26v5ZxUhAtSCbAqY0fAP7u54Z8rVHyyHScpZ8AuFC88JdMFr5+5x2Lh45z3Z1ykw8qoxDPaBH5PmheIEikk4urPP9GCWbVs/AyQujns6pYWL1abBjunOVE+ClWXjE2ZXklXm+FUmxP+bR6N1rIC5OYrPPfsDcQ6iqWMQC0kQVF9/DiO2VyeWgem+w/M+SER53nLu+fvS1xAmvnAQB8jxdhqWfLAvZaYvmBTHL1ZxssbwXSKaczr8kXwNnZ6RPjYXok73qFL3NO5fVM8Sknr8k5RHHAhoAPUQbNA+k6mkbxL8PYv554EKUV+RjySbYzNgwaMIm0061Bt8bFHtAiFTIz5P8uE2zKzyZPKC+zcbM7+v+hetlKpUc1SHL+oFQ7guwm8/s1VrlomXWTEZwZK6ZB0s1YwCSrtW504F/VsKPCXCvLmxtmRGXMXJZ2Zg8szilS0dTC14rP+WnPAIW/e2yrjLTI4wbI7OO1Jr8/wn/ygd8rDW4cmrdfYVtaWeAEH79B/u7Fr3eapvsB03i9m/ai450HYKKwDWJ2UH7Is3ppovcUEAg7c2Vt17S8CumpqOlwojBJ9TCkCyUtECbwu70muT58NVFPcsYuZi42IlJQKKs/0RC5Xw0tYnPObbV7NI//YZbAOTrJ+Dmln43QXrJf50tT/UftpgaazuxOFdAniF79Zi8rUXdRHBI+5CrAwcCZAc0qngtirCB9Op8tWFTz8Endrk9u2N+q123e+CMfHpW0SJSkh18KOvYoEq700rjFCR3R9+2pwJ8ell53iD6LK5T0KKhP1tW8Mhfx/cIZ6LGYyLAYmHO410Kp9/l7E9sCeJLamNN0UO/jHZzmH40RgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01HMSaC7gF2RBrXggU9zUFiS",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 79
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3976,
+    "outputTokens": 94,
+    "cacheReadTokens": 3974,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:ca35508860bf92893b92bcdd46dcf7e713ea1af39804b63b78607ad52810295c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Uc9memr2NPkotnzc1gqZDc",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server got a createuser POST with user_login=jordan and redirected to users.php?update=add&id=4, which means a new user was created. The users probe taken after the task lists jordan."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST body has email=jordan@example.com, and the probe shows jordan with the email jordan@example.com."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST body has role=author, and the probe shows jordan with roles [author]."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Uc9memr2NPkotnzc1gqZDc",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server got a createuser POST with user_login=jordan and redirected to users.php?update=add&id=4, which means a new user was created. The users probe taken after the task lists jordan."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST body has email=jordan@example.com, and the probe shows jordan with the email jordan@example.com."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST body has role=author, and the probe shows jordan with roles [author]."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4406,
+    "outputTokens": 267,
+    "cacheReadTokens": 3974,
+    "cacheWriteTokens": 430
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

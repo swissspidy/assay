@@ -1,0 +1,139 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "gitea/g08-new-repo",
+  "version": "1",
+  "task": {
+    "instruction": "Create a new private repository called \"meeting-notes\" under my account, initialized with a README."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "A new repository named \"meeting-notes\" is created under the user's account.",
+      "source": {
+        "field": "instruction",
+        "quote": "Create a new private repository called \"meeting-notes\" under my account"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The repository is private.",
+      "source": {
+        "field": "instruction",
+        "quote": "private"
+      }
+    },
+    {
+      "id": "R3",
+      "kind": "hard",
+      "text": "The repository is initialized with a README.",
+      "source": {
+        "field": "instruction",
+        "quote": "initialized with a README"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "r1-repo-exists",
+      "requirement": "R1",
+      "description": "The backend lists a repository alice/meeting-notes under alice's account.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "aliceRepos"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "full_name": {
+                  "const": "alice/meeting-notes"
+                }
+              },
+              "required": [
+                "full_name"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r2-repo-private",
+      "requirement": "R2",
+      "description": "The repository alice/meeting-notes is private in the backend.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "aliceRepos"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "full_name": {
+                  "const": "alice/meeting-notes"
+                },
+                "private": {
+                  "const": true
+                }
+              },
+              "required": [
+                "full_name",
+                "private"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r3-repo-initialized",
+      "requirement": "R3",
+      "description": "The repository alice/meeting-notes is not empty (initialized with a README).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "aliceRepos"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "full_name": {
+                  "const": "alice/meeting-notes"
+                },
+                "empty": {
+                  "const": false
+                }
+              },
+              "required": [
+                "full_name",
+                "empty"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:13:10.103Z"
+  }
+}

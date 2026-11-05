@@ -1,0 +1,152 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:58:59.023Z",
+ "turns": {
+  "sha256:f4bd7208eef813a3baddeca2df4fcfb60bbe360c20597780f4f4de30d9ec83f8": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01VtQuumZ6viSmDaVLSFMPVA",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01Sjdc7m2op1W11TLMSPqMtH",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01VtQuumZ6viSmDaVLSFMPVA",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Sjdc7m2op1W11TLMSPqMtH",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1839,
+    "outputTokens": 70,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1835
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:d2906d8a475275b78ad2b3ec376561bdd25790e4637581941099809d569b6e40": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01RAkNT2NaNge5qY9cKjfbgu",
+     "name": "find_nodes",
+     "input": {
+      "name": "newsletter"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS4QUKEAgTGAI4AUIIdGhpbmtpbmcSDFfcipwXqNd3Twa2CxoMU9Y3TOpJFcDSinR/IjBDCtbEcmZha/CzKHNMDktJnezIiTaivU1m5sMSRskGqoxbSjomCF7QlgJA1JyDbgoq/gQ6mHbx4mC720EXWTl4UXfgjVF4EncAL8ODMjkEDcw5rQKejGKSrOhvYn+nkuJbccYNu6Uz6NCl7okH13br5jaHFcFNJYkGKHxyelc+AvZK5UldOLvUx5+sR6zRoYzbDyExVBiwbuA8BzQ3DRJAj5VAjrt9rwBDUQJtYb+HfaHo0gaxxoJXc0A03fPFJhQlarTDh5QhYBB9KihY3BK/eeb7D5SizOnaMGzn5LU0hQq3Gw6Zb4f+xSovJ7fefF+xydVK1+3eO46MfO5ClYveroKptnZXcPjrjmwKzSV7uc4jsO24MVcxUm5/fsCQducuECUURMcHOigF5zCln3XfV8ss1AGbydIVBJzKtNPHF1ID6cGM/zot5KT5FiXwQFgdNdR8NIwyuLG+RjjvvW3Qim1+oboF847CqU6TzWRDoB8ygkHvM4I6risXJAHcj2kFPJzVczq5fHiFhBLTPduF5DOIS9q6ltqmqmpDdiDYhllFdmqBvQqzbdXb6YlgK2c60SY2NQxXtKiA4YzA0Ebfzamdv9Wjbgobjh45kQB+hZvF6z1now6P5nVfGxArOxc3vMpP8cKCdfViGDgJpzwk75ZhacYM6nU7Z09QfeafcZLG0110HyFjuYSXZgQxIfwzbg4ZCZs8+yZq3C3LfryUq3sAktoYUxqkBLJffA/Tp5rtAxlByYo8Nch4OBhEbo3bxvnmpcmwXm/1DUUX99I25leRA5jjyiiOelHlBU7tt7RtX+VzoQBTCxw9S8Mkib0Lojhvzlv3BY5TgxN8032OEyfG5Xo8dxTD0EBe03FWtodwyYAZzQPFXPduIP2BXm+cL4Tv/BOz6bJGQQBlXmBJ7RgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01RAkNT2NaNge5qY9cKjfbgu",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "name": "newsletter"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3992,
+    "outputTokens": 92,
+    "cacheReadTokens": 1835,
+    "cacheWriteTokens": 2155
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:9bbad0071ed103dacc99ef912ee7f8921fb929a213bb96a55df9d39bd4c82e2d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01NWMEEaxWooV6JXFPtSiHqH",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "After the task, the account probe still shows newsletter: 1. The network log has no POST requests, so the identity form was never submitted. On the captured Identity page, the 'Sign up for our newsletter' checkbox is still checked."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSmgYKEAgTGAI4AUIIdGhpbmtpbmcSDHhNe8AKtKj3VJlfxxoMXyOoCXbAeezUbe3fIjCkVrs0L3t1whAl+yHaWQj8WsVx4Cp7WHh80NcUDKPqd2o5iimG9FeH+tX0SrAqeDoqtwVkNgoDEmYyNfihF9KOdGY2aFYYehs071OoSwYmu7gKgQs75httSc4RclsDelJAjDeIPOvHzdcl+ejYU5nF3wj5HyQm+WAeyAGXTaYe+HPCWkQlLxW0PFbCZdxXjastMXF5GajWS9maGXrrhxjXbilsP959f2W2lbuisnmZu3FHwXxvPpwncYwAgDFt4OPRLksJ/u8DpWB7uUpW98wNWQNCgqVZnrFEP4ZP61oIxelp05Ew1oPpKc0u/4qK4sp+84fmogdRMJANTfqDpReeOSGQH8SVBLJSEO5FOQKzidMjJAhCu1Q9t2Blma4MzxPvbN/FT/jAdx7ElbVVa3kAOxDoE6iN/WglvtXE2COKdSGjADKtXh3S3QgHff68yw8a6rksttKwN2XXPbvNDTLDbhZ/KFG7I3ecQ6hbsxcbflA/0+Xt8dQuzVOhYWJyM2BSslqgN/YTh/46vpbT5dGDbvFMZaWLyN/Wipau4DvMt2NMl6YNRDQhLz1wP8SfLon3Oya7sTysp/j8rWpVlq4q5VvFZnMPcYTsnerK1PoC2kzGIhBqPZejM8hnZTwuysVfT4qxEZ/HvOS+wwabwnFLjuUuwWz9mXyIRt3/9rkdYcXKHk/U+0nIAzsp8q4GeDw4cZTklJjoh0sSL8PujeCKWJA6m/XZRA5/YZoRAGB0IUPW8BPN8Nx9yS9JA/5YISGmM2BdvHctt8A70Km1g0u+boKYTIE6JpHwyLe4C0rz3Grno/KH7Df1q3boAINJGeu74sI0lmKiW8WSR2cc7ahvU1Wc/ixgiyQ19GjVYR5kGLgWOw7ETHKOiVWtSX7n2g/bMffIgiS4040yP/Wpt/IulAHWsM+pMdKYRUtyCc+9ZT2NZmg0o4NxGzpnAB7xXwnibXFQE6MZViAaEjxDLUPsXRQperm75wGztBgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01NWMEEaxWooV6JXFPtSiHqH",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         3
+        ],
+        "reasoning": "After the task, the account probe still shows newsletter: 1. The network log has no POST requests, so the identity form was never submitted. On the captured Identity page, the 'Sign up for our newsletter' checkbox is still checked."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4226,
+    "outputTokens": 190,
+    "cacheReadTokens": 3990,
+    "cacheWriteTokens": 234
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

@@ -1,0 +1,212 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T12:05:39.095Z",
+ "turns": {
+  "sha256:9c0bb35379b1cb79d4e35b412a6337d66b71cc4ac382a0b5306a24374716c81c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018bpEqJw2U9kKpzWCN1p1TY",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/addresses"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_018bpEqJw2U9kKpzWCN1p1TY",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/addresses"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7156,
+    "outputTokens": 57,
+    "cacheReadTokens": 7152,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:e790b086e66684ada9d1c0427fea1147c6ac65f6470f3170aadc88432975bcd9": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01EzX6DEC1QbK4FrV3nmYPWJ",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/address?id_address=5"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01EzX6DEC1QbK4FrV3nmYPWJ",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/address?id_address=5"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 11066,
+    "outputTokens": 61,
+    "cacheReadTokens": 11064,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:c90ae5796b25ff8d03a06663aacb9afa2a044d2ef1288f546f2c78dec0f1e3cf": {
+   "stop": "tool_use",
+   "text": "The address with alias \"My address\" is open, with phone currently \"0102030405\". I'll replace the phone number.",
+   "toolCalls": [
+    {
+     "id": "toolu_011uYS2LQG3UHcQK2mxEdDaS",
+     "name": "fill",
+     "input": {
+      "ref": "f2e119",
+      "text": "305-555-0199"
+     }
+    },
+    {
+     "id": "toolu_01EP4RyWaWVVLbJ841rYNaBi",
+     "name": "click",
+     "input": {
+      "ref": "f2e122"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS/AcKEAgTGAI4AUIIdGhpbmtpbmcSDGNPLqWhm43ZO12aRBoMToP15w51DJOTB7zpIjC4yRrnxbPmCJwix/z0qQ4UH0Wlx35e9BU3/VRhcI06G20NJU/61pg6YHXB7Ny3FnwqmQdNBY9c8SLw/Dkr/0khy+1yG+TaHb8U3zKn+l5go+sL7Bb7+cCaGfvn2l0yDB0zWHgmCV/+XxTOzFgIfok0LnJr53CZM/xHIn41DlvmUzmtkpmvJWq8qV4IFEFL+VGyzaPB9uvt8W35PeKXR4+hyg+E9Mq6tg7jX2j5dGSfWixaC5U3CnEpydQ4F4iioFFtd8lritostA+t38JB2UDQVnmMaZzssA/1kmuguM08d+LO1tO5ymkVqocCLIrgpxck0KXpiMlOaFapWTR2/cyyxW2kJFWXnqrqVRaiLMmv3y08u2KAJOEocutvguEu2m7hLzjRb/l+ysPBkqWy7ZDUbVLRgsEX1z3+HxHG7ovr35WcwP8C1FHkIYfRZKDndTZ0uIGDrEzRGuBNIf9LCRGZ3DapmcHuht/LhGdCv9DYRSxWg77WsMiq0saaSD7K6RjPRT6L7j32Xz6d/Gsrz4QEYcP4DOzcPkhwb8MCwBDVdZPngg9cYkPNRk+y6FWBn6st4CYnP+WgyL1yVEPVJnG4bwhyVzpRyuM0k9Su6fVE/7qUWVYLDcOQKaq2RJwvT+aqiMlTE2tYb0WiPGA/aw8Pf9iNGNpRBHTBYTZLNYWCbU5G+7hwBZGDSiI0tPsPqZcGYwtdAweWabUZbDHKibOMIaomrX1c+w4ORNdPE48CUtIOv5XH2Cg9Y5Crh5IWyimdDyX4uvNwu1MMaKDQCwaRPZh87jKUhywfGUzJ5+1vsrnkfzQ1g93s3hanXBpUBLDO5k2mcsdR/MGZhGE7sV/pfk0RVKxBsk2FE4o+RjVwcMqSWA2MVniU866tnJoynsWoDOZcAscl1/ic9WthWN0B5XZas0EyEQDsA9rwnMddI2omNbbZWQ6/tK857fGh2xy3eEA01bA1v+gwCwUWs7YFYbgTl/6HtSihRMK6FivIaQppZjVrDEsC1OlCaJ6KmDoCxobmWQEw4vuf0pXxL4Lp5hHkU1gZ9SdwZEKFz9esWjshYk78wpveNpPCGjWIY2pogM8ntJ81aZ/fLwboGiyq4Gnbqw/mfKR12cEEY9NeJ7nUCKem2SZ66/oSC52Y5IpZYAcoUsQA8/Cp7OPQIlpY406PByHXvthPfhsrzmUqfMcBq4A2RTytc8TkVEwbHlRTcX7t4SKWUwf4syniGIEFRDykFAB/q3tozXOrzjQRYyWyXo3PkbWZjRXX5Ip06CbB+Y2pTxMm6lKYyq8YAQ=="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The address with alias \"My address\" is open, with phone currently \"0102030405\". I'll replace the phone number."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_011uYS2LQG3UHcQK2mxEdDaS",
+       "toolName": "fill",
+       "input": {
+        "ref": "f2e119",
+        "text": "305-555-0199"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01EP4RyWaWVVLbJ841rYNaBi",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e122"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 11970,
+    "outputTokens": 276,
+    "cacheReadTokens": 11968,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:a5375222432b95c9b8ac09cdb7f5280429363e0a8f4f0284af84a6460de30b8d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01265uh83HW86MHUfaNVqqYX",
+     "name": "finish",
+     "input": {
+      "report": "I changed the phone number of your \"My address\" address to 305-555-0199 and saved it; the addresses page now shows 305-555-0199 for \"My address\" (the other address, \"Mon adresse\", was left unchanged)."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01265uh83HW86MHUfaNVqqYX",
+       "toolName": "finish",
+       "input": {
+        "report": "I changed the phone number of your \"My address\" address to 305-555-0199 and saved it; the addresses page now shows 305-555-0199 for \"My address\" (the other address, \"Mon adresse\", was left unchanged)."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 16251,
+    "outputTokens": 114,
+    "cacheReadTokens": 7152,
+    "cacheWriteTokens": 9097
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

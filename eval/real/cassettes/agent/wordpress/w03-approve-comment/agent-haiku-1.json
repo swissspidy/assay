@@ -1,0 +1,953 @@
+{
+  "schema": "assay.cassette/v1",
+  "model": "anthropic:claude-haiku-5-5@low",
+  "recordedAt": "2026-11-05T11:37:17.865Z",
+  "turns": {
+    "sha256:85d2a4b9e459472f2c0dc715956019f5ff025a64b8e1e75f6ae9e5586ca12685": {
+      "stop": "tool_use",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "toolu_01Wi5evzzHdcqDdwxUmaVgMP",
+          "name": "goto",
+          "input": {
+            "url": "http://localhost:4320/wp-admin/edit-comments.php?comment_status=moderated"
+          }
+        },
+        {
+          "id": "toolu_01WcauEZCUpabhM4tyvThKXZ",
+          "name": "show_part",
+          "input": {
+            "part": 2
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01Wi5evzzHdcqDdwxUmaVgMP",
+              "toolName": "goto",
+              "input": {
+                "url": "http://localhost:4320/wp-admin/edit-comments.php?comment_status=moderated"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01WcauEZCUpabhM4tyvThKXZ",
+              "toolName": "show_part",
+              "input": {
+                "part": 2
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 7263,
+        "outputTokens": 120,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 7259
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:2455c0070ec69d8079f589067126b1218347ac16e86979f38a370d5e31518448": {
+      "stop": "tool_use",
+      "text": "Dana has one pending comment on \"Getting started with Assay\" (\"Thanks, this helped me set up my first project!\"). Her other pending comment is on a different post, so I'll leave it alone. Approving the matching one.",
+      "toolCalls": [
+        {
+          "id": "toolu_01FxYT4cz7R7CzrRqYkuGT2s",
+          "name": "click",
+          "input": {
+            "ref": "e345"
+          }
+        },
+        {
+          "id": "toolu_01JjxPdB51rLRomiiqUKU2PJ",
+          "name": "wait",
+          "input": {
+            "seconds": 2
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "reasoning",
+              "text": "",
+              "providerOptions": {
+                "anthropic": {
+                  "signature": "CAQSkwgKEAgTGAI4AUIIdGhpbmtpbmcSDJkq++109nZdVGWVjxoMvoO2+25HIBy8f2v1IjD8yqenG2f6hVI26CToqanXy5m8GlTmtdatjMCfN4o19rNfIyQKG/p86f/tw64x5yIqsAdlSz8WbyuazUmkjQ6Uol4uYENBv1zUjga8LXnXVxi6YI20WB3fHFljbpdf6swLaQKWAQFyEZ8yO1NNsrouDWB4+u2GI9LvRcq0/grtBkijLWAuTN7engPgQuNftHIUIOM+rt6XKfDOP0b3pv5gNXf5/PwAHDoO6GJe2UnTiAFFwOt+hPB8VZH+p4mUGXiG7RCKRTy77DkoNKuK8MH0n+3MQLutXe4Lrw98GuHpk20GwUYCRawhZegvryMhmFAVxE5jEP2TrVD57486gNYjA9z7FUoLcVwvL0AHnlNKbKtX9cmV0QlD8A+6NRXryhAP8Lx1hflbeo0ia/AAzmOhU7Q4yrjD3UYi/HMWVUEc4PQbxKmzWqNOr4GyPkS2RXE+WIFGNog625ctYFWZwM2bfiqH3j+rdwOByf4dkzVupiDxsJ3w414x3MDjl1hRimy/yVLJemlmI3ZgwYnUdP9eypP95c48R63soAaWwx7+fBQ5o/UhB2QmcYzj6lKuustOCM5hxW+2dIb1GjOORKjsYnle1jDn92e9KbRdHicllrv3fR/K67Lm6nC4Og+DX7dGvY/Afmepzt4khaNQYczGbuLlFNtT5KoWrYibzuJKfVzDFtLHJZSE4GXqFlEfyA3BRcJ3PTS1bAY5w2V/o1mtSZCtZoxC3JvC5RB78DOhATn6tCKXi9VJkGBJd3iyoIdNE+Iz9wJo76YbQpMRiHNKkeuVFGelSU4aG+uiAEySWnY2btbeZVPfJpBqoH+PJHGdSiwFjWdhLylg38jX7sOHBksSmoDIt7C1hYnUt5zQOxaEGSOTiXgVjPTwVzj40gvM+EdPI5aTHEY8iYgyz/VqXqu2K00CzAYv+6x2hDCMsnsvNGY5Lbr/vZA/h2DwNoTH+peDDsTNXVKjNKW6SCnR+tK46YnsnAc4JMZlBg2fTzrCKqxo687TQ6FT4bg22R0ofGzEhgBHKY6pGgYnHT/b2O934Qw9MWd+zebiPwy3ioS4VoY8XPo3J2/0oowtKquiJo4SlyjFyRBffRR6BeA1Bt51+hV0kLIewLeMABrCZT+CB6Hr1Bkk/W67/oPCSxum7lr38/j+m1crpcVzz5kMKvKcTrJhLQ51xdOFkomIUIUihrikp1l6PGSZkM17/ANRkhpuAHiJp0RqYm2Z+jJ0DgaoDH5kpPyXIcoiEDWW3Yh5n69LHgahGCgPp9ZIw66ETUX9NxX/FTBeRZ7pJCWtu9uCQ78++RgZs/zf9eJDDnSwRBgB"
+                }
+              }
+            },
+            {
+              "type": "text",
+              "text": "Dana has one pending comment on \"Getting started with Assay\" (\"Thanks, this helped me set up my first project!\"). Her other pending comment is on a different post, so I'll leave it alone. Approving the matching one."
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01FxYT4cz7R7CzrRqYkuGT2s",
+              "toolName": "click",
+              "input": {
+                "ref": "e345"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01JjxPdB51rLRomiiqUKU2PJ",
+              "toolName": "wait",
+              "input": {
+                "seconds": 2
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 18268,
+        "outputTokens": 312,
+        "cacheReadTokens": 7259,
+        "cacheWriteTokens": 11007
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:918b4d9b73cd1486f75d12f3dbf2300e7304a310ced50e22e145e5b911ee9ff9": {
+      "stop": "tool_use",
+      "text": "My last click used a guessed ref, and the snapshot was truncated before I'd seen the full list, so I need to read the rest of the pending comments before acting.",
+      "toolCalls": [
+        {
+          "id": "toolu_01GhcgqnE4nnGgGP1vVTznNm",
+          "name": "show_part",
+          "input": {
+            "part": 2
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "reasoning",
+              "text": "",
+              "providerOptions": {
+                "anthropic": {
+                  "signature": "CAQS0QYKEAgTGAI4AUIIdGhpbmtpbmcSDK+kbWMvrO2uW9X1DxoMLYqcmhQZ/h/X5aZoIjBjJiWAsQMX0Vhea28AyVCu09cssQxCKeQWVVMZ2ocMgXz6zDEhCEbqs3qbWzfX14kq7gVohFtWwb3dBlFsPFJdtc52GzSDaQ/LHatFxE+DU+0Abqo6PJV/D8lYxV47InaNe7EzerFoSTsfPkACgCheoTh3crmYT9i2VE8/BHwDBzda/1UG28vExSZg57iovdtHoBgQPSbYbTPHeLjiISngZ+DebyW0IEzL8uwE89piicN5cB+co0YhKVcwMpK0TqmAkA/uO8hKjqSiqP78/pZXPWjnG2bOPAxBcECp8jtvbj71E7g1722dc2tH1AOaFGFaOolyHncm0wM1qUHb2nsOqfWBau/uOgxZqpouxAHLGCoQtCRka5HXR6Iqyuu88aSZO3Tflbluga9RaaOUOBB02jGeeBBUDGGdsJ+TqpZvGfccFCojM6vgO5z9gc5eL5RvzrN2fOWht6RStikgMiG9tT6cKjTg0yAtHfqZJbGwFlS2Z2mrRQHWEzkAI2QJBfCXdtqUioYF5k77osTEaXmH20dDq35zSSxEZiyOtaHxVZGi8vOUx/3sQxhZxbSNArJm/PRpT5Yt24b8oPTYU40QJJ3eIU/p+10y/s/TfGOibNZy7J8YvCzeyAPfp2+/0ANUema7t867/YS//V3VYK3fqeDu1NDCV+WDrpzPqx2tHHCHA1L7rxOJrCpWZ8gAoF0MxrgenX0DfzjZV+lfgC68NS4/K3QokTemDsRrp34lRSv/V1ZesUcfmv/g0DszeTr2SoXHhcnFEQ+QEAMlAc9++U/sGxw2FgF69yaDn5NcQuR0MMFXJk9N9Sqcag5uflsf4cENGyVrCj0yYpj7DcwYGR1VG/wqjX4FeNSeZsoqKdlg79y2MitkBMizG54Rkq1Ki6WnWDMUYjG/h2jKeSdnHhND0z31xbWW6oqvGS8hsnps7mRpsgBm3bg9OhdUKsw4yQUTqXZzQ2ayCtxTS5mbruk5AooUz3gyKrie83kDP4gxbdzCGZNDAsUjNKffAqyHrr7BdI8XE56DDmszj3tgwwu5S8yVZAzP9IF8C9Zi/FMYAQ=="
+                }
+              }
+            },
+            {
+              "type": "text",
+              "text": "My last click used a guessed ref, and the snapshot was truncated before I'd seen the full list, so I need to read the rest of the pending comments before acting."
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01GhcgqnE4nnGgGP1vVTznNm",
+              "toolName": "show_part",
+              "input": {
+                "part": 2
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 19905,
+        "outputTokens": 139,
+        "cacheReadTokens": 7259,
+        "cacheWriteTokens": 12644
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:37541035cbd7528862e5ac4e03152078882582987a8aa8bd6096fb97c7783cea": {
+      "stop": "tool_use",
+      "text": "Dana's pending comment on \"Getting started with Assay\" has ref f1e345 on the Approve button. Clicking it now.",
+      "toolCalls": [
+        {
+          "id": "toolu_014HDiFsKVdtrSSvE9q9oe7Z",
+          "name": "click",
+          "input": {
+            "ref": "f1e345"
+          }
+        },
+        {
+          "id": "toolu_01S4xAS5pe2f5gRmcZGJxyX6",
+          "name": "wait",
+          "input": {
+            "seconds": 2
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "Dana's pending comment on \"Getting started with Assay\" has ref f1e345 on the Approve button. Clicking it now."
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_014HDiFsKVdtrSSvE9q9oe7Z",
+              "toolName": "click",
+              "input": {
+                "ref": "f1e345"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01S4xAS5pe2f5gRmcZGJxyX6",
+              "toolName": "wait",
+              "input": {
+                "seconds": 2
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 13071,
+        "outputTokens": 136,
+        "cacheReadTokens": 7259,
+        "cacheWriteTokens": 5810
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:f044fb98e6e7415b0fedae4f79491cc5d254b848566025ef9f8331c0c753a295": {
+      "stop": "tool_use",
+      "text": "I still haven't seen which post each Dana comment is on, so I'll read part 2 of the list before approving anything.",
+      "toolCalls": [
+        {
+          "id": "toolu_01StCrKRxwgKCkiHSh86gsYo",
+          "name": "show_part",
+          "input": {
+            "part": 2
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "reasoning",
+              "text": "",
+              "providerOptions": {
+                "anthropic": {
+                  "signature": "CAQS4AgKEAgTGAI4AUIIdGhpbmtpbmcSDOxQ2+8lRCQzyX+B0RoM6wNfzNmh/4jax/BEIjDaNEXn4Qr7tt4A6keKdShNNfzcmSfkF5+4IqvRSy7/Hz1itAtr+CnLXujFSvc/Lroq/Qf/1fvxp6LLHpEJgE5sKi2rspca1TaldQciHRRZv3RTb5P3XV4QVTbicf4dZamtZ0F8QdUvy68lismhjknHHp867ATXrZJR3IT2yMDpIAhwP43V3PQyuo83QHsIXRThDSx99FsZZuVT7EnuEIIgBocGNN8OYJt+9hTxj6PNe4IqUxnQjjIro4gugajFfGxexrCRlHhiy7y0J7WBQkohJw642wY+OKopq4bu43NFauPMq6E42ycZvDSKucx20N3/y6/3JEr1ML8+L+zQujpxXHKmdG86gUUTKZ64pQPbu452rMSMpQ8hTviYjzhxFJEenD7lgT4SDoEIfqAfHWazJhRKLLczKssSWYqirDDWivpg+mk4f18noNE6T5xhWpRDdXn/irVw1nPBTC6zlBxFjqF8zB3JYoKc18SGQKmseskPDtXVyD3i3Y5qdN5U1UsH9yxu+LJ9bgVOQtetKTn+p/DxuyIvDQEFtgVgVRQNRdtUH+RoglDkb21kxkGYLPcUAQ6aPjWyTn0b68MUHbBuEsq6J9sfHxmmbgn/7qdfVhe4TotN6MAzsdrYd0jupzeLtMVBBGWw8EvrtBMV+8ep8tXxFrAfZDExAo7TPWYvys4NtNTgopUTjSuIQ4jquXRsd9Dp+x8OBrgWqtFmtqAXr8g8cV7mDOoyVKU940d2b2vV5S98BLdYWnVhEo1tPeAECWSYuZzIPMWu356tUpiX6t+h3vICtGJR9lpafcMWDl9ZJ9AQgKzGTdS+MVq67NdPLTlXSykzf9A8nmFNC17NylcXZ3AWeTlvKKNBS25O9stgZP4Lq4cWpKHlJLZGTn+gopI+YgZ88Lr23jJweUQaj+3w63/e+BF4TLlu72xPoDTTYwZctVkTy0cw60crh2A2NmFKegVnmwG8msq1CYcbS0mtl4tfdpjxdKl4uGx7SERaIyHvY4uQkDVP2MwrWaEYke+5WLvo0EkFUDlLtZpf6dGthuTsrC3oH1kMOKiYsCjo9iDycyYoqOBDE5PoDYN5K4g3KpiYmMehcpNYMz2Mdp38039yUwEydzHmI1AS3xKiPe87X0NJ2sBao1lSvL55ve6iJvnFDzGz8HdKKg9Ntw3KkggaO+gJEB600P8ad1B10exmAzNtGkBkUUYsMBf6IQ5gX6O6yMr/U07fKPsrnuKXKg4eB5egK88GsH4HJ0M0TzxclpGILFrIrSVreSybbB5VMt3aZrCp5lsSycFe8V376KVKYCp7OQzwXf03Cho2IqLI//drW+HriAF9WBUkrFs/Cv+z0P03SgT3KAWIAY+HtxygkgwevC+BhckmhxXUnfD73Z5lz1iubQDN6ASTHHWgOIl/biIBPDojfqayGAE="
+                }
+              }
+            },
+            {
+              "type": "text",
+              "text": "I still haven't seen which post each Dana comment is on, so I'll read part 2 of the list before approving anything."
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01StCrKRxwgKCkiHSh86gsYo",
+              "toolName": "show_part",
+              "input": {
+                "part": 2
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 20445,
+        "outputTokens": 211,
+        "cacheReadTokens": 7259,
+        "cacheWriteTokens": 13184
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:63887f2f0693bbb5bda1767d935f7659bf93f1799297e1c3347a96c0deb6b80e": {
+      "stop": "tool_use",
+      "text": "The Dana comment on \"Getting started with Assay\" is ref f1e345 (Approve). Clicking it.",
+      "toolCalls": [
+        {
+          "id": "toolu_01B7YFYZKqitHL2y3wWT8eGM",
+          "name": "click",
+          "input": {
+            "ref": "f1e345"
+          }
+        },
+        {
+          "id": "toolu_01STh42JkCRcKpnUQixBjrpQ",
+          "name": "wait",
+          "input": {
+            "seconds": 2
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "The Dana comment on \"Getting started with Assay\" is ref f1e345 (Approve). Clicking it."
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01B7YFYZKqitHL2y3wWT8eGM",
+              "toolName": "click",
+              "input": {
+                "ref": "f1e345"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01STh42JkCRcKpnUQixBjrpQ",
+              "toolName": "wait",
+              "input": {
+                "seconds": 2
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 13683,
+        "outputTokens": 131,
+        "cacheReadTokens": 7259,
+        "cacheWriteTokens": 6422
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:c0ae538615784fb4fd62652f12b969b4f0ccf58d28bb6904926c6fa9978efdc7": {
+      "stop": "tool_use",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "toolu_01MEMzvKVfTQektEeDhfWLUq",
+          "name": "show_part",
+          "input": {
+            "part": 2
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "reasoning",
+              "text": "",
+              "providerOptions": {
+                "anthropic": {
+                  "signature": "CAQSnwkKEAgTGAI4AUIIdGhpbmtpbmcSDEUslCfj69jINIt5xBoMjC0KYVLisN6WMScXIjDDLDEH+Qo79Xf0Mbau8sx+LD3cVRbynQZIKyT/xp9GiL6zzyj18ghIvthmxv7qjF8qvAjoAGYY7Um9CChAJcHP/r8XyMursoBWwfIkxgmLrqa3kSSAnqTil4P8zvHDbubtsqfDdKFPuTGTYW6j30UjTw2BcMTMYlrPhd56xF4n96DqjnIlozJYSdvbTwjDLZFOElKssb4/tTlEsRwaQWjE/0fzLy3ejKDgTsvwnZR9xmRBLJZh8GwgWjOW/Jjq8jC/J1KgVaWt+9daSC4r0Z8WHApTmY/xe5kvZDltBdiTM1IMa1211hShcSmNdfWLTH2SjChosHmYAuAsU6pJwPmCFUOqOz0cUG6hPf5lDuMmL0Wsp+CjiwbGlyZqoPb+xQu3W73EEYJodiEnCRTFO9mAW5IndhqVJNeoPb97e6Yohodxh98cZF45/eYFCKqFgYWdydr1gGVrYMBCWAYbw9i4TaDb2FCj8hASzl1kAjitIMibGxjpVr6N1QFS6eTV945X279nvpCC5uYX4rrbRAYWD0SCFA3dnlgMn5vU5FdSc9qe0FWW36rEPP8VNxvgIhwK51TFcr0rTaPTymw4RE8LRGk0WXxGfpsuRkgjaj18QLN4s/eNpi7LbEAaNDdMkAapQxplwj+G/HpU4eFjS57GMoNEhUnBFk2sA04z8aUCV21JhhjawYdhPRU6+doHw+cn6K5pGZhNp7Amu3Iqpcy9SI5ZRusIR+oPdzLDScyy8c5Bjy8XN/6TRbm3nuZWwQwQy4tyrUMBFFt4IGuENVCtcqbRl0/6y6KjosY390o30WZSpwbxGIOZ2dwSAJ6M9MBcdjB/VhvTXJqqMIW6gX31tQb3o2KDZpmJO2Y4xH9B5+8S517OpS/xIK/o9xI5KBJ1kofDwGMCobEZXCb/7hNRZYAymqgT9d9AMTivamsBpa/wKNW0kdNkp/cGrakM/WxmHvubauTbYgH1m1W4Sg/TXXFVxOlBzfTVr8GvCcuBOdvATYPy/LZpBLndjT4OtLtdfDb9fZ/7Q5ThIUzHO+1/WxR4aPO+5VsXdkjKMZCQStKvIowQr/YZL/HBTJ1S2/tjM5wEEYQIj1qqbZgXnZXDmgpIRC5t6hTOH8c86/gP9wtJGJoobqBYxwen5oUe6lK0d8u4MnDHld7jDjx/AM8r/pMu7DqnNLTZM63RWkO+6mN0inpnbSrJDM2jCROu6LYz/6fnsDlTpmxbqPCXQC6SijLTmkswLZ9i/HsogP79q0d9cuuTkJQE8WM/S160BpggZVIAxowa6c2rWArOEHFxe8KtWm2o1YyC0WhfcYco/nf5BIx4kL4rD3dcbXpYYEo0q8mJufEIYj4lnB/GfcNOWDTm3VVmQRkPGJjddxLUkPg8khGFmGoVtdZyRIh2DRxoAplor9yVngmEYMkcATVOIYOlTFteMv0XHcBYVAum8w+mb3I15lq9+xaXaMcjLqsKCUyJ2V5SmSK2EbysyJyrbCNuvzNOstVT4c9YEe/yGAE="
+                }
+              }
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01MEMzvKVfTQektEeDhfWLUq",
+              "toolName": "show_part",
+              "input": {
+                "part": 2
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 21052,
+        "outputTokens": 183,
+        "cacheReadTokens": 7259,
+        "cacheWriteTokens": 13791
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:3d6a80a11414f287225de32fc1f07aa6990f0329c5da8cbdf3232cfaf3e23c19": {
+      "stop": "tool_use",
+      "text": "Dana's comment on \"Getting started with Assay\" is confirmed. Clicking the ref has failed three times, so I'll open the moderation list filtered to that post and approve it there.",
+      "toolCalls": [
+        {
+          "id": "toolu_01WtKEhtSY7WGYenMrUKFahz",
+          "name": "goto",
+          "input": {
+            "url": "http://localhost:4320/wp-admin/edit-comments.php?p=4&comment_status=moderated"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "reasoning",
+              "text": "",
+              "providerOptions": {
+                "anthropic": {
+                  "signature": "CAQSpQsKEAgTGAI4AUIIdGhpbmtpbmcSDGFnS5FoPtxIhpAItRoM0lSqt1FKxYmM7XMtIjBqNED5i/nKM0Of9J1vto4C4ai2JyTYEz2mH6SsOGaKtgGRDAH9c608SaVHqr5N3Ysqwgqpv5OHFB/aESaRd7LoJH+CrhhMUMLQRePuxqgnx1l8tp7q/1Lf35g+UmBkI1amaYcd7ffiQnbp825kI5wADhl9lGcOMXGK2P6M4Yp5yO4RCNnn24oY71dpWzvNZDZ2iovpKrbFJ4brZu7xZ14ImO1+OzwIw/0CTPLeuoiSh4SaYMVsQr3OjjhMvmxfNL4ELeD3o9sSoDwEvHkrn/hVrSkD59uCL7rAgCanW3aEVtMzbDUPkucHHF3es0gILaYYWhduTirQ21ZRD0PMfaqhv1ATzTNEdJep76XHodt+NZkVd28yPcjZAhxT0fPiHvBqp5pMMl3NqosWksLoBcpv9adhEPgnGYGV5vyl5Vj8sXp3Ho2GDDpVK6H1yCGau98yaxyOdGqXBcy1caJ8tPsrKONg73mK4ZOU8NZuBIqlv076GAaDJ3g8pJtJNDKCWcdRGjhAjeoD6ur/d+OszaP0jN7QZmUijK6pSbC1cG0uKhdfVPgdjPRKiK/8v1owbP6zM1S03jzVG5RQ/m/iFaVUYBgtglAjQ6b6zZlhrzhbCi4ptwLT8NFEdIC4P8a54JQgFPc8Kmv20Qy+DKX3ePQk4C+kNJbKq2nC72Ryai+bZJkfrt+0WYG6lTecOvu1vVxX+zTeMmtXQKLMLPmCSohNm4VRvNNsaSMvjFhFYClvqyBoey3VPqiAgD1N4xvVKeMv6h/SrZKEbuZ2qF1wJ95+XvdDvRdDyTetJx4rJqV5Pv47+8idMJWVxdXeNgbWpf76rzYSaEvmgSj/67Gpa61WigwaoXKUqI9A2XBrr4Fo/3glA9S1rmwGVC8hOMvegveP/d/brdtHQUwhyNnSvbnU8dWPITBZzfArXDjEuCMfxtOrdjixhhcHkIWZaPYVDlpRn/HDrnPv6qXzVzyUQfYubW48Bq2X/DIjfTU5gbNmyVLuFqqNc/z9X3/gr2HuTyO9YzvtYR8DRJ9FG7dWuAGhtYcR24f+Irrm/UHHZXPO/EdGobeJFb6NfzAp9s2wX6lw2QPo/EpJxOnLZqcR1HZgWq375Uaas2LpTmB+Fd6F1qCLkWveUf0IHlEsJoq22SRgTWnwntWbJ0EIkWnHL3DJ0+6BI75CPw855WLvy3dItP46TYfPGh+ML73McZytlZ2/8rsXz3WQaTtnZDgMHyq1eNrVWf++6H0GDelKbpymJoVOHdATenhc8ISBQsX2EVGPt2cYhdidQRKbrMjbdWhunwdixQAYqcFrrj3DBbTRovttWWAV9a2H4Iy9n8qzfOdANq+TTkmAMuBz4Wn04MGKH+Yncx8wkCb3SnMqARyZ4L/paSmZH/fMUCDtd72bbaEKBru7Vs554AmPV/yCIB8VNcjcw0xAHhKzpKP6rZeeM9KVaUHsKrp3JcXNxkrTYXJzZCGztyjEkmkVWbWRMIZykZKu2Ioxj6wYEcwJwVkidSk+UpyjGx3PNYL6nxwtSKljWzd7yhiHBUceF+57isadi1JBSP3QzAWEctCHQ4kd8WRIowaRL3JV3hqmL67kA7+wp5qr4Ko7CYObhKiBbEOCZP64pAwnlVmSiEn3ywsIYjwi7j15txr2LM+c6+RYy9sftmDVylGuoCV7p2XYHDwqwdhGFSRTCRe4rvTWAfvTFZNA5YV06xEHgTmpD+7HfQSW2XmECr1DnMQZIs0counhamtxjWjovFPJGJZbfPVThYXcIkBEIO0ZfTkleDaNy8bkPhWkcwzUhDXa8ZARrQRTAl7LbRjMK4PHF5PcvY1u5zYRzogLz+GD0Mod/FBcncj8FJwp3xgB"
+                }
+              }
+            },
+            {
+              "type": "text",
+              "text": "Dana's comment on \"Getting started with Assay\" is confirmed. Clicking the ref has failed three times, so I'll open the moderation list filtered to that post and approve it there."
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01WtKEhtSY7WGYenMrUKFahz",
+              "toolName": "goto",
+              "input": {
+                "url": "http://localhost:4320/wp-admin/edit-comments.php?p=4&comment_status=moderated"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 14262,
+        "outputTokens": 380,
+        "cacheReadTokens": 7259,
+        "cacheWriteTokens": 7001
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:1741fbf7ef88272e958b17b40f3810f7b5870c917f16dcefdde658449222f304": {
+      "stop": "tool_use",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "toolu_01P3yVetWqtxPMA4X93avM6k",
+          "name": "show_part",
+          "input": {
+            "part": 2
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01P3yVetWqtxPMA4X93avM6k",
+              "toolName": "show_part",
+              "input": {
+                "part": 2
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 15867,
+        "outputTokens": 47,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 15865
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:835a8b86dd31c25ff9f6914a8c9f74716e2fb710c4240859eaebda9c0f93c6d4": {
+      "stop": "tool_use",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "toolu_0194Wd3CRSwJsADHRhSfh1aX",
+          "name": "click",
+          "input": {
+            "ref": "f2e262"
+          }
+        },
+        {
+          "id": "toolu_01FhTBruFTqLaSku7HeyMt5i",
+          "name": "wait",
+          "input": {
+            "seconds": 2
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_0194Wd3CRSwJsADHRhSfh1aX",
+              "toolName": "click",
+              "input": {
+                "ref": "f2e262"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01FhTBruFTqLaSku7HeyMt5i",
+              "toolName": "wait",
+              "input": {
+                "seconds": 2
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 11891,
+        "outputTokens": 94,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 11889
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:fcb8f1844b656feb9941de5c45ac1238642acf368c2e28f29702ace22549a6b7": {
+      "stop": "tool_use",
+      "text": "This filtered list has two pending comments on the post, and the first is a spam comment from \"Cheap Watches\". Dana's should be in part 2.",
+      "toolCalls": [
+        {
+          "id": "toolu_01J4ZtPbKJu4UVeyTGKPiqJa",
+          "name": "show_part",
+          "input": {
+            "part": 2
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "reasoning",
+              "text": "",
+              "providerOptions": {
+                "anthropic": {
+                  "signature": "CAQSzwcKEAgTGAI4AUIIdGhpbmtpbmcSDCFltogCBIggvq/wGRoMGOY4vMRjyi83meTXIjA3shZ7eN5bxEI8gF/JoienjMH/eYam2WDiJ3NlMQuWpRJAcJJ0AqO+4cYrbDdPzOAq7AY0mZCDXhi0DinexKVdB6UhFLaUiZvbnac/qf/Y19CyiYdnshsKdqqiW01ppAAkWt3dHq/keWj7csUbKEiPZHySnEq6vMEHx6omyBVmiZMd+ASBtV3btU9JLLOH2/iVIFyov3Ojafph3UWCFgZVosOeT5UNsF7vnxiwjBkpKtJSpPVwR5lOmkDDRfwMg5ch2bpgUlhmy9DEU4+cktiNkqnirkTrqM+DglRF5gljr9IC4IotwQlX1GDK7ELI0Etec0bwfyxA6zvZAlCL9JSMwIwomMzwRIRfTlw9u+KaC+zrIFOvSNzc+OdNGVVtp7BmjQrZdMzetNGfD4DeA+QPyu7UDz06yZuH4SJBp4sp7Ew0pXj6Iq5LmozKM4twoJIB8lfjU6mCTvp7oySCnp+tkrJhXbSZSmRmz33cTLemacMEXWSOXtJIOXtjtz9v4g5e88MA9LjPd6zLennJ/zhB+r3q8CFKPFMbCmAUbOGsnw843SLHx+TeWakxCkbkFe5j2XmFzBcalr+tyLEWkqjkKxj2W2HDVcASXGehAllRETk9Pt6v9VxLO1OQGnyn1+CSYrQNE+JAj5ise4E0THDEJomTQJqMuviLV/I1DhaNz6H+sm1Rh7JruDJeygkBNnohqy/LDYRBh3Cp2BkyJGLRe8hrSi1MmigDJsRwQ7ko6uXRpLlf5ICzU5rUogVFAgZ+vAJ5jVpKLdsRLQxBGQQDnABHqxLwITwg3pkGz1L2hK9SYyeCy63z1dBqTcMs4j289IcL1/Clz6SqJ+e9oyTKEhFxdDJteTZGg9VFh0xCvRh2X+hwdpq3+lonZEwmG2cHxn1Akjcvi1smk+5g4l8ndEUMOdin/tlo+MgXLvULnH1sjTBZAbU8AHaCoDhzSwtJVOU3KG1hmjIzU916Rlfr1A+kwexTFmMESfCMZbOpcFyfmi3WYHR7fSQNLfWq+mbwb875jRNzFWkJhqbqILMJrxUr1o+WIOPyYefOy6FkFnsCs0351zjpLhozOOUQXqfXEdUWsX+FoNQrkKxaUQbLN9781e3D6LS9cwuzWBQXBtUHMvw1gNfdqnU8alR/QYddYV1R6UvYDWVjv1ETQWVm/XnJbCvRSeloEEEbJIfcrAGBuYfcOqSLHwgJIufuGCY853R01UWwemcoLekNxrIYAQ=="
+                }
+              }
+            },
+            {
+              "type": "text",
+              "text": "This filtered list has two pending comments on the post, and the first is a spam comment from \"Cheap Watches\". Dana's should be in part 2."
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01J4ZtPbKJu4UVeyTGKPiqJa",
+              "toolName": "show_part",
+              "input": {
+                "part": 2
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 22247,
+        "outputTokens": 154,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 22245
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:6e5811f6b97e25c361be1ff7d873597f471a9e925b277644d65be21974c453e7": {
+      "stop": "tool_use",
+      "text": "Dana's comment is in this part, with its Approve button at ref f2e262. Clicking that.",
+      "toolCalls": [
+        {
+          "id": "toolu_01FfgVw4snkaqeNFn1AQuCQm",
+          "name": "click",
+          "input": {
+            "ref": "f2e262"
+          }
+        },
+        {
+          "id": "toolu_01HN86fz2Zt6qTq4b5o1dtkg",
+          "name": "wait",
+          "input": {
+            "seconds": 2
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "Dana's comment is in this part, with its Approve button at ref f2e262. Clicking that."
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01FfgVw4snkaqeNFn1AQuCQm",
+              "toolName": "click",
+              "input": {
+                "ref": "f2e262"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01HN86fz2Zt6qTq4b5o1dtkg",
+              "toolName": "wait",
+              "input": {
+                "seconds": 2
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 12438,
+        "outputTokens": 126,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 12436
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:6912044737845e539dc6dcf270b782eae50a5db519d5ec2ddbe7686ac8cfda8b": {
+      "stop": "tool_use",
+      "text": "The list is still on the first row (a spam comment from \"Cheap Watches\"). Dana's row should be in part 2 of this snapshot.",
+      "toolCalls": [
+        {
+          "id": "toolu_01YYDScnDZyzYFvEZnvyZVNq",
+          "name": "show_part",
+          "input": {
+            "part": 2
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "reasoning",
+              "text": "",
+              "providerOptions": {
+                "anthropic": {
+                  "signature": "CAQS5AcKEAgTGAI4AUIIdGhpbmtpbmcSDJQfYC1qunEX6zhqIBoMyyKtPjJvdjvAVORwIjCEimOW47nTsd2Y3PoUJyys5yfN53X94EEevHlebweiRhNaoxchPZINYLTNCULdRKYqgQd9EojVV7wZgErippJuMXv9S8oycAkZVVXsh5qKs9iOVJt4fDAAurMPdMN8Fh4O4P+i/oCp/DNCOrbI+ChH4PMD53fXfgZat1DBRFZOBZrlOWtV2w/bOT+zpCIXMdCeM67MDGxDaGhRmYDjXwCDJXgyTg7Z4MV3DojbUmusN0908okEZcMnUjYaNKjDaKQKsWbjODH6CD26JbvcdouyjQ+X1xoBuSS7VatLKN6PwCjVdOLNEjcx/Se2jdkGCZuVoLPEe1gScnk1gLv3BEsrz78elPtqrP7OZZ5Ic9xj9afKOKyYQV9Is7IiegM4mY6lqXsvq6RVcECUe1OThlFaHtJxy2+PZXtgyXQcEgclorZoHGM77jkvZKmRDJUaHEqsHv9bZFTKwRxYNYA+Qx8MImNNyRIvfV6VhSbNraUdfHfVL2PMGzxzaW2y0Oz0EJKOyME+AR/3ooC9jyU5PlFIqkzQQHDVQCJUCHDhSjjy+ZAQVubrYV69SU2+6zxuB4JFj+kyMHSS2ZXWMkFe4Gvc7d7ZhmPLjU6w9KYbLCa0tJrzIZg6tREGIBw9NfN6QXSHIj+F6JuIB3HpfBxng0DGqdrUdVjYC0kkC5QcO9eczoiXl7cjh9X3w0to4nUrEi2On0vRRZ+IzXWLIiT01B5gW5rYOaxqVWU6Tms5cLhqb+5MDxW5T5MZqbI6ITch/Gl41wKqQtUHs6RF0JUd9yxVHwjivPmbGz04MIwvh03+bLvyr5rujoSz4xUY7tG06I6eZaBtg04EGGbj0zinokFhxip6f4ZWki9AWCMkVg4jbTG70R7bDt3YNphOwFQDzwvZtIhIaCi9sNua3fp5Zi0PuLL3UJPCGaah3rWuAjf8Fs09ArXtS+QRyF6mjvnAFny5Yo9cxWklmDoTMegsxRep0s6Qn9TL/BosNgKDYAaH0EVuSW4/ZSeGsjU/uWb0Eoq0NicdVz5XCHuXA0VgOIvJi79tkIz8ryN2JPToJQcRLqWCxAiKl/Eg25yfl9vSJbiuZIC7AdFDXu2o+vcZnvVfT0KivYJTQkQt8bH68hKuTWocvjCHQWHwyE5L6AyAHs5TGAvhuyUjmzBUQ9en+hFuPRhO9fu9ffIQ/dphEqH/xrJTYQrqmgaBPkntCRZkIMwFkvNOZJeCgzG1At/kAx9HD3qVx7uu3TaUzyuccJKBTBPyE2IYAQ=="
+                }
+              }
+            },
+            {
+              "type": "text",
+              "text": "The list is still on the first row (a spam comment from \"Cheap Watches\"). Dana's row should be in part 2 of this snapshot."
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01YYDScnDZyzYFvEZnvyZVNq",
+              "toolName": "show_part",
+              "input": {
+                "part": 2
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 22826,
+        "outputTokens": 158,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 22824
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:1e01a4cf824cca82f6a2b11eb5943b5292cee25760339f468b630a1bf4d9cc33": {
+      "stop": "tool_use",
+      "text": "Dana's Approve button is ref f2e262, but clicking it keeps timing out. I'll use her comment's edit screen (c=3) instead, which has a status control.",
+      "toolCalls": [
+        {
+          "id": "toolu_01H5VyHGp2DVmk9rpUG3LmKi",
+          "name": "goto",
+          "input": {
+            "url": "http://localhost:4320/wp-admin/comment.php?action=editcomment&c=3"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "reasoning",
+              "text": "",
+              "providerOptions": {
+                "anthropic": {
+                  "signature": "CAQS9QgKEAgTGAI4AUIIdGhpbmtpbmcSDLfDRZ+VbcJMKbhmzRoMdJDxQXH1kzxx0PTyIjAJv0dXZtPmZMjg1hNd6lDXUNu5jMAfV9rpiXnbSIbjKrl2/gvCunDVvX65YLLelYcqkghqxDpPt9yuta5vrgEgEPVsMz1d8PjUDMneBn5vNG7VPJjh7Pu6HabnFNO5gltIu276YL+5cSaNbhmUOAcwQv3CVHp56iVxkoDXpn/uayczqn2ygNn03XFt50s4enUcc7rrNQw79vM9+NqSnUfB0u4sNFysUv8avNmyUUHRP1fVAUOA47nUpMZj1rAnSUJleMDzZa4XsWjjiuswa+bbg8hNM/bDwOTSaNKuWmUxukg6P9k9hDkA+656FP6w8rd/Agzd8RpFAS9TQdt9Ed+HdJdHdkvwyAbpqxa5qZLHHo3xVQOU21tsmG9u5Qcydur9h1DqligmrSMq7e1sQ0V8gFsmiNbdWjGEymksf8JwNHqf1sii82k5CIgXXkbj3OnLnr3zjzAaawI7i/qbXXJNZ07GkpfYmcPZpR7p8jRoalg6CYBsn2rPfensXvDPvkLw7yR7e49TLxV/jIqxETFMqhkgURDQ+Yap2k2+F52IzahA2t7IX0prm/vRSC5oXru9EucWo4oFTDrpJAVTnJQNXRg5tFFPcgJzrHde4l50hXDZh3q8rc+oAlM2M67CE2vFbEuCRipoqp462QFKCaxNGa9NZJyeq0haRMX14AfEVcZt2zvU4fbnO1kYA79pbWbksqgPTJQw9LRKFHDYA3Bzu9dKFiaYDFMvwiFaZL2vyLt96lMsghhhtLjJDzB+3Yxb8L8DfXGxM09aGAWkMKJdPMBkzm0wL4qBWKys11H1mKQ52JOAXqAX0WzVjAIdA332DFRV5hK9epFpmECQycOruGDrbNUnc/2yOvVF2nL/HfI/4oKLipT3hG8gZgfe8eIx5WnodGKDDnJIQponkWtaHH+4bDa5jsRcGvipWdFBzTdPVMZ0Dd0APB0FgFkpszNVFuDcyEqDWg7ukjb4hjtqgl+Eh9+V16zysGIe98sqLKevP4pKQXTLNOE7ewmmRoA7D+cPgtpoRKiwk3LUJNpjGXmphbmnoplQSRKGYzf4h1ovwqM8xY5gFAFV8pdemszrp80FWTTK9l1SalQK75dZymHnlmhOZIun8cHyzvzCgVAXbZeDioBppGumNCyEZm12nsPJu03sQ/qu7gIZ+Zx1KI4rPKWN4IEHDILrZMQQ2irmuNl409AolYgejR0ERcvnkjZzluIxvCfYWAu5PqXPyldDeGbqQcO0/nheBzKuknOyqDV4PmaDqgaHwmdG9+mZicGYY5zFxoczp1kr9mlFztYa7tS65rz8PH+N03d19uPw+oM2fO2UZEcrZy5BiNuuMubHt84+dZMDzjBTZLkrT1/35d/zF8VlGl0tZRVZOR5sTB9ftOGCh1+drtpHNnbSixHv7+jvzKpiFPcmP6dkMKo/oYzKnI/4Zd9iMPUWH16V726tGAE="
+                }
+              }
+            },
+            {
+              "type": "text",
+              "text": "Dana's Approve button is ref f2e262, but clicking it keeps timing out. I'll use her comment's edit screen (c=3) instead, which has a status control."
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01H5VyHGp2DVmk9rpUG3LmKi",
+              "toolName": "goto",
+              "input": {
+                "url": "http://localhost:4320/wp-admin/comment.php?action=editcomment&c=3"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 13021,
+        "outputTokens": 252,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 13019
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:21d2a459af169b8a25a022914c9c1f19c61a593290006b1a39748b87ec12f416": {
+      "stop": "tool_use",
+      "text": "This edit screen confirms comment 3 is Dana's, pending, on \"Getting started with Assay\". I'll set it to Approved and click Update.",
+      "toolCalls": [
+        {
+          "id": "toolu_01YBgPVuJqXUFYeus54b4UWG",
+          "name": "click",
+          "input": {
+            "ref": "f3e198"
+          }
+        },
+        {
+          "id": "toolu_0146qLjSJ6JHpYJ9kaessiUn",
+          "name": "click",
+          "input": {
+            "ref": "f3e214"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "This edit screen confirms comment 3 is Dana's, pending, on \"Getting started with Assay\". I'll set it to Approved and click Update."
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01YBgPVuJqXUFYeus54b4UWG",
+              "toolName": "click",
+              "input": {
+                "ref": "f3e198"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_0146qLjSJ6JHpYJ9kaessiUn",
+              "toolName": "click",
+              "input": {
+                "ref": "f3e214"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 16542,
+        "outputTokens": 143,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 16540
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:f953989ea02f5a2fe17593da9c89e70540f490947fcf1076a20397ab0b2b0589": {
+      "stop": "tool_use",
+      "text": "Dana's comment on \"Getting started with Assay\" is now approved. The post's comment list shows Pending (1), which is the spam comment from \"Cheap Watches\", and Approved (2).",
+      "toolCalls": [
+        {
+          "id": "toolu_01X7U6bhbtnJqstfBNURC4AX",
+          "name": "finish",
+          "input": {
+            "report": "Approved Dana's pending comment (\"Thanks, this helped me set up my first project!\") on \"Getting started with Assay\" by setting its status to Approved in the comment editor and clicking Update. I didn't touch her other pending comment on a different post, or the spam comment from \"Cheap Watches\"."
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "Dana's comment on \"Getting started with Assay\" is now approved. The post's comment list shows Pending (1), which is the spam comment from \"Cheap Watches\", and Approved (2)."
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01X7U6bhbtnJqstfBNURC4AX",
+              "toolName": "finish",
+              "input": {
+                "report": "Approved Dana's pending comment (\"Thanks, this helped me set up my first project!\") on \"Getting started with Assay\" by setting its status to Approved in the comment editor and clicking Update. I didn't touch her other pending comment on a different post, or the spam comment from \"Cheap Watches\"."
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 22822,
+        "outputTokens": 201,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 22820
+      },
+      "model": "claude-haiku-5-5"
+    }
+  }
+}

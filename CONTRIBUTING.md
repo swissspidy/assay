@@ -32,7 +32,9 @@ point from there.
   package test (`tests/pack/`). `tests/tasks.spec.ts` evaluates every Tiny Shop task live and on the
   serialized snapshot and asserts both give identical results.
 - `scripts/`: the model-backed and long-running jobs below.
-- `eval/`, `stability/`: committed results and cassettes.
+- `eval/`, `stability/`: committed results and cassettes. `eval/real/` holds the real-app evaluation
+  ([ADR 0009](docs/adr/0009-real-site-evaluation.md)): app drivers, tasks and oracles, the browser
+  agent, labelled runs and compiled check sets.
 
 ## Model-backed scripts
 
@@ -43,6 +45,9 @@ point from there.
 | `npm run eval`             | Compares checks, checks with escalation, an LLM judge and the agentic verifier (`eval/results/`). Add `-- --checks compiled` for the compiled sets (`eval/results/compiled/`). |
 | `npm run stability`        | Judges every run against five simulated releases of each app with checks written for the first (`stability/results/REPORT.md`).                                                |
 | `npm run references`       | Re-captures the labelled reference runs from the example apps.                                                                                                                 |
+| `npm run eval:real`        | The same comparison on the real-app runs (`eval/results/real/`). Replays from stored snapshots: no app or browser needed. In CI.                                               |
+| `npm run real:compile`     | Compiles the real-app tasks from their reference runs (`eval/real/compiled/`, `eval/results/real/COMPILE.md`).                                                                 |
+| `npm run real:collect`     | Starts a real app in Docker (`forge`, `cms` or `shop`) and records labelled runs; `-- shop --check-oracles` self-tests the oracles. Needs Docker; agent runs need the key.     |
 
 Model steps replay the committed cassettes, so these run without an API key. A missing cassette is
 recorded when `ANTHROPIC_API_KEY` is set. `ASSAY_MODEL_MODE=replay` never calls a model;

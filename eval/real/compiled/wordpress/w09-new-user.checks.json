@@ -1,0 +1,142 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "wordpress/w09-new-user",
+  "version": "1",
+  "task": {
+    "instruction": "Add a new user with the username jordan, the email jordan@example.com and the Author role."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "A new user with username jordan is created.",
+      "source": {
+        "field": "instruction",
+        "quote": "Add a new user with the username jordan"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The new user's email is jordan@example.com.",
+      "source": {
+        "field": "instruction",
+        "quote": "the email jordan@example.com"
+      }
+    },
+    {
+      "id": "R3",
+      "kind": "hard",
+      "text": "The new user has the Author role.",
+      "source": {
+        "field": "instruction",
+        "quote": "the Author role"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "r1-user-jordan-exists",
+      "requirement": "R1",
+      "description": "The backend users list contains a user with username jordan after the task.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "users"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "const": "jordan"
+                }
+              },
+              "required": [
+                "username"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r2-jordan-email",
+      "requirement": "R2",
+      "description": "The user jordan in the backend has the email jordan@example.com.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "users"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "const": "jordan"
+                },
+                "email": {
+                  "const": "jordan@example.com"
+                }
+              },
+              "required": [
+                "username",
+                "email"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r3-jordan-author-role",
+      "requirement": "R3",
+      "description": "The user jordan in the backend has the author role.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "users"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "const": "jordan"
+                },
+                "roles": {
+                  "type": "array",
+                  "contains": {
+                    "const": "author"
+                  }
+                }
+              },
+              "required": [
+                "username",
+                "roles"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:15:35.859Z"
+  }
+}

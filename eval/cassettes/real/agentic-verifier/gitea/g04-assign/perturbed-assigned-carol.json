@@ -1,0 +1,202 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:44:18.018Z",
+ "turns": {
+  "sha256:696f95f3b84a42576b134357f0f497e93b8dcad972d08a9e1f8df9993c8c0731": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01PXEjc4ujwZQrqyt8ktzrLZ",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01XamYR7Gy5yW7b2GwxxYX8N",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01PXEjc4ujwZQrqyt8ktzrLZ",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01XamYR7Gy5yW7b2GwxxYX8N",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1907,
+    "outputTokens": 70,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1903
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:2a91c3c45b396b52b11e1ede1382119d5636153c00dc20ff31f5f7580a5bd67f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015gcoQ4uSvnvgteugBo7DTu",
+     "name": "network_entry",
+     "input": {
+      "seq": 45
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_015gcoQ4uSvnvgteugBo7DTu",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 45
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4044,
+    "outputTokens": 49,
+    "cacheReadTokens": 1903,
+    "cacheWriteTokens": 2139
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:e971b220a9c8c7da0831a0c6e21bb564d3a2670202a0967ccf558f863309f1e0": {
+   "stop": "tool_use",
+   "text": "The agent did not complete the task: the \"Add CSV export\" issue is assigned to carol, not bob.",
+   "toolCalls": [
+    {
+     "id": "toolu_01XUvXBa2bQr4FQoD23FYnjw",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Assign the \"Add CSV export\" issue in acme/webapp to bob.",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "After the task, the issues probe shows issue #2 \"Add CSV export\" with assignees [\"carol\"]. Before the task its assignee list was empty. The only assignment request sent was user id 4 for issue 2, which ended up as carol. Bob is not assigned to this issue."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSuAUKEAgTGAI4AUIIdGhpbmtpbmcSDHbxGo+SB+DeMYNFrhoM1jHfh8qJVpsGtH5YIjB0nCCcVnRgsAqnvu13HJ85rYSQJdjoMghIZ28HZexIKVYBO5g6Zw99VNcWq1VouPIq1QToF6Pt94Bn5AS6GZZTacyqUha8VkIUg2wqfzMBMzzE3pjwMU3uIgivQJVashLaxWLyKYYwkIaJ7qw+yKLDV+94sInvpWBRB/3Le3slrZuod0mLb/sPFYDzKxI278+cUIpUOfh4ge4DN4fS3BQt+YmEEHSpPNGTy6haQnrDdHGbz5VKH3xCk6JTty3qFDYYVDCskYfS03wQjCeER5VrlUQPVEXeWy40IdTLOFMhBLCCDSf+wBXWs6HBwAdETKOqOCMP9esR52bsmpS2Q9Ld04jIe+lgpoJhpBbUMwbpJA6lCkZKqP5HxYjDaqYI/kwHep2YqnAbnCAWveY2n+YdAnFRYsyvhiHTb7VBQvE80v8XWrNxAjJqCu0+tlWfH/n4BT3KdfzwHc/0ikTME1mSOM6Nv4+RJcSCavpN5Rcu7mZzXENQh8gcd9LQ5WF7sVs9Q4vGUBt12LJgAnyhXpp1D3BDHITYi353xznf7UWA7XdUP6NJBUfzsbJ2vx9ZKoinZxzpKMZd7nbeihBRy11crE1soOOJLlvvxrXHeQCXHPlZPPToCVLPhD1B772AGza5vr0mdbr8/Du/KgYm3hZoq+9SU3QTFHqjSsskgosR7MaYzrsNBh/0A7C+WVya2IywLw+EsSc3nUlc/L359MRhyb2GMkgjZl5L0HhYpsHF+mQdPTBehMARKJ12fJ1aTQsjRxcuJXGo86RrXywV0y7f2ismp1l08csQRxxoiJYyU8THx0Fx3CuoQPHAhJCI8+zR0FI+eTQAra7KKQZoSsG5zxK3CrTKfU0YAQ=="
+    },
+    {
+     "type": "text",
+     "text": "The agent did not complete the task: the \"Add CSV export\" issue is assigned to carol, not bob."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01XUvXBa2bQr4FQoD23FYnjw",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Assign the \"Add CSV export\" issue in acme/webapp to bob.",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "After the task, the issues probe shows issue #2 \"Add CSV export\" with assignees [\"carol\"]. Before the task its assignee list was empty. The only assignment request sent was user id 4 for issue 2, which ended up as carol. Bob is not assigned to this issue."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4252,
+    "outputTokens": 261,
+    "cacheReadTokens": 4042,
+    "cacheWriteTokens": 208
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a55c17a671edbbd381e1868bb209be1f47bc1be88c33201b71e378f2d2f773ca": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01H4pfDMy1EMdpwZGRWiyWAA",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "After the task, the issues probe shows issue #2 \"Add CSV export\" with assignees [\"carol\"]. Before the task its assignee list was empty. The only assignment request sent was user id 4 for issue 2, which ended up as carol. Bob is not assigned to this issue."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01H4pfDMy1EMdpwZGRWiyWAA",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "After the task, the issues probe shows issue #2 \"Add CSV export\" with assignees [\"carol\"]. Before the task its assignee list was empty. The only assignment request sent was user id 4 for issue 2, which ended up as carol. Bob is not assigned to this issue."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4575,
+    "outputTokens": 182,
+    "cacheReadTokens": 4250,
+    "cacheWriteTokens": 323
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:40:12.787Z",
+ "turns": {
+  "sha256:fa97d0e62f60679d4e55f29968192fa3b7a2eb2423c0e00904cec6af8a69795d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_019fu9dcE6cD5dGXwydew9aa",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The final page is filtered with post_status=pending, not post_status=draft. The table says \"No posts found.\", yet the status links show \"Drafts (3)\", so three draft posts exist and none of them are on screen. The agent landed on the wrong filter (Pending, which has no posts) and did not show the user the draft posts list, so the task was not completed even though the agent said it was."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_019fu9dcE6cD5dGXwydew9aa",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The final page is filtered with post_status=pending, not post_status=draft. The table says \"No posts found.\", yet the status links show \"Drafts (3)\", so three draft posts exist and none of them are on screen. The agent landed on the wrong filter (Pending, which has no posts) and did not show the user the draft posts list, so the task was not completed even though the agent said it was."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3450,
+    "outputTokens": 193,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 3446
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

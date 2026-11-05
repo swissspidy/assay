@@ -1,0 +1,208 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:59:34.139Z",
+ "turns": {
+  "sha256:b3bc9a4175679c2ead00498b5bd970e7be20ccc748765ddd35488dc702019ac4": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FoP2DPLrJj3pZuNe3Gu3PP",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01FoP2DPLrJj3pZuNe3Gu3PP",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1872,
+    "outputTokens": 27,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1868
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:f5a23dedaac260cb344670f7f34c07c7e579b5e0f7019aa33dc856f794a4d76f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01XGBpadtAthtqZiZwfJsLAQ",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSpQYKEAgTGAI4AUIIdGhpbmtpbmcSDGFTcFU7HHkG7lP/BRoMyK9fSFHnQxOAlKhgIjB2ULbkr2iC3FhQgGSmOA5fLLUOjwIxjIEG0ljGbIzkYtSq+dTE+BT/Ay1AH1bQh5AqwgUVjkMGbS9fmvC/nn98vgiGc8QcSlSjU33TZOMWJERuMXygC/VrIlatig02E0JiQFkRm5a19msZ3HFpB2GfPPwzZWYxX0F/+3ZCDHiYWTjbvfKOyvZSA5G5uyKEG4+JC7zKPNH8BG7O64so5hprSC3+vBNhcgZwcDWg97vmMZWAtWKUftWPG+Bg92of/LGXu3gpK16yET1OWFb47RLu/IrFHEGU/paCvgk2OpFwbFoaBbDPpBySYEEOIbM9TNa7JoT6n2U0eIFZNeOAgOA/kqIt49krvpQb+PmgozLlPLqCospZUM3kY3UAUJaKCRWMjS/KjItkuweVNQqEkmt5+N7PGde/Sgbi3x4MeUfZmR+8NsGwZ5fcNFnjSKkPc+jy11sJ0zBGdjdksQkh+jV2uDC+Ok9/UNgRynks0aVZ5i9R4KpRljZh41mByypH/ShMFN9u/vqfhOTuQ08um+Xe1BPGqwkdUezEW84QdXaDTADv/L1SGAolVLPy5PWz+xfOMuKTrElBVrdrXxuz3+DI57iVpfFBW1K3IzGQBMx5XhOLqdU+Q+I6qy7KYVpUF4Eemfilf/VUBxlQmAdrP6l2AGY4i72jtqX+atpViA0g0TuDbzI8+Pimw+gQC1LWrAqT0/9QxZ4siUx07KtITYIVRVLes467IL9KxZvVUD5lQ8117P+XG0b7REc5127fBE6kHKBG27LD8aM5WFMgRgxEua4jQWozHCpDvQgU6UEUeMCHRuoKEPi1fFzX3n7MhZa3F0dA8Mzjd9uiP71KwwzkYBvCOQDnWSZyRJeLTmo/aGCDE10iveqV03mYMooNYe8GWaY4DEVUdj2mj8ElHFf7ZkHpUwh50e2Fu6F95mJsA1z90SJNM7QUfzjyr1YmTR6wj5psae53+h5/gEXdqyCpXoH7pIF2F+rIKFXKvHIQwLcZm2M3GAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01XGBpadtAthtqZiZwfJsLAQ",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 3544,
+    "outputTokens": 85,
+    "cacheReadTokens": 1868,
+    "cacheWriteTokens": 1674
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:b6ce6ef902718431e9efe60124953f718d220c7139bda031129bc1c559517db5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011N8VZQHDBRpmJmKVz8b2Xk",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Show me the mugs in the shop",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The final page is a search for \"mug\" that shows all 4 mug products listed in the catalog probe (IDs 6, 7, 8, 19). It also shows the \"Pack Mug + Framed poster\" bundle."
+       },
+       {
+        "requirement": "cheapest first",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The URL includes order=product.price.asc and the sort control reads \"Price, low to high\". Prices are in ascending order: €11.90 ×3, €13.90, €35.00."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_011N8VZQHDBRpmJmKVz8b2Xk",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Show me the mugs in the shop",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The final page is a search for \"mug\" that shows all 4 mug products listed in the catalog probe (IDs 6, 7, 8, 19). It also shows the \"Pack Mug + Framed poster\" bundle."
+       },
+       {
+        "requirement": "cheapest first",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The URL includes order=product.price.asc and the sort control reads \"Price, low to high\". Prices are in ascending order: €11.90 ×3, €13.90, €35.00."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 5649,
+    "outputTokens": 260,
+    "cacheReadTokens": 3542,
+    "cacheWriteTokens": 2105
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:3047ee536ea3f1a2ca0a099e9791570eb5297129717a094c2b6ea5a50fbe4537": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01WcUY5DcWStaQmpMpEH91MU",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The final page is a search for \"mug\" that shows all 4 mug products listed in the catalog probe (IDs 6, 7, 8, 19). It also shows the \"Pack Mug + Framed poster\" bundle."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The URL includes order=product.price.asc and the sort control reads \"Price, low to high\". Prices are in ascending order: €11.90 ×3, €13.90, €35.00."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01WcUY5DcWStaQmpMpEH91MU",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The final page is a search for \"mug\" that shows all 4 mug products listed in the catalog probe (IDs 6, 7, 8, 19). It also shows the \"Pack Mug + Framed poster\" bundle."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The URL includes order=product.price.asc and the sort control reads \"Price, low to high\". Prices are in ascending order: €11.90 ×3, €13.90, €35.00."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 5984,
+    "outputTokens": 268,
+    "cacheReadTokens": 5647,
+    "cacheWriteTokens": 335
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

@@ -1,0 +1,50 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "prestashop/s10-voucher",
+  "version": "1",
+  "task": {
+    "instruction": "Apply the discount code AUTUMN10 to my cart."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The discount code AUTUMN10 is applied to the user's cart.",
+      "source": {
+        "field": "instruction",
+        "quote": "Apply the discount code AUTUMN10 to my cart."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "r1-voucher-in-cart",
+      "requirement": "R1",
+      "description": "The backend cart probe lists the voucher AUTUMN10 among the cart's applied vouchers.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/vouchers"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "const": "AUTUMN10"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:19:19.518Z"
+  }
+}

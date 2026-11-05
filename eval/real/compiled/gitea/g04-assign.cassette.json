@@ -1,0 +1,286 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:12:25.542Z",
+ "turns": {
+  "sha256:bcc9ac16032715431a3ef101828d9d5a2fa1a460bce5350a873b8fa9f388f046": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01SpadHnW8ioWonX72X1kVMG",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The \"Add CSV export\" issue in the acme/webapp repository is assigned to bob.",
+        "field": "instruction",
+        "quote": "Assign the \"Add CSV export\" issue in acme/webapp to bob."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01SpadHnW8ioWonX72X1kVMG",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The \"Add CSV export\" issue in the acme/webapp repository is assigned to bob.",
+        "field": "instruction",
+        "quote": "Assign the \"Add CSV export\" issue in acme/webapp to bob."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1066,
+    "outputTokens": 142,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1062
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:06091b04cc0f435dfd5bb80f8184e830369d5ec4cf4e7651b03990e54167d054": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015gSQGrT2knqdJUmLiVVAqR",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_015gSQGrT2knqdJUmLiVVAqR",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 16913,
+    "outputTokens": 25,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 16909
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:9e6e5d83573544f6ab9dac537aec4b23d2b20e7f1b552e180f692ad0d586bc9d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01TmghwMW4YDLWWGvovJwHTN",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "title": {
+            "const": "Add CSV export"
+           },
+           "assignees": {
+            "type": "array",
+            "contains": {
+             "const": "bob"
+            }
+           }
+          },
+          "required": [
+           "title",
+           "assignees"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS3QYKEAgTGAI4AUIIdGhpbmtpbmcSDN8geIDzUBm82qOgLBoMFXJdCxE/VsRxaymBIjDOfbXfspobfHTtPMClY48nBvgIeD+5NlCbnmSMgyajc/6ruAGX0P11G+DqRQ7zcm0q+gWHH7DpajI9G6g4TY8RbDYHKTvvVwt8LVg/GK6xObIEmF46sjEOvy552P9W7IM/SjwmAZ0mhsY9GRjVGsw2uERLRav3XjaH3W80xUBmRJJeUCz25BzjH9wgzRbyW8/Qrx+9IfA60UdahOvQ3EZ6cDqcaqryRjuF7OxovduLZPX22DIY/HWwnjNc8F7s3OmxeHL6gQI90TnLsESYx9Vvijv+SORD88nnwCkLGYLfl0LATJFziAWUWudrDCOBkDc8BUDc/pHdMJfJEA7rPlznivbMJl3/TlpStyj3JOx6YyHHGV8CFjyYLWxTAQI3/yy2saeHQ03OeWw4qj3R3txbHh9s2xJiremb+A6cit51udSfN6pdPV458XD+T3XrEhOWgCTt9pq2//M6EZTCYo3F5Jmg9EpB1J4RbqLSf9QXjlmuiW1hz9iAKSaVGzJR7Hn/WPLIeHunZ8v7APIEWAKfu1s39b3h0OqO9sN3+oKV4AkHPTLgEhAMX6NBVqqAkesFL/E4CKT5sB37w1dPgeW/cPUkgqvGDLZBFm/VOVYd74YVMb5sf+/vLXdXaJxOnuqXk/YlhjD5z/qw4AzoQ4yTEm8+jwBQqifF5yMlCQkEuNXIA9QaXTIdBvHBZlXPOUfhYiggWAdCVn/QIrfET7jAVQ++tAq5iXrovU015ai4aoS0bMXu/9T5C0Gi4jpnblvycKuwQmbnokyyqyCc2jgJabP5Oj1d5IAax0n/w5pi/yhJnQ3C6gMka6hS2jA3ZyIargGZ965h5RNMgwxVtKXVVxU4i+0A24KU68b2Zu06136qjvQoXoYfHbNyLkN9vexr2HziNKOpt2OFX1gr0r132NYxhahg3XdT0z+37jfjPS3qp1nul0uQYFuILmIlVWHjlgUAI+2AM36eNM4RElq4NDxyiVDqnQfufA10n4JCnEuCRe+RBkjLLXH/6ndqWohnjhw8pcyohZb/fO+KIi8B596XNti5Z01vHdQvtwphM6OeSrgXZ1zfosLITr0YAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01TmghwMW4YDLWWGvovJwHTN",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "title": {
+            "const": "Add CSV export"
+           },
+           "assignees": {
+            "type": "array",
+            "contains": {
+             "const": "bob"
+            }
+           }
+          },
+          "required": [
+           "title",
+           "assignees"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20184,
+    "outputTokens": 244,
+    "cacheReadTokens": 16909,
+    "cacheWriteTokens": 3273
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:6fac6fb10eb61e55b6381a2f0e20592d21ea8adbeccbf26145d68948e58cd8b5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01TP7V2uW3BdyAxWmWyRvpoa",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "csv-export-assigned-bob",
+        "requirement": "R1",
+        "description": "The backend issues probe for acme/webapp shows the issue titled \"Add CSV export\" with bob among its assignees.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "title": {
+              "const": "Add CSV export"
+             },
+             "assignees": {
+              "type": "array",
+              "contains": {
+               "const": "bob"
+              }
+             }
+            },
+            "required": [
+             "title",
+             "assignees"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01TP7V2uW3BdyAxWmWyRvpoa",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "csv-export-assigned-bob",
+        "requirement": "R1",
+        "description": "The backend issues probe for acme/webapp shows the issue titled \"Add CSV export\" with bob among its assignees.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "title": {
+              "const": "Add CSV export"
+             },
+             "assignees": {
+              "type": "array",
+              "contains": {
+               "const": "bob"
+              }
+             }
+            },
+            "required": [
+             "title",
+             "assignees"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20504,
+    "outputTokens": 250,
+    "cacheReadTokens": 20182,
+    "cacheWriteTokens": 320
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

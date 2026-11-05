@@ -1,0 +1,278 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:23:23.336Z",
+ "turns": {
+  "sha256:c5ec758c0c6567fbf08429b65e264ca245adab1e5ac334326c8013868e411f1d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01SUU8jvWd4GEo5xmdBsSxjv",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The phone number of the address named \"My address\" is changed to 305-555-0199.",
+        "field": "instruction",
+        "quote": "Change the phone number of my address \"My address\" to 305-555-0199."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01SUU8jvWd4GEo5xmdBsSxjv",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The phone number of the address named \"My address\" is changed to 305-555-0199.",
+        "field": "instruction",
+        "quote": "Change the phone number of my address \"My address\" to 305-555-0199."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1063,
+    "outputTokens": 134,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1059
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:5e0fb8598c8be5dd1e087ea111ca08761faf720114917b2ea13fef4d85242338": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018G4mDeMEXrs3bL14m3k6UN",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_018G4mDeMEXrs3bL14m3k6UN",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 16861,
+    "outputTokens": 25,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 16857
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:1d4816cfb3758ee0dbc266030f91dc23da108f4ac8aee2f75dc05dbeafcc2c84": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01NeikWBUpFDUBMW6GdXDi5w",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "addresses"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "alias": {
+            "const": "My address"
+           },
+           "phone": {
+            "type": "string",
+            "pattern": "^\\s*\\(?305\\)?[\\s.-]*555[\\s.-]*0199\\s*$"
+           }
+          },
+          "required": [
+           "alias",
+           "phone"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSzgkKEAgTGAI4AUIIdGhpbmtpbmcSDMu+TFFJYIirYZO5pRoMtxeOTn7u2u0nQJonIjCPxwZLXSfUY4CPfdqLVXJGMENjXUIR7ZQPlTAyN/cDFy1yv2q50ZyuEFamhXSYJM0q6wjcYjPFRMaSDL1tkqlTnx5KJ8jx0mvvoEgu+WWz4PuTDylBRzZ+fcqMzyHgAMnE+83t2zEaxcTUywTsxX3LBscCXuJ50JFoNbz3kGWrp88T1NXOJJsnLLziEGc2or+vLR2Y64/FZXi9zbnlx56r6yZ/ChTp+HSeVcx2dIln+NbNKPnY5UUhF1Vm5HlP/A+Ytf6DBN+IkNPLHShFThhgcFqjqqIx0DLIn7Czz97D+/WjffUugBCoLLScC05iVWfeVRJXMrPoLqUUNMznrvFDcdWOYbkfg5hMlNONuH5dXNCGF+oOS+MHXyLwND8rGeCtmQsfuDG4KGB73rC/h/meBCcvpaMk0aRa2mR1IfM5VajiBZhOifYAGMBWhV1Wrt7BaxlHkrZb5DeJoJv1GXCQgHQS78phCHionXNckVQwiemYdwnyB0Sp1kL98YZEarR1cuuYAuTsL4BW710W4V/FXVkx2xmGWdlU8wGgv2+1noS/NjErb4cwhBvMSniiQFdBVxCGNiChUKcpEG2rzHbj6WWEhpbVhm/Kv5rihnNY5n1U5TQ/P8pkCTzOeTncfyetf4/QOPXFfW1fHkc9bDI8YTy7WgNw+b62iRxKQF/GxL0vIEBhbdLFSPDX8HjqriXronK2jtSvOirsb/aIlql8zY5lghBay965KwCk3PPTl+A29TYIsh10hal0iULS6FcbkCJIu8VfRvBcfz+c8eYFfdxschsqfzuDk4+f8oheTf6GgIjRIotlIIvmYK9WbtZ+f1iH1h79nr0XnotWoVg91JDkKRh7ZfzRJX59XW+u5H8ZyVzYjgQpHmS6wGUFAKEc5d68taR3Iy4eJWdSkq9Vu2TvyrE+2IP71ltOh2EKkaXs9L07/KFBEeU3tiubdaeWI2PW8HJga1idsPRC7Ui4UigppIlPK/MEdFxWdsHGf7MdRasW2i0nzq+0T2lPTH3K9/tqUZbEX2Sc3wnGZ4SndiwJxfQdY5qCjMylZzbLEeGR/uDLf3v0+gZsFm88nWZbrg5vbXMtLxQtH2pmmhiHOj82pYcNIMH/H6hiGDIXTWr4CJupO26xqQmN5lxKiBBLWsoqZbPMehzpn8AHoXINixK9GwrgtQwr6eJEUceXWNKcQ1MfrhVDURfI0qYsqH68v74vKIO29Sn1XFfOp7ks3hGKHIePvsRGD2e4/nEFIATa6UgfsTykSU6+UwpyDExGl9YAO5wuBcKEt3YQDFT+Paaw1PtPNxrQF/40lhQBB1Z5I1iKkm0eIQ9l48khLRwmHSS4g1NM40AcC/hVqGyDD3lTmr07txXYuss1NxdG3q2eE4ziT0NVt338GYWQd7gQ2cOocU8/TWrFFxuDSc4ILjit9Uj1rDGc2HUEiEcZp9fQr+CCTmuzb5oeK0J3hdn0LxqHevNVrPV9wnQ0XWhI6Ju8HDQdm8UCnc1AFyqhFbUQzpnLieJpMCYUDA8SA6yTXVz0Yc4gB6NapyJQk8JQKtUC/d1affswxUXY9esYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01NeikWBUpFDUBMW6GdXDi5w",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "addresses"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "alias": {
+            "const": "My address"
+           },
+           "phone": {
+            "type": "string",
+            "pattern": "^\\s*\\(?305\\)?[\\s.-]*555[\\s.-]*0199\\s*$"
+           }
+          },
+          "required": [
+           "alias",
+           "phone"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20915,
+    "outputTokens": 423,
+    "cacheReadTokens": 16857,
+    "cacheWriteTokens": 4056
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:5427a761615b039156b9c9ca20c13d08374d8a3004dd8698a58d62e522206d3b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01YRZ3rE4zGUV81KBzZ9b85a",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "R1-my-address-phone",
+        "requirement": "R1",
+        "description": "The backend addresses probe shows the address with alias \"My address\" has phone 305-555-0199 (tolerating only separator formatting).",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "addresses"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "const": "My address"
+             },
+             "phone": {
+              "type": "string",
+              "pattern": "^\\s*\\(?305\\)?[\\s.-]*555[\\s.-]*0199\\s*$"
+             }
+            },
+            "required": [
+             "alias",
+             "phone"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01YRZ3rE4zGUV81KBzZ9b85a",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "R1-my-address-phone",
+        "requirement": "R1",
+        "description": "The backend addresses probe shows the address with alias \"My address\" has phone 305-555-0199 (tolerating only separator formatting).",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "addresses"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "const": "My address"
+             },
+             "phone": {
+              "type": "string",
+              "pattern": "^\\s*\\(?305\\)?[\\s.-]*555[\\s.-]*0199\\s*$"
+             }
+            },
+            "required": [
+             "alias",
+             "phone"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 21418,
+    "outputTokens": 281,
+    "cacheReadTokens": 20913,
+    "cacheWriteTokens": 503
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

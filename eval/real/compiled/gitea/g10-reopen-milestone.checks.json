@@ -1,0 +1,102 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "gitea/g10-reopen-milestone",
+  "version": "1",
+  "task": {
+    "instruction": "Reopen the issue \"Session expires too early\" in acme/webapp and put it in the v1.1 milestone."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The issue \"Session expires too early\" in acme/webapp is reopened (state open).",
+      "source": {
+        "field": "instruction",
+        "quote": "Reopen the issue \"Session expires too early\" in acme/webapp"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The issue \"Session expires too early\" is assigned to the v1.1 milestone.",
+      "source": {
+        "field": "instruction",
+        "quote": "put it in the v1.1 milestone"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "r1-issue-open",
+      "requirement": "R1",
+      "description": "The backend issues probe for acme/webapp shows the issue titled 'Session expires too early' with state open.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "const": "Session expires too early"
+                },
+                "state": {
+                  "const": "open"
+                }
+              },
+              "required": [
+                "title",
+                "state"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r2-issue-milestone",
+      "requirement": "R2",
+      "description": "The backend issues probe shows the issue titled 'Session expires too early' assigned to milestone v1.1.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "const": "Session expires too early"
+                },
+                "milestone": {
+                  "const": "v1.1"
+                }
+              },
+              "required": [
+                "title",
+                "milestone"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:13:54.200Z"
+  }
+}

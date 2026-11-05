@@ -1,0 +1,203 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:11:30.337Z",
+ "turns": {
+  "sha256:0a685b958eb4eefe004af431906fc8692e98c9b73aef594c32078842bca0d11b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01ShvcayJRrqQPQLS4RE6ZxG",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01CXEXWeNgTkYBik6Aesthtt",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01ShvcayJRrqQPQLS4RE6ZxG",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01CXEXWeNgTkYBik6Aesthtt",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1877,
+    "outputTokens": 70,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1873
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:3f8ac11988b28d4b9370db70ff39e019a0f044308a1c059e35185d5394b07ef2": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0149JSWhn7RMKYY3hEnP1cmk",
+     "name": "network_log",
+     "input": {
+      "pathContains": "trash"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQShQYKEAgTGAI4AUIIdGhpbmtpbmcSDCEgKRqQqhdYX7CyKRoMgCzmnBAs1xqyEt18IjBcXSSFpGp0rX9a5PUjfbXvPgh/geUWFBWTALPNk2twgh7qaxvZt+GYJKHYW92QNsYqogWKWJoKXmY8+dCnuufzHiek92Mc1+AJMYdIItRg4q765SrItU5hRxqFb80U61hItAF3MH9Jtl5MkFpm1D1LEcJFfQXEoPhKTCLCU6iwktCfXt4hxAQeX0HTpJx61Q5AJxS7R+qjumGe8o4aQ+xTMqlKibS2a+Ji9lqoLAFpIBnkITXQms32mzliVQBGWjtZwKm9IfZIc/SWaxsGrQDl6n3miPfBUCWJUBh9OFRtOWXy8SxCgNsjFo383ODLE8k1fMebob0+Kxy8+v4mVA8ikjGJsP9pI6lMVjmDmQ0tQ9apP6xe6B69vQudK7eego4bo7scAjPhbqxgpzSf60ZfxM13OBzwd8jVpGEAWov7Z6wIub30mvu3HnxnQ124XCnDpE91dbFgNeoJO8Snwb82CqZZS922ny7S6yJwyB/sdf5vji0WLi5WthULSJb731jjruFfK1X+4RfPfNZo/J26DS1RMOx/5KPq8uXAKM2nCsMeQT3sEK8RUnC5LWZmt2pImT4bWDW9sTTlABoC4n5QHzk0swqr4sXtC3k1SpPcLEJyk4tA2IloB546c8M9ganQ1B+KVFdl2elWqXelB7wwit31lugFTi4PMp0RtyrS2zmnT7P1DsuNsBowTxxx/i/0q//IYtgpiCOCB1BoKLrUkxpTtsI9Jr8zq0oJRHlh7ITEJ/HrwnnyER8PFGUr2Dsbo+4dtdRo6NlmWAsQcLR2K7TnvMyrqDbjnmyjjL/YmaUHRNXPVV2iwu2Oux/q4HEuvPQQf/92tsTv65Wksbx9j73tc1IeidmsbH2JgT708AGy65HweSatZV7cVKvjuJ/YwQhh/JtVBAq2BijKLpGRzLs8LAY7KlqIPx/9YsQvzi4yEBfH3qsr38I+7nywJmEd/h+/ixgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_0149JSWhn7RMKYY3hEnP1cmk",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "pathContains": "trash"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4056,
+    "outputTokens": 97,
+    "cacheReadTokens": 1873,
+    "cacheWriteTokens": 2181
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:ad0637eb824515c56034eaa8c1b07c366e8385c63070e4c554abbaf08ec0ec64": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01WtaMA3H1xfpWy2UAURYJMR",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Move the post \"Old pricing announcement\" to the trash.",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The posts probe taken after the task shows post id 7 \"Old pricing announcement\" with status \"trash\". The network log shows one bulk trash request, and it lists only post[]=7. It redirected to trashed=1&ids=7. All other posts are still published or drafts."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSpgYKEAgTGAI4AUIIdGhpbmtpbmcSDPfga/lXef6Oc9+C3xoMB7qJ6glBrb8C8fjoIjDgmypwlk9T/i1WYRMvpLURZSWE+jP7+vttqXelukbNf7JjCDlLsoafj4F1Dj7t4+IqwwXmaxYj9THdu/nOSO0mZbRBCwUTqcFpinhY2TE2VU7Em9FGd4R9ECVwoKGK1KAOLuzTYkgmnqJQolYwQj4qLptU03kbJ2GJIkfpDkhH7vreB/vNyTxCwzuavpZPgJ9unze//Nso53Q4Lng+L3Fn2aSCZ0aQIh6LHIiVh16ipG3XQ6hUABEF9nT86RTOUVm6RKVHeIGR2mcIOBB/p90vMHmKoNJ9HQsEPXX1wasqvK9ibAL93LkrZ+mAE7eN0TmzMi40Ia6GPB5mB1VzmQqLks37GReF6XNewNYq0uZArYECnzLs3coCksmJE6Sfnxc0qj6cAFd/mE6M7fgZY2J0bNSRMe4CaYlrE0L7l2aU0OyPVRAWu50Y1fLP5AkAVRnPZF3252bW/Gkim5zvkg8gX9BnX8sOSf28zfq03k8bKtKDYbeF9teiIyXv0u++igDFRDLSWSwJ0edPUaj0PZIuuu8Eqx9W6nkH0tZ2Zvz9vD85il+Kx29xPi8D4InA92ebUxzBMXo2/XIx96HBZlyOWOvlMsM0aVBKoMhK2bmfAe7JGrg+kEyKHJwvwF8f73GYg31o9+TEeiGIKPP71UKUqJMG3VdLfrdl8jSftHKOZAsz8pQqvFPjNHucr3chWBcNc6U+vLFM7GC9lcMuASjNHeoEewNnwg8g00HL5qo8sqBCJLFg8v39ZPGdUKfeLoas5TvFbyQ5jpwcYAlW0yHeuKaGR0pxxo/B7bGFY9wGGccMyU9j+bnjxIkh99UYDQ3bBLSRyHVFDLAerqMKegM/CYAQJoDZPcpcdVglRd+MDLkqCQ6lqp13rfWoQRptsc2OOrKcxKhxYEeSCM4N8RWk9SoLggiESvSgtKkWbdz2fCsV1BooaGYznbB+tbs/mKAtpzPbUrM7Qfdi1NTBAx1vSX4xTdvKDJZBd1oKDSqfqzzzLj5vQRgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01WtaMA3H1xfpWy2UAURYJMR",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Move the post \"Old pricing announcement\" to the trash.",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The posts probe taken after the task shows post id 7 \"Old pricing announcement\" with status \"trash\". The network log shows one bulk trash request, and it lists only post[]=7. It redirected to trashed=1&ids=7. All other posts are still published or drafts."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4390,
+    "outputTokens": 233,
+    "cacheReadTokens": 4054,
+    "cacheWriteTokens": 334
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:718f7d5a7750b6ccd02ef3c6f21756c1153dd8607ed85a193807cb9f9e5d4680": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0164oeKCFo5MscTtMMN6eEXR",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The posts probe taken after the task shows post id 7 \"Old pricing announcement\" with status \"trash\". The network log shows one bulk trash request, and it lists only post[]=7. It redirected to trashed=1&ids=7. All other posts are still published or drafts."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_0164oeKCFo5MscTtMMN6eEXR",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The posts probe taken after the task shows post id 7 \"Old pricing announcement\" with status \"trash\". The network log shows one bulk trash request, and it lists only post[]=7. It redirected to trashed=1&ids=7. All other posts are still published or drafts."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4679,
+    "outputTokens": 178,
+    "cacheReadTokens": 4388,
+    "cacheWriteTokens": 289
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

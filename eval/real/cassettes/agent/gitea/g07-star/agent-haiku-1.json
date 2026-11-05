@@ -1,0 +1,219 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:48:39.456Z",
+ "turns": {
+  "sha256:d78c10540a601268da259c629cef6248bf526513c3bdd066be4019374ee0aefb": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01MYZErJ8kLHPRU3jp9fxkUZ",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/docs"
+     }
+    },
+    {
+     "id": "toolu_01ULWDbpF8R76Q7wHHs1Q4xj",
+     "name": "show_part",
+     "input": {
+      "part": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01MYZErJ8kLHPRU3jp9fxkUZ",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/docs"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01ULWDbpF8R76Q7wHHs1Q4xj",
+       "toolName": "show_part",
+       "input": {
+        "part": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7123,
+    "outputTokens": 103,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7119
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:7a7462e6153e47f85945f239cc1fbee5099d603786ad7b67eba7d7afaa5ca72e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01DZCj54J3xENuFSefekXCEM",
+     "name": "click",
+     "input": {
+      "ref": "f1e55"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01DZCj54J3xENuFSefekXCEM",
+       "toolName": "click",
+       "input": {
+        "ref": "f1e55"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 10662,
+    "outputTokens": 49,
+    "cacheReadTokens": 7119,
+    "cacheWriteTokens": 3541
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:a5d207e6a7cd3d3eb2717b5b5bde5b57a8de4cd7fca8a0acc21ce166e4ae6edb": {
+   "stop": "tool_use",
+   "text": "The page shows an \"Unstar\" button, which means the repo is already starred. My earlier click used a ref I had not read from this page, so I'll reload to confirm the saved state.",
+   "toolCalls": [
+    {
+     "id": "toolu_018UjcwQsbqy78nCQqDyK5Kh",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/docs"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "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"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The page shows an \"Unstar\" button, which means the repo is already starred. My earlier click used a ref I had not read from this page, so I'll reload to confirm the saved state."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_018UjcwQsbqy78nCQqDyK5Kh",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/docs"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 10780,
+    "outputTokens": 417,
+    "cacheReadTokens": 7119,
+    "cacheWriteTokens": 3659
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:7b55216b576e1705350bfadb8b0c7cf6e916e94abfb05fc8e0e824ccdba66091": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LZfpj4gjvFXD1iUxSuWPkm",
+     "name": "finish",
+     "input": {
+      "report": "The acme/docs repository now shows as starred (the \"Unstar\" button is displayed and the star count is 1). One caveat: I accidentally issued a click using a stale element reference before confirming the initial state, so I can't be fully certain whether that click was the action that starred it or whether it was already starred."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQShwwKEAgTGAI4AUIIdGhpbmtpbmcSDJfsYZFp2JAqhubARBoM9+qurwSr60zNTZIPIjD7vIRqkjOrEiuh5O9oWbwMN4Ph0yAnll//7GUyKfzSxS6ifM4sBIM6xK9Sjnw1w2EqpAvZxbUyrKy/jsp/D7Z4mKGJuMCU/coDNaNEtVuAsS/Af6B7wnNHKQVxeecEokLnQnIuycq0cYfr5+RKlfV2BZuLo7Rf1GLA7CAqHwL7vFtIh1AqcM39b7VC8iOwI/ku8ywMp+Nc7qrir7p6KWAW7WelNtx7ylqIFEl2pbhdSWk3+L+AypsXEfwjx/EKu/Lq1mCTEhwbctdvI+DDcnGrxxI7HFKOROd3ldI1jfv+58GPpis+oiCIsTn1fSai7sMOozGJZ8QlWp6FSler2MLgKNUklbpZpXdoJJUdqgtxI2a+RSCrnlfpiC5udvQoU/PE12bmyfMcb1a97bMDaaJ0I/KyfDUNUF7FT73c24svtUDfesIHif3FiHqtwBVwNu6UD6qTCtAv45oAR3hQ5WrTgz6OHhf8m5lZKmTK0LRNOwyUQpuBqe7Q5UgbPaBSbOoyelrBqMnzoQZ8Yc1qazoHv8i6geYbj1aHQ3ykoJj4uu5JVJbVq8BfCm5nGrNuKsTUHpI/UxFetbl2i6y4ZTcQJ7x/XEND83OHzGms8tWClN1PPiDYXmMPITPn+Dsml++jcLsgigVa9+EjYkzXHH9peFUP4s7ZwOL4a/WCAmeF3q/cemaRxiKYz4AyIJXFCg5oApx14UGsK2n2J6gVZlojQRpfDeLh5fuNllzULn4ozz86A7tr5c1kn5/UiejyOBIX9n4vW7GSW5+nanDntAPJ24K6/InaTdn+KpYMnPkUwhHga1uVYCfYL0DtLDWTNQ20NdD9tIksmuvYCCHP4/NcHiCZZ0DN/yOvKYbbSZn0YoXphLv+q3XufzUCNnmQ9xTTUBatRCGGYRBetYr3G7gWbwsnSsbNbnBcjWdSBXyge8mPAorlZOVmxaZ8F3NPODRQBC4SBVZHN2d+4org1StYfp8o1vo4t64/D5qvmRPBa2xhhUHqXAlsd21rQOHXzVRtttgF7cTjUEzLo5wNO8hfW90X1gVUldtQMKZ7XrNl/kpkya6k84+PGCUoGjapVI4lfYveMjxota6PjPUdRU++RowJoLOoQkcROjH6Fy7dlb4of4BIwgEQjvXHFhFfoNTGCek87tA2qgja+syjpFO1FHZAcmIGJS98wFtP2+bUwS5X07pNg4XIOTwdXwcdxIhRZ5A+VQH1kBHCQ+RujWMsOJPeqk/dTGa272Rqcsar7IeQrA6msYkNKlk4HV+y2KM5NI0EGBoCrX3eGLOnQgMebY6avEGP8sI7rDM6X7JSvzTxzXRMrgoyOwbkwQbY0OA1U6093AzsY7WHuJbrRJaBWesrLuAJYfsA409FLGWSVteZUkIeFm9ooaKH9UPOGjDePp2Zl8AE8T3Y9CG3tbIBbFtJ0ql+W4tMZfq/nWuaC+bscIVifNrG6IcG6Eze4ikClfMS5xolrcHjIz4KchiiCxeY98/s7MHyFHa/tBZThtCVTrAPl9KWcGp+V3j0/ngnElwlPBYzISzlW6pSMnQV47pcXQHPpcW89Tv3Ogj2a2TYVwiQpLyxhmXw55pbtVynbSfdTBZZSEye0p52iIGiI9BUb2jKjbL4fvJhDhx0uxHpFC2hrAgMLm/EG9J22D+Udir8sY24/v9kN7M6+yMMr0oA3nhuWHjwnajR8ByoMgTRREkWFosttElE3oXlkxMV7USa1eTMTbfTsOLhM/nOvlw8DbIORNMzWnT9qC3b7ncrZ/7D2ymVjve1N+akBA7i9o3NTqEok4XZqfO683ZcHL4SOFFlCpdMm7aQLQHdTqfC3CQrqhkg4GOTgNqWe80KwTtrDA7hZfWKjIiGV66T2rDuTqh+XmpaCRAzec7erXpnxhk02+wyx8TQgImW6lcjJUCY6fXxtnZZxsSaIUxsqsolEqN3t/8VPpxjfc/+btI0FBqTVIJWcjZLyenMOeV0fzf9f8vEGAE="
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01LZfpj4gjvFXD1iUxSuWPkm",
+       "toolName": "finish",
+       "input": {
+        "report": "The acme/docs repository now shows as starred (the \"Unstar\" button is displayed and the star count is 1). One caveat: I accidentally issued a click using a stale element reference before confirming the initial state, so I can't be fully certain whether that click was the action that starred it or whether it was already starred."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 11262,
+    "outputTokens": 418,
+    "cacheReadTokens": 7119,
+    "cacheWriteTokens": 4141
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

@@ -1,0 +1,203 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:15:24.554Z",
+ "turns": {
+  "sha256:71f7de8264c9bf04dca8974022b592e2b189e8f0f3284edfa014724b787ce0f6": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01RWt8mw7bWUL3m4oVuf9L6i",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01FQ1PAaMep8sSLQMDdP4ZMX",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01RWt8mw7bWUL3m4oVuf9L6i",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01FQ1PAaMep8sSLQMDdP4ZMX",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1855,
+    "outputTokens": 70,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1851
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:01383c50f57448e842ecc104d280879b18e92e1790bfe79da49f6033a789a15f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017VaZa1yQXQbA1vm55Peusf",
+     "name": "network_entry",
+     "input": {
+      "seq": 71
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS6QUKEAgTGAI4AUIIdGhpbmtpbmcSDBQFVYOAQq0VSo/J2BoMu0gMhh+7d0tom9JRIjCjzeDUCLj0NQKZOB70+9yo715/uyFYmBXih9BX0wwppLrUR3SXi1nkziczYHw6vcUqhgV0+IrULHxTIB56xsZ3ZfG6M2nOva6fFoK/ng1BF8kdWPsS/toYIGZZcNUZpxLLAW+B6k4wNc6q9hyYlTQ5jYMhj+iOIScqikGD5SErWW8bHutXa860YYzYl/3cTBl/+h5jUr5Onc3jrhQbNhLIhHWeSjuzcfnFLuaLLBcLx5BFgnyIEAMU0l02xZ0KPjV3KQ1RQyYDueZscrkeLS0bZF4MjiHFGAUbs+/hFTuxBDBnALhhHaWcjJNGs+QboLTnbZS8SDspUYAmbrlUuiRpl0EcHEBYjIgJTVvrUaoYeBWJgqyqWID6KN+xfrw8Y2JdssEGNFyoiOGDMd4z9fKwtLigwXbkxjZOscQ7tmNGF94Ho4R0Hm2h/KneB6QgkU5eWA/pXu+k+wQLC6JRzxt01MF2uZceb9R2Zs9ubSWI/n1dHfeztynVkH4tZmTlSs6HVINEI0Vy8hDXhrEDmoP6/tuD6RbeerlFHFfSeUKXHmXlskpWwsxOpGCSrTdrlIvY1iCheOZ322fxlKa6ODGNRqGpswiD0iNYUOIczfJdUtFnaK12xsGgi2PlUnOLZQnYfuNrZamGNmsmnS0D593MTd4gfG2nb9HeSGfR5b0Gci6445pd2T7wmtgbPILVo2EqbDH2BMfJ8/IGN4mX+RIXyd16gV6KpvtddGY1862JRKiaCSwxX+4sawCA79I6w+XpMNZ4jhBrZ9ac+S8ay5doR248Bcd8x2dYrf5uxgZKZphyRJ7z0pqa0odawJCJJ9jH9MUM9cJX+rulfZ3W9XUSyIpcFxvSBPBT2Kl5lV6ulry1pEiknQ5QRBarEp6JhxD3E272zAHGCTHv+llXHdrz8x1XsRpeYLmaGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_017VaZa1yQXQbA1vm55Peusf",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 71
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3931,
+    "outputTokens": 86,
+    "cacheReadTokens": 1851,
+    "cacheWriteTokens": 2078
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:42b55ab468d738b5666ae254f2939892156c96f32a99ec2bd70b5a9fa3c4c0df": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_019Sfs4JXecmFsKfEJwa1aSw",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Make the blog show at most 5 posts per page.",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent saved the Reading settings form, and the POST to options.php sent posts_per_page=5. The server answered with a 302 redirect to settings-updated=true. The settings probe captured after the task shows posts_per_page: 5, so the blog now shows at most 5 posts per page."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSiAYKEAgTGAI4AUIIdGhpbmtpbmcSDDFG/HqxrzVGvlhmzBoMG/UbS80N3ZC7ZtpTIjDwqupEUuptmgLAfAIcshej8hCFiUEKyp/l1ggTeuHwqUZ+7qVTSHFUFd0Vg5wpyhEqpQU3qQEcvDRbv9+XjjlIDGACnNWlQZB6F/c56/mrY4dvoJWEr77v4QOtUFmWIBk4KxgRdzZOK/HMU6QLynwdjbdpA3SHg2Oi/zs+bxkeIfdXeRULkt80ZgB01Qvo59PsumX3lVxpKBXiJKb29SxnkubmdLT0E8FL2ufkYqqxyXb3o6nxodYLGPC3GXavbhMYiPBmHpkXlLjer0FZ0GVf8ka71fy5PvQMacTdLU+vZ0b5/+WSRFLNOi6+l5873sXHOr6RIPBVXOHuY1nDtEfdhW9PdwRzvIscVqa2bJKViOUd4tP6/dN549mjKNWkJfPmneMogveU/rF8JpoMS2Z5GsU6/27xwam/yREJ3Gh22lEishMvVQTjasvk+diIXlb3FLD14KrWlkgXpCYy248YaOX8OB1lkgRkY03SjFpAupBy+nYY78bFQX4EYeaPTJDfwz9OuvL6gjEv/bpsc39NF35WiNR9mMobgEu2OiQV1k8xNjwENfsiejlz5VCOqR7+gUqn9k3hte0ars2DMsOOdudgGwLsJ8MqyZLUd8kBh+rfiqr6Jde5OsXRt2X8UoQGJ94pziaG4cxRBDarI3sX5WTK3M4BPKBLqQY07Vq0y2R/PBWu+3T2BrfnfCtiYFVIB5HbKRu57mUaQfEnyT4/ncTpFNBUZX8QrjKYs7efWpxN4PXuLoFT1J0Z9/1Z/56JLnHKXOqMUMuV5sWPTgZNSPglGWNcoUhh4/gzwJK48n+Vtr5vpM044sZw+7rsKjY18yEBkcyzZJtAo/DL6cpBrjy7884v9jPIKCuVwqcWE6Gytl4m+yU3Nqr37QpD3XA5SXmhl7dT7DRmV3LOrwu2I7yNH/X6eaJZzk5mG9nJ7m0nc9+CtTZV6LTTNue3atm7IkytQEf9GRgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_019Sfs4JXecmFsKfEJwa1aSw",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Make the blog show at most 5 posts per page.",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent saved the Reading settings form, and the POST to options.php sent posts_per_page=5. The server answered with a 302 redirect to settings-updated=true. The settings probe captured after the task shows posts_per_page: 5, so the blog now shows at most 5 posts per page."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4286,
+    "outputTokens": 220,
+    "cacheReadTokens": 3929,
+    "cacheWriteTokens": 355
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:651bdddc9abcd4277665e192fae3134cd8b0ec51d0ed84644f75aed8cdb4bc16": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LnYywSgHpStofghJczg2Pq",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent saved the Reading settings form, and the POST to options.php sent posts_per_page=5. The server answered with a 302 redirect to settings-updated=true. The settings probe captured after the task shows posts_per_page: 5, so the blog now shows at most 5 posts per page."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01LnYywSgHpStofghJczg2Pq",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent saved the Reading settings form, and the POST to options.php sent posts_per_page=5. The server answered with a 302 redirect to settings-updated=true. The settings probe captured after the task shows posts_per_page: 5, so the blog now shows at most 5 posts per page."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4559,
+    "outputTokens": 181,
+    "cacheReadTokens": 4284,
+    "cacheWriteTokens": 273
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

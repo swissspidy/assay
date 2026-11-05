@@ -1,0 +1,556 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:45:36.843Z",
+ "turns": {
+  "sha256:d9959d4e141067a49a0e529fb7769f6c96ef8238bcb6c427b3778a15ecb81471": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LUgxbTo8YbJi4GaNhRDZLD",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4320/wp-admin/post-new.php"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01LUgxbTo8YbJi4GaNhRDZLD",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4320/wp-admin/post-new.php"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7284,
+    "outputTokens": 65,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7280
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:daefe979f3e3c7720bd8af01b1d1ed6a11dbf7c092cb2e68cc840e1d0c39b451": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Pb6tkhLmMQjhKHvSiMaFZs",
+     "name": "click",
+     "input": {
+      "ref": "f2e3"
+     }
+    },
+    {
+     "id": "toolu_01NdhTX54ywEk7Asw2TkUkAP",
+     "name": "click",
+     "input": {
+      "ref": "f1e142"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Pb6tkhLmMQjhKHvSiMaFZs",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e3"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01NdhTX54ywEk7Asw2TkUkAP",
+       "toolName": "click",
+       "input": {
+        "ref": "f1e142"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 9309,
+    "outputTokens": 95,
+    "cacheReadTokens": 7280,
+    "cacheWriteTokens": 2027
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:9fe0ed281ac72dd98096c299eaa29059084a36b76ff347b52a86380fe24fc1c8": {
+   "stop": "tool_use",
+   "text": "The title box is inside an iframe. I'll type the title, then look at the categories panel.",
+   "toolCalls": [
+    {
+     "id": "toolu_0168XAnJam5Xzuy6LrWG1Msv",
+     "name": "fill",
+     "input": {
+      "ref": "f2e3",
+      "text": "Release 0.2 is out"
+     }
+    },
+    {
+     "id": "toolu_01NLBbjP5bF1tTexyQeEB9Zq",
+     "name": "wait",
+     "input": {
+      "seconds": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The title box is inside an iframe. I'll type the title, then look at the categories panel."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_0168XAnJam5Xzuy6LrWG1Msv",
+       "toolName": "fill",
+       "input": {
+        "ref": "f2e3",
+        "text": "Release 0.2 is out"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01NLBbjP5bF1tTexyQeEB9Zq",
+       "toolName": "wait",
+       "input": {
+        "seconds": 1
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 11505,
+    "outputTokens": 152,
+    "cacheReadTokens": 7280,
+    "cacheWriteTokens": 4223
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:bb323406a9b7221b301bf4c6979e0f896ba76c5a07921b4b28e7d5cf25f4f848": {
+   "stop": "tool_use",
+   "text": "Title is set. Next I'll tick News and add the body text.",
+   "toolCalls": [
+    {
+     "id": "toolu_01GEczQTP8n2N3uvCizfQ9yZ",
+     "name": "set_checked",
+     "input": {
+      "ref": "f1e175",
+      "checked": true
+     }
+    },
+    {
+     "id": "toolu_0172TNxvHtMQ7XBvpsTqr7Gy",
+     "name": "click",
+     "input": {
+      "ref": "f2e7"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Title is set. Next I'll tick News and add the body text."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01GEczQTP8n2N3uvCizfQ9yZ",
+       "toolName": "set_checked",
+       "input": {
+        "ref": "f1e175",
+        "checked": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_0172TNxvHtMQ7XBvpsTqr7Gy",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e7"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12588,
+    "outputTokens": 140,
+    "cacheReadTokens": 7280,
+    "cacheWriteTokens": 5306
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:7ef8813cf10fb018b3a56a643c87594c562f5e9346f3d8cc15c933f9772649a0": {
+   "stop": "tool_use",
+   "text": "The title and News category are set, and the body block is focused. Now I'll enter the body text.",
+   "toolCalls": [
+    {
+     "id": "toolu_011KMVoDTxFFv4E7rXXADwSU",
+     "name": "click",
+     "input": {
+      "ref": "f2e12"
+     }
+    },
+    {
+     "id": "toolu_012czzx15SrG8kRrgyhCS2Ck",
+     "name": "fill",
+     "input": {
+      "ref": "f2e12",
+      "text": "Assay 0.2 adds per-row checks."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The title and News category are set, and the body block is focused. Now I'll enter the body text."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_011KMVoDTxFFv4E7rXXADwSU",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e12"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_012czzx15SrG8kRrgyhCS2Ck",
+       "toolName": "fill",
+       "input": {
+        "ref": "f2e12",
+        "text": "Assay 0.2 adds per-row checks."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12664,
+    "outputTokens": 160,
+    "cacheReadTokens": 7280,
+    "cacheWriteTokens": 5382
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:9ae01b3622d24c599874591aa1a45145b3a710cdcdb7d4562a83f15c20f05ba0": {
+   "stop": "tool_use",
+   "text": "Before publishing, I need to confirm the News category was actually checked. My earlier click used a guessed ref, so I'll check the Post settings tab.",
+   "toolCalls": [
+    {
+     "id": "toolu_015G8V57S4E7CN6JcjbJJU8A",
+     "name": "click",
+     "input": {
+      "ref": "f1e72"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSmgcKEAgTGAI4AUIIdGhpbmtpbmcSDFJRzIeuEwUDvPAgghoMOqiCJpdQ4zvNKDTxIjCU1KfngjOjBQ28fDwTlL9RWIbFbUyNMY9YGlHLxbSj+7XfJL5X7J6qYS9Tljy5mloqtwa25cj6Tj2qLMkpWsvszdyp8mBuMiRzHrokBX5/AFdoSFdmIh5E373luTD8xbRguNRH1JNjtxW7DnY/Md/Fh/VhfCdM1y9nwGWgXdXIN3ILKwxGi6rN5D08tEs6d54ogsujAhaj0nZtH+0PiRtf4QQ6BYebsB+uMlsJZ6cyxdpejiHqB+ucHInUIvsw5QEZ42SadIjaMzIszcFRQNYbH1x0cPRZkUUXcOEfPYvVBCDkJPoy3DioIFXp8UnNpgvGq1FDwX1+Rs4nE1yNjfKdIkzqYKFQkHN9Yj4BLCZZ9u3Ee90ujqURA0r3Jc8/Gjs0sM2Ft59Nf6Os2cYkinQkSinUZf2LDpJ3oX1HRY+nHlpjBl1MrbjteRDaZFDPTViUKB2zrfWI3uEILsuSvnRFeYlnou2CVHhRv2XQyumUqmOCPpJyrJZCz2EfKBiIeUie41Cm1F6YD3BRUQ8s1gTbpQHYBLDMFsKYI0uMynNMjtMt3W5LnjysYRiOGelA2lKP3KTu1jkHPhuAbAoxfUl9MEeNtc7jR1RJufKBrHytbfDL5hYq3BFxyG8nQcP13s+Adiyb4HNbWjp87xPQ1cmMmQCEsgf1qQIsbTXuokWtbCEVU4SxXgrIaEDgAUvGcHXg8j9I5ZMcnTZL+tI+T5t8Oj5Nn7/Pdrhb4r8G0Y5VxPOAW0eO5FJdnN/7wv81fuQDvXKMkN6j7ekHpaegUmoCh/YnhjkkSFt2lHKHu7I+O2TlZFJxd0BObU9ddRBX7m+g03buZYV/Ri/FY9WrFmiMi9YTJYdmhT90ZM6sJoEVwnVPcxzkdCkpVyM2VTWC0YFQTZImE3W5sbvsYAXNmvd1QSi6RuECAcaGcW6+EcrINnwpr/JdoksuMJvZNfsllzx9Mj+yfAybQHTtETYcfehsURk7iqn6JwX5haZ0/SqTpyIZG82MGzy7gllD9XPVe73jFsXBPxh05Z/9lH76dT/OAWhDfhptmzIjdVaHyUKV2KoWt5Yaoi7yRnPgqwIdAyaK/9eYa9UUg7eb+Qm4PWSscm5Fk53ylQY9ehqZSgrE9pqQxrJ2dgX3eBAJRqgq8NgD1WTgv+3g2c/gGAE="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "Before publishing, I need to confirm the News category was actually checked. My earlier click used a guessed ref, so I'll check the Post settings tab."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_015G8V57S4E7CN6JcjbJJU8A",
+       "toolName": "click",
+       "input": {
+        "ref": "f1e72"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13129,
+    "outputTokens": 172,
+    "cacheReadTokens": 7280,
+    "cacheWriteTokens": 5847
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:3a922c6a4de9303937242102e0a5906a1cc0744dd7b71121163dc315a2032db6": {
+   "stop": "tool_use",
+   "text": "News is checked, title and body are correct. Publishing now.",
+   "toolCalls": [
+    {
+     "id": "toolu_01Ja6uhrgFCzGLCo7pHjommm",
+     "name": "click",
+     "input": {
+      "ref": "f1e50"
+     }
+    },
+    {
+     "id": "toolu_013jy896YH1QvfsFetwRXvv5",
+     "name": "wait",
+     "input": {
+      "seconds": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "News is checked, title and body are correct. Publishing now."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Ja6uhrgFCzGLCo7pHjommm",
+       "toolName": "click",
+       "input": {
+        "ref": "f1e50"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_013jy896YH1QvfsFetwRXvv5",
+       "toolName": "wait",
+       "input": {
+        "seconds": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 11603,
+    "outputTokens": 113,
+    "cacheReadTokens": 7280,
+    "cacheWriteTokens": 4321
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:45bab814e272de9cdd436c20e492cfaaa0ceed0d7fe80067dd50988d7100b0e5": {
+   "stop": "tool_use",
+   "text": "The pre-publish panel is open, so I'll confirm with the Publish button in it.",
+   "toolCalls": [
+    {
+     "id": "toolu_01WFXA91gErC1UDhrit1fwhp",
+     "name": "click",
+     "input": {
+      "ref": "f1e430"
+     }
+    },
+    {
+     "id": "toolu_01CRJPqFi5sAEna2gDtEvhG6",
+     "name": "wait",
+     "input": {
+      "seconds": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The pre-publish panel is open, so I'll confirm with the Publish button in it."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01WFXA91gErC1UDhrit1fwhp",
+       "toolName": "click",
+       "input": {
+        "ref": "f1e430"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01CRJPqFi5sAEna2gDtEvhG6",
+       "toolName": "wait",
+       "input": {
+        "seconds": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 15662,
+    "outputTokens": 122,
+    "cacheReadTokens": 7280,
+    "cacheWriteTokens": 8380
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:d015f8a5acc79e592d5002daee24fbd403fb3938d708e51b17d4f70ab44cb76c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01WUWHmM4dxFtGQbDtirKMXX",
+     "name": "finish",
+     "input": {
+      "report": "Published the post \"Release 0.2 is out\" in the News category with the text \"Assay 0.2 adds per-row checks.\"; it is live at http://localhost:4320/release-0-2-is-out/."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01WUWHmM4dxFtGQbDtirKMXX",
+       "toolName": "finish",
+       "input": {
+        "report": "Published the post \"Release 0.2 is out\" in the News category with the text \"Assay 0.2 adds per-row checks.\"; it is live at http://localhost:4320/release-0-2-is-out/."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 15752,
+    "outputTokens": 109,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 15750
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}
