@@ -82,15 +82,19 @@ A check can declare that it reads route evidence:
 With it, **missing** route evidence abstains with the new reason `route_missing` instead of failing;
 evidence that was found but is wrong still fails. Precisely, inside such a check:
 
-| Leaf                                       | Missing (abstain, `route_missing`)                    | Found and decided as before                                                        |
-| ------------------------------------------ | ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `request`                                  | no request matches and the count does not accept zero | one or more match: a count bound still fails (one too few, a duplicate submission) |
-| `url`                                      | the URL does not match the match without its `query`  | the path matches: a wrong query parameter fails                                    |
-| `value` from a `request`/`response` source | no request matches the source's `match` (either side) | the body is read and compared: a wrong value fails                                 |
-| any other leaf                             | unchanged                                             | unchanged                                                                          |
+| Leaf                                       | Missing (abstain, `route_missing`)                                                                  | Found and decided as before                                                        |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `request`                                  | no request matches and the count does not accept zero                                               | one or more match: a count bound still fails (one too few, a duplicate submission) |
+| `url` with a `path`                        | the page is not on the path's shape (origin, and the path with record ids such as `5` as wildcards) | on that shape: a wrong id, query parameter or `regex` fails                        |
+| `url` without a `path`                     | never (a `regex` or query alone names no route)                                                     | decided as before                                                                  |
+| `value` from a `request`/`response` source | no request matches the source's `match` (either side)                                               | the body is read and compared: a wrong value fails                                 |
+| any other leaf                             | unchanged                                                                                           | unchanged                                                                          |
 
 and an `anyOf` ignores the branches that abstained with `route_missing` when at least one branch did
-not: the route the run took decides, and can fail it. When every branch's route is missing, the
+not: the route the run took decides, and can fail it. When the run took several routes (set the date
+through Quick Edit, then again through the editor), only the route whose request came last decides,
+since it left the final state; branches that read no request (a probe) keep their say. When every
+branch's route is missing, the
 `anyOf` abstains with `route_missing`. `allOf`, `each` and the requirement combine with the usual
 strong Kleene logic, so a requirement whose route check abstains still **fails when any other
 check of it fails** (a probe showing nothing was stored), passes only when every check passes, and
@@ -199,7 +203,9 @@ A prompt change used to need `ASSAY_MODEL_MODE=record`, which re-asks every step
 rubric, whose new wording would then change requirements and invalidate the verifier's recordings.
 With a key and an existing cassette, the scripts now replay what the cassette has and record only
 the turns it lacks (`replayOrRecordModel`); a run without a miss leaves the file untouched, and one
-with a miss writes exactly the turns it used. The discovery prompt changed, so discovery was
+with a miss writes exactly the turns it used. A turn it cannot record (the live model is another
+model, the call fails, or no live model can start) raises a "no recording" error and changes
+nothing, so the evaluation reports the run as not measured instead of scoring a model error. The discovery prompt changed, so discovery was
 re-recorded everywhere; the rubric replayed, and every requirement stayed byte for byte the same.
 
 ## Results
@@ -250,7 +256,8 @@ mutants (the remaining one is ADR 0009's weak `s08` product-list check).
 The recompile also exposed a runtime bug. `s01-add-cushions` counted cart lines with `minContains`
 and `maxContains`, which Ajv's default draft-07 mode ignored silently, so a cart with one cushion
 passed for "add two" (the stress test already mutated those keywords as if they held). User schemas
-are now compiled as draft 2019-09, where draft-07 schemas mean the same.
+are now compiled as draft 2019-09, where draft-07 schemas mean the same; the draft-07 meta-schema
+is registered, so a schema that declares `"$schema"` draft-07 still compiles.
 
 **Examples** (30 tasks, 96 held-out runs): unchanged at 1.000 for checks and checks+escalation,
 0.906 for the judge and 0.976 for the verifier. The new prompt first made three Tiny Shop order tasks
