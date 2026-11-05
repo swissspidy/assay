@@ -6,6 +6,7 @@
  */
 import type {
   Assertion,
+  AssertionResult,
   AXNode,
   CheckSet,
   Comparison,
@@ -1251,7 +1252,9 @@ function pageMutants(s: EvidenceSnapshot, a: Extract<Assertion, { kind: 'page' }
   if (hits.length !== 1) return [];
   const i = hits[0]!;
   const view = viewOf(s, i);
-  const out: M[] = assertionMutants(view, new AXIndex(view.a11y), a.assert).map((m) => ({
+  const index = new AXIndex(view.a11y);
+  // The selected page's own frames can fail to load too.
+  const out: M[] = [...assertionMutants(view, index, a.assert), ...frameMutants(view, index, a.assert)].map((m) => ({
     ...m,
     snapshot: withView(s, i, m.snapshot),
   }));
@@ -1276,27 +1279,39 @@ function subtreeTexts(n: AXNode): string[] {
 /** Frames whose content the snapshot holds, at most this many per check. */
 const MAX_FRAME_MUTANTS = 3;
 
+/** An assertion's result, or undefined when it throws (evaluate() would abstain). */
+function resultOf(snapshot: EvidenceSnapshot, index: AXIndex, x: Assertion): AssertionResult | undefined {
+  try {
+    return evaluateAssertion({ snapshot, index }, x);
+  } catch {
+    return undefined;
+  }
+}
+
+/** The locators inside an assertion that name the iframe role (targets, scopes, `within` chains). */
+function iframeLocators(x: unknown, out: Locator[] = []): Locator[] {
+  if (Array.isArray(x)) x.forEach((y) => iframeLocators(y, out));
+  else if (x && typeof x === 'object') {
+    const o = x as Record<string, unknown>;
+    if (o.role === 'iframe') out.push(o as unknown as Locator);
+    // A page assertion reads another page's tree: its locators do not address this one.
+    if (o.kind !== 'page') for (const v of Object.values(o)) iframeLocators(v, out);
+  }
+  return out;
+}
+
 /**
  * A frame that never loaded: its iframe node is empty (marked unavailable) and its text is
- * gone from the page text. Kept for the checks that read the frame: those whose result it
- * changes, and those that address the iframe itself (an absence check scoped to the frame
- * reads it, though an empty frame leaves its result as it was).
+ * gone from the page text. Kept for the checks that read the frame. A part reads it when its
+ * result changes, or when one of its locators matches the iframe (an absence check scoped
+ * to the frame reads it, though an empty frame leaves its result as it was). As for other
+ * mutants, an anyOf reads it only when every alternative does (an alternative that does not
+ * still holds), an allOf when some part does. A page assertion reads another page's frames,
+ * which its own mutants cover.
  */
 function frameMutants(s: EvidenceSnapshot, idx: AXIndex, a: Assertion): M[] {
-  const json = JSON.stringify(a);
-  const addresses = (f: AXNode) =>
-    json.includes('"role":"iframe"') && (f.name === undefined || json.includes(JSON.stringify(f.name)));
   const frames = idx.all.filter((n) => n.node.role === 'iframe' && n.node.children?.length);
   if (!frames.length) return [];
-  const result = (snapshot: EvidenceSnapshot, index: AXIndex) => {
-    try {
-      return evaluateAssertion({ snapshot, index }, a);
-    } catch {
-      return undefined;
-    }
-  };
-  const before = result(s, idx);
-  if (!before) return [];
   const out: M[] = [];
   for (const f of frames) {
     if (out.length >= MAX_FRAME_MUTANTS) break;
@@ -1311,9 +1326,17 @@ function frameMutants(s: EvidenceSnapshot, idx: AXIndex, a: Assertion): M[] {
       const { children: _, ...empty } = n;
       return { ...empty, props: { ...n.props, frame: 'unavailable' } };
     });
-    const after = result(snap, new AXIndex(snap.a11y));
-    const same = after && after.status === before.status && after.message === before.message;
-    if (same && !addresses(f.node)) continue;
+    const snapIdx = new AXIndex(snap.a11y);
+    const reads = (x: Assertion): boolean => {
+      if (x.kind === 'anyOf') return x.of.every(reads);
+      if (x.kind === 'allOf') return x.of.some(reads);
+      if (x.kind === 'page') return false;
+      if (iframeLocators(x).some((loc) => idx.matches(f, loc))) return true;
+      const before = resultOf(s, idx, x);
+      const after = resultOf(snap, snapIdx, x);
+      return !before || !after || after.status !== before.status || after.message !== before.message;
+    };
+    if (!reads(a)) continue;
     out.push({
       id: `frame:unloaded${out.length ? `#${out.length + 1}` : ''}`,
       description: `the frame ${f.node.name ? JSON.stringify(f.node.name) : (f.node.url ?? '')} never loaded`,

@@ -95,11 +95,20 @@ test('a frame that never loaded is a mutant of the checks that read the frame', 
   expect(r.weak).toEqual([]);
 });
 
-test('an absence check inside a frame without a witness is weak: an unloaded frame passes it', () => {
+test('an absence check scoped to an unloaded frame abstains; one that reaches it through within is weak', () => {
+  // Scoped to the frame: the unloaded frame cannot be searched, so the check abstains.
   const cs = set([{ kind: 'contains', scope: canvas, match: { role: 'alert' }, count: { eq: 0 } }]);
   const r = stressTest(cs, [{ name: 'ref', snapshot: reference }]);
-  expect(r.weak.map((w) => [w.check, w.mutants.map((m) => m.id)])).toEqual([['C1', ['C1:frame:unloaded']]]);
-  // With a witness it is not.
+  expect(r.mutants.find((m) => m.id === 'C1:frame:unloaded' && !m.claim)).toMatchObject({
+    rejected: true,
+    rejectedBy: 'abstain',
+  });
+  expect(r.weak).toEqual([]);
+  // Reaching into the frame with within: its result does not change, but it reads the frame.
+  const within = set([{ kind: 'contains', match: { role: 'alert', within: canvas }, count: { eq: 0 } }]);
+  const w = stressTest(within, [{ name: 'ref', snapshot: reference }]);
+  expect(w.weak.map((x) => [x.check, x.mutants.map((m) => m.id)])).toEqual([['C1', ['C1:frame:unloaded']]]);
+  // With a witness the scoped one is not weak either.
   const witnessed = set([
     {
       kind: 'contains',
@@ -191,4 +200,78 @@ test('parsed multipart fields are mutated like JSON bodies', () => {
   expect(ids.filter((id) => id.startsWith('C2:')).length).toBeGreaterThan(0);
   expect(r.mutants.filter((m) => !m.advisory && !m.rejected).map((m) => `${m.id}: ${m.description}`)).toEqual([]);
   expect(r.variants.filter((v) => !v.accepted).map((v) => v.id)).toEqual([]);
+});
+
+test('an iframe locator matched by contains, not only by its exact name, addresses the frame', () => {
+  const cs = set([
+    {
+      kind: 'contains',
+      match: { role: 'alert', within: { role: 'iframe', name: { contains: 'Editor' } } },
+      count: { eq: 0 },
+    },
+  ]);
+  const r = stressTest(cs, [{ name: 'ref', snapshot: reference }]);
+  expect(r.weak.map((w) => w.mutants.map((m) => m.id))).toEqual([['C1:frame:unloaded']]);
+});
+
+test('an anyOf with an alternative that does not read the frame gets no unloaded-frame mutant', () => {
+  const cs = set([
+    {
+      kind: 'anyOf',
+      of: [{ kind: 'contains', scope: canvas, match: { role: 'alert' }, count: { eq: 0 } }, heading],
+    },
+  ]);
+  expect(generateMutants(cs, reference).some((m) => m.id.includes('frame:'))).toBe(false);
+  expect(stressTest(cs, [{ name: 'ref', snapshot: reference }]).weak).toEqual([]);
+});
+
+test('frames on a page a page assertion selects get unloaded-frame mutants and ad variants', () => {
+  const framedPreview: EvidenceSnapshot = {
+    ...reference,
+    pages: [
+      {
+        ...reference.pages![0]!,
+        a11y: {
+          role: 'document',
+          children: [
+            {
+              role: 'main',
+              children: [
+                {
+                  role: 'iframe',
+                  name: 'Comments',
+                  children: [{ role: 'main', children: [{ role: 'heading', name: 'Great post', level: 2 }] }],
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+  };
+  const cs = set([
+    {
+      kind: 'page',
+      match: { title: { contains: 'Preview' } },
+      assert: { kind: 'contains', scope: { role: 'iframe' }, match: { role: 'heading', name: 'Great post' } },
+    },
+  ]);
+  const unloaded = generateMutants(cs, framedPreview).find((m) => m.id === 'C1:frame:unloaded')!;
+  expect(unloaded.snapshot.a11y).toEqual(framedPreview.a11y); // the active page is untouched
+  expect(JSON.stringify(unloaded.snapshot.pages![0]!.a11y)).toContain('"frame":"unavailable"');
+  const r = stressTest(cs, [{ name: 'ref', snapshot: framedPreview }]);
+  expect(r.mutants.find((m) => m.id === 'C1:frame:unloaded' && !m.claim)!.rejected).toBe(true);
+  // The ad goes on that page too, outside its frame: the role-only iframe scope becomes
+  // ambiguous there, which the stress test reports as fragile.
+  const ad = generateVariants(cs, framedPreview).find((v) => v.id === 'extra-frame')!;
+  expect(JSON.stringify(ad.snapshot.pages![0]!.a11y)).toContain('"name":"Advertisement"');
+  expect(r.fragile.map((f) => [f.check, f.variants.map((v) => v.id)])).toEqual([['C1', ['extra-frame']]]);
+});
+
+test('the ad frame goes outside existing frames, so their content is unchanged', () => {
+  const ad = generateVariants(set([title]), reference).find((v) => v.id === 'extra-frame')!;
+  const main = ad.snapshot.a11y.children![0]!;
+  expect(main.children!.at(-1)).toMatchObject({ role: 'iframe', name: 'Advertisement' });
+  const canvasNode = main.children!.find((n) => n.name === 'Editor canvas')!;
+  expect(canvasNode).toEqual(reference.a11y.children![0]!.children!.find((n) => n.name === 'Editor canvas'));
 });

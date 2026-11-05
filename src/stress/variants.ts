@@ -128,28 +128,46 @@ function extraContent(s: EvidenceSnapshot): EvidenceSnapshot {
 const hasFrameContent = (n: AXNode): boolean =>
   (n.role === 'iframe' && !!n.children?.length) || (n.children ?? []).some(hasFrameContent);
 
+/** `tree` with `extra` added to its first `main` outside any iframe, or to its root. */
+function addOutsideFrames(tree: AXNode, extra: AXNode): AXNode {
+  let placed = false;
+  const walk = (n: AXNode): AXNode => {
+    if (placed || n.role === 'iframe') return n;
+    if (n.role === 'main') {
+      placed = true;
+      return { ...n, children: [...(n.children ?? []), extra] };
+    }
+    return n.children ? { ...n, children: n.children.map(walk) } : n;
+  };
+  const out = walk(tree);
+  return placed ? out : { ...out, children: [...(out.children ?? []), extra] };
+}
+
+/** The advertisement frame of the extra-frame variant, on the origin of `url`. */
+const adFrame = (url: string): AXNode => ({
+  role: 'iframe',
+  name: 'Advertisement',
+  url: `${httpOrigin(url) ?? 'https://ads.example'}/ads/frame`,
+  children: clone(UNRELATED),
+});
+
+/** A page view with the ad frame added, when it has frame content; else the same view. */
+function withAd<V extends { url: string; a11y: AXNode; text: string }>(v: V): V {
+  if (!hasFrameContent(v.a11y)) return v;
+  return { ...v, a11y: addOutsideFrames(v.a11y, adFrame(v.url)), text: `${v.text}\n${UNRELATED_TEXT.join('\n')}` };
+}
+
 /**
  * An unrelated embedded frame (an advertisement) with content of its own, next to the
- * page's content (ADR 0012). Only for pages whose frames were captured: a check that
- * reads frame content must not pick up another frame's.
+ * page's content and outside its frames (ADR 0012), on every open page whose frames were
+ * captured: a check that reads frame content, on the active page or one a page assertion
+ * selects, must not pick up another frame's.
  */
 function extraFrame(s: EvidenceSnapshot): EvidenceSnapshot | null {
-  if (!hasFrameContent(s.a11y)) return null;
-  let origin = 'https://ads.example';
-  try {
-    origin = new URL(s.page.url).origin;
-  } catch {
-    /* keep the default */
-  }
-  const ad: AXNode = { role: 'iframe', name: 'Advertisement', url: `${origin}/ads/frame`, children: clone(UNRELATED) };
-  let placed = false;
-  let out = editById(s, (n) => {
-    if (n.role !== 'main' || placed) return undefined;
-    placed = true;
-    return { ...n, children: [...(n.children ?? []), ad] };
-  });
-  if (!placed) out = { ...out, a11y: { ...out.a11y, children: [...(out.a11y.children ?? []), ad] } };
-  return { ...out, text: `${out.text}\n${UNRELATED_TEXT.join('\n')}` };
+  const active = withAd({ url: s.page.url, a11y: s.a11y, text: s.text });
+  const pages = s.pages?.map(withAd);
+  if (active.a11y === s.a11y && (pages ?? []).every((p, i) => p === s.pages![i])) return null;
+  return { ...s, a11y: active.a11y, text: active.text, ...(pages ? { pages } : {}) };
 }
 
 /** The origin of an http(s) URL, if it is one. */
