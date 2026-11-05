@@ -1,4 +1,5 @@
 import { Ajv } from 'ajv';
+import { Ajv2019 } from 'ajv/dist/2019.js';
 import type {
   Assertion,
   CheckSet,
@@ -21,7 +22,7 @@ import { checkSetSchema } from './schema.ts';
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 const validateShape = ajv.compile(checkSetSchema);
-const schemaCompiler = new Ajv({ strict: false, validateFormats: false });
+const schemaCompiler = new Ajv2019({ strict: false, validateFormats: false });
 
 export interface ValidationReport {
   ok: boolean;

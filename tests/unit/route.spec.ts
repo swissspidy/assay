@@ -321,6 +321,23 @@ test.describe('items flatten: "add X" keeps what was there', () => {
   });
 });
 
+test('JSON Schema comparisons enforce minContains and maxContains (draft 2019-09)', () => {
+  // A compiled check counted cart lines with these; draft-07 ignored them, so one cushion passed for two.
+  const lines: Check = {
+    ...stored,
+    assert: {
+      kind: 'value',
+      source: { from: 'probe', probe: 'comments' },
+      expect: {
+        schema: { type: 'array', contains: { properties: { post: { const: 6 } } }, minContains: 2, maxContains: 2 },
+      },
+    },
+  };
+  expect(evaluate(set([lines]), snap([], { probes: { comments: comments() } })).verdict).toBe('fail');
+  expect(evaluate(set([lines]), snap([])).verdict).toBe('success');
+  expect(evaluate(set([lines]), snap([], { probes: { comments: comments(REPLY, REPLY) } })).verdict).toBe('fail');
+});
+
 test.describe('compiler: route evidence', () => {
   const ref = (name: string, network: NetworkEntry[], extra: Partial<EvidenceSnapshot> = {}): Reference => ({
     name,
