@@ -313,6 +313,7 @@ interface Locator {
   level?: number;
   landmark?: { role: LandmarkRole; name?: TextMatch }; // some landmark ancestor
   within?: Locator; // some ancestor matches this locator
+  column?: TextMatch; // a cell's column header (ADR 0008)
 }
 type Target = Locator | { anchors: Locator[] }; // redundant anchors
 ```

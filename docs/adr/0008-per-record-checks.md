@@ -57,8 +57,8 @@ The fix had to be additive: existing check sets keep validating and give identic
   without a scope reads the record's text (canonicalized, ADR 0001 §2.3). `within` and `landmark`
   still look at all ancestors, inside the record or not. An `each` nests: an order's list item, and
   in it the line of one product.
-- **Anchors and outcome.** The scope and witness are anchors: missing or ambiguous, the check
-  abstains (ADR 0001 §2.1). The number of records is outcome evidence: outside `count`, the check
+- **Anchors and outcome.** The scope and witness are anchors: missing or ambiguous (a witness
+  matching more than one node), the check abstains (ADR 0001 §2.1). The number of records is outcome evidence: outside `count`, the check
   fails, as `contains` does. Inside, a missing anchor abstains with a message naming the record.
 - **Labels are anchors.** A record found by a label the page shows whatever the outcome (the
   term "When") should name that label as its `witness` too: renamed copy then abstains instead of
@@ -68,6 +68,14 @@ The fix had to be additive: existing check sets keep validating and give identic
   conjunction: one record failing fails the check, one abstaining while the others pass abstains.
   "The row named X has cell Y" is an `each` whose `match` selects that row; "every listed issue
   is open" is an `each` over all rows. The message lists the records that decided.
+- **Cells bound to their column.** Inside a row, "a cell named Open" also matches a title cell
+  that reads "Open". A locator's `column` (a text match) binds a cell (`cell`, `gridcell`,
+  `rowheader`, `columnheader`) to its column: the columnheader at the cell's position among its
+  row's cells, in the first row of the enclosing `table`, `grid` or `treegrid` that has column
+  headers. `{role: "cell", name: "Open", column: "Status"}` matches only the status. The
+  accessibility tree has no column indices, so positions are counted: a cell spanning several
+  columns shifts the cells after it, and such a table needs another anchor. The validator rejects
+  `column` on other roles.
 - **Only the record may be read.** Inside `each`, a `url` or `request` assertion, or a `value`
   whose source is not a node or text, reads the same thing for every record; the validator
   rejects it. The other side of a `sameAs` may read any source (the row's order number equals the
@@ -97,6 +105,10 @@ the Red Mug, but keep everything else" (a changed price passed), so it is refuse
   where both sides can be read as non-empty arrays of objects, all their items have exactly the same
   fields. Two different sources (order lines and cart items) can only be compared by shape on data,
   so this lives in the compiler, which has the references, not in `validateCheckSet`.
+
+The compiler's check also walks into `each` (both sides read in every record of every correct
+reference, as for `unreadableBranches`), and resolves a storage key without an `origin` to the
+page's origin, so the same key named with and without it counts as one collection.
 
 ### 3. Validator
 
@@ -139,14 +151,27 @@ definition case is structural: a `dd` has no meaning without its `dt`.
   on its own still holds the same values; only whole-record and `pick` comparisons see it. As for
   the other array edits, it is kept only when the check's own normalizers and comparison read it
   as a violation.
+- **Wrong column:** for a `contains` whose match is bound to a column, the matched cell trades
+  content with another cell of its row, so the value is still in the row, under another header.
 - **Valid variant `reorder-terms`:** term groups (a term with its definitions) in reverse order.
-  Formatting variants also re-render values that an `each` reads inside its records.
+  Formatting variants also re-render values that an `each` reads inside its records, from a node
+  or from the record's (or a scope's) text. Record and scoped text is read canonically, as the
+  evaluator reads it, so a value after a no-break space is still found and edited.
 
 ### 5. Compiler
 
 The discovery prompt documents `each` and asks for it whenever a value belongs to one row, list
-item or field; the baseline section documents `pick` for collections whose items carry different
-fields. The compiler refuses the new loose match like the others.
+item or field, with cells bound to their column; the baseline section documents `pick` for
+collections whose items carry different fields. The compiler refuses the new loose match like the
+others.
+
+Review of the recompile found record-level gaps outside the DSL, which the prompt now covers: a
+task that changes an existing record selects it by its id (a new record with the same title is
+another record); "the others are still there" or "nothing else" compares every field of each kept
+record (with the baseline when there is one, otherwise with what the reference shows), so a moved
+event fails; stored state is checked in a probe, not only in a request's response; and each
+redundant anchor keeps everything the requirement says about where the node is (a fallback anchor
+without the Preferences form could select a look-alike checkbox).
 
 ## Alternatives considered
 
@@ -162,15 +187,15 @@ fields. The compiler refuses the new loose match like the others.
 - **"Some record" semantics** (pass when any record satisfies the assertion). "The row named X
   has Y" is `each` with a `match` that names X; a check that any row has Y is already a `contains`.
   Every-record semantics keep `each` from passing on one good record among bad ones.
-- **Column binding** (a cell under the column header "Status"). The accessibility tree gives no
-  column indices, and spanning cells make a position-based guess wrong. Matching a cell by its
-  content inside the row covers the cases seen so far.
+- **Column indices from the DOM.** The accessibility snapshot has none, and capturing them would
+  change the snapshot format. Counting cells is right for tables without spanning cells, which is
+  where `column` is offered.
 - **A tuple for `pick`** (`["MUG-RED", 1]`). An object keyed by pointer shows in the evidence
   which value is which field.
 
 ## Compatibility
 
-`each` and `pick` are additive to `assay.checks/v1`. An assertion outside `each` resolves against
+`each`, `pick` and `column` are additive to `assay.checks/v1`. An assertion outside `each` resolves against
 the document exactly as before, so existing check sets give identical verdicts. The new loose-match
 warning can appear on an existing set that reads a definition by its content (one compiled set did,
 and was recompiled). `resolveTarget` takes an optional scope.
