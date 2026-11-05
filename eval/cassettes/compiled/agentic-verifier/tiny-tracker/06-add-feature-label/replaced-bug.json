@@ -1,19 +1,19 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T10:53:04.386Z",
+ "recordedAt": "2026-11-05T11:38:10.455Z",
  "turns": {
-  "sha256:9290bc4e0b8978640e2513e25130b95eb23f08f5481f28b431a9fe5688b993d7": {
+  "sha256:120c85ae395e40e49572f9dd7ffb9aa52e13e5b803f755ea0606fac40494ab1f": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01GQSz4GmKoHnuKKQVxNvUsa",
+     "id": "toolu_01RzLRZbhhoJ3uU4EQcKykmi",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01StJN8Wm9MD57y3rqwA8p2E",
+     "id": "toolu_01B8ndiPDVYqaDfnQct6XmBz",
      "name": "network_log",
      "input": {}
     }
@@ -21,7 +21,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01GQSz4GmKoHnuKKQVxNvUsa",
+     "id": "toolu_01RzLRZbhhoJ3uU4EQcKykmi",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -30,7 +30,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01StJN8Wm9MD57y3rqwA8p2E",
+     "id": "toolu_01B8ndiPDVYqaDfnQct6XmBz",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -39,19 +39,19 @@
     }
    ],
    "usage": {
-    "inputTokens": 1883,
+    "inputTokens": 1879,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 1879
+    "cacheWriteTokens": 1875
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:eeb8dc39f7122aaa4ca211e33a7a8bacbd01eed357812ff7b9e1af10c84d9b08": {
+  "sha256:a302b6850ad43d7efcc98729179922c94468b6c39c7128e0ea7cbe8c07705877": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01LqQ8kQW2BVnaBCoPkGxpjn",
+     "id": "toolu_01SXU6risSxKqa8qUGg88DSr",
      "name": "network_entry",
      "input": {
       "seq": 1
@@ -61,7 +61,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01LqQ8kQW2BVnaBCoPkGxpjn",
+     "id": "toolu_01SXU6risSxKqa8qUGg88DSr",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -72,100 +72,125 @@
     }
    ],
    "usage": {
-    "inputTokens": 2364,
+    "inputTokens": 2360,
     "outputTokens": 49,
-    "cacheReadTokens": 1879,
+    "cacheReadTokens": 1875,
     "cacheWriteTokens": 483
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:ea903f12fc8fc25531319a1ba68083a43beffaaa86503e485804b7cecc01b72b": {
+  "sha256:d2d866b78f70f57fd983fd250f07f732ae100eb8f022c19e142900efa1ede678": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01D9VHG86478o4n1UxSfrHjL",
-     "name": "submit_verdict",
+     "id": "toolu_01Gqa5fnVdXxSnBvbPpiAMw8",
+     "name": "find_nodes",
      "input": {
-      "verdicts": [
-       {
-        "requirement": "Then issue #1 has the feature label",
-        "status": "pass",
-        "cites": [
-         1,
-         3
-        ],
-        "reasoning": "Probe shows issue #1 labels = [\"feature\"]; POST /issues/1/labels sent labels=feature."
-       },
-       {
-        "requirement": "Then issue #1 still has the bug label",
-        "status": "fail",
-        "cites": [
-         1,
-         3
-        ],
-        "reasoning": "The POST submitted only labels=feature, replacing the label set; probe shows issue #1 labels are just [\"feature\"], with no bug label."
-       }
-      ]
+      "text": "bug"
      }
     }
    ],
    "raw": [
     {
-     "type": "thinking",
-     "thinking": "",
-     "signature": "CAQS3QUKEAgTGAI4AUIIdGhpbmtpbmcSDECYdFMTI0jyE7WftBoMiEU5beIwYlrVLxTaIjBtu34k/fFLELt/3OZ2fPP1NafFPcwxG7J4byfR2EZmhCeBeIpEEEBTz8kbfzhRPLUq+gQN/ooIEAEMEgDFtwwSFNiGJONVREEFgrTuS88fTtKwSdJ6LVRu+fvaQFYGRmGKZyNo/i0WhSZ9YsPyIvfqwzrAdU8dw3neFTPRl8FwhMQ8KTE2fAu2bTlSQZWO470ZVrCKSzygwGqcboSUNWkik89Xi1Pjf5wx7gwa58duLef+ShV0jd58yLCMgHMwjXVSAIzzZN6MQpShCypIqchtLED7i3mECC7QayQWGiuzVDviOcxQ35IYIlB3++e2D2faF7I2/6mUzAqWRMzI+qv0Ws7P1uy3KFMSu6wiQnyY2l+piZT7eFMoykeLDWlIfxzCd3OMDQka2sf9//HIMobKjFIkq771KszAaPNuaValesDnNilWQ6yAQStnMuVDQ+KelnFjQ4DWo7WHRzsbkOett1AqGs2m4O+oG82NihUlzlTLIh87xE/1cT4xubVdEnWf0k5jKYzi6BR0hVJWzlJN73+dvhpDOqPaHZzkfr1U8Ts5QLMXrxWCdyK8v3SYGztrjcSn+oZWJIP3WZL9kGd91uwkD23oB/Raeejrj5u0rFgmk8RKjqIwu8Er5rfWwihPuNwpBlYcI6J8OjFmoMSGH9QxUdQ4EodW2BWuTSUN/ChXa9hpcKEWxFDmXwVDL+r5hs6Nq5MowBZIO+EWPGXVR38SZt2E+CA2j9Ywj48crPtSvuPHewDawlaNKAaCWomj0+Dq053rRPnaGcofuJ2ZmX/YNICy31GYDo2mRbxGqcsVQiZOVBeGiAr1JIkKZVtTmgulDtH2bSY5qoA+TescrllYsm1LezzgqxZyjM2EgjYX/50g/L+l+tx/V8uj1mVwzKwoFNofzByZIUDbGAE="
-    },
-    {
-     "type": "thinking",
-     "thinking": "",
-     "signature": "CAQSwwkKEQgTGAI4AUIJbmFycmF0aW9uEgzkmO5EEsE9tAGUIvIaDHWKJ9ZERJevwhQHRyIwu8b0sZ1IxbNiPuBC1MHHPXwPA7Q/iIM0A9Bgmte0GD8TZ6JpeE/YbKUFRJ/PS+BMKt8I6QALeB8Ctw1JS5urwIkYCnR5/r05+HAMuIAhdawjWPU1Cn6nxQr4YpLzSVHK20YOo/eFdJ8JOtXg0q0vVF59aEqaEfH3PWiK1ximNPephF6pWM/Y0cDf/1jwAWrSav3IiZkR0kCYMrMnP37IAzen7kC2gXh/aDxzdT70oNJaxUgzwwjhQxjoIiqAaj384dQq3ugXN1jjojK1J42A3318wZ3hOltKIbXtCYVrPqGZaMPAUUDQ5hhmhZ8+DPZq5eezd5q9gKXWG28JmwnZW4l6HUC8iyDIg7ZlDAeEiHD3SApZif1/trl4/hJsuv2w0PKbHpwnONm0idZyRCg5O7cpJZmn/f1vHdCBfOY4gXZagB+nW1k4WiKjE78VEbtrmvpMcBdrPb6vLPYEMFdF2bWowq0DxDKKU7715iwwSJRyOIvd+sPS7BNEcBbWCtmMjBykg1Bjl6a/00OMW/Pmkc0w5QNcptO9hLH6GJz5WWB0nIFmBjTic7vPVQyr2L0vHVo1LOPOc65YH4AqM9ZTLwl/pG8AlG1GDtALmo81xfKCJTgP2Kr1uZHyMypfsvYV7GdFzbTLdzHneiMbIHPM2pZNe0ibjzMm1H69J57IYTcXVorpUGuCtPQ/Tvj448xiflo1zezaNoD3nYoNLBrTXRqPkeEQkyuhL6rxis1d1AF2Ffbcn38LfzBvkOdS7C87ymV/zQ43iM7s22bXu7vnj6VZMNqsq9PHaQIOvWCpv/ogybNmRLb/Aq0sYwzlkuez6+yrp4gnHn9I+Kn2fQqdxucsffTlAFPri0o5/DT5OJCtcdAH95aBUtue1zcTAqk3Ch2ZS9ISSLA0cM9E8zIsuob2tn9BGOephKFQ9EXwcK7Y+MGVAGnMGnXyzjcak8z4zunPL/AP7WereKmchc69d4vnev7iuWoPrmceAVN1Q/wnVayyt6ZAeKf+Y1rleos7lJZddvgYOFI5kXi2FRxRKkwtBqAkf6OjF7SKhj9KWvev4bqdx8RY1dEf+7acGAPjHNZb3ZTlH28vyiWgLGDFGOW34RpnyrnewaQN4jkIPTlWGzYFy9QPbwLhUSRzyopxxm89HDs6WGz2Ka5GCp2vGf3CA0GQmXMlcvKaPGkRa6GahweL9c6O41HSX//NQYqhOYsE/9wSpOi2uyTDYCMa6v5pYH1f+YpIiKaFCbRml5Ii4PsToxaVp9XiBz20q38zEYgKcAeviU9LHEbgH6342Ci9T+f2taksGTu5/sGdjQOeHOqmvv+EK5Nm6B0Bi9DDZo9L+hotYa14YKri2yQpfU3y2LAnK+40x6Z3fnia/9zNI4ID61IvEd1J3Kk0Q3iIXsboKhRo7UOkFKqn6QiTLB9Q/SpibooV6esqYr4VkmUtimubd1K4hy+xRRZFIP6MLd97Y6IWmZL0pj6PAqFhhpbc8zng0kDImiueXPvAhn2lYn71mJw12HDFK10kGJez1JWzffxblc/ff/SAHtifVd27GAE="
-    },
-    {
      "type": "tool_use",
-     "id": "toolu_01D9VHG86478o4n1UxSfrHjL",
-     "name": "submit_verdict",
+     "id": "toolu_01Gqa5fnVdXxSnBvbPpiAMw8",
+     "name": "find_nodes",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "verdicts": [
-       {
-        "requirement": "Then issue #1 has the feature label",
-        "status": "pass",
-        "cites": [
-         1,
-         3
-        ],
-        "reasoning": "Probe shows issue #1 labels = [\"feature\"]; POST /issues/1/labels sent labels=feature."
-       },
-       {
-        "requirement": "Then issue #1 still has the bug label",
-        "status": "fail",
-        "cites": [
-         1,
-         3
-        ],
-        "reasoning": "The POST submitted only labels=feature, replacing the label set; probe shows issue #1 labels are just [\"feature\"], with no bug label."
-       }
-      ]
+      "text": "bug"
      }
     }
    ],
    "usage": {
-    "inputTokens": 2521,
-    "outputTokens": 426,
-    "cacheReadTokens": 2362,
+    "inputTokens": 2517,
+    "outputTokens": 50,
+    "cacheReadTokens": 2358,
     "cacheWriteTokens": 157
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:3f7a33095bf51ae2702c8d7b407c5f019a73bd0cae47af59d9603182643fe821": {
+  "sha256:0109f82556faba1fb6bf3a5ef57627440bd032c6fa84c283cc948d4ac9e135b6": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_018DkQKGYcfMfUbku7btRQjH",
+     "id": "toolu_01JHdMyaYzXfjurULUydhksu",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 has the feature label",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The issue state probe shows that issue #1's labels are [\"feature\"]. The POST request sent labels=feature."
+       },
+       {
+        "requirement": "issue #1 still has the bug label",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The POST request sent only labels=feature, and the probe shows that issue #1's labels are now only [\"feature\"]. The page lists the labels as just \"feature\", so the bug label was removed."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01JHdMyaYzXfjurULUydhksu",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 has the feature label",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The issue state probe shows that issue #1's labels are [\"feature\"]. The POST request sent labels=feature."
+       },
+       {
+        "requirement": "issue #1 still has the bug label",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The POST request sent only labels=feature, and the probe shows that issue #1's labels are now only [\"feature\"]. The page lists the labels as just \"feature\", so the bug label was removed."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2767,
+    "outputTokens": 238,
+    "cacheReadTokens": 2515,
+    "cacheWriteTokens": 250
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:47a7f7095d51b3f1b43944899b96e9014a3f69e8899a018c2b83022355bd3a01": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01YcG6Ff6SrFdFRAGNZq71oY",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -176,16 +201,17 @@
          1,
          3
         ],
-        "reasoning": "Probe shows issue #1 labels = [\"feature\"]; POST /issues/1/labels sent labels=feature."
+        "reasoning": "The issue state probe shows that issue #1's labels are [\"feature\"]. The POST request sent labels=feature."
        },
        {
         "requirement": "R2",
         "status": "fail",
         "cites": [
          1,
-         3
+         3,
+         4
         ],
-        "reasoning": "The POST submitted only labels=feature, replacing the label set; probe shows issue #1 labels are just [\"feature\"], with no bug label."
+        "reasoning": "The POST request sent only labels=feature, and the probe shows that issue #1's labels are now only [\"feature\"]. The page lists the labels as just \"feature\", so the bug label was removed."
        }
       ]
      }
@@ -194,7 +220,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_018DkQKGYcfMfUbku7btRQjH",
+     "id": "toolu_01YcG6Ff6SrFdFRAGNZq71oY",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -208,26 +234,27 @@
          1,
          3
         ],
-        "reasoning": "Probe shows issue #1 labels = [\"feature\"]; POST /issues/1/labels sent labels=feature."
+        "reasoning": "The issue state probe shows that issue #1's labels are [\"feature\"]. The POST request sent labels=feature."
        },
        {
         "requirement": "R2",
         "status": "fail",
         "cites": [
          1,
-         3
+         3,
+         4
         ],
-        "reasoning": "The POST submitted only labels=feature, replacing the label set; probe shows issue #1 labels are just [\"feature\"], with no bug label."
+        "reasoning": "The POST request sent only labels=feature, and the probe shows that issue #1's labels are now only [\"feature\"]. The page lists the labels as just \"feature\", so the bug label was removed."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 3018,
-    "outputTokens": 212,
-    "cacheReadTokens": 2519,
-    "cacheWriteTokens": 497
+    "inputTokens": 3073,
+    "outputTokens": 229,
+    "cacheReadTokens": 2765,
+    "cacheWriteTokens": 306
    },
    "model": "claude-opus-5-5"
   }

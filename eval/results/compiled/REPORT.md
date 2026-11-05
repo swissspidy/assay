@@ -1,15 +1,15 @@
 # Evaluation: compiled checks vs. model baselines
 
-Generated 2026-11-05T11:01:07.523Z · check sets: **compiled** · 96 labelled runs over 30 tasks (30 correct, 66 incorrect) in 3 apps.
+Generated 2026-11-05T11:40:21.634Z · check sets: **compiled** · 96 labelled runs over 30 tasks (30 correct, 66 incorrect) in 3 apps.
 
 Positive = the run really completed the task. TPR = correct runs judged success; TNR = incorrect runs judged not success (an abstain counts as not success). The agent always reports success, as agents usually do.
 
 | System | Balanced accuracy | TPR | TNR | Abstain rate | Cost / run | Latency (median / p95) |
 |---|---|---|---|---|---|---|
-| checks | 1.000 | 1.000 | 1.000 | 0.000 | $0.0000 | 274 µs / 7.4 ms |
-| checks+escalation | 1.000 | 1.000 | 1.000 | 0.000 | $0.0000 | 151 µs / 433 µs |
+| checks | 1.000 | 1.000 | 1.000 | 0.000 | $0.0000 | 281 µs / 4.7 ms |
+| checks+escalation | 1.000 | 1.000 | 1.000 | 0.000 | $0.0000 | 161 µs / 515 µs |
 | llm-judge | 0.906 | 0.933 | 0.879 | 0.000 | $0.0119 | n/a (replayed) / n/a (replayed) (0 of 96 runs timed) |
-| agentic-verifier | 0.976 | 0.967 | 0.985 | 0.000 | $0.0274 | 9.5 s / 13.6 s (4 of 96 runs timed) |
+| agentic-verifier | 0.976 | 0.967 | 0.985 | 0.000 | $0.0275 | 9.6 s / 12.3 s (28 of 96 runs timed) |
 
 ## Correct verdicts by run kind
 
@@ -26,7 +26,7 @@ Positive = the run really completed the task. TPR = correct runs judged success;
 ## Notes
 
 - **llm-judge** used anthropic:claude-opus-5-5@high (replay).
-- **agentic-verifier** used anthropic:claude-opus-5-5@high (replay).
+- **agentic-verifier** used anthropic:claude-opus-5-5@high.
 - Compiled check sets: each was compiled from one correct run per task. Those 30 runs are left out for every system, so all scored runs are held out.
 - The LLM judge is shown the agent's report, as typical LLM judges are; Assay's checks never see it, and the agentic verifier gets it marked as context, not evidence.
 - Model latency is only measured when recording; replayed runs show none.

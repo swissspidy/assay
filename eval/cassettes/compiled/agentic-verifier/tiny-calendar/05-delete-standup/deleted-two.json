@@ -1,19 +1,19 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T10:53:22.016Z",
+ "recordedAt": "2026-11-05T11:39:26.789Z",
  "turns": {
-  "sha256:17d8cdba480ea21e242f59fa45e6cb817aab45613ab7c9ff42b64d067f99bab9": {
+  "sha256:de0405a7cd134499e0d2ca69afbcb828baaa855bda89c50eca87af74d676081d": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01KtgsEVzNckx9EmBE5eZkKV",
+     "id": "toolu_01X1disBqc7f1XYAaxSxHxmM",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_016wbj3pQPh6AzNrrWz48UBb",
+     "id": "toolu_01JwhTGrquqdaqKbB3xE1AKu",
      "name": "network_log",
      "input": {}
     }
@@ -21,7 +21,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01KtgsEVzNckx9EmBE5eZkKV",
+     "id": "toolu_01X1disBqc7f1XYAaxSxHxmM",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -30,7 +30,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_016wbj3pQPh6AzNrrWz48UBb",
+     "id": "toolu_01JwhTGrquqdaqKbB3xE1AKu",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -39,26 +39,26 @@
     }
    ],
    "usage": {
-    "inputTokens": 1860,
+    "inputTokens": 1856,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 1856
+    "cacheWriteTokens": 1852
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:eb8dcd081730a60078f6471ebdf944f225baab93acebbba8e5e044a5a5dda97c": {
+  "sha256:3a91a149ccd02ac904a3fb91970ad8093c07da849db9c5b4f8de41b25c0bf83f": {
    "stop": "tool_use",
-   "text": "Two deletes. Let's see which was Team standup.",
+   "text": "Two deletions happened. Let me check which events they were.",
    "toolCalls": [
     {
-     "id": "toolu_01KXttBHwiJo84wgmBMzBe2Y",
+     "id": "toolu_0166fSsTNfw5fGrYy5WNcjQz",
      "name": "network_entry",
      "input": {
       "seq": 2
      }
     },
     {
-     "id": "toolu_01GkRZgxa8s656WW43VTnkbr",
+     "id": "toolu_017Gigq44pdiFyByBzVraqgm",
      "name": "network_entry",
      "input": {
       "seq": 16
@@ -68,11 +68,11 @@
    "raw": [
     {
      "type": "text",
-     "text": "Two deletes. Let's see which was Team standup."
+     "text": "Two deletions happened. Let me check which events they were."
     },
     {
      "type": "tool_use",
-     "id": "toolu_01KXttBHwiJo84wgmBMzBe2Y",
+     "id": "toolu_0166fSsTNfw5fGrYy5WNcjQz",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -83,7 +83,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01GkRZgxa8s656WW43VTnkbr",
+     "id": "toolu_017Gigq44pdiFyByBzVraqgm",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -94,19 +94,19 @@
     }
    ],
    "usage": {
-    "inputTokens": 2504,
+    "inputTokens": 2500,
     "outputTokens": 113,
-    "cacheReadTokens": 1856,
+    "cacheReadTokens": 1852,
     "cacheWriteTokens": 646
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:d2d711c97385bd1b2b1d1fe6d0dfb803fccfe4d992f198c039a66070cbeb659a": {
+  "sha256:c73e052330b36a0c4889ff23096b83249c8946786d9a6aa51b17f0bdd2add9ee": {
    "stop": "tool_use",
-   "text": "The agent deleted Team standup as asked, but it also deleted Dentist, which it should not have touched.",
+   "text": "",
    "toolCalls": [
     {
-     "id": "toolu_017s2pFqD3DYFen3KL2QNzRm",
+     "id": "toolu_01CZPavFv5Go1x5gxfU82eCH",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -118,18 +118,17 @@
          2,
          3
         ],
-        "reasoning": "At the start, Team standup was event id 1 (obs 3). The agent sent DELETE /api/events/1, which returned 200 (obs 2). The events probe now holds only Book club (obs 1), so Team standup is gone."
+        "reasoning": "Team standup (id 1) was deleted via DELETE /api/events/1, and the final events probe no longer lists it."
        },
        {
         "requirement": "R2",
         "status": "fail",
         "cites": [
          1,
-         2,
          3,
          4
         ],
-        "reasoning": "At the start there were three events: Team standup, Dentist and Book club (obs 3). The agent also sent DELETE /api/events/2 (Dentist), and the server replied {\"deleted\":2} (obs 2, obs 4). The final probe shows only Book club (obs 1), so Dentist is no longer there."
+        "reasoning": "Dentist (id 2) was also deleted with DELETE /api/events/2. The final probe lists only Book club, so not all of the other events are still there."
        }
       ]
      }
@@ -137,17 +136,8 @@
    ],
    "raw": [
     {
-     "type": "thinking",
-     "thinking": "",
-     "signature": "CAQS4QUKEAgTGAI4AUIIdGhpbmtpbmcSDAt3ktAQ5wskDL5D9hoMp5LNQ6CgXjEcIFYnIjBUUqmd/de5aiWqd/mL3gVB/q8PotuRZUtp6kZqRgVT0+w6sfpOzC67RwlFk2lFlooq/gShgq8IrpX7+Qpiw/CDuoWeUsJ274jYJqQZwWhUNk98O47uK0ZphkeX0uyVpRjSal6qwOwEUh3VXRzEwton8hGpJaI5q94bjleHJ5KZwez9Sp3F+dzn60If0yQIe6LbIUYjmMFO60cc3RkcZgI12SFo7cSyVMV61gqqKxg44SVWWtSmIS3u8/JoSaroMiwAzrmAy1HDsSEZ5ZpDvZy9/WxTyDO2duyHmLvbCbj4pH1X2vM0G9KB+wuqVV5olWsCgAOV9GAUPZ+2lcEmqyp+/u+gRjBkepfP1BvakWeQG0dP5U1ZptfdthAfOaYdOo5sHs2DYnbNt4Qvam/HkAYfkZyW4Etq7YU0uywmKZoqWAwKa006SAVR3hWsTU2bxhQw+OxFIVYtCsFDo9fT2ylzbtcfHK1hGQuHFK8gWJL4NQKlcF8zVN0gBxJVqMWgv7tE3s/w1JiQgN9NM6ACvg/8EFqxW4ATZbh4oFlgCHJFZmAoSmw5uGoNv6eHg1NnjABGRrJQWUi8Mm4EMD2KRiFQa9RzSAHqvodtSnyB8zs3qca5fhMuEaXD0l0whVaPJlRo8Yox5NZm6o3vryZVzP0RGYBzNiEwt0Kz5wsJjZQymT2NgZn06CZJjGjzJFw45LD94Jq6Vt5AlyZfWBVFszXupsaPOLkKQFp4n2607JkFcmIIq/P9F1mxs5zKmLTPFYriBa+BakDOuIs2eMQRq0PilTLI6sWU9LKi06jTOF+QK9cCXaoGCZuuK5bn8kyPvYkuxHfr6nYrYBXKggt5h8Eyz5i4CuBJkZnn9H5SXvIxjXyC+JsvWGbmGD1Uko6sagIbRT1XqJzAChuN7zexC2/tihgB"
-    },
-    {
-     "type": "text",
-     "text": "The agent deleted Team standup as asked, but it also deleted Dentist, which it should not have touched."
-    },
-    {
      "type": "tool_use",
-     "id": "toolu_017s2pFqD3DYFen3KL2QNzRm",
+     "id": "toolu_01CZPavFv5Go1x5gxfU82eCH",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -162,27 +152,26 @@
          2,
          3
         ],
-        "reasoning": "At the start, Team standup was event id 1 (obs 3). The agent sent DELETE /api/events/1, which returned 200 (obs 2). The events probe now holds only Book club (obs 1), so Team standup is gone."
+        "reasoning": "Team standup (id 1) was deleted via DELETE /api/events/1, and the final events probe no longer lists it."
        },
        {
         "requirement": "R2",
         "status": "fail",
         "cites": [
          1,
-         2,
          3,
          4
         ],
-        "reasoning": "At the start there were three events: Team standup, Dentist and Book club (obs 3). The agent also sent DELETE /api/events/2 (Dentist), and the server replied {\"deleted\":2} (obs 2, obs 4). The final probe shows only Book club (obs 1), so Dentist is no longer there."
+        "reasoning": "Dentist (id 2) was also deleted with DELETE /api/events/2. The final probe lists only Book club, so not all of the other events are still there."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 3099,
-    "outputTokens": 373,
-    "cacheReadTokens": 2502,
+    "inputTokens": 3095,
+    "outputTokens": 208,
+    "cacheReadTokens": 2498,
     "cacheWriteTokens": 595
    },
    "model": "claude-opus-5-5"

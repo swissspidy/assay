@@ -1,19 +1,19 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T10:52:58.236Z",
+ "recordedAt": "2026-11-05T11:38:04.599Z",
  "turns": {
-  "sha256:37bff9f1d763c6c0287e86da7408544bea7c156fbe0961f37bfe604d096aa1d7": {
+  "sha256:a4a5f55de0c806b0706ba82ba099d9d81bb0c3c97565631a5eeb5e28a01e7df4": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_018smazsCNWmicYepp6yPjFd",
+     "id": "toolu_01EYi5uZPM3kMpYwZF1Rq2TP",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01Fdz1UT98nXHoHRF9S8Vqgv",
+     "id": "toolu_014UCKQiuvi6kTE7vZTSBRRD",
      "name": "network_log",
      "input": {}
     }
@@ -21,7 +21,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_018smazsCNWmicYepp6yPjFd",
+     "id": "toolu_01EYi5uZPM3kMpYwZF1Rq2TP",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -30,7 +30,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Fdz1UT98nXHoHRF9S8Vqgv",
+     "id": "toolu_014UCKQiuvi6kTE7vZTSBRRD",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -39,38 +39,38 @@
     }
    ],
    "usage": {
-    "inputTokens": 1882,
+    "inputTokens": 1878,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 1878
+    "cacheWriteTokens": 1874
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:c6145c40a5f4b3edfc61a10747e7646bee3813706613165efbcb0e8f75be7f50": {
+  "sha256:6aa96ac850f75b537f33b8bc835567bd4cc7921e8dc0fb1f995b290b1cdb2efa": {
    "stop": "tool_use",
-   "text": "I checked the stored issue data and the network log. The agent added the label to the wrong issue, so R1 fails and R2 passes.",
+   "text": "I checked the issue data captured with the snapshot and the network log. The task was not completed: the feature label went on issue #3 instead of issue #1.",
    "toolCalls": [
     {
-     "id": "toolu_016kdbvWsHvAb4XjAzrZgR9A",
+     "id": "toolu_01PLDmacy4gCwY948oN8u23N",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
        {
-        "requirement": "R1",
+        "requirement": "issue #1 has the feature label",
         "status": "fail",
         "cites": [
          1,
          2
         ],
-        "reasoning": "The stored data shows issue #1 has only the label [\"bug\"]. The only change the agent sent was a POST to /issues/3/labels, which put the feature label on issue #3 instead of #1."
+        "reasoning": "The captured data shows issue #1 has only [\"bug\"]. The one label change was a POST to /issues/3/labels, so the feature label ended up on issue #3, not issue #1."
        },
        {
-        "requirement": "R2",
+        "requirement": "issue #1 still has the bug label",
         "status": "pass",
         "cites": [
          1
         ],
-        "reasoning": "The stored data shows issue #1's labels are still [\"bug\"], so it still has the bug label."
+        "reasoning": "The captured data shows issue #1 still has the \"bug\" label."
        }
       ]
      }
@@ -80,15 +80,84 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS5gUKEAgTGAI4AUIIdGhpbmtpbmcSDCHeToaqKEWWiAHJohoMsXZQ0o894RA7pxtJIjBbTj5+BoFYH+dGAGxaN7Bn2OLucjwbrg0GxHKNyJ5txUSKYMYs5+2mm3alul+DnrIqgwUFmWioWtMXabrMRx2ogvMXNl6AV2G3cjqSJ3UXseU16IfS//FwLmr2p2zEkv1ZGwRvic6z0NfYauGSsGlZqRO8eoEbd4ZItTenOd+fvvMIB+w1la47bPXUVmofvLe0EZdzK7vB+YAd52Z6wWaXx442S9ZPmE2y4dTf/zStkvIiXfqfqjfZ5wSvISRs7gIvA07Hj3+aKzeI0cnDKkXoWoCMUQdL8tL1UafHd8fnGcGQHiWxEyZ4fkjbZi2BXWX4iobZwMzPJdaUwXO+IC2sVwTaxH5jueNh8NC2dL/dsmjyD68b8mg/QEUFXd9VslPjXjCBd9j4adXaUdqIGtNOOjKrFwfq2sVCzfrLB5UH3IX98eSfmfPdsh9JbGATt1DicH49DNEG7yFOYzsH336vbC7gS12yGH/D9tX41tbnGF0weL1fYQXmjnxEkOCAFuZ0P0ct6rTj95/oynBHCRMdnM6+kRIO7nQIUjteqhlOeBQGL131zAFS9xYZGbGyKPojrG7M0j4lyjBEzxyv54rwf4N0oXoVM2oGxeP2Xo1YT0bWp5UMiAeZmtvZ5PC643+81fEiCAs/UmgfaM1wh3+sAMNEp+fcHDbLD+C4mJ4SCinLugYBbySXx9Xhy9vNZIdYbiypYVmwguOn+n2Tf3/tMe47pLk8r+AZ78l+bv8onprVGvVsP+tlqtt0jUWhIWDDIS40iFyAKlymn2tZkWv4JG3oQjfpNHJZ27bCYG/3sxwlFn7nwCHmn5G+ae4mhH9QZQe6qykROdul4WipUsnBWB1t7j8XBjDizKwVR3GWDASDIRzomcdODzpkPg/zpY6lDtlSoanIZLqwjmqrj34hKmM3KC8OGAE="
+     "signature": "CAQS6AUKEAgTGAI4AUIIdGhpbmtpbmcSDJ+LEzpVrLmMZyVvpRoMjB4bJjavoUVUMN5DIjAoEhcXfRdBFcoZaQGi1HQN+xFUjU3CRp7FtZROOzBBEbmlj0gpDHsbyh5y1yocAWcqhQVocHfWx/nmwGk73zDXxYIeTvBc2ynRZFctrg7cx3GtvKJnExFG7wXkN+xUXr9okUcYQF7ogn9yxg7OtlGtO9zyOOTexGYqoKdZQ9EjnCf8ECRMgKmp038DIK5rPfWQxsBmz8DkIWg9W3XlFTUmj2TENyaN5LO1SmzNhHOtyGe+JKYWyfQTqwK3gza/r7POd5RMP8iPP7Dwbj5bAu9ff2TRGCjazV7VfIsOHfmmkJuijaE6XD+R5pN9SIWElv9lPanyzNXNMDRdt9KKQk5sFrTzPaIWRpjFQhd+PHKYkcFSx8rJ+dtNrVuiW8T4J7czOdvomxDqEurZ15QTyr3V/hNS2vFb2utCteI3ViAvqD5lrM3w+rfBhEVlmGB1kH6O0UeekwrO9LLG4TWsPn0+f18JYfn9Q5A0rhcYrE6r94PEpSVuGcT81RvrbSnV6xV2Xd0z9Vs5gVW9WNOEhB+T3PBahUEKY/uG1rJJN000XGOpnOVemwJ98LY+MzhJEQANgN4YGvmsYQr/yzyZfS5yDXRJaBd04DtfEpobV3q3u7zefH/7KadoneIherxGUAq4Jb1NY4+uYsa1U4EdVTuMMZDvbg0qWlZHP37DeslLzdpqBmBRu36OJWLZJuq+2ruRGTHjWtvg0Zl6UMV+2caUksHhZVpaT8DxHPbEcImJAduMpwJ9mpvad1z9mQ2UuZroj9Vipf0m2E0VReoWtPFAC/EsvEdJXca+Btlnmq6BtqJqmDpvBuaOPj1Hc6m8BWjebrAlOpvk54WRBFLqhyzgA/Cks6Vp8cegnPwO+UUMB2A7wT6LtCGcVKa2MHwk1AhNk/dhY4TAd00MlZ8QCDcv3gBEeOQXYWIYAQ=="
     },
     {
      "type": "text",
-     "text": "I checked the stored issue data and the network log. The agent added the label to the wrong issue, so R1 fails and R2 passes."
+     "text": "I checked the issue data captured with the snapshot and the network log. The task was not completed: the feature label went on issue #3 instead of issue #1."
     },
     {
      "type": "tool_use",
-     "id": "toolu_016kdbvWsHvAb4XjAzrZgR9A",
+     "id": "toolu_01PLDmacy4gCwY948oN8u23N",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "issue #1 has the feature label",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The captured data shows issue #1 has only [\"bug\"]. The one label change was a POST to /issues/3/labels, so the feature label ended up on issue #3, not issue #1."
+       },
+       {
+        "requirement": "issue #1 still has the bug label",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The captured data shows issue #1 still has the \"bug\" label."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2365,
+    "outputTokens": 308,
+    "cacheReadTokens": 1874,
+    "cacheWriteTokens": 489
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:62206a8747a94fc916e3b11ab4e6c2d4118911d2f255d5f996373d82a60a98b1": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01XkYK1V95MnVBXPtWgrrcj3",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The captured data shows issue #1 has only [\"bug\"]. The one label change was a POST to /issues/3/labels, so the feature label ended up on issue #3, not issue #1."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The captured data shows issue #1 still has the \"bug\" label."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01XkYK1V95MnVBXPtWgrrcj3",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -102,7 +171,7 @@
          1,
          2
         ],
-        "reasoning": "The stored data shows issue #1 has only the label [\"bug\"]. The only change the agent sent was a POST to /issues/3/labels, which put the feature label on issue #3 instead of #1."
+        "reasoning": "The captured data shows issue #1 has only [\"bug\"]. The one label change was a POST to /issues/3/labels, so the feature label ended up on issue #3, not issue #1."
        },
        {
         "requirement": "R2",
@@ -110,17 +179,17 @@
         "cites": [
          1
         ],
-        "reasoning": "The stored data shows issue #1's labels are still [\"bug\"], so it still has the bug label."
+        "reasoning": "The captured data shows issue #1 still has the \"bug\" label."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2369,
-    "outputTokens": 298,
-    "cacheReadTokens": 1878,
-    "cacheWriteTokens": 489
+    "inputTokens": 2739,
+    "outputTokens": 204,
+    "cacheReadTokens": 2363,
+    "cacheWriteTokens": 374
    },
    "model": "claude-opus-5-5"
   }

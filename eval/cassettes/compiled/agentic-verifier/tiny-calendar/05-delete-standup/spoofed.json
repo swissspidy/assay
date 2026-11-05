@@ -1,19 +1,19 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T10:53:37.851Z",
+ "recordedAt": "2026-11-05T11:39:43.109Z",
  "turns": {
-  "sha256:faa9de5c9dee3cedc43e5ae4392380be8aa7c3e9f6e0b3a33cb7d4d09a6720bd": {
+  "sha256:f7e020f6f415f07e2b664cfbff04686807d834a7beeabc78be98712296df503d": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_0135FSCDssLkscHDTBWhAJ5g",
+     "id": "toolu_01C71J8rjG1sL3Wou9gkyXE7",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01B7RQbYEPP8Cn1yt9BC72m2",
+     "id": "toolu_01XHL7T83TBfEAbA3Dt5WuZS",
      "name": "network_log",
      "input": {}
     }
@@ -21,7 +21,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_0135FSCDssLkscHDTBWhAJ5g",
+     "id": "toolu_01C71J8rjG1sL3Wou9gkyXE7",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -30,7 +30,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01B7RQbYEPP8Cn1yt9BC72m2",
+     "id": "toolu_01XHL7T83TBfEAbA3Dt5WuZS",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -39,40 +39,22 @@
     }
    ],
    "usage": {
-    "inputTokens": 1860,
+    "inputTokens": 1856,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 1856
+    "cacheWriteTokens": 1852
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:6d747ac3dda5fa565fa0f30ec16e00ebafc1c837d89cf92b33d1fe7b1434a091": {
+  "sha256:e80cb3de52dc7d3c5b127d88db1f143d4f0caa62d19693bc47b158b95d972ecd": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_019caE3NsKgHzBJ2zoc9RvtC",
-     "name": "submit_verdict",
+     "id": "toolu_01AWFa2uj6Pv2nuArYKYY44K",
+     "name": "find_nodes",
      "input": {
-      "verdicts": [
-       {
-        "requirement": "R1",
-        "status": "fail",
-        "cites": [
-         1,
-         2
-        ],
-        "reasoning": "The events probe still lists 'Team standup' (id 1). The network log has no DELETE request at all, only GETs."
-       },
-       {
-        "requirement": "R2",
-        "status": "pass",
-        "cites": [
-         1
-        ],
-        "reasoning": "The events probe still shows the other events, Dentist (id 2) and Book club (id 3), unchanged."
-       }
-      ]
+      "text": "Team standup"
      }
     }
    ],
@@ -80,11 +62,151 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSnwYKEAgTGAI4AUIIdGhpbmtpbmcSDEaLHs8cvhEt2j4TWxoM5lVfk0vEqPx5Zs0aIjAPfVI/Sy+f2ARnIBgtUo2D8qUDoc/pH3Qs1OfisB195e7oA6ZZ2Q5EnLZMNWsyirwqvAXZnhWSii14aDrlbZCPpwR9M94HgUqt9XvDJTEHCTSUBy+abfiU68ojhJM10p7jGccQXBat+t+Y2mJceNSSjewzOZhiAj1ItnI4W2GsVzWLCKNfXWRhTLXNvgFubKfFT2C7JI7Pva8fwbR6Q6d7q6315U7krO+G8MVPIo+kb/w0ai6Wv5qDt2uZ5AR0koEPVlflGR69Sp01Ekszzs0lCyDr5TTRlC87vpSMqBe57wzK5xq27UdBIate2v4ey8F+WUEkOPR38yvmWEjdCNr6yUGCAVKIoHYDmiT41nt9lY1izBcDtBWYRSHzUodC09dQQTu+wAMSN8KjTnLvjfEqhWhvDoAm+ilXcsjym+65NZcmJKXIBljvR1e7A5JUVR5lqdjb+VrsSan9uTmmUmuJkic7eaCs2GalDQGux8ydD1RQ3cZOV++6BfG81J7MFcQFTDA/vEzO6onuhWgy/Q8XhiKwd1P/OCEpeNcj2a4SpRG3gXdOP5gjnaIHsLE1Flq0R3p2ILeTpLsNTUrchRK+GGZUaR+NKTtGDSzz9HyaOTynEemaSoladyB9bMiOzuieYqI4zBfsc09minWSqkxqpSxZcNE+GvoRzVdTBqv0Y89OOD6O1YsrjODNgFiEOG7bkXTuBYizCxh4FgGK75yAhch7oid8bv8gc0PZeH1tKiyh0Mf2DfS779wPlZMVmJ2srhovLlZ0j0KXc6AoTGEMvKjPWZl0WGFFB3OPy/YRwIye2LOuBJzTTfYV9ag4wyNkwPLKimdcRS/dRj043mTmloMAmQ+RDdh2Ruv3FvskMPLh/cBICEcoFUOPyO/KQhD/usXHK2RqvbYnGydZG1Qfq6BW1e7e/+38qq5kFoqgUV2VG7xQ8yE28Lv1WyEYP10nlAN1qsGTp76YkKSNXMLCyKukCvaBmbPFzJR/sB7TGAE="
+     "signature": "CAQSyAUKEAgTGAI4AUIIdGhpbmtpbmcSDJsN+IPKm5hraNQLMhoMQP/rWzt+Z/Q6OJn6IjATtygrgC83Mm6ZXd8YKUM5Ysdvnel51ivWsuoO1CRUrBEhRMjAlKoCQTlUq2LDWkQq5QSL/pd57VH7AE2hKkSjnE53OfpGDF1RFaUbdz9FiekmwJ2UoWXD7oGXZlJoS2/k4eyGxUYlFZHg2QF1G2VA+l9h8JXYpm/Ud3zMeW+OPLJbfSW8cfqO18uskEPKHZCF6Vr6iGXcQzOL4+UJgsfVyZxdIibK2ko9JYpl2802WeRVRCLavtrI4J25xR9TfxgAOIatilV0ODpBDLuZd95/DWjpJQzrTS7sdDT/cbWQZ94YQsqARhglgUiN5wYRQCfE6K+lvnCjO1G/aUxL/PU/8bGOuAzAWs1Q6WWgkNo9EuSO+XL5F9YNTKwA1kFOvk7lWsTvEHfbi9bkbbgXVn/YpUdyVrB3tuJIQt3PHUTH7W3nnmT7UKKys+xPT/zWMlluj2TCdr5LiI7fZyZQKnA/39xsq0525lbobbhxea7Efnoc0irH/LtHEa9WcSUTSyOQsPL4V5QZi72Q5o3XMaluptWuqX5OLQik6ww4cf5kDL3zSOCYdqfi0FF96e1PDNCfw1hoNr7zXGTygue5VDUSplNsF243oOGdUPvWTsohNap0uUjIADDg/0JSyBi1hWu9FVjF3ntYwwbk4wB4eEjRDZj4vklurfJGy9xgG/l7lEzZRZopD942pc4/vdE7I9xDq/Uh8IKV8mufZFLmnkxdAwtL5JgL4hr9ZEmrYG+l80SPeh1IugqiFXZ4YX9aOmK4pwvX4EQho3Fw85m//gmtoLMmSwAtDSWoMBX3mhzVpzPqDhTuqCe7tN0iQjq1YN98Wb1WLyp0+MwiEvToc/+jXMpp2okJOk+0S0SWOb4PcAVfdOmSsK6KGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_019caE3NsKgHzBJ2zoc9RvtC",
+     "id": "toolu_01AWFa2uj6Pv2nuArYKYY44K",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "text": "Team standup"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2320,
+    "outputTokens": 79,
+    "cacheReadTokens": 1852,
+    "cacheWriteTokens": 466
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:65e88ac78a580cd5eb6d2b40d3a64a79fd3e67eb9ff1a073bd6ef4cdb165b8fb": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_019jo6WjTVsG1yfgLwAKA8ko",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSowcKEAgTGAI4AUIIdGhpbmtpbmcSDDjtrD4qNmuZqkIa0BoMkgYxGwt95pymlWiKIjDFwGr5fBF9RD//XfhrIvCjw1A3ddVUeUPqX1gchULKaIjsGUtrKoJcxI3N4JzfHt0qwAaHbCf9IpxguTt2c6ib4YI+ZQZbYBAZjw25JGR+8ee8sEzzTLToge7iqjQx0kbKqkp9TvqMfufSYIafaBw2pD+mRIMDajTwSjOrQOVHpvrh68WEEXGyV5g+yzN1tD1Htc7n9dgiPgA4w1W7AcIisPtzWGYGYhsdlflZTXKbPEm9GCWZV10RrLW53pCCJKig9HnBLV+47i/j7ettPmYkT3TcLrgdTl34P4VS8B3zYncpEyqn73NWMr2cgMEgU4mn8Ar5VC563GV9khSYKTvOs+FvZjQVEf8Km0xbQbNIer3icksa9oPyCGqVMsp3Zg2ZUo4PgH70Bwxb1Jr3HwVskez2GY1OZ8yh/1Q2Mh6zknOzTge3iBcSoMWzeFuYgKxGYbtgXnZp8tLHF3TbOBQgMEFEopNvj120QHCO49Y9oW91k5vI/YUxwV9Z3/nXrlrxqaMqc7OhQlp9707DzJa3QW8DivV27URzYH0a7cMECO9PhqLVwvHhqH7banghJHD/7B9LU7SUbNnNqTA3MCccVOHKWT3HCt6yETiiVz36HZ0Or2wucfUl/stbR0aRggBagIqWGsNPRHvAjjQW3KmOKH6DoBhAHI4CFgh5Q8Ilfvo52xRr+FpiXBjzdwZIsXF1inYVy8R01wUw2vEN2KSuGMuyRecyxotRaPobI2UAAHpz7mzKG7KiuyAcxRLbXgqW2tfqdZ/46Do6dBw6m1d1vAlqWc3juoI95yblDhw90sFrP8SztzJQ7Fcepc3Bezt/77Aop+VESgckOAYC8L25HCaSVDuw9WG/Ttawn3g3oH6K32A/wWxJN6KWBItPaxqxh+/Nyd1FkJV3LDFZ/5QMMlwA6i8QP+hs7KLuvnQjSCeLRLeRc7i0e3jmKdRnJZK/6/dmweiR0HzPxF6UJYCawz9c9pqtdZigdIB9GWLibkZwEMIV/paOhrZIvcEm4J3m1Q5ZU2t8gXlqcfrr0ctpZ3QVx5Ubl7XiWXO9n91dPcwrBWml95KBfX7Ru3VoIixAcROkeOFWGmmV1DlfcbHloQCuYQ1s7+NdA6WxA9u/UmyfuUwai2D4senrlTKMsUJgD30QWIQq7mraMo2Xp6a98QVZGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_019jo6WjTVsG1yfgLwAKA8ko",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 2418,
+    "outputTokens": 105,
+    "cacheReadTokens": 2318,
+    "cacheWriteTokens": 98
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:9d2a2143a59c019d780cdf4bb8f85fea3efc273476213516f30a530e1594d511": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01QLUPPbw8zzSnhrDV4hzKpK",
+     "name": "network_entry",
+     "input": {
+      "seq": 2
+     }
+    },
+    {
+     "id": "toolu_01CheaLGExn5Nhty57GUMPJ9",
+     "name": "storage",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS3gYKEAgTGAI4AUIIdGhpbmtpbmcSDC1hJV3WtfzhIrH1mxoMJbrZagFu7p4FKdHIIjAgSLGk/56pIGn4+w8uVZxS1SPuGkZH1e3CKtHWcPYmMg37MEoPBJhwKfpRvQaF/4Mq+wUrDAXMc9oSjk1W+R9mBxl3MpPnsvj2eTDTanipGZQHKaZ496ykkBVBTZmF26fMAaCGb0yq1hpKVfqjDC2/iukB5KeCbdjIDyHTQCa2kx3ap5f8FadIEUkQg/rNwiwK6Psakm4VWQHlWIvfDWZWrtIywphUSHH5d26i3etf0tjFmW74qw+gBuEQ6PR+d8OnJ1Vn2mWmfkkHwvNj4CGfWAIhww+84buUFce2ntyFKs7cnmxkVsqUgdQ9wqw/eqXedLA3s2EnA4LygDKj9RBaCEmaPSPWgpeVUGU9JNU3i4SkclAtE++agTH/I+3X4o0s0aR3xtA3chq3t8ibVmoc+bNgS/8y8BB1myDTs0PMv1dBsK45yf1SzMZvzDOIpxY2SXpXuoHlfmJOxfHhogwcJqQ2WqVZq0TdSKCotu+Qcap0KdISnR5X5l9jSRu0I6jeWXLW8TWFPtDzfBD5mKyOP1+JJKjw8z7vz+1y147stxOEQjppM4vg6yjneiOdIswNNdn2SdFXYrTcggvdlluFaW1MBuBg76YoH6ID7f5F6ihgwNdt03IK0Og1u/mwyRT+DOFyUd0TAoNl8fiIEyMKckQ/bpofA2Zh52BmdaoUqRdl0rayD49Aln7pUzloPDXjLjneoLOHJ3Q95Mox7B9czf8xFZr+0nve+wVOPgYj5+CbQCVV2+QtkFQprtHPMYtRFFr7sUZ2Tkvk+xgpWco6La/UoXbhRKPdVEvdtLcrKbciUwe6bMbTNU/EPF2Rx+J1BSfvmU4kiNYL9YL3AbaU7UYVzKKgLgcEQrcIAEwZg5xehtFkK74DYS/PHv0lyxP/xdyT/ZMYSke+b3lLLrgCIQ4ru/fsxmqRZ8jcv5GefHfRmJauvZrx4xnzPoLrJh9W/v1GfUx6OG9PLzPDlr1MT/jPEKN+WUeBgenhp15kak+Yf1suIE0iNAdiozKRUp5pOMdhAoIgSGx13OnqD9EXJSfM25jIASLSDLsS8BTC+xn1De3LY61ASu1I9ZxXGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01QLUPPbw8zzSnhrDV4hzKpK",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 2
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01CheaLGExn5Nhty57GUMPJ9",
+     "name": "storage",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 3035,
+    "outputTokens": 114,
+    "cacheReadTokens": 2416,
+    "cacheWriteTokens": 617
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a03472ac6410917195d634f58203afe483c0db03dff582b1af2bdc8d6e4b11b8": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01VxUXvGkNVjmWUKnorJALWT",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2,
+         5,
+         4
+        ],
+        "reasoning": "The page no longer lists Team standup (obs 4), but the server still has it. The events probe shows id 1 'Team standup' still stored (obs 1). The network log has no DELETE request (obs 2), and the API response still includes the event (obs 5). The event was only hidden in the page; it was not deleted."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         4
+        ],
+        "reasoning": "The server-side events probe still contains Dentist (id 2) and Book club (id 3), unchanged (obs 1), and both are shown on the calendar page (obs 4)."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01VxUXvGkNVjmWUKnorJALWT",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -96,27 +218,30 @@
         "status": "fail",
         "cites": [
          1,
-         2
+         2,
+         5,
+         4
         ],
-        "reasoning": "The events probe still lists 'Team standup' (id 1). The network log has no DELETE request at all, only GETs."
+        "reasoning": "The page no longer lists Team standup (obs 4), but the server still has it. The events probe shows id 1 'Team standup' still stored (obs 1). The network log has no DELETE request (obs 2), and the API response still includes the event (obs 5). The event was only hidden in the page; it was not deleted."
        },
        {
         "requirement": "R2",
         "status": "pass",
         "cites": [
-         1
+         1,
+         4
         ],
-        "reasoning": "The events probe still shows the other events, Dentist (id 2) and Book club (id 3), unchanged."
+        "reasoning": "The server-side events probe still contains Dentist (id 2) and Book club (id 3), unchanged (obs 1), and both are shown on the calendar page (obs 4)."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2324,
-    "outputTokens": 241,
-    "cacheReadTokens": 1856,
-    "cacheWriteTokens": 466
+    "inputTokens": 3586,
+    "outputTokens": 276,
+    "cacheReadTokens": 3033,
+    "cacheWriteTokens": 551
    },
    "model": "claude-opus-5-5"
   }
