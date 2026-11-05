@@ -28,9 +28,9 @@
   ],
   "checks": [
     {
-      "id": "r1-settings-probe-newsletter",
+      "id": "r1-probe-newsletter",
       "requirement": "R1",
-      "description": "The backend settings probe reports newsletter set to true.",
+      "description": "The backend settings probe shows newsletter set to true.",
       "assert": {
         "kind": "value",
         "source": {
@@ -44,9 +44,42 @@
       }
     },
     {
-      "id": "r2-newsletter-checkbox-checked",
+      "id": "r1-put-request",
+      "requirement": "R1",
+      "description": "A successful PUT to /api/settings sent newsletter: true.",
+      "assert": {
+        "kind": "request",
+        "match": {
+          "method": [
+            "PUT",
+            "POST",
+            "PATCH"
+          ],
+          "url": {
+            "path": "/api/settings"
+          },
+          "status": {
+            "gte": 200,
+            "lt": 300
+          },
+          "requestBody": {
+            "type": "object",
+            "required": [
+              "newsletter"
+            ],
+            "properties": {
+              "newsletter": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r2-checkbox-checked",
       "requirement": "R2",
-      "description": "The 'Email me the newsletter' checkbox in the Preferences form is checked.",
+      "description": "The newsletter checkbox in the Preferences form is checked.",
       "assert": {
         "kind": "state",
         "target": {
@@ -71,7 +104,10 @@
                 "ignoreCase": true
               },
               "within": {
-                "role": "main"
+                "role": "form",
+                "name": {
+                  "contains": "Preferences"
+                }
               }
             }
           ]
@@ -88,6 +124,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T23:11:36.609Z"
+    "at": "2026-11-05T06:55:37.007Z"
   }
 }

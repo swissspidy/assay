@@ -19,7 +19,7 @@
     {
       "id": "R2",
       "kind": "hard",
-      "text": "The cart is checked out, so an order is placed.",
+      "text": "The user's cart is checked out, so an order is placed.",
       "source": {
         "field": "instruction",
         "quote": "Check out my cart"
@@ -28,9 +28,9 @@
   ],
   "checks": [
     {
-      "id": "R2-order-request",
+      "id": "order-placed-request",
       "requirement": "R2",
-      "description": "A POST to /api/orders succeeded and returned a placed order with items.",
+      "description": "A POST to /api/orders succeeded and returned a placed order.",
       "assert": {
         "kind": "request",
         "match": {
@@ -46,76 +46,9 @@
             "type": "object",
             "required": [
               "id",
-              "items"
-            ],
-            "properties": {
-              "status": {
-                "const": "placed"
-              },
-              "items": {
-                "type": "array",
-                "minItems": 1
-              }
-            }
-          }
-        },
-        "count": {
-          "gte": 1
-        }
-      }
-    },
-    {
-      "id": "R2-latest-order-placed",
-      "requirement": "R2",
-      "description": "The backend's latest order has status 'placed' and contains at least one item.",
-      "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "latestOrder"
-        },
-        "expect": {
-          "schema": {
-            "type": "object",
-            "required": [
-              "id",
-              "status",
-              "items"
-            ],
-            "properties": {
-              "status": {
-                "const": "placed"
-              },
-              "items": {
-                "type": "array",
-                "minItems": 1
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "id": "R1-latest-order-giftwrap",
-      "requirement": "R1",
-      "description": "The backend's latest placed order has giftWrap set to true.",
-      "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "latestOrder"
-        },
-        "expect": {
-          "schema": {
-            "type": "object",
-            "required": [
-              "giftWrap",
               "status"
             ],
             "properties": {
-              "giftWrap": {
-                "const": true
-              },
               "status": {
                 "const": "placed"
               }
@@ -125,13 +58,58 @@
       }
     },
     {
-      "id": "R1-order-request-giftwrap",
-      "requirement": "R1",
-      "description": "The last order submission sent giftWrap true and the server stored it as gift wrapped.",
+      "id": "order-placed-probe",
+      "requirement": "R2",
+      "description": "The backend's latest order exists with status placed.",
       "assert": {
         "kind": "value",
         "source": {
-          "from": "response",
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/status"
+        },
+        "expect": {
+          "equals": "placed"
+        }
+      }
+    },
+    {
+      "id": "order-giftwrap-probe",
+      "requirement": "R1",
+      "description": "The backend's latest placed order has gift wrap enabled.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "latestOrder"
+        },
+        "expect": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "status",
+              "giftWrap"
+            ],
+            "properties": {
+              "status": {
+                "const": "placed"
+              },
+              "giftWrap": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "order-giftwrap-request",
+      "requirement": "R1",
+      "description": "The last order creation request asked for gift wrapping.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "request",
           "match": {
             "method": "POST",
             "url": {
@@ -157,6 +135,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T23:13:50.478Z"
+    "at": "2026-11-05T06:57:38.269Z"
   }
 }

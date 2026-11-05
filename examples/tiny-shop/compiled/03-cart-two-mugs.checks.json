@@ -24,22 +24,25 @@
         "field": "outcomes",
         "quote": "the cart page lists a Red Mug"
       }
+    },
+    {
+      "id": "R3",
+      "kind": "hard",
+      "text": "The cart is shown to the user at the end.",
+      "source": {
+        "field": "instruction",
+        "quote": "show me the cart"
+      }
     }
   ],
   "checks": [
     {
-      "id": "R1-cart-blue-mug",
+      "id": "r1-blue-mug",
       "requirement": "R1",
-      "description": "The browser is on the cart page, the Cart table has a row containing Blue Mug, and the backend cart contains a Blue Mug item.",
+      "description": "The cart page's Cart table has a Blue Mug row, and the backend cart holds a Blue Mug.",
       "assert": {
         "kind": "allOf",
         "of": [
-          {
-            "kind": "url",
-            "match": {
-              "path": "/cart"
-            }
-          },
           {
             "kind": "contains",
             "scope": {
@@ -91,18 +94,12 @@
       }
     },
     {
-      "id": "R2-cart-red-mug",
+      "id": "r2-red-mug",
       "requirement": "R2",
-      "description": "The browser is on the cart page, the Cart table has a row containing Red Mug, and the backend cart contains a Red Mug item.",
+      "description": "The cart page's Cart table has a Red Mug row, and the backend cart holds a Red Mug.",
       "assert": {
         "kind": "allOf",
         "of": [
-          {
-            "kind": "url",
-            "match": {
-              "path": "/cart"
-            }
-          },
           {
             "kind": "contains",
             "scope": {
@@ -152,6 +149,17 @@
           }
         ]
       }
+    },
+    {
+      "id": "r3-cart-shown",
+      "requirement": "R3",
+      "description": "The browser ends on the cart page (/cart).",
+      "assert": {
+        "kind": "url",
+        "match": {
+          "path": "/cart"
+        }
+      }
     }
   ],
   "compiled": {
@@ -160,6 +168,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T23:11:58.980Z"
+    "at": "2026-11-05T06:55:56.860Z"
   }
 }

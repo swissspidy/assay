@@ -28,7 +28,7 @@
   ],
   "checks": [
     {
-      "id": "r1-url-status",
+      "id": "R1-status-filter-url",
       "requirement": "R1",
       "description": "The issue list URL has the status filter set to open.",
       "assert": {
@@ -45,9 +45,9 @@
       }
     },
     {
-      "id": "r1-no-closed-rows",
+      "id": "R1-no-closed-rows",
       "requirement": "R1",
-      "description": "The Issues table contains no cell showing status Closed.",
+      "description": "The Issues table contains no row whose Status cell is Closed.",
       "assert": {
         "kind": "contains",
         "scope": {
@@ -71,7 +71,7 @@
       }
     },
     {
-      "id": "r2-url-label",
+      "id": "R2-label-filter-url",
       "requirement": "R2",
       "description": "The issue list URL has the label filter set to bug.",
       "assert": {
@@ -88,9 +88,9 @@
       }
     },
     {
-      "id": "r2-no-nonbug-rows",
+      "id": "R2-no-non-bug-rows",
       "requirement": "R2",
-      "description": "The Issues table contains no row whose labels are only feature or only docs.",
+      "description": "Every data row in the Issues table mentions the bug label.",
       "assert": {
         "kind": "contains",
         "scope": {
@@ -102,10 +102,9 @@
           "name": "Labels"
         },
         "match": {
-          "role": "cell",
+          "role": "row",
           "name": {
-            "regex": "^\\s*(feature|docs)\\s*$",
-            "flags": "i"
+            "regex": "^\\d+\\s(?!.*\\bbug\\b)"
           }
         },
         "count": {
@@ -120,6 +119,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T23:12:59.815Z"
+    "at": "2026-11-05T06:57:11.018Z"
   }
 }

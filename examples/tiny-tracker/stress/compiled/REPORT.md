@@ -70,4 +70,4 @@
 - filtered/claims-only (the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable)
 
 **Checks without a targeted mutant**
-- r2-no-nonbug-rows
+- R2-no-non-bug-rows

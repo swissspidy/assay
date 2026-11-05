@@ -7,20 +7,20 @@
   ],
   "turns": {
     "rubric": 1,
-    "discovery": 4
+    "discovery": 6
   },
   "usage": {
-    "inputTokens": 70277,
-    "outputTokens": 1628,
-    "cacheReadTokens": 51011,
-    "cacheWriteTokens": 19252
+    "inputTokens": 110689,
+    "outputTokens": 3023,
+    "cacheReadTokens": 90827,
+    "cacheWriteTokens": 19844
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "an event \"Lunch with Sam\" exists on November 5, 2026 at 12:30",
       "checks": [
-        "r1-event-stored"
+        "R1-probe-event"
       ],
       "channels": [
         "probe"
@@ -31,12 +31,14 @@
       "requirement": "R2",
       "quote": "the event page shows the date November 5, 2026",
       "checks": [
-        "r2-event-page-date"
+        "R2-event-page",
+        "R2-shows-date"
       ],
       "channels": [
+        "url",
         "a11y"
       ],
-      "trust": "semantic"
+      "trust": "structured"
     }
   ],
   "warnings": [],

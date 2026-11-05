@@ -10,7 +10,7 @@
     {
       "id": "R1",
       "kind": "hard",
-      "text": "The existing Dentist event's title is now \"Dentist (Dr. Lee)\".",
+      "text": "The Dentist event's name is \"Dentist (Dr. Lee)\".",
       "source": {
         "field": "outcomes",
         "quote": "the Dentist event is called \"Dentist (Dr. Lee)\""
@@ -19,9 +19,9 @@
   ],
   "checks": [
     {
-      "id": "dentist-renamed-backend",
+      "id": "r1-dentist-renamed-probe",
       "requirement": "R1",
-      "description": "The backend events list has the original Dentist event (id 2, 2026-11-06 14:30) titled exactly \"Dentist (Dr. Lee)\", and no event still titled plain \"Dentist\".",
+      "description": "The backend events list contains the Dentist event (id 2) with title exactly \"Dentist (Dr. Lee)\".",
       "assert": {
         "kind": "value",
         "source": {
@@ -33,71 +33,18 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "id",
-                "title",
-                "date",
-                "time"
-              ],
               "properties": {
                 "id": {
                   "const": 2
                 },
                 "title": {
                   "const": "Dentist (Dr. Lee)"
-                },
-                "date": {
-                  "const": "2026-11-06"
-                },
-                "time": {
-                  "const": "14:30"
                 }
-              }
-            },
-            "not": {
-              "contains": {
-                "type": "object",
-                "required": [
-                  "title"
-                ],
-                "properties": {
-                  "title": {
-                    "const": "Dentist"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "id": "dentist-rename-request",
-      "requirement": "R1",
-      "description": "A successful PUT/PATCH to /api/events/2 sent the title \"Dentist (Dr. Lee)\".",
-      "assert": {
-        "kind": "request",
-        "match": {
-          "method": [
-            "PATCH",
-            "PUT"
-          ],
-          "url": {
-            "path": "/api/events/2"
-          },
-          "status": {
-            "gte": 200,
-            "lt": 300
-          },
-          "requestBody": {
-            "type": "object",
-            "required": [
-              "title"
-            ],
-            "properties": {
-              "title": {
-                "const": "Dentist (Dr. Lee)"
-              }
+              },
+              "required": [
+                "id",
+                "title"
+              ]
             }
           }
         }
@@ -110,6 +57,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T23:13:06.703Z"
+    "at": "2026-11-05T06:57:25.855Z"
   }
 }

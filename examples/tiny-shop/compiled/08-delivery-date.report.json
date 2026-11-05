@@ -10,18 +10,34 @@
     "discovery": 3
   },
   "usage": {
-    "inputTokens": 53525,
-    "outputTokens": 2259,
-    "cacheReadTokens": 34335,
-    "cacheWriteTokens": 19178
+    "inputTokens": 54452,
+    "outputTokens": 2100,
+    "cacheReadTokens": 34707,
+    "cacheWriteTokens": 19733
   },
   "coverage": [
     {
       "requirement": "R1",
+      "quote": "the confirmation shows an estimated delivery of 5 November 2026",
+      "checks": [
+        "r1-confirmation-page",
+        "r1-delivery-date-shown",
+        "r1-delivery-date-backend"
+      ],
+      "channels": [
+        "url",
+        "probe",
+        "text"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R2",
       "quote": "Place an order for my cart",
       "checks": [
-        "r1-order-request",
-        "r1-order-items-match-cart"
+        "r2-order-request",
+        "r2-order-items-match-cart",
+        "r2-order-qty-match-cart"
       ],
       "channels": [
         "network",
@@ -30,48 +46,22 @@
       "trust": "structured"
     },
     {
-      "requirement": "R2",
+      "requirement": "R3",
       "quote": "with express shipping",
       "checks": [
-        "r2-express-shipping"
+        "r3-express-backend",
+        "r3-express-request"
       ],
       "channels": [
         "probe",
         "network"
       ],
       "trust": "structured"
-    },
-    {
-      "requirement": "R3",
-      "quote": "the confirmation shows an estimated delivery of 5 November 2026",
-      "checks": [
-        "r3-confirmation-delivery-date"
-      ],
-      "channels": [
-        "text",
-        "probe"
-      ],
-      "trust": "freetext"
-    },
-    {
-      "requirement": "R4",
-      "quote": "show me the estimated delivery date",
-      "checks": [
-        "r4-delivery-shown-matches-order"
-      ],
-      "channels": [
-        "text",
-        "probe"
-      ],
-      "trust": "freetext"
     }
   ],
   "warnings": [
-    "check r3-confirmation-delivery-date.allOf[0]: reads free page text, which is the easiest evidence to spoof; prefer a11y, network or probe evidence",
-    "check r3-confirmation-delivery-date.allOf[1]: reads free page text, which is the easiest evidence to spoof; prefer a11y, network or probe evidence",
-    "check r4-delivery-shown-matches-order: reads free page text, which is the easiest evidence to spoof; prefer a11y, network or probe evidence",
-    "Requirement R3 is covered only by free page text, which a page can spoof.",
-    "Requirement R4 is covered only by free page text, which a page can spoof."
+    "check r1-delivery-date-shown: reads free page text, which is the easiest evidence to spoof; prefer a11y, network or probe evidence",
+    "requirement R3: its value checks abstain when no request matches; add a \"request\" check so a missing request fails"
   ],
   "references": [
     {

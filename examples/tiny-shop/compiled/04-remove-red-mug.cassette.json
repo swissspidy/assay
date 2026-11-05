@@ -1,14 +1,14 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T23:12:10.464Z",
+ "recordedAt": "2026-11-05T06:56:08.428Z",
  "turns": {
   "sha256:91d57a1c002d1c4d527a3ffb22860a77d1e8596635e71de70e87624d726d132b": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_014BDRUxMLWsVpZXs1s5A4xd",
+     "id": "toolu_01XF9n4WovzvmxBVDJPQGoe8",
      "name": "submit_rubric",
      "input": {
       "requirements": [
@@ -33,7 +33,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_014BDRUxMLWsVpZXs1s5A4xd",
+     "id": "toolu_01XF9n4WovzvmxBVDJPQGoe8",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -66,17 +66,17 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:86d4db002ff24f53f8af7c8ce9f5c23b92f88c0ea996ad4e2a0332f1215e44d7": {
+  "sha256:e731ba2855095fd6f6ba527a3f390b6758c04dfd0ac14cf7b2faff45cc3fd7e6": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01GvNTudg5UyuG7RCWpNbGPg",
+     "id": "toolu_01MfmU9mAUXti8mAWA4ru6i2",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_018VSiiM1x5C7gFA4TpGRck5",
+     "id": "toolu_01TbE2rHGjAteRHLScmkGpss",
      "name": "network_log",
      "input": {}
     }
@@ -84,7 +84,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01GvNTudg5UyuG7RCWpNbGPg",
+     "id": "toolu_01MfmU9mAUXti8mAWA4ru6i2",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -93,7 +93,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_018VSiiM1x5C7gFA4TpGRck5",
+     "id": "toolu_01TbE2rHGjAteRHLScmkGpss",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -102,93 +102,126 @@
     }
    ],
    "usage": {
-    "inputTokens": 16549,
+    "inputTokens": 16773,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16545
+    "cacheWriteTokens": 16769
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:37907739eb5d446aa0c55153c0be1e71122140329235c5d616aed7a604a82019": {
+  "sha256:187e4a7fb15c292de81d48fd39ca891b7ccacf0c4d0acd227726a4dd8ea59efa": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Cn53NqMqc22QWD7oRfW8G2",
-     "name": "try_assertion",
+     "id": "toolu_01WfiFjFKkR4TipExJzX2hhd",
+     "name": "submit_checks",
      "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "cart",
-        "pointer": "/items"
-       },
-       "normalize": [
-        {
-         "op": "items"
-        }
-       ],
-       "expect": {
-        "sameAs": {
+      "checks": [
+       {
+        "id": "R1-no-red-mug",
+        "requirement": "R1",
+        "description": "The backend cart probe holds no item named Red Mug or with SKU MUG-RED.",
+        "assert": {
+         "kind": "value",
          "source": {
           "from": "probe",
           "probe": "cart",
-          "pointer": "/items",
-          "at": "before"
+          "pointer": "/items"
          },
-         "normalize": [
-          {
-           "op": "items",
-           "where": {
-            "not": {
-             "properties": {
-              "name": {
-               "const": "Red Mug"
+         "expect": {
+          "schema": {
+           "type": "array",
+           "not": {
+            "contains": {
+             "anyOf": [
+              {
+               "properties": {
+                "name": {
+                 "const": "Red Mug"
+                }
+               },
+               "required": [
+                "name"
+               ]
+              },
+              {
+               "properties": {
+                "sku": {
+                 "const": "MUG-RED"
+                }
+               },
+               "required": [
+                "sku"
+               ]
               }
-             },
-             "required": [
-              "name"
              ]
             }
            }
           }
-         ]
+         }
         }
-       }
-      }
-     }
-    },
-    {
-     "id": "toolu_01CWiPDscfM5YVj4fXrgQVcg",
-     "name": "try_assertion",
-     "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "cart",
-        "pointer": "/items"
        },
-       "expect": {
-        "schema": {
-         "type": "array",
-         "not": {
-          "contains": {
-           "type": "object",
-           "properties": {
-            "name": {
-             "const": "Red Mug"
-            }
+       {
+        "id": "R2-others-kept",
+        "requirement": "R2",
+        "description": "The cart items after the task equal the cart items before the task minus the Red Mug.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/items"
+         },
+         "normalize": [
+          {
+           "op": "items"
+          }
+         ],
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "cart",
+            "pointer": "/items",
+            "at": "before"
            },
-           "required": [
-            "name"
+           "normalize": [
+            {
+             "op": "items",
+             "where": {
+              "not": {
+               "anyOf": [
+                {
+                 "properties": {
+                  "name": {
+                   "const": "Red Mug"
+                  }
+                 },
+                 "required": [
+                  "name"
+                 ]
+                },
+                {
+                 "properties": {
+                  "sku": {
+                   "const": "MUG-RED"
+                  }
+                 },
+                 "required": [
+                  "sku"
+                 ]
+                }
+               ]
+              }
+             }
+            }
            ]
           }
          }
         }
        }
-      }
+      ]
      }
     }
    ],
@@ -196,287 +229,129 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSswoKEAgTGAI4AUIIdGhpbmtpbmcSDBKazD8rsLf1T1cNdhoMm+SJMyJeR3OPjMPKIjCPbpPTLMV9cA04tsZwgJmoI0RFXy7gV5DFCQ9/0SWIO+2Wn3R3H2sZfuTC+doKbtwq0Ak6Vk7HO18WDoNGcpa4QFzb2eDUcrnxSGFmeROzZiAuKRR3UqarL3cMkWgZGBnLNuWOQMfSUEXXt0nnk4UVwmqja1rne5NhA/Dcd3DDvV8ooBeKQUai5Qqdi2sp8qFA3UXNzGC4WbOrN+KJ37aK3bUdu5Ic1JodQji58mSSzPkU9JS7uaD+B8ixXxZ0B/HWJrOyKxjLYCpTmz2s/n+IHQyTK3ZHFDyU4JUnJw6wku93qyeJOUx0vqN3cl4WFIWHgYy/5zuWvHENGsaHCvNT1PVB337Vir2gmCckQjjGiHv5Yk1/s8ITSBWH07vrjlW3CLJS0rcRF98Xgaud8uy0ZyaxZ8A2rT+Gd4iMrrQH8wwIyylYpEaOr4AxdJIf0ho6l2h84jthsHsqZ2H7HR7W0+CbbU6o2TbNh/8Y/d1EsPf3aEkKrTtoRt4H4Q3g328XdDxJOwCLgPA1mTPui+YcDjiu07YWCCtHQLnqJoyYCLRmYJSH9dbuZi0tuK+B4vLJIDkmvS5deZ7bbZBB7dXsHTf3LRflJtWRXRb9cPmJzSkHasPi3bdZNatXC6ntlYdFh+aC5ng5Hw6ZrOwY6M4xCn0KmJsfnOXuEmJLvBAFTmFEY4rSmVXCZ0SmXZ9AM+3si31mq2oqNP2IOI7ctFJvmpbJ9351veFxhHnQNiDsIURw7FIJjdfICtkTXAUErAsl+dPH96+wUwM+2AasCc7E2qk5Ri1Lz+qvhnh2JYSzIfDA8ZEbPAHQp7akFCczneNgx5tBZmtIogSdZosvwy8rOEFXZkvS2CrTgOD+nhUosOo6jTIjP6EIIAtxrbJ73/F4xpnWbCDXNsTY7RRvdj9vnT9QOgNBVsAruEpct9FI4dFhj8SpTzxtMGSEDuHd3aj/ASnF5A0al5RGbrlneXscIhpQZF5Bs0EqVI747OV6jzVJ1c/81F0De5xByaBoa2iIZ48g5MiJVgJN1iIg4sHHATmXfY1J3Ix1qvKdm26m9Eoz0y/ANI14rSlLnUn75lyk6IwdfILBfrOjh3674oK6TrzF8OirwzOcOvceeTIE8c5+u4xox042YUp+LV2JviYto7cBptF4p4qUw/wecsaeGCNp7Xske4l8Zockqm764r3y3jYDAd8bFy+/oZBcz0kSJH7V5jPUYXnXcz9xThWQ0VY10VAmQ/WUXhry9CbMr1TUthCGtc4UrXAWu485FnO+ElxH/H72MuwCnV4N1TV5y3Y0OZXyjSeP1Kwtp55Znr6dwInnKvJbxBAWzfFeKuJUKUlHUweFoCcVLKGQ8U7PR/AnGmhLieIou021UbkluDP+aTZuvTopLFV3pwYBuaiLYgkN4hLFktJYdB6tFOBJb3vh4g9PRCuGXjnpyoPqt3Ea4xEPsBqAsl1ety/cFL7YFetk7pUpEYhVv3j1NMQoVZ/Sk6ChqJfL/HRyJH+gEmC8cWRwGxSdnP19+DUP5/ZPnMyvjnGSLjU8B56x4x/OIlW7M7kIugFZ/kx47/phTrVf+s+SpeLzJTRdlPAJzHgg49lpZ2ieMznuM+t/RAjAMpaRJROm9uCgrIQirXZ9auP8dN++aj5ZjRZU4BAJpyqluKF5onCyEcr+LAri1MH58ryFAA0PoORzpvBph+dAC9iL3BgB"
+     "signature": "CAQS/AgKEAgTGAI4AUIIdGhpbmtpbmcSDJhJTS/DdcDUkpLqrRoM2guLRNBzmISTOwjfIjAhWTL+XQMiV5lJbscLG3epaPMgi4NUgYPtl8h19DJ6lWBLO0sflihEjJKfD4kSnAAqmQgsjzVaSEDQIq8p0ZxLdiIdrbdhJpYiDOspe7Gnp0J2aIqzntgDGgy3h1gKmUKDZkjSigbe6Unz6e2smBge0H3XpIOgHkDlMAQxLLbEOct5hGLd0hFSBl6liCAAXsLJr5+gXMYKn3+m6yWG2EPihyLukeBsXS+SuMCIFzLqeTKim4QjDYBStt9cuYCdLeTVEYBvd0UbTVdC4jdIPLvXpcJJF0ly6CByz5jhsrS2c7WD319XV1QEBzN9kDVkm4KrTGq8rNkecGf4k31QLgnhHnl0JMa8Wxhx2dsidehYobDGqhLNsMauYCO6nxGtZFHSn2+To9Mb8SlQO98Rxy7go16vkLWG2dS5ISckE0EnWUjRDx0OPp6HPhDqqJlYGdys5cs/6I4WIFdbFSjlCn523nF8Kc4Qq6oQBUAggyyEbwkLXBR6mQVAInf5S2rrSmIWueAX25zOjNtDzCfghi9I2M86fbkXMMROW8MYCPre8B9CLXPC1rg84WJRgvlE/VJTXQfxfMcIj4036wKTrPbV1nOpL/j/zUlBJLgEGsxSS0NQadBk3crZ2grK7i4Y+yQ4FHPXhSTj5SCC6oLX7hTz/78vFFn6NnEizJV+Aq4UhxNEV7asGfkx3rC7fI5OJZddk2aWXzzB4zdO1W0fI9I1rz69sUu7OQOGWql/sHpbQ2t9VdKlyguOwAaElvoELZe6dPwESSEEL5Ju4PDgWAaHByue0h3GhxJPu5qOer751N6H5TaU3oOQ8LfQQ4ZoJNorGFIogYw7u2id5eIpJgwxt9zguJhHhDTEC+YCF+Q6Ck+QbarEfWke2+86Bx07pgifDFBf73kNuBIHo/M4hnt6s8N/8JAQ1cWHkI62+QTA/TIRr6nqo8SGb11sVvgFfCgawSN8mS5CoVgnRiMPzKpyBlgo4loeo6YFY5ImgO60GvCIdkxAcFA3pV/94iOB5VoFqUOdfh3IFWShafmntfpSnuVDlH08yFT6HAWQ5wffH4zhFvL+w/vr00CJSZOKDR+aHdcPPhc2W+xdD4k5Fh8Pmux4KSbmFrdsraiZkq7pJA6cIzQVivyAIvdlE53t1N3cVcAu8fB2P66wWQpXjhMhwEQYfNZPM/naVN5AlhJ24QPjxSS5c6Qy+wINIzynT3cVQlGrCtvzbp9eKyigeA7HHzzb1IJ6fIF2pQxM8UhG3OiCNCAXBNcSIihxo2PEztNWZ/DVuDKXECRrioRi6+ecLq3SX5/gjfc0hWtdVineLEUQlUGWyXpJzmt+bXJwMH1ueUol3m90RJ8z/pLSAjI2P6pUEm8xiliRRVwvReyEK9oJwSzTLDiMepfNIwtFTqGliWKjcZUuJ0ZHsyI7jFJX1aylDzhAgZLW5QUH2pUa5tbpXY/WOZ9XVtSfQRgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Cn53NqMqc22QWD7oRfW8G2",
-     "name": "try_assertion",
+     "id": "toolu_01WfiFjFKkR4TipExJzX2hhd",
+     "name": "submit_checks",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "cart",
-        "pointer": "/items"
-       },
-       "normalize": [
-        {
-         "op": "items"
-        }
-       ],
-       "expect": {
-        "sameAs": {
+      "checks": [
+       {
+        "id": "R1-no-red-mug",
+        "requirement": "R1",
+        "description": "The backend cart probe holds no item named Red Mug or with SKU MUG-RED.",
+        "assert": {
+         "kind": "value",
          "source": {
           "from": "probe",
           "probe": "cart",
-          "pointer": "/items",
-          "at": "before"
+          "pointer": "/items"
          },
-         "normalize": [
-          {
-           "op": "items",
-           "where": {
-            "not": {
-             "properties": {
-              "name": {
-               "const": "Red Mug"
+         "expect": {
+          "schema": {
+           "type": "array",
+           "not": {
+            "contains": {
+             "anyOf": [
+              {
+               "properties": {
+                "name": {
+                 "const": "Red Mug"
+                }
+               },
+               "required": [
+                "name"
+               ]
+              },
+              {
+               "properties": {
+                "sku": {
+                 "const": "MUG-RED"
+                }
+               },
+               "required": [
+                "sku"
+               ]
               }
-             },
-             "required": [
-              "name"
              ]
             }
            }
           }
-         ]
+         }
         }
-       }
-      }
-     }
-    },
-    {
-     "type": "tool_use",
-     "id": "toolu_01CWiPDscfM5YVj4fXrgQVcg",
-     "name": "try_assertion",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "cart",
-        "pointer": "/items"
        },
-       "expect": {
-        "schema": {
-         "type": "array",
-         "not": {
-          "contains": {
-           "type": "object",
-           "properties": {
-            "name": {
-             "const": "Red Mug"
-            }
+       {
+        "id": "R2-others-kept",
+        "requirement": "R2",
+        "description": "The cart items after the task equal the cart items before the task minus the Red Mug.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/items"
+         },
+         "normalize": [
+          {
+           "op": "items"
+          }
+         ],
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "cart",
+            "pointer": "/items",
+            "at": "before"
            },
-           "required": [
-            "name"
+           "normalize": [
+            {
+             "op": "items",
+             "where": {
+              "not": {
+               "anyOf": [
+                {
+                 "properties": {
+                  "name": {
+                   "const": "Red Mug"
+                  }
+                 },
+                 "required": [
+                  "name"
+                 ]
+                },
+                {
+                 "properties": {
+                  "sku": {
+                   "const": "MUG-RED"
+                  }
+                 },
+                 "required": [
+                  "sku"
+                 ]
+                }
+               ]
+              }
+             }
+            }
            ]
           }
          }
         }
        }
-      }
+      ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 17241,
-    "outputTokens": 594,
-    "cacheReadTokens": 16545,
+    "inputTokens": 17465,
+    "outputTokens": 679,
+    "cacheReadTokens": 16769,
     "cacheWriteTokens": 694
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:33b8ce087236d9e157d3ce87e849f952531d45782ce4a5f9fe78c4e8aa4eabd8": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_01LaBaP5cTTXJvCez6CpbwDn",
-     "name": "submit_checks",
-     "input": {
-      "checks": [
-       {
-        "id": "r1-no-red-mug",
-        "requirement": "R1",
-        "description": "The backend cart probe after the task holds no item named Red Mug.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "cart",
-          "pointer": "/items"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "not": {
-            "contains": {
-             "type": "object",
-             "properties": {
-              "name": {
-               "const": "Red Mug"
-              }
-             },
-             "required": [
-              "name"
-             ]
-            }
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "r2-others-kept",
-        "requirement": "R2",
-        "description": "The cart items after the task equal the cart items before the task minus the Red Mug.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "cart",
-          "pointer": "/items"
-         },
-         "normalize": [
-          {
-           "op": "items"
-          }
-         ],
-         "expect": {
-          "sameAs": {
-           "source": {
-            "from": "probe",
-            "probe": "cart",
-            "pointer": "/items",
-            "at": "before"
-           },
-           "normalize": [
-            {
-             "op": "items",
-             "where": {
-              "not": {
-               "properties": {
-                "name": {
-                 "const": "Red Mug"
-                }
-               },
-               "required": [
-                "name"
-               ]
-              }
-             }
-            }
-           ]
-          }
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_01LaBaP5cTTXJvCez6CpbwDn",
-     "name": "submit_checks",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "checks": [
-       {
-        "id": "r1-no-red-mug",
-        "requirement": "R1",
-        "description": "The backend cart probe after the task holds no item named Red Mug.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "cart",
-          "pointer": "/items"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "not": {
-            "contains": {
-             "type": "object",
-             "properties": {
-              "name": {
-               "const": "Red Mug"
-              }
-             },
-             "required": [
-              "name"
-             ]
-            }
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "r2-others-kept",
-        "requirement": "R2",
-        "description": "The cart items after the task equal the cart items before the task minus the Red Mug.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "cart",
-          "pointer": "/items"
-         },
-         "normalize": [
-          {
-           "op": "items"
-          }
-         ],
-         "expect": {
-          "sameAs": {
-           "source": {
-            "from": "probe",
-            "probe": "cart",
-            "pointer": "/items",
-            "at": "before"
-           },
-           "normalize": [
-            {
-             "op": "items",
-             "where": {
-              "not": {
-               "properties": {
-                "name": {
-                 "const": "Red Mug"
-                }
-               },
-               "required": [
-                "name"
-               ]
-              }
-             }
-            }
-           ]
-          }
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 18189,
-    "outputTokens": 427,
-    "cacheReadTokens": 17239,
-    "cacheWriteTokens": 948
    },
    "model": "claude-opus-5-5"
   }

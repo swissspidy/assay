@@ -28,9 +28,9 @@
   ],
   "checks": [
     {
-      "id": "r1-issue-exists",
+      "id": "issue-exists",
       "requirement": "R1",
-      "description": "The backend issues list contains an issue titled \"Checkout fails on Safari\".",
+      "description": "The backend issues list contains an issue titled exactly \"Checkout fails on Safari\".",
       "assert": {
         "kind": "value",
         "source": {
@@ -47,8 +47,7 @@
               ],
               "properties": {
                 "title": {
-                  "type": "string",
-                  "pattern": "^\\s*Checkout fails on Safari\\s*$"
+                  "const": "Checkout fails on Safari"
                 }
               }
             }
@@ -57,9 +56,9 @@
       }
     },
     {
-      "id": "r2-issue-bug-label",
+      "id": "issue-has-bug-label",
       "requirement": "R2",
-      "description": "The backend issue titled \"Checkout fails on Safari\" has the \"bug\" label.",
+      "description": "The backend issue titled \"Checkout fails on Safari\" has \"bug\" among its labels.",
       "assert": {
         "kind": "value",
         "source": {
@@ -77,14 +76,12 @@
               ],
               "properties": {
                 "title": {
-                  "type": "string",
-                  "pattern": "^\\s*Checkout fails on Safari\\s*$"
+                  "const": "Checkout fails on Safari"
                 },
                 "labels": {
                   "type": "array",
                   "contains": {
-                    "type": "string",
-                    "pattern": "^\\s*[Bb]ug\\s*$"
+                    "const": "bug"
                   }
                 }
               }
@@ -100,6 +97,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T23:11:36.496Z"
+    "at": "2026-11-05T06:55:39.330Z"
   }
 }

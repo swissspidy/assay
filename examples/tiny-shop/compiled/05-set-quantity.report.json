@@ -10,27 +10,30 @@
     "discovery": 2
   },
   "usage": {
-    "inputTokens": 33835,
-    "outputTokens": 741,
-    "cacheReadTokens": 15901,
-    "cacheWriteTokens": 17924
+    "inputTokens": 34277,
+    "outputTokens": 849,
+    "cacheReadTokens": 16122,
+    "cacheWriteTokens": 18145
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "the cart shows 3 Blue Mugs",
       "checks": [
-        "r1-backend-cart-blue-mug-qty-3",
-        "r1-page-cart-blue-mug-qty-3"
+        "cart-backend-blue-mug-qty-3",
+        "cart-page-shows-blue-mug-qty-3"
       ],
       "channels": [
         "probe",
+        "url",
         "a11y"
       ],
       "trust": "structured"
     }
   ],
-  "warnings": [],
+  "warnings": [
+    "check cart-page-shows-blue-mug-qty-3.allOf[1]: exact equality on a number; consider approx with a tolerance"
+  ],
   "references": [
     {
       "name": "quantity-3",

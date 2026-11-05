@@ -1,21 +1,21 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T23:13:06.703Z",
+ "recordedAt": "2026-11-05T06:57:25.855Z",
  "turns": {
   "sha256:66a05c7441ee8f58428d0776c59271753090005beca2842d97ffb4dbf1e056d0": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01MZkkcP6kLzkMnbFxo9Gfak",
+     "id": "toolu_01CRP9vbJGahPacemSYmpgvL",
      "name": "submit_rubric",
      "input": {
       "requirements": [
        {
         "id": "R1",
         "kind": "hard",
-        "text": "The existing Dentist event's title is now \"Dentist (Dr. Lee)\".",
+        "text": "The Dentist event's name is \"Dentist (Dr. Lee)\".",
         "field": "outcomes",
         "quote": "the Dentist event is called \"Dentist (Dr. Lee)\""
        }
@@ -26,7 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01MZkkcP6kLzkMnbFxo9Gfak",
+     "id": "toolu_01CRP9vbJGahPacemSYmpgvL",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -36,7 +36,7 @@
        {
         "id": "R1",
         "kind": "hard",
-        "text": "The existing Dentist event's title is now \"Dentist (Dr. Lee)\".",
+        "text": "The Dentist event's name is \"Dentist (Dr. Lee)\".",
         "field": "outcomes",
         "quote": "the Dentist event is called \"Dentist (Dr. Lee)\""
        }
@@ -46,23 +46,23 @@
    ],
    "usage": {
     "inputTokens": 1141,
-    "outputTokens": 139,
+    "outputTokens": 136,
     "cacheReadTokens": 0,
     "cacheWriteTokens": 1137
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:723b494a28e2433ce134a779dbc55246419a273eb68922c3541c32d219de9dfc": {
+  "sha256:2835c2343ccd727733f6c22220dbd329092c4ab2bf585297b1457b0bbd2f75f6": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01WwUBgznBcLZENDzVJGep9S",
+     "id": "toolu_019NiESaQvmQu24ncnKBwWLJ",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01EqmnLCvPhJjb1UVs4XTJPf",
+     "id": "toolu_01Mn2gQ6ZkLhDUeGVVctaynk",
      "name": "network_log",
      "input": {}
     }
@@ -70,7 +70,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01WwUBgznBcLZENDzVJGep9S",
+     "id": "toolu_019NiESaQvmQu24ncnKBwWLJ",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -79,7 +79,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01EqmnLCvPhJjb1UVs4XTJPf",
+     "id": "toolu_01Mn2gQ6ZkLhDUeGVVctaynk",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -88,22 +88,55 @@
     }
    ],
    "usage": {
-    "inputTokens": 15927,
+    "inputTokens": 16148,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 15923
+    "cacheWriteTokens": 16144
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:b548441567521e651edd907a5e20aadd5bc065d97019b0240d452adcc027887c": {
+  "sha256:6cb047882f69ddb00a7a9eed5fad294b3493f5442d90a22eb31047728a1fef5a": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01HCU3nDR3JdiYFYnDMvczR4",
-     "name": "network_entry",
+     "id": "toolu_01L5nU8swdD9SVEpeGdMb7tR",
+     "name": "submit_checks",
      "input": {
-      "seq": 6
+      "checks": [
+       {
+        "id": "r1-dentist-renamed-probe",
+        "requirement": "R1",
+        "description": "The backend events list contains the Dentist event (id 2) with title exactly \"Dentist (Dr. Lee)\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "events"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "const": 2
+             },
+             "title": {
+              "const": "Dentist (Dr. Lee)"
+             }
+            },
+            "required": [
+             "id",
+             "title"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
      }
     }
    ],
@@ -111,230 +144,58 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSkAoKEAgTGAI4AUIIdGhpbmtpbmcSDD1ZqE/+Q4azL+4NfhoMl+eLaTiUwWRhVyi0IjA/IKbztDnRwLHhk7fatU3zQElEF7AKX0bX7XenS1bktMko5jJb7wfenmGe+pmJvC8qrQmJBQJvQiLFrFU9+aAi4vuUS1evTjpNl8iV/Rxj4frccY6XzwaMH2mBNg/WpoVoBpV458h7NH07iUvnutzkK4jHQ2+9go3k/7i7ay3DAw3Njryn25LzlIbT+ikOoBAvBK+g5itUraV5yUuNnttvz/RysZXwu8eTMmE9hVyzkxmgDCBJbfuokyIyVu1uXYJcQyT0DAPCmHAgEgYjdZ05MXm+rBMXluryZR0HMolWeihT4/p9WGwbXxNuMYk5ytvuoOT16WnMlnr0LcmgQ+gX63Y+7lbPupRz2cOkePQrvE292oiYOYamhQriXv7enaJq+3lL/j+jTj26+ZghxFxKUsWLdFkt04go7FOFqu60V1NJx2m45lz9lhXEa7ggsFwKqdcN7wlvT/2bt/pwsEDpKT5hQ5e+lPViRN8Jb0VRXICYatTAL6Xf3XX3E4FeIj2AUQvH46amWatkwU/CDc41cZPKA4on9hYneFUlgwqModyRDu3XR44bQeeQIzMdgM8Tdgv1Bhu37xaaIFg11Ojmxy7wBsfPRgqJF8KKwEP9HWtzy6X8jCPbm7Rl9PiWkMNYHv+lcHPW5pMHyVdPyZ6wKqO0k0DFXMciAbHqW3EWOnoRlx06cTfR2x7kc5DvmVRcu4mHu29MRc/D7OTwzRqMQhN18WHSmtT9+JeXRqopmbcFsU9fEaPlxjsCAN79tAiQt0/QB1H9UscSM1vxOhbNMp1og7WDddLR+usPXV0xguHM9yfdRPpH1cvx6AsUJ0RLnV1TlLtQ3rkCjxUVMtFJ16kt9LSEgJiTookIjnRgPov/NpaHw5rFPaIVCR2lcxBUiXoBnAmuICKBk0p64JeBKmkcdPky4wSOJat/J5wPXlVpjacQvHP845KOR3VnikrK5/cZIqs3xl+fAYDpfQbPXtOLoi8HCHDXJzHuq9xXkti348/7vzvojs9hp06PL2dIcc9WHP2JTcAfQgAbspk6tH4BX+YHOUDMSNNHfKOILJw5Mw8fbS2D3BDnlEhcIknGPpBYFglGBeltKeWofKiLUdFf3EcC356ePFlqza82n3mW4YUoPMSHhQaP4r61tQKX/FIHov0ZARSXF/SDNHvgtMWhO93RHI6hm+vN7Gjo0kfFXvdzO0QEvf32vv5DModhlHiT46wYnr9FUrjYzqUC0yB95nX1Ff6wV/Lykdn6c70gA7kXA2KI0wQX2kTK6FoafLhrBl883JrCizemQLT8rJ9tuIztPukFxd4FjHLKkqhmXQoLjZf3NQmFDTuN66ZRqUCIJYjrJ1Uk9zTcfsEYZDnjaUSYfF1sX8Y2WNCM930zSZNvluEgGnhPtU6eRnGUNH0Ikp9mKYta+/lcdBVx1bPsjY2wcIgb61YWZASrMufwo5Lq9Q5x7MBrLabQ4ka6ixd5xz2Dhccd03T47AIOBGlqY6L25Uee+NDvf3L3MQT1ahZ7FNXL1TSPYiipwqzrmy6Acvzipzv/I36GMEmiz594oVJ8zWU2U1Kr3qjUB9ThhJorO1q1XgOZH8OHqDhZOQtSfLNL9nDohFTSftquzQPaMsJ2U8qmYt7rb6Imf997R25ffKtnwnfuRFoCuAsYAQ=="
+     "signature": "CAQS2wgKEAgTGAI4AUIIdGhpbmtpbmcSDGuYvSLDMvJIRbM3zBoMhV5f7nHy8f1XKejCIjAH06Q/kpjDFSqQb2O6E5Pk3CCQX/rm8DONDcboSX2yo1FBbm1A7KRLAoo5Drk4rmQq+Acd58L1PONodXTuuPTPgkdQqOnVUEUmygp+LkXYm7zEubN8MqSEwbzB7+okhkc/pWHwksd3CyXlFp61kpu5XiIqNZGrkg+MEbQGqi7ThoiPibV/D+3tz5butUcUOQhVfuwQ4mL9cntVjP7p3FB6++hOPxzj1rRihovd9Wy3wdiz58FcLQ31rNvLFUMm8G8i0LOWrgpQTHHTBWBk9UWfl4snF6vAsrEWCxpR+/ObgwDErQoL94qEeixMBhrY83kO/vC87QUog3/gCp1C/yKJB9Bv219//Sr4NSlH4ElXHsUXSoQ5sZ/he73LOBXw0f0HTDwVeA5eXrO1Q5+CspCynqi9aCwwvml3yW7sMDdL6OZPjejcTetcL7dSYTOGeVNVxHuCcqr6zfOzma5MubWtGdHM0L4vtSb0y8P8SBXtK+keS11m51e6n/o0lQz7Wjbi8Ry2iG1F1jrqN13bw83ntfQbs+HvrTEYsLqWtpYfDOM0goj4L4GxJw8wfBhOGziazvIm5mQ4eETHhkF+t/TCYmodzCzI+vsCp82gwUDwgEO6GoIxvQ9rvd26k0qcOHtcNltHH9MVG9ckLTdUI/pcUzGECqQq2PZn9TYaLu2+spnBfqcTXZhCR5pJVWvHMeObYyNqJ0nC4rEmqOVoyoEFNd/53Iv+w2C7aM7U3rnJ2WtMh2XUIhRu8VDH/VHi0F4v80MQz4fumYobvZMpJhHm2xzNZ+j/oAEBqpmpIR8Iz4c1nYbB5WxZ5ye4UCon6iG/YNZ3MTttwNFy7G55gxLZywGqPs0gm6MleRqE2lPvnoS0ZD0+OlY9SE7PgDsDJVtjU5cwcwkXBfmRmXFeZHuOt9RLe8x8Dq8KoRVPi6itTpC0W7XEQ7uIMSyEUfmLzMX+7gTQqhkUnW1/ouvvzpGGptg+8y57i7HMEml/EcuwKeX/km6f5cnvfLfOMVWRlg9uO5ragFHhqtjX7a1dnwCFoxUJdBtZxN5XnAcioDGYHb7cR39lm6SIu89pyhjETzPGoP0gVuriVGNypyNBDVOVDK4+24QZW7eT2Q153D2V+U3H0jgIlBPChC+X2CsZgEBAT4HhFOemt6bVJQ5swKPcZpN+XNNE7FhANbOtAX3X/C5R5lVAaHpXslGkX4BB398VmZr0Wz0tnoa/UqXzBHKjigVi7aFLhsHeux2rx+cIaXZuEUQQWi8yjCWXdpNBZG/kSBz9EL1DoEDWF+CWXrSFh6p+Ney4sS6eeTCMZNk3ZguWrAu1HEpjoNy5/LM1fSPPBJue0bRMAs71E4QGsuC98pbPVBRjY/63BlK9Lo92kcrRebbrJa86737HGCv/ajXn5b+zB4VEFE292BgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_01HCU3nDR3JdiYFYnDMvczR4",
-     "name": "network_entry",
+     "id": "toolu_01L5nU8swdD9SVEpeGdMb7tR",
+     "name": "submit_checks",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "seq": 6
+      "checks": [
+       {
+        "id": "r1-dentist-renamed-probe",
+        "requirement": "R1",
+        "description": "The backend events list contains the Dentist event (id 2) with title exactly \"Dentist (Dr. Lee)\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "events"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "const": 2
+             },
+             "title": {
+              "const": "Dentist (Dr. Lee)"
+             }
+            },
+            "required": [
+             "id",
+             "title"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 16486,
-    "outputTokens": 292,
-    "cacheReadTokens": 15923,
+    "inputTokens": 16707,
+    "outputTokens": 399,
+    "cacheReadTokens": 16144,
     "cacheWriteTokens": 561
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:7a49402a278f52cbd968614dc0d00599d994e98941ffefdb54407d5ffc94dbf9": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_01Wr49yr5waJKKCmaDwN3xo4",
-     "name": "submit_checks",
-     "input": {
-      "checks": [
-       {
-        "id": "dentist-renamed-backend",
-        "requirement": "R1",
-        "description": "The backend events list has the original Dentist event (id 2, 2026-11-06 14:30) titled exactly \"Dentist (Dr. Lee)\", and no event still titled plain \"Dentist\".",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "events"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "id",
-             "title",
-             "date",
-             "time"
-            ],
-            "properties": {
-             "id": {
-              "const": 2
-             },
-             "title": {
-              "const": "Dentist (Dr. Lee)"
-             },
-             "date": {
-              "const": "2026-11-06"
-             },
-             "time": {
-              "const": "14:30"
-             }
-            }
-           },
-           "not": {
-            "contains": {
-             "type": "object",
-             "required": [
-              "title"
-             ],
-             "properties": {
-              "title": {
-               "const": "Dentist"
-              }
-             }
-            }
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "dentist-rename-request",
-        "requirement": "R1",
-        "description": "A successful PUT/PATCH to /api/events/2 sent the title \"Dentist (Dr. Lee)\".",
-        "assert": {
-         "kind": "request",
-         "match": {
-          "method": [
-           "PATCH",
-           "PUT"
-          ],
-          "url": {
-           "path": "/api/events/2"
-          },
-          "status": {
-           "gte": 200,
-           "lt": 300
-          },
-          "requestBody": {
-           "type": "object",
-           "required": [
-            "title"
-           ],
-           "properties": {
-            "title": {
-             "const": "Dentist (Dr. Lee)"
-            }
-           }
-          }
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_01Wr49yr5waJKKCmaDwN3xo4",
-     "name": "submit_checks",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "checks": [
-       {
-        "id": "dentist-renamed-backend",
-        "requirement": "R1",
-        "description": "The backend events list has the original Dentist event (id 2, 2026-11-06 14:30) titled exactly \"Dentist (Dr. Lee)\", and no event still titled plain \"Dentist\".",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "events"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "id",
-             "title",
-             "date",
-             "time"
-            ],
-            "properties": {
-             "id": {
-              "const": 2
-             },
-             "title": {
-              "const": "Dentist (Dr. Lee)"
-             },
-             "date": {
-              "const": "2026-11-06"
-             },
-             "time": {
-              "const": "14:30"
-             }
-            }
-           },
-           "not": {
-            "contains": {
-             "type": "object",
-             "required": [
-              "title"
-             ],
-             "properties": {
-              "title": {
-               "const": "Dentist"
-              }
-             }
-            }
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "dentist-rename-request",
-        "requirement": "R1",
-        "description": "A successful PUT/PATCH to /api/events/2 sent the title \"Dentist (Dr. Lee)\".",
-        "assert": {
-         "kind": "request",
-         "match": {
-          "method": [
-           "PATCH",
-           "PUT"
-          ],
-          "url": {
-           "path": "/api/events/2"
-          },
-          "status": {
-           "gte": 200,
-           "lt": 300
-          },
-          "requestBody": {
-           "type": "object",
-           "required": [
-            "title"
-           ],
-           "properties": {
-            "title": {
-             "const": "Dentist (Dr. Lee)"
-            }
-           }
-          }
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 17012,
-    "outputTokens": 506,
-    "cacheReadTokens": 16484,
-    "cacheWriteTokens": 526
    },
    "model": "claude-opus-5-5"
   }

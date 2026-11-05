@@ -1,14 +1,14 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T23:12:04.365Z",
+ "recordedAt": "2026-11-05T06:56:05.341Z",
  "turns": {
   "sha256:634cb3e747b8d36f92560ff5c66b078610448de11c8e7c1de9bd6ca84a273b4b": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01KKeE95uxvwvssWG5tPLKym",
+     "id": "toolu_01DtsuEuqwczVyojuJWbdCAm",
      "name": "submit_rubric",
      "input": {
       "requirements": [
@@ -26,7 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01KKeE95uxvwvssWG5tPLKym",
+     "id": "toolu_01DtsuEuqwczVyojuJWbdCAm",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -52,17 +52,17 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:b14bd409867e349be32279210cc485e6f7e5ee0bc3aee0b74ea0f70013f3ff14": {
+  "sha256:3e28ea9989c193136cd4ebf2610fc1072b7385d3ba28bbca504a254ed90164ee": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01EVFaqmRMqw5YQESEnJo6LR",
+     "id": "toolu_01C2M7FdNsAhm4DoziAuH7Wz",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01BDh8ZAbhjNnC6sXkM5pAjd",
+     "id": "toolu_016CRCQiMQFrBUY3z3HjGUpA",
      "name": "network_log",
      "input": {}
     }
@@ -70,7 +70,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01EVFaqmRMqw5YQESEnJo6LR",
+     "id": "toolu_01C2M7FdNsAhm4DoziAuH7Wz",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -79,7 +79,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01BDh8ZAbhjNnC6sXkM5pAjd",
+     "id": "toolu_016CRCQiMQFrBUY3z3HjGUpA",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -88,55 +88,22 @@
     }
    ],
    "usage": {
-    "inputTokens": 15875,
+    "inputTokens": 16099,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 15871
+    "cacheWriteTokens": 16095
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:ed667cff0e2affb228044b92cd8541289d47d3935369148336bf6fa0fc5bb65d": {
+  "sha256:6488bd71cbce7888d65532fa43ef57ee7396d2876269faa748b79a373d82058d": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_0161JAHLqmhZopQo8WuxPAYp",
-     "name": "submit_checks",
+     "id": "toolu_01CANUUZxvMEMPXCTBnCvBqf",
+     "name": "network_entry",
      "input": {
-      "checks": [
-       {
-        "id": "issue3-open-probe",
-        "requirement": "R1",
-        "description": "The backend issues list shows issue #3 with status \"open\".",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "issues"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "id",
-             "status"
-            ],
-            "properties": {
-             "id": {
-              "const": 3
-             },
-             "status": {
-              "const": "open"
-             }
-            }
-           }
-          }
-         }
-        }
-       }
-      ]
+      "seq": 1
      }
     }
    ],
@@ -144,21 +111,133 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSuAYKEAgTGAI4AUIIdGhpbmtpbmcSDNZaQkVj2ZuZt+/YMBoMSNx6Xsgmv9QRZhZPIjAWwQfqJVqam2Eifr9+jXMFdSQF/h4thzUNWL1bG0r8E+gM5jySPPA8r3LCLzwSCFAq1QUxV5JTxNnhPw9At8HDgYcTsgy2WMlD7oic4512dNjCw2ELrsUyUelt7ExZdgqV3M4xiunLrbdP2UZ8JrI5pf0ikBAAA12mIny9mLLvPtHSiU+iMX4ByX8N3duv6KO8iQ1WwlAKfmQhkRdRZUvutLMyRjVudGUiW+6inbNMZVT9Tv8wqAMy8jZRUho9VUSfj9lEGI3mykl0bPVu7Nlk7trotUAsXTcrZbygmyyXKduv/QWedylnei6qGusw8422ruP05h4QkxaVlgRRhWwPH2hvn3lPgUtz1n70S1TTXR7blGRqVS7Sm9YwtNTZUQB51ga89dazdMAWltmElgxmDhtZRXbNPpPQE6ALSkaX0DPB38TJqcOJhv4JILc/DvSYr/JQMmVl14eZ3CZTXKPicT+zX++wcyM+Ar9I4DxDPZb0n4H5xSmdacffzif4NmZ03C3ko51thHs1k0/o50BZqJkuIRTABAWmoGNQbIO+47B+3giNlplQQwfV1XfoTjYp8MhURdmtUS3BxMMxXa5vJAIlWAGqBlylnPVK6C0YJleLMR+GtuDFJeMrWdan39WBxDrpFyG4iOdGo863MSj3pPKPKUjae5l+N9zCRuGst9sU4GtVbFG4pUjqrRvVD8a/CEM2ESI6JovpEsCTVCSMcJX6ytl69i3hmjPU/+fB35sk+Xkpj+D3XsojsBYVK4fOgA0o4q5fE/+6I4eari9kJJsP2B/buhkaNjZKd85/3zK0kJVIFTv3EJcon//Haa4oU4fM6IqirxmvOFVoAMOFplly7zbL5ZZ4q0a/m1HqRY8t5Hp5a0KSDDMIllgWTRgJgjcDX1rjUMkw2bcVtfsBAAUUWvLdiFWwY3hkYe0AiYM/CtWLpuJDqHqKgsAl9EhmphrBabQSFooNtfK1wts6xM8gSdamHw++giLtKQGNN++J5aWG4rBMF7xQm3pRnwpQ8j0OFL/O0hgB"
+     "signature": "CAQSngYKEAgTGAI4AUIIdGhpbmtpbmcSDPAN/TT6X5Qiq7UmPhoMTJg9SDlOAr0p3vd7IjCpmKB8rpW3tY5TUYxucQqpON6p+dJ39cBa7ZY3H3gU1a9LtuKxQ7WFmJ/hW+oOd6QquwUvVjC4N4Lwjs4E+de8x70JP/c0CEa2rmIqYX/V+zCa10+pdGEP+2FagfR1dmSJEC1ABAeiCPezm7zACcbOexVZesFbd5PPomLRkbQvTouh+CG+VgDRbc8DqkJbpiD2xIPpkRSZoNE6y6/AXsGXFJcJ8KQeh1nMpw3ejsWmrfsSGhkq5QZHLnLckF6GPbEBYk5qOkXznlJNWJTSKvCCe2DgKihGIlPHbqG+0nn+jTtsXLyunPkDvdjIyRdJOmSluptG7W9EaVBw+4Jnmp7h4lmblirL5RQ7QJDB0VQxlWgR11/FRFRD76AxYfK99wWtXPQO0Axap0T30dvQxbj7RPKfF5BbNkh7PkoTRhjRjEhIbpo7sEe+/efY0bbz19bN8DBIyOIjf3JYWAkbwDlNpZakU3DmrZSjwgEyofUyotcsOUbS7J9XdqjYsmVDYmeyAq2n+JoLor2Kql8teuyni/DKzSiZr0vgf0Z7MFjxuV4aduTKCkMTA5P8BlgVN/yLDeaLsxeehjhxrA7pniJylhmsUsAFJrDrlF0UaSoBbLvNMezUXu5J4xgFlrikOy/sdixu31sYYLiEpLaJ3XnZZVxyo/U7X55zqtta+tf9isHqd9hfz3SG0UQxDgxz/LbomlxgOz7MdG3KfkNMV0MU/NpOcSxLGzkmHmPEzk/flto1XZBn2NL6sS766o0u6MjkW6e8KrJ85JegJL0WvS2JXakEZ1yapHIra9Wu3qa9fR1IAzSrvdW/vag8au3me4aA1kn4HSeDc/4mM2j7ryldsc6Znajkg35qkCVuDb5pCZbiacybP1Ov/bX9u70g14tLj1hSicCoOlaQWMHp3RbF/eOK0jD34x1wXvpzJF7FsjyDguBUgn3JNLJBsVW0xeDUoupg/uPoj+fDZ8CHFmtLitZpEehyd/hTVkIK3PcYAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_0161JAHLqmhZopQo8WuxPAYp",
-     "name": "submit_checks",
+     "id": "toolu_01CANUUZxvMEMPXCTBnCvBqf",
+     "name": "network_entry",
      "caller": {
       "type": "direct"
      },
      "input": {
+      "seq": 1
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 16564,
+    "outputTokens": 106,
+    "cacheReadTokens": 16095,
+    "cacheWriteTokens": 467
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:caa9e9f8fdf0e7ba30cdaad8efe04f4183116b0972558f7d6329887fcda79520": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LACpLRrv26KyfH4EcvzBsb",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues",
+        "at": "before"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "id": {
+            "const": 3
+           },
+           "status": {
+            "const": "closed"
+           }
+          },
+          "required": [
+           "id",
+           "status"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSuwYKEAgTGAI4AUIIdGhpbmtpbmcSDAU3L2V2Kh5sSktwqBoM0zp4NDLJzsmA3o3XIjCnheExAtDEg+3A5+rwSo1VvDJfiCdaJS+l0aUGlFFaIGrYa8AqXZGnaWIQbM+g5hYq2AXJCosTXy6D83pysh+Frye1ojuMrzdD5RSPO3BkZksXeBVLtZdbhx1HFiM8sJ1VAIcOD71mZFhwe02R4ahP+kiJP4eZNnO51EX8lkyfa3qUP7O/U/ETl/Axzjh9iJ7H4em2mWK/Asd6RcihCEBBFHuWthY3xfIv5zxZAop4BhSW3bB+756WQfOvHz4+15v3787MHOB0tu2igBgV8nKrR8w2rDWzm2dN9+bSOz4IMD0jwEd1JjN0lp3KP6nruUxOauVccBNQ6px4T72r+vm3JNc11lBQpaoPaPbQvaPzp+EpatpC/cewS5JdNV5Q0FCAZ0ytZViRq8smz23e1CK6jeSQIld+2uX2o/IKXWQn4qWjKZQv26V6bVWgWqSC9SQMNFdBLxR0q68p1r1dqwDZAPpPTrDCL1iigV8zsai7zvAeSwSiMfogJgdJuEDW74U5qMRTpNvtUiZuE01qeyvL7wNzYyMnIpt/N7IkG2xwpq1EeJYlodTWest6j1luiYw0V7QY4/EpZzzePNdvZWFGoVTeCANr6XUo9NS3/hP4affnKCvGInTuLtzvRfi3idWSP7EY0+PSgOrLPbSqkCaq2yUnZ9BE+xeI+tzbTaCdqKFBy+JoOz00wcjUL6eiKXJy80xX62HlQ/r1437D3Xyd9/JrClGyz1NwyUatSgPFpAO+xKxMrfUZos/93xgDQtYLWQTZ+Vnn+aTm47EMV2UbuLtg5ZZPOz19bXSJzJH2x4kmFi5I1zDTwuDdBDsc7pS4XUccm9p51w8pzEn/0T+cKzv+yKaEtVmaJlq/U8LX+VdxND8Hv0boKfJ/xHJmyPXBDj01WJI9rkzVHJDLPbjsuouvEBe3MxElUmoWt6Z726yWflTpBwe58ZqDlWVnqAfr4pFSCq0WDwvyrFYXshQEcsF2C36q6dCAx/+6z7MqLVRxgjSHinNw/ivE01UjslCPUIThXyRSr0OUKhgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01LACpLRrv26KyfH4EcvzBsb",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues",
+        "at": "before"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "id": {
+            "const": 3
+           },
+           "status": {
+            "const": "closed"
+           }
+          },
+          "required": [
+           "id",
+           "status"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 16768,
+    "outputTokens": 184,
+    "cacheReadTokens": 16562,
+    "cacheWriteTokens": 204
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:24797a9871fd30dfb8e769377a0af4d046805e7a780cb69ce45774b40ae4997d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Q33wFt41Qs7bBVRy8Jg75D",
+     "name": "submit_checks",
+     "input": {
       "checks": [
        {
-        "id": "issue3-open-probe",
+        "id": "issue3-open-backend",
         "requirement": "R1",
-        "description": "The backend issues list shows issue #3 with status \"open\".",
+        "description": "The backend issues probe shows issue #3 with status \"open\".",
         "assert": {
          "kind": "value",
          "source": {
@@ -170,10 +249,6 @@
            "type": "array",
            "contains": {
             "type": "object",
-            "required": [
-             "id",
-             "status"
-            ],
             "properties": {
              "id": {
               "const": 3
@@ -181,7 +256,57 @@
              "status": {
               "const": "open"
              }
-            }
+            },
+            "required": [
+             "id",
+             "status"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Q33wFt41Qs7bBVRy8Jg75D",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "issue3-open-backend",
+        "requirement": "R1",
+        "description": "The backend issues probe shows issue #3 with status \"open\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "const": 3
+             },
+             "status": {
+              "const": "open"
+             }
+            },
+            "required": [
+             "id",
+             "status"
+            ]
            }
           }
          }
@@ -192,10 +317,10 @@
     }
    ],
    "usage": {
-    "inputTokens": 16340,
-    "outputTokens": 251,
-    "cacheReadTokens": 15871,
-    "cacheWriteTokens": 467
+    "inputTokens": 17001,
+    "outputTokens": 205,
+    "cacheReadTokens": 16766,
+    "cacheWriteTokens": 233
    },
    "model": "claude-opus-5-5"
   }

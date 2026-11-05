@@ -19,7 +19,7 @@
     {
       "id": "R2",
       "kind": "hard",
-      "text": "All other events remain undeleted.",
+      "text": "All other events still exist.",
       "source": {
         "field": "outcomes",
         "quote": "the other events are still there"
@@ -28,9 +28,9 @@
   ],
   "checks": [
     {
-      "id": "R1-standup-gone",
+      "id": "r1-standup-gone",
       "requirement": "R1",
-      "description": "The backend events list no longer contains an event titled Team standup.",
+      "description": "The backend events list contains no event titled Team standup.",
       "assert": {
         "kind": "value",
         "source": {
@@ -58,9 +58,9 @@
       }
     },
     {
-      "id": "R2-others-remain",
+      "id": "r2-others-remain",
       "requirement": "R2",
-      "description": "The backend events list still contains the Dentist and Book club events.",
+      "description": "The backend events list still contains the Dentist event (Nov 6, 14:30) and the Book club event (Nov 10, 19:00).",
       "assert": {
         "kind": "value",
         "source": {
@@ -80,11 +80,15 @@
                     },
                     "date": {
                       "const": "2026-11-06"
+                    },
+                    "time": {
+                      "const": "14:30"
                     }
                   },
                   "required": [
                     "title",
-                    "date"
+                    "date",
+                    "time"
                   ]
                 }
               },
@@ -97,11 +101,15 @@
                     },
                     "date": {
                       "const": "2026-11-10"
+                    },
+                    "time": {
+                      "const": "19:00"
                     }
                   },
                   "required": [
                     "title",
-                    "date"
+                    "date",
+                    "time"
                   ]
                 }
               }
@@ -117,6 +125,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T23:12:29.316Z"
+    "at": "2026-11-05T06:56:37.604Z"
   }
 }
