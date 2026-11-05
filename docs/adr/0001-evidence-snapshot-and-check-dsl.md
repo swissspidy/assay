@@ -235,6 +235,9 @@ no reader can silently evaluate `at: "before"` as the end state.
 handling beyond what `ariaSnapshot` exposes. One page per snapshot. State that
 isn't visible on the final page should be checked through probes or the
 network log, not by navigating at check time (see "Rejected alternatives").
+ADR 0012 lifts the frame and page limits: frame content is captured under its iframe node,
+the context's other open pages are kept as `pages` (read with a `page`
+assertion), and multipart request bodies are parsed like URL-encoded ones.
 
 ### 2. Check DSL (`assay.checks/v1`)
 

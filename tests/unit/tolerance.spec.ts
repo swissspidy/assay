@@ -2,6 +2,9 @@
 import { test, expect } from '@playwright/test';
 import {
   describeAssertion,
+  diffCheckSets,
+  formatCheckSetDiff,
+  reviewSheet,
   validateCheckSet,
   type Assertion,
   type AXNode,
@@ -166,15 +169,43 @@ test.describe('sameAs tolerance', () => {
     expect(errors(items)).toMatch(/not to collections/);
   });
 
-  test('the review sheet states the tolerance, its unit and its reason', () => {
+  test('describeAssertion states the tolerance, its unit and its reason', () => {
     expect(describeAssertion(totalCheck(cents))).toMatch(
-      /, within ±0\.01 \(tolerance, because "the page rounds the stored total to the cent"\)$/,
+      /, within ±0\.01 \(because "the page rounds the stored total to the cent"\)$/,
     );
-    expect(describeAssertion(createdCheck(minute))).toMatch(/within ±1 minutes \(tolerance, because/);
+    expect(describeAssertion(createdCheck(minute))).toMatch(/within ±1 minutes \(because/);
     expect(describeAssertion(totalCheck({ abs: 0.01, rel: 0.01, because: 'a\nb' }))).toMatch(
-      /within ±0\.01 or ±1% of that value \(tolerance, because "a b"\)/,
+      /within ±0\.01 or ±1% of that value \(because "a b"\)/,
     );
-    expect(describeAssertion(totalCheck())).not.toMatch(/tolerance/);
+    expect(describeAssertion(totalCheck())).not.toMatch(/within|because/);
+  });
+
+  test('the review sheet shows the tolerance in what the check tests and as a setting', () => {
+    const sheet = reviewSheet(one(totalCheck({ abs: 0.5, because: 'rounded on the page' })));
+    expect(sheet).toContain(', within ±0.5 (because "rounded on the page")');
+    expect(sheet).toContain('sameAs tolerance: within ±0.5 (because "rounded on the page")');
+    expect(reviewSheet(one(totalCheck()))).not.toContain('sameAs tolerance');
+  });
+
+  test('the semantic diff reports a changed tolerance as a changed setting', () => {
+    const before = one(totalCheck(cents));
+    const after = one(totalCheck({ abs: 0.5, because: 'rounded on the page' }));
+    const d = diffCheckSets(before, after);
+    expect(d.checks.changed.map((c) => [c.id, c.fields])).toEqual([['C1', ['what it tests', 'tolerance']]]);
+    expect(d.checks.changed[0]!.before.settings).toEqual([
+      'sameAs tolerance: within ±0.01 (because "the page rounds the stored total to the cent")',
+    ]);
+    expect(d.checks.changed[0]!.after.settings).toEqual([
+      'sameAs tolerance: within ±0.5 (because "rounded on the page")',
+    ]);
+    const text = formatCheckSetDiff(d);
+    expect(text).toContain('changed: what it tests, tolerance');
+    expect(text).toMatch(
+      /settings:[\s\S]*before: sameAs tolerance: within ±0\.01[\s\S]*after: sameAs tolerance: within ±0\.5/,
+    );
+    // Added or removed, it is a change too; an unchanged tolerance is none.
+    expect(diffCheckSets(one(totalCheck()), before).checks.changed[0]!.fields).toContain('tolerance');
+    expect(diffCheckSets(before, one(totalCheck(cents))).identical).toBe(true);
   });
 
   test('stress: values just past the tolerance are mutants, values inside it are valid variants', () => {

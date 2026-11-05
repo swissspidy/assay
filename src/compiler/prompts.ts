@@ -102,6 +102,20 @@ export const DISCOVERY_ABSENCE = `## Records a probe cannot show missing
 A probe that fails to read when its record does not exist (an error, "not found", shown as failed by the probes tool), or a probe read without a state before the task to compare with, makes a check abstain on a run that created nothing at all. A requirement that a record was created (an order placed, an item saved) therefore also needs a check that fails when nothing was created: the request that creates it, as a "request" check without onMissing, when the app has one API for it; or a probe listing the records, which shows it missing.`;
 
 /**
+ * Appended to DISCOVERY_SYSTEM, each only when a reference snapshot has captured frame
+ * content, other open pages or parsed form bodies (ADR 0012), so prompts for tasks
+ * without them are unchanged.
+ */
+export const DISCOVERY_FRAMES = `## Frames
+Frame content is in the tree under its iframe node (named by the iframe's title; its url is the frame's URL), and locators find it like any other node. To keep a check to one frame, scope it to the iframe: scope {role:"iframe", name:"Editor canvas"}, or within the same.`;
+
+export const DISCOVERY_PAGES = `## Other open pages
+Some references had several pages open (tabs, popups); the outline lists the others after the active page. The page, tree, text and URL a check reads are the active page's. To read another open page, wrap the assertion: {kind:"page", match:{url?: UrlMatch, title?: TextMatch}, assert: Assertion}. Select the page by what identifies it (its path); a match that fits several pages or none abstains. Inside, read only the page: state, contains, each, url, and value from node, text or url sources.`;
+
+export const DISCOVERY_FORMS = `## Form bodies
+Form request bodies (URL-encoded and multipart) are objects of their fields: a repeated field is an array, an uploaded file is {filename, type, size}. Match a field with a requestBody JSON Schema or read it with a pointer ("/title").`;
+
+/**
  * Sent with the first refused submission in which a sameAs binding fails on a correct
  * reference by a small difference of numbers, money, dates or date-times. Only then do
  * submit_checks and try_assertion accept a tolerance, so compiles (and the recordings

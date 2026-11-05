@@ -15,12 +15,38 @@ export { validateCheckSet, assertValidCheckSet, CheckSetError, type ValidationRe
 export { formatOutcome } from './report.ts';
 export {
   lockCheckSet,
+  approveCheckSet,
+  rejectCheckSet,
+  unlockCheckSet,
   isLocked,
+  verifyLock,
+  assertLocked,
+  reviewState,
+  contentDigest,
+  stressDigest,
   describeAssertion,
-  reviewSheet,
-  type Lock,
+  describeChange,
+  LockError,
+  type ApproveOptions,
   type LockedCheckSet,
+  type LockChange,
+  type LockCheckOptions,
+  type LockRequirement,
+  type LockStatus,
+  type ReviewState,
+  type SignatureStatus,
 } from './verifier/lock.ts';
+export { generateSigningKey, keyId, type KeyInput, type SigningKeyPair, type TrustedKey } from './verifier/sign.ts';
+export { reviewSheet, type ReviewSheetOptions } from './verifier/review.ts';
+export {
+  diffCheckSets,
+  formatCheckSetDiff,
+  evidenceRead,
+  type CheckSetDiff,
+  type CheckView,
+  type RequirementView,
+  type Changed,
+} from './verifier/diff.ts';
 export {
   writeOutcomeRecord,
   RECORD_SCHEMA,

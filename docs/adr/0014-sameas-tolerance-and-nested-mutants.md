@@ -45,8 +45,11 @@ not show up as weak, and the order of nested arrays was only varied together wit
   currencies is never within tolerance. Without `tolerance`, equality stays exact.
 - **Explicit and reviewable.** It sits on the binding, never as a default. `because` is required and
   is shown in the review sheet next to the tolerance and its unit:
-  `…, equals backend probe latestOrder at /total, normalized by …, within ±0.01 (tolerance, because
-  "the page rounds the stored total to the cent")`.
+  `…, equals backend probe latestOrder at /total, normalized by …, within ±0.01 (because "the page
+  rounds the stored total to the cent")`. The sheet also lists it among the check's settings
+  (`sameAs tolerance: within ±0.01 (because …)`), and the semantic diff of two versions (ADR 0013)
+  reports a tolerance added, removed or changed as a changed field `tolerance`, with the settings
+  before and after.
 - **Bounded and typed** (validator): `abs` and `rel` are positive; `rel` at most 0.05; date-times at
   most 60 minutes; dates a whole number of days, at most 7. A tolerance on text, booleans or
   collections (`items`) is an error; `items` already compares in any order, so order-insensitive

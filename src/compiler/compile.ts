@@ -11,6 +11,7 @@
  */
 import type {
   Assertion,
+  AXNode,
   Check,
   CheckSet,
   EvidenceSnapshot,
@@ -47,7 +48,10 @@ import { findNodes, networkEntry, networkLog, outline, probesView, storageView, 
 import {
   DISCOVERY_ABSENCE,
   DISCOVERY_BASELINE,
+  DISCOVERY_FORMS,
+  DISCOVERY_FRAMES,
   DISCOVERY_NUDGE,
+  DISCOVERY_PAGES,
   DISCOVERY_SYSTEM,
   DISCOVERY_TOLERANCE,
   RUBRIC_SYSTEM,
@@ -415,6 +419,8 @@ function sourceChannels(a: Assertion): Channel[] {
       return [...new Set([a.source, ...('sameAs' in a.expect ? [a.expect.sameAs.source] : [])].map(sourceChannel))];
     case 'each':
       return [...new Set(['a11y' as const, ...sourceChannels(a.assert)])];
+    case 'page':
+      return sourceChannels(a.assert);
     case 'allOf':
     case 'anyOf':
       return [...new Set(a.of.flatMap(sourceChannels))];
@@ -435,6 +441,8 @@ export function assertionTrust(a: Assertion): number {
     case 'each':
       // Records are found in the accessibility tree; what is read inside them can be weaker.
       return Math.min(TRUST_RANK.semantic, assertionTrust(a.assert));
+    case 'page':
+      return assertionTrust(a.assert);
     default:
       // A sameAs binding passes when one side is made to show what the other holds, so
       // faking the weaker side alone is enough: it counts as its weaker source.
@@ -903,12 +911,47 @@ export function verifyCandidate(cs: CheckSet, refs: Reference[], stress = true, 
   return { errors, warnings, references };
 }
 
+const hasFrameContent = (n: AXNode): boolean =>
+  (n.role === 'iframe' && !!n.children?.length) || (n.children ?? []).some(hasFrameContent);
+
 /**
- * The DSL without sameAs tolerance. The tools offer it until a submission shows a binding
- * that a tolerance could be for (DISCOVERY_TOLERANCE); a compile that never meets one
- * sends exactly the requests it sent before tolerance existed, so its recordings replay.
+ * Sections for evidence beyond a single page's main frame (ADR 0012): frames, other open
+ * pages and parsed form bodies, each only when a reference holds it, so the prompt for
+ * references without them is unchanged.
  */
-function withoutTolerance(defs: typeof checkSetSchema.definitions): Record<string, unknown> {
+function captureSections(snapshots: EvidenceSnapshot[]): string[] {
+  const parts: string[] = [];
+  if (snapshots.some((s) => hasFrameContent(s.a11y) || s.pages?.some((p) => hasFrameContent(p.a11y))))
+    parts.push(DISCOVERY_FRAMES);
+  if (snapshots.some((s) => s.pages?.length)) parts.push(DISCOVERY_PAGES);
+  if (snapshots.some((s) => s.network?.some((e) => e.requestBodyRaw !== undefined))) parts.push(DISCOVERY_FORMS);
+  return parts;
+}
+
+/**
+ * The DSL definitions the compiler's tools take. The `page` assertion (ADR 0012) is offered
+ * only when a reference has other open pages, and a sameAs `tolerance` (ADR 0014) only once
+ * a submission shows a binding that one could be for (DISCOVERY_TOLERANCE), so the tools
+ * (and the recordings keyed on them) change only for such tasks.
+ * @internal Exported for tests.
+ */
+export function dslDefinitions(withPages: boolean, withTolerance = false) {
+  const defs = checkSetSchema.definitions;
+  const paged = withPages
+    ? defs
+    : (() => {
+        const { pageMatch: _, ...rest } = defs;
+        const oneOf = defs.assertion.oneOf.filter(
+          (a) => !('const' in a.properties.kind && a.properties.kind.const === 'page'),
+        );
+        return { ...rest, assertion: { oneOf } };
+      })();
+  // Same shape either way; only the optional tolerance property is left out.
+  return (withTolerance ? paged : withoutTolerance(paged)) as typeof paged;
+}
+
+/** The definitions without sameAs tolerance: byte for byte the DSL before it existed. */
+function withoutTolerance<D extends object>(defs: D): Record<string, unknown> {
   const d = structuredClone(defs) as unknown as Record<string, Record<string, unknown>>;
   delete d.tolerance;
   const comparison = d.comparison as {
@@ -918,28 +961,26 @@ function withoutTolerance(defs: typeof checkSetSchema.definitions): Record<strin
   return d;
 }
 
-const toolSchemas = (definitions: Record<string, unknown>) => ({
-  checks: {
-    type: 'object',
-    additionalProperties: false,
-    required: ['checks'],
-    properties: { checks: { type: 'array', minItems: 1, items: { $ref: '#/definitions/check' } } },
-    definitions,
-  },
-  assert: {
-    type: 'object',
-    additionalProperties: false,
-    required: ['assert'],
-    properties: {
-      assert: { $ref: '#/definitions/assertion' },
-      onMissing: { enum: ['fail', 'abstain'], description: 'Evaluate as a check with this onMissing setting.' },
-    },
-    definitions,
-  },
+/** @internal Exported for tests: the submit_checks input schema. */
+export const checksToolSchema = (withPages: boolean, withTolerance = false) => ({
+  type: 'object',
+  additionalProperties: false,
+  required: ['checks'],
+  properties: { checks: { type: 'array', minItems: 1, items: { $ref: '#/definitions/check' } } },
+  definitions: dslDefinitions(withPages, withTolerance),
 });
 
-const BASE_TOOL_SCHEMAS = toolSchemas(withoutTolerance(checkSetSchema.definitions));
-const TOLERANCE_TOOL_SCHEMAS = toolSchemas(checkSetSchema.definitions);
+/** @internal Exported for tests: the try_assertion input schema. */
+export const assertToolSchema = (withPages: boolean, withTolerance = false) => ({
+  type: 'object',
+  additionalProperties: false,
+  required: ['assert'],
+  properties: {
+    assert: { $ref: '#/definitions/assertion' },
+    onMissing: { enum: ['fail', 'abstain'], description: 'Evaluate as a check with this onMissing setting.' },
+  },
+  definitions: dslDefinitions(withPages, withTolerance),
+});
 
 const show = (f: FindingRef) => `${f.description} [${f.reference}/${f.id}]`;
 
@@ -957,6 +998,7 @@ function discoveryTools(
   onAccept: (v: Verification) => void,
 ) {
   const refNames = refs.map((r) => r.name);
+  const withPages = refs.some((r) => r.snapshot.pages?.length);
   const pickRef = (name: string | undefined): Reference => refs.find((r) => r.name === name) ?? refs[0]!;
   const refProp = {
     reference: { type: 'string', enum: refNames, description: 'Reference snapshot name (default: the first one).' },
@@ -1024,7 +1066,7 @@ function discoveryTools(
         name: 'try_assertion',
         description:
           'Evaluate one assertion against every reference snapshot and report pass/fail/abstain with the reason.',
-        inputSchema: BASE_TOOL_SCHEMAS.assert,
+        inputSchema: assertToolSchema(withPages),
       },
       run(i: { assert: Assertion; onMissing?: 'fail' | 'abstain' }) {
         const lines = refs.map((r) => {
@@ -1046,7 +1088,7 @@ function discoveryTools(
         name: 'submit_checks',
         description:
           'Submit the complete list of checks. They are validated and run against all references; you get errors to fix, or acceptance.',
-        inputSchema: BASE_TOOL_SCHEMAS.checks,
+        inputSchema: checksToolSchema(withPages),
       },
       run(i: { checks: Check[] }) {
         const cs: CheckSet = {
@@ -1067,9 +1109,10 @@ function discoveryTools(
             if (!offered) {
               offered = true;
               for (const t of tools)
-                if (t.spec.name === 'submit_checks') t.spec = { ...t.spec, inputSchema: TOLERANCE_TOOL_SCHEMAS.checks };
+                if (t.spec.name === 'submit_checks')
+                  t.spec = { ...t.spec, inputSchema: checksToolSchema(withPages, true) };
                 else if (t.spec.name === 'try_assertion')
-                  t.spec = { ...t.spec, inputSchema: TOLERANCE_TOOL_SCHEMAS.assert };
+                  t.spec = { ...t.spec, inputSchema: assertToolSchema(withPages, true) };
             }
           }
           return {
@@ -1087,14 +1130,18 @@ function discoveryTools(
 
 /**
  * The discovery prompt: the baseline section when a reference has a baseline, and the
- * absence section when none has one or a probe failed in one (ADR 0011).
+ * absence section when none has one or a probe failed in one (ADR 0011), then the frames,
+ * pages and form bodies sections where the references hold them (ADR 0012).
  */
 export function discoverySystem(refs: Reference[]): string {
   const baseline = refs.some((r) => r.snapshot.baseline);
   const absence = !baseline || refs.some((r) => Object.values(r.snapshot.baseline?.probes ?? {}).some((p) => !p.ok));
-  return [DISCOVERY_SYSTEM, ...(baseline ? [DISCOVERY_BASELINE] : []), ...(absence ? [DISCOVERY_ABSENCE] : [])].join(
-    '\n\n',
-  );
+  return [
+    DISCOVERY_SYSTEM,
+    ...(baseline ? [DISCOVERY_BASELINE] : []),
+    ...(absence ? [DISCOVERY_ABSENCE] : []),
+    ...captureSections(refs.map((r) => r.snapshot)),
+  ].join('\n\n');
 }
 
 export async function compileTask(task: TaskInput, refs: Reference[], opts: CompileOptions): Promise<CompileResult> {

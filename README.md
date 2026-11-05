@@ -69,7 +69,12 @@ the same check run without validation or a record, for hot loops.
 
 - **Evidence snapshot.** What a run left behind: the accessibility tree, visible text, URL, network
   log, storage and the results of backend probes you define. Captured with `captureSnapshot` (or by
-  `expectOutcome`), stored as JSON, and evaluated the same way live or offline.
+  `expectOutcome`), stored as JSON, and evaluated the same way live or offline. Iframe content
+  (same- and cross-origin) sits under its `iframe` node, where locators find it like any other node
+  (scope to `{"role": "iframe", "name": "Editor canvas"}` to stay in one frame); open shadow roots
+  are included, closed ones are not. Other open tabs and popups are kept as `pages`; the snapshot's
+  page is the active one. Form request bodies, URL-encoded and multipart, are parsed into fields,
+  with uploads recorded as `{filename, type, size}` ([ADR 0012](docs/adr/0012-snapshot-frames-pages-bodies.md)).
 - **Requirements and checks.** A check set lists requirements, each quoting the task text it comes
   from, and checks, each tracing to one requirement:
 
@@ -93,7 +98,8 @@ the same check run without validation or a record, for hot loops.
 
   Assertion kinds: `state`, `contains`, `value` (read from a node, text, the URL, a request or
   response, storage or a probe, then normalized and compared with a literal, or with a second
-  source via `sameAs`), `url`, `request`, `each` and `allOf`/`anyOf`. Normalizers parse numbers,
+  source via `sameAs`), `url`, `request`, `each`, `page` (another open tab or popup, selected by
+  URL or title) and `allOf`/`anyOf`. Normalizers parse numbers,
   money, dates and date-times (`datetime`, compared as instants; `approx` on them is in minutes).
   The JSON Schema is exported as `checkSetSchema`; `validateCheckSet` adds semantic checks.
 
@@ -215,15 +221,46 @@ Design details: [ADR 0001](docs/adr/0001-evidence-snapshot-and-check-dsl.md).
    console.log(formatStressReport(stressTest(checkSet, [{ name: 'reference', snapshot }])));
    ```
 
-3. **Review and lock.** `reviewSheet` renders each check in plain language next to what it actually
-   tests. `lockCheckSet` records who confirmed it; any later edit breaks the lock:
+3. **Review and approve.** `reviewSheet` renders each check in plain language next to what it
+   actually tests and the evidence it reads, with warnings and stress findings. Approving locks the
+   set; any later edit breaks the lock (see [Review and signed locks](#review-and-signed-locks)):
 
    ```ts
-   import { lockCheckSet, reviewSheet } from '@swissspidy/assay';
+   import { approveCheckSet, reviewSheet } from '@swissspidy/assay';
+   import { stressTest } from '@swissspidy/assay/stress';
 
-   console.log(reviewSheet(checkSet));
-   const locked = lockCheckSet(checkSet, 'reviewer@example.com');
+   const stress = stressTest(checkSet, [{ name: 'reference', snapshot }]);
+   console.log(reviewSheet(checkSet, { stress }));
+   const locked = approveCheckSet(checkSet, { by: 'reviewer@example.com', key: privateKeyPem });
    ```
+
+## Review and signed locks
+
+A compiled check set is a **proposal** until a reviewer approves it, which locks it, or rejects it
+with a note. The lock records the reviewer, the time, a digest of the set and of each requirement and
+check, the stress report they saw, and optionally an Ed25519 signature. `verify` can require a lock
+signed by a key you trust; an edit after approval breaks the lock and the refusal names what changed
+("changed after approval: check C2 changed"). Locks made before signing existed still verify.
+
+```sh
+assay keygen --out ~/.assay/alice.pem                      # alice.pem (secret) and alice.pub.pem
+assay review checks/order.checks.json --diff old.checks.json --format github  # only what changed
+assay approve checks/order.checks.json --reviewer alice --key ~/.assay/alice.pem --note "R2 checked"
+assay reject checks/order.checks.json --reviewer bob --note "C3 reads free text"
+assay verify checks/order.checks.json snapshot.json --require-signed --trusted-key keys/
+assay validate checks/*.checks.json --require-signed --trusted-key keys/  # CI gate: exit 1 if not approved
+```
+
+```ts
+await verify(checkSet, snapshot, { requireLocked: { trustedKeys: [alicePublicKeyPem] } });
+```
+
+A recompiled set is re-reviewed against the approved version: the diff lists requirements and
+checks added, removed and changed in plain language, and which requirements to read again. Approval
+is not carried over for unchanged parts: a lock covers the whole set, so the reviewer approves it
+again. Keys come from files or `ASSAY_SIGNING_KEY` / `ASSAY_TRUSTED_KEYS` (PEM text). Design, and an
+example GitHub workflow that posts the review sheet on pull requests:
+[ADR 0013](docs/adr/0013-review-workflow-and-signed-locks.md).
 
 ## Escalation and records
 
@@ -269,6 +306,7 @@ assay compile "Add a Blue Mug to my cart." --outcomes "Then the cart contains a 
   --reference runs/added-blue-mug.json --out checks/add-blue-mug.checks.json
 assay validate checks/*.checks.json          # schema, semantic errors, loose-match warnings, lock
 assay review checks/add-blue-mug.checks.json # the review sheet: every check in plain language
+assay approve checks/add-blue-mug.checks.json --reviewer alice --key alice.pem
 assay stress checks/add-blue-mug.checks.json --reference runs/
 assay verify checks/add-blue-mug.checks.json snapshot.json --record assay-records
 assay capture http://localhost:4173/cart --out runs/
@@ -280,10 +318,13 @@ assay capture http://localhost:4173/cart --out runs/
   runs. A refused compile prints its reason and warnings.
 - **`verify <checks> <snapshot>`** prints each requirement and check with its evidence.
   `--escalate` sends abstained requirements to the agentic verifier, `--record <dir>` writes the
-  outcome record, `--require-locked` refuses an unlocked set.
+  outcome record, `--require-locked` refuses a set that is not approved, `--require-signed` one
+  not signed by a `--trusted-key`.
 - **`stress <checks> --reference <path>`** reports over-constrained, fragile and weak checks and
   missed mutants. **`validate <checks...>`** (`--strict` fails on warnings) and **`review <checks>`**
-  need no snapshot.
+  (`--diff <old>`, `--format github|html`) need no snapshot.
+- **`approve`**, **`reject`**, **`unlock`** and **`keygen`**: the
+  [review workflow](#review-and-signed-locks).
 - **`capture <url>`** opens the URL in headless Chromium and writes a snapshot (needs
   `@playwright/test` and `npx playwright install chromium`). It sees what loading the page shows; for
   probes, a baseline or a task run first, capture from a Playwright test.
@@ -379,6 +420,8 @@ five ([ADR 0011](docs/adr/0011-route-robust-compilation.md)).
 - [ADR 0009](docs/adr/0009-real-site-evaluation.md): evaluation on real web apps
 - [ADR 0010](docs/adr/0010-command-line-tool.md): the `assay` command-line tool
 - [ADR 0011](docs/adr/0011-route-robust-compilation.md): route-robust compilation (several references, `onMissing`, "add" keeps)
+- [ADR 0012](docs/adr/0012-snapshot-frames-pages-bodies.md): frames, open pages and form bodies in snapshots
+- [ADR 0013](docs/adr/0013-review-workflow-and-signed-locks.md): the review workflow and signed locks
 - [ADR 0014](docs/adr/0014-sameas-tolerance-and-nested-mutants.md): `sameAs` tolerance and nested JSON array mutants
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
 - Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)

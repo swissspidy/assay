@@ -6,6 +6,7 @@
  */
 import type {
   Assertion,
+  AssertionResult,
   AXNode,
   CheckSet,
   Comparison,
@@ -24,9 +25,9 @@ import type {
   ValueSource,
 } from '../types.ts';
 import { AXIndex, readNodeField, resolveTarget, type INode } from '../runtime/axindex.ts';
-import { matchRequest } from '../runtime/network.ts';
+import { matchPage, matchRequest } from '../runtime/network.ts';
 import { compare, compareNumber, compareValues, jsonPointer, tolerable } from '../runtime/compare.ts';
-import { evaluateAssertion } from '../runtime/evaluate.ts';
+import { evaluateAssertion, openPages } from '../runtime/evaluate.ts';
 import {
   applyNormalizers,
   describeValue,
@@ -1452,6 +1453,8 @@ function assertionMutants(s: EvidenceSnapshot, idx: AXIndex, a: Assertion, rec?:
     }
     case 'request':
       return requestMutants(s, a);
+    case 'page':
+      return pageMutants(s, a);
     case 'allOf':
       return a.of.flatMap((sub, i) =>
         assertionMutants(s, idx, sub, rec).map((m) => ({ ...m, id: `allOf[${i}]:${m.id}` })),
@@ -1476,6 +1479,128 @@ function assertionMutants(s: EvidenceSnapshot, idx: AXIndex, a: Assertion, rec?:
       return [{ id: 'anyOf:all', description: `every alternative broken: ${parts.join('; ')}`, snapshot: snap }];
     }
   }
+}
+
+// --- pages and frames (ADR 0012) -------------------------------------------------
+
+/** The snapshot seen from open page `i` (0: the active page), as a `page` assertion reads it. */
+function viewOf(s: EvidenceSnapshot, i: number): EvidenceSnapshot {
+  if (i === 0) return s;
+  const v = s.pages![i - 1]!;
+  return { ...s, page: { url: v.url, title: v.title }, a11y: v.a11y, text: v.text };
+}
+
+/** `s` with open page `i` replaced by what `view` shows. */
+function withView(s: EvidenceSnapshot, i: number, view: EvidenceSnapshot): EvidenceSnapshot {
+  if (i === 0) return view;
+  const pages = s.pages!.map((p, j) =>
+    j === i - 1 ? { ...p, url: view.page.url, title: view.page.title, a11y: view.a11y, text: view.text } : p,
+  );
+  return { ...s, pages };
+}
+
+/**
+ * A `page` assertion: the nested assertion's mutants, made on the page it selects; and,
+ * for a page other than the active one, that page not being open at all.
+ */
+function pageMutants(s: EvidenceSnapshot, a: Extract<Assertion, { kind: 'page' }>): M[] {
+  const views = openPages(s);
+  const hits = views.flatMap((v, i) => (matchPage(a.match, v) ? [i] : []));
+  if (hits.length !== 1) return [];
+  const i = hits[0]!;
+  const view = viewOf(s, i);
+  const index = new AXIndex(view.a11y);
+  // The selected page's own frames can fail to load too.
+  const out: M[] = [...assertionMutants(view, index, a.assert), ...frameMutants(view, index, a.assert)].map((m) => ({
+    ...m,
+    snapshot: withView(s, i, m.snapshot),
+  }));
+  if (i > 0) {
+    const pages = s.pages!.filter((_, j) => j !== i - 1);
+    const { pages: _, ...rest } = s;
+    out.push({
+      id: 'page:closed',
+      description: `the page ${view.page.url} was never opened`,
+      snapshot: pages.length ? { ...rest, pages } : rest,
+    });
+  }
+  return out;
+}
+
+/** Text runs and leaf names inside a subtree, as they appear in page text. */
+function subtreeTexts(n: AXNode): string[] {
+  if (n.role === 'text' || !n.children?.length) return n.name ? [n.name] : [];
+  return n.children.flatMap(subtreeTexts);
+}
+
+/** Frames whose content the snapshot holds, at most this many per check. */
+const MAX_FRAME_MUTANTS = 3;
+
+/** An assertion's result, or undefined when it throws (evaluate() would abstain). */
+function resultOf(snapshot: EvidenceSnapshot, index: AXIndex, x: Assertion): AssertionResult | undefined {
+  try {
+    return evaluateAssertion({ snapshot, index }, x);
+  } catch {
+    return undefined;
+  }
+}
+
+/** The locators inside an assertion that name the iframe role (targets, scopes, `within` chains). */
+function iframeLocators(x: unknown, out: Locator[] = []): Locator[] {
+  if (Array.isArray(x)) x.forEach((y) => iframeLocators(y, out));
+  else if (x && typeof x === 'object') {
+    const o = x as Record<string, unknown>;
+    if (o.role === 'iframe') out.push(o as unknown as Locator);
+    // A page assertion reads another page's tree: its locators do not address this one.
+    if (o.kind !== 'page') for (const v of Object.values(o)) iframeLocators(v, out);
+  }
+  return out;
+}
+
+/**
+ * A frame that never loaded: its iframe node is empty (marked unavailable) and its text is
+ * gone from the page text. Kept for the checks that read the frame. A part reads it when its
+ * result changes, or when one of its locators matches the iframe (an absence check scoped
+ * to the frame reads it, though an empty frame leaves its result as it was). As for other
+ * mutants, an anyOf reads it only when every alternative does (an alternative that does not
+ * still holds), an allOf when some part does. A page assertion reads another page's frames,
+ * which its own mutants cover.
+ */
+function frameMutants(s: EvidenceSnapshot, idx: AXIndex, a: Assertion): M[] {
+  const frames = idx.all.filter((n) => n.node.role === 'iframe' && n.node.children?.length);
+  if (!frames.length) return [];
+  const out: M[] = [];
+  for (const f of frames) {
+    if (out.length >= MAX_FRAME_MUTANTS) break;
+    // Frame text follows the page's, so the last occurrence is the frame's.
+    let text = s.text;
+    for (const t of subtreeTexts(f.node).toReversed()) {
+      const at = text.lastIndexOf(t);
+      if (at >= 0) text = text.slice(0, at) + text.slice(at + t.length);
+    }
+    const snap = editById({ ...s, text }, (n, id) => {
+      if (id !== f.id) return undefined;
+      const { children: _, ...empty } = n;
+      return { ...empty, props: { ...n.props, frame: 'unavailable' } };
+    });
+    const snapIdx = new AXIndex(snap.a11y);
+    const reads = (x: Assertion): boolean => {
+      if (x.kind === 'anyOf') return x.of.every(reads);
+      if (x.kind === 'allOf') return x.of.some(reads);
+      if (x.kind === 'page') return false;
+      if (iframeLocators(x).some((loc) => idx.matches(f, loc))) return true;
+      const before = resultOf(s, idx, x);
+      const after = resultOf(snap, snapIdx, x);
+      return !before || !after || after.status !== before.status || after.message !== before.message;
+    };
+    if (!reads(a)) continue;
+    out.push({
+      id: `frame:unloaded${out.length ? `#${out.length + 1}` : ''}`,
+      description: `the frame ${f.node.name ? JSON.stringify(f.node.name) : (f.node.url ?? '')} never loaded`,
+      snapshot: snap,
+    });
+  }
+  return out;
 }
 
 /** The page still claims success, but nothing structured happened. */
@@ -1518,7 +1643,8 @@ export function generateMutants(cs: CheckSet, s: EvidenceSnapshot): Mutant[] {
   const idx = new AXIndex(s.a11y);
   const out: Mutant[] = [];
   for (const c of cs.checks) {
-    for (const m of assertionMutants(s, idx, c.assert)) out.push({ ...m, id: `${c.id}:${m.id}`, check: c.id });
+    for (const m of [...assertionMutants(s, idx, c.assert), ...frameMutants(s, idx, c.assert)])
+      out.push({ ...m, id: `${c.id}:${m.id}`, check: c.id });
   }
   out.push(claimsOnly(s));
   return out;

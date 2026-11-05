@@ -19,10 +19,14 @@ export interface AXStates {
 }
 
 export interface AXNode {
-  /** ARIA role, or "text" for a text run. The root is "document". */
+  /**
+   * ARIA role, or "text" for a text run. The root is "document". An `iframe` node holds
+   * the content of its frame as children (ADR 0012).
+   */
   role: string;
   name?: string;
   value?: string;
+  /** A link's target; for an `iframe`, the URL of the document in the frame. */
   url?: string;
   level?: number;
   states?: AXStates;
@@ -38,12 +42,48 @@ export interface NetworkEntry {
   status: number | null;
   failure?: string;
   requestHeaders: Record<string, string>;
+  /**
+   * Parsed JSON; a form body (URL-encoded or multipart) as an object of its fields
+   * (repeated fields become arrays, a file becomes `{filename, type, size}`); else text.
+   */
   requestBody?: Json;
+  /**
+   * The text of a form body as sent, when `requestBody` holds its parsed fields. The
+   * content of multipart file parts is left out.
+   */
+  requestBodyRaw?: string;
+  /** The request carried a body (it has a content type) that could not be read. */
+  requestBodyUnavailable?: boolean;
   responseHeaders: Record<string, string>;
   responseBody?: Json;
+  /** A body (request or response) was cut at the size limit. */
   bodyTruncated?: boolean;
+  /**
+   * Which body was cut, set with `bodyTruncated` by capturers that tell them apart (ADR
+   * 0012). Without either, `bodyTruncated` applies to both bodies, as it always did.
+   */
+  requestBodyTruncated?: true;
+  responseBodyTruncated?: true;
   /** The response body should have been captured but could not be read. */
   bodyUnavailable?: boolean;
+}
+
+/** What one open page (tab or popup) showed at capture time. */
+export interface PageView {
+  url: string;
+  title: string;
+  a11y: AXNode;
+  /** innerText of the body, followed by the text of each captured frame. */
+  text: string;
+  /** The page could not be read (it hung or crashed); its a11y and text are empty. */
+  unavailable?: true;
+}
+
+/** A file in a multipart form body: its metadata, never its content. */
+export interface FormFile {
+  filename: string;
+  type: string;
+  size: number;
 }
 
 export interface Redacted {
@@ -97,6 +137,12 @@ export interface EvidenceSnapshot {
   probes: Record<string, ProbeResult>;
   /** State before the agent started; absent = no baseline was captured. */
   baseline?: Baseline;
+  /**
+   * The other open pages of the browser context (tabs, popups), in the order they were
+   * opened; absent when the active page was the only one. `page`, `a11y` and `text`
+   * describe the active page (ADR 0012).
+   */
+  pages?: PageView[];
   meta: { capturer: string; redacted: string[] };
 }
 
@@ -156,6 +202,12 @@ export interface UrlMatch {
   origin?: string;
   /** null = the parameter must be absent. */
   query?: Record<string, TextMatch | null>;
+}
+
+/** Selects one open page of a snapshot by its URL and/or title (ADR 0012). */
+export interface PageMatch {
+  url?: UrlMatch;
+  title?: TextMatch;
 }
 
 export type JsonSchema = { [key: string]: Json } | boolean;
@@ -285,6 +337,11 @@ export type Assertion =
       count?: NumberCompare;
       assert: Assertion;
     }
+  /**
+   * On one open page: `assert` reads the page (tab, popup) that `match` selects instead of
+   * the active page. No such page, or several → abstain (ADR 0012).
+   */
+  | { kind: 'page'; match: PageMatch; assert: Assertion }
   | { kind: 'allOf'; of: Assertion[] }
   | { kind: 'anyOf'; of: Assertion[] };
 
@@ -339,8 +396,51 @@ export interface CheckSet {
   checks: Check[];
   /** Where a compiled set came from; absent on handwritten sets. */
   compiled?: Provenance;
-  /** Set by human confirmation (lockCheckSet); the digest covers everything else in the set. */
-  locked?: { by: string; at: string; digest: string };
+  /** Set by a reviewer's approval (`approveCheckSet`, `assay approve`); the digest covers everything else in the set. */
+  locked?: Lock;
+  /** Set by a reviewer's rejection (`rejectCheckSet`, `assay reject`); the set stays a proposal. */
+  rejected?: Rejection;
+}
+
+export interface LockSignature {
+  alg: 'ed25519';
+  /** The signing key's id (see `keyId`): which trusted key to check the signature with. */
+  keyId: string;
+  /** Base64 Ed25519 signature of the lock digest. */
+  value: string;
+}
+
+/**
+ * A lock. `by`, `at` and `digest` are all a lock written before ADR 0013 has; such a
+ * lock still verifies, but cannot name what changed after it was made.
+ */
+export interface Lock {
+  /** Who approved the set. */
+  by: string;
+  /** When (ISO 8601). */
+  at: string;
+  /** Digest of the set's content together with every other lock field except the signature. */
+  digest: string;
+  /** The reviewer's note. */
+  note?: string;
+  /** Digest of the normalized check set alone (`contentDigest`). */
+  content?: string;
+  /** Digest of each part of the set, so a broken lock can name what changed. */
+  items?: Record<string, string>;
+  /** Digest of the stress report the reviewer saw (`stressDigest`). */
+  stress?: string;
+  /** The digest of the lock this approval replaced. */
+  supersedes?: string;
+  signature?: LockSignature;
+}
+
+/** A recorded rejection: the set stays a proposal and `verify` does not accept it as locked. */
+export interface Rejection {
+  by: string;
+  at: string;
+  note: string;
+  /** Digest of the content that was rejected: a revised set is a new proposal. */
+  content: string;
 }
 
 // ---------------------------------------------------------------------------
