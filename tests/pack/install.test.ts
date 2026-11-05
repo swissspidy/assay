@@ -152,16 +152,40 @@ console.log(JSON.stringify(out));
 });
 
 /** Run the installed `assay` executable; resolves with its exit status and output. */
+/** The environment for the executable: the caller's, without anything that selects or reaches a model. */
+function cliEnv(env: Record<string, string> = {}): NodeJS.ProcessEnv {
+  const out: NodeJS.ProcessEnv = { ...process.env };
+  for (const k of ['ANTHROPIC_API_KEY', 'ANTHROPIC_AUTH_TOKEN', 'ASSAY_MODEL_MODE', 'ASSAY_PROVIDER', 'ASSAY_MODEL'])
+    delete out[k];
+  return { ...out, ...env };
+}
+
 function assay(cwd: string, args: string[], env: Record<string, string> = {}) {
   return new Promise<{ code: number; stdout: string; stderr: string }>((resolve) => {
     execFile(
       join(cwd, 'node_modules/.bin/assay'),
       args,
-      { cwd, env: { ...process.env, ANTHROPIC_API_KEY: '', ...env }, maxBuffer: 64 << 20 },
+      { cwd, env: cliEnv(env), maxBuffer: 64 << 20 },
       (err, stdout, stderr) => resolve({ code: err ? Number(err.code) : 0, stdout, stderr }),
     );
   });
 }
+
+test('the executable runs without the model settings of the environment it is tested from', () => {
+  const saved = { ...process.env };
+  Object.assign(process.env, { ASSAY_MODEL_MODE: 'record', ASSAY_PROVIDER: 'ai-sdk', ANTHROPIC_API_KEY: 'k' });
+  try {
+    const env = cliEnv({ ASSAY_MODEL_MODE: 'replay' });
+    assert.equal(env.ASSAY_MODEL_MODE, 'replay');
+    assert.equal(env.ASSAY_PROVIDER, undefined);
+    assert.equal(env.ANTHROPIC_API_KEY, undefined);
+  } finally {
+    for (const k of ['ASSAY_MODEL_MODE', 'ASSAY_PROVIDER', 'ANTHROPIC_API_KEY']) {
+      if (saved[k] === undefined) delete process.env[k];
+      else process.env[k] = saved[k];
+    }
+  }
+});
 
 test('the installed assay executable verifies, validates, reviews, stress-tests and compiles', async () => {
   const ex = (p: string) => join(root, 'examples/tiny-shop', p);
