@@ -1,5 +1,15 @@
 /** `assay verify <checks.json> <snapshot.json>`: run a check set, optionally escalating. */
-import { CheckSetError, formatOutcome, verify, type Verdict } from '../../index.ts';
+import {
+  CheckSetError,
+  evaluate,
+  formatOutcome,
+  validateCheckSet,
+  verify,
+  type CheckSet,
+  type EvidenceSnapshot,
+  type Verdict,
+} from '../../index.ts';
+import { selectRequirement } from '../../verifier/escalate.ts';
 import {
   CliError,
   EXIT,
@@ -12,6 +22,18 @@ import {
 } from '../io.ts';
 import { selectModel } from '../model.ts';
 
+/** Whether `verify` with its default policy would escalate a requirement (the checks are validated by it later). */
+function escalates(checks: unknown, snapshot: EvidenceSnapshot): boolean {
+  if (!validateCheckSet(checks).ok) return false;
+  const cs = checks as CheckSet;
+  const outcome = evaluate(cs, snapshot);
+  const policy = { on: ['abstain' as const], includeSoft: false };
+  return cs.requirements.some((r) => {
+    const sel = selectRequirement(cs, r, outcome, policy);
+    return sel === 'policy' || sel === 'onFail';
+  });
+}
+
 export const exitCodeFor = (verdict: Verdict): number =>
   verdict === 'success' ? EXIT.ok : verdict === 'fail' ? EXIT.fail : EXIT.inconclusive;
 
@@ -19,7 +41,8 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
   const [checksPath, snapshotPath] = positionals as [string, string];
   const checks = readJson(checksPath, 'check set');
   const snapshot = toSnapshot(readSnapshotFile(snapshotPath));
-  const verifier = values.escalate ? await selectModel(values, io.env) : undefined;
+  // The model is selected (and a key needed) only when a requirement will actually escalate.
+  const verifier = values.escalate && escalates(checks, snapshot) ? await selectModel(values, io.env) : undefined;
 
   let res: Awaited<ReturnType<typeof verify>>;
   try {
@@ -59,7 +82,7 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
     io.out(
       `Escalated ${esc.requirements.join(', ')} to ${esc.model}: ${esc.status}${esc.error ? ` (${esc.error})` : ''}`,
     );
-  } else if (verifier) {
+  } else if (values.escalate) {
     io.out('Nothing to escalate.');
   }
   if (written) io.out(`Record: ${written.recordFile}`);

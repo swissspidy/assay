@@ -392,4 +392,13 @@ test.describe('review findings', () => {
     expect(r.stderr).toContain('two references are named "added-blue-mug"');
   });
 
+  test('verify --escalate needs a model only when a requirement escalates', async () => {
+    const decided = await assay(['verify', BLUE_MUG, ADDED_BLUE, '--escalate']);
+    expect(decided).toMatchObject({ code: 0, stderr: '' });
+    expect(decided.stdout).toContain('Nothing to escalate.');
+    const abstained = await assay(['verify', TWO_MUGS, NEWSLETTER_RUN, '--escalate']);
+    expect(abstained.code).toBe(4);
+    expect(abstained.stderr).toContain('set ANTHROPIC_API_KEY');
+  });
+
 });
