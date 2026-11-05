@@ -61,6 +61,17 @@ export interface NetworkEntry {
   bodyUnavailable?: boolean;
 }
 
+/** What one open page (tab or popup) showed at capture time. */
+export interface PageView {
+  url: string;
+  title: string;
+  a11y: AXNode;
+  /** innerText of the body, followed by the text of each captured frame. */
+  text: string;
+  /** The page could not be read (it hung or crashed); its a11y and text are empty. */
+  unavailable?: true;
+}
+
 /** A file in a multipart form body: its metadata, never its content. */
 export interface FormFile {
   filename: string;
@@ -119,6 +130,12 @@ export interface EvidenceSnapshot {
   probes: Record<string, ProbeResult>;
   /** State before the agent started; absent = no baseline was captured. */
   baseline?: Baseline;
+  /**
+   * The other open pages of the browser context (tabs, popups), in the order they were
+   * opened; absent when the active page was the only one. `page`, `a11y` and `text`
+   * describe the active page (ADR 0012).
+   */
+  pages?: PageView[];
   meta: { capturer: string; redacted: string[] };
 }
 
@@ -178,6 +195,12 @@ export interface UrlMatch {
   origin?: string;
   /** null = the parameter must be absent. */
   query?: Record<string, TextMatch | null>;
+}
+
+/** Selects one open page of a snapshot by its URL and/or title (ADR 0012). */
+export interface PageMatch {
+  url?: UrlMatch;
+  title?: TextMatch;
 }
 
 export type JsonSchema = { [key: string]: Json } | boolean;
@@ -291,6 +314,11 @@ export type Assertion =
       count?: NumberCompare;
       assert: Assertion;
     }
+  /**
+   * On one open page: `assert` reads the page (tab, popup) that `match` selects instead of
+   * the active page. No such page, or several → abstain (ADR 0012).
+   */
+  | { kind: 'page'; match: PageMatch; assert: Assertion }
   | { kind: 'allOf'; of: Assertion[] }
   | { kind: 'anyOf'; of: Assertion[] };
 

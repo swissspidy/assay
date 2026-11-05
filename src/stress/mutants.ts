@@ -1182,6 +1182,8 @@ function assertionMutants(s: EvidenceSnapshot, idx: AXIndex, a: Assertion, rec?:
     }
     case 'request':
       return requestMutants(s, a);
+    case 'page':
+      return [];
     case 'allOf':
       return a.of.flatMap((sub, i) =>
         assertionMutants(s, idx, sub, rec).map((m) => ({ ...m, id: `allOf[${i}]:${m.id}` })),

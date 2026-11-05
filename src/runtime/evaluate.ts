@@ -2,6 +2,9 @@ import type {
   AbstainReason,
   Assertion,
   AssertionResult,
+  AXNode,
+  PageMatch,
+  PageView,
   CheckResult,
   CheckSet,
   Channel,
@@ -22,7 +25,14 @@ import { checkSetDigest, snapshotDigest } from '../snapshot/digest.ts';
 import { AXIndex, describeLocator, readNodeField, resolveTarget, type INode } from './axindex.ts';
 import { compare, compareNumber, compareValues, describeNumberCompare, jsonPointer } from './compare.ts';
 import { NormalizeError, applyNormalizers, fromJson, toJson, type TypedValue } from './values.ts';
-import { describeRequestMatch, describeUrlMatch, matchRequest, matchUrl } from './network.ts';
+import {
+  describePageMatch,
+  describeRequestMatch,
+  describeUrlMatch,
+  matchPage,
+  matchRequest,
+  matchUrl,
+} from './network.ts';
 
 /** What an assertion is evaluated against. */
 export interface EvalCtx {
@@ -452,6 +462,8 @@ export function evaluateAssertion(ctx: EvalCtx, a: Assertion): AssertionResult {
     }
     case 'each':
       return evaluateEach(ctx, a);
+    case 'page':
+      return evaluatePage(ctx, a);
     case 'allOf':
     case 'anyOf': {
       const subs = a.of.map((s) => evaluateAssertion(ctx, s));
@@ -533,6 +545,51 @@ function evaluateEach(ctx: EvalCtx, a: Extract<Assertion, { kind: 'each' }>): As
     return abstain(reasons.length === 1 && reasons[0] ? reasons[0] : 'subcheck_abstained', message, evidence, allDrift);
   }
   return { status, message, evidence, drift: allDrift };
+}
+
+/** Indexes of other pages' trees, built once per tree. */
+const pageIndexes = new WeakMap<AXNode, AXIndex>();
+
+/** The open pages of a snapshot: the active page first, then the others. */
+export function openPages(s: EvidenceSnapshot): PageView[] {
+  return [{ url: s.page.url, title: s.page.title, a11y: s.a11y, text: s.text }, ...(s.pages ?? [])];
+}
+
+/**
+ * The context of the open page `match` selects: the snapshot seen as if that page were the
+ * active one (its URL, title, tree and text), with the rest (network, storage, probes)
+ * unchanged. A result instead when no page or several pages match, or the page could not be read.
+ */
+export function pageContext(ctx: EvalCtx, match: PageMatch): EvalCtx | AssertionResult {
+  const s = ctx.snapshot;
+  const views = openPages(s);
+  const hits = views.filter((v) => matchPage(match, v));
+  const what = describePageMatch(match);
+  const seen = views.map((v) => v.url);
+  if (hits.length === 0)
+    return abstain('anchor_missing', `No open page matches ${what} (open: ${seen.join(', ')})`, [
+      ev('url', { value: seen }),
+    ]);
+  if (hits.length > 1)
+    return abstain(
+      'anchor_ambiguous',
+      `${hits.length} open pages match ${what}: ${hits.map((v) => v.url).join(', ')}`,
+      [ev('url', { value: hits.map((v) => v.url) })],
+    );
+  const v = hits[0]!;
+  if (v.unavailable) return abstain('evidence_unavailable', `the open page ${v.url} could not be read`);
+  if (v.a11y === s.a11y) return { snapshot: s, index: ctx.index };
+  let index = pageIndexes.get(v.a11y);
+  if (!index) pageIndexes.set(v.a11y, (index = new AXIndex(v.a11y)));
+  return { snapshot: { ...s, page: { url: v.url, title: v.title }, a11y: v.a11y, text: v.text }, index };
+}
+
+/** `page`: the nested assertion reads the open page `match` selects; selecting it is an anchor. */
+function evaluatePage(ctx: EvalCtx, a: Extract<Assertion, { kind: 'page' }>): AssertionResult {
+  const sub = pageContext(ctx, a.match);
+  if (isResult(sub)) return sub;
+  const r = evaluateAssertion(sub, a.assert);
+  return { ...r, message: `on page ${sub.snapshot.page.url}: ${r.message}` };
 }
 
 // ---------------------------------------------------------------------------

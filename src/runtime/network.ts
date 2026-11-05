@@ -1,4 +1,4 @@
-import type { NetworkEntry, RequestMatch, UrlMatch } from '../types.ts';
+import type { NetworkEntry, PageMatch, RequestMatch, UrlMatch } from '../types.ts';
 import { matchText, describeTextMatch } from '../text.ts';
 import { compareNumber, compileSchema, describeNumberCompare } from './compare.ts';
 
@@ -56,6 +56,19 @@ export function describeUrlMatch(m: UrlMatch): string {
   for (const [k, v] of Object.entries(m.query ?? {}))
     parts.push(v === null ? `no ?${k}` : `?${k} ${describeTextMatch(v)}`);
   return parts.join(', ') || 'any URL';
+}
+
+/** Whether an open page (its URL and title) is the one a `page` assertion selects. */
+export function matchPage(m: PageMatch, page: { url: string; title: string }): boolean {
+  if (m.url && !matchUrl(m.url, page.url)) return false;
+  return m.title === undefined || matchText(m.title, page.title);
+}
+
+export function describePageMatch(m: PageMatch): string {
+  const parts: string[] = [];
+  if (m.url) parts.push(`URL ${describeUrlMatch(m.url)}`);
+  if (m.title !== undefined) parts.push(`title ${describeTextMatch(m.title)}`);
+  return parts.join(', ');
 }
 
 export type MatchResult = 'yes' | 'no' | 'unknown';

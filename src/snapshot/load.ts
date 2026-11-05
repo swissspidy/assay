@@ -6,8 +6,8 @@ import { SNAPSHOT_SCHEMA } from '../types.ts';
  * children (where present) an array of nodes. Checked without recursion, so a
  * deep tree cannot overflow the stack.
  */
-function assertTree(root: unknown): void {
-  const stack: [unknown, string][] = [[root, 'a11y']];
+function assertTree(root: unknown, at = 'a11y'): void {
+  const stack: [unknown, string][] = [[root, at]];
   while (stack.length) {
     const [node, path] = stack.pop()!;
     if (!node || typeof node !== 'object' || Array.isArray(node))
@@ -20,7 +20,11 @@ function assertTree(root: unknown): void {
   }
 }
 
-/** Parse and minimally validate a serialized snapshot (envelope, page URL and the accessibility tree's shape). */
+/**
+ * Parse and minimally validate a serialized snapshot (envelope, page URL, the accessibility
+ * tree's shape, and the baseline and other open pages where present). Snapshots written
+ * before frames, pages and parsed form bodies were captured load unchanged (ADR 0012).
+ */
 export function loadSnapshot(input: string | unknown): EvidenceSnapshot {
   const s = (typeof input === 'string' ? JSON.parse(input) : input) as EvidenceSnapshot;
   if (!s || typeof s !== 'object' || s.schema !== SNAPSHOT_SCHEMA)
@@ -28,10 +32,22 @@ export function loadSnapshot(input: string | unknown): EvidenceSnapshot {
   if (!s.a11y || typeof s.page?.url !== 'string') throw new Error('snapshot is missing a11y or page');
   assertTree(s.a11y);
   if (s.baseline !== undefined) assertBaseline(s.baseline);
+  if (s.pages !== undefined) assertPages(s.pages);
   return s;
 }
 
 const isObject = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x);
+
+/** Other open pages: each with a URL, title, text and an accessibility tree. `page` checks select among them. */
+function assertPages(pages: unknown): void {
+  if (!Array.isArray(pages)) throw new Error('snapshot pages is not an array');
+  pages.forEach((p: unknown, i) => {
+    const at = `pages[${i}]`;
+    if (!isObject(p) || typeof p.url !== 'string' || typeof p.title !== 'string' || typeof p.text !== 'string')
+      throw new Error(`snapshot ${at} is not a page (url, title, text and a11y)`);
+    assertTree(p.a11y, `${at}.a11y`);
+  });
+}
 
 /**
  * The optional baseline (state before the task): a URL, probe results shaped

@@ -6,6 +6,7 @@ import {
   type EvidenceSnapshot,
   type Json,
   type NetworkEntry,
+  type PageView,
   type ProbeResult,
   type StorageRecord,
   type Redacted,
@@ -374,6 +375,27 @@ export class EvidenceRecorder {
     context.on('request', (req) => this.onRequest(req));
     context.on('response', (resp) => this.track(this.onResponse(resp.request())));
     context.on('requestfailed', (req) => this.onFailed(req));
+    // Page activity: when each page last opened or navigated, to find the active one.
+    const watch = (p: Page) => {
+      this.touch(p);
+      p.on('framenavigated', (f) => {
+        if (f === p.mainFrame()) this.touch(p);
+      });
+    };
+    context.pages().forEach(watch);
+    context.on('page', watch);
+  }
+
+  private readonly activity = new WeakMap<Page, number>();
+  private ticks = 0;
+
+  private touch(p: Page): void {
+    this.activity.set(p, ++this.ticks);
+  }
+
+  /** When `page` last opened or navigated, relative to the context's other pages (undefined: not seen). */
+  lastActive(page: Page): number | undefined {
+    return this.activity.get(page);
   }
 
   /** Attach a recorder to a context (idempotent). Pages opened afterwards get the body tap. */
@@ -605,6 +627,12 @@ export interface CaptureOptions {
    * nodes, and their text after the page's (default true; ADR 0012).
    */
   frames?: boolean;
+  /**
+   * Capture the browser context's other open pages (tabs, popups) as `pages`, and take the
+   * active page, `page` or a popup or tab it opened, as the snapshot's page (default
+   * true). false: `page` only, as before (ADR 0012).
+   */
+  pages?: boolean;
   /** Cookie names whose values are kept even if httpOnly or credential-like. */
   keepCookies?: string[];
   /** Web storage keys whose values are kept even if they look like credentials. */
@@ -733,16 +761,79 @@ export async function captureBaseline(page: Page, opts: BaselineOptions = {}): P
   return structuredClone(baseline);
 }
 
+/** Max ms to read one other open page; one that takes longer is recorded as unavailable. */
+const PAGE_TIMEOUT = 5000;
+
+/**
+ * The active page: of `given` and the pages it opened (popups and new tabs, and the pages
+ * those opened), the one that most recently opened or navigated, as the recorder saw it.
+ * Pages opened otherwise (`context.newPage()`, e.g. by the test itself) never take over.
+ * Without a recorder, the given page.
+ */
+async function activePage(given: Page, recorder: EvidenceRecorder | null | undefined): Promise<Page> {
+  if (!recorder) return given;
+  const open = given.context().pages();
+  const openers = await Promise.all(open.map(async (p) => [p, await p.opener().catch(() => null)] as const));
+  const family = new Set([given]);
+  for (let grew = true; grew;) {
+    grew = false;
+    for (const [p, opener] of openers) {
+      if (opener && family.has(opener) && !family.has(p)) {
+        family.add(p);
+        grew = true;
+      }
+    }
+  }
+  let active = given;
+  for (const p of family) {
+    if (!p.isClosed() && (recorder.lastActive(p) ?? -1) > (recorder.lastActive(active) ?? -1)) active = p;
+  }
+  return active;
+}
+
+/** Another open page: its accessibility tree (frames included) and text, or unavailable. */
+async function readOtherPage(p: Page, frames: boolean): Promise<PageView> {
+  const read = async (): Promise<PageView> => {
+    const a11y = parseAriaSnapshot(await p.locator('body').ariaSnapshot({ timeout: PAGE_TIMEOUT }));
+    const texts: string[] = [];
+    if (frames) await attachFrames(p.mainFrame(), a11y, texts);
+    const dom = await p.evaluate(() => ({ text: document.body ? document.body.innerText : '', title: document.title }));
+    return { url: p.url(), title: dom.title, a11y, text: [dom.text, ...texts].join('\n') };
+  };
+  const view = await within(
+    read().catch(() => undefined),
+    PAGE_TIMEOUT * 2,
+  );
+  if (view && view !== TIMED_OUT) return view;
+  return { url: p.url(), title: '', a11y: { role: 'document' }, text: '', unavailable: true };
+}
+
+/**
+ * Capture a snapshot of the browser context's active page: its accessibility tree (with
+ * frame content), text, URL and storage, the network log, probes and the baseline, and
+ * the other open pages (tabs, popups) as `pages` (ADR 0012). The active page is `page`, or
+ * a popup or tab it opened that was opened or navigated more recently.
+ */
 export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Promise<EvidenceSnapshot> {
   const recorder = opts.recorder === undefined ? EvidenceRecorder.for(page.context()) : opts.recorder;
   const baseline = opts.baseline === undefined ? baselines.get(page.context()) : opts.baseline;
   const redacted: string[] = [];
+  const frames = opts.frames !== false;
+  const active = opts.pages === false ? page : await activePage(page, recorder);
 
-  const a11y = parseAriaSnapshot(await page.locator('body').ariaSnapshot());
+  const a11y = parseAriaSnapshot(await active.locator('body').ariaSnapshot());
   const frameTexts: string[] = [];
-  if (opts.frames !== false) await attachFrames(page.mainFrame(), a11y, frameTexts);
-  const dom = await readDom(page);
-  const storage = await readStorage(page, dom, opts, redacted);
+  if (frames) await attachFrames(active.mainFrame(), a11y, frameTexts);
+  const dom = await readDom(active);
+  const storage = await readStorage(active, dom, opts, redacted);
+  const others =
+    opts.pages === false
+      ? []
+      : active
+          .context()
+          .pages()
+          .filter((p) => p !== active && !p.isClosed());
+  const pages = await Promise.all(others.map((p) => readOtherPage(p, frames)));
   const probes = await runProbes(opts.probes);
 
   let network: NetworkEntry[] | null = null;
@@ -754,7 +845,7 @@ export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Pr
   return {
     schema: SNAPSHOT_SCHEMA,
     capturedAt: new Date().toISOString(),
-    page: { url: page.url(), title: dom.title },
+    page: { url: active.url(), title: dom.title },
     a11y,
     // Frames' text follows the page's: innerText does not include it.
     text: [dom.text, ...frameTexts].join('\n'),
@@ -763,6 +854,8 @@ export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Pr
     probes,
     // Left out (not null) when there is none, so digests of snapshots without one are unchanged.
     ...(baseline ? { baseline: structuredClone(baseline) } : {}),
+    // Likewise: a snapshot of a context with one page has no `pages`.
+    ...(pages.length ? { pages } : {}),
     meta: { capturer: CAPTURER, redacted: redacted.toSorted() },
   };
 }

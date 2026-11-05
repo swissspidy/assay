@@ -218,6 +218,10 @@ function looseAssertion(a: Assertion, at: string, out: string[], inTerm = false)
     case 'request':
       looseRequestMatch(a.match, at, out);
       return;
+    case 'page':
+      if (a.match.url) looseUrlMatch(a.match.url, `${at} page`, out);
+      looseAssertion(a.assert, `${at}.assert`, out, inTerm);
+      return;
     case 'allOf':
     case 'anyOf':
       a.of.forEach((s, i) => looseAssertion(s, `${at}.${a.kind}[${i}]`, out, inTerm));
@@ -357,7 +361,7 @@ function fieldwiseCollections(cs: CheckSet, out: string[]): void {
         for (const b of a.of) visit(b, check);
         return;
       }
-      if (a.kind === 'each') return visit(a.assert, check);
+      if (a.kind === 'each' || a.kind === 'page') return visit(a.assert, check);
       if (a.kind !== 'value' || !('sameAs' in a.expect)) return;
       const x = itemsSide(a.source, a.normalize);
       const y = itemsSide(a.expect.sameAs.source, a.expect.sameAs.normalize);
@@ -388,7 +392,7 @@ function fieldwiseCollections(cs: CheckSet, out: string[]): void {
 /** Some value read inside `a` (nested ones and sameAs operands included) comes from a request or response. */
 function readsNetworkValue(a: Assertion): boolean {
   if (a.kind === 'allOf' || a.kind === 'anyOf') return a.of.some(readsNetworkValue);
-  if (a.kind === 'each') return readsNetworkValue(a.assert);
+  if (a.kind === 'each' || a.kind === 'page') return readsNetworkValue(a.assert);
   if (a.kind !== 'value') return false;
   return [a.source, ...('sameAs' in a.expect ? [a.expect.sameAs.source] : [])].some(
     (src) => src.from === 'request' || src.from === 'response',
@@ -591,9 +595,17 @@ function checkComparison(t: VType, cmp: Comparison, at: string, errors: string[]
 
 /**
  * `inRecord`: inside an `each`, where locators resolve within the record (a contains
- * without a scope searches the record) and only the record may be read.
+ * without a scope searches the record) and only the record may be read. `onPage`: inside a
+ * `page` assertion, where only what the selected page shows may be read.
  */
-function walkAssertion(a: Assertion, at: string, errors: string[], warnings: string[], inRecord: boolean): void {
+function walkAssertion(
+  a: Assertion,
+  at: string,
+  errors: string[],
+  warnings: string[],
+  inRecord: boolean,
+  onPage = false,
+): void {
   switch (a.kind) {
     case 'state':
       checkTarget(a.target, at, errors);
@@ -624,13 +636,17 @@ function walkAssertion(a: Assertion, at: string, errors: string[], warnings: str
         warnings.push(
           `${at}: each with a count that allows no records passes vacuously if the scope's content loses its structure; add a witness`,
         );
-      walkAssertion(a.assert, `${at}.assert`, errors, warnings, true);
+      walkAssertion(a.assert, `${at}.assert`, errors, warnings, true, onPage);
       return;
     case 'value': {
       if (inRecord && a.source.from !== 'node' && a.source.from !== 'text')
         errors.push(
           `${at}: inside each, a value check must read the record (a node or text source); a ${a.source.from} source reads the same value for every record`,
         );
+      if (onPage)
+        for (const src of [a.source, ...('sameAs' in a.expect ? [a.expect.sameAs.source] : [])])
+          if (src.from !== 'node' && src.from !== 'text' && src.from !== 'url')
+            errors.push(notOnPage(at, `a ${src.from} source`));
       const t = checkValueSource(a.source, a.normalize, at, errors, warnings);
       if ('sameAs' in a.expect) {
         const other = a.expect.sameAs;
@@ -653,14 +669,27 @@ function walkAssertion(a: Assertion, at: string, errors: string[], warnings: str
       return;
     case 'request':
       if (inRecord) errors.push(notInRecord(at, 'request'));
+      if (onPage) errors.push(notOnPage(at, 'a request assertion'));
       checkRequestMatch(a.match, at, errors);
+      return;
+    case 'page':
+      if (inRecord)
+        errors.push(`${at}: a page assertion cannot be inside each; put the each inside the page assertion`);
+      if (onPage) errors.push(`${at}: a page assertion inside another page assertion; select one page`);
+      checkTextMatch(a.match.title, `${at} page title`, errors);
+      if (a.match.url?.regex) checkRegex(a.match.url.regex, undefined, `${at} page url`, errors);
+      for (const v of Object.values(a.match.url?.query ?? {})) if (v) checkTextMatch(v, `${at} page url`, errors);
+      walkAssertion(a.assert, `${at}.assert`, errors, warnings, false, true);
       return;
     case 'allOf':
     case 'anyOf':
-      a.of.forEach((s, i) => walkAssertion(s, `${at}.${a.kind}[${i}]`, errors, warnings, inRecord));
+      a.of.forEach((s, i) => walkAssertion(s, `${at}.${a.kind}[${i}]`, errors, warnings, inRecord, onPage));
       return;
   }
 }
+
+const notOnPage = (at: string, what: string) =>
+  `${at}: ${what} inside a page assertion does not read the page, so it is the same whatever page is selected; move it out of the page assertion`;
 
 const notInRecord = (at: string, kind: string) =>
   `${at}: a ${kind} assertion inside each does not read the record, so it is the same for every record; move it out of the each`;

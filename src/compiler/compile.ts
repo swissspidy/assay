@@ -386,6 +386,8 @@ function sourceChannels(a: Assertion): Channel[] {
       return [...new Set([a.source, ...('sameAs' in a.expect ? [a.expect.sameAs.source] : [])].map(sourceChannel))];
     case 'each':
       return [...new Set(['a11y' as const, ...sourceChannels(a.assert)])];
+    case 'page':
+      return sourceChannels(a.assert);
     case 'allOf':
     case 'anyOf':
       return [...new Set(a.of.flatMap(sourceChannels))];
@@ -406,6 +408,8 @@ export function assertionTrust(a: Assertion): number {
     case 'each':
       // Records are found in the accessibility tree; what is read inside them can be weaker.
       return Math.min(TRUST_RANK.semantic, assertionTrust(a.assert));
+    case 'page':
+      return assertionTrust(a.assert);
     default:
       // A sameAs binding passes when one side is made to show what the other holds, so
       // faking the weaker side alone is enough: it counts as its weaker source.

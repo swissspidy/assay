@@ -31,6 +31,15 @@ export function outline(snapshot: EvidenceSnapshot, maxLines = 300): string {
     for (const c of n.children ?? []) walk(c, depth + 1);
   };
   for (const c of snapshot.a11y.children ?? []) walk(c, 0);
+  // Other open pages (tabs, popups) follow, each under a heading; checks read them with a
+  // `page` assertion (ADR 0012). Snapshots of one page render as before.
+  for (const [i, p] of (snapshot.pages ?? []).entries()) {
+    if (lines.length >= maxLines) break;
+    lines.push(
+      `=== other open page ${i + 1}: ${p.url} — title ${JSON.stringify(p.title)}${p.unavailable ? ' (could not be read)' : ''}; read it with a page assertion ===`,
+    );
+    for (const c of p.a11y.children ?? []) walk(c, 0);
+  }
   if (truncated) lines.push(`… (truncated at ${maxLines} lines; use find_nodes to search)`);
   return lines.join('\n');
 }
@@ -164,5 +173,8 @@ export function probesView(snapshot: EvidenceSnapshot): string {
 }
 
 export function summary(snapshot: EvidenceSnapshot): string {
-  return `URL ${snapshot.page.url} — title ${JSON.stringify(snapshot.page.title)}; network ${snapshot.network ? `${snapshot.network.length} entries` : 'not recorded'}; storage ${snapshot.storage ? 'captured' : 'not captured'}; probes: ${Object.keys(snapshot.probes).join(', ') || 'none'}${snapshot.baseline ? `; baseline before the task: probes ${Object.keys(snapshot.baseline.probes).join(', ') || 'none'}, storage ${snapshot.baseline.storage ? 'captured' : 'not captured'}` : ''}`;
+  const pages = snapshot.pages?.length
+    ? `; other open pages (read with a page assertion): ${snapshot.pages.map((p) => `${p.url} ${JSON.stringify(p.title)}`).join(', ')}`
+    : '';
+  return `URL ${snapshot.page.url} — title ${JSON.stringify(snapshot.page.title)}${pages}; network ${snapshot.network ? `${snapshot.network.length} entries` : 'not recorded'}; storage ${snapshot.storage ? 'captured' : 'not captured'}; probes: ${Object.keys(snapshot.probes).join(', ') || 'none'}${snapshot.baseline ? `; baseline before the task: probes ${Object.keys(snapshot.baseline.probes).join(', ') || 'none'}, storage ${snapshot.baseline.storage ? 'captured' : 'not captured'}` : ''}`;
 }
