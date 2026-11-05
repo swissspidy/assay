@@ -110,7 +110,9 @@ the same check run without validation or a record, for hot loops.
   }
   ```
 
-  The number of records is outcome evidence (default at least one, else fail); a label the page
+  A cell can be bound to its column header (`{"role": "cell", "name": "Open", "column": "Status"}`),
+  so another cell of the row that reads the same text does not match. The number of records is
+  outcome evidence (default at least one, else fail); a label the page
   always shows (a term "When") belongs in `witness` too, so renamed copy abstains
   ([ADR 0008](docs/adr/0008-per-record-checks.md)).
 
@@ -266,9 +268,9 @@ that only claim success. Each task was compiled from one correct run; on the 96 
 
 | System           | Balanced accuracy | TPR   | TNR   | Cost / run | Latency (median / p95) | Model at run time |
 | ---------------- | ----------------- | ----- | ----- | ---------- | ---------------------- | ----------------- |
-| compiled checks  | 1.000             | 1.000 | 1.000 | $0         | 0.3 ms / 7.4 ms        | no                |
+| compiled checks  | 1.000             | 1.000 | 1.000 | $0         | 0.3 ms / 4.7 ms        | no                |
 | LLM judge        | 0.906             | 0.933 | 0.879 | $0.0119    | 4.3 s / 10.0 s         | yes               |
-| agentic verifier | 0.976             | 0.967 | 0.985 | $0.0274    | 9.3 s / 18.9 s         | yes               |
+| agentic verifier | 0.976             | 0.967 | 0.985 | $0.0275    | 9.6 s / 12.3 s         | yes               |
 
 The LLM judge accepted 3 of 8 adversarial pages, and all 3 runs that changed the starting cart
 wrongly; the checks and the verifier rejected all of them.
