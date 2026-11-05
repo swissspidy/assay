@@ -714,6 +714,33 @@ const TASKS: RealTask[] = [
       [11, 1],
     ]),
     oracleDoc: 'The open cart holds exactly 3x Mug Today is a good day and 1x Hummingbird cushion.',
+    route: 'by typing the quantity on the cart page',
+    alternatives: [
+      {
+        name: 'spin-buttons',
+        route: "by clicking the quantity's increase button on the cart page",
+        async run(page) {
+          await openCartPage(page);
+          const line = cartLine(page, 'Mug Today is a good day');
+          for (const qty of ['2', '3']) {
+            await line.locator('.bootstrap-touchspin-up').click();
+            // The cart re-renders after each update; wait for the new quantity before the next click.
+            await page.waitForLoadState('networkidle');
+            await page.waitForFunction(
+              (want) =>
+                [...document.querySelectorAll('.cart-item')].some(
+                  (el) =>
+                    el.textContent?.includes('Mug Today is a good day') &&
+                    (el.querySelector('input.js-cart-line-product-quantity') as HTMLInputElement | null)?.value ===
+                      want,
+                ),
+              qty,
+            );
+            await page.waitForTimeout(1000);
+          }
+        },
+      },
+    ],
     async reference(page) {
       await setCartQty(page, 'Mug Today is a good day', 3);
     },

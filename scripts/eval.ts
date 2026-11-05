@@ -21,7 +21,15 @@ import { kleeneAnd } from '../src/runtime/evaluate.ts';
 import { APPS } from '../examples/apps.ts';
 import { compileReference } from '../examples/lib/scenario.ts';
 import { APPS as REAL_APPS } from '../eval/real/apps.ts';
-import { compiledFile, realApps, realRuns, realTasks, runKind, TRAINING_RUN } from '../eval/real/dataset.ts';
+import {
+  compiledFile,
+  isTrainingRun,
+  realApps,
+  realRuns,
+  realTasks,
+  runKind,
+  TRAINING_RUN,
+} from '../eval/real/dataset.ts';
 import { modelFromEnv } from './model-from-env.ts';
 
 const arg = (name: string, dflt: string) => {
@@ -124,7 +132,7 @@ for (const app of REAL ? realApps() : []) {
     const stored = realRuns(app, task);
     if (!stored.some((r) => r.name === TRAINING_RUN)) throw new Error(`${app}/${task}: no ${TRAINING_RUN} run`);
     for (const r of stored) {
-      if (r.name === TRAINING_RUN) {
+      if (isTrainingRun(r.name)) {
         trainingRuns.push(`${app}/${task}/${r.name}`);
         continue;
       }
@@ -366,7 +374,7 @@ function writeReport(): string {
       .map(([k, v]) => `- **${k}** used ${v.model}.`),
     CHECKS === 'handwritten'
       ? `- **Caveat:** these are the handwritten check sets, written by the same author as the labelled runs, so the checks rows are an upper bound and partly circular. The real measure is \`--checks compiled\` (checks compiled by the model from one correct run per task; all other runs held out).`
-      : `- Compiled check sets: each was compiled from one correct run per task. Those ${trainingRuns.length} runs are left out for every system, so all scored runs are held out.`,
+      : `- Compiled check sets: each was compiled from ${REAL ? 'its scripted correct runs (one per task, two where the task has a second UI route, ADR 0011)' : 'one correct run per task'}. Those ${trainingRuns.length} runs are left out for every system, so all scored runs are held out.`,
     ...(unscoredTasks.length
       ? [
           `- **Not scored** (no ${CHECKS} check set): ${unscoredTasks.join(', ')}. The comparison covers the other tasks only.`,

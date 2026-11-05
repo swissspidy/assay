@@ -123,6 +123,7 @@ async function checkOracles(browser: Browser, task: RealTask): Promise<string[]>
   if (seeded.success) problems.push(`passes on the seeded state (${seeded.reason})`);
   const scripts: [string, (page: Page, a: RealApp) => Promise<void>, boolean][] = [
     ['reference', task.reference, true],
+    ...(task.alternatives ?? []).map((x) => [`reference-${x.name}`, x.run, true] as [string, typeof x.run, boolean]),
     ...(task.perturbations ?? []).map((x) => [x.name, x.run, false] as [string, typeof x.run, boolean]),
   ];
   for (const [name, script, want] of scripts) {
@@ -169,9 +170,19 @@ try {
         kind: 'correct',
         play: async (page) => {
           await task.reference(page, app);
-          return { type: 'reference' };
+          return { type: 'reference', ...(task.alternatives?.length && task.route ? { route: task.route } : {}) };
         },
       });
+      for (const alt of task.alternatives ?? []) {
+        jobs.push({
+          name: `reference-${alt.name}`,
+          kind: 'correct',
+          play: async (page) => {
+            await alt.run(page, app);
+            return { type: 'reference', route: alt.route };
+          },
+        });
+      }
     }
     if (kinds.has('perturbed')) {
       for (const p of task.perturbations ?? []) {
