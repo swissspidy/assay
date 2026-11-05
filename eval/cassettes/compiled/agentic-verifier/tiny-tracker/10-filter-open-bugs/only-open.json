@@ -1,19 +1,19 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T07:09:57.208Z",
+ "recordedAt": "2026-11-05T07:55:05.663Z",
  "turns": {
-  "sha256:adaaba361b2e58d9a89fd1ae5825e9d3fce46db1a753a8a81987d180924f6a45": {
+  "sha256:b6b8110db35e9169b7d4dcf2b9d0d1ce38d10bced438c8cfca9ad25851814129": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_019LFHhJxk3c2fCSYBs7NwAn",
+     "id": "toolu_019DViv7nKX52k5FM9wv4k9Z",
      "name": "page_outline",
      "input": {}
     },
     {
-     "id": "toolu_01Pue3sRyr1DXjTuA4E5pZo8",
+     "id": "toolu_013Q77Fv68RCgzFYSJXRXQTu",
      "name": "probes",
      "input": {}
     }
@@ -21,7 +21,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_019LFHhJxk3c2fCSYBs7NwAn",
+     "id": "toolu_019DViv7nKX52k5FM9wv4k9Z",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -30,7 +30,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Pue3sRyr1DXjTuA4E5pZo8",
+     "id": "toolu_013Q77Fv68RCgzFYSJXRXQTu",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -39,19 +39,19 @@
     }
    ],
    "usage": {
-    "inputTokens": 1871,
+    "inputTokens": 1875,
     "outputTokens": 49,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 1867
+    "cacheWriteTokens": 1871
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:cd4f01769c8b1ec5f3ddea77b4c1eab133d3ca703d364fdcc853ba531c8403b0": {
+  "sha256:e0f3d787d714371195bd48aec5a1fef67689a13e93870a0f9cbabfecfe4480a3": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Wkg5zAhcGFxjCeLttmpVwy",
+     "id": "toolu_019wdfDRE3bLC2E4tdktt3EV",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -62,15 +62,16 @@
          1,
          2
         ],
-        "reasoning": "The URL has status=open, and the list shows only issues #1 and #2, which are both Open. Closed issue #3 is excluded."
+        "reasoning": "The status filter is set to Open, and both rows shown (#1 and #2) are Open. The closed issue #3 does not appear."
        },
        {
         "requirement": "R2",
         "status": "fail",
         "cites": [
-         1
+         1,
+         2
         ],
-        "reasoning": "The label filter is still 'Any' (label= in the URL). The list includes #2 'Add dark mode', which is labelled feature, not bug."
+        "reasoning": "The label filter is still 'Any' (label= is empty in the URL). The list includes #2 'Add dark mode', which is labelled feature, so the list does not show only bug issues."
        }
       ]
      }
@@ -79,7 +80,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01Wkg5zAhcGFxjCeLttmpVwy",
+     "id": "toolu_019wdfDRE3bLC2E4tdktt3EV",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -93,24 +94,25 @@
          1,
          2
         ],
-        "reasoning": "The URL has status=open, and the list shows only issues #1 and #2, which are both Open. Closed issue #3 is excluded."
+        "reasoning": "The status filter is set to Open, and both rows shown (#1 and #2) are Open. The closed issue #3 does not appear."
        },
        {
         "requirement": "R2",
         "status": "fail",
         "cites": [
-         1
+         1,
+         2
         ],
-        "reasoning": "The label filter is still 'Any' (label= in the URL). The list includes #2 'Add dark mode', which is labelled feature, not bug."
+        "reasoning": "The label filter is still 'Any' (label= is empty in the URL). The list includes #2 'Add dark mode', which is labelled feature, so the list does not show only bug issues."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2860,
-    "outputTokens": 204,
-    "cacheReadTokens": 1867,
+    "inputTokens": 2864,
+    "outputTokens": 216,
+    "cacheReadTokens": 1871,
     "cacheWriteTokens": 991
    },
    "model": "claude-opus-5-5"

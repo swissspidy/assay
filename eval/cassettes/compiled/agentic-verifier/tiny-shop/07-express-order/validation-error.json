@@ -1,24 +1,24 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T07:03:37.888Z",
+ "recordedAt": "2026-11-05T07:48:28.850Z",
  "turns": {
-  "sha256:13b5ab8b4cd52cd123619070b3e42b1050e1cb5c58726a883f7ee9ad2291bb38": {
+  "sha256:abb29a182106fcacc515d39c140df7677b7f5b11966015975dc4ed5f4060b509": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_018YRqMruTszm3VZcqLofsYX",
+     "id": "toolu_01KqbBZrVAhMniSPjRBhAg2G",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01MN2NLGgMeCVX8vMEuV2Zrb",
+     "id": "toolu_01NrH9CLbsa4SNWD3sHmiBEo",
      "name": "network_log",
      "input": {}
     },
     {
-     "id": "toolu_01N7vSH99MZ2VaYxW3AABFnV",
+     "id": "toolu_01SU6eK2oFSvrREtZcF1hF5V",
      "name": "page_outline",
      "input": {}
     }
@@ -26,7 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_018YRqMruTszm3VZcqLofsYX",
+     "id": "toolu_01KqbBZrVAhMniSPjRBhAg2G",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -35,7 +35,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01MN2NLGgMeCVX8vMEuV2Zrb",
+     "id": "toolu_01NrH9CLbsa4SNWD3sHmiBEo",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -44,7 +44,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01N7vSH99MZ2VaYxW3AABFnV",
+     "id": "toolu_01SU6eK2oFSvrREtZcF1hF5V",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -53,29 +53,36 @@
     }
    ],
    "usage": {
-    "inputTokens": 1963,
+    "inputTokens": 1969,
     "outputTokens": 72,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 1959
+    "cacheWriteTokens": 1965
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:0b834b96362588b7e5aaf78477861dc528acd031a3aaf3383b08b0eec9aeb109": {
+  "sha256:2a7f481cce81c4dcf7078ad76ce087c500741a55940d7be1d01c1417305d41ab": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01VefGvXfrCF43nJStGnn3cc",
+     "id": "toolu_019GF7kxJLJVgBfgE8eMbVQu",
      "name": "network_entry",
      "input": {
       "seq": 9
+     }
+    },
+    {
+     "id": "toolu_01P3CLTae5kqaNjEk4YmLezc",
+     "name": "network_entry",
+     "input": {
+      "seq": 3
      }
     }
    ],
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01VefGvXfrCF43nJStGnn3cc",
+     "id": "toolu_019GF7kxJLJVgBfgE8eMbVQu",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -83,22 +90,33 @@
      "input": {
       "seq": 9
      }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01P3CLTae5kqaNjEk4YmLezc",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 3
+     }
     }
    ],
    "usage": {
-    "inputTokens": 3004,
-    "outputTokens": 49,
-    "cacheReadTokens": 1959,
+    "inputTokens": 3010,
+    "outputTokens": 95,
+    "cacheReadTokens": 1965,
     "cacheWriteTokens": 1043
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:fe0360302c95c0d1ac17586e3aea261e62fb7f71eb7b09285b7cd8c62dc7b294": {
+  "sha256:89f24da889b1e1162d6bd5af9b1097daa269ae5caa2493c47d25f6e46616105b": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01RgdJNm9iuqhBDXD3qaC7u5",
+     "id": "toolu_015Bc6azgQVPWfXfzZTfJF3Q",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -110,7 +128,7 @@
          2,
          4
         ],
-        "reasoning": "The only POST /api/orders came back 422 with \"name is required\". latestOrder still returns 404 after the task, so no order exists."
+        "reasoning": "The only POST to /api/orders came back 422 with \"name is required\". /api/orders/latest still returns 404 after the task, so no order exists."
        },
        {
         "requirement": "R2",
@@ -119,7 +137,7 @@
          1,
          4
         ],
-        "reasoning": "The request did ask for shipping \"express\", but it was rejected and no order exists, so nothing ships express."
+        "reasoning": "The failed request did ask for shipping \"express\", but no order was created, so no order ships express."
        },
        {
         "requirement": "R3",
@@ -127,7 +145,7 @@
         "cites": [
          3
         ],
-        "reasoning": "The final page is still the checkout form, showing the alert \"Could not place order: name is required\". No confirmation is shown."
+        "reasoning": "The page is still the checkout form, with an alert reading \"Could not place order: name is required\". No confirmation is shown."
        },
        {
         "requirement": "R4",
@@ -136,16 +154,16 @@
          3,
          4
         ],
-        "reasoning": "The order request was sent with name \"\" instead of \"Ada Lovelace\", and the server rejected it for the missing name."
+        "reasoning": "The order request was sent with name \"\" (empty), not Ada Lovelace, and the Full name textbox is empty."
        },
        {
         "requirement": "R5",
         "status": "fail",
         "cites": [
          1,
-         2
+         4
         ],
-        "reasoning": "The cart still holds the Blue Mug, but no order was placed (the POST failed with 422 and latestOrder returns 404), so the cart contents were not ordered."
+        "reasoning": "The cart (Blue Mug) was never ordered. The order request failed and the cart is the same as it was before the task."
        }
       ]
      }
@@ -155,11 +173,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSxQcKEAgTGAI4AUIIdGhpbmtpbmcSDLa1FVEs79i5S9dNDBoM+twjX9wDKGDIY6bCIjB0GL7wW53PrdxAlqZyiSw+GCgGI9HgWPtspyYlzRN0GueVuxqFuz8Xypi5TFMMNswq4ga+w1KONJKDCRrYKe0hFhEgJiLGsVFrk02OYRny+B+zUu21hyvZTgtintokjaxWonrqiU7I+Xmt5ROh+o03dpYrDEtPlrSrHr/kr1aWsNRWzCu9tvSHUvDGKVEmbhU7Ng/VO014iCp6QhAd65DrmZTQp10ENFY/zqgihMtWdIdwKFfnt0f9GEj9QXxVFF0GTAS4pDVTD6ddptj64kZQgoY3nNCFzs8PxZUN8Ir13PpfvgnM4ol1TAp4/qP03AUnzQTYO5v4TktHAmfbOui3au8HmYJMlHf3r3zEE1gQfD0YqOG8oo1qTmLU8pFxHC6QLvWVJWaenLP2zWzHAGvxUUypZ3NKnmMI9c9SM03uUHcQo/L/LyUzDxalxRl4IbiIT4q6mp1RffJq2SShk7PN5dcrU9wQ+IYczXWeG+Cr+8Q3wC/Knsx2BrRcQkWVK/OkGQtvKRL7hKdQ3uBUTza2skAvVd0Dukkm2i3m7NeCpcG7x7nKNZACICfNdeGn89HLcyv69bSqlzQXgxN1t5M1kAUpxSJLtAogxdygl927j78L81ngvic185te9KvcTIX4a8bNKgbhnMjibyspcXDDULL/PySTxN7BQadoYIT1qcqP7BkgC8vT75qYhqYtqrFDq4VCwjSoF0WVBezJbkOx0ZLnlrTkGcWwPaFRHnJioGxul17MixKXJGgqeu24VLSdT2Uy8DO5p4ri7sYKlys9cKMV11Ul6Ibl/laJUIin2bFBVYsGCPSBBc2BjWflrDfIjRY2m0FVDll1L7qIYaLtKHhT8kfLNVoC1oynrxcwpCULpk2qnCNrehpq30rzGJ3DDEdlnY7klNsB5hYFPTMKOERDSpx9wertttuq3hr/iGR90rSAy3dBkoHW6qoOWlnnin3IQqlrSvZR+jjEbN520Ancbjw/gSdl98kXBE5surEfgTJyuSnz1Rqm+0xYmCqnoPlt8Wg892mBk1RudUc9Oo6yvaPs4fXfdscJGvW3xWH+gWaRlhtcHpDMB0ILtSF7XcIINyepwVqMrgqSHrdPAzhbatbFS27i42SDEa8gY1bAHxNU2up9cUvg6pTGPyObBGw6AevpmWF4s8v/vEUiwzYgXN0WxBmDuwLNvOAQ7Uj6DMPp9nGu0Op4xtxcCH1u1hEOiBgB"
+     "signature": "CAQS3QYKEAgTGAI4AUIIdGhpbmtpbmcSDFTgN+NP21KlaAN2AxoM+oO03Do/MntYBSylIjCCOXxx8BYaE0bpDvIQghwHTIZjTy+1CL7Z5glMB3z3U/Ty5uAl9zH8KeZyclR54M8q+gUdqhHUXmKve3+fUILWi1CKs6ooHsSa8KBJolC2Qq1sj1FjF6u5Q8NXN/HEa7ig1llx4ZYZJL4Mwgyk/DlN4qP/YkbUdTR7d9NrfRoBtwyFnJcKZ3tLoLLPrB6A870Cr2t7eIkZoW2RMp94pR+b5A2DP4a26uyO/HFnpm03gZHLM8HtRF6PxHDN4G7q8LeZ55uwN3Lp0WhOlPkBBtMHDLGh/4aYjwf5JNb1uW/fe/gn5uXKvXI+MEcFMshaQMNfuVL+k9kaoVBzO8iWGSxuaN09ikU6o5oRKo6qPbuEP4qcWisOTbFfnQTNem7LXvopVIB/TTFMhFNMY+4KBCt1gq4VL92pM5akj6rbn7mTXWwmAekctKOLKHSvHK3tdZOfDubd/4T4l4ZsPqrv9iU1aYHZNue5qmR3aWacypSZkfA9LWySXMtgEgM4LGUiR8Yh9GEVZkkPIgOFyp7TDO0Z1FYGUZVcULpZ+4M6aQs8ddEnnvA7b6FgxwwwDKoqEsMIyLp+pi1jOuXNGO+/Sk8gsjbAm5002Gvb7sDVqfyLn185k5vNAUzmm/Rv1E8ZtJdRamESqg8TiIrgBAnsUfSsXduH7KkRnD0xjmgvpVSibFU2oS1XXsa7t3QOLiWmxbbsBpST0qZ9LODjJQKneY/fHkrAhFfgdzPX0e4qe6b4Y6tKWsAkvikyq74a4/BV6NHdgKzWFNnrD+H2JmlcZZGqRemRZXYU6Zp03AABdFZ9tXy3euv8OqBT4wmthuKfJmyvKQOwYnWJRs0aRKIdg89nb7YmwAfnhHm1QxC94QOZii57dxGX2ogHN5pSR+I8y0ektTcBwup+OWmvmSg75sGN87cSdoI1dlZjPv/soZcld5UzBxYzVzqOGkEcXa5PedO+3VVuRhgOdt5ktAt0rjH8L6RnDlV21LUuTe3Ne3bZIC11suyVInygsco8LBPP6q7cVqZp5xyIIY/3EUwm7vZt1PX6ON+Z/VE9A6/7U+d6I6VfIV56jQ8cFHvAD+AYAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01RgdJNm9iuqhBDXD3qaC7u5",
+     "id": "toolu_015Bc6azgQVPWfXfzZTfJF3Q",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -174,7 +192,7 @@
          2,
          4
         ],
-        "reasoning": "The only POST /api/orders came back 422 with \"name is required\". latestOrder still returns 404 after the task, so no order exists."
+        "reasoning": "The only POST to /api/orders came back 422 with \"name is required\". /api/orders/latest still returns 404 after the task, so no order exists."
        },
        {
         "requirement": "R2",
@@ -183,7 +201,7 @@
          1,
          4
         ],
-        "reasoning": "The request did ask for shipping \"express\", but it was rejected and no order exists, so nothing ships express."
+        "reasoning": "The failed request did ask for shipping \"express\", but no order was created, so no order ships express."
        },
        {
         "requirement": "R3",
@@ -191,7 +209,7 @@
         "cites": [
          3
         ],
-        "reasoning": "The final page is still the checkout form, showing the alert \"Could not place order: name is required\". No confirmation is shown."
+        "reasoning": "The page is still the checkout form, with an alert reading \"Could not place order: name is required\". No confirmation is shown."
        },
        {
         "requirement": "R4",
@@ -200,26 +218,26 @@
          3,
          4
         ],
-        "reasoning": "The order request was sent with name \"\" instead of \"Ada Lovelace\", and the server rejected it for the missing name."
+        "reasoning": "The order request was sent with name \"\" (empty), not Ada Lovelace, and the Full name textbox is empty."
        },
        {
         "requirement": "R5",
         "status": "fail",
         "cites": [
          1,
-         2
+         4
         ],
-        "reasoning": "The cart still holds the Blue Mug, but no order was placed (the POST failed with 422 and latestOrder returns 404), so the cart contents were not ordered."
+        "reasoning": "The cart (Blue Mug) was never ordered. The order request failed and the cart is the same as it was before the task."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 3177,
-    "outputTokens": 533,
-    "cacheReadTokens": 3002,
-    "cacheWriteTokens": 173
+    "inputTokens": 3470,
+    "outputTokens": 480,
+    "cacheReadTokens": 3008,
+    "cacheWriteTokens": 460
    },
    "model": "claude-opus-5-5"
   }

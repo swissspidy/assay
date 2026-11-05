@@ -1,24 +1,24 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T07:06:54.377Z",
+ "recordedAt": "2026-11-05T07:51:59.064Z",
  "turns": {
   "sha256:2ed974870ecf0b14bbee1ceb4b5c60b7c8d984ae35faa42a716b090530fe5026": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Tk3tFZGBS3CYrFL1vk4cwK",
+     "id": "toolu_01EpxAhb3TgpKd47jq7QVRxB",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_016qbpho5CdWQJcciVTbdPPf",
+     "id": "toolu_01L3hnfxUr5jUk4onYWfdck3",
      "name": "network_log",
      "input": {}
     },
     {
-     "id": "toolu_01JhsdkmjkSTVwYWPWQK4TNN",
+     "id": "toolu_015Gepq9XbxYxrJv2td4euY7",
      "name": "page_outline",
      "input": {}
     }
@@ -26,7 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01Tk3tFZGBS3CYrFL1vk4cwK",
+     "id": "toolu_01EpxAhb3TgpKd47jq7QVRxB",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -35,7 +35,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_016qbpho5CdWQJcciVTbdPPf",
+     "id": "toolu_01L3hnfxUr5jUk4onYWfdck3",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -44,7 +44,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01JhsdkmjkSTVwYWPWQK4TNN",
+     "id": "toolu_015Gepq9XbxYxrJv2td4euY7",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -60,12 +60,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:f0d11f57604fca45d39e7d9afcaab778ed65ec0c99cc32f28e041969c068cba8": {
+  "sha256:6468e886e722a116df39a116724da0f3c82ebee6d6843d8ad9a2d6b0e23c159b": {
    "stop": "tool_use",
-   "text": "Closed then reopened (toggle twice) it seems.",
+   "text": "Toggled twice, apparently. Quick check of bodies.",
    "toolCalls": [
     {
-     "id": "toolu_018mqZVYf2HyABhbr2a8kWyt",
+     "id": "toolu_01M2Gz1nVapYfF7uZ8K4V2Wn",
      "name": "network_entry",
      "input": {
       "seq": 4
@@ -75,11 +75,11 @@
    "raw": [
     {
      "type": "text",
-     "text": "Closed then reopened (toggle twice) it seems."
+     "text": "Toggled twice, apparently. Quick check of bodies."
     },
     {
      "type": "tool_use",
-     "id": "toolu_018mqZVYf2HyABhbr2a8kWyt",
+     "id": "toolu_01M2Gz1nVapYfF7uZ8K4V2Wn",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -91,18 +91,18 @@
    ],
    "usage": {
     "inputTokens": 3063,
-    "outputTokens": 68,
+    "outputTokens": 70,
     "cacheReadTokens": 1821,
     "cacheWriteTokens": 1240
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:7f6b9c013ab0d4eb86e734ed041f81b62d2f7f649f940dfff4c02c256f3ebaf0": {
+  "sha256:0d4603b91e1fb60bb2b65ebcb386ce5587cb113f236a0e987c6724e86d717dd8": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_0177HyL9H1ZNhoZZcJrxZd6M",
+     "id": "toolu_012wsEjxq2XBxSS7VL6btiMM",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -115,7 +115,7 @@
          3,
          4
         ],
-        "reasoning": "The server-side probe shows issue #1 with status \"open\". The network log has two state POSTs. The last one (#4) sent status=open, so the issue was closed and then reopened. The final page also shows Status \"Open\" and a \"Close issue\" button."
+        "reasoning": "The server-side probe shows issue #1 with status \"open\" (obs 1). The page also shows Status: Open with a \"Close issue\" button (obs 3). The network log has two POSTs to /issues/1/state (obs 2). The second one sent status=open (obs 4), so the issue was reopened after it had been closed."
        }
       ]
      }
@@ -124,7 +124,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_0177HyL9H1ZNhoZZcJrxZd6M",
+     "id": "toolu_012wsEjxq2XBxSS7VL6btiMM",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -140,17 +140,17 @@
          3,
          4
         ],
-        "reasoning": "The server-side probe shows issue #1 with status \"open\". The network log has two state POSTs. The last one (#4) sent status=open, so the issue was closed and then reopened. The final page also shows Status \"Open\" and a \"Close issue\" button."
+        "reasoning": "The server-side probe shows issue #1 with status \"open\" (obs 1). The page also shows Status: Open with a \"Close issue\" button (obs 3). The network log has two POSTs to /issues/1/state (obs 2). The second one sent status=open (obs 4), so the issue was reopened after it had been closed."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 3236,
-    "outputTokens": 173,
+    "inputTokens": 3238,
+    "outputTokens": 195,
     "cacheReadTokens": 3061,
-    "cacheWriteTokens": 173
+    "cacheWriteTokens": 175
    },
    "model": "claude-opus-5-5"
   }

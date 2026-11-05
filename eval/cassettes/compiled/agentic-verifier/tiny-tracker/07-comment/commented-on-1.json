@@ -1,28 +1,28 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T07:08:17.402Z",
+ "recordedAt": "2026-11-05T07:53:28.277Z",
  "turns": {
   "sha256:7b2ea1d1957f350dc6f537df28481b8f2e12c84227af053e0071a9170ec13b0e": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01YYbXEzAFhH7XKdXnVayDi4",
-     "name": "network_log",
+     "id": "toolu_01WJ7devWWBYwXNjnUFouvVZ",
+     "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_013HmognodNteNkoiyMHYzmS",
-     "name": "probes",
+     "id": "toolu_012U9THYZozRaDVdeNwBXETS",
+     "name": "network_log",
      "input": {}
     }
    ],
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01YYbXEzAFhH7XKdXnVayDi4",
-     "name": "network_log",
+     "id": "toolu_01WJ7devWWBYwXNjnUFouvVZ",
+     "name": "probes",
      "caller": {
       "type": "direct"
      },
@@ -30,8 +30,8 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_013HmognodNteNkoiyMHYzmS",
-     "name": "probes",
+     "id": "toolu_012U9THYZozRaDVdeNwBXETS",
+     "name": "network_log",
      "caller": {
       "type": "direct"
      },
@@ -46,12 +46,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:17a49c366c9c38da0538d5f964d627fd1049d995a44a58dee4cc7153524f1f81": {
+  "sha256:aaff7bcf30157c498ce0b3c98e3bd23f7f4a29793ceb588bdc04bbd892141348": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01QYTGs2CREsvNgFbzVNoDJk",
+     "id": "toolu_01Y4wPNXVH7G5LTv3gt2GKPT",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -62,7 +62,7 @@
          1,
          2
         ],
-        "reasoning": "The agent sent the comment to the wrong issue: the only POST went to /issues/1/comments. The server-side probe shows the comment \"Working on it\" on issue #1, while issue #2 (\"Add dark mode\") has no comments at all."
+        "reasoning": "The issues probe shows issue #2 (\"Add dark mode\") has no comments. The \"Working on it\" comment went to issue #1 instead, and the network log shows the only POST went to /issues/1/comments."
        }
       ]
      }
@@ -71,7 +71,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01QYTGs2CREsvNgFbzVNoDJk",
+     "id": "toolu_01Y4wPNXVH7G5LTv3gt2GKPT",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -85,7 +85,7 @@
          1,
          2
         ],
-        "reasoning": "The agent sent the comment to the wrong issue: the only POST went to /issues/1/comments. The server-side probe shows the comment \"Working on it\" on issue #1, while issue #2 (\"Add dark mode\") has no comments at all."
+        "reasoning": "The issues probe shows issue #2 (\"Add dark mode\") has no comments. The \"Working on it\" comment went to issue #1 instead, and the network log shows the only POST went to /issues/1/comments."
        }
       ]
      }
@@ -93,18 +93,18 @@
    ],
    "usage": {
     "inputTokens": 2358,
-    "outputTokens": 181,
+    "outputTokens": 171,
     "cacheReadTokens": 1844,
     "cacheWriteTokens": 512
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:1c735a28f732a9406368f6031c559e3930bca0e2e82eaa4b2b799a77a9ec6ce1": {
+  "sha256:e5621a5201588f18b4a203cc5fd267df68cd72181b1facf560cf7a10ea7aa8b2": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01JJ5Rud6qXq6N98v9NBzkkx",
+     "id": "toolu_0158en73fR5u8Q5WnbmVhpa1",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -115,7 +115,7 @@
          1,
          2
         ],
-        "reasoning": "The agent sent the comment to the wrong issue: the only POST went to /issues/1/comments. The server-side probe shows the comment \"Working on it\" on issue #1, while issue #2 (\"Add dark mode\") has no comments at all."
+        "reasoning": "The issues probe shows issue #2 (\"Add dark mode\") has no comments. The \"Working on it\" comment went to issue #1 instead, and the network log shows the only POST went to /issues/1/comments."
        }
       ]
      }
@@ -124,7 +124,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01JJ5Rud6qXq6N98v9NBzkkx",
+     "id": "toolu_0158en73fR5u8Q5WnbmVhpa1",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -138,17 +138,17 @@
          1,
          2
         ],
-        "reasoning": "The agent sent the comment to the wrong issue: the only POST went to /issues/1/comments. The server-side probe shows the comment \"Working on it\" on issue #1, while issue #2 (\"Add dark mode\") has no comments at all."
+        "reasoning": "The issues probe shows issue #2 (\"Add dark mode\") has no comments. The \"Working on it\" comment went to issue #1 instead, and the network log shows the only POST went to /issues/1/comments."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2591,
-    "outputTokens": 169,
+    "inputTokens": 2581,
+    "outputTokens": 159,
     "cacheReadTokens": 2356,
-    "cacheWriteTokens": 233
+    "cacheWriteTokens": 223
    },
    "model": "claude-opus-5-5"
   }

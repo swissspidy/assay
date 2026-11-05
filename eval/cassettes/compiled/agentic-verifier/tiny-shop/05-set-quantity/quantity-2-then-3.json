@@ -1,29 +1,27 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T07:02:08.056Z",
+ "recordedAt": "2026-11-05T07:47:21.404Z",
  "turns": {
   "sha256:78c3227628c0a3c98665f9b02fe79df497edb37a9dbb60129e57d2018038ee2a": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_013hHjDoQzcjS3P8yMVnE5Wr",
+     "id": "toolu_01HHZuznbT3uc7296Vctt6g1",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_012BUaHgQ9XQq1ZYWpDj6S1F",
-     "name": "find_nodes",
-     "input": {
-      "text": "Blue Mug"
-     }
+     "id": "toolu_01Hq1ajSP8ddDMsJ1ENNKn4N",
+     "name": "page_outline",
+     "input": {}
     }
    ],
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_013hHjDoQzcjS3P8yMVnE5Wr",
+     "id": "toolu_01HHZuznbT3uc7296Vctt6g1",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -32,30 +30,28 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_012BUaHgQ9XQq1ZYWpDj6S1F",
-     "name": "find_nodes",
+     "id": "toolu_01Hq1ajSP8ddDMsJ1ENNKn4N",
+     "name": "page_outline",
      "caller": {
       "type": "direct"
      },
-     "input": {
-      "text": "Blue Mug"
-     }
+     "input": {}
     }
    ],
    "usage": {
     "inputTokens": 1849,
-    "outputTokens": 76,
+    "outputTokens": 49,
     "cacheReadTokens": 0,
     "cacheWriteTokens": 1845
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:1929c1f98c640209204ca01a48a6fd8cd549412a8fe9769ffeaeeb2ee28882d9": {
+  "sha256:2280bc7111d1ec3b2b7da2eb3f2a46fdf79f200ceb165b52ac9d00ba23a25625": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_012syavyAe7CVBPpGQVPrRNK",
+     "id": "toolu_01F7bUVR942jGqTAyNgmwnwW",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -66,7 +62,7 @@
          1,
          2
         ],
-        "reasoning": "The server-side cart probe has Blue Mug (MUG-BLUE) at qty 3 with a line total of $36. The cart page's quantity input for Blue Mug also shows 3, with $36.00."
+        "reasoning": "The server cart probe shows MUG-BLUE \"Blue Mug\" with qty 3 and a line total of 36. The captured /cart page shows the Blue Mug row with its quantity field set to 3 and a price of $36.00."
        }
       ]
      }
@@ -76,11 +72,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSvAYKEAgTGAI4AUIIdGhpbmtpbmcSDO0SHglP0xS8ZeQ9XRoM6Cxt6yUDAD7VSah7IjB8+pt86wMI26WZw2tCtlTwe+i+DNyXYq8ht2Qw/iFTxeGiRPBG0nEar9eSmelTlRcq2QUaKTvP1H0GLTaldS+33/FXPcuxg4fM5qfY4m5GqTxwPtY49JibJ7z6A9l5B80A3pFDlcsAujC30/NExzOCTcSLV1CbfyzXjZvSI1ZdpoZI64BlLUgaZLwyhjGTlwtITN7DOLlX4D2Q5QoRyZlpIMw4ZxM/xw8KVA8qms5A6u7XhqN/3Vz3wCXNu48YIFi5Sim/joqb7Q1dmUFt1bDUZvtsf/hSd80qMbxOONJ3Jq1XmwuY9h8gDanoJyCl5c//W34eS9m+9Lg5j+ok0gaGX6kGzVLbUJBAgX6xFqso7G+fiz0JD1hziGCr6ljVvS4HR2lABB+RLHlkciShfgFVKam6U0FE6CKCpHK/WmyA6GqIC71OaXJ0WgGsAcIBqvUR2OdOppgvKfnUoXPn4uvJplmxYHFHaIFiFybKW2PkZJF2nBVAxdMfkqXII8vyv63l693aBJbZkchJ1PO/Vk6bHsSzFigQlKjel4EcekzcziskVIqImSMLFvjnoVn8DtJUQ3Saf+qE+MnIwxN+b9MTArNimhsQz/ichzwWgtKBm4SPheIspvYBhjCAZufYh+8rLMGOISeZgQuJ06ZpNkddJy5+ZSZETltK8OGHOMaAKZrAmoSHx0dS1mvtG5kDWTfKfkRgEOuCzlk1ipQYWXmSDINmXWf4ZEHQHANmr9PbnaApf6aMwSmWg1rREVtB9Xpqcv39fVISqbqLWVaGoLEJxTl0D0z7qd0CRzphrHBKYkjAMH8avJ8r7769qD2gy70E/tkO8tpzVFXi80RTC1hzmR2Y3ZlbGHbR+8ycUund1wtjCa/JIdPOUk2eYxoZYTRdfTTGhfHwCE04Gx0P4UDVXwf/m2tPRsPKmPMKRNEr7PWaCBd4A3fJZOshsa05wdeyOpoULoRZDQpInbwUsvw8I9ElqpiYAJaDfl5xD19hDjZ3Su/TBBUwA2Yp8roSglio+TNm1lC4tYG9y6MYAQ=="
+     "signature": "CAQSmgYKEAgTGAI4AUIIdGhpbmtpbmcSDLdDOEr0imz864V3UxoM+z48IlDyBd+WkP7YIjDrsgIkN0TDiMF/MjNzsCB0UtEhG6sLxf5umaKKLEkW+CJYdCvB5dPhJX/PCqeuIG4qtwUYs95tomTtLedBiu5h2hCm5QNUzEkID+yvOfW/4Z3LJT/UZdMME+PN7t6UiUGULFGHLAFIYW+3MlidWJu1Sy/rg1gotDXxHzypmiaYa2rfos7loYowWmCAi9Al6c8XEFeTZ81cntIGOLKykwx2BjiLzh6nosl3r1fwWYvqfe9vxo+gfntrn0pA2vr+iwC3mN5lX23/iPyRyuyI6Mk515MvoQ/h5T6cupT1JTykAqr27cipxBtuQZuvFbSxQthXeYjkO/0CLuZM+V8t8B2hGDp4vNB5QRNSnqabCZXwlo/PPP5kNQLUoOdHH3rwimsE7Cod5kiNuJQPVxTz35CyPZPBS9+n3nEAF1ttjmZn+bIB1c2u8GiyKmRFB7Vf52+yx8Z//l8VWtFEZnaa1r8myKtPAuwHkaBhn/Yt6j2t//1Dg7L04QM1iFDp6A0gzD4ZrynG6zj76xK+9WBKhhaq9BXRWIB+cKn4ED+2enJcnm4ilm0/4xFadFYq8OO4TVgCsyzsRvQtH+Pc6ubuxdKV5TuZ8AN6lYl+/j1L6Ey8X9LriooAGFJtpADhEZUz54I76V04QbBCjpVAZYiqv5lK4sR2DklfH3l0FvjjAvOa0ng6wQR72Z8YDvxbBvx9SQJdXgm0eOkkGDbdgDa476vSbJLe9FhMTGBNFCMx7dZfEC+Dv94JMGaMEIlAChbKwMeC9D3AswvLT7uvLNKEhWSAwRk82oEsel2O+H/iNR3X94dz0YgBr7ACJkGD3YftFMbhqwhdCN5ba7SFlwLmRBxWxWq3UoKyiLzkXkXb94/RYmd1HHhSnSMaA6vVbVh9zNrF4YaNGzeaDDLocdV7NqL1/3Kll/DzGhKn2SqM44++WsLrLi8ZD5UCNRdxp8DlHaU6Pnd7vR8FA1K2mXwpOaL1XAEH96R6LwpbzhgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_012syavyAe7CVBPpGQVPrRNK",
+     "id": "toolu_01F7bUVR942jGqTAyNgmwnwW",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -94,26 +90,26 @@
          1,
          2
         ],
-        "reasoning": "The server-side cart probe has Blue Mug (MUG-BLUE) at qty 3 with a line total of $36. The cart page's quantity input for Blue Mug also shows 3, with $36.00."
+        "reasoning": "The server cart probe shows MUG-BLUE \"Blue Mug\" with qty 3 and a line total of 36. The captured /cart page shows the Blue Mug row with its quantity field set to 3 and a price of $36.00."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2549,
-    "outputTokens": 233,
+    "inputTokens": 2522,
+    "outputTokens": 235,
     "cacheReadTokens": 1845,
-    "cacheWriteTokens": 702
+    "cacheWriteTokens": 675
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:edc91f61304fccbae567f5550aec1bad5aea7c5a03de5f2f52d293942921c84d": {
+  "sha256:1837a38ccfc502a3d3520141d2ed39bc8d6aad36cf8baf51cc486ef4e4b7ce36": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01QaojWT1vF99onJgZdEQML1",
+     "id": "toolu_013vx91XcCqorqbhjT5ECvyG",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -124,7 +120,7 @@
          1,
          2
         ],
-        "reasoning": "The server-side cart probe has Blue Mug (MUG-BLUE) at qty 3 with a line total of $36. The cart page's quantity input for Blue Mug also shows 3, with $36.00."
+        "reasoning": "The server cart probe shows MUG-BLUE \"Blue Mug\" with qty 3 and a line total of 36. The captured /cart page shows the Blue Mug row with its quantity field set to 3 and a price of $36.00."
        }
       ]
      }
@@ -133,7 +129,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01QaojWT1vF99onJgZdEQML1",
+     "id": "toolu_013vx91XcCqorqbhjT5ECvyG",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -147,17 +143,17 @@
          1,
          2
         ],
-        "reasoning": "The server-side cart probe has Blue Mug (MUG-BLUE) at qty 3 with a line total of $36. The cart page's quantity input for Blue Mug also shows 3, with $36.00."
+        "reasoning": "The server cart probe shows MUG-BLUE \"Blue Mug\" with qty 3 and a line total of 36. The captured /cart page shows the Blue Mug row with its quantity field set to 3 and a price of $36.00."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2835,
-    "outputTokens": 156,
-    "cacheReadTokens": 2547,
-    "cacheWriteTokens": 286
+    "inputTokens": 2810,
+    "outputTokens": 166,
+    "cacheReadTokens": 2520,
+    "cacheWriteTokens": 288
    },
    "model": "claude-opus-5-5"
   }

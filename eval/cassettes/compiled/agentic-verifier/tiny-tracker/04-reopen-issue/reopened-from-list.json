@@ -1,19 +1,19 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T07:07:17.684Z",
+ "recordedAt": "2026-11-05T07:52:24.521Z",
  "turns": {
   "sha256:43a3e089319cbbf47943dab3f04457ee59367ba2c3bcb8148c630b1f3d882524": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01CFbdcDsR3Lg8REeqit1CaK",
+     "id": "toolu_01576j22XXPaWcNeeH4Und6C",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_017ey4xWXYiDYNrBqcHSR3sZ",
+     "id": "toolu_01HpTknSJyCbrU1PRux1jNUH",
      "name": "network_log",
      "input": {}
     }
@@ -21,7 +21,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01CFbdcDsR3Lg8REeqit1CaK",
+     "id": "toolu_01576j22XXPaWcNeeH4Und6C",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -30,7 +30,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_017ey4xWXYiDYNrBqcHSR3sZ",
+     "id": "toolu_01HpTknSJyCbrU1PRux1jNUH",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -46,12 +46,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:6d871c11a8e97f14bc2f21cafb4c8024589aa6bb985204617fb6af8f401bdfab": {
+  "sha256:a6e64697d172a2af18bf7346ab3c310ea6c7a343fa6988ca4085a1a79b1f9c2a": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01AqrpDt6Gc4vCcCHCuGZqJ5",
+     "id": "toolu_01HvZkxHtTf4MTjLGBi7GUoE",
      "name": "network_entry",
      "input": {
       "seq": 3
@@ -61,7 +61,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01AqrpDt6Gc4vCcCHCuGZqJ5",
+     "id": "toolu_01HvZkxHtTf4MTjLGBi7GUoE",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -79,24 +79,24 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:dd5d179831baa7e6f4699d190a3ae234225cae4bb272b9b27545732b177d7d26": {
+  "sha256:b1b9cbfe46cb0eb5161c58a7f5da1f41a37863abb3b4a2b1b779df36f98f7abe": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01H7ZYfPHisgsXEgFZ2Cn6ND",
+     "id": "toolu_01HVTSYMm41gbjFjmQwksgig",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
        {
-        "requirement": "issue #3 is open again",
+        "requirement": "R1",
         "status": "pass",
         "cites": [
          1,
          2,
          3
         ],
-        "reasoning": "The agent opened issue #3 from the closed-issues filter (obs 2), which means it had been closed. It then sent POST /issues/3/state with status=open and got a 303 response (obs 3). The server-side probe now shows issue 3 with status \"open\" (obs 1)."
+        "reasoning": "The agent filtered issues to status=closed, then sent POST /issues/3/state with status=open, and the server replied 303. The issues probe now shows issue #3 with status \"open\"."
        }
       ]
      }
@@ -106,11 +106,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS5QUKEAgTGAI4AUIIdGhpbmtpbmcSDMfgK3q9HSQ/U0LP0BoM+RyEdZKqQkCHIpNsIjDkj/KO/nlxlPZLfbe4ZZs3rprekjmuk4/xjz9WW4pkqtO/DHeUj2SxxrFwWvNSQUEqggVhiHuBQN8M9Q/44dzxpfX7KdNIbkWdI/PbMA8Rz8ejpQcUDUYosV88etv/8FmfR8gQ+6ANse9Nh1Xa8WKz7vRzOfzW2jzseW0EqMTegM6hyevUwcQO3ri5a4H75Yo+7StaFlHfso79mxpfj6//jzRgFXVSMLcGEe1b/aaQw6j/11JroJ/FIgF3ppdfWY8ag5zVYPYfmvr+zj245LvFzjc6T5fWpkIlpqMePhnhtnVYbgWT/El8ioAUmUOaf3us1wkQw0bHyIqe8Ev8jxcDg4F69prF9VoHNuDtPz5lqepAJ8CUVrLDIhW2I84kgpaiW/oOZAs80+SwsnKtcK0gEnU++W/iIkoJPeu/XGTqMgQmczMVV9dl3L11Z799aFWku8Rcmm8/teIffTS+BB13HDoC/Dlzp9bTJ+Od5yaaHe07teqBZlnaQQSovU08ew8a/wLgf1Pcv4Fh1kLvRiePSGLjtLAvKEzymWAaLUuHWjAFx5HBrFbBZYa++TkPG1KanJi07HSU41sNWjULqFT6KLLUBl7/M/4zoxWJD5X53ePQV3xUO6ykP4yNMy3wz39J9G/Q9cYieIVfuUrQcy7ZE0FV053U9D5NKTKsCkUxtvmt67MsYPqYKKTo5G+oVBZeNcNkuBy8m49SEVuT9sWSzYKVhHpiUSeIGGQqD5qzkhBaZk2NuCEL3YBY0gRRYrv7oPll0HlkOrMu8URELHNYZZmtbjL06S8Fa3Eg/z5qGv3ro6tuTPNeshOwQW3b4yDUyWD0YvVvvaklskj5m25nE4RO7tHwbjR0PGBAAuYYAqMLm95TnOncMq6r/EByUtQgqgjsVXoUHB83cSIJPQHW5IiYStoYAQ=="
+     "signature": "CAQSygUKEAgTGAI4AUIIdGhpbmtpbmcSDJPIp/MOBX4vjmtGGRoM5t6ou2RM+KYiXbdbIjAh91cqRQmTeVy18Kev0LEGqIp/GxhhTX93DdIEZnWZXuM+UFd8zBlofzjmxwGYAUYq5wRTTGErqgxrjZDEgGD2IyuyGIKhTKn48YYAcpKD3gWk8yV3fo3ZFONyW+hyw2Unwfo3HVf5LkVjlYU24JgkNOk78dmZeCA///Dw1IXgD03qkQwTVisany1dc/jaZRnGGs/URDetNwpXtlY5Vnrv1bUvQhlRo4T6DmB6ATqvLh2eAmdPusoPmEe79tVC+EDo2TJU3Z+M/KxkkMTxkY7aOt7MHPksuQ7pKCVUQfdbyJ39Kw045z6tW8yJjUjAz6CzYo1v6UWQpzsVOiYD1XOZu0dB7WWdw0x6hOh1opg6C5Bv+tRnqoktTlWGk+ejCAJcboPw64v5wclPEWDbvNTRsCmwLRKw719T/sVG54rSYEfvx9j89TyVKQOCS8M70jgY9YWLuCMIN88Q45SRQVg3tJQ64IE1EZJlBugR2vmBGlKgCSGJcAdZagaHGWMQmzD4fjtEU8SYypftbcA6y7ZmO+0A+EN6R61SjVK35YA+n7eYCR3dMOoqntyg3qxbcNGuf64m7184BdeELMBdMOfg0Rfd2m6fTGm4HGmYv8PFXJUzhWunVMHZO7BD9GrxIJlQfdY4Jca+lxYa2jphNrff8ydxa/50LZyt7jMEn9H3sqCczUWM1IkaMYO10et/2IuxHVr+9Lm2KSe6LlDBkTNyOorG1gUJf1pDRJkKoT7hF5irBUIRZC7rFTK3m4JZvLt/S/Hx5f9dt5Y2zT6ZEN1TTj624aVAiDo5YgfSVJD1Tvf2JK353DvMi2iw9dk7HOOaCylE298OAwyJQydRpftAtm+n8K8cYpUbtHcHOEaiXHvLW1galTbMXo8YAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01H7ZYfPHisgsXEgFZ2Cn6ND",
+     "id": "toolu_01HVTSYMm41gbjFjmQwksgig",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -118,14 +118,14 @@
      "input": {
       "verdicts": [
        {
-        "requirement": "issue #3 is open again",
+        "requirement": "R1",
         "status": "pass",
         "cites": [
          1,
          2,
          3
         ],
-        "reasoning": "The agent opened issue #3 from the closed-issues filter (obs 2), which means it had been closed. It then sent POST /issues/3/state with status=open and got a 303 response (obs 3). The server-side probe now shows issue 3 with status \"open\" (obs 1)."
+        "reasoning": "The agent filtered issues to status=closed, then sent POST /issues/3/state with status=open, and the server replied 303. The issues probe now shows issue #3 with status \"open\"."
        }
       ]
      }
@@ -133,64 +133,9 @@
    ],
    "usage": {
     "inputTokens": 2518,
-    "outputTokens": 220,
+    "outputTokens": 174,
     "cacheReadTokens": 2362,
     "cacheWriteTokens": 154
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:39eec7607efb2cc56cc2ac0f3202292a87522d5c9cf40c5f5d485769206b5e36": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_01Y2ZZryVsVAUAS34cbDPkyF",
-     "name": "submit_verdict",
-     "input": {
-      "verdicts": [
-       {
-        "requirement": "R1",
-        "status": "pass",
-        "cites": [
-         1,
-         2,
-         3
-        ],
-        "reasoning": "The agent opened issue #3 from the closed-issues filter (obs 2), which means it had been closed. It then sent POST /issues/3/state with status=open and got a 303 response (obs 3). The server-side probe now shows issue 3 with status \"open\" (obs 1)."
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_01Y2ZZryVsVAUAS34cbDPkyF",
-     "name": "submit_verdict",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "verdicts": [
-       {
-        "requirement": "R1",
-        "status": "pass",
-        "cites": [
-         1,
-         2,
-         3
-        ],
-        "reasoning": "The agent opened issue #3 from the closed-issues filter (obs 2), which means it had been closed. It then sent POST /issues/3/state with status=open and got a 303 response (obs 3). The server-side probe now shows issue 3 with status \"open\" (obs 1)."
-       }
-      ]
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 2785,
-    "outputTokens": 183,
-    "cacheReadTokens": 2516,
-    "cacheWriteTokens": 267
    },
    "model": "claude-opus-5-5"
   }

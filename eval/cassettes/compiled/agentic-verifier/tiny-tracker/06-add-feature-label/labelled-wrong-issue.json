@@ -1,19 +1,19 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T07:08:04.938Z",
+ "recordedAt": "2026-11-05T07:53:14.460Z",
  "turns": {
   "sha256:a4a5f55de0c806b0706ba82ba099d9d81bb0c3c97565631a5eeb5e28a01e7df4": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_015UHgcLueJtdqe1nmb5kNbu",
+     "id": "toolu_01NeVYmp4rhseA8Z3Z7tqDRn",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01475ar2Mdu5SdiXyd3vmdAr",
+     "id": "toolu_01Nb9eqzyiFi6SYY5n3DQoxj",
      "name": "network_log",
      "input": {}
     }
@@ -21,7 +21,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_015UHgcLueJtdqe1nmb5kNbu",
+     "id": "toolu_01NeVYmp4rhseA8Z3Z7tqDRn",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -30,7 +30,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01475ar2Mdu5SdiXyd3vmdAr",
+     "id": "toolu_01Nb9eqzyiFi6SYY5n3DQoxj",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -46,12 +46,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:596bb779edc7cc4bfba36fd2d6573f98bc2cccdbf73873e08486a3e19f0492d8": {
+  "sha256:f07ec236a09c1dcf3d09e3e0a75a2f7f6ac30caa218add7cd514c00e781dcdae": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01GmjzM7wRX9tB5dSkUrHzMC",
+     "id": "toolu_01E7CSsSkjPAhAoymQczJb8M",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -62,7 +62,7 @@
          1,
          2
         ],
-        "reasoning": "Server probe shows issue #1's labels are only [\"bug\"]. The only label POST went to /issues/3/labels, so the feature label was added to issue #3 and not to issue #1."
+        "reasoning": "The probe shows issue #1's labels are only [\"bug\"]. The only write request was a POST to /issues/3/labels, so the label went to issue #3, not issue #1."
        },
        {
         "requirement": "issue #1 still has the bug label",
@@ -70,7 +70,7 @@
         "cites": [
          1
         ],
-        "reasoning": "Server probe shows issue #1's labels include \"bug\"."
+        "reasoning": "The probe shows issue #1 still has the \"bug\" label."
        }
       ]
      }
@@ -80,11 +80,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS3wUKEAgTGAI4AUIIdGhpbmtpbmcSDGP+l5ttmP2mVtmP+RoMB4GUg67VziazNYSnIjCr80pI6onEdpWN0e80ISfcJcA4kzFr3EQZQl73wBrkkTT3WzH7rZ7RPu/6nzQwtYIq/ATXDgx+RzWrjasL6zlsuYXKQ/WVIO9j4GRXiT/AZFxPvp0MhDR42NZ0rOcmA90u7OUseoE/v3OX4eGC1hZCncHUCM+mu9VB9eJchxydzqOXgwmR+1IpYpOGylgTzAuxPCZaGHmB5N6mN+MpQRFiSWsbYPiNSjuEa5wYTZojkKrTDKos5y+uSSdsFInkfNhI7jMlQPOJVsBlvECB6wUhiYPB1blMBWbWaz2Ao437kjx0PSOlf5OBoUFBtVZ79Uc0KwNm/ehQij+/fQRWOB51tqYDMeDoOhmiWuMcclW4uiAYvwEB4Ofz/MJ68rQYNgyUopebyM/QAVQ0FKrBW21Y8jTe8Nf+L5lHP9SjGRUirihvor/k4kjCeSXIhTLHqjfDbychtg+Dk3c71BEiFRn9umkRMASKKAzYgG7hvYzBG/c2zMudJrJ+DRtJpgflUL7586fwn+ShWWLPrjHWvCbG35hBUYc/MgvifgZ2S3eJmlkH1jhX5xCDR+qCPwOJu0iJvEumVECZTIoGnjgejfspUC/2/Pg3uo326OQ8xFaDB8mer/Snc55LI6cer4YtOiyG4FliSZZRhPIXQPGB7Rt1UJS/QzCmiDsVzRq6vnZ5KwKFU7DhtS8p8zLgjsQmAV4Gdui2x0Lzmu80r7ll5hhB9k5qtcNVJjPsWcOKBxwwjwwZW8dcBsUItvSe01n+7pOpR5cBHt5uGFkQEXMfKpqFCyMVab0IvuWqNLbFF+VqUnjZ+ilEqEqxzkCUDjP37rWSZbeD62bxQERKp96L7kQjgk0tM4f4pjbzAUR+ekIWdQlvAt5yEtZAYBJzdpXUnx/JjS5LHG0YmkCv9xhgnScYAQ=="
+     "signature": "CAQS5AUKEAgTGAI4AUIIdGhpbmtpbmcSDCNXZqsLxCXVow/ayRoMOvlXqCjag8uJUrqbIjCVSvC0nZeoTl/1TdOpMosYd4mrLlkV0JKOuKMt++LKmb9r7nPZLWdpmvnwQkvpD8MqgQUg9iLs3slpAJi4aCiy82pBgpwiMu7dOendJ2DeaCQ+V2fXpv5uYUfZP03vVKZnofE3uwB8yUbplcbMGEFatS8yLUBOhb6MgIObtnxIhM4I7ZTKxBYTFCghLSuxotM2Pbt/mRcBSQtYGRgYDRs+VFtInrcmL5L5bxQLML0TKn7Y9Bs7x0jeZqKYdQdOd8ZAor4pWDOBziIHI71NvQOn+ngSgJ+wbtoo9xoAHjMJ4VTag5bWgak1crLeqVIBAvKenssFLcW9+M33DGW84x5deCWQMHh9Uv0WHoQ3gkWih/Cd9UvvtFVbBgLJSt+zJclajZirgvNI2MjGSZCC3vJWGu7Eohn8r5YvS69BTfc6M+pauz51yO/ggw/eCEnivaPwzGpVHnRuVG2adHsLDT7libQodJxyYcoKUBsQXqx7CSkAxY3uw8K6kOwgKZNuOZ7UPk7wEJ3m68C2RxsUljrKJdlQ+I5EZQOQU+MauCxvOApr36Wiys2T3YPJSDQCiz3BQPXkOfdslVCmfCCuE2NRli2flamsqDIg+TThH1v6QC8V8bVIZJb8dY7ooeXL627AXO/8IGMvJ0xdHJX8oP/nMhYMLAMmBOmAaX6HOZ9rFf9w553SrP4gBBOmx6KjvICsWX/mWD+TIg90p0UyiZ0s71fyAQE6AKhwhKs+7495oso2rGkMtUy3dOQIK2mEODxfMbQ2I0uhDjeJZfxBNEp+HbW1Edo3ute3l36NGDZi+5jAIRn9jWzxQPZy1jfYrOqTDVLMqB3U9fFbmKo1LkxOQPTheD6/Ge9ppYi/AVowWwLKHfuqoiJxK7MHNUADl7B/yhMTFhcRgUjyHye1nJiVA3u9jhgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_01GmjzM7wRX9tB5dSkUrHzMC",
+     "id": "toolu_01E7CSsSkjPAhAoymQczJb8M",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -98,7 +98,7 @@
          1,
          2
         ],
-        "reasoning": "Server probe shows issue #1's labels are only [\"bug\"]. The only label POST went to /issues/3/labels, so the feature label was added to issue #3 and not to issue #1."
+        "reasoning": "The probe shows issue #1's labels are only [\"bug\"]. The only write request was a POST to /issues/3/labels, so the label went to issue #3, not issue #1."
        },
        {
         "requirement": "issue #1 still has the bug label",
@@ -106,7 +106,7 @@
         "cites": [
          1
         ],
-        "reasoning": "Server probe shows issue #1's labels include \"bug\"."
+        "reasoning": "The probe shows issue #1 still has the \"bug\" label."
        }
       ]
      }
@@ -114,18 +114,18 @@
    ],
    "usage": {
     "inputTokens": 2365,
-    "outputTokens": 260,
+    "outputTokens": 257,
     "cacheReadTokens": 1874,
     "cacheWriteTokens": 489
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:09203da3b9c8c4e05fb9482ec6745433c47318e3722341c59e2768fb822c2b1a": {
+  "sha256:cbf155bc3ab23d3aefe51b92eaa642e3370a5abcd69b176f1e65b17baada96a5": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01LkZQMVWeaaehhwLphoydsb",
+     "id": "toolu_017HqhJA8ZUM5PPXjphFHZ81",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -136,7 +136,7 @@
          1,
          2
         ],
-        "reasoning": "Server probe shows issue #1's labels are only [\"bug\"]. The only label POST went to /issues/3/labels, so the feature label was added to issue #3 and not to issue #1."
+        "reasoning": "The probe shows issue #1's labels are only [\"bug\"]. The only write request was a POST to /issues/3/labels, so the label went to issue #3, not issue #1."
        },
        {
         "requirement": "R2",
@@ -144,7 +144,7 @@
         "cites": [
          1
         ],
-        "reasoning": "Server probe shows issue #1's labels include \"bug\"."
+        "reasoning": "The probe shows issue #1 still has the \"bug\" label."
        }
       ]
      }
@@ -153,7 +153,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01LkZQMVWeaaehhwLphoydsb",
+     "id": "toolu_017HqhJA8ZUM5PPXjphFHZ81",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -167,7 +167,7 @@
          1,
          2
         ],
-        "reasoning": "Server probe shows issue #1's labels are only [\"bug\"]. The only label POST went to /issues/3/labels, so the feature label was added to issue #3 and not to issue #1."
+        "reasoning": "The probe shows issue #1's labels are only [\"bug\"]. The only write request was a POST to /issues/3/labels, so the label went to issue #3, not issue #1."
        },
        {
         "requirement": "R2",
@@ -175,17 +175,17 @@
         "cites": [
          1
         ],
-        "reasoning": "Server probe shows issue #1's labels include \"bug\"."
+        "reasoning": "The probe shows issue #1 still has the \"bug\" label."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2691,
-    "outputTokens": 204,
+    "inputTokens": 2688,
+    "outputTokens": 200,
     "cacheReadTokens": 2363,
-    "cacheWriteTokens": 326
+    "cacheWriteTokens": 323
    },
    "model": "claude-opus-5-5"
   }
