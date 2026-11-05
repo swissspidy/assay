@@ -67,6 +67,43 @@ async function shownFrameElements(frame: Frame, timeout: number): Promise<{ loc:
   return shown;
 }
 
+/** The `textbox` nodes of a frame's own tree (not inside its iframes) that show no value. */
+function blankTextboxes(tree: AXNode): AXNode[] {
+  const out: AXNode[] = [];
+  const walk = (n: AXNode) => {
+    if (n.role === 'textbox' && n.value === undefined && n.name) out.push(n);
+    if (n.role !== 'iframe') n.children?.forEach(walk);
+  };
+  walk(tree);
+  return out;
+}
+
+/**
+ * Values of contenteditable textboxes (a rich-text editor's title field). Playwright's aria
+ * snapshot gives a value only to inputs and textareas, so a `role="textbox"` contenteditable
+ * element shows none. Its text becomes the value of the textbox node with its name, when
+ * exactly one such element and one such node have that name; anything else is left alone.
+ */
+async function fillEditableValues(frame: Frame, tree: AXNode, timeout: number): Promise<void> {
+  const blanks = blankTextboxes(tree);
+  if (!blanks.length) return;
+  const editables = frame.locator('[role="textbox"][contenteditable]:not([contenteditable="false"])');
+  const byName = new Map<string, string[]>();
+  for (let i = 0, n = await editables.count(); i < n; i++) {
+    const loc = editables.nth(i);
+    // The name as the aria snapshot computes it; an empty snapshot means the tree does not show it.
+    const [node] = parseAriaSnapshot(await loc.ariaSnapshot({ timeout })).children ?? [];
+    if (node?.role !== 'textbox' || !node.name) continue;
+    const text = await loc.evaluate((el) => (el as HTMLElement).innerText.replace(/\n$/, ''), undefined, { timeout });
+    byName.set(node.name, [...(byName.get(node.name) ?? []), text]);
+  }
+  for (const node of blanks) {
+    const values = byName.get(node.name!);
+    if (values?.length !== 1 || blanks.filter((b) => b.name === node.name).length !== 1) continue;
+    if (values[0]) node.value = values[0];
+  }
+}
+
 /**
  * Fill the `iframe` nodes of `tree` (the aria snapshot of `frame`) with their frames'
  * content, recursively, and append each captured frame's text to `texts` (document order,
@@ -82,6 +119,11 @@ export async function attachFrames(
   depth = 0,
   budget = { left: limits.maxFrames },
 ): Promise<void> {
+  try {
+    await fillEditableValues(frame, tree, limits.timeout);
+  } catch {
+    /* values stay as the aria snapshot gave them */
+  }
   const slots = iframeNodes(tree);
   if (!slots.length) return;
   let elements: { loc: Locator; name: string }[];

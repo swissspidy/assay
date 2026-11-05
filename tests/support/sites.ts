@@ -31,7 +31,8 @@ const appRoutes: Record<string, Route> = {
   '/canvas': (_req, { other }) =>
     html(
       'Canvas',
-      `<main aria-label="Block editor"><label>Add title <input value="Roadmap 2027"></label>
+      `<main aria-label="Block editor"><h1 role="textbox" contenteditable="true" aria-label="Add title">Roadmap 2027</h1>
+<label>Slug <input value="roadmap-2027"></label>
 <div role="textbox" aria-label="Paragraph block" contenteditable="true"><p>What we plan to build next year.</p></div>
 <label><input type="checkbox" checked> Sticky</label>
 <iframe title="Embed" src="${other}/embed"></iframe></main>`,

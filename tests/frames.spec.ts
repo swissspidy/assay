@@ -46,8 +46,10 @@ test('same-origin and cross-origin frames are captured under their iframe nodes'
   expect(payment!.url).toBe(`${other.origin}/widget`);
   expect(embed!.url).toBe(`${other.origin}/embed`);
 
-  // Form state inside the frames: values and checked states.
+  // Form state inside the frames: values (of inputs, and of a contenteditable title field,
+  // which the aria snapshot leaves out) and checked states.
   expect(find(canvas!, 'textbox', 'Add title')[0]!.value).toBe('Roadmap 2027');
+  expect(find(canvas!, 'textbox', 'Slug')[0]!.value).toBe('roadmap-2027');
   expect(find(canvas!, 'checkbox', 'Sticky')[0]!.states).toEqual({ checked: true });
   expect(find(payment!, 'textbox', 'Card number')[0]!.value).toBe('4242 4242 4242 4242');
   expect(find(embed!, 'figure')).toHaveLength(1);
