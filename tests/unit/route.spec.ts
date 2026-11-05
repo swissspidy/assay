@@ -20,7 +20,7 @@ import {
   type Normalizer,
 } from '../../src/index.ts';
 import { coverage, verifyCandidate, type Reference } from '../../src/compiler/index.ts';
-import { literalRuns, routeOnlyFindings, unmarkedRouteChecks } from '../../src/compiler/compile.ts';
+import { discoverySystem, literalRuns, routeOnlyFindings, unmarkedRouteChecks } from '../../src/compiler/compile.ts';
 import { selectRequirement } from '../../src/verifier/escalate.ts';
 import { applyNormalizers, NormalizeError } from '../../src/runtime/values.ts';
 import { stressTest } from '../../src/stress/index.ts';
@@ -388,6 +388,22 @@ test.describe('compiler: route evidence', () => {
     expect(coverage(set([check(adminBranch, 'abstain'), stored]))[0]!.routeOnly).toBeUndefined();
     // A view's URL alone is the state of the view, not route evidence.
     expect(coverage(set([check({ kind: 'url', match: { path: '/drafts' } })]))[0]!.routeOnly).toBeUndefined();
+  });
+
+  test('the absence section is added only when a probe cannot show a record missing', () => {
+    const base = (ok: boolean) => ({
+      capturedAt: '',
+      url: ORIGIN,
+      storage: null,
+      probes: { latest: ok ? { ok: true as const, value: [] } : { ok: false as const, error: '404' } },
+      redacted: [],
+    });
+    const has = (extra: Partial<EvidenceSnapshot>) =>
+      discoverySystem([ref('r', [], extra)]).includes('Records a probe cannot show missing');
+    expect(has({})).toBe(true);
+    expect(has({ baseline: base(false) })).toBe(true);
+    expect(has({ baseline: base(true) })).toBe(false);
+    expect(discoverySystem([ref('r', [], { baseline: base(true) })])).toContain('State before the task');
   });
 
   test('literal runs of a pattern', () => {

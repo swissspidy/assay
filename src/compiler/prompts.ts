@@ -92,5 +92,14 @@ Use it for requirements that relate the end state to the start: "keep everything
 - "order what is in my cart": the order's items (from the order response or a probe) sameAs the cart's items before the task, both through {op:"items"}.
 - "pointer" keeps one field of each item: use it only when that one field is all the task is about (e.g. which items are kept). When several fields matter together (a product and its quantity), compare whole items ({op:"items"} without a pointer) in one check, never separate checks per field. "pick" drops every field it does not name, so a change to those fields passes: use it only when the two sides' items have different fields (order lines with a lineTotal the cart lacks), to keep the fields both have together, e.g. {op:"items", pick:["/sku", "/qty"]} on both sides. When both sides hold items with the same fields (the cart after and the cart before; order lines shaped like the cart's items), compare whole items; pick there is refused.`;
 
+/**
+ * Appended when no reference has a baseline, or a probe failed in one: then a probe check
+ * cannot show that a record is missing (a "latest order" probe errors before any order
+ * exists), so it abstains on a run that created nothing. Kept apart so the prompt changes
+ * only for those tasks.
+ */
+export const DISCOVERY_ABSENCE = `## Records a probe cannot show missing
+A probe that fails to read when its record does not exist (an error, "not found", shown as failed by the probes tool), or a probe read without a state before the task to compare with, makes a check abstain on a run that created nothing at all. A requirement that a record was created (an order placed, an item saved) therefore also needs a check that fails when nothing was created: the request that creates it, as a "request" check without onMissing, when the app has one API for it; or a probe listing the records, which shows it missing.`;
+
 export const DISCOVERY_NUDGE =
   'Continue exploring if needed, then call submit_checks with your checks. Every requirement needs at least one check.';

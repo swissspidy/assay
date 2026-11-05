@@ -41,7 +41,7 @@ import type { ModelClient } from '../model/types.ts';
 import { parseOutcomes, parseOutcomesDetailed, type Clause } from './outcomes.ts';
 import { stressTest, type FindingRef } from '../stress/stress.ts';
 import { findNodes, networkEntry, networkLog, outline, probesView, storageView, summary } from './explore.ts';
-import { DISCOVERY_BASELINE, DISCOVERY_NUDGE, DISCOVERY_SYSTEM, RUBRIC_SYSTEM } from './prompts.ts';
+import { DISCOVERY_ABSENCE, DISCOVERY_BASELINE, DISCOVERY_NUDGE, DISCOVERY_SYSTEM, RUBRIC_SYSTEM } from './prompts.ts';
 
 export interface TaskInput {
   id: string;
@@ -958,6 +958,18 @@ function discoveryTools(
   return tools;
 }
 
+/**
+ * The discovery prompt: the baseline section when a reference has a baseline, and the
+ * absence section when none has one or a probe failed in one (ADR 0011).
+ */
+export function discoverySystem(refs: Reference[]): string {
+  const baseline = refs.some((r) => r.snapshot.baseline);
+  const absence = !baseline || refs.some((r) => Object.values(r.snapshot.baseline?.probes ?? {}).some((p) => !p.ok));
+  return [DISCOVERY_SYSTEM, ...(baseline ? [DISCOVERY_BASELINE] : []), ...(absence ? [DISCOVERY_ABSENCE] : [])].join(
+    '\n\n',
+  );
+}
+
 export async function compileTask(task: TaskInput, refs: Reference[], opts: CompileOptions): Promise<CompileResult> {
   // Tools select references by name (an enum in their schemas), so names must be unique.
   const seen = new Set<string>();
@@ -1037,7 +1049,7 @@ export async function compileTask(task: TaskInput, refs: Reference[], opts: Comp
     .join('\n\n');
   const run = await runAgent<CheckSet>({
     model: opts.model,
-    system: refs.some((r) => r.snapshot.baseline) ? `${DISCOVERY_SYSTEM}\n\n${DISCOVERY_BASELINE}` : DISCOVERY_SYSTEM,
+    system: discoverySystem(refs),
     prompt,
     tools,
     maxTurns: opts.maxTurns ?? 40,
