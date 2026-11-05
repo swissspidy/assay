@@ -6,6 +6,7 @@ import {
   validateCheckSet,
   snapshotDigest,
   type Assertion,
+  type Check,
   type CheckSet,
   type EvidenceSnapshot,
   type Json,
@@ -551,6 +552,112 @@ test.describe('check set validation', () => {
         },
       }),
     ).toEqual([expect.stringContaining('check C1 sameAs items where')]);
+  });
+  test('schema pins: combinator pins, local $refs, allOf conjunctions and not', () => {
+    const warns = (schema: Record<string, Json>) => {
+      const cs = base();
+      cs.checks[0]!.assert = { kind: 'value', source: { from: 'probe', probe: 'latestOrder' }, expect: { schema } };
+      const r = validateCheckSet(cs);
+      expect(r.errors).toEqual([]);
+      return r.warnings.filter((w) => w.includes('not in "required"'));
+    };
+    // A pin wrapped in a combinator on the property itself.
+    for (const k of ['allOf', 'anyOf', 'oneOf'])
+      expect(warns({ properties: { status: { [k]: [{ type: 'string' }, { const: 'placed' }] } } }), k).toEqual([
+        expect.stringContaining('/properties/status pins its value with const'),
+      ]);
+    expect(warns({ properties: { status: { allOf: [{ const: 'placed' }] } }, required: ['status'] })).toEqual([]);
+    // Local $refs: the pinned property and the schema that pins, resolved against the root.
+    const defs = {
+      order: { type: 'object', properties: { status: { $ref: '#/definitions/placed' } } },
+      placed: { const: 'placed' },
+    };
+    expect(warns({ definitions: defs, $ref: '#/definitions/order' })).toEqual([
+      expect.stringContaining('property /definitions/order/properties/status pins its value with const'),
+    ]);
+    expect(warns({ definitions: defs, allOf: [{ $ref: '#/definitions/order' }], required: ['status'] })).toEqual([]);
+    expect(warns({ definitions: defs, type: 'array', items: { $ref: '#/definitions/order' } })).toHaveLength(1);
+    // A cycle ends.
+    const tree = {
+      node: { properties: { kind: { const: 'leaf' }, children: { items: { $ref: '#/definitions/node' } } } },
+    };
+    expect(warns({ definitions: tree, $ref: '#/definitions/node' })).toEqual([
+      expect.stringContaining('/definitions/node/properties/kind'),
+    ]);
+    // Sibling allOf branches are one conjunction: a required in one covers a pin in another.
+    expect(warns({ allOf: [{ properties: { status: { const: 'placed' } } }, { required: ['status'] }] })).toEqual([]);
+    expect(warns({ properties: { status: { const: 'placed' } }, allOf: [{ required: ['status'] }] })).toEqual([]);
+    // anyOf branches are alternatives: a required in one does not cover another.
+    expect(warns({ anyOf: [{ properties: { status: { const: 'placed' } } }, { required: ['status'] }] })).toHaveLength(
+      1,
+    );
+    // Under not, a value without the property matches the inner schema, so not excludes it.
+    expect(warns({ not: { properties: { name: { const: 'Red Mug' } } } })).toEqual([
+      expect.stringContaining('/not/properties/name (inside "not") pins its value with const'),
+    ]);
+    expect(warns({ not: { properties: { name: { const: 'Red Mug' } }, required: ['name'] } })).toEqual([]);
+    expect(warns({ not: { not: { properties: { name: { const: 'x' } } } } })[0]).not.toContain('inside "not"');
+  });
+  test('warns about a literal href regex in url assertions and request matches', () => {
+    const warns = (a: Assertion) => {
+      const cs = base();
+      cs.checks[0]!.assert = a;
+      return validateCheckSet(cs).warnings.filter((w) => w.includes('has no anchors'));
+    };
+    expect(warns({ kind: 'url', match: { regex: 'settings' } })).toEqual([
+      expect.stringContaining('check C1 url: regex /settings/ has no anchors'),
+    ]);
+    expect(warns({ kind: 'request', match: { url: { regex: '/api/orders' } } })).toHaveLength(1);
+    expect(
+      warns({
+        kind: 'value',
+        source: { from: 'response', match: { url: { regex: 'orders' } } },
+        expect: { exists: true },
+      }),
+    ).toHaveLength(1);
+    expect(warns({ kind: 'url', match: { regex: '/settings$' } })).toEqual([]);
+    expect(warns({ kind: 'url', match: { path: '/settings' } })).toEqual([]);
+  });
+  test('warns when one requirement compares two collections one field at a time', () => {
+    const cs = base();
+    const field = (id: string, pointer?: string): Check => ({
+      id,
+      requirement: 'R1',
+      description: id,
+      assert: {
+        kind: 'value',
+        source: { from: 'probe', probe: 'latestOrder', pointer: '/items' },
+        normalize: [{ op: 'items', ...(pointer ? { pointer } : {}) }],
+        expect: {
+          sameAs: {
+            source: { from: 'probe', probe: 'cart', pointer: '/items', at: 'before' },
+            normalize: [{ op: 'items', ...(pointer ? { pointer } : {}) }],
+          },
+        },
+      },
+    });
+    const advice = (checks: Check[]) => {
+      cs.checks = checks;
+      return validateCheckSet(cs).warnings.filter((w) => w.includes('one field at a time'));
+    };
+    expect(advice([field('sku', '/sku'), field('qty', '/qty')])).toEqual([
+      expect.stringContaining('requirement R1: checks sku, qty compare the same two collections one field at a time'),
+    ]);
+    // Nested in an allOf of one check too.
+    expect(
+      advice([
+        { ...field('both'), assert: { kind: 'allOf', of: [field('a', '/sku').assert, field('b', '/qty').assert] } },
+      ]),
+    ).toHaveLength(1);
+    // One field (the ids of kept items), or whole items alongside, are fine.
+    expect(advice([field('sku', '/sku')])).toEqual([]);
+    expect(advice([field('sku', '/sku'), field('qty', '/qty'), field('whole')])).toEqual([]);
+    // Different collections, or different requirements, are not one comparison.
+    const other = field('other', '/qty');
+    (other.assert as { source: { probe: string } }).source.probe = 'wishlist';
+    expect(advice([field('sku', '/sku'), other])).toEqual([]);
+    cs.requirements.push({ id: 'R2', kind: 'hard', text: 'q', source: { field: 'instruction', quote: 'Set' } });
+    expect(advice([field('sku', '/sku'), { ...field('qty', '/qty'), requirement: 'R2' }])).toEqual([]);
   });
   test('warns when an accessible-text regex expects a tab (tabs are normalized to spaces)', () => {
     const cs = base();

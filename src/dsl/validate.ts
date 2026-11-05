@@ -9,6 +9,7 @@ import type {
   RequestMatch,
   Target,
   TextMatch,
+  UrlMatch,
   ValueSource,
 } from '../types.ts';
 import { canonical } from '../text.ts';
@@ -90,15 +91,18 @@ export function validateCheckSet(input: unknown): ValidationReport {
 
 /**
  * Comparisons that accept more than they appear to: an unanchored literal regex
- * on structured evidence (/Berlin/ also matches "Europe/Berlin-Test"), and a
- * JSON Schema property pinned with const or enum that is not required (a body
- * without the property passes). `validateCheckSet` reports them as warnings;
- * the compiler refuses them, since a warning on an accepted submission is never
- * acted on. Expects a check set that passed the shape validation.
+ * on structured evidence (/Berlin/ also matches "Europe/Berlin-Test"), a JSON
+ * Schema property pinned with const or enum that is not required (a body without
+ * the property passes), and one requirement comparing two collections field by
+ * field (sorted separately, the fields of different records pair up).
+ * `validateCheckSet` reports them as warnings; the compiler refuses them, since a
+ * warning on an accepted submission is never acted on. Expects a check set that
+ * passed the shape validation.
  */
 export function looseMatches(cs: CheckSet): string[] {
   const out: string[] = [];
   for (const c of cs.checks) looseAssertion(c.assert, `check ${c.id}`, out);
+  fieldwiseCollections(cs, out);
   return dedupe(out);
 }
 
@@ -107,25 +111,33 @@ export function isLiteralPattern(pattern: string): boolean {
   return pattern !== '' && !/[\\^$.*+?()[\]{}|]/.test(pattern.replace(/\\[^A-Za-z0-9]/g, ''));
 }
 
-const literalRegexAdvice = (pattern: string, at: string) =>
-  `${at}: regex /${pattern}/ has no anchors, so it also matches any value that merely contains it; compare an exact value (an identifier, a setting, a status) with equals or an anchored regex (^…$), or use contains when extra text is allowed`;
+const literalRegexAdvice = (pattern: string, at: string, exact = 'equals or an anchored regex (^…$)') =>
+  `${at}: regex /${pattern}/ has no anchors, so it also matches any value that merely contains it; compare an exact value (an identifier, a setting, a status) with ${exact}, or use contains when extra text is allowed`;
 
 function looseTextMatch(m: TextMatch | null | undefined, at: string, out: string[]): void {
   if (m && typeof m === 'object' && 'regex' in m && isLiteralPattern(m.regex))
     out.push(literalRegexAdvice(m.regex, at));
 }
 
+/** A URL match's href regex and its query matchers (url assertions and request matches). */
+function looseUrlMatch(m: UrlMatch | undefined, at: string, out: string[]): void {
+  if (!m) return;
+  if (m.regex !== undefined && isLiteralPattern(m.regex))
+    out.push(literalRegexAdvice(m.regex, `${at} url`, 'a path pattern, or a regex anchored to the part it means'));
+  for (const [name, v] of Object.entries(m.query ?? {})) looseTextMatch(v, `${at} query ${name}`, out);
+}
+
 function looseRequestMatch(m: RequestMatch, at: string, out: string[]): void {
-  for (const [name, v] of Object.entries(m.url?.query ?? {})) looseTextMatch(v, `${at} query ${name}`, out);
-  if (m.requestBody !== undefined) looseSchema(m.requestBody, `${at} requestBody`, '', [], out);
-  if (m.responseBody !== undefined) looseSchema(m.responseBody, `${at} responseBody`, '', [], out);
+  looseUrlMatch(m.url, at, out);
+  if (m.requestBody !== undefined) looseSchema(m.requestBody, `${at} requestBody`, out);
+  if (m.responseBody !== undefined) looseSchema(m.responseBody, `${at} responseBody`, out);
 }
 
 function looseOperand(src: ValueSource, normalize: Normalizer[] | undefined, at: string, out: string[]): void {
   if (src.from === 'request' || src.from === 'response') looseRequestMatch(src.match, at, out);
   for (const n of normalize ?? [])
     if (typeof n === 'object' && n.op === 'items' && n.where !== undefined)
-      looseSchema(n.where, `${at} items where`, '', [], out);
+      looseSchema(n.where, `${at} items where`, out);
 }
 
 function looseAssertion(a: Assertion, at: string, out: string[]): void {
@@ -136,11 +148,11 @@ function looseAssertion(a: Assertion, at: string, out: string[]): void {
       const structured = a.source.from !== 'node' && a.source.from !== 'text';
       if (structured && 'regex' in a.expect && isLiteralPattern(a.expect.regex))
         out.push(literalRegexAdvice(a.expect.regex, at));
-      if ('schema' in a.expect) looseSchema(a.expect.schema, `${at} schema`, '', [], out);
+      if ('schema' in a.expect) looseSchema(a.expect.schema, `${at} schema`, out);
       return;
     }
     case 'url':
-      for (const [name, v] of Object.entries(a.match.query ?? {})) looseTextMatch(v, `${at} query ${name}`, out);
+      looseUrlMatch(a.match, at, out);
       return;
     case 'request':
       looseRequestMatch(a.match, at, out);
@@ -156,30 +168,152 @@ function looseAssertion(a: Assertion, at: string, out: string[]): void {
 
 const isObject = (x: unknown): x is Record<string, unknown> => typeof x === 'object' && x !== null && !Array.isArray(x);
 
+/** A local `$ref` ("#", "#/definitions/x") resolved against the root schema; undefined for anything else. */
+function resolveRef(root: unknown, ref: string): unknown {
+  if (ref === '#') return root;
+  if (!ref.startsWith('#/')) return undefined;
+  let cur: unknown = root;
+  for (const raw of ref.slice(2).split('/')) {
+    const key = decodeURIComponent(raw).replace(/~1/g, '/').replace(/~0/g, '~');
+    if (isObject(cur)) cur = cur[key];
+    else if (Array.isArray(cur)) cur = cur[Number(key)];
+    else return undefined;
+  }
+  return cur;
+}
+
+interface SchemaWalk {
+  root: unknown;
+  at: string;
+  out: string[];
+  /** $refs being expanded on the current path (cycle guard). */
+  refs: Set<string>;
+}
+
 /**
- * Walks a JSON Schema through properties, items, contains and anyOf/allOf/oneOf.
- * `inherited` holds the names a parent schema requires of the same instance (a
- * combinator's branches describe the same object as the schema around them).
+ * Names a schema requires of its own instance: its `required`, and those of its
+ * allOf branches and its $ref target (one conjunction describing the same value).
  */
-function looseSchema(s: unknown, at: string, path: string, inherited: string[], out: string[]): void {
+function requiredOf(s: unknown, w: SchemaWalk, seen: Set<string> = new Set()): string[] {
+  if (!isObject(s)) return [];
+  const names = Array.isArray(s.required) ? s.required.map(String) : [];
+  if (Array.isArray(s.allOf)) for (const b of s.allOf) names.push(...requiredOf(b, w, seen));
+  if (typeof s.$ref === 'string' && !seen.has(s.$ref)) {
+    seen.add(s.$ref);
+    names.push(...requiredOf(resolveRef(w.root, s.$ref), w, seen));
+  }
+  return names;
+}
+
+/** Whether a property schema pins its value: const or enum, directly, in a combinator branch or through $ref. */
+function pinOf(p: unknown, w: SchemaWalk, seen: Set<string> = new Set()): 'const' | 'enum' | undefined {
+  if (!isObject(p)) return undefined;
+  if ('const' in p) return 'const';
+  if ('enum' in p) return 'enum';
+  for (const k of ['allOf', 'anyOf', 'oneOf'])
+    if (Array.isArray(p[k]))
+      for (const b of p[k] as unknown[]) {
+        const pin = pinOf(b, w, seen);
+        if (pin) return pin;
+      }
+  if (typeof p.$ref === 'string' && !seen.has(p.$ref)) {
+    seen.add(p.$ref);
+    return pinOf(resolveRef(w.root, p.$ref), w, seen);
+  }
+  return undefined;
+}
+
+function looseSchema(schema: unknown, at: string, out: string[]): void {
+  walkSchema(schema, '', [], false, { root: schema, at, out, refs: new Set() });
+}
+
+/**
+ * Walks a JSON Schema through properties, items, contains, anyOf/allOf/oneOf,
+ * not and local $refs. `inherited` holds the names the enclosing schemas require
+ * of the same instance; `negated` is true under an odd number of `not`s.
+ */
+function walkSchema(s: unknown, path: string, inherited: string[], negated: boolean, w: SchemaWalk): void {
   if (!isObject(s)) return;
-  const required = [...inherited, ...(Array.isArray(s.required) ? s.required.map(String) : [])];
+  const required = [...inherited, ...requiredOf(s, w)];
   if (isObject(s.properties)) {
     for (const [name, p] of Object.entries(s.properties)) {
       const here = `${path}/properties/${name}`;
-      if (isObject(p) && ('const' in p || 'enum' in p) && !required.includes(name))
-        out.push(
-          `${at}: JSON Schema property ${here} pins its value with ${'const' in p ? 'const' : 'enum'} but is not in "required", so a value without ${JSON.stringify(name)} passes; add it to "required"`,
+      const pin = pinOf(p, w);
+      if (pin && !required.includes(name))
+        w.out.push(
+          negated
+            ? `${w.at}: JSON Schema property ${here} (inside "not") pins its value with ${pin} but is not in "required", so the inner schema also matches a value without ${JSON.stringify(name)} and "not" excludes it; add it to "required"`
+            : `${w.at}: JSON Schema property ${here} pins its value with ${pin} but is not in "required", so a value without ${JSON.stringify(name)} passes; add it to "required"`,
         );
-      looseSchema(p, at, here, [], out);
+      walkSchema(p, here, [], negated, w);
     }
   }
-  if (Array.isArray(s.items)) s.items.forEach((x, i) => looseSchema(x, at, `${path}/items/${i}`, [], out));
-  else looseSchema(s.items, at, `${path}/items`, [], out);
-  looseSchema(s.contains, at, `${path}/contains`, [], out);
+  if (Array.isArray(s.items)) s.items.forEach((x, i) => walkSchema(x, `${path}/items/${i}`, [], negated, w));
+  else walkSchema(s.items, `${path}/items`, [], negated, w);
+  walkSchema(s.contains, `${path}/contains`, [], negated, w);
   for (const k of ['anyOf', 'allOf', 'oneOf'])
     if (Array.isArray(s[k]))
-      (s[k] as unknown[]).forEach((x, i) => looseSchema(x, at, `${path}/${k}/${i}`, required, out));
+      (s[k] as unknown[]).forEach((x, i) => walkSchema(x, `${path}/${k}/${i}`, required, negated, w));
+  // The inner schema of a not applies to the same instance, so what the outside requires still holds.
+  walkSchema(s.not, `${path}/not`, required, !negated, w);
+  if (typeof s.$ref === 'string' && !w.refs.has(s.$ref)) {
+    w.refs.add(s.$ref);
+    walkSchema(resolveRef(w.root, s.$ref), s.$ref.slice(1), required, negated, w);
+    w.refs.delete(s.$ref);
+  }
+}
+
+/** One side of a sameAs through `items`: the collection without the items pointer, and that pointer. */
+function itemsSide(src: ValueSource, n: Normalizer[] | undefined) {
+  const steps = n ?? [];
+  const step = steps.find((x) => typeof x === 'object' && x.op === 'items') as
+    | Extract<Normalizer, { op: 'items' }>
+    | undefined;
+  if (!step) return undefined;
+  const rest = steps.map((x) => {
+    if (typeof x === 'string') return { op: x };
+    if (x.op !== 'items') return x;
+    const { pointer: _, ...keep } = x;
+    return keep;
+  });
+  return { key: canonicalJson({ src, n: rest } as unknown as Json), pointer: step.pointer ?? '' };
+}
+
+/**
+ * Within one requirement, two or more sameAs comparisons of the same pair of
+ * collections through `items` with different pointers: each sorts one field on
+ * its own, so 1×A + 2×B passes for 2×A + 1×B. Comparing whole items avoids it.
+ */
+function fieldwiseCollections(cs: CheckSet, out: string[]): void {
+  for (const r of cs.requirements) {
+    // pair of collections → pointer pair → checks
+    const pairs = new Map<string, Map<string, Set<string>>>();
+    const visit = (a: Assertion, check: string): void => {
+      if (a.kind === 'allOf' || a.kind === 'anyOf') {
+        for (const b of a.of) visit(b, check);
+        return;
+      }
+      if (a.kind !== 'value' || !('sameAs' in a.expect)) return;
+      const x = itemsSide(a.source, a.normalize);
+      const y = itemsSide(a.expect.sameAs.source, a.expect.sameAs.normalize);
+      if (!x || !y) return;
+      const [p, q] = x.key <= y.key ? [x, y] : [y, x];
+      const pair = `${p.key}\u0000${q.key}`;
+      const byPointers = pairs.get(pair) ?? new Map<string, Set<string>>();
+      pairs.set(pair, byPointers);
+      const ptrs = JSON.stringify([p.pointer, q.pointer]);
+      byPointers.set(ptrs, (byPointers.get(ptrs) ?? new Set<string>()).add(check));
+    };
+    for (const c of cs.checks) if (c.requirement === r.id) visit(c.assert, c.id);
+    for (const byPointers of pairs.values()) {
+      if (byPointers.size < 2 || byPointers.has(JSON.stringify(['', '']))) continue;
+      const checks = [...new Set([...byPointers.values()].flatMap((s) => [...s]))];
+      const fields = [...new Set([...byPointers.keys()].flatMap((k) => (JSON.parse(k) as string[]).filter(Boolean)))];
+      out.push(
+        `requirement ${r.id}: checks ${checks.join(', ')} compare the same two collections one field at a time (items pointers ${fields.join(', ')}); each field is sorted on its own, so the fields of different records pair up (1×A + 2×B matches 2×A + 1×B); compare whole items (items without a pointer) in one check`,
+      );
+    }
+  }
 }
 
 /** Some value read inside `a` (nested ones and sameAs operands included) comes from a request or response. */
