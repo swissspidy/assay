@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:34:57.281Z",
+ "turns": {
+  "sha256:f07bfd122ed7225d28bd26ccf19b5e9509494be8484c5d2b3d760cd2345d163e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Y37zZcEbnW2XBTbStc4rzm",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The agent changed the wrong address. The task was to set the phone number of the address titled \"My address\" to 305-555-0199. On the final page, the address titled \"Mon adresse\" (id 2, Paris) now shows 305-555-0199. The address titled \"My address\" (id 5, Miami) still shows the old number, 0102030405. \"Mon adresse\" is French for \"my address\", which may be why the agent picked it, but it is a different address with a different alias. So the requested change was not made, and an unrelated address was modified."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Y37zZcEbnW2XBTbStc4rzm",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The agent changed the wrong address. The task was to set the phone number of the address titled \"My address\" to 305-555-0199. On the final page, the address titled \"Mon adresse\" (id 2, Paris) now shows 305-555-0199. The address titled \"My address\" (id 5, Miami) still shows the old number, 0102030405. \"Mon adresse\" is French for \"my address\", which may be why the agent picked it, but it is a different address with a different alias. So the requested change was not made, and an unrelated address was modified."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2748,
+    "outputTokens": 239,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2744
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

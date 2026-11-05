@@ -1,0 +1,163 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "gitea/g13-assign-open-bugs",
+  "version": "1",
+  "task": {
+    "instruction": "Assign every open bug in acme/webapp that has no assignee yet to dave."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Every open bug in the acme/webapp repository that had no assignee is now assigned to dave.",
+      "source": {
+        "field": "instruction",
+        "quote": "Assign every open bug in acme/webapp that has no assignee yet to dave."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-dave-on-previously-unassigned-open-bugs",
+      "requirement": "R1",
+      "description": "After the task, the bugs without dave as assignee are exactly the bugs that before the task were closed or already had a non-dave assignee, so every open bug that was unassigned now has dave assigned.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "normalize": [
+          {
+            "op": "items",
+            "where": {
+              "properties": {
+                "labels": {
+                  "type": "array",
+                  "contains": {
+                    "const": "bug"
+                  }
+                },
+                "assignees": {
+                  "type": "array",
+                  "not": {
+                    "contains": {
+                      "const": "dave"
+                    }
+                  }
+                }
+              },
+              "required": [
+                "labels",
+                "assignees"
+              ]
+            },
+            "pointer": "/number"
+          }
+        ],
+        "expect": {
+          "sameAs": {
+            "source": {
+              "from": "probe",
+              "probe": "issues",
+              "at": "before"
+            },
+            "normalize": [
+              {
+                "op": "items",
+                "where": {
+                  "properties": {
+                    "labels": {
+                      "type": "array",
+                      "contains": {
+                        "const": "bug"
+                      }
+                    },
+                    "assignees": {
+                      "type": "array",
+                      "not": {
+                        "contains": {
+                          "const": "dave"
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "labels",
+                    "assignees"
+                  ],
+                  "not": {
+                    "properties": {
+                      "state": {
+                        "const": "open"
+                      },
+                      "assignees": {
+                        "maxItems": 0
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "assignees"
+                    ]
+                  }
+                },
+                "pointer": "/number"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "R1-no-unassigned-open-bugs-left",
+      "requirement": "R1",
+      "description": "After the task, no open issue labelled bug in acme/webapp is left without an assignee.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "normalize": [
+          {
+            "op": "items",
+            "where": {
+              "properties": {
+                "state": {
+                  "const": "open"
+                },
+                "labels": {
+                  "type": "array",
+                  "contains": {
+                    "const": "bug"
+                  }
+                },
+                "assignees": {
+                  "type": "array",
+                  "maxItems": 0
+                }
+              },
+              "required": [
+                "state",
+                "labels",
+                "assignees"
+              ]
+            },
+            "pointer": "/number"
+          }
+        ],
+        "expect": {
+          "equals": []
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:20:24.639Z"
+  }
+}

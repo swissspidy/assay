@@ -1,0 +1,63 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "prestashop/s11-admin-price",
+  "version": "1",
+  "task": {
+    "instruction": "In the shop's back office, change the price of the product \"Brown bear cushion\" to €21.90 (tax excluded)."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The tax-excluded price of the product \"Brown bear cushion\" is changed to €21.90.",
+      "source": {
+        "field": "instruction",
+        "quote": "change the price of the product \"Brown bear cushion\" to €21.90 (tax excluded)"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-catalog-price",
+      "requirement": "R1",
+      "description": "The backend catalog probe shows the product \"Brown bear cushion\" with a tax-excluded price of 21.90.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "catalog"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "const": "Brown bear cushion"
+                },
+                "price": {
+                  "type": "number",
+                  "minimum": 21.895,
+                  "maximum": 21.905
+                }
+              },
+              "required": [
+                "name",
+                "price"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:19:25.187Z"
+  }
+}

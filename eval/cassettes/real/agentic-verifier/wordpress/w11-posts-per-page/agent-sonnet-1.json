@@ -1,0 +1,203 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:15:31.408Z",
+ "turns": {
+  "sha256:df97fdf59976e2340dd270304bf7392d192898f3d1e3acd1506626c1d858158f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Mz8JDZZjy7eza8UKPEry7D",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01QHrCZwgGHbvWWVknSAbayq",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Mz8JDZZjy7eza8UKPEry7D",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01QHrCZwgGHbvWWVknSAbayq",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1855,
+    "outputTokens": 70,
+    "cacheReadTokens": 1851,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a6b4679e09ccfd8e46049efcbc5ec615a4af2024dc3f7d2720320529c1682e93": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_014nrqqwwXgvAeP4WLhBzw9m",
+     "name": "network_entry",
+     "input": {
+      "seq": 72
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSzQUKEAgTGAI4AUIIdGhpbmtpbmcSDHkMwqzBqlIVZcTSnxoMlhT02WklkuSf9RKxIjD0h5rWROP0Vl/usSbduxmpXmZSHjvt8fB5D1uf5fAWn41U77WVBee0mxlOPip43JIq6gT9XwR0ONaRYRQ7rSELa6deccZVnHjOACvedci+JhEwBL1r1GY2XUlB7HiSYl0WKXf36HF5S19DU2AUQiU8m1csOF9wB/YzpmkiQItdWLg4sai3ZaYhZjcQPfDuG/9BxR64GtGuzw3VSR1cNU5ferPbVg02dtxF9jkg5Iub5PeexHMevpADQ7j5wl3NxQotMgnip+Dj39dXjFyWxTOxRoJqeWGZYnEajuXqOZk5cYvLmEV3heqGsjlLK32S0kp7md4q7XLuoCFboJt/s9xGMcksN3nUX1My9QFzGX6fc6scqmyIEw/G/1fN9U5Qi9sPR+b+jXs514WgArOF21IxuGTx/fAn8tXgCNFDFXkHDkFSVEBNxGXMnI2lq5hEbSYZA3uJ0yJacUb8ZF032o9cR8+arAXlFO1zYVQVg/gqqqD254Uvjx/AG6K+EX2+4Yiz1JoBOwn2obURi56zXTlcsS6rzP/M07K5bQ7vY2CK4YtNpdhbBwfoLfqUCjwW+/jg6Ek6Ay2aKj+PxbyJ1raF63aAsLlmM532as6xaPiqbZYhqo2+oQ34yXkLcV6EChy++OawIB5ZnumhuG4SO4Ill2xVgvQAPPVFfRGrFnr30qG6fEeVDLYQcjmC5uxPDUS9aOj6YDqdq4TbVAuWNDPlzHDkbLe9+kM0O95mSj/oYTtIfFgdR6xskd+tPbm1eI3G2EH/fi3C3T0fNHcJ4xX96h0Um8+LyzKge6JLd4vEGtuOC+oTMokEG5dyTTXmni6zGYxU6QPioyLWxJgUoK9j9SCZNULzglGE12uiJn8AV1wI+hcFx0EwROfIk4QYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_014nrqqwwXgvAeP4WLhBzw9m",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 72
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3931,
+    "outputTokens": 77,
+    "cacheReadTokens": 3929,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:bc5a244ba08466bd808c8f32364d0a751b615f391d185d48fbc3c547e3547984": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01AShssquucA55nNPxjtDgAg",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Make the blog show at most 5 posts per page.",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The Reading Settings form was submitted with posts_per_page=5, and the server redirected with settings-updated=true (obs 3). The settings probe taken after the task shows posts_per_page: 5 (obs 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSogYKEAgTGAI4AUIIdGhpbmtpbmcSDLEaUF8KOq3o7cZ0hRoMyN5XTOPmYcvIVDvfIjDho8gg3MoZp2oagCSvNEqLQRYqjnjV/DLZ910Afg5VsxArxgPfMtZqsC3kU3+b8q4qvwWQ2lLuIpcYuSJ9u48JM9cbH1yyoWb3B7BN6Sw0728DAQgEfhYhiRRsyiwk7u9OGEJKEngpAksi/0vp0b8b2Acg6C2rfqgbuKwumF/iPIzILXP7Cx12TO2YlF4rE2ABnRgLOGiRwJD9VZe0JKEa/eLP1wz5tYvBQA1e92fXUby1lYDltZdQXPMBVSFNOggAWcLDMzCFegXGizUGHsZ3dj6j7mjAlV6k4uY6qDbfoUG0vLuSc7/rUXDSZSgyWlxZGN5LgWLSx2KskLMPp2MMLMEmrTggmtVYK4p/iNsZ5OsAFdVjk9vAeCQWa+m0kSlktg5erTN9cY541BYcTer1QEt2VYoicuLshXwixNWfFvwzkVEwnPYnMkIzVYjZMS59ZHVSU1a5LTG3VwDoXzdjx9t1q8pDVvrTH8qfTE8QmJpC8H/Pys1H+3XX5WxD1Gnr+lCPCPGw47EHbPnOLQoQ71B+LD6ZmroPB1uKUOzazjwS/QxXZ3zke+aCliHSAOmcdyR14OJ2jGS+GTQtJHpUWh4IKJ3i5NyZRJjKRImkKPeU06wQ+G9oCCZLQxHR+QXwTzbOXqhLy85I/SC+yK3rOZtmzT4JbfcYsf4QGw9ZlvrpBUk5nw2stTxb21hZeX4EZuCbOe3c0swTcCNpCf9qG71CUnheUvx8ZxGE3iSvNqRN6yKbds4K2x0UQJUvzsUOZcBIuJjgeTYJjDFBRJtrxbHgeYMNStS84yM40HlHLuVKQ929Vn4kithM3AzxWVk1vtKAGU0CGb7GhDdXOqAF2BNrnoweRE7LefjG5FBTgkX/DgiEO4okG8909zHcEYy4FYbzB1KeXGW1/uPwjnzFAuYjhKpVkaLN+Emim3MjP4mTUXsKGuWoRUcRFjvdZqvNBZpdc5JKF6CxsFvBd4M5dqnZ08LcA0xEDBaS/JjkVxRiGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01AShssquucA55nNPxjtDgAg",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Make the blog show at most 5 posts per page.",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The Reading Settings form was submitted with posts_per_page=5, and the server redirected with settings-updated=true (obs 3). The settings probe taken after the task shows posts_per_page: 5 (obs 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4276,
+    "outputTokens": 216,
+    "cacheReadTokens": 3929,
+    "cacheWriteTokens": 345
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:f820d975ebea520fae4203e9156da5606a5bcf82551132c05be94a05d7973b7f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01UjeTa1PB3m4YJycWEdKH3q",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The Reading Settings form was submitted with posts_per_page=5, and the server redirected with settings-updated=true (obs 3). The settings probe taken after the task shows posts_per_page: 5 (obs 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01UjeTa1PB3m4YJycWEdKH3q",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The Reading Settings form was submitted with posts_per_page=5, and the server redirected with settings-updated=true (obs 3). The settings probe taken after the task shows posts_per_page: 5 (obs 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4545,
+    "outputTokens": 160,
+    "cacheReadTokens": 4274,
+    "cacheWriteTokens": 269
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

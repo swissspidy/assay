@@ -1,0 +1,167 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:19:19.518Z",
+ "turns": {
+  "sha256:ed5b0c831ad1600cfd4325e554de32ec8e2cb39221be2cbe85f642bb0e91bb6e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_013yQvTSamaQtyQyCwm25s89",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The discount code AUTUMN10 is applied to the user's cart.",
+        "field": "instruction",
+        "quote": "Apply the discount code AUTUMN10 to my cart."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_013yQvTSamaQtyQyCwm25s89",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The discount code AUTUMN10 is applied to the user's cart.",
+        "field": "instruction",
+        "quote": "Apply the discount code AUTUMN10 to my cart."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1061,
+    "outputTokens": 126,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1057
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:4837d73384b15ec252bf9c3d8cb5a7f230e3bdec878426c6ccaa5faaa1f723ee": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01QW6ycs94DbxJxNebFsb4Cg",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01QW6ycs94DbxJxNebFsb4Cg",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 16861,
+    "outputTokens": 25,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 16857
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:8ae491cb52917c980e522dee95d6048cec935aa4855196641ef7cae263c4b710": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_013HKAQWtEWt5pZfB3KaZ9JM",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "r1-voucher-in-cart",
+        "requirement": "R1",
+        "description": "The backend cart probe lists the voucher AUTUMN10 among the cart's applied vouchers.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/vouchers"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "const": "AUTUMN10"
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS8QYKEAgTGAI4AUIIdGhpbmtpbmcSDEJMpJtFwVIp5AOngBoMDBXs/Yv6MMC0ElcqIjDJS5ZX/4btVcs7bYYtpJaDQDzA+Za1XCN1unZT0AQLn19wzMjqO5zlMVSe8GMc+MYqjgavqcQ8H4QGks7n5LkandeRuPtY5rqAb+GJFc8Um2aw+KAut5ON4d5tbS8PfJS0JkIpo0T5UsMTXytFTvjNZQ/k06mo/MyVzv8oNbDirgSo7I3bXcysffWWC9szGydBzmPtbcZ2U0amYIcJDNA2+RpRCTujdH39ibboZbC17ivtQXvj9Rt2zKJ+ynybfYXn+HSrJ19WRiywCy1BHM3hEzGtLI+Q8f84nYrLcMe11hfXn+G4Ka1vz56HOHuYt4D3yggmL4ZvJCOy73DeTncGTbvC4Bx3hzFy841TkNwFdGqhBka+kV/HhEIq7e3ttdGfRlINVaMtmQt7wxUJJEEHvBpwh+U0Rw2DHfw1klEhMy/I5qczvz3K9baxEMIS2y9mwrs31gxk3/odofU6FQWvPC30Txnyxwo9JHC6+/PNwGi39HnyeUeGsvhW768UwzboM7L0mr27hEOAO0q9u992j9v2V73oOcbCW7mtDzLoMZVKCorA7x8VQWg/LM7EGUoR5MbDrfxfdVJZSjvFklXAzdekscXiaK48WiB0zUQp0fk9o6pSf2fL/H6bxkAf2I5TZjZ9QJYia8/mg+uPzy3pzkngo2CT/1qimEutSx9gLRx6EOQlcgKpfUe2sM0UjCSMZiw8qLxFyp/2HR8ozARwFDycvSxALihsZhygd8dS8E2WT+4DIqxNX6wDY3+S0+HBVfV57LflGa8mH/X6huAGr1kZBFzvML/AIhaKCbWiFjNae0o+rurmQVqFgIibq2l5mENKVezir7iuqsO9c65fsuEk8cw0w5EwGzEitgtD2Z+t1Epq6E5RcQ5WxY2QIPDCmHCCSsjx5wUkH+zTKV/2NKDx4E2JesPYtCKnHx8ADFmFJ+tra02UFZ8VaBYYG6pEvWyFvqPWZKOn+v+RFdkHp96w7Dqp/dTBsIN3RwOPnqJryRCewFLW+vOaxn77w9p9eDnl2gHHsjIgrhSt3PlZlqHGRGGB+b7G3Ly/ixEzxSnFbDbcUydwSTwsm4WAMXf2aIT8OcIDZdImSNWsjsud+BgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_013HKAQWtEWt5pZfB3KaZ9JM",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "r1-voucher-in-cart",
+        "requirement": "R1",
+        "description": "The backend cart probe lists the voucher AUTUMN10 among the cart's applied vouchers.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/vouchers"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "const": "AUTUMN10"
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 21026,
+    "outputTokens": 279,
+    "cacheReadTokens": 16857,
+    "cacheWriteTokens": 4167
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

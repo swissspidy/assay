@@ -1,0 +1,49 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "gitea/g07-star",
+  "version": "1",
+  "task": {
+    "instruction": "Star the acme/docs repository."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The acme/docs repository is starred.",
+      "source": {
+        "field": "instruction",
+        "quote": "Star the acme/docs repository."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-docs-starred",
+      "requirement": "R1",
+      "description": "After the task, the backend list of repositories starred by alice includes acme/docs.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "aliceStarred"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "const": "acme/docs"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:13:00.692Z"
+  }
+}

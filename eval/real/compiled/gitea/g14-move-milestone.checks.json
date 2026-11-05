@@ -1,0 +1,123 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "gitea/g14-move-milestone",
+  "version": "1",
+  "task": {
+    "instruction": "Create a milestone \"v1.2\" in acme/webapp and move every open issue of milestone v1.1 into it."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "A milestone named \"v1.2\" exists in the acme/webapp repository.",
+      "source": {
+        "field": "instruction",
+        "quote": "Create a milestone \"v1.2\" in acme/webapp"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "Every issue that was open in milestone v1.1 is now assigned to milestone v1.2.",
+      "source": {
+        "field": "instruction",
+        "quote": "move every open issue of milestone v1.1 into it"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "r1-milestone-v1.2-exists",
+      "requirement": "R1",
+      "description": "The backend milestones list for acme/webapp contains a milestone titled exactly \"v1.2\".",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "milestones"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "const": "v1.2"
+                }
+              },
+              "required": [
+                "title"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r2-open-v1.1-issues-moved-to-v1.2",
+      "requirement": "R2",
+      "description": "The set of issue numbers assigned to milestone v1.2 after the task equals the set of issues that were open in milestone v1.1 before the task.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "normalize": [
+          {
+            "op": "items",
+            "where": {
+              "properties": {
+                "milestone": {
+                  "const": "v1.2"
+                }
+              },
+              "required": [
+                "milestone"
+              ]
+            },
+            "pointer": "/number"
+          }
+        ],
+        "expect": {
+          "sameAs": {
+            "source": {
+              "from": "probe",
+              "probe": "issues",
+              "at": "before"
+            },
+            "normalize": [
+              {
+                "op": "items",
+                "where": {
+                  "properties": {
+                    "milestone": {
+                      "const": "v1.1"
+                    },
+                    "state": {
+                      "const": "open"
+                    }
+                  },
+                  "required": [
+                    "milestone",
+                    "state"
+                  ]
+                },
+                "pointer": "/number"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:21:03.572Z"
+  }
+}

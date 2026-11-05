@@ -1,0 +1,61 @@
+{
+  "task": "wordpress/w08-recategorize",
+  "status": "compiled",
+  "model": "anthropic:claude-opus-5-5@high (replay)",
+  "modelsUsed": [
+    "claude-opus-5-5"
+  ],
+  "turns": {
+    "rubric": 1,
+    "discovery": 3
+  },
+  "usage": {
+    "inputTokens": 60395,
+    "outputTokens": 2158,
+    "cacheReadTokens": 37320,
+    "cacheWriteTokens": 23063
+  },
+  "coverage": [
+    {
+      "requirement": "R1",
+      "quote": "Move the post \"Writing your first check\"",
+      "checks": [
+        "r1-same-post-moved"
+      ],
+      "channels": [
+        "probe"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R2",
+      "quote": "to Tutorials",
+      "checks": [
+        "r2-in-tutorials"
+      ],
+      "channels": [
+        "probe"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R3",
+      "quote": "from the News category",
+      "checks": [
+        "r3-not-in-news"
+      ],
+      "channels": [
+        "probe"
+      ],
+      "trust": "structured"
+    }
+  ],
+  "warnings": [],
+  "references": [
+    {
+      "name": "reference",
+      "kind": "success",
+      "verdict": "success"
+    }
+  ]
+}

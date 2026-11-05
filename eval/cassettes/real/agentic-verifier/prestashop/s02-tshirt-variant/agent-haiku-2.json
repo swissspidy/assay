@@ -1,0 +1,148 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:53:20.868Z",
+ "turns": {
+  "sha256:0d2aaf0fb0c2572f565505a22be61611e00d5c887a7894e6ee0e52932009730f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_012Nub91FrKhRgVJaauKwNLT",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01H59h1BL4jc6hjNv52DCEzi",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_012Nub91FrKhRgVJaauKwNLT",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01H59h1BL4jc6hjNv52DCEzi",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1924,
+    "outputTokens": 70,
+    "cacheReadTokens": 1920,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:27db03b20598ae7b4b265fa66114018e168e96749324983d3d078d5a3a76485f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011r8myP8uoif1U9unYkF9Fx",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "After the task, the cart probe shows one line, \"Hummingbird printed t-shirt\", with quantity 1. The network log has a POST to /cart that follows the product configuration request."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The cart line's attributes include \"Size - L\". The request also sent group[1]=3, which matches size L (the URL shows 3-size-l)."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The cart line's attributes include \"Color - Black\". The request also sent group[2]=11, which matches black (the URL shows 11-color-black)."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSxwUKEAgTGAI4AUIIdGhpbmtpbmcSDPy7k1ETLLsHRNzNZxoMnCRB2KR1rJemfRU1IjBX2t0QLs5S5hBBfpjZ1A4lkLMzVyJfRqy4yPfy/qrXO1t69Fmb002NNZW9rzXKru0q5ASidcBss/uXcs8O0YaHBTCsh1z20HK5MwChATswluVTx/RrGlAeF+kIVxCrU30Fik5bh9r2Vp5SIYlQQYl8rEPfdakuVq/x9JYLXZeSrEP/385efTMmf36T2L+CWpaWndtXB6jn1gTI91UW5ygyFpApbhPmstFLTIY+Ky1HC+UyGi60YIDBtCQjeApldZcM6SpIUgPp8o0vdugpOfaQ1yRoCXVilPcB4iHbCxRbME9m6jxUgBJ3Jn25/OUgu407hu7EoZ99z/oBu2YDbJSyFBF5mQgEmgQt4tggpJ97zHuIMh17l1gUqlDY4frjVD2PlUmwg4h7TyEhW5nYulY6lurdD0t3yOi9E6I8ZQqVzOFP79AIZF+VltlQq4oRfnlQMndKvWpX2KSVh+dTgNJLb2UyVsJdYFfNq1hCsh2c1CHfAFsbvwMeXG44xYrrqzFPfwZNWxNNZQ5d1qcf90fZV7rIZac99kNsE8F4oQNY8EzuEzC551UdI/6P61BuuXj1BFJ+/NtHkFMCNodB/M1BoegSFi+VogGv/syONYJFs+aP0DdSN2lYTOI76ns2hdC3WYnDs2nyfUFnjzjwO97SZTiLZ38Z5K0JQ/U5fcX8hUs/VbekIwQ67LwnSfh5FneNJV/3VAB6YAasZlOLeDYcJPOs9iBG0a1Cf1MtklgrpvnDT1E2PE1R9coiPKpvv63CDX5GDQZDNgpcPGJP1WnYsHV0DDfRoSlkTGQb7OzdLtWquxw5Bh0qaJeEDyCXZ5YFhKUmcS7QhOiCDk97CBGtWKuN6y6QFsQI49etNi+yA0SnfNBhJXMYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_011r8myP8uoif1U9unYkF9Fx",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "After the task, the cart probe shows one line, \"Hummingbird printed t-shirt\", with quantity 1. The network log has a POST to /cart that follows the product configuration request."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The cart line's attributes include \"Size - L\". The request also sent group[1]=3, which matches size L (the URL shows 3-size-l)."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The cart line's attributes include \"Color - Black\". The request also sent group[2]=11, which matches black (the URL shows 11-color-black)."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4246,
+    "outputTokens": 336,
+    "cacheReadTokens": 4244,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

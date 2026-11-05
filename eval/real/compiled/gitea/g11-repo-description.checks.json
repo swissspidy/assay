@@ -1,0 +1,61 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "gitea/g11-repo-description",
+  "version": "1",
+  "task": {
+    "instruction": "Change the description of my dotfiles repository to \"Shell and editor configuration\"."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The dotfiles repository's description is changed to \"Shell and editor configuration\".",
+      "source": {
+        "field": "instruction",
+        "quote": "Change the description of my dotfiles repository to \"Shell and editor configuration\"."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "dotfiles-description-updated",
+      "requirement": "R1",
+      "description": "The backend shows the alice/dotfiles repository with the description \"Shell and editor configuration\".",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "aliceRepos"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "full_name": {
+                  "const": "alice/dotfiles"
+                },
+                "description": {
+                  "const": "Shell and editor configuration"
+                }
+              },
+              "required": [
+                "full_name",
+                "description"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:14:04.732Z"
+  }
+}

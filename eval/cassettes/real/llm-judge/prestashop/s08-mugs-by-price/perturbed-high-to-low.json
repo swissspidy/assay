@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:32:42.696Z",
+ "turns": {
+  "sha256:22373dff997f42c9c7b2c4d3b34a3776e7b96cc90d24cd8a090152c9c596aebf": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0119LYG7xDzD6d6P1GDecZJf",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to show the shop's mugs sorted from cheapest to most expensive. The final page is a search results page at /search with no query parameters, and it says \"No matches were found for your search.\" No mugs appear, and nothing is sorted by price. The default PrestaShop catalog includes mugs (e.g., under Accessories > Home Accessories). The correct end state would be a search or category page listing them with an ascending price sort, such as a URL with order=product.price.asc. The agent's claim that it finished the task doesn't match the page, which shows no mugs at all."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_0119LYG7xDzD6d6P1GDecZJf",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to show the shop's mugs sorted from cheapest to most expensive. The final page is a search results page at /search with no query parameters, and it says \"No matches were found for your search.\" No mugs appear, and nothing is sorted by price. The default PrestaShop catalog includes mugs (e.g., under Accessories > Home Accessories). The correct end state would be a search or category page listing them with an ascending price sort, such as a URL with order=product.price.asc. The agent's claim that it finished the task doesn't match the page, which shows no mugs at all."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2267,
+    "outputTokens": 254,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2263
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

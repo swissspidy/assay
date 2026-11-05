@@ -1,0 +1,47 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:34:07.516Z",
+ "turns": {
+  "sha256:adbb693775c5a59b663d81b0803bfe19c53f8e11ed101923d418de7998768dec": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01N6HCoSCnvngBCoCzAjCcUp",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to mark order FFATNOMMJ as \"Shipped\", but the order's current status is \"Delivered\". The status history has only two entries: \"Awaiting check payment\" (12:31:08) and \"Delivered\" (12:51:05, by John Doe). PrestaShop has a separate \"Shipped\" status, and it appears in the dropdown, but the agent never applied it. Instead the agent set the order to a different status, \"Delivered\". The \"Successful update\" message only confirms that a status change was saved, not that the requested one was. Because the order was never set to Shipped, the task was not completed as asked."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS8wYKEAgTGAI4AUIIdGhpbmtpbmcSDF4EnjoKWxr+VaTBpRoMX/rccOggx9b44VTzIjAi9l40szAViaz7CH3WCIYepQO4ylBMcqkBr/yItB8Y+CZy9KTcwW0KcQSX4piaMRoqkAbfLKi4b2LVEdnbJJqiiPByzVqsFQlEOkbx9jcahxg/Qvcsik0o+8EBoKpIUHKEaz2KiYERNg9pZGZghp+U5cBZZHtzXcJwPiRB8dQ5TrXt5xm+GQAjWQ+hrvXbWg31QZj6H+Q4OnphdNE8iIfbPSNvqmtLVWiI9ruxD3yAClLj+xgN+3X9oMjx3nZ0vS1JwnDjyGbrarSG4ejNWT93+9++ZDavWnfkYPLU0OknBH5DZ5JFFQqdUPPQGOJX26lQaN9RzZONH4oxV3h46y5IfqHtTYaVDNg3ormdqLg0057/j3pTyKfIXmpYqn09Knkm+1lVNkWiMfa/QP4sVIy4ex9g+YDib0xix2x4SaOki7mZBUrxad2gqlI4IYCXLRExwIk/oOW5Q7fr9MrDk8ff8e0ClPsn9DGtZBEMTCb3F4yYsoJXNuBn0FpEMXIWh1ZYeqH22VV8C1fe+lgKLgQ1Sg2Z6UdwNcFpLbz2jGbq+XCFSJIhRjzZVosw0JCohStgfNh93wK7uWHsTJ/IZ8+uQHfx7Jr7q1eKKlkBqPOfZD5UZGaqfVqTMFrZ3FbbbrVWa/gcPibN2Ofpoj8GZA7WqbfXkfeiRGPhFS9LEWtP+YJO13kWF4TZthRhYE4aj0kkyI2Mb9lMbD9VDVbrMrL0V8NgAlq0xPv1LInGELyTM6tIxpKJaTxPcdwLH6+1imT3rmEIBYKh1ybKziW3c8o4Qr5G+s6xr3EQJRMg/VV9wSlfqbI7+uG0078W83P3tSSMP0lsVrtbaDtDCtUa3CYwPCB8Tq8kv3G2Pznbht7kJDbr6/u6lvNVFSzyM4t/cvEoYcNDNTKbZdhdzy41ld2qE2GPKCdRI1tqXBsW8J0rbk8j5bZK6tlbovXS372TcJaG2p+F51s8cIlFG00dR8Rq7B4dKS7HyEz59TieBzWxsr7USFG2eTNRHt6WOpCgIfh20OuZ7fB6B7uSOQ3c/e2/C8upx2OsTRdDYgyEHkLzUfB65pvypc4NTcZzPjIOblZKMDGIKqh38SlQxoF5jJtFszpBGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01N6HCoSCnvngBCoCzAjCcUp",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to mark order FFATNOMMJ as \"Shipped\", but the order's current status is \"Delivered\". The status history has only two entries: \"Awaiting check payment\" (12:31:08) and \"Delivered\" (12:51:05, by John Doe). PrestaShop has a separate \"Shipped\" status, and it appears in the dropdown, but the agent never applied it. Instead the agent set the order to a different status, \"Delivered\". The \"Successful update\" message only confirms that a status change was saved, not that the requested one was. Because the order was never set to Shipped, the task was not completed as asked."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 5570,
+    "outputTokens": 369,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 5566
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

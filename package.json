@@ -53,6 +53,9 @@
     "compile:examples": "node scripts/compile-examples.ts",
     "stress": "node scripts/stress.ts",
     "eval": "node scripts/eval.ts",
+    "eval:real": "node scripts/eval.ts --dataset real",
+    "real:collect": "node eval/real/collect.ts",
+    "real:compile": "node eval/real/compile.ts",
     "stability": "node scripts/stability.ts",
     "changeset": "changeset",
     "version-packages": "changeset version && npm install --package-lock-only --ignore-scripts"
@@ -62,6 +65,7 @@
     "yaml": "^2.9.1"
   },
   "devDependencies": {
+    "@ai-sdk/anthropic": "^4.0.97",
     "@anthropic-ai/sdk": "^1.4.0",
     "@changesets/changelog-github": "^1.0.1",
     "@changesets/cli": "^3.0.3",

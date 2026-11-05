@@ -1,0 +1,432 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "prestashop/s04-checkout",
+  "version": "1",
+  "task": {
+    "instruction": "Check out my cart: deliver it to my address called \"My address\" with My carrier, and pay by bank wire."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The cart is checked out (order placed).",
+      "source": {
+        "field": "instruction",
+        "quote": "Check out my cart"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "Delivery address used is the one named \"My address\".",
+      "source": {
+        "field": "instruction",
+        "quote": "deliver it to my address called \"My address\""
+      }
+    },
+    {
+      "id": "R3",
+      "kind": "hard",
+      "text": "The shipping carrier selected is \"My carrier\".",
+      "source": {
+        "field": "instruction",
+        "quote": "with My carrier"
+      }
+    },
+    {
+      "id": "R4",
+      "kind": "hard",
+      "text": "Payment method is bank wire.",
+      "source": {
+        "field": "instruction",
+        "quote": "pay by bank wire"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-order-with-cart-lines",
+      "requirement": "R1",
+      "description": "The backend holds an order whose lines are exactly the items that were in the cart before the task (Hummingbird cushion White x1, Mountain fox notebook Ruled x1), not canceled or in payment error.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "orders"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "lines",
+                "state"
+              ],
+              "properties": {
+                "state": {
+                  "type": "string",
+                  "not": {
+                    "enum": [
+                      "Canceled",
+                      "Payment error"
+                    ]
+                  }
+                },
+                "lines": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "allOf": [
+                    {
+                      "contains": {
+                        "type": "object",
+                        "required": [
+                          "product",
+                          "attributes",
+                          "quantity"
+                        ],
+                        "properties": {
+                          "product": {
+                            "const": "Hummingbird cushion"
+                          },
+                          "attributes": {
+                            "const": "Color - White"
+                          },
+                          "quantity": {
+                            "const": 1
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "contains": {
+                        "type": "object",
+                        "required": [
+                          "product",
+                          "attributes",
+                          "quantity"
+                        ],
+                        "properties": {
+                          "product": {
+                            "const": "Mountain fox notebook"
+                          },
+                          "attributes": {
+                            "const": "Paper Type - Ruled"
+                          },
+                          "quantity": {
+                            "const": 1
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R1-cart-emptied",
+      "requirement": "R1",
+      "description": "After checkout the customer's cart has no lines left.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "maxItems": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "R1-payment-validation-request",
+      "requirement": "R1",
+      "description": "A payment validation request was submitted to the shop and redirected (order placed).",
+      "assert": {
+        "kind": "request",
+        "match": {
+          "method": [
+            "POST",
+            "GET"
+          ],
+          "url": {
+            "regex": "/module/[^/]+/validation"
+          },
+          "status": {
+            "gte": 200,
+            "lt": 400
+          }
+        }
+      }
+    },
+    {
+      "id": "R2-order-address",
+      "requirement": "R2",
+      "description": "The order with the cart's items uses the delivery address named \"My address\".",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "orders"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "lines",
+                "address"
+              ],
+              "properties": {
+                "address": {
+                  "const": "My address"
+                },
+                "lines": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "allOf": [
+                    {
+                      "contains": {
+                        "type": "object",
+                        "required": [
+                          "product",
+                          "attributes",
+                          "quantity"
+                        ],
+                        "properties": {
+                          "product": {
+                            "const": "Hummingbird cushion"
+                          },
+                          "attributes": {
+                            "const": "Color - White"
+                          },
+                          "quantity": {
+                            "const": 1
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "contains": {
+                        "type": "object",
+                        "required": [
+                          "product",
+                          "attributes",
+                          "quantity"
+                        ],
+                        "properties": {
+                          "product": {
+                            "const": "Mountain fox notebook"
+                          },
+                          "attributes": {
+                            "const": "Paper Type - Ruled"
+                          },
+                          "quantity": {
+                            "const": 1
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R3-order-carrier",
+      "requirement": "R3",
+      "description": "The order with the cart's items is shipped with \"My carrier\".",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "orders"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "lines",
+                "carrier"
+              ],
+              "properties": {
+                "carrier": {
+                  "const": "My carrier"
+                },
+                "lines": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "allOf": [
+                    {
+                      "contains": {
+                        "type": "object",
+                        "required": [
+                          "product",
+                          "attributes",
+                          "quantity"
+                        ],
+                        "properties": {
+                          "product": {
+                            "const": "Hummingbird cushion"
+                          },
+                          "attributes": {
+                            "const": "Color - White"
+                          },
+                          "quantity": {
+                            "const": 1
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "contains": {
+                        "type": "object",
+                        "required": [
+                          "product",
+                          "attributes",
+                          "quantity"
+                        ],
+                        "properties": {
+                          "product": {
+                            "const": "Mountain fox notebook"
+                          },
+                          "attributes": {
+                            "const": "Paper Type - Ruled"
+                          },
+                          "quantity": {
+                            "const": 1
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R4-order-bankwire",
+      "requirement": "R4",
+      "description": "The order with the cart's items is paid by bank wire (payment bank wire/transfer, awaiting bank wire payment).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "orders"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "lines",
+                "payment"
+              ],
+              "properties": {
+                "payment": {
+                  "type": "string",
+                  "pattern": "[Bb]ank ([Ww]ire|[Tt]ransfer)|[Ww]ire"
+                },
+                "lines": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "allOf": [
+                    {
+                      "contains": {
+                        "type": "object",
+                        "required": [
+                          "product",
+                          "attributes",
+                          "quantity"
+                        ],
+                        "properties": {
+                          "product": {
+                            "const": "Hummingbird cushion"
+                          },
+                          "attributes": {
+                            "const": "Color - White"
+                          },
+                          "quantity": {
+                            "const": 1
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "contains": {
+                        "type": "object",
+                        "required": [
+                          "product",
+                          "attributes",
+                          "quantity"
+                        ],
+                        "properties": {
+                          "product": {
+                            "const": "Mountain fox notebook"
+                          },
+                          "attributes": {
+                            "const": "Paper Type - Ruled"
+                          },
+                          "quantity": {
+                            "const": 1
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R4-wirepayment-module",
+      "requirement": "R4",
+      "description": "The order was validated through the bank wire payment module.",
+      "assert": {
+        "kind": "request",
+        "match": {
+          "url": {
+            "path": "/module/ps_wirepayment/validation"
+          },
+          "status": {
+            "gte": 200,
+            "lt": 400
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:16:44.937Z"
+  }
+}

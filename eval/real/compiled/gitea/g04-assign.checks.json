@@ -1,0 +1,64 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "gitea/g04-assign",
+  "version": "1",
+  "task": {
+    "instruction": "Assign the \"Add CSV export\" issue in acme/webapp to bob."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The \"Add CSV export\" issue in the acme/webapp repository is assigned to bob.",
+      "source": {
+        "field": "instruction",
+        "quote": "Assign the \"Add CSV export\" issue in acme/webapp to bob."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "csv-export-assigned-bob",
+      "requirement": "R1",
+      "description": "The backend issues probe for acme/webapp shows the issue titled \"Add CSV export\" with bob among its assignees.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "const": "Add CSV export"
+                },
+                "assignees": {
+                  "type": "array",
+                  "contains": {
+                    "const": "bob"
+                  }
+                }
+              },
+              "required": [
+                "title",
+                "assignees"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:12:25.542Z"
+  }
+}

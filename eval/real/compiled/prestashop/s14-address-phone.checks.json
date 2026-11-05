@@ -1,0 +1,62 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "prestashop/s14-address-phone",
+  "version": "1",
+  "task": {
+    "instruction": "Change the phone number of my address \"My address\" to 305-555-0199."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The phone number of the address named \"My address\" is changed to 305-555-0199.",
+      "source": {
+        "field": "instruction",
+        "quote": "Change the phone number of my address \"My address\" to 305-555-0199."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-my-address-phone",
+      "requirement": "R1",
+      "description": "The backend addresses probe shows the address with alias \"My address\" has phone 305-555-0199 (tolerating only separator formatting).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "addresses"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "alias": {
+                  "const": "My address"
+                },
+                "phone": {
+                  "type": "string",
+                  "pattern": "^\\s*\\(?305\\)?[\\s.-]*555[\\s.-]*0199\\s*$"
+                }
+              },
+              "required": [
+                "alias",
+                "phone"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:23:23.336Z"
+  }
+}

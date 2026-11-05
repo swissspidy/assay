@@ -1,0 +1,615 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T12:05:18.925Z",
+ "turns": {
+  "sha256:7f793ca2105bc4cefd97b0c45f3731396cbab0a122384ff3cdf35635b7c007e7": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01L2PoVe7XHt1NmgrPRq73QU",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4320/wp-admin/edit-tags.php?taxonomy=category"
+     }
+    },
+    {
+     "id": "toolu_01RGwff3tPVX92p2LTGFG3e8",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4320/wp-admin/edit.php?category_name=events&post_status=all"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01L2PoVe7XHt1NmgrPRq73QU",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4320/wp-admin/edit-tags.php?taxonomy=category"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01RGwff3tPVX92p2LTGFG3e8",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4320/wp-admin/edit.php?category_name=events&post_status=all"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7260,
+    "outputTokens": 148,
+    "cacheReadTokens": 7256,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:cb4313743cc369c1d15e99ac64156ae38321c06ac207a1b4a2e077ef12f3c409": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KqufcPBFr3LZhhsiyPJuXR",
+     "name": "fill",
+     "input": {
+      "ref": "f1e173",
+      "text": "Community"
+     }
+    },
+    {
+     "id": "toolu_01UsQfU1VnnqoVPsDWhFfhmN",
+     "name": "show_part",
+     "input": {
+      "part": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSiQkKEAgTGAI4AUIIdGhpbmtpbmcSDH9yg3B8JiA1DCtiOBoMi9s/kJNpUvHTZG8GIjCD1zYgVdv5TC1HICryw77O+bjDG4aV2gM6AuGuJ0wsW5tu/88TMuWRukbDR5lGNpMqpginsZrTUXzJ4ahtWxMRIoigHVZr10EOm1luvXFGw8KbWcu0zEM+9jq8qdWtmETHzLaao1aXWNJnCa7xzN+zhtlyxgYFEAqaGn/KGPaaGkX2gC7g8GdpEtoyNUQMB2QALbRSC1f1DP0j4h8znViqzxR3ytQ/+dTky+x+JOLzp7PBkB8yA9aYV/poXj2g1MnCR9sHwjvQKBe9uSowLogdeImDHOEBxe2QRJ/nqnKSHk9sy4mErPJcw7gNf1RHe0o0IWq4AlBu5RqlNM7cOq3T3+7QWB0OdJ5MEP1xCtz5ijGCEDzJb9hF569PKwJCXwUnPqP9+DKJ2ktTtQensfP6CeQfbw6muJM8YJ3FzbSxdbCNF4WIPdKRg0BiH1riJMZPWE0k9W2hwZhf9QI2VSOlFP9J7CznU7jh+wBz4mVTylrt8/iOotLqiusNaAr7o3o+IN7yyapyNp+axOVCkfAp6FtbFS/qLlwse9GFQgzxpYDF1uUKVmxg078igyr3W2PbpNQoMifgqair2cVQ7fwrT6jRwjXopcPbJvDrVAKPazLmNpa9Gci5LsfuaQuXp3SzzPjp2TMOqFIgk3fO746y7t4OtbedmILnChv1w15PI01xieAFSDVNoOQta256hgxRfa/jmNjPhYwkZcPz8kNCzguPDKIlMpgQ1E07raeDWP1h1QNZ93z0BSsC1BQSrfTjF6mRvf3lnLpx61J19rzXlaiHPB1H7xk3qV840+sZb28a15jd3aHk0Mb6H2N9gi7pVyhfu8KfYNfN/J29XNFT+7i/8dKRArbdypOpC673E0d0nrt4n+iEmQTTmHwPueChsJo77rkR20y/ZiumoKMHOoPJtVtjnpPOhxbFVHEDme72z2yX6ZJJd+CthAO9cZjXunQbSh2coDsh1UCv1I8JhMW+9wsHh9+zi/DTEJjOBfsELEs2L3bFp9EKUWomltKWN3DDNcxaBQtNOm8EA5I7HmlPNIwp7y/XMD2da9KnkGDFzYKfi4p2HsAqtKzKdJ/Yp2L9mCUpzYUeaUsZHESA8g0vSz6vNxTgW1bxsEi5YHTll8vjPc69hgqS83hqeb/KW17yQK1vlZdEHEhSZa5bsXOtFiOMxBP6BRujy0TyXt0p2AypqpgoPwjlRv4D9e0s7+y8xghaq5iybRk/pdU0OCOI/8cLJEJ4rjw3UVWJGvquyAqWKcM7fERMKuCuiVQA6xxcD+hxsOmNPHhbb9vb2dW2vdEYGuhvyvbC8WV8huY100ZKBcjCveHC2CQ+TMYOLTxEAsyXr0o1VFeO1MPBUf4yKDVy4us8ZYYHJki0S+99vEa/LrYjaIZO3ajqgJZ+fJ41q+A9TOspddz8CxlFmOL+jpwhOQrBBMjM0KsGflq1WG2k2HAFYTMcCrr2oNYr+OvaEKUCx/QYAQ=="
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01KqufcPBFr3LZhhsiyPJuXR",
+       "toolName": "fill",
+       "input": {
+        "ref": "f1e173",
+        "text": "Community"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01UsQfU1VnnqoVPsDWhFfhmN",
+       "toolName": "show_part",
+       "input": {
+        "part": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 19288,
+    "outputTokens": 282,
+    "cacheReadTokens": 7256,
+    "cacheWriteTokens": 12030
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:fa13b09f7e707714576f5751ef112378d86c5605204e35447618d6287de194ed": {
+   "stop": "tool_use",
+   "text": "Events has 2 posts (one draft, one published). Now I'll create the category.",
+   "toolCalls": [
+    {
+     "id": "toolu_01UooSSmif9f4A5o12hzpkGo",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4320/wp-admin/edit-tags.php?taxonomy=category"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQStQgKEAgTGAI4AUIIdGhpbmtpbmcSDDZdcAO/2ULzrekuKxoMaIatpB0Segh9twy0IjCOlepG6cKxlcpD6mqIdo0VGV4znW/q+6fbqlAQu/SsDvHa+dR7e2V9zcn/Nu7jVI8q0gcGvQPDrK5ipnxL2bqM58wh5FPh0zaqhkv9QMZyb7/W8r3S+IOylFtWwPHhDHJzaROF/+QGuWQ7MKo58zIHUtf67CrEDYdrAGjWB1u1D9Y7bLZZ9gy5EzaOMhZYjaRx92ADK3UL7e6jis4Qi0OnOHNlQd7AGQNPK5lNTvqsDZLJQj2gjmFDnBeQfxh7wtNzIr75DGu1x5LaUmPt/qNJMNPN5RBubghsRwFC4XXhWHA/rbXusyhpk2brRlc7lDYYMmEA4piUHLD4FPnVYV2OzTt2VRfawqp57iiEsuv10hFVt8ZtYy52hb4/owhyk+yluyXZp+BffJ0gGl4vUQh8lz40dDur2I7ixq1XYtQFouRwDGIJi7eMbWMVrHN1z6Pp6aSHCjvlnp7Qedp8eF41Sy6lR5zlmnNeiG1UEG4Qb3c1jmfR4+XBqqq8Z/RFu/wU19HMDnXvT7k940OU0tPQBBqkS8Dxx/rHs/uZMzeXQCKquRS/ypBa4iKiLzlCbo1pg09K5KDmCrh8JB7dbJEAr6ZGHgAwamiQL9bKu/Ifdx02tYaJwW2qSbBOwuuJuxRKoK/LrvK5c66OHoCQT/aYwUUlrfTSV8iVV2fdNZN6oUnlbX/cFBhP38xZnEh7X9aPxcxY3OcXciY9hlnZ9nWeEffFUMvrCnOYPICiWqxlW3mOxs7qmQomD9GmZkQfhCbGqxe4WB+qophMUXS2QvprBVkbxf5zeKLvoCXvYgllWXHXHPmtse0jFN7H8S+dpY4eBtemM7Ttki/b47f32gC3r2M5q74X/YhrHlMyXXe1Mp2RwcjJhM1eKzuwW2VXWlx2UW/WtDagd+UgIWU+w+UoYK0ivRMNR/yCozFnf4u7xBwrgX37Cda7EADa4dsMNqnFn/A9FeJ2G4poADi4QFUkSY0fi+xdG6DCJ2EaQHf6ICigtGLFWCXsVgoSmKjhkzZOg19clKA/bHB+rvWpXU0cSY3Id44aO3WWMt/IKBrRNwwanhhtQpoUDwRrpXPfQhQHriEiBUjkm/1WPNnY61lFEnS/rjIsyJAPgnrGSH3x9W0hdeP7zSK8F6XS+4J/m0MNp3HdB7QC7V32a08duKXfBPcFTqFZ1aUfb7RAtL3KtXYEHHIxkCxE8iy1l5WqhfZlFsIgxa70xICSpBIhdXj9FKLVm6oDlXRRetOiRk+DYMzD0DCUta5TGqJH4n0sjI+lLT7ulTnJtoPLpXDC0FDx0080T2GChKAWxIprUfDmwknjWGI0e9jC42p0r5U18xwTidyaBXxGXnPHrDz0ZF0MmUafZNcYAQ=="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "Events has 2 posts (one draft, one published). Now I'll create the category."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01UooSSmif9f4A5o12hzpkGo",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4320/wp-admin/edit-tags.php?taxonomy=category"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 16432,
+    "outputTokens": 219,
+    "cacheReadTokens": 7256,
+    "cacheWriteTokens": 9174
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:fdc3df9e8b21e94b02acc7c7138859930c249cb659976da4ff7e08ca080de38f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_013MFxpaXV6tBbE57cZUNawr",
+     "name": "fill",
+     "input": {
+      "ref": "f3e173",
+      "text": "Community"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_013MFxpaXV6tBbE57cZUNawr",
+       "toolName": "fill",
+       "input": {
+        "ref": "f3e173",
+        "text": "Community"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14183,
+    "outputTokens": 72,
+    "cacheReadTokens": 7256,
+    "cacheWriteTokens": 6925
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:b9320265cfef918709ed25b2f113626d77b9caa7823badefe80b84c9a8307e6d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Nu1niRh1Rt3i1oznoWA7cs",
+     "name": "click",
+     "input": {
+      "ref": "f3e188"
+     }
+    },
+    {
+     "id": "toolu_01DyJcE1PGoYLZwRhRDPMoqr",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4320/wp-admin/edit.php?category_name=events&post_status=all"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Nu1niRh1Rt3i1oznoWA7cs",
+       "toolName": "click",
+       "input": {
+        "ref": "f3e188"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01DyJcE1PGoYLZwRhRDPMoqr",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4320/wp-admin/edit.php?category_name=events&post_status=all"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14326,
+    "outputTokens": 122,
+    "cacheReadTokens": 7256,
+    "cacheWriteTokens": 7068
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:b2171a872c674fc5d54fb72dd3f4587ce9e4c2e9f1d69d969dcd3f075b4a40cb": {
+   "stop": "tool_use",
+   "text": "The Community category now exists. Next I'll select both Events posts and bulk-edit them to add Community.",
+   "toolCalls": [
+    {
+     "id": "toolu_01Gwmo9Ft3Doz6JzC2nFQ3jw",
+     "name": "click",
+     "input": {
+      "ref": "f4e195"
+     }
+    },
+    {
+     "id": "toolu_01YCFKEonSHDBPCvUPBsTJ4C",
+     "name": "select",
+     "input": {
+      "ref": "f4e179",
+      "options": [
+       "Edit"
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS3QgKEAgTGAI4AUIIdGhpbmtpbmcSDGhDNsyrdRU3GJRsZxoMkhCmxZie41f/ZFS+IjDsO9QTpuMnXbZb/Mc3oCv6PGLjxkAcxVTt2pyg01M6Rdk4egUuzIFueY6mcM4vLBgq+gdZQl9wD9nFZDvBZF/CqP9TeN0Ow2RLUBbQWDvF8FBxvwH77RFH4wOXfaMsbDOKWq2U4jCl6jKpbiyt+XsyUv45ww7qpmERgFun9hW3amDnxeMGoYc9nutZLoW0jm55zvOuZ9TGGe3G296YSkUrL5X+GLBAWqd99Lb0shx+1nFHQDqOJtQ66FokaxGIS/xk9BGrRhDhzE36NVDUNhdklBVlwls6eVfr9n9C/k9ghjbbwBlDR3vCKnf/5ANCrVEqdBc5IeAyb2im0RR2fKrtgPyWVUt6ASPiwupe4qxe+IJh89K27JXa++01PuPd8naZovDT4K6l1KJvVWxkNecIrBattoFkyLDEAYUTPNX/ns5Zx7NmMwuRJWnLHVEvvq1V2bkQC9qsW0GWG8oof35Y4ftxN/vUvlTnQhW8yMlVfWSCIBOoCUe8tH0iTnGQenUBG1VA3svX1Tnx5zjpzikYp844z33JIM196wOQEwIB8Lpyv/Y7XVMzrNzMiLwGSun5FFPyKlXRtrxkLDR6fmus6VmetDeMLg5U/yQkOgJ66Spc07MhBuRrabBU53kziHznId0ZO13K6/VI84BtAlaZVgkf5vsJDj9JtbkfgnBii+sWmJ4O46bwj4JzHKZHsDW20hkFFqGlP8E9aWmCVeqZSi92MD/h5XeVnExqNxFaCZxdkAvnSCqzaiqPEukA3fcshu5bcTmS0svC5qCrWuUIGBg2m7hgHbbi34Mq9MuTLcmZRfSPuZGTOsGzfmB/n6w2wT9Jk0Dt1YkniBTHGsgFLrGFDdKcO9fC7JNmk7nqQNkEi0Z0MTPiWtqsu2mXgmsWXX5RA7QxSkosLha3flpjW6GSj2qTBACH5h6tq8uHHAAu2Y8IJ4n+J4IXT/MGXmV0EaQaBaomyHNSOnla6/0USoqd6b0iF+VIVh2Pes4mVRxPVaARRTSpKGQmKMOnP1DwzjTcEBhdpt/64lyYlZWDZUBcCPB/76/3V+lCGeD71BqOd3LfLxazoDzjG859NzKe7Wy8OsCDl3joWpaQewaAdXc/UOO4IlNBCu3QlA4iBcdkIsLGE9oV//ZEN8X6tQlpYmlF1CmfrZmzNxjWboT3xxSwiCTzjpbL3RZ4VmPu6mRJeBDCM6EACZRezmhxhA7omTooPDoimEZR2NroaimPEGvG1Rm0Gqz6CRwPa/gVMiyuZPhNra0lW7PMolQcTxDJ1+mbUHdaVySiodkt5w9ZKVcpEYy5fCujGT/Q8xRCpwFrx6VCfLKY8KA0ChUrg3PnxsBcEoLSE6QMkJy0jrL16B/ZYi1PEP3Dq6QzJbrnKQU8ZvgTUJX1k7wEpdlcjFar1zx3lK+v7bR0DAsKGAE="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The Community category now exists. Next I'll select both Events posts and bulk-edit them to add Community."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Gwmo9Ft3Doz6JzC2nFQ3jw",
+       "toolName": "click",
+       "input": {
+        "ref": "f4e195"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01YCFKEonSHDBPCvUPBsTJ4C",
+       "toolName": "select",
+       "input": {
+        "ref": "f4e179",
+        "options": [
+         "Edit"
+        ]
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 20510,
+    "outputTokens": 266,
+    "cacheReadTokens": 7256,
+    "cacheWriteTokens": 13252
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:b51eab22c09cb153bf201e68a13b0593c9c35016e5d654cc324ac96a56294647": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0144Lpu5PsqC4J88SWaC4tAa",
+     "name": "click",
+     "input": {
+      "ref": "f4e180"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS1ggKEAgTGAI4AUIIdGhpbmtpbmcSDG7jo9PX3ePaIVVPcRoM0so+O/kA7gqCdmTfIjAoi3xLJknQpq199kOtex74CZqEb6DbmI83XhTEjbMfzIEfogiYMMVOay1gpoHUWDIq8weKKshDj1nIjEGP2KI8PMKKEiEyb7tEzWxZw39anu3IZ1L01sR7Hj3Jv/KSgFba9mb+DCguMusl/AEzrQpsoL4Xw1RU8y6PxAaI1SO5B/QsAeuPm7FIz5GGV7nk2TfCv5yXnz14vlIclAIPTIQKvg8rz6jKWPn/Vqza3ZabYNDl7iJwVhhr6y3ZwN8a6Ptnujh+qyn5EhBxsvqvd1diCepfK4aZocKtEWvURwNz/7FBj9H8rhoyLGu1Xy7XB62N12NCIL9r/IOxN4h1Gyw1UhTe/1zWsBffqzWbMbDUdod2nyEPPQXEZHMRsC2C26BfJ2hdHtksxt4dzLn73FuCcI7Ud4JY3lfChsbZLD9HVQH8Y1PsciKGd5KrXbxQtetV+tz+hgCpV0+6KlrCOjFRyjybR2LonnCZQ1FSOS6QjQwoaGfQiLV5mqV8S4LaJDbw7G+cg+iCuM+FZxLAggBRtx2+PEGqNjh/oc6a3K3vc37Uu+plqt11l//Fg0f27CRYIQg3tadqdg52CSQ7aLdJc8kuvaeouuZkiMOqufOsKbvUi3dVgQ5fYqqNhtdHniqbrI5XByyPIF6oJDrcdKythZvAcnr2LVQid6uzcajtR9HTqOuk8fyJCGzMx2PNUTPaDxEAR2e6AY8KazJnEs0RWCbDthtoRAlYLKfAmWbjFuV892qs8te59A/or1tN+b3UQadm6ZmtGKFlrsnHjgC1WF7acEuw33HYxljJb99J7ds6MWGN/5A9fZMslB1Kj2PjulLceIoljGVBwRNM/GCQ9n5++1uFA4ormj64hgHhs8urYkLltTU8S+/p7uycJY8YG3wYsnaag9RNzDChCA3ehgbvHIr2AkKGRM8ZnfDK9tsTsSFmJ48j2gomqd22XMgZwgJG7IJcwqPR7ffRV3Nzs7sYCkG0OK8eykwNwQfOCuSur8BYJYNLgUfzKHH0Y2YDsnqBrClkDv+ZsGBSL4tNl80nPBLC2KV2CkwTZKvssF7O8JJ+RWI8J9YS3Xlt3bpc+7ihka60E8iOU59E2qnXoTpqjgnjnbxpgE2ZN0Bq9BpuuH3FuFZsqQ+ie/mSTyI5lyaW6uCFQBgyuVaBb8dT6koGDxUqW7CpXOeiuWCbaZXAQ9gMDKw5homsOI/S8PY4LKDhHKc+V4LIEQWN9hbIx86C78XOHaZtuQeCUueTUa8Zm8AF5vm7GnJugk4neHlOwSxfyBybkEJs5e7/OJuix32jaR3LDYvOYAGVAh4CbDVRxb8pRmpa/sxMg3rk1dhtX8XgdMVF7fqaPZTsdUC4Co02Jr+628NtD0por1lV2l/c8oKIH2laEJjOamrr/N/JHo3017MYAQ=="
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_0144Lpu5PsqC4J88SWaC4tAa",
+       "toolName": "click",
+       "input": {
+        "ref": "f4e180"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 21013,
+    "outputTokens": 152,
+    "cacheReadTokens": 7256,
+    "cacheWriteTokens": 13755
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:214fc78842a10e8144fe88ab8062dd066a55c30f44a5b70d7198fe6ee24b481a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015cjg7je62C1BYLvCo9UFfB",
+     "name": "show_part",
+     "input": {
+      "part": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQStQcKEAgTGAI4AUIIdGhpbmtpbmcSDN14lBByguBEOOyOWxoMUBQCVVfNg/KAAhm/IjCbeeLXgEPUr8fG8t3C3I846i/1h39g8T+xMtUR/JkxDEiUjG/i0+xTOXgvBq7tulsq0gbFRe5Xs6Z+ApGU4iOcNUvjnHjAEtFzcC3QxpthATPolNR9E4jB2uXRRM2jk/JSJUehC+YYO1ehtBGlJRXosj3wttSVxQ9+Iq6UIE2TP1LUh1NMc+LQ7LTEvVAgQLaZ1tNmzXC32fVEOAILZ8PBev39cHgk56SIqkdI1qjVr+rRARZpwpARb7Lbqgp4Y1lgG1GKvvJlO2HOKdX34mzGf0XtIHO3k+gg4IUooBYPGszYf0KX2rXVyb8hpha8VnY7ctxHX1tPwqEwRsUjXxkNcHwvI/rNvio4z22cEFK22AD6MpXlRscIH92EmIdQbkWMlfVvuco54qpZc40s0daUqQu1J+uXmE01EkvZ9RAXDPsAn/OFnxxcrnBw1T74cCqRwA1BfOvJUaTuZ7QM7tuhVxj3VXMayesuJnx7RVIZDqxO4e29emJGHRLSU8D0bi35ilisMDa/qAlYI8CDdEDziQUMnc8cnQ5UDmWRV4UX+pUpRYkGYRKmGft9st+vgFS3gyWnehKBsWAZySEAE3fUFi8q2EgBiqQ/ZW0xEiYugZV2cn/+eNgQyHwMmNM0YMMa2Bw9NN3MatxFTDiCdGNGoMEr7AI3IjR5shv0L7bxxTqzHwkBYCSzZP/IIvX5FH8prdb7Eav3ZIdyHlH3Njw6dvvXu8pKWGsCsA5cnJNhgeub61LgCNgZrglAq9tWhxTB/wGcf1MhLvKXFqoV+r9PCVFRDa/7F/heoWKL53I1IdfctltFNM1t9a04WcLL5mGA5qdnzbvWi6CGKFgL5JKIQzrm9NpOszLbD4hNUsYr1LOg2OOfw6k8U3Gi/WTsfw0yrjl7f2kJV1JqSpyhg9KeK5GBxiXTMeUNzTdA7xJrh0S5B4mbyhOldH/D3a+jee4BfgCI81EBTOG4cj3B+Foo9L2+X6kS3hf1N2aLjMJDEJHQt4hbT4mbipwilXFMxfhj2UEqxR+xlYZn3pPu77QmqGcINNjYJ9lxM/c5FjBdQBXMwXUY1jzYr2gBW6l3cp6hRCH92js5SqS7+sqy+ms5ELpzdDSZ9wqjSRJ6kSumbb2/3CslMQd3ws3be4O88v1BEklMSl/BcfP8LpbCkzuMsNHO53oMSh85ZjNaQR9Uef4MMGraGAE="
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_015cjg7je62C1BYLvCo9UFfB",
+       "toolName": "show_part",
+       "input": {
+        "part": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 15172,
+    "outputTokens": 100,
+    "cacheReadTokens": 7256,
+    "cacheWriteTokens": 7914
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:0b7ce5b8b16f52ab9427aa339007b5b8115f60d01e6cd468b45d4be2b3687b1c": {
+   "stop": "tool_use",
+   "text": "Both posts are selected in the bulk editor. I'll tick Community and click Update.",
+   "toolCalls": [
+    {
+     "id": "toolu_01LwQ7ECEsN5uJQkJ38ghoFU",
+     "name": "set_checked",
+     "input": {
+      "ref": "f4e346",
+      "checked": true
+     }
+    },
+    {
+     "id": "toolu_01DvjofeoPpvGewhAqJ8ihoi",
+     "name": "click",
+     "input": {
+      "ref": "f4e387"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Both posts are selected in the bulk editor. I'll tick Community and click Update."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01LwQ7ECEsN5uJQkJ38ghoFU",
+       "toolName": "set_checked",
+       "input": {
+        "ref": "f4e346",
+        "checked": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01DvjofeoPpvGewhAqJ8ihoi",
+       "toolName": "click",
+       "input": {
+        "ref": "f4e387"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14099,
+    "outputTokens": 148,
+    "cacheReadTokens": 7256,
+    "cacheWriteTokens": 6841
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:a20dce35aedcbf7887a6027c13193f248c40546a0d5bd42073618f46c3b752da": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01RrRT1HTmuue4MfVfdDkdYf",
+     "name": "finish",
+     "input": {
+      "report": "Created the \"Community\" category and added both Events posts (\"Spring meetup recap\" (draft) and \"Community call: November\") to it via bulk edit; WordPress confirmed \"2 posts updated.\" Existing Events assignments were left in place."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS2QcKEAgTGAI4AUIIdGhpbmtpbmcSDD+u3ux2jRnVLOQpTxoMugbfGUve+jwW+vlnIjBrV1i60OtMQhwlpWM+nfN9RlWA8IZErW8R3BxJSfB19XNE1yH47jQGuZ5AV6MkHcIq9gYs/+rP3zErr7Xqe4wLhshjh2ZnqzzypYPU92I8zwbBWjJPoPLfuZnvUd8pomsD0F3sqdUBl0j38vAUkxlffMCW3m2Qw0hJ+9GGtFNmkzXiU7TynDttz73ywBHyCFubrzx7g5uy7CDG1BXCi7igdWtyFq0+8RJgbz/O9hSzQful+EODp+tjEhb3FEicX48Bxm6jmnilWUxiCPYcYZeANyD6ATjo4C+2o00Q8NNboeKmzww4gVf1m8BmITA2J7UiuuC0qse4pecSrgc8NhUrEjj0iQwBR2ZfR3M+0mOjW90SsVFravh1+sLZ3/Pj5HioX2vCWfdVy2NrkzmRZfctO2CGRoDRWxiww3LKx9e3nCKydpeISJ3aLKUCGLe5095VVHuFIdO3E/2fFlzCq+QtwfNNnloDYUHSJxgeUczhQOZH5RhpsYLMofhio8UXmb5BIWSRUc3ckTuYGoSEP7bn+gvGHciBH1XlBeeG/miN/+QYgbRMIotT3SlhuynjNUidn81q/JSMeuUIM8JWFfdT26gl8+H0KOdehB0Wr5tOeA52E5oBOys62IVS7ljieHofpxF163+yrGbRnQ3sDZ72DyW6c9DPiCaUVeQKdfJUZg+WdY28LkfAPYjDG2Ooyp3TKxSUGtLqjAJoofjXre2sINuY9O2QV2CNlvrvWPdiCOGH+mw+SKzfeo+46mPXKgDmg1+zRg74q9tv6Vwm9AE8OWTI9Jirg/WkGr7U1jUbZ/tbGHtVkXWNSjN+ZaK+C7RzpTqTFDRZsFUcewBXfZESPqpOtvPo/9n3TbY5EBERMmKl6bUez4ipdYwiRdZDIWkJnl4Dzkw9J+ylFFQxthii+iCwa8/pG7Vl4efWWOGyOkxVQ8MQtI6RpWQuJ9UsKiD34iu9CBtoiHmvpknhtaC0gZAFf+ohOWEcxQI1hML9CbReqnoSCBy6AR4m04l9EHjpUj0LL4cMEsZd0xErBsiiyE3k/MQv3e2nShgW5rIX6A3kzgSEfMSrvC2Kf7ZIhQySvGwMpZ7RRu8qm5c1gwmBpvy7Zpexe8x7C4+C5CFxrf+I3fPWlAaGY9ktGC/BJ3KCK3iGgJP/WBIL8Z0gJQvS2o89Nae0fjhmci8iNA9a98mMbZEFLzRi1hUOLKDdkef+3AVx8qouwUOhKMZtHtI+PNkmpXYjJPh0GAE="
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01RrRT1HTmuue4MfVfdDkdYf",
+       "toolName": "finish",
+       "input": {
+        "report": "Created the \"Community\" category and added both Events posts (\"Spring meetup recap\" (draft) and \"Community call: November\") to it via bulk edit; WordPress confirmed \"2 posts updated.\" Existing Events assignments were left in place."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 21551,
+    "outputTokens": 169,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 21549
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

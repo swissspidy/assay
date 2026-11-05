@@ -1,0 +1,45 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "wordpress/w05-site-title",
+  "version": "1",
+  "task": {
+    "instruction": "Change the site title to \"Assay Field Notes\"."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The site title is changed to \"Assay Field Notes\".",
+      "source": {
+        "field": "instruction",
+        "quote": "Change the site title to \"Assay Field Notes\"."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "site-title-saved",
+      "requirement": "R1",
+      "description": "The backend settings probe shows the site title is exactly \"Assay Field Notes\".",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "settings",
+          "pointer": "/title"
+        },
+        "expect": {
+          "equals": "Assay Field Notes"
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:14:33.759Z"
+  }
+}

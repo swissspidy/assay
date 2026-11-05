@@ -1,0 +1,189 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "wordpress/w14-community-category",
+  "version": "1",
+  "task": {
+    "instruction": "Create a category \"Community\" and add every post of the Events category to it as well."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "A category named \"Community\" exists.",
+      "source": {
+        "field": "instruction",
+        "quote": "Create a category \"Community\""
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "Every post in the Events category is also assigned to the Community category.",
+      "source": {
+        "field": "instruction",
+        "quote": "add every post of the Events category to it"
+      }
+    },
+    {
+      "id": "R3",
+      "kind": "hard",
+      "text": "The Events posts stay in the Events category, with Community added alongside it.",
+      "source": {
+        "field": "instruction",
+        "quote": "as well"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "community-category-exists",
+      "requirement": "R1",
+      "description": "The backend categories list contains a category named exactly \"Community\".",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "categories"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "const": "Community"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "events-posts-in-community",
+      "requirement": "R2",
+      "description": "The set of posts assigned to Community after the task equals the set of posts that were in Events before the task.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "posts"
+        },
+        "normalize": [
+          {
+            "op": "items",
+            "where": {
+              "properties": {
+                "categories": {
+                  "contains": {
+                    "const": "Community"
+                  }
+                }
+              },
+              "required": [
+                "categories"
+              ]
+            },
+            "pointer": "/id"
+          }
+        ],
+        "expect": {
+          "sameAs": {
+            "source": {
+              "from": "probe",
+              "probe": "posts",
+              "at": "before"
+            },
+            "normalize": [
+              {
+                "op": "items",
+                "where": {
+                  "properties": {
+                    "categories": {
+                      "contains": {
+                        "const": "Events"
+                      }
+                    }
+                  },
+                  "required": [
+                    "categories"
+                  ]
+                },
+                "pointer": "/id"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "events-posts-keep-events",
+      "requirement": "R3",
+      "description": "The posts in the Events category after the task are the same posts that were in Events before the task (Events was not removed).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "posts"
+        },
+        "normalize": [
+          {
+            "op": "items",
+            "where": {
+              "properties": {
+                "categories": {
+                  "contains": {
+                    "const": "Events"
+                  }
+                }
+              },
+              "required": [
+                "categories"
+              ]
+            },
+            "pointer": "/id"
+          }
+        ],
+        "expect": {
+          "sameAs": {
+            "source": {
+              "from": "probe",
+              "probe": "posts",
+              "at": "before"
+            },
+            "normalize": [
+              {
+                "op": "items",
+                "where": {
+                  "properties": {
+                    "categories": {
+                      "contains": {
+                        "const": "Events"
+                      }
+                    }
+                  },
+                  "required": [
+                    "categories"
+                  ]
+                },
+                "pointer": "/id"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:21:58.318Z"
+  }
+}

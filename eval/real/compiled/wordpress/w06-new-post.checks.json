@@ -1,0 +1,215 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "wordpress/w06-new-post",
+  "version": "1",
+  "task": {
+    "instruction": "Write and publish a new post titled \"Release 0.2 is out\" in the News category, with the text \"Assay 0.2 adds per-row checks.\""
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "A new post titled \"Release 0.2 is out\" is created.",
+      "source": {
+        "field": "instruction",
+        "quote": "Write and publish a new post titled \"Release 0.2 is out\""
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The post is published (not left as a draft).",
+      "source": {
+        "field": "instruction",
+        "quote": "publish"
+      }
+    },
+    {
+      "id": "R3",
+      "kind": "hard",
+      "text": "The post is in the News category.",
+      "source": {
+        "field": "instruction",
+        "quote": "in the News category"
+      }
+    },
+    {
+      "id": "R4",
+      "kind": "hard",
+      "text": "The post body contains the text \"Assay 0.2 adds per-row checks.\"",
+      "source": {
+        "field": "instruction",
+        "quote": "with the text \"Assay 0.2 adds per-row checks.\""
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-post-created",
+      "requirement": "R1",
+      "description": "A post titled \"Release 0.2 is out\" exists in the backend after the task and did not exist before it.",
+      "assert": {
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "posts"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "const": "Release 0.2 is out"
+                    }
+                  },
+                  "required": [
+                    "title"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "posts",
+              "at": "before"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "not": {
+                  "contains": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "const": "Release 0.2 is out"
+                      }
+                    },
+                    "required": [
+                      "title"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "R2-post-published",
+      "requirement": "R2",
+      "description": "The post titled \"Release 0.2 is out\" has status publish in the backend.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "posts"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "const": "Release 0.2 is out"
+                },
+                "status": {
+                  "const": "publish"
+                }
+              },
+              "required": [
+                "title",
+                "status"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R3-post-news-category",
+      "requirement": "R3",
+      "description": "The post titled \"Release 0.2 is out\" is assigned to the News category in the backend.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "posts"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "const": "Release 0.2 is out"
+                },
+                "categories": {
+                  "type": "array",
+                  "contains": {
+                    "const": "News"
+                  }
+                }
+              },
+              "required": [
+                "title",
+                "categories"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R4-post-body-text",
+      "requirement": "R4",
+      "description": "The post titled \"Release 0.2 is out\" has body text containing \"Assay 0.2 adds per-row checks\" (as shown in its excerpt).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "posts"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "const": "Release 0.2 is out"
+                },
+                "excerpt": {
+                  "type": "string",
+                  "pattern": "Assay 0\\.2 adds per-row checks"
+                }
+              },
+              "required": [
+                "title",
+                "excerpt"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:14:43.004Z"
+  }
+}

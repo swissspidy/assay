@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:37:36.427Z",
+ "turns": {
+  "sha256:9277608e9de7a09067c8970d89719bab16319f749727083b1edc4db96a37845e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KQo1XmthDMhYEEmAjbgZfp",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to mark the \"Cheap Watches\" comment as spam, and the final page shows that didn't happen. The notice on the page reads \"Comment by Cheap Watches moved to the Trash. Undo\". The status counts agree: Spam (0) and Trash (1). The comment was trashed, not marked as spam, which is a different result in WordPress. The agent says it completed the task, but the page state shows otherwise."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01KQo1XmthDMhYEEmAjbgZfp",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to mark the \"Cheap Watches\" comment as spam, and the final page shows that didn't happen. The notice on the page reads \"Comment by Cheap Watches moved to the Trash. Undo\". The status counts agree: Spam (0) and Trash (1). The comment was trashed, not marked as spam, which is a different result in WordPress. The agent says it completed the task, but the page state shows otherwise."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4498,
+    "outputTokens": 210,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 4494
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

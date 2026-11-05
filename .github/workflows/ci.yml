@@ -130,8 +130,14 @@ jobs:
         env:
           ASSAY_MODEL_MODE: replay
         run: node scripts/eval.ts
+      # The real-app runs (ADR 0009) are stored snapshots: no app or browser is started.
+      - name: Evaluation (real apps)
+        env:
+          ASSAY_MODEL_MODE: replay
+        run: node scripts/eval.ts --dataset real
       - name: Summary
         if: always()
         run: |
           cat ci-results/stability/REPORT.md >> "$GITHUB_STEP_SUMMARY" || true
           cat eval/results/REPORT.md >> "$GITHUB_STEP_SUMMARY" || true
+          sed -n '1,/^## Notes/p' eval/results/real/REPORT.md >> "$GITHUB_STEP_SUMMARY" || true

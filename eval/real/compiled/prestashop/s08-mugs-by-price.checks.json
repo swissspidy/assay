@@ -1,0 +1,108 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "prestashop/s08-mugs-by-price",
+  "version": "1",
+  "task": {
+    "instruction": "Show me the mugs in the shop, cheapest first."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The shop's mugs are shown to the user.",
+      "source": {
+        "field": "instruction",
+        "quote": "Show me the mugs in the shop"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The mugs are sorted by price, lowest first.",
+      "source": {
+        "field": "instruction",
+        "quote": "cheapest first"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-search-mugs-url",
+      "requirement": "R1",
+      "description": "The current page is the shop search results for the query 'mug' or 'mugs'.",
+      "assert": {
+        "kind": "url",
+        "match": {
+          "path": "/search",
+          "query": {
+            "s": {
+              "regex": "^\\s*mugs?\\s*$",
+              "flags": "i"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R1-mug-products-listed",
+      "requirement": "R1",
+      "description": "The main content lists at least one product whose title contains 'mug'.",
+      "assert": {
+        "kind": "contains",
+        "scope": {
+          "role": "main"
+        },
+        "match": {
+          "role": "heading",
+          "level": 2,
+          "name": {
+            "contains": "mug",
+            "ignoreCase": true
+          }
+        }
+      }
+    },
+    {
+      "id": "R2-order-price-asc-url",
+      "requirement": "R2",
+      "description": "The page URL has the sort order set to price ascending.",
+      "assert": {
+        "kind": "url",
+        "match": {
+          "query": {
+            "order": {
+              "equals": "product.price.asc"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R2-sort-control",
+      "requirement": "R2",
+      "description": "The sort-by control shows 'Price, low to high'.",
+      "assert": {
+        "kind": "state",
+        "target": {
+          "role": "button",
+          "name": {
+            "contains": "Sort by"
+          }
+        },
+        "expect": {
+          "text": {
+            "contains": "Price, low to high"
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:18:46.788Z"
+  }
+}

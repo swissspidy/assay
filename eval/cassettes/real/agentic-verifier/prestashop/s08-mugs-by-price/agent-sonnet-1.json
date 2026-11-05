@@ -1,0 +1,213 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:59:50.686Z",
+ "turns": {
+  "sha256:7b00bd04cab9bc35dbc366bbe06c7e1e3e020801d15d68260722f4dc0e956a48": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01WQaUGzydrrshLj4F7GFBnc",
+     "name": "page_outline",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01WQaUGzydrrshLj4F7GFBnc",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1872,
+    "outputTokens": 27,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1868
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:0414e1dcffc6ab71bf17206e8a3ce43511c772ccfacce13c0e2011b62227263e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01XiBrrQY5m6P13TmzZ76mP4",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSpwYKEAgTGAI4AUIIdGhpbmtpbmcSDLf0erCbJnrzDgADmxoMHNICuetJWuFMNiKqIjD8RM5rBIWIA6SIwZlPYMAnaqY3NrYAIDXurEBTKh23RH/m4OqY2JH5eiya74uYDTEqxAXSSeNfBcQATdp4TV4/gzDfpN6Zp3lcZ3HipP9WT2gV2j5IGTHOnQ65rp95yB3jUFyKEZJZlF1U01nr+j40vvA8KdROT3026ZfFpa4RMXEdojg6t3VTzEkPtUaadhgjq1+fW1NT19VcOdbTh/zPrldZuN1+lBjnu0lKianD2WcemYwjJDJwzOYdzIKHWoBkTqXt/s/L2Jy+wWfoF6ZPsxPi26z46WwB/dJwyKW7GOv6UxRkyFBHZIFYi9v5aYAHMXwAfKWcpt6SPMKl8ymt+PJ/pw/cMvGmdXvKaGqixfGib1fr3Q5UupFD6vSWhlXM1fb4pEYbVeangk3x5CHMiaOvf2gZRJJpmjZv6Y1lx26ucKYh2csojHL75QVLxj/VyAntlWIkFRnbJI0/lYIlo7xn6U8lbfHfjmd/iCz+I/hWRK8UXIWaprvpeLMCosKeUy0OINizJYZO2iZlHN7CzhJkqbSsH5G+vvxEH2JQVhwQoJ+D0z6TS+WAV1aXQ11DDKTpjBMl8J0fHVGAgqrjDKLa3JozZso5ucrZjn6QLc3zyZbx94eqGBIBBaLd3KViElAVrQlNKXX3CbL4LubHO+Uic482VjsXV8y4aByTXJmeJo8GBHm4Q+BiM39KREjQMfK0CTAcng0Hjo3LnggytXo9r6eAfJTm+QCa2l/2lXJi2mLSbjjhO/CXu7tRlGZJMWndJJJhBxM2UDirxLRQdDib7abPk0VY1rnwjTKUp7hNS4LSEHXjVSqsyAJaw+4KA20d7i5C1x1xVPwYNFDvTJnJbICNfC9uUHzU91NtlaDd7gBCFYg6YQrEOD10fRGH14NExtyrmkfM1EQolT6dbD2Lfzn+94syYl8ntrAGu0inwkgKuSMs7Is/lRd96XRtyw1TGOOB2wA/6kXttJKbFR7xsdk0ycbQXi1NTDxJzfMY2WRbVU4YAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01XiBrrQY5m6P13TmzZ76mP4",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 3544,
+    "outputTokens": 87,
+    "cacheReadTokens": 1868,
+    "cacheWriteTokens": 1674
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:957ba28083cfe0403c383df97dfbed021a31db094a594c24b89202d3ad351545": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01W7KTU9X1EeoCVSdBtzkByB",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1 [hard] \"Show me the mugs in the shop\"",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The final page is the search results for 'mug' and says 'There are 5 products.' It lists Mug The best is yet to come, Mug The adventure begins, Mug Today is a good day, Customizable mug and Pack Mug + Framed poster. According to the catalog probe, these are every product in the shop with 'mug' in its name."
+       },
+       {
+        "requirement": "R2 [hard] \"cheapest first\"",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The URL includes order=product.price.asc and the sort control reads 'Price, low to high'. The prices shown go up in order: €11.90, €11.90, €11.90, €13.90, €35.00."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQShQYKEAgTGAI4AUIIdGhpbmtpbmcSDJgOjJ6k/jtB8iKUHRoMfpigubN2A8LhDdtBIjBRrl+90kicH+V+MJmJB2cxR+6N0lVMq+AHIVq8sqWuvdrlHl3xb1ida8I3r1Qg+OQqogUCi2z/frC7ZdfL/OVhfvKoHofgPKLKojMGU3Z8e2OJr+hCCrh0+UbN+MpuhG1qJpyCac2ty+CyPRyYPxcbu0zq/Ur5QLq+gj2DybbieK0aTvNw+7OLeD0ClrnOgTsSAyOMcL7as1Gzcm5IMD7XVcE+CD+E4So9Lh8SxQ6BdmXOlj5t1WIG6+EDUCnSSUDxo7ZNFW+Bxsh3U5W97ChPWIpxPhZYEzGvpRFL386LRWTLq9kMx6kr2s/8UE1Qc5jPiN7EivRc02dVSQDYD9sc7dN6BoszKr8rC/4bKTcuJQd/0vd0JSFtdraKiCru1Eag+WcVyc9tXAE6+IfQo9gV0qvV1uaXLSIyimRU+5VZQWzPvMDoXOSYF7KwNFNMZOfxL7il3t9g/eAJinCGYJi3WKZdc71114tydtSFyPH2jRJF/oJ7+hW0zO13iP8eNAUbBCG2IY0S8QRKGmTe3LiFIgA8wnK3KWGq5vzv/mb0qYifY7aPx5xADrESORytNwPjYuXrCq9le32F8FIwwMpIzXx5bhLQ5bmAa+bPHFpVSVu9EHl1fhKqwhIujumAEFDnZf3AtJ/K5pYg13mvcF4z5F01CqIX4wKk6A5meTeK6L1EEkGa0X1O6q7ESbaV0UBgo+RtaBF+rxO9K2EPjDZlsmb79U1GUYYSlJbvOEmN/67I56OBPH7jEtw9W0QyblDIREEihvIFeqHGt2VrfuXJ1Fpdp9iDSF2uOwq/u/epOG9y+mpDw3LSilfEkiMr94CvPJaxtTALSZK5deAP+YV1pX2uteDXBG/1Brqf5JjIgW1Ovx8CKVP6IZ+jcQpSiYI41Zyu1ab2LbFxao7K/khNEaMogfwevzodqFVwsy/a370cOLLZmj+YDcMiB1ixhWAMQ5nD0BgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01W7KTU9X1EeoCVSdBtzkByB",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1 [hard] \"Show me the mugs in the shop\"",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The final page is the search results for 'mug' and says 'There are 5 products.' It lists Mug The best is yet to come, Mug The adventure begins, Mug Today is a good day, Customizable mug and Pack Mug + Framed poster. According to the catalog probe, these are every product in the shop with 'mug' in its name."
+       },
+       {
+        "requirement": "R2 [hard] \"cheapest first\"",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The URL includes order=product.price.asc and the sort control reads 'Price, low to high'. The prices shown go up in order: €11.90, €11.90, €11.90, €13.90, €35.00."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 5651,
+    "outputTokens": 353,
+    "cacheReadTokens": 3542,
+    "cacheWriteTokens": 2107
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:2d5746d9d5bc3686b98a77f28da43a2122e21b43b813117b178ee803f521d44a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01VYFYvvcbKR3oM8mFBq3VcV",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The final page is the search results for 'mug' and says 'There are 5 products.' It lists Mug The best is yet to come, Mug The adventure begins, Mug Today is a good day, Customizable mug and Pack Mug + Framed poster. According to the catalog probe, these are every product in the shop with 'mug' in its name."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The URL includes order=product.price.asc and the sort control reads 'Price, low to high'. The prices shown go up in order: €11.90, €11.90, €11.90, €13.90, €35.00."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01VYFYvvcbKR3oM8mFBq3VcV",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The final page is the search results for 'mug' and says 'There are 5 products.' It lists Mug The best is yet to come, Mug The adventure begins, Mug Today is a good day, Customizable mug and Pack Mug + Framed poster. According to the catalog probe, these are every product in the shop with 'mug' in its name."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The URL includes order=product.price.asc and the sort control reads 'Price, low to high'. The prices shown go up in order: €11.90, €11.90, €11.90, €13.90, €35.00."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 6101,
+    "outputTokens": 313,
+    "cacheReadTokens": 5649,
+    "cacheWriteTokens": 450
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

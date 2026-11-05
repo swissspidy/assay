@@ -1,0 +1,208 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:03:57.087Z",
+ "turns": {
+  "sha256:a786b8dbc7393cd272ccb7f386c326b2b19d35ec505d6701a24c0fbac0aff00b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01VcWFxcdwDH1UkTmo4mSq77",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01KKSQqKsaWPUXPDeBMsyS3W",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01VcWFxcdwDH1UkTmo4mSq77",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01KKSQqKsaWPUXPDeBMsyS3W",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1939,
+    "outputTokens": 70,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1935
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:027d9f556efa538c42d616b44088170b63fbc849a0283084009405550ed1d7b5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01UVHXYrDbS2n1YVUDMvD5mu",
+     "name": "network_entry",
+     "input": {
+      "seq": 163
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS5wUKEAgTGAI4AUIIdGhpbmtpbmcSDOBmM6nd2/uFuqfUVRoMpD+75xzmVI2KKhnsIjAMCJKyX88qUdAQ+Z5DI8+7daa/TP/iWwmT8EA8Hp1OP40n9LOa1F4HE4OXPvQt0CsqhAUVjmcU+v/9/fE//jnFgDDfrFCoCpPZZujsi1i2wXrM1Swr2dkAc2p7bUKxIzfd+gwQ4kOV++OgEFKgOZ7hRZFfjwKVzz8k3XmkKRd8RcNfIvJsQLUqBtFojQTdc0/X5aXoWqXSaLK5KwZG3YHPbVtb8Z1UvwaSBW+Zy4bfanqlv6sYbztIZUtkOwyO2zNxR3DqBciDtXoMaggzadZB/96P8ItQM/vobjSC1b3Lwyvm8O3ED3B+TFjdG1I6kNLbMp2Axp3H61+g6VMy9dJBDygNvGX6YKIOOz5i+zxRNvR+yTBdCAVwmo86eaTwkWkGx32B6O4xt6AXVSPUxxSWFMEw5xqrijnmE1XQfxP9b9kUbFFN9X5+Hfpp8PL1vKuPpIM1pGlG7KH7Ayq3gfG/nMJZMOvdbPWvY04f24i0FRJKYaLVILlci2Ipes5ZZfjwLpJ8LmBbOGQ8iissl9DEqAQIzc+FqdyCdUGfQ78zEX8zmdi4Gj6j2cXYMtYIc9bEh7U+nasv9QEUjk/T4qUyL/urf4XrfrOEGkiDDeUvbnG0qXkP4kVvIsXRLW4+YkDVD72vRdH1EWzs2eFeJed4e9bhVLFiCRGZDZIF81FXdgxpWM+3uS5AVr7f33TRf7LI6NAtlI2aaP7owCZclAX187EtgSBTTNpCUtgr+IhD4/nGFpedyDIWyGgZhkY76fQR8QDv25Vw1q3rP8LeFEPgBJnxulCujCv0Mdb/KsPGevgP3drAalZBOoQ/EW5t8D25IXjeLhsgWX+hXalbLMCUiJvTDpEuegi7zfs88oH+KEx9aD5COWzYATGhhA/GQxEAf1IOsAwHH6WZrWgWWHZfYXGl9qeWPBgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01UVHXYrDbS2n1YVUDMvD5mu",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 163
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4932,
+    "outputTokens": 91,
+    "cacheReadTokens": 1935,
+    "cacheWriteTokens": 2995
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:f123ceb198f224d4b8213ef3919167d0d1ad58e09f70f266316219684655fc60": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0119SumQAWtWEPNDj5iKXytB",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "In the back office, mark order FFATNOMMJ as shipped.",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Back-office POST #163 to sell/orders/4/status with new_order_status_id=4 (Shipped), and the page it redirected to is Order FFATNOMMJ (observation 3). The orders probe after the task shows FFATNOMMJ in state 'Shipped' (observation 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSmQYKEAgTGAI4AUIIdGhpbmtpbmcSDNOLkldeYnoeiWXwfRoMWB3SnQ0iPV60RSNfIjA7rnoS0toRmitwpRC8Bp+qV/LCZFXSGPvFyNDSJnPlKR4fROEBmy2ze/GPs2IM9EMqtgUc2nwzypNAdsPNTfgBFUBcECDrHL77GqMM/bpoUSHA2WTJMPe8CN1e3zH4rI4YhP3lWx189qm+U6OTOJyUVmA2vTwZuKkM7lbauIcORPwxM0V6xP1ArNfymrbyGmYK5vcYTnm5qF3VeedWzHBLZlN5UnzZ3D8BzRcVAt/aGyxoPWRKuqCQFFyT4nUzFuI5QrTjGIbp2iXaI+sT7XJYTf1YRFxPWvpyTW2ywL/VorHikw4pIlSLe1T3kCaHwopEIeOzm26FFjhrqcYyO2z+v1hL5QsWZNmkWk1UcI6FMgCC63M5u5Q2yF40BH7mDaoZ4I9D55bxB4HNJ3k02he1gluRDIZxVIlxyM1n4L6SeF5f4t8TcE7jD5CmcLaKxYPWeneIrwvYeeKKhtOn1vDkzAymIEfnwoL2zhYfvbdYuSGp6sRX9OksGZ2grHfvQ3TEM9ktVEkX0tqJfeQ/kSVrIbjauDETSF/vczO1lZXBGbm0vBzV/To0XT3Qq6Irrr93CFcZrXpFSFjiokkW30zN11ghNTq6A29PG6kXf0axqKV+7qKEdTtpVanMzc0x9cgsyoPx2++zJJYHBwgDLBQwy4bTBnwI4g1KJpqwyM91keCy8LUHockJRhbAReeFvodLpb0WDlKbmm3Tc1cTLargI40QALAyP+KN6FtwEylkDLH83gSpzDAgC+bxhxGTjXifmdPfPAUdJ9wIaHY0HLCFQrJh8oeSP6NMIIwqH9Y19+4aObSO03OF/gMwhOhxqs+PVKIviv8iOcmWVvCsMoVwPVBPLj18yQCUgY6sy4pltVbBQDSqx7ATvLkSvrMXeMteegBlDshiFteoGbQskpEJn3x0OPEfcXjwuz61okgOHv3Jka4x2vEL57RZEy7cuYUZrWuQIqq62sZDNUFnCi8Ce5Nrz3cIls/pGAE="
+    },
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSwgkKEQgTGAI4AUIJbmFycmF0aW9uEgzDNgJKWPsmirUaQfcaDJrYBpTVBAYZUYQyFyIwCB1JAoXpzMqZlfjFw2mSSOWyS4nCuNm7ccdqKDBY8qryhakgBGVJZRtGCGMgZEUZKt4Iy81F3uN5EE/y1kw7ia0icR+jTUIhLit3PcoGHcJ/s+ouhcnU8vvzDW3lGfLrO8ffJIFMX3wfvlHef+YVazgW+DPT8rvKS8MA44Y2lhfQKnthx/QGJT0yw36593EO1lxoncUMv8g68Gue+LTubQ142TfASE2rQND5jvLP0jzTFAGbBK8yU/nw64WhgAYpBxbokv63XvbvPXm+JejjBH62fwMHsbHR+v5utffmKrRBsOSCO2L6+XjBuUNWQ/0OHdPuNeAKIEKfL+E+bn2BVxXMAfXliDFU3HCAFktxQeeadJaKI8rAELHAsZBWGK3TQ0aUH5ZMi8k3vZVqI+mBsrvIMgOYHYLMqNip1LSoDq7ndbeYVAyKB2MRP8QuimdvxZBnJuVyZqsHLbOM1Eyf+WuDG2tk0aGwfXuCpwbqN7E6BKc9KuyBp9n8Ug6s3lhEg/NVrt/0vWr+nUhWuDMt3DK1/Pztp18HJE71WA9y4BZgm6uWxdbGAQuCIWW921+O/cml4XvTmGrZLJK/fLW8ZKtqt1Aqp9g1ISFMKEwDbh03fhuq3T5JkHvIBIVH3SL5wlnCops8cAkuqAugRbZYg2TvWaGjfqRvnxoaWYTQrGPoXcDJV47N5f4mS37Q49KHPweEzlbKHhxKkP5IOvkzieMtosRKk1mIRS0Ml30qmpofJJS7Pjo9lL7ZrdyNiCTDWDI4+yq8MmrYdV/7rziikr28n2v6oEQZN2e9Sz4oHZo2qYbgPjZXSVoIl1ZVVJAigAuBU1s0lj8XibRFESmFMxfjQsiRItS5d19MX9nPLzBilaztPAI8pSyv5yyPmncAJh7+Ppx5i0JdEJmXefV/Nr5aDad0WW+xaxLFIVIPKxYY/qighNbVeUoQTQJtVBUA5kj8tdOwWaKNjVjBNpGoKPF/aehLB9vvC7J2e+aY17pUrFGF39staxusxgZizea+rAjgSJcNaD/UOv23G+w5iwCdvhwMGVJlo6ajjbNijzKhYpX1EHVRO6IN+6kmfPEozTfZeEZ8e6Ocad6ByPbC9GEFAe7EcfrTGK111nZxSfgxbujJo3sQFqQGTdgZQ5iEwjZNVpWT4csLQPiwjj7z5fS2qef3JWFMQ+9Vqpu7GPxReFV5FRtamYVMzLV5QxjaRYpc12kG4YjaYLlJvI/MMxBNJGMqxwBLlemRi1KgGKU0N0emPl7t33pBq7v8j1gxex0JCyoPtwUVQDfa7dXUMrv0v3fBKHAQSLh8/eEioNSeQk62wrGZdaluUToHDbhaL37eCifKrnAEV5jU2bnX42S6xaT9dL5RDmYElCWEAGQCuhcREnTD6tBB4QvVCZbK1uh/YjFhgBy99wtPwYhJ0oDha4G75qu/KjoGY695JcQoAnwyKx7/0RKMaSgsvk4daFOcv93fa/Slr484qfyY+4wKtUaI3Zf2urAgKGNc4IqZwdENmaonxyulYHphbCZFsbHDJKtHkWWd51kUhxWATJAYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_0119SumQAWtWEPNDj5iKXytB",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "In the back office, mark order FFATNOMMJ as shipped.",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Back-office POST #163 to sell/orders/4/status with new_order_status_id=4 (Shipped), and the page it redirected to is Order FFATNOMMJ (observation 3). The orders probe after the task shows FFATNOMMJ in state 'Shipped' (observation 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 5342,
+    "outputTokens": 451,
+    "cacheReadTokens": 4930,
+    "cacheWriteTokens": 410
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:20e42d01c3721f77dc299b685f149f5b0932dd139e563a2c1147fd783a992d59": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_016tusJx1yFE43rDbC15kHB9",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Back-office POST #163 to sell/orders/4/status with new_order_status_id=4 (Shipped), and the page it redirected to is Order FFATNOMMJ (observation 3). The orders probe after the task shows FFATNOMMJ in state 'Shipped' (observation 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_016tusJx1yFE43rDbC15kHB9",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Back-office POST #163 to sell/orders/4/status with new_order_status_id=4 (Shipped), and the page it redirected to is Order FFATNOMMJ (observation 3). The orders probe after the task shows FFATNOMMJ in state 'Shipped' (observation 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 5852,
+    "outputTokens": 186,
+    "cacheReadTokens": 5340,
+    "cacheWriteTokens": 510
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

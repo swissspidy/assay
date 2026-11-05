@@ -1,0 +1,64 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "wordpress/w10-add-tag",
+  "version": "1",
+  "task": {
+    "instruction": "Add the tag \"testing\" to the post \"Flaky tests and how to avoid them\"."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The post \"Flaky tests and how to avoid them\" has the tag \"testing\".",
+      "source": {
+        "field": "instruction",
+        "quote": "Add the tag \"testing\" to the post \"Flaky tests and how to avoid them\"."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "post-has-testing-tag",
+      "requirement": "R1",
+      "description": "The backend posts probe shows the post titled exactly \"Flaky tests and how to avoid them\" with \"testing\" among its tags.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "posts"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "title",
+                "tags"
+              ],
+              "properties": {
+                "title": {
+                  "const": "Flaky tests and how to avoid them"
+                },
+                "tags": {
+                  "type": "array",
+                  "contains": {
+                    "const": "testing"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:15:48.715Z"
+  }
+}

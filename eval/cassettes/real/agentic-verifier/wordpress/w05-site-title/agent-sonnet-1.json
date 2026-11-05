@@ -1,0 +1,203 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:10:21.054Z",
+ "turns": {
+  "sha256:f4dba490bf8a6eaed88f7b5456421addaff7b517fffd4baab386f43199f775e0": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Qk14NUkBgzzXBkZJzJzbod",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_013FkssQGChCtvg641xu7f6L",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Qk14NUkBgzzXBkZJzJzbod",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_013FkssQGChCtvg641xu7f6L",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1857,
+    "outputTokens": 70,
+    "cacheReadTokens": 1853,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:b28fa210014748cdd5b5fccebf1f5ee9d302ea0c64993c6c160dc1210ec7334b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01WtV7KzCQaKCiQe4xdDjCPQ",
+     "name": "network_entry",
+     "input": {
+      "seq": 103
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSxQUKEAgTGAI4AUIIdGhpbmtpbmcSDKOvC9/ce5aNERijbxoM4Zgdo2RygRXZY1JmIjDK90slXXu2FnnlYR0l3hNICFDVraW7AlbSjCgun9BhHLCfGGwayfywXqRQWAaABbsq4gSNFdITirWPl9cKRmy6oQqWX/wwixMkGgOQ5l8g5JcZYy64E6Vc4KK0ENOWHT6jv/1Kg0h6xrhEvlsQJAon8ISGiL6Wn7ws1XB4wLGBahBYYRMQt/wpLlVsoEEgpFTXzv/gm7ydKHH4rdtpmxF/SGM2XP+sK0GuL0SN8esjCu/rup7Ahh/SbAf/616rJF9IGZiXQnRcjLrMC18AHXk7A44AooMPFq3WmpmscIzM8Zd8EFA3AfJ6gVSfkjhJRAET9d+VQ7BOKMypudgilGRNM0ensMfVOjsmBMyZBW+vIK0y3wADhmwbG6oKHOZ9dDOUmrPWEeyVb+coCjzOxhzkivGzbodEbarv8RcYFWjw3RQmHPh9RdWDMhzU5Syq17UMFGcw0RbiAh8QDndKVDebR1uuDFaotKuV7uWUvhrtSe/zyeaG7PXWVStpXNZ0DgXd0WTAtd5SPx0gLY/aVA/oPydQ2U/sPWX3iJ0eSwpLjdsT/vp/TTH0kdBj6WNW5lf84MCMUZ/dXeLkwN9aHstzQ1VsyxmRESnNYzV1Lb6C2Bsf9qyIwSth6rD7RG9C39qI9ANnIDL2sLtR8lV92DVgzHJkJpnUNmUVHGftFuO1J8HRycG/cx9q9UFGhXpOFVfigg7xuSsrcfFXeEmGDMLD8p0IrRzLUfiJ9smER2wHOxGgVxBJT9mC9qA1nHbSld13YuEANGnM3Di3WCqt5VfOQdvQAusnS85tP6zVWUQtzt1Y2x3gbPHQWpAfaAQ0jadZLrXt0924xSC8G81nVWKgrRG4mDAs+1pqeNLxLzpGoKdUrhjnGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01WtV7KzCQaKCiQe4xdDjCPQ",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 103
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3932,
+    "outputTokens": 74,
+    "cacheReadTokens": 3930,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a391e2675b4033febbae4107ec5fbb33797b618aef3cbef591e8d69545a35776": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01TxfGP3c6YY2XreU9aX7a5a",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Change the site title to \"Assay Field Notes\".",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The general settings form was sent to options.php with blogname \"Assay Field Notes\", and the server replied with a 302 redirect to settings-updated=true (obs 3). After the task, the settings probe reads title \"Assay Field Notes\" (obs 1). The tagline and other fields were sent with what look like their existing values."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSgAYKEAgTGAI4AUIIdGhpbmtpbmcSDOpXEuvhvbDQLmKRbRoM6tnsnn/22dRx83RwIjCRkGQejXj1iBB2KBsMXKEtQt1TtrNoM3aNeI5g1VOMJTJcGqjpBn/K4WyShotwdokqnQVxxXyi7fm0JyXU8KjxPATFyPfHSz4pD2uUQoZWsWFm3NqATbbIPTlF7q8X1tn0cnR5IkR4bD+R9351l1YRdYyR6yLrBaQaOyW/VGMxQbm0vUlU01s/COwjHB2ErpXhdr1KPGNjpRx7r1XqZtevCLi0RmnfHjhKqusVb/q3JRg3gLFxFzOsahN73pGx1lcfwvfJZ9ykgzcCTUnRWHdopk95F6jYpuP8y9vswZ7T5J9FYyIsCYl8IJMmhSbxXid3uStQKiP4nHPm5+ECulZaTvrXfntn9s0DBWIA/8Sinkk8aXeu17z3x9IpUwweUvYTWsYocpOHteOksFsGGlTBNpTEPCGElMw2W39H0R27OvTE0zCA9inkQspKqwGnNH1Tm2qvZrA6Lli8v21oN1RoA31Y2dv/fDDYxPXlb3fYXODzoUKa0fPdG+a+ozaOkjoLTEzW9gvoykRdBqKfV1Nu3Yj4FU9yPbf2voHCxMnVfc8Iv9vu/eArXAwMfwb8EHku56GouudjG1ZQUeAb7/eJg1xQjG8D0JI3oyzFG0aleJPRCNBYlFYITsvQE6/9iMcdFqpOpaRnieRjIBEV5eAWtkO8iokcFp6UbBqeL1yNbfzU3BekiXnNGHhsTawAc8rdWXedw5QrQ29kguRboFRkBARO0bcOaQT8uyKDrBcmk2GqwYC8eCy+uXFd2Cf7XMwYEZFVDGZpr1DJhL+EfTV6tA3lXsqXekVCdAkPkZ6t/eyMigVTHzLFTnRd2CnVWgqg5ndEcFBGl5LyFiYoPwmRyi3Vlr6AXs38y6M9BhtPJ8kPcWajPZkBYN7h+RBnBHK9tB05UHt7gUEublkWCzdreleBR6H5/FJn5KpwuSlUNiQPHX0xAZtopz5G9xn0hqMYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01TxfGP3c6YY2XreU9aX7a5a",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Change the site title to \"Assay Field Notes\".",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The general settings form was sent to options.php with blogname \"Assay Field Notes\", and the server replied with a 302 redirect to settings-updated=true (obs 3). After the task, the settings probe reads title \"Assay Field Notes\" (obs 1). The tagline and other fields were sent with what look like their existing values."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4416,
+    "outputTokens": 230,
+    "cacheReadTokens": 3930,
+    "cacheWriteTokens": 484
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:444c25c35c5dabc6000d73316c13c14a242fa6bfc1ee72d22cd2e0e935bf30b7": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01P3sBmhvX4HUgugEDV9uavk",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The general settings form was sent to options.php with blogname \"Assay Field Notes\", and the server replied with a 302 redirect to settings-updated=true (obs 3). After the task, the settings probe reads title \"Assay Field Notes\" (obs 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01P3sBmhvX4HUgugEDV9uavk",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The general settings form was sent to options.php with blogname \"Assay Field Notes\", and the server replied with a 302 redirect to settings-updated=true (obs 3). After the task, the settings probe reads title \"Assay Field Notes\" (obs 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4700,
+    "outputTokens": 175,
+    "cacheReadTokens": 4414,
+    "cacheWriteTokens": 284
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

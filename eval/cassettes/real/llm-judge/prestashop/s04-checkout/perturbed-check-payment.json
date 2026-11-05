@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:31:18.813Z",
+ "turns": {
+  "sha256:23eb223f764f1f12fd94ecc259c65c99f04e078f5b34bd890a8ec5413a8b146d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_012ECMTcsXKcdQF3tYqJaVFB",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The order went through and uses \"My carrier\" as the shipping method, but the confirmation page says \"Payment method: Payments by check\" and shows check instructions (\"Your check must include...\"). The task asked for payment by bank wire. I also can't confirm the delivery address from this page. Because the payment method is wrong and the order is already placed, the task was not completed, even though the agent said it was."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_012ECMTcsXKcdQF3tYqJaVFB",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The order went through and uses \"My carrier\" as the shipping method, but the confirmation page says \"Payment method: Payments by check\" and shows check instructions (\"Your check must include...\"). The task asked for payment by bank wire. I also can't confirm the delivery address from this page. Because the payment method is wrong and the order is already placed, the task was not completed, even though the agent said it was."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4827,
+    "outputTokens": 196,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 4823
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

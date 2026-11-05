@@ -1,0 +1,197 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:10:30.808Z",
+ "turns": {
+  "sha256:15d511e42f9eaa52e93080af05dc09e7ec3e5c98dc5f6b5bdcdbfeb95eaa96bc": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_016Xjk4kmknZMpVYeDecJ75V",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_017iwodAbBkUkLRfnC7xbhst",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_016Xjk4kmknZMpVYeDecJ75V",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_017iwodAbBkUkLRfnC7xbhst",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1855,
+    "outputTokens": 70,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1851
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:dc3a0b2c5c719b69dd74f8d1d685f148d95a0258655e4162fcd12c362a3e5109": {
+   "stop": "tool_use",
+   "text": "Title is still \"Assay Journal\"; tagline set instead. Let me confirm the POST.",
+   "toolCalls": [
+    {
+     "id": "toolu_01XY34UQekDtLmoWnugkNerJ",
+     "name": "network_entry",
+     "input": {
+      "seq": 103
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "text",
+     "text": "Title is still \"Assay Journal\"; tagline set instead. Let me confirm the POST."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01XY34UQekDtLmoWnugkNerJ",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 103
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3932,
+    "outputTokens": 80,
+    "cacheReadTokens": 1851,
+    "cacheWriteTokens": 2079
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:79a7ce772e228836033383c80381f82b6351df001aac6028725cadae5c839514": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Jj1WpBCbxWEbfHCB5ucLVz",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Change the site title to \"Assay Field Notes\".",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The settings form the agent submitted sent blogname=\"Assay Journal\" (unchanged) and put \"Assay Field Notes\" in blogdescription, which is the tagline. After the task, the settings probe still shows title \"Assay Journal\" and description \"Assay Field Notes\". So the agent changed the tagline, not the site title."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Jj1WpBCbxWEbfHCB5ucLVz",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Change the site title to \"Assay Field Notes\".",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The settings form the agent submitted sent blogname=\"Assay Journal\" (unchanged) and put \"Assay Field Notes\" in blogdescription, which is the tagline. After the task, the settings probe still shows title \"Assay Journal\" and description \"Assay Field Notes\". So the agent changed the tagline, not the site title."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4416,
+    "outputTokens": 215,
+    "cacheReadTokens": 3930,
+    "cacheWriteTokens": 484
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:618270c25a8f6e1901c41b48a2daa6122ff1cd6c2db02fabd764026c648e2a3c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01DvxSjEH4XFQkaUyEWRFnvQ",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The settings form the agent submitted sent blogname=\"Assay Journal\" (unchanged) and put \"Assay Field Notes\" in blogdescription, which is the tagline. After the task, the settings probe still shows title \"Assay Journal\" and description \"Assay Field Notes\". So the agent changed the tagline, not the site title."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01DvxSjEH4XFQkaUyEWRFnvQ",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The settings form the agent submitted sent blogname=\"Assay Journal\" (unchanged) and put \"Assay Field Notes\" in blogdescription, which is the tagline. After the task, the settings probe still shows title \"Assay Journal\" and description \"Assay Field Notes\". So the agent changed the tagline, not the site title."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4685,
+    "outputTokens": 202,
+    "cacheReadTokens": 4414,
+    "cacheWriteTokens": 269
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

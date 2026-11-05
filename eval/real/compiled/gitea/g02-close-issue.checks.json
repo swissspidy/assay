@@ -1,0 +1,61 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "gitea/g02-close-issue",
+  "version": "1",
+  "task": {
+    "instruction": "Close the issue \"Crash when uploading empty file\" in acme/webapp."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The issue \"Crash when uploading empty file\" in the acme/webapp repository is closed.",
+      "source": {
+        "field": "instruction",
+        "quote": "Close the issue \"Crash when uploading empty file\" in acme/webapp."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "issue-closed",
+      "requirement": "R1",
+      "description": "The backend issues list for acme/webapp shows the issue titled \"Crash when uploading empty file\" with state closed.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "const": "Crash when uploading empty file"
+                },
+                "state": {
+                  "const": "closed"
+                }
+              },
+              "required": [
+                "title",
+                "state"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T11:38:10.994Z"
+  }
+}

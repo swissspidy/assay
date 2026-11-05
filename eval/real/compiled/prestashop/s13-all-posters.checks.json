@@ -1,0 +1,196 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "prestashop/s13-all-posters",
+  "version": "1",
+  "task": {
+    "instruction": "Add one of each framed poster the shop sells to my cart."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Every framed poster the shop sells is in the user's cart.",
+      "source": {
+        "field": "instruction",
+        "quote": "each framed poster the shop sells to my cart"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "Each framed poster is added with a quantity of one.",
+      "source": {
+        "field": "instruction",
+        "quote": "Add one of each"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-cart-has-all-framed-posters",
+      "requirement": "R1",
+      "description": "The backend cart contains a line for each of the three framed posters: 'The best is yet to come' Framed poster', 'The adventure begins Framed poster' and 'Today is a good day Framed poster'.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "allOf": [
+              {
+                "contains": {
+                  "properties": {
+                    "product": {
+                      "const": "The best is yet to come' Framed poster"
+                    }
+                  },
+                  "required": [
+                    "product"
+                  ]
+                }
+              },
+              {
+                "contains": {
+                  "properties": {
+                    "product": {
+                      "const": "The adventure begins Framed poster"
+                    }
+                  },
+                  "required": [
+                    "product"
+                  ]
+                }
+              },
+              {
+                "contains": {
+                  "properties": {
+                    "product": {
+                      "const": "Today is a good day Framed poster"
+                    }
+                  },
+                  "required": [
+                    "product"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "R2-one-of-each-poster",
+      "requirement": "R2",
+      "description": "The cart has exactly one line per framed poster in the catalog (excluding the mug+poster pack), and every framed-poster line has quantity 1.",
+      "assert": {
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "cart",
+              "pointer": "/lines"
+            },
+            "normalize": [
+              {
+                "op": "items",
+                "where": {
+                  "properties": {
+                    "product": {
+                      "pattern": "Framed poster$",
+                      "not": {
+                        "const": "Pack Mug + Framed poster"
+                      }
+                    }
+                  },
+                  "required": [
+                    "product"
+                  ]
+                },
+                "pointer": "/product"
+              }
+            ],
+            "expect": {
+              "sameAs": {
+                "source": {
+                  "from": "probe",
+                  "probe": "catalog"
+                },
+                "normalize": [
+                  {
+                    "op": "items",
+                    "where": {
+                      "properties": {
+                        "name": {
+                          "pattern": "Framed poster$",
+                          "not": {
+                            "const": "Pack Mug + Framed poster"
+                          }
+                        }
+                      },
+                      "required": [
+                        "name"
+                      ]
+                    },
+                    "pointer": "/name"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "cart",
+              "pointer": "/lines"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "if": {
+                    "properties": {
+                      "product": {
+                        "pattern": "Framed poster$",
+                        "not": {
+                          "const": "Pack Mug + Framed poster"
+                        }
+                      }
+                    },
+                    "required": [
+                      "product"
+                    ]
+                  },
+                  "then": {
+                    "properties": {
+                      "quantity": {
+                        "const": 1
+                      }
+                    },
+                    "required": [
+                      "quantity"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:22:55.328Z"
+  }
+}

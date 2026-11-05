@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:27:27.310Z",
+ "turns": {
+  "sha256:fb53db89c0aa66fc1d1ce656c762bc1f8acc174f08e132940206dd9a1ff266e5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017bGnLjCF8FY5X3wxYUaZZP",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "success",
+      "reasoning": "The final page shows the repository at alice/meeting-notes, so it was created under the user's own account (Alice is the logged-in user). It carries the \"Private\" label. It has exactly 1 commit, \"Initial commit\" by Alice, and that commit contains only README.md. The README is displayed with the heading \"meeting-notes\", which is what Gitea produces when you check \"Initialize Repository\" with a README. The commit timestamp says \"now\", which suggests the agent created the repo just now rather than finding an existing one. All parts of the task are met: the right name, the right owner, private, and initialized with a README."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_017bGnLjCF8FY5X3wxYUaZZP",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "success",
+      "reasoning": "The final page shows the repository at alice/meeting-notes, so it was created under the user's own account (Alice is the logged-in user). It carries the \"Private\" label. It has exactly 1 commit, \"Initial commit\" by Alice, and that commit contains only README.md. The README is displayed with the heading \"meeting-notes\", which is what Gitea produces when you check \"Initialize Repository\" with a README. The commit timestamp says \"now\", which suggests the agent created the repo just now rather than finding an existing one. All parts of the task are met: the right name, the right owner, private, and initialized with a README."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2509,
+    "outputTokens": 265,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2505
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

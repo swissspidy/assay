@@ -1,0 +1,139 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "gitea/g12-answer-and-close",
+  "version": "1",
+  "task": {
+    "instruction": "Answer the question about resetting an API token in acme/webapp with the comment \"Go to Settings > Applications to regenerate it.\" and then close that issue."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "A comment with the text \"Go to Settings > Applications to regenerate it.\" is posted on the acme/webapp issue asking about resetting an API token.",
+      "source": {
+        "field": "instruction",
+        "quote": "Answer the question about resetting an API token in acme/webapp with the comment \"Go to Settings > Applications to regenerate it.\""
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The issue about resetting an API token in acme/webapp is closed.",
+      "source": {
+        "field": "instruction",
+        "quote": "then close that issue"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "R1-comment-posted",
+      "requirement": "R1",
+      "description": "The backend holds a comment on issue #14 (the API token question) whose body is 'Go to Settings > Applications to regenerate it.'",
+      "assert": {
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "issues"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "number": {
+                      "const": 14
+                    },
+                    "title": {
+                      "const": "How do I reset my API token?"
+                    }
+                  },
+                  "required": [
+                    "number",
+                    "title"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "issueComments"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "issue": {
+                      "const": 14
+                    },
+                    "body": {
+                      "type": "string",
+                      "pattern": "^\\s*Go to Settings > Applications to regenerate it[.!]?\\s*$"
+                    }
+                  },
+                  "required": [
+                    "issue",
+                    "body"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "R2-issue-closed",
+      "requirement": "R2",
+      "description": "The issue 'How do I reset my API token?' (#14) is in state closed in the backend.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "number": {
+                  "const": 14
+                },
+                "title": {
+                  "const": "How do I reset my API token?"
+                },
+                "state": {
+                  "const": "closed"
+                }
+              },
+              "required": [
+                "number",
+                "title",
+                "state"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:20:10.976Z"
+  }
+}

@@ -1,0 +1,169 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:46:16.314Z",
+ "turns": {
+  "sha256:f031dfebd5e1627b8218dbeff9932eb46938b08a9b57e91b3b613d0b84b71db5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Qw2ZhmHSkjAXduKgsjqeY7",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01MytHtY2WgcsBxMRsPrFGpi",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Qw2ZhmHSkjAXduKgsjqeY7",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01MytHtY2WgcsBxMRsPrFGpi",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1876,
+    "outputTokens": 70,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1872
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:e48c2c32a30b798a292b7b9eabf2ac5c6dc660a7eeedf2aedad79f45e1b977c1": {
+   "stop": "tool_use",
+   "text": "The agent starred acme/webapp instead of acme/docs, so I'm marking R1 as failed.",
+   "toolCalls": [
+    {
+     "id": "toolu_0134QETxGhNnSvkAJVsXA8pb",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Star the acme/docs repository.",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "After the task, alice's starred list holds only acme/infra and acme/webapp, with no acme/docs (observation 1). The only POST recorded is to /acme/webapp/action/star (observation 2), so the agent starred the wrong repository. acme/docs was never starred."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSjQYKEAgTGAI4AUIIdGhpbmtpbmcSDDYfBXpl4K8yUS1FfBoM460CGmOEv5M9olaTIjDsrdnWcqOlzV8DqusbxSDKgo2LsY6sGKgP77NSuejO+Kr+CyiUQL1FLc3tIlgA0PYqqgWLMZVPi0+QyOMKXV7g67VaNIMpgzPqXtZpFfrzh4LgYCFFiuNO++8OFFFnhX1sMivzQESTaLVl9jbSeQWbbRtY+F0O7spADKgyDOLaoLhESIGG6GK6Xe/DO+B5MEY3uKt/PrO0UAxxhfpV8GgEvzwa2JnLYZ3YyDeSPd+lUIvYXArK9q2bCZ8gfxXsZVPvBuAi1fiJB43LkRB3+d7D2daXevVbVsGbaA++8OIQH5A1KB3fldUhg7pUEcupM2ng1wfQ3amhA1Ep2j4gWbsdvSxsksbWmz0Lt2ahp01RS1vszHBCAqwZ5Adv506N0bhHTbKsphyUm/5y6ika70TXRgEINyPkX58+Dns2qCJTTEBTkZtzZnMeWbk5zhcdf/NLl261MvR+rDdQUGrv8RxCPc7t1UkkZeGkrMxHj0YV2FXBcfDc4i8e1POXM+LDhdEdHmcv/eL3AjrLyzl7oog/PI36L/jDKBSfbFURB0eEws9Phu1vBXhkoSUGzFnG9vXjy6ddYf/VDuWucqxep88KKX/Mk/2dMGJwYJPjykzRZxK4iR54hWk+c05TlAtsAIRA6s1IfIA1sJHRFWKE8Lr0fcjSKgoLZmuM/0/8A4XSJUP17aCWAhkoKGs3hnDnabI/SNr8FWvXTs/QHMlknQ/VKiLH0JHljjYSGrbVry2SRf8O4+Pej1NT/CV801aOaNFSnpODgDUVzjv9Y2j73e8RVY+J+cGZx+AcgrQTmYUPkq5deIz1N/zl8JRAkAYs/WfIgwrXfPvBG4R14OXLJ4cOPjuxFPValKn2O7Vp0Gplh7iyfUf8OuvabcVxjRhUmM062FGBVpn/h02WL/CZEoyZqXyD95L6W3HLNRPoqSe/ttYIYhEsaib9lNVsfGIMkpGieaEKwloPJfNbK9J0GAE="
+    },
+    {
+     "type": "text",
+     "text": "The agent starred acme/webapp instead of acme/docs, so I'm marking R1 as failed."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_0134QETxGhNnSvkAJVsXA8pb",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Star the acme/docs repository.",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "After the task, alice's starred list holds only acme/infra and acme/webapp, with no acme/docs (observation 1). The only POST recorded is to /acme/webapp/action/star (observation 2), so the agent starred the wrong repository. acme/docs was never starred."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4005,
+    "outputTokens": 276,
+    "cacheReadTokens": 1872,
+    "cacheWriteTokens": 2131
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a347318c83445fbc6d8713c7071149fea68a6b05019f52496e5350cab05e887a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CL7rH4TVsFojBDZoCEcXyj",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "After the task, alice's starred list holds only acme/infra and acme/webapp, with no acme/docs (observation 1). The only POST recorded is to /acme/webapp/action/star (observation 2), so the agent starred the wrong repository. acme/docs was never starred."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01CL7rH4TVsFojBDZoCEcXyj",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "After the task, alice's starred list holds only acme/infra and acme/webapp, with no acme/docs (observation 1). The only POST recorded is to /acme/webapp/action/star (observation 2), so the agent starred the wrong repository. acme/docs was never starred."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4329,
+    "outputTokens": 177,
+    "cacheReadTokens": 4003,
+    "cacheWriteTokens": 324
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

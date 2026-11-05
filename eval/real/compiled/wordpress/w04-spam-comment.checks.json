@@ -1,0 +1,62 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "wordpress/w04-spam-comment",
+  "version": "1",
+  "task": {
+    "instruction": "Mark the comment that advertises watches as spam."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The comment advertising watches is marked as spam.",
+      "source": {
+        "field": "instruction",
+        "quote": "Mark the comment that advertises watches as spam."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "watch-comment-spam",
+      "requirement": "R1",
+      "description": "The backend comments probe holds the comment advertising watches with status 'spam'.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "comments"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string",
+                  "pattern": "[Ww]atches"
+                },
+                "status": {
+                  "const": "spam"
+                }
+              },
+              "required": [
+                "content",
+                "status"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:14:17.817Z"
+  }
+}

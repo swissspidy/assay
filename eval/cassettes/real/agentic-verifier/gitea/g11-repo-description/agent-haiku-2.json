@@ -1,0 +1,198 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:49:03.683Z",
+ "turns": {
+  "sha256:b5534233ea0aecda18eec93582832000d829945b99b76de48518b896a452c861": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01DC3CivVGiZpibYjXEW1QVL",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01ASXKXuMzvdSxYgaLPFAQFF",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01DC3CivVGiZpibYjXEW1QVL",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01ASXKXuMzvdSxYgaLPFAQFF",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1902,
+    "outputTokens": 70,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1898
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:805206e1dec152c81494d63ed52131c998dbe9f7d542bc1881fda4d9f1759d6b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01QLyRzfNdUj3XeNGmvBiFHy",
+     "name": "network_entry",
+     "input": {
+      "seq": 27
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01QLyRzfNdUj3XeNGmvBiFHy",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 27
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4023,
+    "outputTokens": 49,
+    "cacheReadTokens": 1898,
+    "cacheWriteTokens": 2123
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a1eb0c4c7a0de37411a1b2eada3d23e8fd56cd9df01f8a91ff060e0337a6022c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01GL6V5sKDhGrc7tLZqm4qAY",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Change the description of my dotfiles repository to \"Shell and editor configuration\".",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server received a settings update POST for alice/dotfiles with description \"Shell and editor configuration\" and the repo name left as dotfiles. The server responded with a 303 redirect. The post-task aliceRepos probe shows alice/dotfiles with description \"Shell and editor configuration\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS5QUKEAgTGAI4AUIIdGhpbmtpbmcSDLVdRPxABZL1fT/FqxoMj8aBXnw0BVcAHPviIjCLOdcBr4GWkylyfQr8FKXOdOSISRnu/SlecuvKhKVpanECKNkkW9ozir6mhvhbELgqggWRA6slnSwkb9rbgbkUVfLIr++YQEqwbx9109AQi1zDRYkwlvTdbQi+X2d90UNf0hl2wY+ruERvdQQJ9V3Yxgzc72bSyJpv0NqF2uUSvCh8qYxqYFh3oOSgqDMb/CrVVrziHPOQBYySI6WXbhj5yv2y7263uZSmI17OG/Jo+8AYE3mz/7hvBUKgerAYHeGzK6qs/3k8KZsDlfUiHeJ59LWiplnDV2klM37FZL/xB6F2Nrj5rIbcZRzMnzgS7WiIUkMZYQAlskFWqJwPoh04Dls1eJR9TnjvHwBjAGvz4zFG6q8AkZhV9GWTZxoa1qLaR/yWWsuxKGblGk3VmpLp2/7jGLkY2YpddoqX7b/tKXvPzz9sQ3jPx6dDMxAT6ajxyg461OHqk5cYpBlm5TWPFz9Fr5X8/FOFcuvU1uuSkMId8GkyAXhZSJmRa7ovDRnuQOTyXp2pBZrRQJAMFtD4IacCiVHE+m9TXsCFKmiGaoxdvE7jP5XHt45xIL18hQx9Ykzzs9Duxqsi/ZnkCKIoZdTzyAYxfePi1XOx6klHswQXyi1+G8M33Hk8WXpq1a6QZl5Df7GAJdn77Q28z5ge93GSu9vWfrfksiT5Tk6HPvwL+nymLM3ZpC5iJH0up5ycfb7nLT+2NBaXoAJ+PNcP2lmR11k+lDDDKPNC6TryQh4YBO6I0HSaM+sm+DBXV6aaGRlyE342XcDkJh5i44ApIUY904CUbEsFTHjtvH885pU4G1wqQfEV9OchBUpJXRp57qyS27j0tnw6wu0DkQaDk1MwPKNimCqhnxQhHMsiq/R/6Gv1Pke/8oVyjJDV9aajPQRjOY2uBXxwR7DqZGKnFIMXcSwYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01GL6V5sKDhGrc7tLZqm4qAY",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Change the description of my dotfiles repository to \"Shell and editor configuration\".",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server received a settings update POST for alice/dotfiles with description \"Shell and editor configuration\" and the repo name left as dotfiles. The server responded with a 303 redirect. The post-task aliceRepos probe shows alice/dotfiles with description \"Shell and editor configuration\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4322,
+    "outputTokens": 238,
+    "cacheReadTokens": 4021,
+    "cacheWriteTokens": 299
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:c25f61008bf3bbcc1f5835523e2f5160ef3311583dfa57a6a22feb4ebd9e8af5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01EovqVEwF7jZBLhd6JDdJNc",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server received a settings update POST for alice/dotfiles with description \"Shell and editor configuration\" and the repo name left as dotfiles. The server responded with a 303 redirect. The post-task aliceRepos probe shows alice/dotfiles with description \"Shell and editor configuration\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01EovqVEwF7jZBLhd6JDdJNc",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server received a settings update POST for alice/dotfiles with description \"Shell and editor configuration\" and the repo name left as dotfiles. The server responded with a 303 redirect. The post-task aliceRepos probe shows alice/dotfiles with description \"Shell and editor configuration\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4623,
+    "outputTokens": 186,
+    "cacheReadTokens": 4320,
+    "cacheWriteTokens": 301
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

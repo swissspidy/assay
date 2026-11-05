@@ -4,18 +4,24 @@
  * undone and adversarial runs).
  *
  *   node scripts/eval.ts [--systems checks,checks+escalation,llm-judge,agentic-verifier] [--checks handwritten|compiled]
+ *                        [--dataset examples|real]
  *
  * Model-based systems replay their cassettes under eval/cassettes/ and record the
  * missing ones live when ANTHROPIC_API_KEY is set (ASSAY_MODEL_MODE=record
  * re-records all); a system without recordings is reported as not measured.
  * Writes eval/results/REPORT.md and results.json (compiled: eval/results/compiled/).
+ *
+ * --dataset real evaluates the real-app runs (ADR 0009: eval/real/runs/, compiled
+ * check sets only) with cassettes under eval/cassettes/real/ and writes eval/results/real/.
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { evaluate, runVerifier, verify, type CheckSet, type EvidenceSnapshot } from '../src/index.ts';
+import { evaluate, runVerifier, verify, type CheckSet, type EvidenceSnapshot, type Outcome } from '../src/index.ts';
 import { costUsd, llmJudge, metrics, PRICING, type Metrics, type Prediction } from '../src/eval/index.ts';
 import { kleeneAnd } from '../src/runtime/evaluate.ts';
 import { APPS } from '../examples/apps.ts';
 import { compileReference } from '../examples/lib/scenario.ts';
+import { APPS as REAL_APPS } from '../eval/real/apps.ts';
+import { compiledFile, realApps, realRuns, realTasks, runKind, TRAINING_RUN } from '../eval/real/dataset.ts';
 import { modelFromEnv } from './model-from-env.ts';
 
 const arg = (name: string, dflt: string) => {
@@ -27,10 +33,15 @@ const SYSTEMS = arg('systems', KNOWN_SYSTEMS.join(',')).split(',');
 // A typo must not fall through to the (paid) verifier path and be reported under its name.
 const unknownSystems = SYSTEMS.filter((s) => !KNOWN_SYSTEMS.includes(s));
 if (unknownSystems.length) throw new Error(`unknown --systems: ${unknownSystems.join(', ')}`);
-const CHECKS_ARG = arg('checks', 'handwritten');
+const DATASET = arg('dataset', 'examples');
+if (DATASET !== 'examples' && DATASET !== 'real') throw new Error(`--dataset must be examples or real, got ${DATASET}`);
+const REAL = DATASET === 'real';
+// The real apps have compiled check sets only.
+const CHECKS_ARG = arg('checks', REAL ? 'compiled' : 'handwritten');
 if (CHECKS_ARG !== 'handwritten' && CHECKS_ARG !== 'compiled') {
   throw new Error(`--checks must be handwritten or compiled, got ${CHECKS_ARG}`);
 }
+if (REAL && CHECKS_ARG !== 'compiled') throw new Error('--dataset real has compiled check sets only');
 const CHECKS: 'handwritten' | 'compiled' = CHECKS_ARG;
 const root = new URL('../eval/', import.meta.url);
 
@@ -50,7 +61,7 @@ const trainingRuns: string[] = [];
 /** Tasks with no check set in the chosen mode: not scored, and named in the report. */
 const unscoredTasks: string[] = [];
 const taskText = (x: CheckSet) => JSON.stringify([x.task.instruction, x.task.outcomes ?? null]);
-for (const app of APPS) {
+for (const app of REAL ? [] : APPS) {
   for (const t of app.tasks) {
     const training = CHECKS === 'compiled' ? compileReference(t).name : undefined;
     const csFile =
@@ -96,6 +107,42 @@ for (const app of APPS) {
     }
   }
 }
+/** Real apps (ADR 0009): every task's runs, scored against the set compiled from its reference run. */
+const oracleReason = new Map<Run, string>();
+for (const app of REAL ? realApps() : []) {
+  for (const task of realTasks(app)) {
+    const csFile = compiledFile(app, task, 'checks');
+    if (!existsSync(csFile)) {
+      unscoredTasks.push(`${app}/${task}`);
+      continue;
+    }
+    const checks = JSON.parse(readFileSync(csFile, 'utf8')) as CheckSet;
+    const written = REAL_APPS.find((a) => a.name === app)?.tasks.find((t) => t.id === task);
+    if (!written || written.instruction !== checks.task.instruction) {
+      throw new Error(`${app}/${task}: the compiled check set's task text is stale; re-run eval/real/compile.ts`);
+    }
+    const stored = realRuns(app, task);
+    if (!stored.some((r) => r.name === TRAINING_RUN)) throw new Error(`${app}/${task}: no ${TRAINING_RUN} run`);
+    for (const r of stored) {
+      if (r.name === TRAINING_RUN) {
+        trainingRuns.push(`${app}/${task}/${r.name}`);
+        continue;
+      }
+      const run: Run = {
+        app,
+        task,
+        scenario: r.name,
+        kind: runKind(r),
+        expected: r.label.expected,
+        snapshot: r.snapshot,
+        checks,
+      };
+      oracleReason.set(run, r.label.oracle.reason);
+      runs.push(run);
+    }
+  }
+}
+const appCount = REAL ? realApps().length : APPS.length;
 
 const AGENT_REPORT = 'I completed the task as requested.';
 const priceOf = (modelId: string) =>
@@ -106,7 +153,30 @@ const priceOf = (modelId: string) =>
       .replace(/ \(replay\)$/, '')
   ];
 
-type Row = Prediction & { app: string; task: string; scenario: string; kind: string; note?: string };
+type Row = Prediction & {
+  app: string;
+  task: string;
+  scenario: string;
+  kind: string;
+  note?: string;
+  /** Why the system decided as it did (checks: the requirements that did not pass; models: their reasoning). */
+  why?: string;
+};
+
+/** The requirements that did not pass, with their checks' messages (or "all passed"). */
+function checksWhy(o: Outcome): string {
+  const notPassed = o.requirements.filter((q) => q.status !== 'pass' && q.kind === 'hard');
+  if (!notPassed.length) return 'all hard requirements passed';
+  return notPassed
+    .map(
+      (q) =>
+        `${q.requirement} ${q.status}: ${o.checks
+          .filter((c) => c.requirement === q.requirement && c.status !== 'pass')
+          .map((c) => `${c.check} ${c.status}${c.reason ? ` (${c.reason})` : ''}: ${c.message}`)
+          .join('; ')}`,
+    )
+    .join(' | ');
+}
 const results: Record<string, { rows: Row[]; measured: boolean; reason?: string; model?: string }> = {};
 
 type ModelOutcome = { row: Row; model: string } | { unavailable: string };
@@ -117,9 +187,13 @@ const isStale = (msg: string | undefined) => !!msg && msg.includes('has no recor
 
 /** The LLM judge never sees the check set, so its recordings serve both modes; the others are kept per mode. */
 const cassetteDir = (system: string) =>
-  CHECKS === 'compiled' && system !== 'llm-judge' ? `cassettes/compiled/${system}/` : `cassettes/${system}/`;
+  REAL
+    ? `cassettes/real/${system}/`
+    : CHECKS === 'compiled' && system !== 'llm-judge'
+      ? `cassettes/compiled/${system}/`
+      : `cassettes/${system}/`;
 /** Handwritten results stay at eval/results/ (what CI writes); compiled ones go next to them. */
-const resultsDir = CHECKS === 'compiled' ? 'results/compiled/' : 'results/';
+const resultsDir = REAL ? 'results/real/' : CHECKS === 'compiled' ? 'results/compiled/' : 'results/';
 
 async function modelRun(system: string, r: Run): Promise<ModelOutcome> {
   const cassette = new URL(`${cassetteDir(system)}${r.app}/${r.task}/${r.scenario}.json`, root).pathname;
@@ -136,11 +210,13 @@ async function modelRun(system: string, r: Run): Promise<ModelOutcome> {
   let verdict: Row['verdict'] = 'abstain';
   let usage: Parameters<typeof costUsd>[0] = { inputTokens: 0, outputTokens: 0 };
   let note: string | undefined;
+  let why: string | undefined;
   try {
     if (system === 'llm-judge') {
       const j = await llmJudge(env.model, { task: r.checks.task, snapshot: r.snapshot, agentReport: AGENT_REPORT });
       verdict = j.verdict;
       usage = j.usage;
+      why = j.reasoning;
       if (j.status === 'error') note = j.reasoning;
     } else if (system === 'agentic-verifier') {
       const v = await runVerifier(env.model, {
@@ -158,10 +234,15 @@ async function modelRun(system: string, r: Run): Promise<ModelOutcome> {
       const k = kleeneAnd(status);
       verdict = k === 'pass' ? 'success' : k;
       usage = v.usage;
+      why = v.verdicts.map((x) => `${x.requirement} ${x.status}: ${x.reasoning}`).join(' | ');
     } else {
       const res = await verify(r.checks, r.snapshot, { verifier: env.model, agentReport: AGENT_REPORT });
       verdict = res.outcome.verdict;
       usage = res.verifier?.usage ?? { inputTokens: 0, outputTokens: 0 };
+      why = [
+        checksWhy(res.outcome),
+        ...(res.verifier?.verdicts ?? []).map((x) => `verifier ${x.requirement} ${x.status}: ${x.reasoning}`),
+      ].join(' | ');
       const err = res.record.escalation?.error;
       if (err !== undefined) note = `model error: ${err}`;
     }
@@ -179,6 +260,8 @@ async function modelRun(system: string, r: Run): Promise<ModelOutcome> {
       ...base,
       verdict,
       ...(note ? { note } : {}),
+      // Kept for the real-app failure analysis; the example reports stay as they were.
+      ...(why && REAL ? { why } : {}),
       ms: env.mode === 'replay' ? NaN : ms,
       costUsd: costUsd(usage, priceOf(env.model.id)),
     },
@@ -208,6 +291,34 @@ const table = (m: Record<string, Metrics | null>) => [
   ),
 ];
 
+const cell = (s: string, n = 400) => {
+  const t = s.replace(/\s+/g, ' ').replace(/\|/g, '\\|');
+  return t.length > n ? `${t.slice(0, n - 1)}…` : t;
+};
+
+/** Every run a system got wrong, with the oracle's ground truth and the system's own reason. */
+function misjudged(): string[] {
+  const out = ['## Misjudged runs', ''];
+  for (const [system, v] of Object.entries(results)) {
+    if (!v.measured) continue;
+    const bad = v.rows.filter((r) => (r.expected === 'success' ? r.verdict !== 'success' : r.verdict === 'success'));
+    out.push(`### ${system} (${bad.length})`, '');
+    if (!bad.length) {
+      out.push('None.', '');
+      continue;
+    }
+    out.push('| Run | Kind | Label (oracle) | Verdict | Why |', '|---|---|---|---|---|');
+    for (const r of bad) {
+      const run = runs.find((x) => x.app === r.app && x.task === r.task && x.scenario === r.scenario);
+      out.push(
+        `| ${r.app}/${r.task}/${r.scenario} | ${r.kind} | ${r.expected}: ${cell(run ? (oracleReason.get(run) ?? '') : '', 120)} | ${r.verdict} | ${cell(r.why ?? r.note ?? '')} |`,
+      );
+    }
+    out.push('');
+  }
+  return out;
+}
+
 function writeReport(): string {
   const all = Object.fromEntries(Object.entries(results).map(([k, v]) => [k, v.measured ? metrics(v.rows) : null]));
   const kinds = [...new Set(runs.map((r) => r.kind))];
@@ -231,7 +342,7 @@ function writeReport(): string {
   const md = [
     `# Evaluation: ${CHECKS} checks${measuredSystems.some((x) => x !== 'checks' && x !== 'checks+escalation') ? ' vs. model baselines' : ' (model baselines not measured yet)'}`,
     '',
-    `Generated ${new Date().toISOString()} · check sets: **${CHECKS}** · ${runs.length} labelled runs over ${new Set(runs.map((r) => `${r.app}/${r.task}`)).size} tasks (${runs.filter((r) => r.expected === 'success').length} correct, ${runs.filter((r) => r.expected === 'fail').length} incorrect) in ${APPS.length} apps.`,
+    `Generated ${new Date().toISOString()} · ${REAL ? 'dataset: **real apps** (ADR 0009) · ' : ''}check sets: **${CHECKS}** · ${runs.length} labelled runs over ${new Set(runs.map((r) => `${r.app}/${r.task}`)).size} tasks (${runs.filter((r) => r.expected === 'success').length} correct, ${runs.filter((r) => r.expected === 'fail').length} incorrect) in ${appCount} apps.`,
     '',
     'Positive = the run really completed the task. TPR = correct runs judged success; TNR = incorrect runs judged not success (an abstain counts as not success). The agent always reports success, as agents usually do.',
     '',
@@ -277,6 +388,7 @@ function writeReport(): string {
       ? `- Checks wrong on: ${wrong.map((r) => `${r.app}/${r.task}/${r.scenario} (${r.verdict})`).join(', ')}.`
       : '- Checks gave the labelled verdict on every run.',
     '',
+    ...(REAL ? misjudged() : []),
   ].join('\n');
   mkdirSync(new URL(resultsDir, root), { recursive: true });
   writeFileSync(new URL(`${resultsDir}REPORT.md`, root), md);
@@ -296,6 +408,7 @@ for (const system of SYSTEMS) {
     if (system === 'checks') {
       const t0 = performance.now();
       const o = evaluate(r.checks, r.snapshot);
+      const took = performance.now() - t0;
       rows.push({
         app: r.app,
         task: r.task,
@@ -303,8 +416,9 @@ for (const system of SYSTEMS) {
         kind: r.kind,
         expected: r.expected,
         verdict: o.verdict,
-        ms: performance.now() - t0,
+        ms: took,
         costUsd: 0,
+        ...(REAL ? { why: checksWhy(o) } : {}),
       });
       continue;
     }
@@ -313,6 +427,7 @@ for (const system of SYSTEMS) {
       const t0 = performance.now();
       const o = evaluate(r.checks, r.snapshot);
       if (o.verdict !== 'abstain') {
+        const took = performance.now() - t0;
         rows.push({
           app: r.app,
           task: r.task,
@@ -320,8 +435,9 @@ for (const system of SYSTEMS) {
           kind: r.kind,
           expected: r.expected,
           verdict: o.verdict,
-          ms: performance.now() - t0,
+          ms: took,
           costUsd: 0,
+          ...(REAL ? { why: checksWhy(o) } : {}),
         });
         continue;
       }

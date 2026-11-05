@@ -1,0 +1,286 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:15:48.715Z",
+ "turns": {
+  "sha256:c333ef6327067e775e735fc4bc597334c12572137d863ea2055e190820bc36b0": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_012go6H5CuZpXLwkDL4oo8aT",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The post \"Flaky tests and how to avoid them\" has the tag \"testing\".",
+        "field": "instruction",
+        "quote": "Add the tag \"testing\" to the post \"Flaky tests and how to avoid them\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_012go6H5CuZpXLwkDL4oo8aT",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The post \"Flaky tests and how to avoid them\" has the tag \"testing\".",
+        "field": "instruction",
+        "quote": "Add the tag \"testing\" to the post \"Flaky tests and how to avoid them\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1068,
+    "outputTokens": 145,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1064
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:574e8edcdf7ff33b835691160b9a7fe67051cc4ae95619796f4489bbbd8dd5b2": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CXJuY95iQ63sunE3TCaftb",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01CXJuY95iQ63sunE3TCaftb",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 16894,
+    "outputTokens": 25,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 16890
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:d72ed211e399e32ff2ace02d9667d3fea5cb23269bb7468877d53622a3712c3b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017bNc19u7PKexDiX5J9KCZJ",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "posts"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "title",
+           "tags"
+          ],
+          "properties": {
+           "title": {
+            "const": "Flaky tests and how to avoid them"
+           },
+           "tags": {
+            "type": "array",
+            "contains": {
+             "const": "testing"
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "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"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_017bNc19u7PKexDiX5J9KCZJ",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "posts"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "title",
+           "tags"
+          ],
+          "properties": {
+           "title": {
+            "const": "Flaky tests and how to avoid them"
+           },
+           "tags": {
+            "type": "array",
+            "contains": {
+             "const": "testing"
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20318,
+    "outputTokens": 484,
+    "cacheReadTokens": 20316,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:f0bf9fbc19b81cecea270a88a32d7249111215227a20827c7aae1e112f4bfd6b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015pYai1FeXmWVcz2GvWq3Ly",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "post-has-testing-tag",
+        "requirement": "R1",
+        "description": "The backend posts probe shows the post titled exactly \"Flaky tests and how to avoid them\" with \"testing\" among its tags.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "posts"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "title",
+             "tags"
+            ],
+            "properties": {
+             "title": {
+              "const": "Flaky tests and how to avoid them"
+             },
+             "tags": {
+              "type": "array",
+              "contains": {
+               "const": "testing"
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_015pYai1FeXmWVcz2GvWq3Ly",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "post-has-testing-tag",
+        "requirement": "R1",
+        "description": "The backend posts probe shows the post titled exactly \"Flaky tests and how to avoid them\" with \"testing\" among its tags.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "posts"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "title",
+             "tags"
+            ],
+            "properties": {
+             "title": {
+              "const": "Flaky tests and how to avoid them"
+             },
+             "tags": {
+              "type": "array",
+              "contains": {
+               "const": "testing"
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20880,
+    "outputTokens": 257,
+    "cacheReadTokens": 20316,
+    "cacheWriteTokens": 562
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

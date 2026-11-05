@@ -1,0 +1,218 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:47:23.146Z",
+ "turns": {
+  "sha256:418d99fdb193d3aefb4e4367bf71c1b084498d39604c8fb38c459f869d92eba0": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01RdVEH6MuQYZ9ZCAsBTH7m8",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/cart?action=show"
+     }
+    },
+    {
+     "id": "toolu_01LWhm22FSxzR9h3o6s6dNTV",
+     "name": "show_part",
+     "input": {
+      "part": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01RdVEH6MuQYZ9ZCAsBTH7m8",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/cart?action=show"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01LWhm22FSxzR9h3o6s6dNTV",
+       "toolName": "show_part",
+       "input": {
+        "part": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7394,
+    "outputTokens": 104,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7390
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:be395e89f89743a1de256dd15cac5ab1a9c47e08ba558131526832a9f524559d": {
+   "stop": "tool_use",
+   "text": "The cart has a \"Mug Today is a good day\" with quantity 1. I'll set its quantity field to 3.",
+   "toolCalls": [
+    {
+     "id": "toolu_01XqH8nhcKGTn3ZfkvTWkR7E",
+     "name": "fill",
+     "input": {
+      "ref": "f4e76",
+      "text": "3",
+      "submit": true
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The cart has a \"Mug Today is a good day\" with quantity 1. I'll set its quantity field to 3."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01XqH8nhcKGTn3ZfkvTWkR7E",
+       "toolName": "fill",
+       "input": {
+        "ref": "f4e76",
+        "text": "3",
+        "submit": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 11958,
+    "outputTokens": 130,
+    "cacheReadTokens": 7390,
+    "cacheWriteTokens": 4566
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:78c60903f2edfed546fc2a81ead8ab585d021e031b83a4bc2645b28621f74f3b": {
+   "stop": "tool_use",
+   "text": "The mug quantity now shows 3 and the cart total updated to €30.80 (3 × €11.90 = €35.70 would be expected for the mug alone, plus €18.90 cushion). Let me verify the totals are consistent: the mug line shows €11.90 at quantity 3, which looks like a stale price display, so I'll reload the cart to confirm the saved state.",
+   "toolCalls": [
+    {
+     "id": "toolu_01T7e9rFh42MPi4DMgyjJNEg",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/cart?action=show"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The mug quantity now shows 3 and the cart total updated to €30.80 (3 × €11.90 = €35.70 would be expected for the mug alone, plus €18.90 cushion). Let me verify the totals are consistent: the mug line shows €11.90 at quantity 3, which looks like a stale price display, so I'll reload the cart to confirm the saved state."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01T7e9rFh42MPi4DMgyjJNEg",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/cart?action=show"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12131,
+    "outputTokens": 182,
+    "cacheReadTokens": 7390,
+    "cacheWriteTokens": 4739
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:199163d710efcfd05c251911a95f4ce3f9401f2061e1f38666dc81394d0d00ad": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0124oB7tpTgE8vF4yNfWRqrd",
+     "name": "finish",
+     "input": {
+      "report": "I changed the quantity of the \"Mug Today is a good day\" in your cart from 1 to 3. After reloading the cart, the mug line shows quantity 3 at €35.70, and the cart total is €54.60, including the Hummingbird cushion at €18.90."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS9QYKEAgTGAI4AUIIdGhpbmtpbmcSDDp/CTNZeda4Vnii+hoMEvqR3ZXE8Mx8UauJIjB9s80NdD7WruYP/MT0wlSe0Ny0b8E7dmTVyaG94ta0XCU3t9EfIR8DzEYPFBE3yP4qkgad06Frqf4XPJHcGqmT8d1HX5sXCDXZ/QPfOH9iRhLSKxb95hihudFRz+OUy3LVGQpXy/EWZyExE3xxl3UIyvs6gf1iBG+TDfuYh8qw/nYBDfRiE80gLZwYMwAImSSGRjduQFzFZIyc+XGdRUy01Tscb5j3As5i9ubg0RKY6z6BDYQyD5xSEz1ePR08LxKjOGR3sYqcjjGP590aEYUspvnqcHyeYpYbFaCTU8kNBtov83pG+MF+fG93kf6uPBrn592CXPUYspQtMBpRKfsqPzE86+LXRho3pM8j+FtzAxoalUSKxkW/jcl/5nWHd9hi7OaP2DXMy9Z6GqMlMvR45GJP6za22XSkAjaIZ/tuvmC2nuyspDdujIXjzW9kvt1t7tieCnvdfZd+ZEdTT/bvXTE4es4exwBmSJAbE/YrZtLgjS0c32lpZIDOj7RuANgYWyKW+bMmKEl7YOkm1w0jhcCvq5fPNv5L1eYUo/diGs3pW5UcYzqd1o85/Pyay/bqakkaSFrLG4tfZNddz04ieDDCKoCoN3pMqgHRQ5wf6Ev6QbWplLzBXX/ox8MyFda6t2xL3WrS8D90yB/wkDwvS19t/R+P0UexlZuE8ePMiwSyTxWClGaygkW1oIKOjBc1SCgKBgwc1sBUWDenZ5XUU81kha3E5NN61Y0XdKCygP/NHJCdHyYMbw7X204FxR2nNP1bUoMqEWaNTzsKtuohHIebOZuDgplueMkfPVVTZ3RQjzSGdeDIPwPvCMloei3enlsMZel2iW1Zb75xUZp6WBSMs11ZKPL1H/bvciGpJU/7TZuAUpDhITXg9ynbDIxX+svOVBDPQ+mDheixcCpaGmfm0g/LljurTqliZ39u0W/gF/8lHMJf1yjOaKg2v+wUU/jvZUTsyVtScpcvZHaMLqmJZoZ1c6Lptn6+f27eIX9Ieqikbe44qiXGeWmFA9dv43GXckJGeVruMZ/DtVXeIJC73U5jBmKI9mGDYlfASnsUZdKkMSbPpybzVkA6csarjKiFr8oCnJ34CsUGuf7+BLMET/4YAQ=="
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_0124oB7tpTgE8vF4yNfWRqrd",
+       "toolName": "finish",
+       "input": {
+        "report": "I changed the quantity of the \"Mug Today is a good day\" in your cart from 1 to 3. After reloading the cart, the mug line shows quantity 3 at €35.70, and the cart total is €54.60, including the Hummingbird cushion at €18.90."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12350,
+    "outputTokens": 218,
+    "cacheReadTokens": 7390,
+    "cacheWriteTokens": 4958
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

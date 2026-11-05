@@ -1,0 +1,157 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:14:33.759Z",
+ "turns": {
+  "sha256:b31bc09517571eaaea670a27b9660bb9abe74f0f6bd251bc6d197126f8ce93a1": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_014NjauJFask2WQQwevUySAZ",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The site title is changed to \"Assay Field Notes\".",
+        "field": "instruction",
+        "quote": "Change the site title to \"Assay Field Notes\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_014NjauJFask2WQQwevUySAZ",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The site title is changed to \"Assay Field Notes\".",
+        "field": "instruction",
+        "quote": "Change the site title to \"Assay Field Notes\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1057,
+    "outputTokens": 122,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1053
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a028bc01803403dad38239975cc6b01d19829fbc9395a06fa18ef3d5f1a81990": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_014ZHs5uE3yhi6BSvkYN9wp4",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_014ZHs5uE3yhi6BSvkYN9wp4",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 16853,
+    "outputTokens": 25,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 16849
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:5ee5ada03908a9599b8bedc3017984f0ec202307b5779eb1e07a0c6a5988464c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_012cnkzVmGZCutjwstiH4qzC",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "site-title-saved",
+        "requirement": "R1",
+        "description": "The backend settings probe shows the site title is exactly \"Assay Field Notes\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "settings",
+          "pointer": "/title"
+         },
+         "expect": {
+          "equals": "Assay Field Notes"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSxQYKEAgTGAI4AUIIdGhpbmtpbmcSDAwMmwVLFYryFUuNtRoM7GQQGjw79G//3yXgIjBsTbGKXEcJ4p+w3CnoHdV7Jr/G8cT+fUMBvdTjnFOHy4pDzvQNQShhBq+RrCNdL/Iq4gXCTCXzB56LI5OAWTYyzp814PEx0yF4wpzBOcBqnYM9AOW7YmNwzU4Idb76iZMDnDFO/6mQs9Hzki7R12Au7P3+pA6/86E3bdLDo91M3l63CnDJjHt45Gewaqe2DhgxGzMLe4KRkMBbEdoNDgb1E6pmYPCAXRXBs8U/XXoe+19eQ8O3/ZpP3vKnI3lw2X7qpHMrviAPu5GkYEKywWvNN3jV/l7UEMmgzWu2rMUwYCYL60V/gLQ6snPvc7P2DALt6hJylAKHb7MkOIJIsYGvkktHp5WH0g/h8GZz64vln9K+j8o6RFohVRbY7OYwD8ztdzpY8eE+mVGglt9BD5OcVx0Ns5VrJsSIL2YGAgL+VcMOGsBSQXakCskzHX2Rsb0zShYP0WxWSoW+jcUTVldCLyRjhuUhPsddaRjCGuXcC72/YFK4U6rMi1UVg/OUl1GhhZVJWnqRreh0+NuQN1sauS6DElxHdtuZiLiGQ06IXAjVRXXU9Z+/c4PH5x3HT03bL7UbL/pfAZ+15hNz/qy9j4JOjq0ey6bWBfDw8o3i1McUEutaiddxIyM94lYy9h2d7DpIidzcmq38e7UpGxl93nPWaP8PPM82StZ2recC3jMo9XQUgCi4EwW0m4433CoF91z2ueqQ4XpB/9TEohg10ytTyFecOrG3AYzUGkRkG2mzgF9KHqMiOW88mOjhJo1cye/bDsTtbhoMPzSOgfkvMhDAZ9ttab8A9lRvwTfhTF5j+Oh2n+piOBC4RHwhf7xKeHKSG0WL36d2xQPQCyP3TZxX0I9+EQM+Q2KFW+JjSdkYtRgecbHbTkj6bMn4vmU9PFMtlYT/kotEucAZ06bxmQ7e+tPHeNoLCaCrr6g+TOJlX6KjsGRtOfN/JoY/7EY3dYOjiwdK2IK5tF6MXEEWovVPGFlnlOHz2dpPINbyEhiGGOmU24BmSFsGgMHKMVc/Hs/0OERvvL8TZ5Lm9QsjOg5zjmUYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_012cnkzVmGZCutjwstiH4qzC",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "site-title-saved",
+        "requirement": "R1",
+        "description": "The backend settings probe shows the site title is exactly \"Assay Field Notes\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "settings",
+          "pointer": "/title"
+         },
+         "expect": {
+          "equals": "Assay Field Notes"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20273,
+    "outputTokens": 246,
+    "cacheReadTokens": 16849,
+    "cacheWriteTokens": 3422
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

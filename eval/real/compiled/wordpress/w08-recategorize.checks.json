@@ -1,0 +1,250 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "wordpress/w08-recategorize",
+  "version": "1",
+  "task": {
+    "instruction": "Move the post \"Writing your first check\" from the News category to Tutorials."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The post \"Writing your first check\" is assigned to the Tutorials category.",
+      "source": {
+        "field": "instruction",
+        "quote": "Move the post \"Writing your first check\""
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The post \"Writing your first check\" is in the Tutorials category.",
+      "source": {
+        "field": "instruction",
+        "quote": "to Tutorials"
+      }
+    },
+    {
+      "id": "R3",
+      "kind": "hard",
+      "text": "The post \"Writing your first check\" is no longer in the News category.",
+      "source": {
+        "field": "instruction",
+        "quote": "from the News category"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "r1-same-post-moved",
+      "requirement": "R1",
+      "description": "The same existing post titled \"Writing your first check\" (same id as before the task) is now in Tutorials and not in News.",
+      "assert": {
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "posts"
+            },
+            "normalize": [
+              {
+                "op": "items",
+                "where": {
+                  "properties": {
+                    "title": {
+                      "const": "Writing your first check"
+                    }
+                  },
+                  "required": [
+                    "title"
+                  ]
+                },
+                "pointer": "/id"
+              }
+            ],
+            "expect": {
+              "sameAs": {
+                "source": {
+                  "from": "probe",
+                  "probe": "posts",
+                  "at": "before"
+                },
+                "normalize": [
+                  {
+                    "op": "items",
+                    "where": {
+                      "properties": {
+                        "title": {
+                          "const": "Writing your first check"
+                        }
+                      },
+                      "required": [
+                        "title"
+                      ]
+                    },
+                    "pointer": "/id"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "posts"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "title",
+                    "categories"
+                  ],
+                  "properties": {
+                    "title": {
+                      "const": "Writing your first check"
+                    },
+                    "categories": {
+                      "type": "array",
+                      "contains": {
+                        "const": "Tutorials"
+                      },
+                      "not": {
+                        "contains": {
+                          "const": "News"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "r2-in-tutorials",
+      "requirement": "R2",
+      "description": "Every post titled \"Writing your first check\" exists and has the Tutorials category in the backend.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "posts"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "title"
+              ],
+              "properties": {
+                "title": {
+                  "const": "Writing your first check"
+                }
+              }
+            },
+            "items": {
+              "if": {
+                "type": "object",
+                "required": [
+                  "title"
+                ],
+                "properties": {
+                  "title": {
+                    "const": "Writing your first check"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "categories"
+                ],
+                "properties": {
+                  "categories": {
+                    "type": "array",
+                    "contains": {
+                      "const": "Tutorials"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r3-not-in-news",
+      "requirement": "R3",
+      "description": "The post \"Writing your first check\" exists and no post with that title is in the News category.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "posts"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "title"
+              ],
+              "properties": {
+                "title": {
+                  "const": "Writing your first check"
+                }
+              }
+            },
+            "items": {
+              "if": {
+                "type": "object",
+                "required": [
+                  "title"
+                ],
+                "properties": {
+                  "title": {
+                    "const": "Writing your first check"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "categories"
+                ],
+                "properties": {
+                  "categories": {
+                    "type": "array",
+                    "not": {
+                      "contains": {
+                        "const": "News"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:15:15.109Z"
+  }
+}

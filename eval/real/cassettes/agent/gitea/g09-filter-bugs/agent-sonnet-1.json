@@ -1,0 +1,137 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-sonnet-5-5@low",
+ "recordedAt": "2026-11-05T11:51:31.450Z",
+ "turns": {
+  "sha256:28690a41c00fd1e4bf4ae979039a699f7851013f60ab3320692c20347f5c25b8": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017Pjpn1LMgWk6iT3BEvvGXv",
+     "name": "goto",
+     "input": {
+      "url": "/acme/webapp/issues?state=open&labels=bug"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_017Pjpn1LMgWk6iT3BEvvGXv",
+       "toolName": "goto",
+       "input": {
+        "url": "/acme/webapp/issues?state=open&labels=bug"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 4794,
+    "outputTokens": 65,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 4790
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:9e56945638b9f2db0bee4fceff1b4982d50972d2a202b3bff8fc9565740d122b": {
+   "stop": "tool_use",
+   "text": "Label needs the id; use labels=1.",
+   "toolCalls": [
+    {
+     "id": "toolu_019C2qM9yZz3hiBvHrN1YN4x",
+     "name": "goto",
+     "input": {
+      "url": "/acme/webapp/issues?state=open&labels=1"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Label needs the id; use labels=1."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_019C2qM9yZz3hiBvHrN1YN4x",
+       "toolName": "goto",
+       "input": {
+        "url": "/acme/webapp/issues?state=open&labels=1"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 10982,
+    "outputTokens": 78,
+    "cacheReadTokens": 4790,
+    "cacheWriteTokens": 6190
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:0d162df4fb3221eb765c6069ec259287d26874cd0a65a2e60d12348cb7b10cf0": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_013G2SfVcZECskb52CdTZ8sk",
+     "name": "finish",
+     "input": {
+      "report": "acme/webapp has 6 open issues labelled bug: #13 Settings page loads slowly, #12 Crash when uploading large file, #10 Broken link in footer, #4 Typo in README, #3 Dark mode toggle does not persist, #1 Crash when uploading empty file. I guessed that the bug label's ID is 1 and filtered the issue list on it. Every issue in the results showed the \"bug\" label."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_013G2SfVcZECskb52CdTZ8sk",
+       "toolName": "finish",
+       "input": {
+        "report": "acme/webapp has 6 open issues labelled bug: #13 Settings page loads slowly, #12 Crash when uploading large file, #10 Broken link in footer, #4 Typo in README, #3 Dark mode toggle does not persist, #1 Crash when uploading empty file. I guessed that the bug label's ID is 1 and filtered the issue list on it. Every issue in the results showed the \"bug\" label."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 10366,
+    "outputTokens": 183,
+    "cacheReadTokens": 4790,
+    "cacheWriteTokens": 5574
+   },
+   "model": "claude-sonnet-5-5"
+  }
+ }
+}

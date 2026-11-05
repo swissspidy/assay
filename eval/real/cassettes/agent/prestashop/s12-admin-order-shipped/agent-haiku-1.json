@@ -1,0 +1,643 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:51:35.815Z",
+ "turns": {
+  "sha256:755a38c503dedce31ec38dcc2a705fc10f9b291bed4a2c2ff960e06f3a9f5cfa": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01ARmLRp2wgoz6RNfm3rSapE",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/admin-dev/index.php/sell/orders/?_token=4fjg47vThgZTlDmSjjkXWKiGaNVWKWyZz2rh0l44wCI"
+     }
+    },
+    {
+     "id": "toolu_01GhXnbEzTB4tx7jxprfy7PR",
+     "name": "show_part",
+     "input": {
+      "part": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01ARmLRp2wgoz6RNfm3rSapE",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/admin-dev/index.php/sell/orders/?_token=4fjg47vThgZTlDmSjjkXWKiGaNVWKWyZz2rh0l44wCI"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01GhXnbEzTB4tx7jxprfy7PR",
+       "toolName": "show_part",
+       "input": {
+        "part": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7716,
+    "outputTokens": 158,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7712
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:be8d9de08f38998b3f602b55f5d84ace13937604900f1bc62271f38a9d13884a": {
+   "stop": "tool_use",
+   "text": "Order FFATNOMMJ is order ID 4. I'll open its view page.",
+   "toolCalls": [
+    {
+     "id": "toolu_01TeHEGtdPti85fu86YCL6M6",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/admin-dev/index.php/sell/orders/4/view?_token=4fjg47vThgZTlDmSjjkXWKiGaNVWKWyZz2rh0l44wCI"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Order FFATNOMMJ is order ID 4. I'll open its view page."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01TeHEGtdPti85fu86YCL6M6",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/admin-dev/index.php/sell/orders/4/view?_token=4fjg47vThgZTlDmSjjkXWKiGaNVWKWyZz2rh0l44wCI"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 16732,
+    "outputTokens": 144,
+    "cacheReadTokens": 7712,
+    "cacheWriteTokens": 9018
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:fae57208443f0d980fbcf7aa13cbc5ef2b8333fe0563150b76deb89dd44b29d6": {
+   "stop": "tool_use",
+   "text": "The order is open with status \"Awaiting check payment\". I'll open the status dropdown.",
+   "toolCalls": [
+    {
+     "id": "toolu_01NVTMgdkt28gdBr3qjBr3dX",
+     "name": "click",
+     "input": {
+      "ref": "f2e131"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSzAYKEAgTGAI4AUIIdGhpbmtpbmcSDOT4Oibnr1GOuQsFlhoM1GqaNJ2V9mGp41TmIjAtgrY1QSZFl4WE1AIQIfXpGt3bYCeqyCClurJMYktWfbPIjjQNk97K+Bdv9khauCUq6QXtpvEdeBrGcMx4tsHokvokLjT/sPR+5q8pjl1qEo408dXXwT+eFPfXeiuPXHYn+uslvlQE+BcbJ927c4tNXHEEE3qQCPpAv9t2V/2/k1UtCd5RhWMXvhywtx0HKIBb+Tr+C6iKVjoBKVkkqFub4KJsiXIy9p9YTqykZy3AgXDtvLpUv17FUZ3k/5BOpwF0MRDXSYfQsriFs0Km54ftWF1XJuOD3vZnlDFjzBx43Fml80XEiORNU3odqdBmUYhBEf5v2Xv9lj/HY8dPljrqYiikyxXIk17dZqoT45VFacTvEBdR0IlUTaKkThvYqLaDUfVvCyGFXRuq80pXH+sS7h8IcDr2SWv+BKNlyt36WinJXGAiGHDQmRZKgkeBhqm3ymVXhoTwdRfrKin3DvfSNdojnBQhfL2K4saKk93jzkslQkTJk6iDhGG5R7t3IFCzfYfcd5JogtvrsU6BdkksZxcH1JQWIvp9JbaUM1Gl5s9mcDvOXeKeHRuG8tKFeRbER7X+Yz0sWf/UnHqNhxWxWrwIU9iU10ImSuEbIhUSFCcgVRVvAhjUTN1A3LfxJ48SfEoLctS4Bspj7Czw3BSQWllSX6ZoVdVmW4Cfjr/IBjhSDiQhILiii/C/xYkFTMgXcYisnclExHhWv8l26ZtoO1pBlf1ZIQjng6Ic5VgriroAPdpATvQfhLP+6S6TOLS1QfmGKvfDVvi1GZ7d86FMTeq16VHrsgOTpakSYHJhdtO+bqvbamL5bvdZxWZSIl64VfJxLGfjQUl1Fx6Yr7R0835YI52piximNdCj7BiWuoW7pLZgCMBLSR3/29syX2ywaY7sfUmooL9Bv5LEh8je6s60LfojHWZx/FThUC/QVxLRMMeZTPPe1acjObtA0288HJrBdboYIe+hpyvBUu7ICDnbmZIJDu7dF39ir/KVBfb02rwqYerpsB/nBWbPZRsvLCUpjAhnruuT4YR1JbsOtE7Ru7lSLb7BxwjxGAE="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The order is open with status \"Awaiting check payment\". I'll open the status dropdown."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01NVTMgdkt28gdBr3qjBr3dX",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e131"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14669,
+    "outputTokens": 138,
+    "cacheReadTokens": 7712,
+    "cacheWriteTokens": 6955
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:bbc4fb81043e62a6f5756d62f8a0c1728cb4d9ab0deab63535c59e9999338008": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01VYDvMkfJ4jCu3hFdj2A6ez",
+     "name": "click",
+     "input": {
+      "ref": "f2e406"
+     }
+    },
+    {
+     "id": "toolu_015RWoxoUqW5ygAJcC2pg46Z",
+     "name": "wait",
+     "input": {
+      "seconds": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01VYDvMkfJ4jCu3hFdj2A6ez",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e406"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_015RWoxoUqW5ygAJcC2pg46Z",
+       "toolName": "wait",
+       "input": {
+        "seconds": 1
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14924,
+    "outputTokens": 94,
+    "cacheReadTokens": 7712,
+    "cacheWriteTokens": 7210
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:0056db130fb72c3cf71170060c7e1c39e14e5ed8d44e51f0a59d2f7921b107eb": {
+   "stop": "tool_use",
+   "text": "The status box now reads \"Shipped\", but I'm not sure whether that is the saved status or something my clicks changed. I'll check the orders list to confirm.",
+   "toolCalls": [
+    {
+     "id": "toolu_012FarYrf7e55Bi1rPcUTjzG",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/admin-dev/index.php/sell/orders/?_token=4fjg47vThgZTlDmSjjkXWKiGaNVWKWyZz2rh0l44wCI"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSlgoKEAgTGAI4AUIIdGhpbmtpbmcSDBfd4pWYogWHMYuhvBoMa7kBMsw6qaL547djIjCk/AFG6ZILBKY3kcMA8TQW4LYoB4ak4z0bHyfBa9Y4hZ1lX5VOTjMSULJOnDLbfswqswmz6OeWkOwbzcEa4oOVgL++r0mZBJlB7zlDsWTcgK1ItgzR/f96kTxx14Z4IDcNoNchO1PoLhrYIfr+VTHjuKOv/bBWRTffFuDkAEkWx/IFEBkBiEbBphn8BmUTAnBr8vUEcWJzrVHnD5+bvibdjpKAStPyqCsAZ+cf6Gi77VUHXpN2wN9TDLbOIf4FNDj19YIT/ZNV4VfH+LPpS6Nk1IJOm1sDVBdBojWnG8BhP3Lqx8glGWYHmvPZnPzMleJlcjIlSbMkTeas4xcJO8qvUEgQhU/LJ4UV8M/XeqDQnxQj2V+tcDxgdpT8Ix0Uwpqn+/7K9yIhG75ZZ6q67AArq5jv5Xe2G7DoL7kNdsO00xMTtTVwx2rukUZzGDCB4pYYiqyChu0t6XNRttGWZMv8WQlVIqncMX2F2UFlq9vjHGvOA/q/4yLp6Rmc6aqsle7ktSaIyjn/e0F/x23LxEEh8oEQnfIuWbmSU2n+4dO9Ihl8qMtWCNx02TwHDS8vTJhJONijEvcjhTX6AZmgEmfctYFw1b8TmxLpOfvA3NZTw0vE1zQ669IosZoalMi/DfeILhcy3noyBN254Ga4YuISXgnDGrtEfx5OzOL58rhoO/OT+TqeB27s0b3bx2FWwvLiUXKLHVd9raC6UrBhyZbfG3Y1EJlzl2BLxLtMkGkybyUll7C9lqskWmu+aFt2BHqHLgXuJNftWuTnDva68AzFIL9JthxOToTf2gyjd9pjAEi5/pjSO+Bg0HdS6m6Qxmo14Cs5vQsbtaKyt9Cml4oJot3x6BYfIzxQtiGQ0awVvU+qQHYOOT4FVZqP7LdLSGl2C7j4S7RhKmkmAok3nnZ9PbYE3s9la6QBnVI/BDf/8eMd0OYxckJWkuODsdZnFOh6pTbANoM0GlmuK+dgZVjzXUnpSiU48AyydujNXo3qzBEy9TaWghkFVdZndznVEl5vdRngz1htXwy27zGYDfEGnzQXBxUbOzc/JkkpIYmcUmxalKdcfn2Z00WpTKIBfAM95hB4DkMGgv4a9YGDUleY41qu3CvtXsa+l+2Avs6t+cVtoL0R3p23yiuX13EgzDmfAstFW1DQLRRjoPwO8zkYcmWTycP0VXNemVI9A742Vt1QYFjXpGsYt2GDSo7WhuXaBm33Uk/N/JOiAVGFZ701yG5nMmDfCJVaDTCNJ5JIRKZKisTb8SUEH2esi62bR8tXkq7r4xEdZDSzaUmFhYWbW9DWcHZBiTbCmm//2NQbyM0uPxq8IYlWEk/cjZmsLt7k8Ah87Wib5JMwsm44tjVoM6MWrNohQbew4sijog/CH2IBz8ESEtT+buMBJYLHSB/ap2AZ3mX6Cl3rNpSkcGF0ps4YR5vNgcROHkfW6VcvH+Tz6dmOIIhnmyFPg82P4TvK3T8171iGl/gn3SpTL6XLTujsEXLT96hwRd+O+01pmpCyEm3q4SEb8xnc5s0Gr4gedL4jScS7pXIuqgIRGtp46yj/Q6fWspmfHw/V+st0AyDXdqzaOuHi0njaWeGRozqVoAa4/icFSG/VJBTZveR1Sr7N8FaemG8Bt9/MLJUReVkWt30aLFLupyYpJSpJ0A7Q6Xmk/B0YAQ=="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The status box now reads \"Shipped\", but I'm not sure whether that is the saved status or something my clicks changed. I'll check the orders list to confirm."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_012FarYrf7e55Bi1rPcUTjzG",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/admin-dev/index.php/sell/orders/?_token=4fjg47vThgZTlDmSjjkXWKiGaNVWKWyZz2rh0l44wCI"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 21604,
+    "outputTokens": 346,
+    "cacheReadTokens": 7712,
+    "cacheWriteTokens": 13890
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:c59eabb13c9e0f6d289eed5e959c291cad3d59534aae4f243a310467a2d7c287": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01He79GzVQ19X72aRDXPrQ4k",
+     "name": "show_part",
+     "input": {
+      "part": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01He79GzVQ19X72aRDXPrQ4k",
+       "toolName": "show_part",
+       "input": {
+        "part": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 15722,
+    "outputTokens": 47,
+    "cacheReadTokens": 7712,
+    "cacheWriteTokens": 8008
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:f3035f8a1efbdfaa317c10003da22b44ec1119fa01c4276f20a6421b21971c52": {
+   "stop": "tool_use",
+   "text": "The list confirms order FFATNOMMJ is still \"Awaiting check payment\", so nothing was saved. I'll reopen the order and set the status properly.",
+   "toolCalls": [
+    {
+     "id": "toolu_01QnbcVCdd3WA5kHX2wTJQhn",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/admin-dev/index.php/sell/orders/4/view?_token=4fjg47vThgZTlDmSjjkXWKiGaNVWKWyZz2rh0l44wCI"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSggcKEAgTGAI4AUIIdGhpbmtpbmcSDJe+POxR4rQD+oZJNxoM5hlvhO/OYMjTkw08IjCW7HzrhDIkjKa8jspf8ynkcMhpn66vL0g4I3V8bOu5PWrYQsuRvPxrgr1MGCakLZQqnwZmEwCZWBENn8LfHdbsxOgslaudMtfeih4MhgZ6XVO/J38aXgbjC7gI0mHKv93btg0G/bPh+UQpg66NoCQgWSj/cf1DaUG42FuTNlK63PjSLn2BgWkgnkj4bwiyrUKheDKATaJHSdMvSS6tPFCkysuAunR6fiApX8t5D7uYFBRHhyn0bTDmet0PE18lGydcRoOygRSJ1ENJiUJYDriMCPCw9OT9iUIlWrZ5noyWPRw+0p+j3BuYbqD/ECUCdkAp6Ksex+8ORrLd1BemDwuSZtvlFkvcctc0GpY917qI4sF2bKvLVYmt4EntCNPPfd0D4rd2Snk5bkiuC2k0AFwlOkvpDVC8eZxmP4yocgWpqWn2g0HHS3xZ0pkWswcf0mFITGkiCBldqOxfQP4UM+Vu2ZhGLb5Bqo5OrISQLOEADuBOXVq9L9vzYMcRatoYcF5qEAznZwzViPT9yi0gte7pfnuF2I5ZpZwB4w21CLafsLQKU9B0rwWkswK3TX4Z2rXPMObXorTTCLskZHRjzKrmdZ9/ABqNR0XXMx6gPu1HIL/f4NLcV8tFdu0rjYcfvTC8jBDfl6vm+YtT87LKcplTrLsJKpDCrlKFF2hHwg4toMRPvu1CuVsLiMyrvpB23XzT54YUAadf1m/wbuueAuk/XERvBhA0/+TxPdwcWg+7CXmPpUbfQ73/mgpr4d3bJD9y3LpA02grn/J807tZkuTzWSlnadPEWhJXWfGj0cRLDJNfH9cUqSsl0fCrFLERzFCarOx2AjibuajznygfClCAjKitbe+e60Dz96I7TsSpPy8tbxmp4ElM/2Z84K/VG1gh5f8PVs4MztBXSKNpZezdVCn01BbPYih9CGad4lZ2L8OOJ+DWjyu6FUVpLBdfIbIR5Tr5iHaZW4Kj9EfqVdoQ8bJUaanA0eFfFaeCOLSWR4e3jnDLN8C65YlVLKtIOJDt/E4WXRZ4xWV1XNJLVxHgspjbMJrtUbkjZI85qzO92FU1bIxANN/dI11oY5dzlEZ/Dg+XoMPRfbPge8Oo6LGBlWfn6hPiR8F3iqxu3Nfa8ltAGAE="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The list confirms order FFATNOMMJ is still \"Awaiting check payment\", so nothing was saved. I'll reopen the order and set the status properly."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01QnbcVCdd3WA5kHX2wTJQhn",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/admin-dev/index.php/sell/orders/4/view?_token=4fjg47vThgZTlDmSjjkXWKiGaNVWKWyZz2rh0l44wCI"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 11960,
+    "outputTokens": 207,
+    "cacheReadTokens": 7712,
+    "cacheWriteTokens": 4246
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:370b84a7b0b44b270b2d7629cdd484b949ddddd0bae0c1a6efd845893103eb16": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018hmfVr4nqZkpN2aJ93YGnL",
+     "name": "click",
+     "input": {
+      "ref": "f4e131"
+     }
+    },
+    {
+     "id": "toolu_012wr8adHQRmfCMAcmrmt3Pb",
+     "name": "wait",
+     "input": {
+      "seconds": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_018hmfVr4nqZkpN2aJ93YGnL",
+       "toolName": "click",
+       "input": {
+        "ref": "f4e131"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_012wr8adHQRmfCMAcmrmt3Pb",
+       "toolName": "wait",
+       "input": {
+        "seconds": 1
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 16216,
+    "outputTokens": 94,
+    "cacheReadTokens": 7712,
+    "cacheWriteTokens": 8502
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:4f0c9a437452e61e92374e36389baab2bdffb8195d91ea1b6363383e1a45ee7d": {
+   "stop": "tool_use",
+   "text": "The status dropdown is open with \"Shipped\" as an option. I'll select it.",
+   "toolCalls": [
+    {
+     "id": "toolu_01Hg9yo64ufQZVCN2iNjB1Ru",
+     "name": "click",
+     "input": {
+      "ref": "f4e406"
+     }
+    },
+    {
+     "id": "toolu_01BrcAUy1LNkAKf3QPfUe8an",
+     "name": "wait",
+     "input": {
+      "seconds": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The status dropdown is open with \"Shipped\" as an option. I'll select it."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Hg9yo64ufQZVCN2iNjB1Ru",
+       "toolName": "click",
+       "input": {
+        "ref": "f4e406"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01BrcAUy1LNkAKf3QPfUe8an",
+       "toolName": "wait",
+       "input": {
+        "seconds": 1
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 22882,
+    "outputTokens": 120,
+    "cacheReadTokens": 7712,
+    "cacheWriteTokens": 15168
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:ae59eda3184a215a90eda01a897f2d0198507e9d36269fea39385cfcb0ada8e3": {
+   "stop": "tool_use",
+   "text": "The status box now shows \"Shipped\". I'll click \"Update status\" to save it.",
+   "toolCalls": [
+    {
+     "id": "toolu_011F6Jc3XHD3zvuCwVqZAvGh",
+     "name": "click",
+     "input": {
+      "ref": "f4e132"
+     }
+    },
+    {
+     "id": "toolu_01LCqSz2Pb5KtFZAhiBvxDTc",
+     "name": "wait",
+     "input": {
+      "seconds": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS/gcKEAgTGAI4AUIIdGhpbmtpbmcSDMF8HjzXyzomy/YPvxoMNUqFn1v93MfiGbclIjArOWFnsGMFGNxL0hMbFK6G0ZeCg89ObrDa5/shWu9cdzA8U1AGCcyaFp8i0wZGzvAqmwdKIhrTL/+hg7tpRhfxeMbsCk9MAQ9Ph0MpuOT90LN6yd5KbTtY/qXUV2EEoLYK4kjuvSCBv37ukrL99i/lBUdLIIcMUpklLzwX4+YbUJyoamqsfQdKyobAMyM5zj+G4IaC5TDA2+bFbq97bmoe/poxm1l7llaMO/ANkal7cDesAzi23Z9VOmgULtvJ+Kv/DCWsFphPq6Nxr74AKMnksy1/FK0352D2xEvEG373PcCpFAHhjWwraeM/4nO/4zeRIQRqskfHdRCiVnol2ci3sm0w9YeBI59IDc2UHXWgaJaxhHljZ2O9BrBKt7zG3rHnu+vxvL1YxvQGahOmX0WMgB40kLhQ7NIJ3gFpaH/otGRO6zw3/UozlH8x3vcMOUlMFm++zA3V8NBGXBi8MhAX4sylMSKrBlwuprJ/Gm8NBQTl24zjZxzUK0jHtzAXwLK38Bh1/4nopxxNumVe+pCRoIBDvOfmV07Ta1fHk7uS+5TH6/rdGPU45xTOv6iBhjVvzoy3XinQ88vj2vIDHaUg3gQkQPmObGi3dxG8c8rBWh/SxPWfWLXxHoEZ8mp+Kc4x/bcCFMTWct+h3B9JyV5x8UkUBa79AshB1fsPPNnbTIg+gSaQad1X5oAz32rSdvVWTvNR01PsWRarMbeCXfEUiriOqft6y8+UwXfNx3nheawotetWadHdN4SrPT5tCpH30rofHIQu+t61KNGRb12dtPhlkEJYj5q2EC5QGCqvatQeo+G3A4yJxTR1af39u0962yqTZd5nF9Fu/ElIXHlXvOvlyzO1CfZFQYiId21FGaEu/iWxJYqYshKoOM2ZyDjn6E7GVjNXCaXPe4+znvl/eG9/wJzOuIXlawcSImFt0FsfxOAMwdz0kCr4zHeqeJVYMZcQXgJex5lBTnIht4KwUIE4cNiQO6oMuUkPZ1wFqP2EWqkPwI8sHnzwmwavwOM8RdhshNkNscZCWAbdpS3WqO7/mUXsRIqcR4vuyI64afR9E3EjIv7H4ouGDjiC+hqB6eDAq5ObpAP5P+1qq9Fc2wYF3ETTK7/gkRIq3ISjZMKg0XlXz75CBMwjk1AocSgTAsS6W/7+zQbWFJ2Vy+yP4JzlwAcP/Ck/SVBFt/oQw8bfe7Y/ETrQmCkgc2ulDi5PZ0cSv0VppB4sEyYkeFvBeANJ6eCRJstrZeF46GfxkFLeFf/r2TE+5ajYV1CHBcv7lFQfgNFEdQ7Or65+EhgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The status box now shows \"Shipped\". I'll click \"Update status\" to save it."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_011F6Jc3XHD3zvuCwVqZAvGh",
+       "toolName": "click",
+       "input": {
+        "ref": "f4e132"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01LCqSz2Pb5KtFZAhiBvxDTc",
+       "toolName": "wait",
+       "input": {
+        "seconds": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 23297,
+    "outputTokens": 186,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 23295
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:8bf4221991db8ed7ba6b07deecf52d95b6ee8fd90ae3f0275ab85d30ff34cb8b": {
+   "stop": "tool_use",
+   "text": "Order FFATNOMMJ (#4) is now marked as shipped: the page showed \"Successful update\" and the status box reads \"Shipped\". I did not re-check the orders list after saving.",
+   "toolCalls": [
+    {
+     "id": "toolu_01Qi2x8tS6C63EMKRMPdG24v",
+     "name": "finish",
+     "input": {
+      "report": "Order FFATNOMMJ (#4, from John DOE) was updated to the \"Shipped\" status and the back office confirmed \"Successful update\"."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Order FFATNOMMJ (#4) is now marked as shipped: the page showed \"Successful update\" and the status box reads \"Shipped\". I did not re-check the orders list after saving."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Qi2x8tS6C63EMKRMPdG24v",
+       "toolName": "finish",
+       "input": {
+        "report": "Order FFATNOMMJ (#4, from John DOE) was updated to the \"Shipped\" status and the back office confirmed \"Successful update\"."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 23896,
+    "outputTokens": 153,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 23894
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

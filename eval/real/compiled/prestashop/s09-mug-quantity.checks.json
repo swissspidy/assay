@@ -1,0 +1,63 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "prestashop/s09-mug-quantity",
+  "version": "1",
+  "task": {
+    "instruction": "Change the quantity of the mug in my cart to 3."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The mug in the cart has its quantity set to 3.",
+      "source": {
+        "field": "instruction",
+        "quote": "Change the quantity of the mug in my cart to 3."
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "mug-qty-3",
+      "requirement": "R1",
+      "description": "The backend cart holds the mug 'Mug Today is a good day' as a single line with quantity 3.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+        },
+        "normalize": [
+          {
+            "op": "items",
+            "where": {
+              "properties": {
+                "product": {
+                  "const": "Mug Today is a good day"
+                }
+              },
+              "required": [
+                "product"
+              ]
+            },
+            "pointer": "/quantity"
+          }
+        ],
+        "expect": {
+          "equals": [
+            3
+          ]
+        }
+      }
+    }
+  ],
+  "compiled": {
+    "compiler": "assay/0.1.0",
+    "model": "anthropic:claude-opus-5-5@high",
+    "modelsUsed": [
+      "claude-opus-5-5"
+    ],
+    "at": "2026-11-05T12:19:10.275Z"
+  }
+}

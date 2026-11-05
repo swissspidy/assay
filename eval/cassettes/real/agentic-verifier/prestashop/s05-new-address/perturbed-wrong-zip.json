@@ -1,0 +1,276 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:58:10.197Z",
+ "turns": {
+  "sha256:9bb60f5c1c22e7c27bb4ba93e5700dfb3720f118c78aa3727a6bbeb609c47bcd": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01JrFkFNVhJL61B3eAxi9cYf",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01F4Ntftf5ue9DVNRAJaZ9uD",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01JrFkFNVhJL61B3eAxi9cYf",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01F4Ntftf5ue9DVNRAJaZ9uD",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1973,
+    "outputTokens": 70,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1969
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:706a94ccefd6acdbd59d0625c85d2e75c711fe6e2e51eebd2c424c381d779277": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015Eerkx6AiVSn3qaRrKjRj4",
+     "name": "network_entry",
+     "input": {
+      "seq": 79
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSuAUKEAgTGAI4AUIIdGhpbmtpbmcSDAbC9wH6Zb6MOtco8hoMJrx/Ml9ZBoi6Ef36IjAef4baLsue/TEgX7Iuk7E63rH9EJCWE7uwdHJkXAuXzfQSi5W3whWscH546JwMz9Aq1QQ3TO+efYDRD/CZiEnFStiJpXGOwvs3ryBtXdSq7vdWpISjVS5q3Iizg5l4mfbf1bIFWkyuySUfb4n48yRkrqmjj4deZg4TS0CB/HyuRrtCVSsNFpfBK+QLyTRb1YOF3SZdZ5EKcl0RGbJTnnEUz6XrWDdOg8QRb+bhh/jUyhBr0GWHpSNbKs8U198zBA5lKjAqmcT+AoFuzVs5QfQxL9xlkO7SV3elas4p0xOvJBxgovCAj07v4xVEhkUVaZU9q6kovSuUR8AngYTJgkKNXK8M38MR8k7S+0q98vkkF13rq9w/3sLD1gYWoCigTlnSejzu6i0rCbXq8wOwgyHqdQd9rk1O9pJYLSkQxJs2Rrcg82mGnxJg6rZB/jECR2pArKFHOjEJcmhadDtu2MpfOgwpwnlize3rNFslQjC9KwoL4HppBHwRcipwCm9KtaYpaczO3Djtjwl/CiccAl7TZYvsiLYnhtUHfOU3WCJXqBmaTYXZHL7wdLJUE69UighAtyQd71pR+8+e0+NI/XoXf9MfW+H8MNbI7Zbgle+Kx7yhMq5mYBnrV98/Fjz15bMISbg1l/mBek5uLEKsJrCgCZsLSEbT9emS4/hTVwx4rZENmPfk8l35dZA9nU7tUkSAWFupNsyNNpF9Z0FrXKqt8RD7nvh64wIt9Yii+efCSBOXqc36EQPDvKguM4ZdSdLy11ZAhi8xIZVgJYHmu1/VXXtQDi8X4P280eP6ChiwrC1RdDW/R9XYknJqHbyQmtj6UDJC8pxBwPsNkHrQ9V+AYcr9SbeymLkYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_015Eerkx6AiVSn3qaRrKjRj4",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 79
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4171,
+    "outputTokens": 72,
+    "cacheReadTokens": 1969,
+    "cacheWriteTokens": 2200
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:fef57b318f4c6044f3012919550710dce7ca54fa9bfbe60b05d4e45f24c30526": {
+   "stop": "tool_use",
+   "text": "The agent added an \"Office\" address to the account, but saved the wrong postcode: 94103 instead of 94105. Every other field matches the request.",
+   "toolCalls": [
+    {
+     "id": "toolu_014vbQ87cwq986WYZw1ovQwM",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "After the task, the address list shows a new third address (alias Office). The form submission POST /address?id_address=0 was accepted with a 302 redirect to /addresses."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored alias is \"Office\"."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "address1 is \"500 Market Street\"."
+       },
+       {
+        "requirement": "R4",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The city is \"San Francisco\"."
+       },
+       {
+        "requirement": "R5",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The stored state is \"California\"."
+       },
+       {
+        "requirement": "R6",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The postcode was submitted and stored as 94103, not the requested 94105."
+       },
+       {
+        "requirement": "R7",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The stored country is \"United States\"."
+       },
+       {
+        "requirement": "R8",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The phone is \"415-555-0100\"."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSnQYKEAgTGAI4AUIIdGhpbmtpbmcSDCsWTP2UzjHnLHOJDBoM619IRiYzuy0YucXnIjADRn+yQBmRHMpbn0QltWrF/oU0CJ4s/extr0bh7sWMfGyj36dDSmHu3dybZUxAsZUqugUxHDA+8X7yH4mSaOBIsTctT4CuRQ0HXZ7JnHyeIQFi0lqqC9amgvg+Vf7Hh+jzyLEEKD1MMwG/HSrMlAsZVTkwNX950O4T7SO9JOY+Jr7hwrY0MXsHKiSPoUBiGmSYYRYKCaaxfiQm8tMXtaHRu3s5W+HLW71n8rc5kEsMlFg+lI83t7dLEoym3LIgdN1Xrp2QJMry2FvrFVDs41qMP3R/8Hs2f0FQYVHJEu8YE5LBRaQ8HolfSvV+xSJfBuCodbbAL3tvep8i62NjsFdrig9beSy7Eh5Xe3JEGNQ01tr/8IphabWB1Lm98b5pEYJpJViKIzYE3G0k3whQk7ajmmbAOxaziK/Z5UN5j8KjbovjQ8RuBFUBAa4cmQIHFplfGjaCkouwXLPoLlNibFqAh8WhXKZCqYMpTOu/H2kFqc2aeZConhynUVRZrgpjYRAG2SmDEvYryE9FuJz80kqRq+KVGsZPC22Cpq3AD25TOCzru6YzIpsR0yAMccbUPSMcl3kKkozg0dWTd2fSrfUQzNpxYqfKg6z479Z2eGrqex39+t7hJlNUDbzc/HP2T8av6JyNxT5O2MA01pUiiZ6IU8q4zPRsPk3d1/CIa7zXwPMf+6erBEyypYIGVU3JMcTDM/Q3YG3/jM/072bOBpDBK/o2w8lJbQtqcx5PUnQAmvo6bidI354ZLQGE2bwWpwuW3rFpfMkaPe7C+w4qvfAnEZB9NU5k0awcsFJDKzKhTLdbq5WSBmlEBH84KNpywPfLwLOUSWcpUTKjjs+D/667zlFPcdLoxmviErF12wZPhWQF4EjyYmeKv8p4xFlXAt/fLg6Rz/VMnXDn/37PpziBFsGutk0DUTzeBJ4onAbvynqNx6vVXT4twJYTu6tGntzZpDsGOeCBFhvJXj112jHBycEpuHXrKTo1aQARJxgB"
+    },
+    {
+     "type": "text",
+     "text": "The agent added an \"Office\" address to the account, but saved the wrong postcode: 94103 instead of 94105. Every other field matches the request."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_014vbQ87cwq986WYZw1ovQwM",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "After the task, the address list shows a new third address (alias Office). The form submission POST /address?id_address=0 was accepted with a 302 redirect to /addresses."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The stored alias is \"Office\"."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "address1 is \"500 Market Street\"."
+       },
+       {
+        "requirement": "R4",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The city is \"San Francisco\"."
+       },
+       {
+        "requirement": "R5",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The stored state is \"California\"."
+       },
+       {
+        "requirement": "R6",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The postcode was submitted and stored as 94103, not the requested 94105."
+       },
+       {
+        "requirement": "R7",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The stored country is \"United States\"."
+       },
+       {
+        "requirement": "R8",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The phone is \"415-555-0100\"."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4534,
+    "outputTokens": 541,
+    "cacheReadTokens": 4169,
+    "cacheWriteTokens": 363
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

@@ -1,0 +1,292 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:15:04.480Z",
+ "turns": {
+  "sha256:c98e49d1e0abc8d8074775dc20050dc1eb121fc8bc9422895edb37b709380b02": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015zrfcaNCFtwL66wPfcA1Po",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The post \"Old pricing announcement\" is moved to the trash.",
+        "field": "instruction",
+        "quote": "Move the post \"Old pricing announcement\" to the trash."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_015zrfcaNCFtwL66wPfcA1Po",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The post \"Old pricing announcement\" is moved to the trash.",
+        "field": "instruction",
+        "quote": "Move the post \"Old pricing announcement\" to the trash."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1060,
+    "outputTokens": 127,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1056
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:d7c16aab91f7384c1b84d2e7cffd760c8ce0c2356ad816a4994cf724dda49663": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01TcpSiVfhGh1RTiBpHsQaVj",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01VYi7CieUZKzJDcbwh4xfZJ",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01TcpSiVfhGh1RTiBpHsQaVj",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01VYi7CieUZKzJDcbwh4xfZJ",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 16870,
+    "outputTokens": 70,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 16866
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:518f609affdc92a3daa080744df4540655bacb6a0e944b0340b1fc8494a51140": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Sb3yhoUE3CEjzwFcZTJFZ4",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "posts"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "title": {
+            "const": "Old pricing announcement"
+           },
+           "status": {
+            "const": "trash"
+           }
+          },
+          "required": [
+           "title",
+           "status"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSmggKEAgTGAI4AUIIdGhpbmtpbmcSDHlWCLaD8kipEl8gPBoMK1HAIN7r+X1VKS7NIjDVixzKhV3PoQzRWsC72MxM6rgqbvwaCnAg13pb0a5nTSVrTDt/b0ea2p+ciU5ekV0qtwd8DyAwYNsUDiFIfTErSR4Tzimnjdq9oSHg7PFzLudVxD/FlPOKSXuVsLITflAU0sARwsls8Hg56bQn/QWw2apwTjXTr2xtmsa5UrZMH5W3dpoYR9dwn8BP8QC7agRNRv3jVSquRioYjJSmrguFJaSTQpPjcxP63sHO7WLOCU509ZuDdLUcyvyCSOaqo3gQrMQPTFBAt81UbCj/gniqr08ihypEgOAUefMKAUGkIXuShP4MWGqn/Dsjz+R913A6YfpbjOl38Vp54KoAtaMZQFwYQIWTzelsHaEmg8gkY0Bfapj6Jced472HwDZKrd1MA7nFKPWqH0S/aq6WRoGbBHaaQyGpRPZEoMiP7U8G2pLlD9GxoEkJQgLSZ2+82u2JiOsFJe8b1YQj/xUsBZHn1po4c54YmVo82zcqnUGioYuRUJhLQoVuDUgH2Ka7DZrEA1hu9WItAliYDjy/0puXcwxuX1cPxg2mI0Fks5KRpn2hXy2QkIc4gjWG9vFPLIRqgJJMBG3gEBCU7MGJKAQRXCNwdgPoZ0OqK2XfDbGzx1TQCcrrHP/DAsxHN/k235Rz2zljng5AO63cMWmCxW9ZkDSmIueKiMs17NZuzTQKi0SRFwjSEl5EP965QNL4AeYOo+GWWUikp4mzDRg+zciN4lwwnF9XqH9MLnME/4RCn3r+MKFHHrZU7A+TFZ+4YE2nlXbW3UpmXVk0k3fRmnO9wZEEwoo6ray/UyKtPlUyuqW19QcwXkwkstHMd2t1d0Wsgp9YP2TvytI8vVNiM1q5Wz6HxpUtSgyidhxueENTHm3OkK5c3k+epouoyXnrYJFRDdX3s5Yu2wvwzJ2hmDa+NPfotyzIao3ld8VtnGy7qf1Y3tsnvfdD0gHnQrkeVHNCEO3GH3pjBWVcgz5DBNWIlpTFbQxJhEyoTpKsr52kAezBqrbKhdvdKMguSbJwy4FwPdcuk7A/UbVD8F1SOKFC7t9r//Facw7BRNREFcY+UPF+d2z4jFUqcdRasEVmROzK4K1LVebnSz5wfWK4qii2WWyLwNzR6jkR+kjF+dIlGGez320MWNejGa9jyXH7T7LYObLIw5xrRG/JgCt/y5hZOY7yxonRR21YC+zlM1vStIwtq33ktqHPqYvChVZXNl7vz3CFA/tMNCFjBSdawUxJdOFITlZBYiS+mLfrfV9HFGXeDTS8zywKjpZzWKkeXpO8PANs+h6CGOSIBDBsCQvSyrHJ1loDpaBZaLxSb0OYe8be1Lo+sEud5ugYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Sb3yhoUE3CEjzwFcZTJFZ4",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "posts"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "title": {
+            "const": "Old pricing announcement"
+           },
+           "status": {
+            "const": "trash"
+           }
+          },
+          "required": [
+           "title",
+           "status"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20520,
+    "outputTokens": 280,
+    "cacheReadTokens": 16866,
+    "cacheWriteTokens": 3652
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:484ba9b39a6acf7fe075d1089384301713f3a659e67aecf64d92bd0492e6685c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01E6U7p6mFR2bw6YGnT8j1ND",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "R1-post-trashed",
+        "requirement": "R1",
+        "description": "The backend posts probe shows the post titled \"Old pricing announcement\" with status \"trash\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "posts"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "title": {
+              "const": "Old pricing announcement"
+             },
+             "status": {
+              "const": "trash"
+             }
+            },
+            "required": [
+             "title",
+             "status"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01E6U7p6mFR2bw6YGnT8j1ND",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "R1-post-trashed",
+        "requirement": "R1",
+        "description": "The backend posts probe shows the post titled \"Old pricing announcement\" with status \"trash\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "posts"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "title": {
+              "const": "Old pricing announcement"
+             },
+             "status": {
+              "const": "trash"
+             }
+            },
+            "required": [
+             "title",
+             "status"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20878,
+    "outputTokens": 226,
+    "cacheReadTokens": 20518,
+    "cacheWriteTokens": 358
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

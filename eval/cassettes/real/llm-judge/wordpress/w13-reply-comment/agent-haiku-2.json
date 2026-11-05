@@ -1,0 +1,51 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:40:21.512Z",
+ "turns": {
+  "sha256:1e142613792f6ddcb63633671ade8bcc5b960f200b10243ca606352f4d27bbc7": {
+   "stop": "tool_use",
+   "text": "I judged this a success. The final page shows a new comment from admin marked \"In reply to Priya.\" on \"Flaky tests and how to avoid them,\" with exactly the text \"Yes, see the network waits section in the docs.\" Priya's comment, \"Do you have an example for network waits?\", is on that same post. The search for \"Priya\" returns only that one comment, so the reply went to the right question. The comment counts back this up: the post's approved count went from 1 to 2 and its pending count stayed at 1, so the reply was published. Priya's comment was already approved and the agent didn't change its status. Only one reply appears, so there's no sign of a duplicate.",
+   "toolCalls": [
+    {
+     "id": "toolu_01Xg8Y8yXXo8Cz5cnhqcdw6g",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "success",
+      "reasoning": "The final page shows a new comment from admin marked \"In reply to Priya.\" on \"Flaky tests and how to avoid them,\" with exactly the text \"Yes, see the network waits section in the docs.\" Priya's comment, \"Do you have an example for network waits?\", is on that same post, and the search for \"Priya\" returns only that one comment, so the reply went to the right question. The counts back this up: the post's approved count went from 1 to 2 and its pending count stayed at 1, so the reply was published. Priya's comment was already approved and its status was not changed. Only one reply appears, so there is no duplicate."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "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"
+    },
+    {
+     "type": "text",
+     "text": "I judged this a success. The final page shows a new comment from admin marked \"In reply to Priya.\" on \"Flaky tests and how to avoid them,\" with exactly the text \"Yes, see the network waits section in the docs.\" Priya's comment, \"Do you have an example for network waits?\", is on that same post. The search for \"Priya\" returns only that one comment, so the reply went to the right question. The comment counts back this up: the post's approved count went from 1 to 2 and its pending count stayed at 1, so the reply was published. Priya's comment was already approved and the agent didn't change its status. Only one reply appears, so there's no sign of a duplicate."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Xg8Y8yXXo8Cz5cnhqcdw6g",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "success",
+      "reasoning": "The final page shows a new comment from admin marked \"In reply to Priya.\" on \"Flaky tests and how to avoid them,\" with exactly the text \"Yes, see the network waits section in the docs.\" Priya's comment, \"Do you have an example for network waits?\", is on that same post, and the search for \"Priya\" returns only that one comment, so the reply went to the right question. The counts back this up: the post's approved count went from 1 to 2 and its pending count stayed at 1, so the reply was published. Priya's comment was already approved and its status was not changed. Only one reply appears, so there is no duplicate."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4365,
+    "outputTokens": 886,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 4361
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

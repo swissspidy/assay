@@ -1,0 +1,165 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:06:02.472Z",
+ "turns": {
+  "sha256:5f79023714c00e8c52db663a6f2194a151161649ef23e3e9799f7b10a05c43c2": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01YRViyonBzjRVsuuCs7Hqnr",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01KERyAwoiteMGMXkXUqqVCD",
+     "name": "network_log",
+     "input": {
+      "method": "PUT"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01YRViyonBzjRVsuuCs7Hqnr",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01KERyAwoiteMGMXkXUqqVCD",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "PUT"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1857,
+    "outputTokens": 71,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1853
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:e6a454f5dd59d78350bbcab166360ab2a677a8afeb11c9711fb508469f1eeb91": {
+   "stop": "tool_use",
+   "text": "The final probe ([observation 1]) shows that the \"My address\" record still has phone \"0102030405\". The new number 305-555-0199 was saved to the other address, \"Mon adresse\".",
+   "toolCalls": [
+    {
+     "id": "toolu_01XfNLYnUiPRWXgrhgCkakYQ",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Change the phone number of my address \"My address\" to 305-555-0199.",
+        "status": "fail",
+        "cites": [
+         1
+        ],
+        "reasoning": "The address probe taken after the task shows that the address with alias \"My address\" (Miami) still has phone 0102030405. The number 305-555-0199 was saved to the other address, \"Mon adresse\" (Paris). The wrong address was changed."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSiQcKEAgTGAI4AUIIdGhpbmtpbmcSDKE616cBGwAalA7aqhoM8TKEdGuPhdDOY/ujIjD6glzOnpFGzdsYaqt/iuXk6G0XhLeGsUskfVi/PouudNRCHgdLW/91tiZnqnQ1BYsqpgZ6/W4CkMyGtYF05l1OuQOOLTJet4tFGG640OnhS44Hvx9ulDxU4eBkEI/XC9Ry+y2zyw+wXyBmy0MwnAv+AubNydQrxMWMbyR7+OpgAZl+rBv2htT8hzdvHER9xgE+vKwgjEjY0tCNyviLBSH+WONAsUCFoQ6XshM9WHPQeppsyORowh/AEKveOk36WDoeYpsVHNAuUFnAnrwyoF/Lajy+6s7gpK2WWG23RVOWREbKHfE02f2pvNNSpF0LRErglYs6NwnloS8jCDsygAD3g2a32xNBpRD0weAH9M8vNreaiCo0dR0WfUYQ4Lk62aqm4QDQSWeDDP7jEGqw4eY9Jw9JsyQ0w0GoXefsK+PVH+uwmjJAUFUQqREkuYvU6q8EHWMUs5eg3DQT+obngnBYX1GjLOAcJknXA/c697LLBX/Vo1Kz4IpDr3inL3sALbyTpQTO2eYL07hzS1L0R655+MEVQcS2KepELdEp77SQGidalXZASafZKK3vaC2Lb0BbVgCQ5/fzhWXG4B2iAvviQ58gsP5iF/JttyVqJUF/IpmVGHzeuAi0q0u8BpYr1V7eb5zAFAkXd3M12dEoy9bDolmZrrAChyjw35YuIYyfAVnJC8omApFjr94g/A7PYKek0j8okTIiGrchBxa6KflWWVg0pxtKvMBvlpjO+3WZuoDdN10jQXGFKp409OhoRcY6xsy3D2ta/rMXgq8fCZtPoyyf7MTbqbYPu3WCSEBJIuPn+uVzZ6aYTrp+UPzGhOb8UDL8MEYMNw6DiAbQoF6aZJRmofUTkE21XAqmcBh1NkwES9xh0Aem0tG/BYSaYyoxg/1GLy9RWpLgL/30Juh4UKgN0kTLWj7w6yH3RNoFAm8tFtz9WbOqISbM2bJqXT03zhq2n4zblMBgU8sUtLEoYyfcibVQmS/n4nfwUmLU2O9BAaRJ32zrbmXnlKXDS/jf2niTWUDY/YODEnREabIlnJV1/HXMRMk36y4zHh0FxG2D76R6Uw+SuLk6X65V4ZALsO3A+GJU2T6sjkpA56aP0BKw7kvbO+A4gC/PvaVjNZUa9bL6N9ohdhgB"
+    },
+    {
+     "type": "text",
+     "text": "The final probe ([observation 1]) shows that the \"My address\" record still has phone \"0102030405\". The new number 305-555-0199 was saved to the other address, \"Mon adresse\"."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01XfNLYnUiPRWXgrhgCkakYQ",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Change the phone number of my address \"My address\" to 305-555-0199.",
+        "status": "fail",
+        "cites": [
+         1
+        ],
+        "reasoning": "The address probe taken after the task shows that the address with alias \"My address\" (Miami) still has phone 0102030405. The number 305-555-0199 was saved to the other address, \"Mon adresse\" (Paris). The wrong address was changed."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4013,
+    "outputTokens": 342,
+    "cacheReadTokens": 1853,
+    "cacheWriteTokens": 2158
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:f11391434e462f268642d3f065b9f712feea1398ca50dca4dc48eb2cd72c3a10": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01NMhEeVedEA5uLGMZe2MvGB",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1
+        ],
+        "reasoning": "The address probe taken after the task shows that the address with alias \"My address\" (Miami) still has phone 0102030405. The number 305-555-0199 was saved to the other address, \"Mon adresse\" (Paris). The wrong address was changed."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01NMhEeVedEA5uLGMZe2MvGB",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1
+        ],
+        "reasoning": "The address probe taken after the task shows that the address with alias \"My address\" (Miami) still has phone 0102030405. The number 305-555-0199 was saved to the other address, \"Mon adresse\" (Paris). The wrong address was changed."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4413,
+    "outputTokens": 166,
+    "cacheReadTokens": 4011,
+    "cacheWriteTokens": 400
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

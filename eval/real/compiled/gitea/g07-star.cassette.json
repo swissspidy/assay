@@ -1,0 +1,183 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:13:00.692Z",
+ "turns": {
+  "sha256:fb3c64f2e1075068f1dde500194ee74defe364bd76b25be4c00ad33fb132a150": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01T9UG6GyGMhnTYxMLiNVdcX",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The acme/docs repository is starred.",
+        "field": "instruction",
+        "quote": "Star the acme/docs repository."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01T9UG6GyGMhnTYxMLiNVdcX",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The acme/docs repository is starred.",
+        "field": "instruction",
+        "quote": "Star the acme/docs repository."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1052,
+    "outputTokens": 107,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1048
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:2d0092a7fcf6fbadd1b9cb6c370621d4bafc9d7724be88720f95d58bbab4f6fe": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01PY9uYZz7fByV4JSwS3Gfr5",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01JDosxDdg824no1YqAoHQCz",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01PY9uYZz7fByV4JSwS3Gfr5",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01JDosxDdg824no1YqAoHQCz",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 16858,
+    "outputTokens": 70,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 16854
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:e50993a6bc46af656573110eb087026cc259234798519ce0520de722ccb24edb": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_019eLuySY1ZmoNRxWo1M77F1",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "R1-docs-starred",
+        "requirement": "R1",
+        "description": "After the task, the backend list of repositories starred by alice includes acme/docs.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "aliceStarred"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "const": "acme/docs"
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSrAcKEAgTGAI4AUIIdGhpbmtpbmcSDPiqOHgHV0HQnDEeoBoM/DOEaWhx1SsNXHG9IjBUmQApsH1yF53oOdxDx24QM8mp2Q3wPv4HP6u1TkeGb4JL9A/IhiEznQZSCB9BTtcqyQa6GyGWJIfaaPBKqrNjecF2gCyacs3kjRgID/zI56paAVY848YkRUnTZjgU05IDH7UsOu1CArhub2rKMEZ7xwDYK9VWMa9Ahd0bvu76pn35h17EdYltWTB1GBzKGByBJlfzYu+BhwJ6pGqcgwrpK9Be07tcpFfkB+y6wefPCIQV5nZ1EwgJ9anaRWluM8Hl9PI7m9LsVOCIC6nZy8ZcFzE1Fzow0UsH/+LvRi2LQfLpYy8e/ZTslyNrZNg3hHvGazGC5kdTW6uVzaA3Rs2vDfb0MhtC063+mOcx98jd5oQLFVofnv1gj4eEjH8zRlhlEUgi9EQix2bf+MdUjXIGriPdh2me2PJK5RS91r9ydvFvl5yYuX/dbSc+hQw9wK4qegujFV21IPwj4X3HRsaIaeUa0kAWlemyMAp+rxPdExja54d2XG6ad9sGuR7epkimFuBwRgHQbyBmW4DOEqFGld9695N6Vf2OmHZFfI2eNLncEZrmhEB0Kslf4vK1nKEeNUutelri6qrMQ7LiTaRFJ91nTVnCl7WaxOaIpURA9SMJX49uA2XN/aQ9lFAIFFwddhNzWbFfxAOst2BzPPxvcf3V1b84/Lpic9LGfIP1xyDk1v7Z7hBbqigfmjUzEgFLm5v7iqwdfH9R2WOi2Kwj6q5OVJ42Gy8DdRTRBg7e7mhxxdVZ62cxnIHHFrh5PxDfJw3g9cBTYgs2eWqMPyjiYJ1ajhffotjSWStPWTQx8vtoLIAK5BSyyjyYROTNtFQMHbLiMqyk8U7dFQTFEYKEsWkb8I3pKS9IhwbyIcj5iz2cby8+kYGP9VIJQkyYeZpDsTUEXRxJfmuHeq9U776XXVxEYIIFGIsvYCnWlfowwyAr1ncXOe40TJ0IbU4woSoHun4NNrSLiNZm/Llk6haYrJG4EZppLkH4p50xxJwiEp5e/vronSI4QuSTjhZHIk5Kqz377UbSLIcLcVqIau0221+GZaZq92lXIlz428G+ZSAALjbir/3NNzAlyNjHy0ML5uXPwKe9i6LfRyxtkua1Q/20B0aKR6HtiipkAEpZsDIB5CAiLvQYxGGxEHyy5wiRxBSAVT8un4IuY1f8AZSfbIKsaMykTbpNPhtcGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_019eLuySY1ZmoNRxWo1M77F1",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "R1-docs-starred",
+        "requirement": "R1",
+        "description": "After the task, the backend list of repositories starred by alice includes acme/docs.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "aliceStarred"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "const": "acme/docs"
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20252,
+    "outputTokens": 275,
+    "cacheReadTokens": 16854,
+    "cacheWriteTokens": 3396
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

@@ -1,0 +1,370 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:14:17.817Z",
+ "turns": {
+  "sha256:de9e9528577a4c49ad2b750fdf44ff7e2f686834b8ddc4f65487f51594552de2": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01VRv8Sh2TkyjJ56ZFZh6G1G",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The comment advertising watches is marked as spam.",
+        "field": "instruction",
+        "quote": "Mark the comment that advertises watches as spam."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01VRv8Sh2TkyjJ56ZFZh6G1G",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The comment advertising watches is marked as spam.",
+        "field": "instruction",
+        "quote": "Mark the comment that advertises watches as spam."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1057,
+    "outputTokens": 115,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1053
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:792b71568ce5b0d7163dfe60392d9d7ba4ce87eac46c5b3580f5ed54857a6459": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01M89PJkxrEfCnuwmrubcmtJ",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01M89PJkxrEfCnuwmrubcmtJ",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 16861,
+    "outputTokens": 25,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 16857
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:4353d324b6f8d023d404145a291484bfad877d72af5615e3b4d3a1c8498ef73b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01E9gWGfL8mnMRyfY1jdnNgk",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "comments"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "content": {
+            "type": "string",
+            "pattern": "(?i)watch"
+           },
+           "status": {
+            "const": "spam"
+           }
+          },
+          "required": [
+           "content",
+           "status"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "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"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01E9gWGfL8mnMRyfY1jdnNgk",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "comments"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "content": {
+            "type": "string",
+            "pattern": "(?i)watch"
+           },
+           "status": {
+            "const": "spam"
+           }
+          },
+          "required": [
+           "content",
+           "status"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20279,
+    "outputTokens": 540,
+    "cacheReadTokens": 16857,
+    "cacheWriteTokens": 3420
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:61b99cfdbe476c4c4f8504538afea70d506d5fed04284581272a256f4d0e39a7": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01A2vzJ38Z3JkPa5VvNL4T33",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "comments"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "content": {
+            "type": "string",
+            "pattern": "[Ww]atches"
+           },
+           "status": {
+            "const": "spam"
+           }
+          },
+          "required": [
+           "content",
+           "status"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01A2vzJ38Z3JkPa5VvNL4T33",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "comments"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "content": {
+            "type": "string",
+            "pattern": "[Ww]atches"
+           },
+           "status": {
+            "const": "spam"
+           }
+          },
+          "required": [
+           "content",
+           "status"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20869,
+    "outputTokens": 165,
+    "cacheReadTokens": 20277,
+    "cacheWriteTokens": 590
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:80681fe373c39664eeae41b338303cfcacb87810b415cf59eb1d4dcf30e5263f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01EBjtnKSQGNEXbujqFqF3FX",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "watch-comment-spam",
+        "requirement": "R1",
+        "description": "The backend comments probe holds the comment advertising watches with status 'spam'.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "comments"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "content": {
+              "type": "string",
+              "pattern": "[Ww]atches"
+             },
+             "status": {
+              "const": "spam"
+             }
+            },
+            "required": [
+             "content",
+             "status"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSiQYKEAgTGAI4AUIIdGhpbmtpbmcSDOQj0OTCiw9DC0C3KhoMhVvUd6+zNEDk4ILdIjAxkz5iyNoEsEsRbc5OdsMS67RmVJFs3i+v5OH6kJ7zsticvbHJNjEnC9WRNNJdYP8qpgWggKEQfwyuV+tq/0famTZtA5jWC0R3DJgxPryts+1UTnUHhJkJpemc/RqU3mOxmT9bJSJKpn7pymqsqS7przKyZ+CvSoauG3sR9rBa/rdoC85uDeOzZyTvyyOQbVLrdfdS9TS2npx71ffl7satRuJjnhKmk2jI/98IYpR7eZg7BfobuD/T6tRejOsZL9SNFKVJPbAzyMXHDwvWeI4hUfohf9pfcDlvdSgxW3koJjYy55wjQCNg0RWs8HCTV/eEF7tp1hW4U4SiswLlExh44gS7KucbBmvzpxj2HbRTetR9pepvoGQdTfW9ThvNEzyfkjbaABJLoTSXCA5V945YaW9ZA27pozXt8oGUBo2He/3xme90Pd7IPeAgwnWGCMM2qZ/OlBQ5TY/s+ZDv5/pfzeDhpVD0aytiKJh7DZ8bup1BcQxzgN1aq9XH0FHBD/6OMGa2g6d+USj8iaY37MsLUUo2+zaBiAB0P26rObt082bKcbMX5Ztz29/7B1H3U0wYepFt8SIAVTlXj0WWa8IAhztPckSy2HtmbZwE4XlNAn16zx1gGzH3EKBYl/O/MmCJXmqIjiULiAJrtvO8tTY2wNlg4vRersJK2cMxZyuldg2poFJ3GIOGYogytBWwKDb4oIqQU2caXGclWclsR2MNYVRg1Kc1yVahGbZ7FQBGmwxKfBiiMwb+6aAsU3aIaMhflPQSLRmKzG4zNzg1psEYnW0Nyo37nxw/WNqthYAXrNqAQOCu0SDUDguh7WvHvIM7tMlDdM58GNxvbn2uX0vTEcP6yekv4CtMtU3IZBWbp0tS0wnXn58X4eE6Vlgk3unHK/EWnKV0bg7NeHbUJ9v0gp/GtTOdQhqQ3B3VZisR1cyb30EcWHTjjw825twJBPruSxRFsp7mDOcYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01EBjtnKSQGNEXbujqFqF3FX",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "watch-comment-spam",
+        "requirement": "R1",
+        "description": "The backend comments probe holds the comment advertising watches with status 'spam'.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "comments"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "content": {
+              "type": "string",
+              "pattern": "[Ww]atches"
+             },
+             "status": {
+              "const": "spam"
+             }
+            },
+            "required": [
+             "content",
+             "status"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 21105,
+    "outputTokens": 247,
+    "cacheReadTokens": 20867,
+    "cacheWriteTokens": 236
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

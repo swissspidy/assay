@@ -1,0 +1,40 @@
+{
+  "task": "gitea/g13-assign-open-bugs",
+  "status": "compiled",
+  "model": "anthropic:claude-opus-5-5@high (replay)",
+  "modelsUsed": [
+    "claude-opus-5-5"
+  ],
+  "turns": {
+    "rubric": 1,
+    "discovery": 4
+  },
+  "usage": {
+    "inputTokens": 84997,
+    "outputTokens": 3389,
+    "cacheReadTokens": 60372,
+    "cacheWriteTokens": 24611
+  },
+  "coverage": [
+    {
+      "requirement": "R1",
+      "quote": "Assign every open bug in acme/webapp that has no assignee yet to dave.",
+      "checks": [
+        "R1-dave-on-previously-unassigned-open-bugs",
+        "R1-no-unassigned-open-bugs-left"
+      ],
+      "channels": [
+        "probe"
+      ],
+      "trust": "structured"
+    }
+  ],
+  "warnings": [],
+  "references": [
+    {
+      "name": "reference",
+      "kind": "success",
+      "verdict": "success"
+    }
+  ]
+}

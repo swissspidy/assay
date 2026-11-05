@@ -1,0 +1,163 @@
+{
+  "schema": "assay.cassette/v1",
+  "model": "anthropic:claude-haiku-5-5@low",
+  "recordedAt": "2026-11-05T11:38:41.207Z",
+  "turns": {
+    "sha256:e919d2e104a4f631ae866259a496eeaecbebef2a25599c41887950a9e1638620": {
+      "stop": "tool_use",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "toolu_01ErYrs8jHNgqrLHUk564hoQ",
+          "name": "goto",
+          "input": {
+            "url": "http://localhost:4330/cart?action=show"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01ErYrs8jHNgqrLHUk564hoQ",
+              "toolName": "goto",
+              "input": {
+                "url": "http://localhost:4330/cart?action=show"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 7394,
+        "outputTokens": 60,
+        "cacheReadTokens": 7390,
+        "cacheWriteTokens": 0
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:73f1ec8beb4cdce65a9e3d75cce52ae5276363aba918cb997978755afd601ab9": {
+      "stop": "tool_use",
+      "text": "The poster in the cart is \"The adventure begins Framed poster\" (id_product=4). I'll delete it.",
+      "toolCalls": [
+        {
+          "id": "toolu_01MitV1E3yu8awqphbLxofu8",
+          "name": "click",
+          "input": {
+            "ref": "f5e119"
+          }
+        },
+        {
+          "id": "toolu_01Uug1AeXcWEnjKt1JJAjdsY",
+          "name": "wait",
+          "input": {
+            "seconds": 1
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "The poster in the cart is \"The adventure begins Framed poster\" (id_product=4). I'll delete it."
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01MitV1E3yu8awqphbLxofu8",
+              "toolName": "click",
+              "input": {
+                "ref": "f5e119"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01Uug1AeXcWEnjKt1JJAjdsY",
+              "toolName": "wait",
+              "input": {
+                "seconds": 1
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 12341,
+        "outputTokens": 130,
+        "cacheReadTokens": 7390,
+        "cacheWriteTokens": 4949
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:6356f2336461ce0121359f860c15b823164b2d90817bc168f01665ca256c33f6": {
+      "stop": "tool_use",
+      "text": "The framed poster is removed from the cart. The other two items are still there: the Mug (quantity 1, €11.90) and the Brown bear notebook (quantity 2, €25.80). The cart total is now €37.70 across 3 items.",
+      "toolCalls": [
+        {
+          "id": "toolu_01BXmb2iM7Ptc8M1SnTQFNPp",
+          "name": "finish",
+          "input": {
+            "report": "Removed \"The adventure begins Framed poster\" (40x60cm) from your cart; the Mug (1 × €11.90) and Brown bear notebook (2 × €12.90) remain, and the cart now totals €37.70."
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "The framed poster is removed from the cart. The other two items are still there: the Mug (quantity 1, €11.90) and the Brown bear notebook (quantity 2, €25.80). The cart total is now €37.70 across 3 items."
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01BXmb2iM7Ptc8M1SnTQFNPp",
+              "toolName": "finish",
+              "input": {
+                "report": "Removed \"The adventure begins Framed poster\" (40x60cm) from your cart; the Mug (1 × €11.90) and Brown bear notebook (2 × €12.90) remain, and the cart now totals €37.70."
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 16971,
+        "outputTokens": 196,
+        "cacheReadTokens": 7390,
+        "cacheWriteTokens": 9579
+      },
+      "model": "claude-haiku-5-5"
+    }
+  }
+}

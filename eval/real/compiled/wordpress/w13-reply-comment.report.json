@@ -1,0 +1,54 @@
+{
+  "task": "wordpress/w13-reply-comment",
+  "status": "compiled",
+  "model": "anthropic:claude-opus-5-5@high (replay)",
+  "modelsUsed": [
+    "claude-opus-5-5"
+  ],
+  "turns": {
+    "rubric": 1,
+    "discovery": 3
+  },
+  "usage": {
+    "inputTokens": 61520,
+    "outputTokens": 1856,
+    "cacheReadTokens": 39785,
+    "cacheWriteTokens": 21723
+  },
+  "coverage": [
+    {
+      "requirement": "R1",
+      "quote": "Reply to Priya's question on the post \"Flaky tests and how to avoid them\"",
+      "checks": [
+        "r1-reply-request",
+        "r1-comment-stored-on-post"
+      ],
+      "channels": [
+        "network",
+        "probe"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R2",
+      "quote": "with: \"Yes, see the network waits section in the docs.\"",
+      "checks": [
+        "r2-reply-text-request",
+        "r2-reply-text-stored"
+      ],
+      "channels": [
+        "network",
+        "probe"
+      ],
+      "trust": "structured"
+    }
+  ],
+  "warnings": [],
+  "references": [
+    {
+      "name": "reference",
+      "kind": "success",
+      "verdict": "success"
+    }
+  ]
+}

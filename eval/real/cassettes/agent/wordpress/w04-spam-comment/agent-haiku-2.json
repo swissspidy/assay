@@ -1,0 +1,676 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:42:56.278Z",
+ "turns": {
+  "sha256:9ea997eca48bccbc6cf07072eb29ccbacfa83eac23205d0c0a3101485f28a671": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Q2TXLd6ByFdztCbKC3ycw2",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4320/wp-admin/edit-comments.php?comment_status=moderated"
+     }
+    },
+    {
+     "id": "toolu_018Bfn52Teh8LptDgosQ8HCC",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4320/wp-admin/edit-comments.php"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Q2TXLd6ByFdztCbKC3ycw2",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4320/wp-admin/edit-comments.php?comment_status=moderated"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_018Bfn52Teh8LptDgosQ8HCC",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4320/wp-admin/edit-comments.php"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7254,
+    "outputTokens": 140,
+    "cacheReadTokens": 7250,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:8b8384002d5248ae6285aa07d51785a9ea0ae287d428a5abcce6ef71c5ba9739": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01QTbKDF7BMyse3oGbjHK5H8",
+     "name": "show_part",
+     "input": {
+      "part": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01QTbKDF7BMyse3oGbjHK5H8",
+       "toolName": "show_part",
+       "input": {
+        "part": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 19397,
+    "outputTokens": 47,
+    "cacheReadTokens": 19395,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:9b2e7389045ff0e6b45acd489ad758d695b9a33df4c089bb5198fa1e9429fe72": {
+   "stop": "tool_use",
+   "text": "The watch comment is by Cheap Watches (ref e354 is its Spam button).",
+   "toolCalls": [
+    {
+     "id": "toolu_01NoXFD39SohVT7EjXdUvQUg",
+     "name": "click",
+     "input": {
+      "ref": "f2e354"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The watch comment is by Cheap Watches (ref e354 is its Spam button)."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01NoXFD39SohVT7EjXdUvQUg",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e354"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12791,
+    "outputTokens": 77,
+    "cacheReadTokens": 12789,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:27fde00cbcae048fdd80977ce62d8e228266be9ab9d2c200822c733326a01809": {
+   "stop": "tool_use",
+   "text": "That click used a ref I guessed, which was a mistake and failed. I'll read the comment list from the current snapshot before acting.",
+   "toolCalls": [
+    {
+     "id": "toolu_013STHkjTkTtynppAC8NgN53",
+     "name": "show_part",
+     "input": {
+      "part": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS5gYKEAgTGAI4AUIIdGhpbmtpbmcSDL8ktQfWabJRWunVSRoMdZrkQQilo0jNIoG5IjBCOhNi9Bb5vWV/MllzMW59gfzSx3F6FaEt8/wTQFGkKAJffjFJMEYSxlG0MqrwhJIqgwYDP8UnYJIzqRJzCKpEG9ZhK6mcZfhuLxACLVHjuYlGv0vf0/jZBtw75LkL04DMgUFZbW1NVpMFd0jSq1NSbzBlNqewVbr80NK55gWwbnISvaJedFxY+TrziLE14Ka+neAoV/iKGBT+VlfdBPiOmuzFCr6bjuFOh7LvX7ZNRJUsObWeF4ZXaX0lvY4DxjQ9c1NK1A1YlcV0khDdUgiAjoFcf7hRmD9MTKSouwgrnR1b03YMI/zzmfmk8ogcpu3ZiWXiowqkZK/XFfM/OKBRQ0Kf+PBatxQeQ/lkvvKAFEaAENviQeuFSlJKdMTXiFeGDsbLyjRYqNfwBDlIverOEv0hsHanb0o32B1gNukULRbWkCR8xNZCkhOaVcWDcslB9RxC32tAd9NXKYDs0De4rmMltdeQEcRq++0XgMXum+50/xLwe9EL6D0yj5E+pcosNr/X/AsnDZxVV/804rdjWHUIq9Z+5SdMxFoD5Jp54ITpMZa0F85t0f7S0zzq1xje1oa0ouYvUvH+hXj2TbLpWI9OSdwyHkH/t6oslH6y7ZpMTwj2gJeErTnaUDLMUkcOzKvht8C/f0b/bx99HS8lLFeTpD2RuaOVZHNkTQ1P+WBxbszwpxbnXFfp/ybm/d1IQLtg0GYLfrNhZKxSQaaVrP9xuFB++kG0fvsNeomBROL6/uwFmOuzl19Q04dAyhZoLbNVEJ8wbsgOLjrp/VigmV7/VXva8kV0mFh6HybSs0GcIgehuYw9D7sOPNlU5fZthQT5fK+dyXJYP9syn2ZUG4vTbslv4igGzYoMS0gbIvj860uNNVzhtw5DiWqdyQgz6b0Sd+m4dPddTTlCondxqHmBU6C5SyNRqgq+jXBvt7ceZHVCRtTCA9SCC7LrKO7opp0msJavOEF9E25aMIUr2OSiWYB+rHOuU1raBfsN8b+ijvz3B2UW9LGKoimPNAFYO7YrwZVNreo8jHAjMPYF4+SJMrr9O7gfOhihDJc1qDCkSV3XbVt0rkUomZOveC9f995nNJwYAQ=="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "That click used a ref I guessed, which was a mistake and failed. I'll read the comment list from the current snapshot before acting."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_013STHkjTkTtynppAC8NgN53",
+       "toolName": "show_part",
+       "input": {
+        "part": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13744,
+    "outputTokens": 158,
+    "cacheReadTokens": 7250,
+    "cacheWriteTokens": 6492
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:65d82797afce8ec845f07770a8c3605aa20a5e89bd933e7785ca5249e5a7987f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01F4zsD5qsdxxkVTBcKSNvmy",
+     "name": "click",
+     "input": {
+      "ref": "f2e354"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01F4zsD5qsdxxkVTBcKSNvmy",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e354"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13162,
+    "outputTokens": 49,
+    "cacheReadTokens": 7250,
+    "cacheWriteTokens": 5910
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:a26b273649b485b05169a910ecccef3d3ef3bbbb6cf979c0b4735727742f8362": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LqXQsfrwbuZ5kkZaQpt88w",
+     "name": "show_part",
+     "input": {
+      "part": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS4gYKEAgTGAI4AUIIdGhpbmtpbmcSDLYoCj7oXNIJT0lPzBoMeu20Qj8UhOo0vQrHIjBeRhhJcwgfu0OKba6WVEoJ49Wcij2cb2FQYHPVE3NNOZBH4UwnkNNhj43+ZL828o8q/wXyZPevdwmcf5YERTcU5PZaQwdtId9CACEbtwwY4HurxAHVo75j8kbe/ougLRuYvjeWXh1Nxw6ClfyHiDoXx1fThtWQZwZkxN82BvaNyoWeIfx/61kG/SGC4hUmtjeLNnWgkAJmYV0g+yT+otQ/n6vgdc57u8r/01mcqx1xyfNZ7O9d6PMl1ymo5/Nrsocmm8Zc+Td2muSxKVanccqRrOaikll+MnKwcNEOqFvngsMlnDp1q9BYnd1iKdc5eLUdTWlH52HpOwAfj48Sy/Xs9FnEgPzdMuw/H9RMBUZTBw8uTsxTChP40S1j4UW+sD4k7vsaHhj/nxz2tyVJD6/Lo29JygRcVIpjWnsYtjurgWLY32iOsOXJr3lYuGzZjNJ0pqJYEnFUu2t8XHKHymMUd67hTiBMGho+zfpTpY+34YYyKbFVp1eQ/I9mj7mVq5ByzWEvvlplskBY1/Uzk7jZpWyi2bSaWgqO0DoTD7ykykpoQXsbxWq4WyOsWJRDr75kmIVqyxtXhgwWS7su1DjSiSlCrlfyN55d8f3ovpNgU9MqWXD2WxTEtcjuMlJdOpZEdQSkJgzWk5DoCnY4Az2+RWhPaEK48Co4p3UWircNkmxTFtOBJTv6qw98WTlgOotoaXXBPMcVe7YWD1iaVP4lmKTSywsVRg2VJWwBZGloOXyDFxOkCPa9zeGd3kalO8ibw2EZ0F0eWNBvZs5U6IgBsoxfo0tmNuOUoomEH21A+pqx71mHZ3uB1OzBZxfNBO2QN8VSo1ilRQ3GJzZWDQaE5AatgFTZ99SOYeb1yYyM7taOUY5h3A/ws+dwNJCbqvWpnlknu3IObrNQLcHhR1G/NtZl9zKRQE9NWgbdlbex5rwmD56H82gnF4QEMJ5D/cOB0DIG5ERvtud6f4DzwXPO7wX3fblaCRZyHyxwqTl4qvA8qckyZL7TH7GfEmNzm5M9qaS3Kk6KId3ARQtFpwzj/pWS7ReffJmZaAorVhGWaVBKE4l6Js1iMv0UfyTtgZrn0hgB"
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01LqXQsfrwbuZ5kkZaQpt88w",
+       "toolName": "show_part",
+       "input": {
+        "part": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14087,
+    "outputTokens": 85,
+    "cacheReadTokens": 7250,
+    "cacheWriteTokens": 6835
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:a581db331aac9bce26c133a2fc817bf36741489dd14f67bbbafbed6a3a978241": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01T9o7dVVVt8vyvyoTDLMbff",
+     "name": "click",
+     "input": {
+      "ref": "f2e354"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01T9o7dVVVt8vyvyoTDLMbff",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e354"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13432,
+    "outputTokens": 49,
+    "cacheReadTokens": 7250,
+    "cacheWriteTokens": 6180
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:1473c3527fb4a2c2d0c350d670a25cc731254ea19515ec7d2b9014be472feaa2": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_014ofDAzW5EJfqn8GFyC5zNh",
+     "name": "show_part",
+     "input": {
+      "part": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSuQcKEAgTGAI4AUIIdGhpbmtpbmcSDFBjToZuiy4NECOwbhoMpCV5vhlHkmxqeM9JIjCSmf0dfwtvYRphSqqiDQh2TEYeHHXYjxHicw6OGQdl6ToOpnWfLLHfFR4wuBNug3oq1gYt6HM+XgB0Pgwg0oKQJGgOvwpNRKO21Y6syBoeGpedZWoy9ZdUX9D5KP5/4TyT0n68T/lAPdG/zoUBIFiSiM6XqFqanIJIqYRVrMwYzUgRrB9bbQxGy7hp0GF4iylGFiAOsTN98UAWCQvfCkcoeOU9ydEi7YFcB30peQY5nSDOXfKQ9p4PPqktXTcJhkihOuBPyL76CGhN0EC2rtzL4kb3x2jdVBRIf4F54ZBlPX113t6mqALVYoCJfrbZjZx54pP3RygB3lxjfiqF5uMk70Gvn18al9m9zSSAJWL1gssnJnU0kMW8eTwOBF1Kw8mT7tEpFaahMJN5xpCUhe5txdo/0GG82tNW+SirZtoKeNjgJa0zb4yffcImyHtyQnGnlAGQ2c9NjtAwU+WBC54AFnU3qWJN2alxAMLVX/R2m4teOES7FuAR3JUXcJq4y6w2/zmYNnd/lXfOKhq+chCei+gDa9abKXQp7jiM5EyJHiAlUC4PT80gftwlSFg+6l20YpmsTnNkzWegZ4LRCOlkMLBClNi75B1DXD1l8UF9N3VqwOI24CrU+Ve9q8UJPNgIC0uztFbABG3QoSkfHec505eg1t7iaaVnZykHyAKN1k3li9PWkT2JuuW+xr3cd3YRxQp5s3Hb/z9P+gNWEdqoZWCjbhrcR+Ktokf0bTNvlZYGJpnjhD7fQooWZ72lL0Wa7QXeBkKS/TEqlOzb3fDz9L+SP4VBbEvy8VkX6WrddiviveeV3iOiDMLotoN69eaVJafFo9kWWDx2uCm8KPVTXHW2gGEheXWRDaHlGa/rJNW4RVazkhueeUlvkom4OQxUiRxwEJTsbeY4qn7K4alnhfcTKbS069RTQK6HuMLJPcHtciGVf/u8jRkCeAep9kHPe95q9W3sMCzWjG1GSnTshJ2hvYga9OvD48CtWJV7B9oHSu3aER981ETmN/130i4g4WYfvUe524whjwkm+C75ceTGQN6b6dm+aM4Jft/e0H4EybIkbwVkQMGybHLJftTbY2efsWpszgrUXBUX7kI63BSUKE2Pfny8qsTQM3Zxk3omXcEeqmvu/hpMGdoOc2X131mw5UOJTG3oV+y8qjTurlb/EVu6BgHcj9UOtYaBiieRqyakGk1luRgB"
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_014ofDAzW5EJfqn8GFyC5zNh",
+       "toolName": "show_part",
+       "input": {
+        "part": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14357,
+    "outputTokens": 104,
+    "cacheReadTokens": 7250,
+    "cacheWriteTokens": 7105
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:2454c7127e588622b88d10cf0ff64ae0d464341e2b87ab9923e9a5bea9095b6a": {
+   "stop": "tool_use",
+   "text": "The Cheap Watches comment's Spam button is ref f2e354 in the latest snapshot. Retrying that click.",
+   "toolCalls": [
+    {
+     "id": "toolu_01CaP3A2jxio6LZSgEaVR1V9",
+     "name": "click",
+     "input": {
+      "ref": "f2e354"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSpAoKEAgTGAI4AUIIdGhpbmtpbmcSDLUxJizHXyrRKJITQRoMQmXjER3Mu2cnFvRpIjAKveOgbybH9yzHRzFuCpg7gsKu12DS0VrinQktDd/AGGfeOFqsX6cW9HpaqOC5jsMqwQl092yOJhiQX+F/PeDWgFnO9Oh202ZojGz5yPvhi4p/g8SmH9CqJVV+fkiGMTfvtlbl9q1gw+b+7sjNzBeT8x5BVqcTnDd9ANSGSbUHyI/hnukULGM7Q2hSKVVGVkb2aIoU06Q2Zi4+Lin1DHeFtatbBUDRip1YJL4nVO/kvDkAFJiVWBnyxn2mlMpMulGEdG0aniNrR9TcwxcliqgkA+MIkRIIHNqYjRSQ9jpSBSgttIiQxInDQqC50J2lMik5Upp8BqUgTPutfkL9mUtyNVfyUet4zNjvQPQ37Hl8nXOKA7SU7B6jrxTah7yCjYo0BuvEpUzF4Fr6BGI+3n+azdTz2T3MdD9vcDXSzEJQI7SO0Yq9+MhoWgw7vAQ1JAkv6bs/hnLrzilB61HEdOmwZkjD9xU7uJ1ok8oiciGF1lXYgbPb3z1AYzc2g6DRGF2mj09I/zyXT3/FZyqIPW5UQWSoJyZmrdf6kcuFp3MEq6PI1i/WVSYPfS59M6NzPkQDDU2YNRFNFZsBthYG++gwzEVLFDTRLPsS6KL6iYWLWIWJz2QCZjIYKcMytsL+mAA2aPX5KJEPAN9wuFbVFWLG3jTIClMbp7RIwLOuhyoKwM821X9Pk5mBfD50YmncNdicvzDbqE96JtsocoK15xA3OtdjjSr0QJdD3RqymVBQjKrtDz13Eg8gyeMl2j3DncsvPdrcgaa3nLUjIyi49UCiYzfAaefyqSRSVmfc/GNosRjycr2jWypSMf4L9hgoqW4e8E0qT5KimDKavOvt7yN8SyaDPfzsLbYGhbE4gyWGR4qPkx7EprRE+LditOcUTcpYiaoeymtsnJYJFXZSPxDQsRxn+of7JrxP5RSOKexT7sMmgK5EVsuTNnyCTXQPOyI4riCc/Wm54hT2XErqTfRhzfa/Iy+IELHoNX7u9pTAUnarbyzSVXWd2NbBGdP/AkjtB2qRnajjEThDDJw5p+6i7tYBwj+w7C4pfl8qUdlbzMiMX3HFZC3p2ystT5UKXKCWcVcV/daHFK4IrD1VicDEoZR2h8KrjmS/4IFcmKzTqNEd3v+JcXp2j12SvLKwU6MBKblgSJLA+xkZEe/j7CFvanofwlOoaHvD+oZM4K8M/ME0L5vQu8Tnkm+aRkIwjVTDtDE+BA/Sn4mxS+C35EqdwFgoFPPPbD4Tfq+hrqlJv1CKAZNgFC1/wDJjDEcRvutMNnzYuYidGmDmVyWOZMm1sNZTLOeMdsXvujqNk3Vnu+uUMxphXNjolgYNJshoHnpl+hV0icMJXF6MttsXL7RkFDX+wVe3t9tggLBslgbPpDLqyv2Ol8eV5bw50KdrOJo06aPKEJAH9j2l63DtXZk7aEJVWwxa9minJ2vN5B4u1FRa7G8WeQZ15FKKsfvAJi0dTeUCzC6y5qutELr+UKR8T3yvMpqvDVYir5Bm3FLOnR1jy0ItRdCXQ/88G4wlpmj8cqs5djPp/mut+ujuXUmVCOnuxH4bjE1O2i5ipeRnMN/OYUTWpSubWxJc+Q0cugn8GSGe9TRGMmOnLz7KDIMiB24pZn8CbZWPCzmk9S/cn2X8GvYL6tj3Kuof4l6ONg2UC7Uah9DuDJkBVP09rXi6VqBjDxgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The Cheap Watches comment's Spam button is ref f2e354 in the latest snapshot. Retrying that click."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01CaP3A2jxio6LZSgEaVR1V9",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e354"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13721,
+    "outputTokens": 277,
+    "cacheReadTokens": 7250,
+    "cacheWriteTokens": 6469
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:a646e27fa72f13c5f61298e3fcd6896898647bace96d5b7736f50c46af81b790": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01D4FGEnGVpkCzZLETeJarEA",
+     "name": "show_part",
+     "input": {
+      "part": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSjwcKEAgTGAI4AUIIdGhpbmtpbmcSDDH2FI0FMv2s/+gPfhoM7lcYxnoORNmOJeEQIjB7x/gIDX1cmpX8LwGmFx5qjY38lWaoQgYSdFqLlDlsmwxL/VSTP1ShRoLmgwL2AkoqrAbN4SbwD0+dSGwtaCY14yH7AKrjvcAlDkLtAhkCD5lfes5I5CdKC+tWgVbc5LbJzQ9tOWqHjIjcyspxmaqYLdzKdAEiH6ZO/WeRxd9TCAxrEcTdQulLAeOkS9ByEDOXyFv03iAOqim4Yu+EuIAFRleNQUlFn2Q+qt75y3AyFw+DenzcqQu2cNpkOxP6gYI4yL6hD7dYl8nWUXNGVUf+Hb9JmQo8L350AdcUc4hCkeDlsxpGbygrbPyk6exmha8QGjdh2xyRBgxmd5uafw3uV3kixAugDEd87vC8It/jPIHUZJPmioxXHs1VloZSHf4F3koM5Vq5g66j/fSoDj9PsLmj22Ke03XiT0g+k3UKJeyuG9fJ8SS70KESMTjTo16rc1mBlCzF3Tg5vg+b6ePeE1WTHyYcdUjUCznbMRKspbNh2K8riBTH++H+bn9NUUsTLcoJwYD4cZkhPEIGRgK8AroWxdeIeRpdQkn/+7ezG7GfFg9I5QKWBsfmZaUamZj++VdlMYtaUVymgqt92hY3L7NGdtAxg1NtMjwppYmQRZuZdYuW4xwsSvYEpDmNSKR4kuEEH7YIOu2/XKB3p7TV34VFZIyEVhXEh5fg0MAu14vUhU0BS2Glpsngmp2ih7a0r95EF9b2FlNbcI2QvyDIuHN1jE3qT9YQvSZvDeeYE2gprMvpLFeE/4TBkTHxVyuU0c5iYtMHAxZvQxwWuJIZWBRo0fH1fjFUyzfxxprGVINOf88KVhylvwdix05XURoMt5Ukwxp9U9JKvUSuVskQ573ibaLJiZprh1Sce9xmmBJg8nRQ2r+3CVaAy4NgWen85EsVPacV8ZOYjkL36Gl86+1yUa5w9KP3xlxF8QAdidsbm7kS1mqmuBRsDmdTUsJ9NyuD9vqNVsNnnTwN/3or1ldzuXaS7XChTFZ9uzF8TTNDxHUe35jFTneqdaQsebbCcvj9q7YMPfitLahUohobkxqLs30WIb2Bl9R0oh9+ZxHBBEI497A0ZCt8wocHMJPsgIbYoGLNoC/fpmpD6UVGyWiGynWbkdsiDtmdB9JTxpG/kTnHj70FJQ6VhIAeHRgB"
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01D4FGEnGVpkCzZLETeJarEA",
+       "toolName": "show_part",
+       "input": {
+        "part": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14874,
+    "outputTokens": 84,
+    "cacheReadTokens": 7250,
+    "cacheWriteTokens": 7622
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:741a5f440783c26a9e836559eb6b29ca5ba5047d90949d96127aff127ef97364": {
+   "stop": "tool_use",
+   "text": "The Spam button for the Cheap Watches comment keeps timing out, so I'll use its edit page (comment 4), which has a status selector.",
+   "toolCalls": [
+    {
+     "id": "toolu_01RR93CN9RpvqbTvpbvRtRnr",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4320/wp-admin/comment.php?action=editcomment&c=4"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS0QoKEAgTGAI4AUIIdGhpbmtpbmcSDMxSRZQOFU2cPVNVHxoMgRx2SyCDBmtM37trIjABHzKBYW0Jwy1KKXfoYwk+aDoaWOCbmFX4KZWD6EgtMxUQuieHZzPYa5aoijTMokIq7gmfH60fuCOSN59kXOJKYGZjvuHY0cyH6D9EP14DUDkNHyEtSLsLQgkTy4uWyc2JVs6UQm7BGvE5NeEtNXuGbBn+ZTaGYJPaF2Zju5sC1G7M5I+rK/KQ7tFZqOyDVKPdAEsiHWr2ZCUo2XPX9KLBnX2XkxW4knjUe0cHjTjKYeV8tVbXg2fL2dhkJ91nkOYA2eT1bgF8BCZXXLAmMGvHpfvRZreB/+J9SSCvhoM+l53rQkdFhUUPXl1ld/8AYrEHCtAjhWY6lokYZHhusbQ6Z8T0lFTYPBQ/iehfD4ikxNDsTO+GUS+8/hWzLvS+akrB8nSt66HqCG2eRTqUENJfjL9Iy8QFS5yW6yPeOukFQQ9LdW+GP5UF8kQGbT+0qPsC/GpUcErNMnjnw1lIdblkEf1FK5y+9fOuwpSZe9KeLW3WfBpQ8puxidByDmllkxyxOv+WRkI48HvVx/7aI5lDTsAvc8PeTInLu+214zK9glExcabbpaC+0QMkBSIfDthyfSdnrnp9yA8RKGlUJEVY/rDws8l7q2G+zyTiUPXaiuowiBZeE2GFgPBTsbPcNt0VRzETGlHjgZy1kllgweXML9Ee+rp5hTNCNfHAx/lg1d5/N4zJnb6ecvldoQ77Lgf19sEImxnsG7ET9yQwzB56HQPd6W1pPONHG8gTyWaVrVJIzgOzKz/qOOmj1OpSzHMPTOYLpwIRJAnIXvYhGM3eqy2uGIqgIYBC9qfuXZDBm+FCxraLGfVSKuuTtkZu8qR0MqzXjJAJkUFKef6Jeh93QXu1Wr/LOJnHWt5auR3WcHigHcdTPMFZgAKIWMcEp6tc8ZoKNFKzf+sSsIlXFofZLHspA1dZE3hca2q+xBhP/SN/EfMbKEEz3IsY0Sq/QRtoRnEkHMSZhgDX3XKzzBTW/K3g4ySgaKIicZVLMNUrGoW0OlMf0yS/mX9VrA/06xh0un+oB890f+Ar7gptcvHKAuWLtw5Dxy+5CifOZetzUMWo143nynniVeWAeBPz7XtFk41McINN6PnWqeW6exgscc/n9jHLNXw0Eb8buyOcrdzOoNE0dM+0xvYCD3iqmB24+TT9ep3B6mKLK/Y56v7EjhR3ZP/1p86lcIhjrFnFk3AvslUwrmTTm3dmMTEhJAnzCWLOfpgOFxI9EhlCM5dGG4+Q9bU7NlkdQ/Asnk7KbFrF6jrD3lg2nO1nWbdW0wLrJDthPsuJeJavDV//Co8CdGmyEpb2QptzaJ02Xy0j3e+K83st6Di8RvkjAH93et8SvkMkUB96rb+2w33TAUJdTh63WWJMB2AtIwlt/g4CtVnTMIf/FosikCWzdGMj1zFedTWGXbp98ZyTBLJ7kT5BNwwMMQeI14PGUsE0qUNAeK/HRGiqRWk0C03vC4iaaz3CchRZ8f+inWYFmx8rD7+LHVFSZ7ffoFse6bQX9DoVNsV5ERgmajPALHcqEIoThsxjhDOVqSXMQOjwYnDBAs8AgIkpxD0IGI68kGmVf4XPWElQiJEoBr0VL+0kR0FBTI1AP/Gffm2c7oI2WM8BramJV1j+nQ16zWgVQAikkxg/JPyyOZQAHfhIFfor09W5SIeY3Zb/Q7VQfWdP5edoUKJzgsVSxv3sI0uD7m98RBfqWBxXeWH9uEVlHf7nIAGMQv68NlyvBc9+QL45NfLq0XFn8hgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The Spam button for the Cheap Watches comment keeps timing out, so I'll use its edit page (comment 4), which has a status selector."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01RR93CN9RpvqbTvpbvRtRnr",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4320/wp-admin/comment.php?action=editcomment&c=4"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14218,
+    "outputTokens": 316,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 14216
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:e6a8162d989bf9fb78bb5d946d7afa77d57807f4c205e2bad32968a1056480f5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011FfSZfWGP9FjcmmsPsnAm5",
+     "name": "click",
+     "input": {
+      "ref": "f3e202"
+     }
+    },
+    {
+     "id": "toolu_012dczid6qEZd894Z75nCNrF",
+     "name": "click",
+     "input": {
+      "ref": "f3e214"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_011FfSZfWGP9FjcmmsPsnAm5",
+       "toolName": "click",
+       "input": {
+        "ref": "f3e202"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_012dczid6qEZd894Z75nCNrF",
+       "toolName": "click",
+       "input": {
+        "ref": "f3e214"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14555,
+    "outputTokens": 95,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 14553
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:64d3838dcca69611ff4252e0fb08642ef11d5022f4ec140a47c29dd5570bdc56": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HoHncAz482YnfyENpuKPD1",
+     "name": "finish",
+     "input": {
+      "report": "I marked the watch-advertising comment by \"Cheap Watches\" (“Best replica watches at unbeatable prices…”) as spam by setting its status to Spam on its edit page and clicking Update; the post's Spam count now shows 1. Note that the row's Spam button timed out, so I used the edit page instead."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS5wcKEAgTGAI4AUIIdGhpbmtpbmcSDOSuXnRJT5AbtxlzBBoMD+6bKeS8CipRB9L6IjChTazhqkVHz0TzCIrsKyWLtJ2tln7UmZvz+4sf4meMFnw2jxOUWwTzEHlwl90wrIEqhAcOfa/uKBFNPr9EYlnKEnc5/pfdl6/h38L54+yvGUpKctH2ect7F66rN2dDAtlodm+b3TEg1rSO6WpwJ/Xhko6rNLkYcOHmeegW9MX4fbjRwbyrbzHmG3M4cb+mBalSZh6Pz7I2U/8RkxDlyfpoSvYg7mQzfrI7+LG8cWo5znUSEd/l6MX7ZIy3vlZMQsqThR14Cx0TQZr7ZfBEU8ouqtb5ECMXhve+WnksDVqTWUUiE0YakoPDbn57DYkh6QFqFNb5nYfGhU/1wJ1ODtnJgW+H7K6mQANF5VBvvxUcTkFqba5nPgnkI7rPQA/1Utp+ZTdjQcIVvFbDxDKqlq6bb4NxIuKuI7lAeMnW+J7uSJOFhW3gPCHxkwAeJZ/9d++8+lW/yKkUhGUD9eLtTcwYMulzxErDUEWoWx23+mrnIDOn98g1DOlQYZGblO6apdS+K8onsrzGmauRtrjHdN69cT6BMMr0QiGde0hiZkA0MEysqxbO17H4JsDbsWKM99S4s9vgF5JA4dJ7Zw+b+PJs/mkxbD59RFIB5D5JX01biPMc/FEOXexZU3T8AtliMN9h2zGsnicbH6OADx45xY/FgI9w4N0tepQN7r2Om/J1Knxb3rm+Qj3MRXYSFCbUVYl1LBB6WUkM5Y/PVZ75z9hjXbaCWG3/fxcRY75K1xIYqkNHp6lwGauo1mOMyNoiWhqEBLTfiKO5lNaQdbx0Y/Bj2Db7tqmHnf6LapQHtQ6/BToD6kVoL2+ZeNgDfBHJDob6SO/qYMzoj6ZBR9Ek7hVAfD+CMFm/7bezPgz3GTrh6rpr7FyJiRAFCYHds42V16xkPS1n7qlSYNLgCmAxtoGCjhoaavySTnCf9xjk+zAqFIjeVJ2X2SFkUFtUggBg3AdRgKsmvylxafglSaAaTK7az/khmGMee86qSpAoOatbWo7DIMfuwh8Zpb0C+Z3vOTilinwhNjzERkHu8uYpaih4dy7cxlCSfKtoLRpTcXSU/n+AJR182WzOcT6yW5HMZBvZIQ9vdq1MqytUTj20QmHtTJXDUIqWJQ7OBFer2UT4XFml6g2ScuYgVg1AAiyrANvl3fKmfEiUXxWI1x/oS7bs/6SRB5OHSPpcx4FEPHiujPpgP7oM83yTu8wMP3MUU17M0B1rChAfORYLldTiPcD8jzt8zzqQ2UZu9pbklXL2TvnvVH/uup0YAQ=="
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01HoHncAz482YnfyENpuKPD1",
+       "toolName": "finish",
+       "input": {
+        "report": "I marked the watch-advertising comment by \"Cheap Watches\" (“Best replica watches at unbeatable prices…”) as spam by setting its status to Spam on its edit page and clicking Update; the post's Spam count now shows 1. Note that the row's Spam button timed out, so I used the edit page instead."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 20786,
+    "outputTokens": 212,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 20784
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}
