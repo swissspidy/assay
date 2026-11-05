@@ -1,21 +1,21 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T07:44:35.843Z",
+ "recordedAt": "2026-11-05T10:47:42.103Z",
  "turns": {
   "sha256:66a05c7441ee8f58428d0776c59271753090005beca2842d97ffb4dbf1e056d0": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_017StUzdkjijeFyJkqxamxmU",
+     "id": "toolu_012tsNMGDLz4JTrU8T8c6rrw",
      "name": "submit_rubric",
      "input": {
       "requirements": [
        {
         "id": "R1",
         "kind": "hard",
-        "text": "The Dentist event has been renamed to \"Dentist (Dr. Lee)\".",
+        "text": "The Dentist event's name is \"Dentist (Dr. Lee)\".",
         "field": "outcomes",
         "quote": "the Dentist event is called \"Dentist (Dr. Lee)\""
        }
@@ -26,7 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_017StUzdkjijeFyJkqxamxmU",
+     "id": "toolu_012tsNMGDLz4JTrU8T8c6rrw",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -36,7 +36,7 @@
        {
         "id": "R1",
         "kind": "hard",
-        "text": "The Dentist event has been renamed to \"Dentist (Dr. Lee)\".",
+        "text": "The Dentist event's name is \"Dentist (Dr. Lee)\".",
         "field": "outcomes",
         "quote": "the Dentist event is called \"Dentist (Dr. Lee)\""
        }
@@ -46,23 +46,23 @@
    ],
    "usage": {
     "inputTokens": 1141,
-    "outputTokens": 139,
+    "outputTokens": 136,
     "cacheReadTokens": 0,
     "cacheWriteTokens": 1137
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:6165d03ea31a1c9224e01ad64161e09770b516d3f5e4e0b66b68f9bdca92b525": {
+  "sha256:6e73e7d5d624001183073de32fafac066a33bff9fb1722da4a550484a8e1b087": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01NC3rUae5cXfhnw6hN9WYKu",
+     "id": "toolu_013mxKLhxhntxxgXuF6qi9jZ",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01UX32zTvbynHFcxxHtJV51T",
+     "id": "toolu_014AtdMvSAUQemiB9s8D9UA4",
      "name": "network_log",
      "input": {}
     }
@@ -70,7 +70,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01NC3rUae5cXfhnw6hN9WYKu",
+     "id": "toolu_013mxKLhxhntxxgXuF6qi9jZ",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -79,7 +79,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01UX32zTvbynHFcxxHtJV51T",
+     "id": "toolu_014AtdMvSAUQemiB9s8D9UA4",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -88,52 +88,294 @@
     }
    ],
    "usage": {
-    "inputTokens": 16284,
+    "inputTokens": 17342,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16280
+    "cacheWriteTokens": 17338
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:224d7f3388959eba98784f43476e09e207cb928ea175bcb417b5e1baf6bb9789": {
+  "sha256:18ba26a6bf52d8b991f54ed812e74ee306eaefb72ce396b887218342daa41344": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_015AxSwtiDNn7fvKP5DTNCgz",
+     "id": "toolu_011zXJK3ubUz8u4Y9nmSEJrR",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "events"
+       },
+       "normalize": [
+        {
+         "op": "items",
+         "where": {
+          "type": "object",
+          "properties": {
+           "id": {
+            "const": 2
+           }
+          },
+          "required": [
+           "id"
+          ]
+         },
+         "pick": [
+          "/title"
+         ]
+        }
+       ],
+       "expect": {
+        "equals": [
+         {
+          "title": "Dentist (Dr. Lee)"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSlQgKEAgTGAI4AUIIdGhpbmtpbmcSDEcjUT+WD2J8eXYrdxoMStNZeL24/Y9r6pXlIjDs0dzwd4eDc1DxS66OCx/4qRNYIXmbkkKm612b+Ik91kL975KhLkU+cRevB6HUY2gqsgcf1GloG7wa7RJyoyjAPLLTSLNx3eyM4JE7Cs5sMWEJBNvTY9EvsIK0K0250W9Hr8DBbawC6/vYn3b/KNks9xusajOarmILpbr9+t8NYoe764/pIPxeyNyFXFViY7Te/VjY42xvp3SHIn1mvn6k8Ds9vimVLA+BRDbwV1oX0IzicOccFutpIanMaUZ15F/jnxdVK7TKRNjXWTLyZxIvahs/P46Gy0GRjxr4mEzwGCyPC5KKe8BuCyDj5XDB2r2o2Qi0REAQnUMV0gC67imUtnyVJnkU09NqSBgoHWiUsaIl8kuiwx4EB3Xt3Vujg6TwZV6TKK9CJ+wZ4XA2U5K59qG9xlJUoe2nto/HQ2jcs3BGvKg/poqUjMnEOisY4r7/HZJYZBqLw5PKNlwpG0K3iQFZXV8P6CPVL9D4jP4iSuB0aH/l+P2SaPCbhsR65R12rnwkp41IYnG1crFfD9PE+ADQbMd2qAFvu3Y0aPm3vXe9NOfD4Z3la/2sWJp/wG/qCSxlrH9JRolWs6obqwT7XeMRd3eWByuCbG6Bx8ksNqsjhad8XObmDNksoRZgsvk2J5iAZflxM/fwNIEjt9WOumShtk2xh2pE/tIw+IiJGC+RsY0xJlAs8Mx/LXKE3f1KhCIGP0fL2k5ZY6AMXXiOmmQlQXtezu9oU3Ou+OTy1N86fdRUWX/JjpykEiEXdF6C6DR60ZR9d3P2izBeOmg3IiE8WRmTZYgxqWqxWWCAFN6r46eo2SMbXZShvsxieuFt0D3wU2upeHKqO3LRzliKv3HaM63drhYhtAiT4Pscu+Wxagb/+D84zRls3X5Q5Sr6CsAqbyWM/jRwDJdtoFJH6KDx0R0zcvH1/4JScvmRLBDyPAX6d/T+cNO+rRiWRa4XXnjfdOd9BUAAl/J/zIqGaUnhg4cubwlxKmQLn5sIC66P4P0CVsMmMT5fZe9fugz15oV5wzX/+CtNbY2Vqhn9hhSBiiFoiz10+QHZ442Ip6Tx3+hkENDHg6Ljsi6dQut+180mmMi0AJMLqitSBwjCjb6wXG87bk6OyDdgfG5TCOQGF1psnGCvugYC8TwzNVXTx/zeCt91eIWaNmtqudoMdtcdTKAF+W8JS1GDWu8qXncdCOrTvzA1z/Fpg+lpT6/Wi9aNGoQ/Av78/aM2nlYs3zD30FgrAN8KtXSl44aWlSY1KOicakJ2AUw1Sos+NpynG6IFo7avuOev29rQl5xS8I89ml/6kuyHC3Ols2Ero08yvpe6GAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_011zXJK3ubUz8u4Y9nmSEJrR",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "events"
+       },
+       "normalize": [
+        {
+         "op": "items",
+         "where": {
+          "type": "object",
+          "properties": {
+           "id": {
+            "const": 2
+           }
+          },
+          "required": [
+           "id"
+          ]
+         },
+         "pick": [
+          "/title"
+         ]
+        }
+       ],
+       "expect": {
+        "equals": [
+         {
+          "title": "Dentist (Dr. Lee)"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 17901,
+    "outputTokens": 325,
+    "cacheReadTokens": 17338,
+    "cacheWriteTokens": 561
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:c3eb839e77fd84fdae78b669f0de4c8225b580815173be125a2335a6aa521cbd": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01QaHUjR7xBj9h3Ux2XQcgd9",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "events",
+        "at": "before"
+       },
+       "normalize": [
+        {
+         "op": "items",
+         "where": {
+          "type": "object",
+          "properties": {
+           "id": {
+            "const": 2
+           }
+          },
+          "required": [
+           "id"
+          ]
+         },
+         "pick": [
+          "/title"
+         ]
+        }
+       ],
+       "expect": {
+        "equals": [
+         {
+          "/title": "Dentist"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSuQYKEAgTGAI4AUIIdGhpbmtpbmcSDLyz9h0FnxP66CyqdBoMaP8aCDGU/YNpBgQFIjDAdZRW9rPQ1zwpT82dx1xTWIIAIvQMensznZbyyNIsfXvTb5+W/LSA4frl2r053t8q1gUp/36Yc/mhWtUhNd9o1F6mX6Zeq8xFVwvCMUnjuXeR1HzxeZiNEw5CCmiUh5i7dWPW01iiWQ1+TKnXOfrdPb9G7xQ9iDNasbkx54X5JFg7WeAe+FswhypSLlSwGrV5pL1a2ckzNXfV5A2/2wlYY0fjsqPNu6QhB/VVyAR+TjjwmMZ3LeNH/pKWGxX8vxd+hmdUP1CLGLUI5G5s9XhiRFz1k53Lso76fEUwa3Oed1R8XEz572f35zcpQGxphMUENUeGJAg7wFQDJGt6qkTVQNz0yeW7ZwTY7D4olkvWQXjgXTZ09ngpiRelqGmlT+RQsu1+/dw28FiPP2gXhrjVcy6DHHCBUNmThdI+uJrrqrufc0L5sr7BthVbGGzeaWIQfCpPeLLXlqIRZzKujl/6C6lFQFQSa94iWSNShb0w5UPoiQOkWFWiaZ7Bsj+FjqAAyHGpQQyTwH/ZKIPSnSffDOmcp0l8E9v4sn8wBdamWhLasfW4q8tdaCmAs9+wILaqqpISZgMFcYVuTMDNe846dkk8sOET2kkjDwl2bZ9BFzvzZmSjDDDge+AtVs49mWDqCsKQCezO4XYeML3yYSGoa6uqLwE3tETy+kKlBgRbHWR57rZP9PtNq8PA9+ZMuzlT3bt/IlZmrXJeIlQHNkYp/fEEVwhcbTmIvu4moVOhg9IgRmz2sc/g8RVNgcSx0FGYhA7QW23Yzizx0plQXzRCz0PsfRiE/TLY/8PkyaAOSeEQGRB/BB8PQrPPHPLfQSVJkQyLuAJ9shszb4XsQHSrZKIggnk99JJM43W2m3pk1qazZV7Ez95jgXj7NR/yPT8po/FbNVoeNcEdHEkt/+P4rwOZPNd8WH6DDPVfmGjJv+5fQb6UCKL8sk2ETCV9wHnOM9eYcF5+EswEf4uyVyjVA9afxwe3agrbkcHz1UiMle9ht0tc4nTqCUZbDHwYhLb9heZz6yC1YKIYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01QaHUjR7xBj9h3Ux2XQcgd9",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "events",
+        "at": "before"
+       },
+       "normalize": [
+        {
+         "op": "items",
+         "where": {
+          "type": "object",
+          "properties": {
+           "id": {
+            "const": 2
+           }
+          },
+          "required": [
+           "id"
+          ]
+         },
+         "pick": [
+          "/title"
+         ]
+        }
+       ],
+       "expect": {
+        "equals": [
+         {
+          "/title": "Dentist"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 18299,
+    "outputTokens": 219,
+    "cacheReadTokens": 17899,
+    "cacheWriteTokens": 398
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:81578760771b4233e43cecbfb95ea2f5fd1e0848e6fe1223aace181acdfadcb3": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Hw5Ge7r1ScfL3q9cznPr5p",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "dentist-renamed-backend",
+        "id": "dentist-renamed-probe",
         "requirement": "R1",
-        "description": "The backend events list holds the Dentist event (id 2) with title exactly \"Dentist (Dr. Lee)\".",
+        "description": "In the backend, the Dentist event (id 2) now has the title exactly \"Dentist (Dr. Lee)\" and no event is still titled \"Dentist\".",
         "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "events"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "id",
-             "title"
-            ],
-            "properties": {
-             "id": {
-              "const": 2
+         "kind": "allOf",
+         "of": [
+          {
+           "kind": "value",
+           "source": {
+            "from": "probe",
+            "probe": "events"
+           },
+           "normalize": [
+            {
+             "op": "items",
+             "where": {
+              "type": "object",
+              "properties": {
+               "id": {
+                "const": 2
+               }
+              },
+              "required": [
+               "id"
+              ]
              },
-             "title": {
-              "const": "Dentist (Dr. Lee)"
+             "pick": [
+              "/title"
+             ]
+            }
+           ],
+           "expect": {
+            "equals": [
+             {
+              "/title": "Dentist (Dr. Lee)"
+             }
+            ]
+           }
+          },
+          {
+           "kind": "value",
+           "source": {
+            "from": "probe",
+            "probe": "events"
+           },
+           "expect": {
+            "schema": {
+             "type": "array",
+             "not": {
+              "contains": {
+               "type": "object",
+               "properties": {
+                "title": {
+                 "const": "Dentist"
+                }
+               },
+               "required": [
+                "title"
+               ]
+              }
              }
             }
            }
           }
-         }
+         ]
         }
        }
       ]
@@ -144,11 +386,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSgwgKEAgTGAI4AUIIdGhpbmtpbmcSDB00v8JadhjpoovtchoMD6JHiy4RPduCEh93IjCAXkEEqGCR7D4xkpdLLrosJ5T2TYoZwxOk8a/24/8G8Hb2+lh70N1juzLwjWgsD4QqoAdCQvyYbNGcKGjbia+OhxWhWnd/tlN0pC24ev3yp9Ct0azbVdCq4B48V9eJ9gv3PSUG0MXcIaGqDrExasq+RSIZFC5gDLHCce/7N8Q+rfU7NGPx0P2haRUx225FwWRhsy5qUQJUVLEoRQrjUPk8eB6COnYd/8Z7f34Iq/2k0Dl2VQpnOVGm3TVkSznrljavzTxIXCBPORXSvRRaM32DxXVb5E/dRgpwECk3kjuE56jX2OZY3PpqolFqIr0Q/ClVUWD97642GAHOLcrDN4wTjMyEGWxudYrqCICBSNVZ47T/SJekjfZLiPgPhSUcjjHhDzAZA/vVFYwL7G7lgre8NlfiohcR9iuS2akz1CuvCKgFuqpMgKVXZD8BWIV2Z4FuK4kqWnExidyil/ndBM3nsuGzAtj/buCl2ayui46v4k3aTIb0yQnQDO0Kt/3a6Sex4oZAtiI5C9mbfVRziC1BOrMns0aT7/oKmZ9bvCfJYRfgTfBGnDohOwtxM3cG0xiOhnsh5t27cgt/eODiOShR95EqqThA7OPEqiygYJf67ZMR+I+OhCrQvILIESKFMpINPcQ3jq+XrJUjY2BUqEN2xHYTuWyzkAsbFiguqXkKobS35lWiywHIzROyV9yGARnVQdMfGhpd4EhS5XZkQ1slJWYumjeaIxfLJ6OhafGHu4/1IUCjzLfzzY4eeBrwdjlQQRfRhyTlDVk4AYESn3PHQXGGSpZNJDx6RnDJ55gElA4YaXAlpDeatuoWpWY6WwbmcUCp7pSOpXDf/NnSRHZ9XcEWY985Dl0LRTYSo2l5y57imd4gz+JMUswui3y5HhdVfE17HUF1zb71xmJiuk4+FGq2C4D/nsADXludRZn13yuTjGv6mkWODrnzcaw/scExL71bnbHW3CKdgAFHE/egH0HYy3HK5J+dXsHZc86x9c3HgPmddbce0i/mUniIhFP8D8bkB0qHEhSSC0/YWz0YQOo8hrHHJ0eoJ2yzSx1gN2wG+x3k/sOD9TMU+Jf0Qeqx1zmoItztuNZy7HTSwxD4i8I02cponXY2qvqTniH+gH5nknFJWk7m6iOUekTToAMMnQo9ka6vG3MVk5Nzk1b+qnYaa0diMY3JLEm0apdW+RSDLwYhEAUlLuaE2CDXT6MwK0l/5lFRQqGtBYJAHKAAAtrVVsKSbdoMGTCJs2YIrBqICafyKq5zdYj6Xu+NmSJTCFsIE60xrDujGweLicLHysLFGAE="
+     "signature": "CAQSmAgKEAgTGAI4AUIIdGhpbmtpbmcSDOqsRFOiEudmUv5rZxoM2n/O1OTHjTMMylp2IjBqaSFl6SokngupeY7hU+FxL+0IWgKc7WMDWX3Wb4WDeHsDvVxemGM3cGLJAkYIAzwqtQfGelh4oEkUxb4VZDhIocoLa7GW5NOZrbTEn/erJEMBJsUnRr66Zo2CJ8QSSZcICXQ1Ep/EULZA+q+0+yS4ESe7Flat6zlkMDkGpdiJmAPBQTfS+iseMHJhI2K11IlIQtW48CATRjOfk2yDbYa30nmsrVrZpw4JXvpL3wq80rJJeVlaSKHuSb3+1dAADFzhoGdcT19ZKV/z1l0eXY4609ovxWc57wg1aSOI2wIFabc3AzUTSMaKjuFhCRv4HPY0RPDnaYQjUE1OD0KXpq4+CfCuVYC0wM99fkmqI8/G1YiKGbfPE+Co12VU4PyCA1plXB4kL7i087Qez7IbddhgmUS2AfTabJbmYNVaKw78FrZ7JsZWKvuPHYOI2iPO6w78Af/sKl0k8cobSZuaV0zBq/+lmUw+st6gkBCoOidAY2skpei/ejbVcndJQqHbvYfUc1oW34gvvFfv5PmDpQ0MNrBo9ENlY+iE0vrWCLigfLnPVbUpoh8hXeDjTA5xdUsH/ht7guzRQD8JTQ2/gYfEaQ3xaNXBbL7PzQoUNGskJQ0vizfiX6FXX+YE5aFZb6aUFFv8I6IHH2Mt+73QrvoTHJE5B1qmOGj73yyiovTVv4AzELjD2yyFNrDKGSR0YpzncP37nI6W4Dk7qlQMFDZKCLK0z5/r649ZD9y7fr48itYVDSaOjQwGmCuzzhcMHPZBIHCRP1hBAeTNJvPOF1LgxKFqwzqfdyeOc+E008rN1Gnw6DRyfdPAAfIPGc1qNzeD8NnIsRvH1zBPt8Z161bN6GWlztYGwMHc494TEAcRSNjkbA9WCp0xEh/fhKANT7xFtX1YMSslgXW6D7PUm9NEU7ZWIIcWkEtcqE1+3Rp/NjxcKUEcxkPFx+ynaI3RqKXoAEx2hbdbIbrgf/biZikIGBzjiSaRxSz55KZlAHlJ8YdAVnaVayBncltKcnC3pmjnllT0naakqIOdInzZGJtkFZS+nkSGWOKFd3r0DjM6tqUBQH9uF/Ct5IHHXvFGv5ZZZaPy8zZACZ0juLnW9JLsIHgEr8PdVR+hBIRFb3JW965IJk5XQkvudimBimcy7RLQNLg+VZnGGsnNtb1Wp146Fn6tp+Qa9IYK2qSndsFS0cNtf7dLO0SOZHk2fTQ5YHz2iXrGhT7DgY+TiU1RQtgcv/zAO/Mrb+xUh6+4B4x+epATjLVBd2S4dDvIqKoxIcZwJALfvvHO4g8HLsV/vutG6+j6AidgN/7hX9+aRQzMkNEnYcah6Z6vGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_015AxSwtiDNn7fvKP5DTNCgz",
+     "id": "toolu_01Hw5Ge7r1ScfL3q9cznPr5p",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -156,35 +398,71 @@
      "input": {
       "checks": [
        {
-        "id": "dentist-renamed-backend",
+        "id": "dentist-renamed-probe",
         "requirement": "R1",
-        "description": "The backend events list holds the Dentist event (id 2) with title exactly \"Dentist (Dr. Lee)\".",
+        "description": "In the backend, the Dentist event (id 2) now has the title exactly \"Dentist (Dr. Lee)\" and no event is still titled \"Dentist\".",
         "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "events"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "id",
-             "title"
-            ],
-            "properties": {
-             "id": {
-              "const": 2
+         "kind": "allOf",
+         "of": [
+          {
+           "kind": "value",
+           "source": {
+            "from": "probe",
+            "probe": "events"
+           },
+           "normalize": [
+            {
+             "op": "items",
+             "where": {
+              "type": "object",
+              "properties": {
+               "id": {
+                "const": 2
+               }
+              },
+              "required": [
+               "id"
+              ]
              },
-             "title": {
-              "const": "Dentist (Dr. Lee)"
+             "pick": [
+              "/title"
+             ]
+            }
+           ],
+           "expect": {
+            "equals": [
+             {
+              "/title": "Dentist (Dr. Lee)"
+             }
+            ]
+           }
+          },
+          {
+           "kind": "value",
+           "source": {
+            "from": "probe",
+            "probe": "events"
+           },
+           "expect": {
+            "schema": {
+             "type": "array",
+             "not": {
+              "contains": {
+               "type": "object",
+               "properties": {
+                "title": {
+                 "const": "Dentist"
+                }
+               },
+               "required": [
+                "title"
+               ]
+              }
              }
             }
            }
           }
-         }
+         ]
         }
        }
       ]
@@ -192,10 +470,10 @@
     }
    ],
    "usage": {
-    "inputTokens": 16843,
-    "outputTokens": 368,
-    "cacheReadTokens": 16280,
-    "cacheWriteTokens": 561
+    "inputTokens": 18553,
+    "outputTokens": 490,
+    "cacheReadTokens": 18297,
+    "cacheWriteTokens": 254
    },
    "model": "claude-opus-5-5"
   }

@@ -42,14 +42,14 @@
             "type": "array",
             "contains": {
               "type": "object",
+              "required": [
+                "title"
+              ],
               "properties": {
                 "title": {
                   "const": "Checkout fails on Safari"
                 }
-              },
-              "required": [
-                "title"
-              ]
+              }
             }
           }
         }
@@ -58,7 +58,7 @@
     {
       "id": "R1-create-request",
       "requirement": "R1",
-      "description": "A successful POST creating an issue titled \"Checkout fails on Safari\" was sent during the run.",
+      "description": "A POST to /issues creating the issue with title \"Checkout fails on Safari\" was sent and succeeded.",
       "assert": {
         "kind": "request",
         "match": {
@@ -67,19 +67,18 @@
             "path": "/issues"
           },
           "status": {
-            "gte": 200,
             "lt": 400
           },
           "requestBody": {
             "type": "object",
+            "required": [
+              "title"
+            ],
             "properties": {
               "title": {
                 "const": "Checkout fails on Safari"
               }
-            },
-            "required": [
-              "title"
-            ]
+            }
           }
         }
       }
@@ -87,7 +86,7 @@
     {
       "id": "R2-bug-label",
       "requirement": "R2",
-      "description": "The backend issue titled \"Checkout fails on Safari\" has \"bug\" among its labels.",
+      "description": "The backend issue titled \"Checkout fails on Safari\" has the \"bug\" label.",
       "assert": {
         "kind": "value",
         "source": {
@@ -99,6 +98,10 @@
             "type": "array",
             "contains": {
               "type": "object",
+              "required": [
+                "title",
+                "labels"
+              ],
               "properties": {
                 "title": {
                   "const": "Checkout fails on Safari"
@@ -109,11 +112,7 @@
                     "const": "bug"
                   }
                 }
-              },
-              "required": [
-                "title",
-                "labels"
-              ]
+              }
             }
           }
         }
@@ -126,6 +125,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T07:43:02.869Z"
+    "at": "2026-11-05T10:44:23.377Z"
   }
 }

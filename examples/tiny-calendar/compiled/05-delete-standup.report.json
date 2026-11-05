@@ -7,31 +7,33 @@
   ],
   "turns": {
     "rubric": 1,
-    "discovery": 2
+    "discovery": 3
   },
   "usage": {
-    "inputTokens": 34146,
-    "outputTokens": 881,
-    "cacheReadTokens": 16252,
-    "cacheWriteTokens": 17884
+    "inputTokens": 54580,
+    "outputTokens": 1032,
+    "cacheReadTokens": 35157,
+    "cacheWriteTokens": 19411
   },
   "coverage": [
     {
       "requirement": "R1",
-      "quote": "the Team standup event is gone",
+      "quote": "Then the Team standup event is gone",
       "checks": [
-        "r1-standup-gone"
+        "R1-standup-gone",
+        "R1-delete-request"
       ],
       "channels": [
-        "probe"
+        "probe",
+        "network"
       ],
       "trust": "structured"
     },
     {
       "requirement": "R2",
-      "quote": "the other events are still there",
+      "quote": "Then the other events are still there",
       "checks": [
-        "r2-others-remain"
+        "R2-others-remain"
       ],
       "channels": [
         "probe"

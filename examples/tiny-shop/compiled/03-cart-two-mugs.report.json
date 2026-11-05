@@ -10,33 +10,37 @@
     "discovery": 2
   },
   "usage": {
-    "inputTokens": 34933,
-    "outputTokens": 1436,
-    "cacheReadTokens": 16347,
-    "cacheWriteTokens": 18576
+    "inputTokens": 36808,
+    "outputTokens": 1553,
+    "cacheReadTokens": 18549,
+    "cacheWriteTokens": 18249
   },
   "coverage": [
     {
       "requirement": "R1",
-      "quote": "Then the cart page lists a Blue Mug",
+      "quote": "the cart page lists a Blue Mug",
       "checks": [
-        "r1-blue-mug-listed"
+        "r1-cart-page-blue",
+        "r1-backend-blue"
       ],
       "channels": [
-        "probe",
-        "a11y"
+        "url",
+        "a11y",
+        "probe"
       ],
       "trust": "structured"
     },
     {
       "requirement": "R2",
-      "quote": "Then the cart page lists a Red Mug",
+      "quote": "the cart page lists a Red Mug",
       "checks": [
-        "r2-red-mug-listed"
+        "r2-cart-page-red",
+        "r2-backend-red"
       ],
       "channels": [
-        "probe",
-        "a11y"
+        "url",
+        "a11y",
+        "probe"
       ],
       "trust": "structured"
     },
@@ -47,7 +51,8 @@
         "r3-cart-shown"
       ],
       "channels": [
-        "url"
+        "url",
+        "a11y"
       ],
       "trust": "structured"
     }

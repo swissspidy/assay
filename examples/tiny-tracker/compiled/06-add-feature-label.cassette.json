@@ -1,14 +1,14 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T07:44:04.596Z",
+ "recordedAt": "2026-11-05T10:45:13.683Z",
  "turns": {
   "sha256:b9f2382643f6d586ff840254428d53143dd3c724d0119f8798dd6d61ea5cdb9c": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01EnqB8wqexQwHT9fbTxRX5T",
+     "id": "toolu_01WrP9CSBbufeRs83WtEdGWK",
      "name": "submit_rubric",
      "input": {
       "requirements": [
@@ -17,14 +17,14 @@
         "kind": "hard",
         "text": "Issue #1 has the feature label.",
         "field": "outcomes",
-        "quote": "issue #1 has the feature label"
+        "quote": "Then issue #1 has the feature label"
        },
        {
         "id": "R2",
         "kind": "hard",
         "text": "Issue #1 still has the bug label.",
         "field": "outcomes",
-        "quote": "issue #1 still has the bug label"
+        "quote": "Then issue #1 still has the bug label"
        }
       ]
      }
@@ -33,7 +33,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01EnqB8wqexQwHT9fbTxRX5T",
+     "id": "toolu_01WrP9CSBbufeRs83WtEdGWK",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -45,14 +45,14 @@
         "kind": "hard",
         "text": "Issue #1 has the feature label.",
         "field": "outcomes",
-        "quote": "issue #1 has the feature label"
+        "quote": "Then issue #1 has the feature label"
        },
        {
         "id": "R2",
         "kind": "hard",
         "text": "Issue #1 still has the bug label.",
         "field": "outcomes",
-        "quote": "issue #1 still has the bug label"
+        "quote": "Then issue #1 still has the bug label"
        }
       ]
      }
@@ -60,23 +60,23 @@
    ],
    "usage": {
     "inputTokens": 1138,
-    "outputTokens": 165,
+    "outputTokens": 169,
     "cacheReadTokens": 0,
     "cacheWriteTokens": 1134
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:c043e238e86573acc5a2f52b0fd0de1bc7ed5a957d55368614821d5d4b2fe974": {
+  "sha256:825618a91be1657bebc6a3753ff9cfc824963d1b54a2577cf5beef754f41c3c1": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Ezj69eoA6KeXwRGNMyV3Cq",
+     "id": "toolu_01LSymdhQvMVFLZunGxuWp3q",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01HRSX7e7kjcyiS4pMdhrdn3",
+     "id": "toolu_013bfE9tQpmSGQNcuvgorurV",
      "name": "network_log",
      "input": {}
     }
@@ -84,7 +84,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01Ezj69eoA6KeXwRGNMyV3Cq",
+     "id": "toolu_01LSymdhQvMVFLZunGxuWp3q",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -93,7 +93,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01HRSX7e7kjcyiS4pMdhrdn3",
+     "id": "toolu_013bfE9tQpmSGQNcuvgorurV",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -102,26 +102,26 @@
     }
    ],
    "usage": {
-    "inputTokens": 16315,
+    "inputTokens": 17380,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16311
+    "cacheWriteTokens": 17376
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:50c30f04f30f6ec0a9e3290c92a7e2f8e281ebaf74ad22a32f303fdbc1698fc1": {
+  "sha256:2bab62e1e98f59d02c9751c1d2a1e7ca4a5da77944b4e1974e5b0ee212937e10": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_012Dsfqzkxk8696TjcEsAxtE",
+     "id": "toolu_01Buy5V7PhuEmtrBC5Pgt2GX",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "r1-feature-label",
+        "id": "R1-probe-feature",
         "requirement": "R1",
-        "description": "Backend issue #1 has the 'feature' label among its labels.",
+        "description": "Backend issue with id 1 has the 'feature' label in its labels.",
         "assert": {
          "kind": "value",
          "source": {
@@ -154,9 +154,9 @@
         }
        },
        {
-        "id": "r2-bug-label",
+        "id": "R2-probe-bug",
         "requirement": "R2",
-        "description": "Backend issue #1 still has the 'bug' label among its labels.",
+        "description": "Backend issue with id 1 still has the 'bug' label in its labels.",
         "assert": {
          "kind": "value",
          "source": {
@@ -196,11 +196,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSsgYKEAgTGAI4AUIIdGhpbmtpbmcSDAGxA5+0vZd/B6DsDRoMKn6gJfIq4/nWXjaJIjAdEzCaBCQ/JUqjUH829e1jr7964j1mv1aAGFoUsa/75X7QkVVTeSlamekJoHvz448qzwXralqwB82K7vgpAUjgqWHp5hzQOqz+8YdANpg+R0hFYNh0j3UnwtaVQ7ewwVaO0M555gIDcRJv1p16uUdErhiuV6au/oD0QwWLwSkEWfRVdeqlBi/BUqXB8dw+fHin+jfs7nzwI/puGcqyIXTn/9IvWnHnL6AxAr8MfwRuyrBYgBbMxn9oKX4azLMgQzcLZkyRg0FBu8l3D4SGLmcnMC5lMXPjI7Pn0rbiUMbmXMDHspLVzGnoFZVCKsCrBhFbCpA/wzLKJB23qbG12CGgmJZa5gbvEuRqPKYsQartXzGu0hsue690hlU6MsKD7txdPjs/JshoCNJAwnXcpU5s7qexlqw5AvlrVPxHr+dtEsSu9d5o94IU79mOFH1kwYGu3JV6f0Zdv4hPh9JyhpQmonxuJi35U5yhBSTUJiWoR3SMSeqpnj4SDYzS+pd5Amlgx1Iz+L+3RdbctJL5fynkwY44+592yss4Ge6gqcKtNv/H5LNrEY5yfWSHprs8emH0CUx4H26wihHINM33/bixe6ykec9TsaH8FdJws895Qlq+KX4FYebeU32h/FMK0J2BvIHVo8Cw+9ztuRkhLux0A3DrOCHpW9gxGieLExRhTkAxfItLAC+g7MdnFyCrxD7ttokOBRNaOSLXgiAfIRgpq7Q5/qtygnrKKnbghw+9Zny0pQRLCKBb2I5UhU6HoqhNvGuhV2XSL8bfbV6/mZyZ2XsDo8RVwQLA7lpaw6oKOolG5OnnR9vKVCT96U1KDv2Q0syO44VnXZeywtRgYCIbkKJzA8ktswCy+j7VWiz22TMkod5Y0euZCZcmIovFnic2LZqOVf7wAnYBtUdM0Zj2gyBTl+afKv648kTXZyBlDoWDUEAd6eQhRgNvi5S9Wna7PeZYiYK44cC53TnTsYpniejV/kzoNXGhU+yS3CYXb9/x0iFy5GHwA0CevKH0y2H/cBgB"
+     "signature": "CAQS6wcKEAgTGAI4AUIIdGhpbmtpbmcSDOzk407yUXxJCDjn9xoM+NssQp2cwqAnI6PsIjDtj2wgy4zZhlBvBT7STFW/nSRRYAS/5DKCRqOCkUPmoZPSMS5QNrbgIS3z7zlfTsoqiAfMsX/FsdS5Wp1UFTdPXVe9JL38LzQqYqQ5ncFDvd8Jboq4EpwnmrAoR83ltzC21HBmBofCfol3juYYQjpxY3rOIOD/5fin+f+6FepIfR5UTPEwUn9oCNewPW86k3fc31vkL1r/RqlNBUtkzzgzC2FsLp0FXUSfcPzZx0pTT9Rm+DI5SdyWYF+AUwPbe/zPfKxzbi+jlkU396n0BpscJVMg7eJJ4JzS5rGJfnjOSr13P1ReY6OWG+VCFpQbEB4bmR+oreMeNKbu8lTqb04dsEUDOwKAdQOkUamY2Pi916JObtHGJ/x4Mlf/zvC9hwcVZLGXmwKFzv3qmHfLr5og85x+DrU/SyO/8n2WVKczCqi1/XzIlh8xKYb0JcxBxtYtuWjPGVyaoga5rb6ifoEvVlaIKSJtycZu9x9YBR4X4nY98+EwQGoEbXngb8Rk3MzZuvDLZLRQ4Qex+4sEzaSvC2iH2WayUe3MVCQv79SsEw+MTldJy9fT/E8TD6XxCj9jh1L8iBGp8XAKMfTPlubDynoH5STkrOJNBJVdBeRtfE+k6RdwYrS7K83sWqBMhXvyQYrIa5SfzXuEKQ6zoqgbiTF40A5LAsgPJpShBkB2NvfQXY+0yyLG6eoAi7fcAQS16f5Yxho7hExCxNbebuJFsA1Gn8ZZ5iPWKeG5zezkwq15V6NR7Q45gEvk3uyXCfjCIA9liG50qAv2w3/VYpCDSVtpvvKq873RyKGt8gl3trzcpXcZkf21m0urYXCG9qSOPOG9U5ytoBeA+0x/tPrYx9F3GAZeVEcxQlCgThn0+BJ6/yMyoV916jkNxc960AUkPOgJbpLe5Qfgyj0w+awW3SDV8CdGP77tejkqD21Cfu6FvltLM1scANNpgNetQV28mZLSIS6X1+4hb/QtQTRp0UUaOqvLgV3gYqLVcMsjxx8iQqaZ7s4dfqKF62uLvY9o/NAJpGpPJ9TC9/pABbfPZPVLk1iLAML/ckvWaCEq8748KNknFUf/DF4m7/T56o8cnLcpvvYz1H7dMIS3m5oMQaiVQo6XEMCvxGqmyoKJjHDscFlu6+NNjiVtMqFFWczIeFkjuzEvZJIYBLNz2kAJcKlatcOU/cKTWHQDxX2BIIC+omoNDT6uROryBGUHGJ/Yf53kesti0/lVE1b9MPtA8hWUJSlA9ZA9ckw1BJbQO9hnOiNiyxmlUrseGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_012Dsfqzkxk8696TjcEsAxtE",
+     "id": "toolu_01Buy5V7PhuEmtrBC5Pgt2GX",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -208,9 +208,9 @@
      "input": {
       "checks": [
        {
-        "id": "r1-feature-label",
+        "id": "R1-probe-feature",
         "requirement": "R1",
-        "description": "Backend issue #1 has the 'feature' label among its labels.",
+        "description": "Backend issue with id 1 has the 'feature' label in its labels.",
         "assert": {
          "kind": "value",
          "source": {
@@ -243,9 +243,9 @@
         }
        },
        {
-        "id": "r2-bug-label",
+        "id": "R2-probe-bug",
         "requirement": "R2",
-        "description": "Backend issue #1 still has the 'bug' label among its labels.",
+        "description": "Backend issue with id 1 still has the 'bug' label in its labels.",
         "assert": {
          "kind": "value",
          "source": {
@@ -282,9 +282,9 @@
     }
    ],
    "usage": {
-    "inputTokens": 16788,
-    "outputTokens": 423,
-    "cacheReadTokens": 16311,
+    "inputTokens": 17853,
+    "outputTokens": 499,
+    "cacheReadTokens": 17376,
     "cacheWriteTokens": 475
    },
    "model": "claude-opus-5-5"

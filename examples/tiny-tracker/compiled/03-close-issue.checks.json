@@ -21,7 +21,7 @@
     {
       "id": "issue1-closed-probe",
       "requirement": "R1",
-      "description": "The backend issues probe shows issue with id 1 has status \"closed\".",
+      "description": "The backend issues probe shows issue with id 1 having status 'closed'.",
       "assert": {
         "kind": "value",
         "source": {
@@ -34,15 +34,35 @@
             "contains": {
               "type": "object",
               "required": [
-                "id",
-                "status"
+                "id"
               ],
               "properties": {
                 "id": {
                   "const": 1
-                },
-                "status": {
-                  "const": "closed"
+                }
+              }
+            },
+            "items": {
+              "if": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "const": 1
+                  }
+                }
+              },
+              "then": {
+                "type": "object",
+                "required": [
+                  "status"
+                ],
+                "properties": {
+                  "status": {
+                    "const": "closed"
+                  }
                 }
               }
             }
@@ -57,6 +77,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T07:43:25.713Z"
+    "at": "2026-11-05T10:44:43.493Z"
   }
 }

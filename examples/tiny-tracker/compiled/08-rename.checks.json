@@ -19,9 +19,9 @@
   ],
   "checks": [
     {
-      "id": "issue3-title",
+      "id": "r1-probe-title",
       "requirement": "R1",
-      "description": "The backend issues probe shows issue with id 3 has title exactly \"Fix typo in README\".",
+      "description": "The backend issues list has issue id 3 with title exactly \"Fix typo in README\".",
       "assert": {
         "kind": "value",
         "source": {
@@ -33,6 +33,10 @@
             "type": "array",
             "contains": {
               "type": "object",
+              "required": [
+                "id",
+                "title"
+              ],
               "properties": {
                 "id": {
                   "const": 3
@@ -40,11 +44,7 @@
                 "title": {
                   "const": "Fix typo in README"
                 }
-              },
-              "required": [
-                "id",
-                "title"
-              ]
+              }
             }
           }
         }
@@ -57,6 +57,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T07:44:21.696Z"
+    "at": "2026-11-05T10:45:31.761Z"
   }
 }

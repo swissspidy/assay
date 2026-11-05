@@ -19,9 +19,9 @@
   ],
   "checks": [
     {
-      "id": "bookclub-rsvp-yes-backend",
+      "id": "bookclub-rsvp-going-backend",
       "requirement": "R1",
-      "description": "The backend events probe has a Book club event, and every event titled Book club has rsvp set to yes (going).",
+      "description": "The backend events list holds the Book club event with RSVP set to 'yes' (going).",
       "assert": {
         "kind": "value",
         "source": {
@@ -36,34 +36,15 @@
               "properties": {
                 "title": {
                   "const": "Book club"
+                },
+                "rsvp": {
+                  "const": "yes"
                 }
               },
               "required": [
-                "title"
+                "title",
+                "rsvp"
               ]
-            },
-            "items": {
-              "if": {
-                "type": "object",
-                "properties": {
-                  "title": {
-                    "const": "Book club"
-                  }
-                },
-                "required": [
-                  "title"
-                ]
-              },
-              "then": {
-                "properties": {
-                  "rsvp": {
-                    "const": "yes"
-                  }
-                },
-                "required": [
-                  "rsvp"
-                ]
-              }
             }
           }
         }
@@ -72,25 +53,30 @@
     {
       "id": "bookclub-rsvp-request",
       "requirement": "R1",
-      "description": "The last RSVP update request for an event was accepted, and the server's reply shows Book club with rsvp yes.",
+      "description": "A successful PUT to the RSVP endpoint sent rsvp 'yes' and the server returned the Book club event with rsvp 'yes'.",
       "assert": {
-        "kind": "value",
-        "source": {
-          "from": "response",
-          "match": {
-            "method": "PUT",
-            "url": {
-              "path": "/api/events/*/rsvp"
-            },
-            "status": {
-              "gte": 200,
-              "lt": 300
-            }
+        "kind": "request",
+        "match": {
+          "method": "PUT",
+          "url": {
+            "path": "/api/events/*/rsvp"
           },
-          "pick": "last"
-        },
-        "expect": {
-          "schema": {
+          "status": {
+            "gte": 200,
+            "lt": 300
+          },
+          "requestBody": {
+            "type": "object",
+            "properties": {
+              "rsvp": {
+                "const": "yes"
+              }
+            },
+            "required": [
+              "rsvp"
+            ]
+          },
+          "responseBody": {
             "type": "object",
             "properties": {
               "title": {
@@ -115,6 +101,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T07:43:32.898Z"
+    "at": "2026-11-05T10:46:31.825Z"
   }
 }

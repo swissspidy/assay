@@ -10,42 +10,38 @@
     "discovery": 3
   },
   "usage": {
-    "inputTokens": 51644,
-    "outputTokens": 1417,
-    "cacheReadTokens": 33093,
-    "cacheWriteTokens": 18539
+    "inputTokens": 54513,
+    "outputTokens": 1036,
+    "cacheReadTokens": 35217,
+    "cacheWriteTokens": 19284
   },
   "coverage": [
     {
       "requirement": "R1",
-      "quote": "Check out my cart",
+      "quote": "the order is gift wrapped",
       "checks": [
-        "r1-order-request",
-        "r1-order-probe"
+        "order-gift-wrapped"
       ],
       "channels": [
-        "network",
         "probe"
       ],
       "trust": "structured"
     },
     {
       "requirement": "R2",
-      "quote": "the order is gift wrapped",
+      "quote": "Check out my cart",
       "checks": [
-        "r2-giftwrap-probe",
-        "r2-giftwrap-request"
+        "order-placed-request",
+        "order-placed-probe"
       ],
       "channels": [
-        "probe",
-        "network"
+        "network",
+        "probe"
       ],
       "trust": "structured"
     }
   ],
-  "warnings": [
-    "requirement R2: its value checks abstain when no request matches; add a \"request\" check so a missing request fails"
-  ],
+  "warnings": [],
   "references": [
     {
       "name": "gift-wrapped",

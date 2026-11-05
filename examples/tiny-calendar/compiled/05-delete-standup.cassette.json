@@ -1,30 +1,30 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T07:43:57.097Z",
+ "recordedAt": "2026-11-05T10:46:52.970Z",
  "turns": {
   "sha256:25ae5c9a04fde0376f652c954d44d2bf102e3dc87b3424021aabcaf915da75fe": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01M1sK9WMrW4tfb3zCwBFmHN",
+     "id": "toolu_018nH2Zk8HzkEXDTdkgpCcuq",
      "name": "submit_rubric",
      "input": {
       "requirements": [
        {
         "id": "R1",
         "kind": "hard",
-        "text": "The Team standup event is deleted.",
+        "text": "The Team standup event has been deleted.",
         "field": "outcomes",
-        "quote": "the Team standup event is gone"
+        "quote": "Then the Team standup event is gone"
        },
        {
         "id": "R2",
         "kind": "hard",
-        "text": "All other events remain present.",
+        "text": "All other events remain undeleted.",
         "field": "outcomes",
-        "quote": "the other events are still there"
+        "quote": "Then the other events are still there"
        }
       ]
      }
@@ -33,7 +33,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01M1sK9WMrW4tfb3zCwBFmHN",
+     "id": "toolu_018nH2Zk8HzkEXDTdkgpCcuq",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -43,16 +43,16 @@
        {
         "id": "R1",
         "kind": "hard",
-        "text": "The Team standup event is deleted.",
+        "text": "The Team standup event has been deleted.",
         "field": "outcomes",
-        "quote": "the Team standup event is gone"
+        "quote": "Then the Team standup event is gone"
        },
        {
         "id": "R2",
         "kind": "hard",
-        "text": "All other events remain present.",
+        "text": "All other events remain undeleted.",
         "field": "outcomes",
-        "quote": "the other events are still there"
+        "quote": "Then the other events are still there"
        }
       ]
      }
@@ -60,23 +60,23 @@
    ],
    "usage": {
     "inputTokens": 1121,
-    "outputTokens": 152,
+    "outputTokens": 160,
     "cacheReadTokens": 0,
     "cacheWriteTokens": 1117
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:6c1f0673840a1717f9fef0f76e8398cd5239ea59a25b4876ffebbb1f04372492": {
+  "sha256:076fa8d7e6263a75620d24e212a345136489a1d6d48d4c4fc0b2b0d010abdcec": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_011PQBA84hwdEX2TGmgcKUoy",
+     "id": "toolu_01KMXRFQeiexpmBjuZstnRmi",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01BKrziPJSoSmxmbSyjHGXEG",
+     "id": "toolu_01G61XVFuj814zfLJ6oVHjy4",
      "name": "network_log",
      "input": {}
     }
@@ -84,7 +84,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_011PQBA84hwdEX2TGmgcKUoy",
+     "id": "toolu_01KMXRFQeiexpmBjuZstnRmi",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -93,7 +93,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01BKrziPJSoSmxmbSyjHGXEG",
+     "id": "toolu_01G61XVFuj814zfLJ6oVHjy4",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -102,24 +102,62 @@
     }
    ],
    "usage": {
-    "inputTokens": 16256,
+    "inputTokens": 17325,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16252
+    "cacheWriteTokens": 17321
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:ebd3d7a990e14d72a69ba730f316a6d08a7d4f1a8d504e4ffa69b5441f63c9e7": {
+  "sha256:450e7b8292d0bd0f0289282d192e16b253280b030a0e4eea8e40f4db70950995": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Jt8Vd4uYk6EZdVVteT98Mo",
+     "id": "toolu_01FsK9u7ZTkY8X3D9v6cUQjY",
+     "name": "network_entry",
+     "input": {
+      "seq": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS4QYKEAgTGAI4AUIIdGhpbmtpbmcSDKnxevsAT0tFGmnZTxoM1DlP5TsrVsOZbmdYIjBVtbxwQ+DT7br7+Iuf1AAnjrIfEt0ZbCrEuAdasYBpPgRhQKXbzKP9UvTJOcrgBAkq/gW4o1FOOYPgqgGVC4vrQrvQQdRlhpUAIMYH2rL0+nrA0sHQXiuf1Td7bOZk7U3zQEJwyYuooU2SgMLIZ/67HN0LFUmQeP+rR18FHMpMjhODjM4tqUQiIOD7jlwVvqNzwXZT1J2H6EY05TBXvrRBzgqmzmQ0Wh76CakPjvSEtgCwghxU34PgPQ+eiqYYm2Ff63RsmaZ3oZgLlPKbg337gNyrhg3NGn7eXqhizOGTN3hP8LqlYleTjAKyFPyOPOacsaSjPE6gQdzH/6Nl6aGine9fVg7bLU7ZXlkSZxzQNSlGTw+5qISlmn8hG2nBM6Eh0fYSUBl5QT4MIDe7obZyZ5f5MmuwTSGActDs29OWD5WDAIhMLmg/MPHxJ1W/1420cDkKj4OLvsQqkhJdikVrnOMXILd6Dtf3T/zhVT8Yzn9Q0VOdw+mRpOYPn/Wc6ifkmPOjuV6n4d1QMtyZf5q87Yoou584+50ftO8eCi2jb8FZgkNs5nSlZvyBOpqcYYoVMI7q/YU2NFGGDn36HjlnPeC3KCqmJQt9Fg95BAc1hOmrt3S9kWGrEYlhHsTgbChUVqBvy09Emd0etRgF0QTjNv+iiEBx1+tEc8kMV4GfuylPzbJ7dOrS++isjay/wSccVX3IgntD8bNx8m0qy/bSrqdjd3RQ88EmTwc3Nm0VYca/0McfmWJjYUGcugNMh8zjr6JinoEFj5oIvQkwiUcaZFv3TQjg4r8K/bzuytYoZHKECwE+QqhnOMdrJW2MaqM6lrUolYW2l6q5P9uBCQby0Oah93hIYmrk034x5RJY9c7o4LnNRR+OI80vZ6yV/6ctdhVHAHy8eulAnuTUlmfGMkcpCuHhd+zbyZYxtwB9bXQAzUPY1NO4pkxkIUY5RVIb2HQRng7ayjhfkVAiGk9Ee/8KcvIJY4iFuvQAasAWufsoanqcWbPIafZqc+BxduYRTQfTq9hytNLLciw9kCa2y35/nlBh8Vak3TdL/GupLW3BBv0oFeA1xoWnGXtSQoGtGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01FsK9u7ZTkY8X3D9v6cUQjY",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 2
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 17838,
+    "outputTokens": 121,
+    "cacheReadTokens": 17321,
+    "cacheWriteTokens": 515
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:efb9f2496222a2899492f5ef0901c287e0bd7353c0c08ec9c5ff8bc642d58ab3": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01YavmyphgnWJuSWaWAmDi78",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "r1-standup-gone",
+        "id": "R1-standup-gone",
         "requirement": "R1",
         "description": "The backend events list no longer contains an event titled 'Team standup'.",
         "assert": {
@@ -149,9 +187,30 @@
         }
        },
        {
-        "id": "r2-others-remain",
+        "id": "R1-delete-request",
+        "requirement": "R1",
+        "description": "A successful DELETE request was sent for the Team standup event (id 1).",
+        "assert": {
+         "kind": "request",
+         "match": {
+          "method": "DELETE",
+          "url": {
+           "path": "/api/events/1"
+          },
+          "status": {
+           "gte": 200,
+           "lt": 300
+          }
+         },
+         "count": {
+          "gte": 1
+         }
+        }
+       },
+       {
+        "id": "R2-others-remain",
         "requirement": "R2",
-        "description": "The backend events list still contains the Dentist (2026-11-06) and Book club (2026-11-10) events.",
+        "description": "The backend events list still contains Dentist (id 2) and Book club (id 3).",
         "assert": {
          "kind": "value",
          "source": {
@@ -166,16 +225,16 @@
              "contains": {
               "type": "object",
               "properties": {
+               "id": {
+                "const": 2
+               },
                "title": {
                 "const": "Dentist"
-               },
-               "date": {
-                "const": "2026-11-06"
                }
               },
               "required": [
-               "title",
-               "date"
+               "id",
+               "title"
               ]
              }
             },
@@ -183,16 +242,16 @@
              "contains": {
               "type": "object",
               "properties": {
+               "id": {
+                "const": 3
+               },
                "title": {
                 "const": "Book club"
-               },
-               "date": {
-                "const": "2026-11-10"
                }
               },
               "required": [
-               "title",
-               "date"
+               "id",
+               "title"
               ]
              }
             }
@@ -209,11 +268,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSygoKEAgTGAI4AUIIdGhpbmtpbmcSDI9ElRzMwzwNOjZ7BBoM1P7eTpbajMYAGc0SIjBgZS+7S5iOYzFt3wMRBpFqvchmydPYyEiM7s8Zhf4KBtNmhqJPIVNJN1IHuDYuELgq5wmCPyY9/kRqA5Sdv3xnq4YnA4VrIh/S3DVY7RXF3jZtbGyNC9QhX05tsN6/Wu0qu7byYdF97aZM7mszpmnzvCefY8L+ZikyM7Ly55DGRM66xSWrGfx7ksIlkN1e90ibb1Qe47h6w0fTSH0JpsTnZ6dSTDnViVd4BrFp73xDdsC47OsbhHVjLJN03agszt6dRN4D+YF0F0beRJz2j+gGgtS7YR9hK/jZ9VW6itz2jzmxTa2MDcr7YoW0nfBy+s9HGBTHZa6jJM8Irk8XYTNZbIUtMcTfTbEw1CqV1GqX2w7+8jgfUShI7dkG0X613Wa7DN6SOGkhDgvV1NMNJZ/aJyunLfFZ93uB7wmMsjZpgHId2qQV27JI94Hedg1L+YYZ3oSoegef1X7oXhASxNx6QePh70otQzuEC+PvZfTjSPpl0ivn/F61R97qLEV8GJBh7EV9vsCXsJ3+3l+9YyfBhEZCvEjDx4+W2Wz1K7m1jE9oktzV1qcE+OXjMhgrqxXPdupU1gEetvyaNjhpA7/ewXFtp10sTGHY3gNv870PJhV938mH8uw8+xsJqj8yeyYGwOWAEUvuTEwFfNuYOTXjdxMjGgvykQ06epxqBPUdoCberteBCGF0sS+/ak8VfTLB3L4udGzE5XaSeNmULJQo3qiCRNwZSfvjkV+DvTDdt2NkoqZ5n2ZzK28a552HhbVb9BcelhGEv3D0qOUjC1tj0tnF3fr+Pnz+pWLpB0WJku/3fhXXHeCeT+Bh/mqgk2p4MYOpXPTmdf2cE4DAa9Wq2BjFJjJ8ag544KrkoUflgLS9fF+M9Kfy552RYBQ59H0Yxmp7o6Gu3kuRMOuzq5wKLW1oyDrQOyKdGr5rIqssnJHhQeZbw32lKYPEWGLuekM2kUksZ1lUGBuVNXUNVNT/AgmvJaa4JGys31uSjJdmOfng1dfoWrKH7rpAqrwPA8F6KOctr3293cRn9QkFQGETHdvplDSZFB0Y4VFptpP1TZVIeAylnqjEDsYHw4JoM5p+ighSPb6v5OoCX56WFpTw1rwn9dsik6yOjhCMZb+WbHeeLuqKwsrUSHE82g/FV1iLwybZJj3SnkKgAKEv9EymD1tjMaybhTdHUj9FVs055KlQKZrzauKBtMqX5G8Kyivvlagtl4EZmd3i9CQmUVU6t/Y6oEbFCdsh8mbUKhCwCA4zqMgGi8SYQgenukRhNtY3ncmGg6yNZ0drN9q3QHuD/0bGlsiPCiUfJ9NwlmafrjeEGxDWIim/gLg4/7AgcBevqQwYbk870KzHSK7U11Am2M9jdNAmHkCqXOs3pUBglNG6iwWZg9OUBFVC6gB4gUUQ3eCXO25digj0kLTesL6iv/MDzSgWzeCLis4ugLbvzQ03SStGsCaZ7MiI3zT0m3/xfRk9U66qEoLynvrq1BVNdtbjvkVwTyNg2oBnc+7ULN6aQGp4Tuv0lq77RbpsoOcxkSqoxsAyojovK2O4LBw81NwsBddC18fIyixYOCiL8/3m96c0m/rhuTkpnbg41rTQ2g1TwHIMrqB7ho9QiOvm4TPH0tYRhwEvRXe+4ZJaPU4Utqkm/H0osnx6AjbxZ//IUw76DuUe2sE7QwPIZhbYdl+N99ANCil2dxE9xhZEqoW4Dcqk/IUJmNUGeQbZ/kD7KN0Ups0iSP5+GAE="
+     "signature": "CAQSugkKEAgTGAI4AUIIdGhpbmtpbmcSDId02unpIq2q8Q8okBoM3+ppsj3V4NUVo4AvIjCGBYe5RFnjNsPntbLm93EpxdBv3ZyVW+6Ii+fKeegkzAOqsuK3siY8vEvoVeHSsJUq1wjXO84BtGNj1bc6pklWRau6KqWyR8L9rhD7NjCSvrG0g3hGPpzCfaVze+Dm3GIvb45gguc+hwmJkoRaqElYEQWVAvRr/xLjqkG+9JBOpCleE0wVhO6bZiYPr0PR+N2Bzkule852BddZwEoGAljojQD/IxwkNxEzni6BF3sgUmqN+3Zwhrz2UWuGT4+DgtvFH3tKjgpm9NXCUWJ0y5ulk4KI+EHckoM19oIjpdxieAA0KwN2jcr/Q34C4HcIis/ErovK/CLZ0gcCmBwKiyuzhrCovHi8MT0B3thfJ8csCV30YAbs73MvxLrapyMc5Z6Yp9VidGGSUQYn8cZOYv0v/S8feAxg2xwC0YMM6c3VBRI4zb8PPWFhCF6dO/gqjR6l5QztYwifzzWjkRyUF0I4UgC6sF/zVFU1Ni2tq9O+sXhZdg+dZVc/E1VkFIo//GQaHl0BtkbG4xS64zxVaGx71dUdZASsJWbQlgrRDt+JTvWLc7h5C4I4JCRoHgbcJdqm/ZKVkDf2pksJY7S4EXLZrD8Z3rBeOJLqIx7yjumOB/Mqs0w5lfCvrgWAN5A1gwbVs5mOf7hfaVXZq23W6SdaIMrGpY9LhqCo3mTcEGL4hM3VJ+tcVkIAv293yLmKwKrdWvM0VKPUf7A63jkrfEckIYT4PGUS4RMVlo5sxkl1ZSF0q+1+F1nETUgtcNUwTO4BbJJL0L61jcYj0ytkD4Nt0n7NGxUpi0JlbVdAVDm6/oeAxSFDd9FsP+PBQiWMVrSlxaXpk+rm0HNH2uGnoAy9PLufm0s/q6u20DonUNomZxGefBtd7G+zwvjVonAm7ggSjoRnivL+mU6XvDzhpyRzEq+Uc7p825YofGOLa4nwWMbxRKkThCXdaJfK92S8yt2T2k5Z3bGXt4+9PMGXLmvWWf2ul1lGQby8tKF0dh4KBM1/B2smRV/deJPRH9YBSUC2l8rxfuYCSpRi9Iufjbulz/QOqtRAiyksyNrZZSfB9C7W99yD+x+MOcRiqZKk5oTcFyimCd/Cj7iTIJhQ/4xvrQ79BduCa+TGYUyyDNyaX36zgdVbwI32BnKIJqQIuBIVqziq+2caiFJetx87tU69pyE2QDpgeKjGMWf1XLXTdATV/59usaRSjIx/tbEFUVBGIT3XpDF9SDu/7z8QQJLDcsXyuKzQhi5KuhNwnccmosarb+2fV0v+L01U6AY/F/4cpoE5vBf2iK7hdOGcTY3Yi9EsYJQKKsoBrn/ZL8adzfSXP8neSN0BDy7VJUo9x3osjS3trwoVP2lwd3PYO72xqhS0C8/GrAtBRQkz5bxZvsbCTu2O1Q44AyKOE2k/suxVGwb2IRMgaSLjciiQfmXQX4P7zvZoTESJLNzsq/iUIGNLC5FnX14vr/Xb4vV14YW0S2OGE828Vf+V/qnYD1IJOuakAIAogfqZatZ71R9Y/f81+uB1W//S2nRZvCpVIbeKNBQM0JN6aoqEGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Jt8Vd4uYk6EZdVVteT98Mo",
+     "id": "toolu_01YavmyphgnWJuSWaWAmDi78",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -221,7 +280,7 @@
      "input": {
       "checks": [
        {
-        "id": "r1-standup-gone",
+        "id": "R1-standup-gone",
         "requirement": "R1",
         "description": "The backend events list no longer contains an event titled 'Team standup'.",
         "assert": {
@@ -251,9 +310,30 @@
         }
        },
        {
-        "id": "r2-others-remain",
+        "id": "R1-delete-request",
+        "requirement": "R1",
+        "description": "A successful DELETE request was sent for the Team standup event (id 1).",
+        "assert": {
+         "kind": "request",
+         "match": {
+          "method": "DELETE",
+          "url": {
+           "path": "/api/events/1"
+          },
+          "status": {
+           "gte": 200,
+           "lt": 300
+          }
+         },
+         "count": {
+          "gte": 1
+         }
+        }
+       },
+       {
+        "id": "R2-others-remain",
         "requirement": "R2",
-        "description": "The backend events list still contains the Dentist (2026-11-06) and Book club (2026-11-10) events.",
+        "description": "The backend events list still contains Dentist (id 2) and Book club (id 3).",
         "assert": {
          "kind": "value",
          "source": {
@@ -268,16 +348,16 @@
              "contains": {
               "type": "object",
               "properties": {
+               "id": {
+                "const": 2
+               },
                "title": {
                 "const": "Dentist"
-               },
-               "date": {
-                "const": "2026-11-06"
                }
               },
               "required": [
-               "title",
-               "date"
+               "id",
+               "title"
               ]
              }
             },
@@ -285,16 +365,16 @@
              "contains": {
               "type": "object",
               "properties": {
+               "id": {
+                "const": 3
+               },
                "title": {
                 "const": "Book club"
-               },
-               "date": {
-                "const": "2026-11-10"
                }
               },
               "required": [
-               "title",
-               "date"
+               "id",
+               "title"
               ]
              }
             }
@@ -308,10 +388,10 @@
     }
    ],
    "usage": {
-    "inputTokens": 16769,
-    "outputTokens": 681,
-    "cacheReadTokens": 16252,
-    "cacheWriteTokens": 515
+    "inputTokens": 18296,
+    "outputTokens": 703,
+    "cacheReadTokens": 17836,
+    "cacheWriteTokens": 458
    },
    "model": "claude-opus-5-5"
   }

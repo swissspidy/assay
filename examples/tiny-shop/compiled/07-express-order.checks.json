@@ -13,7 +13,7 @@
       "text": "An order is placed.",
       "source": {
         "field": "outcomes",
-        "quote": "Then an order is placed"
+        "quote": "an order is placed"
       }
     },
     {
@@ -22,7 +22,7 @@
       "text": "The order uses express shipping.",
       "source": {
         "field": "outcomes",
-        "quote": "Then the order ships express"
+        "quote": "the order ships express"
       }
     },
     {
@@ -31,7 +31,7 @@
       "text": "The order confirmation is shown.",
       "source": {
         "field": "outcomes",
-        "quote": "Then the order confirmation is shown"
+        "quote": "the order confirmation is shown"
       }
     },
     {
@@ -46,7 +46,7 @@
     {
       "id": "R5",
       "kind": "hard",
-      "text": "The order contains the items that are in the user's cart.",
+      "text": "The order contains the items that were in the user's cart.",
       "source": {
         "field": "instruction",
         "quote": "Order what is in my cart"
@@ -55,9 +55,9 @@
   ],
   "checks": [
     {
-      "id": "order-placed-request",
+      "id": "R1-order-request",
       "requirement": "R1",
-      "description": "A POST to /api/orders succeeded and the server responded with a placed order.",
+      "description": "The browser POSTed to /api/orders and the server answered with a successful status.",
       "assert": {
         "kind": "request",
         "match": {
@@ -68,25 +68,17 @@
           "status": {
             "gte": 200,
             "lt": 300
-          },
-          "responseBody": {
-            "type": "object",
-            "properties": {
-              "status": {
-                "const": "placed"
-              }
-            },
-            "required": [
-              "status"
-            ]
           }
+        },
+        "count": {
+          "gte": 1
         }
       }
     },
     {
-      "id": "order-placed-probe",
+      "id": "R1-order-placed-probe",
       "requirement": "R1",
-      "description": "The backend's latest order has status 'placed'.",
+      "description": "The backend's latest order exists with status 'placed'.",
       "assert": {
         "kind": "value",
         "source": {
@@ -100,9 +92,9 @@
       }
     },
     {
-      "id": "order-express-probe",
+      "id": "R2-express",
       "requirement": "R2",
-      "description": "The backend's latest order uses express shipping.",
+      "description": "The backend's latest order has shipping set to express.",
       "assert": {
         "kind": "value",
         "source": {
@@ -110,13 +102,17 @@
           "probe": "latestOrder",
           "pointer": "/shipping"
         },
+        "normalize": [
+          "trim",
+          "lowercase"
+        ],
         "expect": {
           "equals": "express"
         }
       }
     },
     {
-      "id": "order-name-probe",
+      "id": "R4-name",
       "requirement": "R4",
       "description": "The backend's latest order is in the name of Ada Lovelace.",
       "assert": {
@@ -127,7 +123,8 @@
           "pointer": "/name"
         },
         "normalize": [
-          "trim"
+          "trim",
+          "collapseWhitespace"
         ],
         "expect": {
           "equals": "Ada Lovelace"
@@ -135,9 +132,9 @@
       }
     },
     {
-      "id": "order-items-match-cart",
+      "id": "R5-items-match-cart",
       "requirement": "R5",
-      "description": "The latest order's items equal the items that were in the cart before the task.",
+      "description": "The latest order's items (sku and quantity) are exactly the items that were in the cart before the task.",
       "assert": {
         "kind": "value",
         "source": {
@@ -147,7 +144,11 @@
         },
         "normalize": [
           {
-            "op": "items"
+            "op": "items",
+            "pick": [
+              "/sku",
+              "/qty"
+            ]
           }
         ],
         "expect": {
@@ -160,7 +161,11 @@
             },
             "normalize": [
               {
-                "op": "items"
+                "op": "items",
+                "pick": [
+                  "/sku",
+                  "/qty"
+                ]
               }
             ]
           }
@@ -168,38 +173,20 @@
       }
     },
     {
-      "id": "confirmation-page",
+      "id": "R3-confirmation-url",
       "requirement": "R3",
-      "description": "The browser is on the order page with an 'Order confirmed' heading.",
+      "description": "The browser ends on an order page /orders/<id>.",
       "assert": {
-        "kind": "allOf",
-        "of": [
-          {
-            "kind": "url",
-            "match": {
-              "path": "/orders/*"
-            }
-          },
-          {
-            "kind": "contains",
-            "scope": {
-              "role": "main"
-            },
-            "match": {
-              "role": "heading",
-              "name": {
-                "contains": "Order confirmed",
-                "ignoreCase": true
-              }
-            }
-          }
-        ]
+        "kind": "url",
+        "match": {
+          "path": "/orders/*"
+        }
       }
     },
     {
-      "id": "confirmation-shows-latest-order",
+      "id": "R3-confirmation-is-latest-order",
       "requirement": "R3",
-      "description": "The order number in the URL is the id of the latest order stored by the backend.",
+      "description": "The order page shown is for the order the backend just stored.",
       "assert": {
         "kind": "value",
         "source": {
@@ -231,6 +218,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T07:44:11.650Z"
+    "at": "2026-11-05T10:42:45.661Z"
   }
 }

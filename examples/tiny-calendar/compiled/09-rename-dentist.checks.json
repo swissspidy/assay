@@ -10,7 +10,7 @@
     {
       "id": "R1",
       "kind": "hard",
-      "text": "The Dentist event has been renamed to \"Dentist (Dr. Lee)\".",
+      "text": "The Dentist event's name is \"Dentist (Dr. Lee)\".",
       "source": {
         "field": "outcomes",
         "quote": "the Dentist event is called \"Dentist (Dr. Lee)\""
@@ -19,35 +19,71 @@
   ],
   "checks": [
     {
-      "id": "dentist-renamed-backend",
+      "id": "dentist-renamed-probe",
       "requirement": "R1",
-      "description": "The backend events list holds the Dentist event (id 2) with title exactly \"Dentist (Dr. Lee)\".",
+      "description": "In the backend, the Dentist event (id 2) now has the title exactly \"Dentist (Dr. Lee)\" and no event is still titled \"Dentist\".",
       "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "events"
-        },
-        "expect": {
-          "schema": {
-            "type": "array",
-            "contains": {
-              "type": "object",
-              "required": [
-                "id",
-                "title"
-              ],
-              "properties": {
-                "id": {
-                  "const": 2
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "events"
+            },
+            "normalize": [
+              {
+                "op": "items",
+                "where": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "const": 2
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ]
                 },
-                "title": {
-                  "const": "Dentist (Dr. Lee)"
+                "pick": [
+                  "/title"
+                ]
+              }
+            ],
+            "expect": {
+              "equals": [
+                {
+                  "/title": "Dentist (Dr. Lee)"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "events"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "not": {
+                  "contains": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "const": "Dentist"
+                      }
+                    },
+                    "required": [
+                      "title"
+                    ]
+                  }
                 }
               }
             }
           }
-        }
+        ]
       }
     }
   ],
@@ -57,6 +93,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T07:44:35.843Z"
+    "at": "2026-11-05T10:47:42.103Z"
   }
 }

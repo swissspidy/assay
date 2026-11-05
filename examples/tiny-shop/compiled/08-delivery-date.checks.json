@@ -10,6 +10,24 @@
     {
       "id": "R1",
       "kind": "hard",
+      "text": "An order is placed for the items in the user's cart.",
+      "source": {
+        "field": "instruction",
+        "quote": "Place an order for my cart"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The order uses express shipping.",
+      "source": {
+        "field": "instruction",
+        "quote": "with express shipping"
+      }
+    },
+    {
+      "id": "R3",
+      "kind": "hard",
       "text": "The order confirmation shows an estimated delivery date of 5 November 2026.",
       "source": {
         "field": "outcomes",
@@ -17,94 +35,20 @@
       }
     },
     {
-      "id": "R2",
+      "id": "R4",
       "kind": "hard",
-      "text": "An order is placed for the user's cart.",
+      "text": "The estimated delivery date is shown to the user.",
       "source": {
         "field": "instruction",
-        "quote": "Place an order for my cart"
-      }
-    },
-    {
-      "id": "R3",
-      "kind": "hard",
-      "text": "The order uses express shipping.",
-      "source": {
-        "field": "instruction",
-        "quote": "with express shipping"
+        "quote": "show me the estimated delivery date"
       }
     }
   ],
   "checks": [
     {
-      "id": "r1-delivery-date",
+      "id": "r1-order-request",
       "requirement": "R1",
-      "description": "The order summary on the confirmation page shows an estimated delivery date of 5 November 2026.",
-      "assert": {
-        "kind": "value",
-        "source": {
-          "from": "text",
-          "scope": {
-            "role": "region",
-            "name": "Order summary"
-          },
-          "pattern": "Estimated delivery:\\s*([^\\n]*?)\\s*(?:\\n|Total:|$)",
-          "group": 1
-        },
-        "normalize": [
-          {
-            "op": "date",
-            "locale": "en-GB"
-          }
-        ],
-        "expect": {
-          "equals": "2026-11-05"
-        }
-      }
-    },
-    {
-      "id": "r1-confirmation-page",
-      "requirement": "R1",
-      "description": "The browser is on the confirmation page of the order just placed (URL /orders/<id> matching the latest order id).",
-      "assert": {
-        "kind": "allOf",
-        "of": [
-          {
-            "kind": "url",
-            "match": {
-              "path": "/orders/*"
-            }
-          },
-          {
-            "kind": "value",
-            "source": {
-              "from": "url",
-              "part": "pathname"
-            },
-            "normalize": [
-              {
-                "op": "extract",
-                "regex": "^/orders/([^/]+)/?$",
-                "group": 1
-              }
-            ],
-            "expect": {
-              "sameAs": {
-                "source": {
-                  "from": "probe",
-                  "probe": "latestOrder",
-                  "pointer": "/id"
-                }
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "id": "r2-order-request",
-      "requirement": "R2",
-      "description": "A POST to /api/orders succeeded.",
+      "description": "A POST to /api/orders succeeded with a placed order.",
       "assert": {
         "kind": "request",
         "match": {
@@ -120,9 +64,9 @@
       }
     },
     {
-      "id": "r2-order-items-match-cart",
-      "requirement": "R2",
-      "description": "The latest order's items are exactly the cart items from before the task.",
+      "id": "r1-order-items-match-cart",
+      "requirement": "R1",
+      "description": "The latest order's items (sku and qty) equal the cart's items before the task.",
       "assert": {
         "kind": "value",
         "source": {
@@ -132,7 +76,11 @@
         },
         "normalize": [
           {
-            "op": "items"
+            "op": "items",
+            "pick": [
+              "/sku",
+              "/qty"
+            ]
           }
         ],
         "expect": {
@@ -145,7 +93,11 @@
             },
             "normalize": [
               {
-                "op": "items"
+                "op": "items",
+                "pick": [
+                  "/sku",
+                  "/qty"
+                ]
               }
             ]
           }
@@ -153,8 +105,8 @@
       }
     },
     {
-      "id": "r3-express-shipping",
-      "requirement": "R3",
+      "id": "r2-express-probe",
+      "requirement": "R2",
       "description": "The latest order stored by the backend uses express shipping.",
       "assert": {
         "kind": "value",
@@ -167,6 +119,179 @@
           "equals": "express"
         }
       }
+    },
+    {
+      "id": "r3-probe-delivery",
+      "requirement": "R3",
+      "description": "The latest order's estimated delivery is 2026-11-05.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/estimatedDelivery"
+        },
+        "normalize": [
+          "trim"
+        ],
+        "expect": {
+          "equals": "2026-11-05"
+        }
+      }
+    },
+    {
+      "id": "r3-confirmation-page",
+      "requirement": "R3",
+      "description": "The current page is the confirmation page of the latest order.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "url",
+          "part": "pathname"
+        },
+        "normalize": [
+          {
+            "op": "extract",
+            "regex": "^/orders/([^/]+)/?$",
+            "group": 1
+          }
+        ],
+        "expect": {
+          "sameAs": {
+            "source": {
+              "from": "probe",
+              "probe": "latestOrder",
+              "pointer": "/id"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r3-page-shows-date",
+      "requirement": "R3",
+      "description": "The order summary shows an estimated delivery date of 5 November 2026.",
+      "assert": {
+        "kind": "each",
+        "scope": {
+          "anchors": [
+            {
+              "role": "region",
+              "name": "Order summary"
+            },
+            {
+              "role": "region",
+              "landmark": {
+                "role": "main"
+              }
+            }
+          ]
+        },
+        "witness": {
+          "role": "paragraph",
+          "text": {
+            "contains": "Estimated delivery",
+            "ignoreCase": true
+          }
+        },
+        "match": {
+          "role": "paragraph",
+          "text": {
+            "contains": "Estimated delivery",
+            "ignoreCase": true
+          }
+        },
+        "count": {
+          "eq": 1
+        },
+        "assert": {
+          "kind": "value",
+          "source": {
+            "from": "text",
+            "pattern": "Estimated delivery\\s*:?\\s*(.+?)\\s*$",
+            "flags": "i",
+            "group": 1
+          },
+          "normalize": [
+            {
+              "op": "date",
+              "locale": "en-GB"
+            }
+          ],
+          "expect": {
+            "equals": "2026-11-05"
+          }
+        }
+      }
+    },
+    {
+      "id": "r4-page-date-matches-order",
+      "requirement": "R4",
+      "description": "The estimated delivery date shown on the page equals the order's estimated delivery stored by the backend.",
+      "assert": {
+        "kind": "each",
+        "scope": {
+          "anchors": [
+            {
+              "role": "region",
+              "name": "Order summary"
+            },
+            {
+              "role": "region",
+              "landmark": {
+                "role": "main"
+              }
+            }
+          ]
+        },
+        "witness": {
+          "role": "paragraph",
+          "text": {
+            "contains": "Estimated delivery",
+            "ignoreCase": true
+          }
+        },
+        "match": {
+          "role": "paragraph",
+          "text": {
+            "contains": "Estimated delivery",
+            "ignoreCase": true
+          }
+        },
+        "count": {
+          "eq": 1
+        },
+        "assert": {
+          "kind": "value",
+          "source": {
+            "from": "text",
+            "pattern": "Estimated delivery\\s*:?\\s*(.+?)\\s*$",
+            "flags": "i",
+            "group": 1
+          },
+          "normalize": [
+            {
+              "op": "date",
+              "locale": "en-GB"
+            }
+          ],
+          "expect": {
+            "sameAs": {
+              "source": {
+                "from": "probe",
+                "probe": "latestOrder",
+                "pointer": "/estimatedDelivery"
+              },
+              "normalize": [
+                {
+                  "op": "date",
+                  "locale": "en-GB"
+                }
+              ]
+            }
+          }
+        }
+      }
     }
   ],
   "compiled": {
@@ -175,6 +300,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T07:44:39.498Z"
+    "at": "2026-11-05T10:43:04.726Z"
   }
 }

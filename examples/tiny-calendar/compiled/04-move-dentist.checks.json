@@ -19,9 +19,9 @@
   ],
   "checks": [
     {
-      "id": "dentist-on-nov7",
+      "id": "dentist-on-nov-7",
       "requirement": "R1",
-      "description": "The backend events list holds a Dentist event dated 2026-11-07 and no Dentist event on any other date.",
+      "description": "The backend events list has the Dentist event dated 2026-11-07, and no Dentist event on any other date.",
       "assert": {
         "kind": "value",
         "source": {
@@ -33,10 +33,6 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "title",
-                "date"
-              ],
               "properties": {
                 "title": {
                   "const": "Dentist"
@@ -44,25 +40,33 @@
                 "date": {
                   "const": "2026-11-07"
                 }
-              }
+              },
+              "required": [
+                "title",
+                "date"
+              ]
             },
-            "not": {
-              "contains": {
+            "items": {
+              "if": {
                 "type": "object",
-                "required": [
-                  "title",
-                  "date"
-                ],
                 "properties": {
                   "title": {
                     "const": "Dentist"
-                  },
-                  "date": {
-                    "not": {
-                      "const": "2026-11-07"
-                    }
                   }
-                }
+                },
+                "required": [
+                  "title"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "date": {
+                    "const": "2026-11-07"
+                  }
+                },
+                "required": [
+                  "date"
+                ]
               }
             }
           }
@@ -76,6 +80,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T07:43:50.245Z"
+    "at": "2026-11-05T10:46:42.968Z"
   }
 }

@@ -28,9 +28,9 @@
   ],
   "checks": [
     {
-      "id": "R1-open-filter",
+      "id": "r1-status-filter-open",
       "requirement": "R1",
-      "description": "The issue list URL has status=open and the Issues table shows no Closed issue.",
+      "description": "The issue list URL has the status filter set to open and every listed issue row shows status Open.",
       "assert": {
         "kind": "allOf",
         "of": [
@@ -47,36 +47,39 @@
             }
           },
           {
-            "kind": "contains",
+            "kind": "each",
             "scope": {
               "role": "table",
-              "name": "Issues",
-              "landmark": {
-                "role": "main"
-              }
+              "name": "Issues"
             },
             "witness": {
               "role": "columnheader",
               "name": "Status"
             },
             "match": {
-              "role": "cell",
+              "role": "row",
               "name": {
-                "equals": "Closed",
-                "ignoreCase": true
+                "regex": "^\\d+\\s"
               }
             },
-            "count": {
-              "eq": 0
+            "assert": {
+              "kind": "contains",
+              "match": {
+                "role": "cell",
+                "name": {
+                  "equals": "Open",
+                  "ignoreCase": true
+                }
+              }
             }
           }
         ]
       }
     },
     {
-      "id": "R2-bug-filter",
+      "id": "r2-label-filter-bug",
       "requirement": "R2",
-      "description": "The issue list URL has label=bug and the Issues table shows none of the non-bug issues (Add dark mode, Typo in docs).",
+      "description": "The issue list URL has the label filter set to bug and every listed issue row carries the bug label.",
       "assert": {
         "kind": "allOf",
         "of": [
@@ -93,13 +96,10 @@
             }
           },
           {
-            "kind": "contains",
+            "kind": "each",
             "scope": {
               "role": "table",
-              "name": "Issues",
-              "landmark": {
-                "role": "main"
-              }
+              "name": "Issues"
             },
             "witness": {
               "role": "columnheader",
@@ -108,11 +108,18 @@
             "match": {
               "role": "row",
               "name": {
-                "regex": "Add dark mode|Typo in docs"
+                "regex": "^\\d+\\s"
               }
             },
-            "count": {
-              "eq": 0
+            "assert": {
+              "kind": "contains",
+              "match": {
+                "role": "cell",
+                "name": {
+                  "regex": "(^|[\\s,])bug($|[\\s,])",
+                  "flags": "i"
+                }
+              }
             }
           }
         ]
@@ -125,6 +132,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T07:44:38.292Z"
+    "at": "2026-11-05T10:45:45.546Z"
   }
 }

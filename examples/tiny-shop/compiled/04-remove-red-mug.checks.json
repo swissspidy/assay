@@ -19,7 +19,7 @@
     {
       "id": "R2",
       "kind": "hard",
-      "text": "All other items remain in the cart.",
+      "text": "All other items stay in the cart.",
       "source": {
         "field": "outcomes",
         "quote": "the other items stay in the cart"
@@ -30,50 +30,41 @@
     {
       "id": "R1-no-red-mug",
       "requirement": "R1",
-      "description": "The backend cart probe shows no item named Red Mug (or with SKU MUG-RED) after the task.",
+      "description": "The backend cart probe holds no item named Red Mug (or with SKU MUG-RED) after the task.",
       "assert": {
         "kind": "value",
         "source": {
           "from": "probe",
-          "probe": "cart"
+          "probe": "cart",
+          "pointer": "/items"
         },
         "expect": {
           "schema": {
-            "type": "object",
-            "required": [
-              "items"
-            ],
-            "properties": {
-              "items": {
-                "type": "array",
-                "not": {
-                  "contains": {
-                    "anyOf": [
-                      {
-                        "type": "object",
-                        "properties": {
-                          "name": {
-                            "const": "Red Mug"
-                          }
-                        },
-                        "required": [
-                          "name"
-                        ]
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "sku": {
-                            "const": "MUG-RED"
-                          }
-                        },
-                        "required": [
-                          "sku"
-                        ]
+            "type": "array",
+            "not": {
+              "contains": {
+                "anyOf": [
+                  {
+                    "properties": {
+                      "name": {
+                        "const": "Red Mug"
                       }
+                    },
+                    "required": [
+                      "name"
+                    ]
+                  },
+                  {
+                    "properties": {
+                      "sku": {
+                        "const": "MUG-RED"
+                      }
+                    },
+                    "required": [
+                      "sku"
                     ]
                   }
-                }
+                ]
               }
             }
           }
@@ -83,7 +74,7 @@
     {
       "id": "R2-others-kept",
       "requirement": "R2",
-      "description": "The cart items after the task equal the cart items before the task minus the Red Mug.",
+      "description": "The cart items after the task (SKU and quantity) equal the cart items before the task minus the Red Mug.",
       "assert": {
         "kind": "value",
         "source": {
@@ -93,7 +84,11 @@
         },
         "normalize": [
           {
-            "op": "items"
+            "op": "items",
+            "pick": [
+              "/sku",
+              "/qty"
+            ]
           }
         ],
         "expect": {
@@ -109,16 +104,34 @@
                 "op": "items",
                 "where": {
                   "not": {
-                    "properties": {
-                      "name": {
-                        "const": "Red Mug"
+                    "anyOf": [
+                      {
+                        "properties": {
+                          "name": {
+                            "const": "Red Mug"
+                          }
+                        },
+                        "required": [
+                          "name"
+                        ]
+                      },
+                      {
+                        "properties": {
+                          "sku": {
+                            "const": "MUG-RED"
+                          }
+                        },
+                        "required": [
+                          "sku"
+                        ]
                       }
-                    },
-                    "required": [
-                      "name"
                     ]
                   }
-                }
+                },
+                "pick": [
+                  "/sku",
+                  "/qty"
+                ]
               }
             ]
           }
@@ -132,6 +145,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T07:43:36.365Z"
+    "at": "2026-11-05T10:42:14.293Z"
   }
 }
