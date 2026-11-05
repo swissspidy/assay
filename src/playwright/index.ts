@@ -12,7 +12,7 @@ import { evaluate } from '../runtime/evaluate.ts';
 import { formatOutcome } from '../report.ts';
 import { verify, type VerifyOptions, type VerifyResult } from '../verifier/escalate.ts';
 import type { OutcomeRecord } from '../verifier/record.ts';
-import { isLocked } from '../verifier/lock.ts';
+import { assertLocked } from '../verifier/lock.ts';
 
 /**
  * Playwright `test` with an auto fixture that records the network log of every
@@ -30,9 +30,6 @@ export const test = base.extend<{ evidence: EvidenceRecorder; evidenceOptions: R
   ],
 });
 
-const notLocked = (cs: CheckSet) =>
-  new Error(`Check set ${cs.id} v${cs.version} is not locked (or was edited after locking).`);
-
 /** Capture and verification options for a live page. The verifier gets read-only live access to it. */
 export interface VerifyPageOptions extends CaptureOptions, Omit<VerifyOptions, 'page' | 'probes'> {}
 
@@ -47,7 +44,7 @@ export async function verifyPage(
 ): Promise<VerifyResult> {
   const cs = assertValidCheckSet(checks);
   // Before capturing: an unlocked set must not run probes or touch the page.
-  if (opts.requireLocked && !isLocked(cs)) throw notLocked(cs);
+  assertLocked(cs, opts.requireLocked);
   const snapshot = await captureSnapshot(page, opts);
   return verify(cs, snapshot, { ...opts, page });
 }
@@ -87,7 +84,7 @@ export async function expectOutcome(
   opts: ExpectOutcomeOptions = {},
 ): Promise<Outcome> {
   const cs = assertValidCheckSet(checks);
-  if (opts.requireLocked && !isLocked(cs)) throw notLocked(cs);
+  assertLocked(cs, opts.requireLocked);
   const want = opts.verdict ?? 'success';
   const timeout = opts.timeout ?? 5000;
   const interval = opts.interval ?? 250;

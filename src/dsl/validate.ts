@@ -51,6 +51,7 @@ export function validateCheckSet(input: unknown): ValidationReport {
     return { ok: false, errors: dedupe(errors), warnings };
   }
   const cs = input as unknown as CheckSet;
+  if (cs.locked && cs.rejected) errors.push('a check set cannot be both locked and rejected');
 
   const reqIds = new Set<string>();
   for (const r of cs.requirements) {

@@ -152,10 +152,19 @@ console.log(JSON.stringify(out));
 });
 
 /** Run the installed `assay` executable; resolves with its exit status and output. */
-/** The environment for the executable: the caller's, without anything that selects or reaches a model. */
+/** The environment for the executable: the caller's, without anything that selects or reaches a model or a key. */
 function cliEnv(env: Record<string, string> = {}): NodeJS.ProcessEnv {
   const out: NodeJS.ProcessEnv = { ...process.env };
-  for (const k of ['ANTHROPIC_API_KEY', 'ANTHROPIC_AUTH_TOKEN', 'ASSAY_MODEL_MODE', 'ASSAY_PROVIDER', 'ASSAY_MODEL'])
+  for (const k of [
+    'ANTHROPIC_API_KEY',
+    'ANTHROPIC_AUTH_TOKEN',
+    'ASSAY_MODEL_MODE',
+    'ASSAY_PROVIDER',
+    'ASSAY_MODEL',
+    'ASSAY_REVIEWER',
+    'ASSAY_SIGNING_KEY',
+    'ASSAY_TRUSTED_KEYS',
+  ])
     delete out[k];
   return { ...out, ...env };
 }
@@ -226,6 +235,56 @@ test('the installed assay executable verifies, validates, reviews, stress-tests 
   assert.equal(await readFile(out, 'utf8'), await readFile(ex('compiled/02-add-blue-mug.checks.json'), 'utf8'));
 });
 
+test('the installed package signs an approval and verifies it against a trusted key', async () => {
+  const ex = (p: string) => join(root, 'examples/tiny-shop', p);
+  const work = await mkdtemp(join(dir, 'review-'));
+  const checks = join(work, 'checks.json');
+  const old = join(work, 'old.json');
+  const snapshot = ex('references/02-add-blue-mug/added-blue-mug.json');
+  await writeFile(checks, await readFile(ex('tasks/02-add-blue-mug.checks.json')));
+  await writeFile(old, await readFile(checks));
+  const key = join(work, 'alice.pem');
+  const pub = join(work, 'alice.pub.pem');
+  assert.equal((await assay(dir, ['keygen', '--out', key])).code, 0);
+  const approved = await assay(dir, ['approve', checks, '--reviewer', 'alice', '--key', key]);
+  assert.equal(approved.code, 0, approved.stderr);
+  const signed = ['verify', checks, snapshot, '--require-signed', '--trusted-key', pub];
+  assert.equal((await assay(dir, signed)).code, 0);
+  assert.equal((await assay(dir, ['validate', checks, '--require-signed', '--trusted-key', pub])).code, 0);
+
+  // An edit after approval breaks the lock, names what changed, and shows in the diff.
+  const cs = JSON.parse(await readFile(checks, 'utf8'));
+  cs.checks[0].description = 'Edited after approval.';
+  await writeFile(checks, JSON.stringify(cs));
+  const tampered = await assay(dir, signed);
+  assert.equal(tampered.code, 4);
+  assert.match(tampered.stderr, /lock is broken \(changed after approval: check C1 changed\)/);
+  assert.match((await assay(dir, ['review', checks, '--diff', old])).stdout, /\*\*C1\*\* \(R1\) changed: description/);
+
+  // The library: approve with a key, verify requiring that key.
+  const script = join(work, 'sign.js');
+  await writeFile(
+    script,
+    `import { readFileSync } from 'node:fs';
+import { approveCheckSet, generateSigningKey, verify } from '${name}';
+const keys = generateSigningKey();
+const cs = approveCheckSet(JSON.parse(readFileSync(${JSON.stringify(old)}, 'utf8')), { by: 'bob', key: keys.privateKey });
+const res = await verify(cs, JSON.parse(readFileSync(${JSON.stringify(snapshot)}, 'utf8')).snapshot, {
+  requireLocked: { trustedKeys: [keys.publicKey] },
+});
+let refused = '';
+try {
+  await verify(cs, res.snapshot, { requireLocked: { trustedKeys: [generateSigningKey().publicKey] } });
+} catch (e) {
+  refused = e.name;
+}
+console.log(JSON.stringify({ verdict: res.outcome.verdict, signature: res.record.checkSet.locked.signature.status, refused }));
+`,
+  );
+  const { stdout } = await run(process.execPath, [script], { cwd: dir });
+  assert.deepEqual(JSON.parse(stdout), { verdict: 'success', signature: 'trusted', refused: 'LockError' });
+});
+
 test('without the optional peers, the executable runs and names what a live model needs', async () => {
   const bare = await mkdtemp(join(tmpdir(), 'assay-pack-bin-'));
   after(() => rm(bare, { recursive: true, force: true }));
@@ -279,7 +338,7 @@ test('the installed type declarations typecheck a consumer', async () => {
   await writeFile(join(dir, 'tsconfig.json'), tsconfig('consumer.ts', false));
   await writeFile(
     join(dir, 'consumer.ts'),
-    `import { evaluate, verify, type Baseline, type CheckSet, type EvidenceSnapshot, type ModelClient, type Outcome } from '${name}';
+    `import { approveCheckSet, evaluate, verify, type Baseline, type CheckSet, type EvidenceSnapshot, type ModelClient, type Outcome } from '${name}';
 import type { BaselineOptions, ExpectOutcomeOptions } from '${name}/playwright';
 import type { CompileOptions } from '${name}/compiler';
 import type { StressReport } from '${name}/stress';
@@ -288,6 +347,9 @@ export const verdictOf = (cs: CheckSet, s: EvidenceSnapshot): Outcome['verdict']
 export const escalated = async (cs: CheckSet, s: EvidenceSnapshot, verifier: ModelClient) =>
   (await verify(cs, s, { verifier })).record;
 export const options: ExpectOutcomeOptions = { timeout: 0, requireLocked: true, baseline: null };
+export const signedOptions: ExpectOutcomeOptions = { timeout: 0, requireLocked: { trustedKeys: ['PEM'] } };
+export const signedBy = (cs: CheckSet, key: string): string | undefined =>
+  approveCheckSet(cs, { by: 'me', key }).locked.signature?.keyId;
 export const before = (b: Baseline, o: BaselineOptions): [string, boolean] => [b.url, o.storage ?? true];
 export type Used = [CompileOptions['rubric'], StressReport['rates']['variantsAccepted'], Metrics['balancedAccuracy']];
 `,

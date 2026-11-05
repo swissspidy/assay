@@ -36,6 +36,11 @@ const MODEL_HELP = `Model:
   --cassette <file>     Replay model turns from this cassette if it exists, else record them to it.
                         ASSAY_MODEL_MODE=replay never calls a model; ASSAY_MODEL_MODE=record re-records.`;
 
+const TRUSTED_KEY_OPTION: ParseArgsOptionsConfig = { 'trusted-key': { type: 'string', multiple: true } };
+
+const TRUSTED_KEY_HELP = `  --trusted-key <path>   An Ed25519 public key (PEM) whose approvals are trusted, or a directory
+                         of .pem files (repeatable). Also: $ASSAY_TRUSTED_KEYS (PEM text)`;
+
 export const COMMANDS: Record<string, CommandDef> = {
   compile: {
     summary: 'Compile a check set from a task and reference snapshots',
@@ -80,6 +85,8 @@ Exit status: 0 compiled, 1 refused (the reason and warnings are printed), 3 usag
       escalate: { type: 'boolean' },
       record: { type: 'string' },
       'require-locked': { type: 'boolean' },
+      'require-signed': { type: 'boolean' },
+      ...TRUSTED_KEY_OPTION,
       'agent-report': { type: 'string' },
       ...MODEL_OPTIONS,
     },
@@ -88,7 +95,9 @@ Exit status: 0 compiled, 1 refused (the reason and warnings are printed), 3 usag
 Options:
   --escalate             Send requirements the checks abstained on to the agentic verifier
   --record <dir>         Write the outcome record (with the snapshot and check set) under <dir>
-  --require-locked       Refuse a check set that is not locked (or was edited after locking)
+  --require-locked       Refuse a check set that is not approved (or was edited after approval)
+  --require-signed       Also require the approval to be signed by a trusted key
+${TRUSTED_KEY_HELP}
   --agent-report <text>  What the agent said it did (recorded as a claim, never evidence)
   --json                 Print { verdict, outcome, ... } as JSON
 
@@ -122,27 +131,118 @@ Exit status: 0 no problems, 1 problems found, 3 usage, 4 error.`,
     summary: 'Validate check sets (schema, semantics, loose matches, lock)',
     usage: 'assay validate <checks.json...> [options]',
     args: [1, Infinity],
-    options: { strict: { type: 'boolean' } },
+    options: {
+      strict: { type: 'boolean' },
+      'require-locked': { type: 'boolean' },
+      'require-signed': { type: 'boolean' },
+      ...TRUSTED_KEY_OPTION,
+    },
     help: `Options:
-  --strict   Treat warnings as problems (exit 1)
-  --json     Print one { file, ok, errors, warnings, lock } per file as JSON
+  --strict               Treat warnings as problems (exit 1)
+  --require-locked       Treat a set that is not approved, or was edited after approval, as a problem
+  --require-signed       Also treat an approval not signed by a trusted key as a problem
+${TRUSTED_KEY_HELP}
+  --json                 Print one { file, ok, errors, warnings, lock } per file as JSON
 
-Exit status: 0 valid, 1 invalid (or warnings with --strict), 3 usage, 4 error.`,
+Exit status: 0 valid, 1 invalid (or warnings with --strict, or not approved as required), 3 usage, 4 error.`,
     load: () => import('./commands/validate.ts'),
   },
   review: {
     summary: 'Print the review sheet: every check in plain language',
     usage: 'assay review <checks.json> [options]',
     args: [1, 1],
-    options: {},
+    options: {
+      diff: { type: 'string' },
+      format: { type: 'string' },
+      stress: { type: 'string' },
+      ...TRUSTED_KEY_OPTION,
+    },
     help: `Prints each requirement with its quote and each check's description next to what it
-mechanically tests, and the lock state.
+mechanically tests and the evidence it reads, validation warnings, and the approval state.
 
 Options:
-  --json   Print the requirements and checks with their descriptions as JSON
+  --diff <old.json>      The approved version: show what changed and which requirements to
+                         re-review; unchanged requirements are listed without their checks
+  --stress <report.json> A stress report (assay stress --json): rates, and findings per check
+  --format <format>      markdown (default), github (Markdown with unchanged requirements
+                         collapsed, for a PR comment) or html
+${TRUSTED_KEY_HELP}
+  --json                 Print the requirements and checks, warnings, lock and diff as JSON
 
 Exit status: 0, 3 usage, 4 error (including an invalid check set).`,
     load: () => import('./commands/review.ts'),
+  },
+  approve: {
+    summary: 'Approve a reviewed check set: lock it, signed with your key',
+    usage: 'assay approve <checks.json> --reviewer <name> [--key <private.pem>] [options]',
+    args: [1, 1],
+    options: {
+      reviewer: { type: 'string' },
+      key: { type: 'string' },
+      note: { type: 'string' },
+      stress: { type: 'string' },
+      out: { type: 'string', short: 'o' },
+    },
+    help: `Records that you read the review sheet (assay review) and confirm the checks: the lock holds
+your name, the time, digests of the set and of each requirement and check, and an Ed25519
+signature when a key is given. Any later edit breaks the lock. Rewrites the file unless --out is given.
+
+Options:
+  --reviewer <name>      Who approves (default: $ASSAY_REVIEWER)
+  --key <file>           Ed25519 private key (PEM, from assay keygen) to sign with.
+                         Default: $ASSAY_SIGNING_KEY (PEM text); without either the lock is unsigned
+  --note <text>          A note kept in the lock
+  --stress <report.json> The stress report you reviewed (assay stress --json); its digest is kept
+  -o, --out <file>       Write the approved set here instead
+  --json                 Print the lock as JSON
+
+Exit status: 0 approved, 3 usage, 4 error (including an invalid check set or key).`,
+    load: () => import('./commands/lock.ts'),
+  },
+  reject: {
+    summary: 'Reject a proposed check set, with a note saying why',
+    usage: 'assay reject <checks.json> --reviewer <name> --note <text> [options]',
+    args: [1, 1],
+    options: { reviewer: { type: 'string' }, note: { type: 'string' }, out: { type: 'string', short: 'o' } },
+    help: `Records the rejection in the set (and removes a lock): verify --require-locked refuses it,
+and assay review shows the note. A revised set is a proposal again.
+
+Options:
+  --reviewer <name>   Who rejects (default: $ASSAY_REVIEWER)
+  --note <text>       Why (required)
+  -o, --out <file>    Write the set here instead of rewriting it
+  --json              Print the rejection as JSON
+
+Exit status: 0 rejected, 3 usage, 4 error.`,
+    load: () => import('./commands/lock.ts'),
+  },
+  unlock: {
+    summary: 'Remove the approval (or rejection): the set is a proposal again',
+    usage: 'assay unlock <checks.json> [options]',
+    args: [1, 1],
+    options: { out: { type: 'string', short: 'o' } },
+    help: `Options:
+  -o, --out <file>   Write the set here instead of rewriting it
+  --json             Print the result as JSON
+
+Exit status: 0, 3 usage, 4 error.`,
+    load: () => import('./commands/lock.ts'),
+  },
+  keygen: {
+    summary: 'Create an Ed25519 key pair for signing approvals',
+    usage: 'assay keygen [--out <private.pem>] [options]',
+    args: [0, 0],
+    options: { out: { type: 'string', short: 'o' }, force: { type: 'boolean' } },
+    help: `Prints the private and the public key (PEM), or writes them to files.
+
+Options:
+  -o, --out <file>   Write the private key here (mode 600) and the public key next to it
+                     (alice.pem → alice.pub.pem)
+  --force            Replace existing files
+  --json             Print { keyId, ... } as JSON
+
+Exit status: 0, 3 usage, 4 error.`,
+    load: () => import('./commands/keygen.ts'),
   },
   capture: {
     summary: 'Capture an evidence snapshot of a URL with Playwright',
