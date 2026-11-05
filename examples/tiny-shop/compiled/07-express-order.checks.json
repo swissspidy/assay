@@ -13,7 +13,7 @@
       "text": "An order is placed.",
       "source": {
         "field": "outcomes",
-        "quote": "Then an order is placed"
+        "quote": "an order is placed"
       }
     },
     {
@@ -22,7 +22,7 @@
       "text": "The order uses express shipping.",
       "source": {
         "field": "outcomes",
-        "quote": "Then the order ships express"
+        "quote": "the order ships express"
       }
     },
     {
@@ -31,33 +31,33 @@
       "text": "The order confirmation is shown.",
       "source": {
         "field": "outcomes",
-        "quote": "Then the order confirmation is shown"
+        "quote": "the order confirmation is shown"
       }
     },
     {
       "id": "R4",
+      "kind": "hard",
+      "text": "The order contains the items in the user's cart.",
+      "source": {
+        "field": "instruction",
+        "quote": "Order what is in my cart"
+      }
+    },
+    {
+      "id": "R5",
       "kind": "hard",
       "text": "The order is placed in the name of Ada Lovelace.",
       "source": {
         "field": "instruction",
         "quote": "in the name of Ada Lovelace"
       }
-    },
-    {
-      "id": "R5",
-      "kind": "hard",
-      "text": "The order contains the items that are in the user's cart.",
-      "source": {
-        "field": "instruction",
-        "quote": "Order what is in my cart"
-      }
     }
   ],
   "checks": [
     {
-      "id": "order-placed-request",
+      "id": "r1-order-request",
       "requirement": "R1",
-      "description": "A POST to /api/orders succeeded and the server responded with a placed order.",
+      "description": "A POST to /api/orders succeeded with a 2xx status.",
       "assert": {
         "kind": "request",
         "match": {
@@ -68,41 +68,47 @@
           "status": {
             "gte": 200,
             "lt": 300
-          },
-          "responseBody": {
+          }
+        },
+        "count": {
+          "gte": 1
+        }
+      }
+    },
+    {
+      "id": "r1-order-stored",
+      "requirement": "R1",
+      "description": "The backend's latest order exists with status 'placed'.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "latestOrder"
+        },
+        "expect": {
+          "schema": {
             "type": "object",
+            "required": [
+              "id",
+              "status"
+            ],
             "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
               "status": {
                 "const": "placed"
               }
-            },
-            "required": [
-              "status"
-            ]
+            }
           }
         }
       }
     },
     {
-      "id": "order-placed-probe",
-      "requirement": "R1",
-      "description": "The backend's latest order has status 'placed'.",
-      "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "latestOrder",
-          "pointer": "/status"
-        },
-        "expect": {
-          "equals": "placed"
-        }
-      }
-    },
-    {
-      "id": "order-express-probe",
+      "id": "r2-express",
       "requirement": "R2",
-      "description": "The backend's latest order uses express shipping.",
+      "description": "The backend's latest order has shipping set to 'express'.",
       "assert": {
         "kind": "value",
         "source": {
@@ -116,28 +122,81 @@
       }
     },
     {
-      "id": "order-name-probe",
-      "requirement": "R4",
-      "description": "The backend's latest order is in the name of Ada Lovelace.",
+      "id": "r3-url",
+      "requirement": "R3",
+      "description": "The browser is on the order page of the order the backend stored.",
       "assert": {
         "kind": "value",
         "source": {
-          "from": "probe",
-          "probe": "latestOrder",
-          "pointer": "/name"
+          "from": "url",
+          "part": "pathname"
         },
         "normalize": [
-          "trim"
+          {
+            "op": "extract",
+            "regex": "^/orders/([^/]+)/?$",
+            "group": 1
+          }
         ],
         "expect": {
-          "equals": "Ada Lovelace"
+          "sameAs": {
+            "source": {
+              "from": "probe",
+              "probe": "latestOrder",
+              "pointer": "/id"
+            }
+          }
         }
       }
     },
     {
-      "id": "order-items-match-cart",
-      "requirement": "R5",
-      "description": "The latest order's items equal the items that were in the cart before the task.",
+      "id": "r3-heading",
+      "requirement": "R3",
+      "description": "The page shows an 'Order confirmed' heading in main.",
+      "assert": {
+        "kind": "contains",
+        "scope": {
+          "role": "main"
+        },
+        "match": {
+          "role": "heading",
+          "name": {
+            "contains": "Order confirmed",
+            "ignoreCase": true
+          }
+        }
+      }
+    },
+    {
+      "id": "r3-order-number",
+      "requirement": "R3",
+      "description": "The order summary shows the order number of the stored order.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "text",
+          "scope": {
+            "role": "region",
+            "name": "Order summary"
+          },
+          "pattern": "Order number:\\s*([A-Za-z0-9-]+)",
+          "group": 1
+        },
+        "expect": {
+          "sameAs": {
+            "source": {
+              "from": "probe",
+              "probe": "latestOrder",
+              "pointer": "/id"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r4-items-match-cart",
+      "requirement": "R4",
+      "description": "The order's items equal the cart's items before the task (whole items, any order).",
       "assert": {
         "kind": "value",
         "source": {
@@ -168,59 +227,22 @@
       }
     },
     {
-      "id": "confirmation-page",
-      "requirement": "R3",
-      "description": "The browser is on the order page with an 'Order confirmed' heading.",
-      "assert": {
-        "kind": "allOf",
-        "of": [
-          {
-            "kind": "url",
-            "match": {
-              "path": "/orders/*"
-            }
-          },
-          {
-            "kind": "contains",
-            "scope": {
-              "role": "main"
-            },
-            "match": {
-              "role": "heading",
-              "name": {
-                "contains": "Order confirmed",
-                "ignoreCase": true
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "id": "confirmation-shows-latest-order",
-      "requirement": "R3",
-      "description": "The order number in the URL is the id of the latest order stored by the backend.",
+      "id": "r5-name",
+      "requirement": "R5",
+      "description": "The backend's latest order is in the name of Ada Lovelace.",
       "assert": {
         "kind": "value",
         "source": {
-          "from": "url",
-          "part": "pathname"
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/name"
         },
         "normalize": [
-          {
-            "op": "extract",
-            "regex": "^/orders/([^/]+)/?$",
-            "group": 1
-          }
+          "trim",
+          "collapseWhitespace"
         ],
         "expect": {
-          "sameAs": {
-            "source": {
-              "from": "probe",
-              "probe": "latestOrder",
-              "pointer": "/id"
-            }
-          }
+          "equals": "Ada Lovelace"
         }
       }
     }
@@ -231,6 +253,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T07:44:11.650Z"
+    "at": "2026-11-05T11:30:10.612Z"
   }
 }

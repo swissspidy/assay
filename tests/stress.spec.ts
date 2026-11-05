@@ -549,3 +549,286 @@ test('extra-storage is skipped when a check reads one of its keys', () => {
   expect(generateVariants(reads('cart'), s).map((v) => v.id)).toContain('extra-storage');
   expect(generateVariants(reads('consent'), s).map((v) => v.id)).not.toContain('extra-storage');
 });
+
+// ---------------------------------------------------------------------------
+// Per-record checks (each) and paired item fields (items pick)
+// ---------------------------------------------------------------------------
+
+const calendar = appByName('tiny-calendar').dir;
+
+test('each: a value moved out of its term or row is rejected; an unscoped check accepts it', () => {
+  const cs = checks('01-lunch', calendar);
+  const refs = successRefs('01-lunch', calendar);
+  const r = stressTest(cs, refs);
+  expect(r.missed, formatStressReport(r)).toEqual([]);
+  expect(r.weak, formatStressReport(r)).toEqual([]);
+  const moved = r.mutants.filter((m) => /^C3:record:(swap|moved)/.test(m.id) && !m.claim);
+  // Swapped with the Duration and Location definitions, and moved out of the dl pair.
+  expect(moved.map((m) => m.id)).toEqual(expect.arrayContaining(['C3:record:swap:0', 'C3:record:moved']));
+  expect(moved.every((m) => m.rejected && m.targetStatus !== 'pass')).toBe(true);
+  // A date matched anywhere among the definitions still passes on those snapshots.
+  const unscoped = withChecks(cs, [
+    ...cs.checks.filter((c) => c.id !== 'C3'),
+    {
+      id: 'C3',
+      requirement: 'R2',
+      description: 'Some definition shows the date.',
+      assert: {
+        kind: 'contains',
+        scope: { role: 'main' },
+        match: { role: 'definition', text: { regex: 'November 0?5, 2026' } },
+      },
+    },
+  ]);
+  const snapshots = generateMutants(cs, refs[0]!.snapshot).filter((m) => /^C3:record:(swap|moved)/.test(m.id));
+  expect(snapshots.length).toBeGreaterThan(1);
+  for (const m of snapshots) expect(evaluate(unscoped, m.snapshot).verdict, m.description).toBe('success');
+});
+
+test('each: rows swap the cells a row check reads; the named row keeps its name', () => {
+  const row = (n: string, title: string, status: string): AXNode => ({
+    role: 'row',
+    name: `${n} ${title} ${status}`,
+    children: [
+      { role: 'cell', name: n },
+      { role: 'cell', name: title },
+      { role: 'cell', name: status },
+    ],
+  });
+  const s = snap([
+    {
+      role: 'table',
+      name: 'Issues',
+      children: [row('1', 'Login button misaligned', 'Closed'), row('2', 'Add dark mode', 'Open')],
+    },
+  ]);
+  const scoped = one({
+    kind: 'each',
+    scope: { role: 'table', name: 'Issues' },
+    match: { role: 'row', name: { contains: 'Login button misaligned' } },
+    assert: { kind: 'contains', match: { role: 'cell', name: 'Closed' } },
+  });
+  const r = run(scoped, s);
+  expect(r.missed, formatStressReport(r)).toEqual([]);
+  expect(r.weak, formatStressReport(r)).toEqual([]);
+  const swap = generateMutants(scoped, s).find((m) => m.id === 'C1:record:swap:0')!;
+  expect(swap.description).toBe(
+    'the cell of main › table "Issues" › row "1 Login button misaligned Closed" and of main › table "Issues" › row "2 Add dark mode Open" are swapped',
+  );
+  // The swapped rows are named by their new cells.
+  const rows = swap.snapshot.a11y.children![0]!.children![0]!.children!;
+  expect(rows.map((x) => x.name)).toEqual(['1 Login button misaligned Open', '2 Add dark mode Closed']);
+  const unscoped = one({
+    kind: 'contains',
+    scope: { role: 'table', name: 'Issues' },
+    match: { role: 'cell', name: 'Closed' },
+  });
+  expect(evaluate(unscoped, swap.snapshot).verdict).toBe('success');
+  expect(evaluate(scoped, swap.snapshot).verdict).toBe('fail');
+});
+
+test('reorder-terms reverses term groups, and a term record check accepts it', () => {
+  const s = snap([
+    { role: 'heading', name: 'Lunch', level: 1 },
+    { role: 'term', children: [{ role: 'text', name: 'When' }] },
+    { role: 'definition', children: [{ role: 'text', name: 'November 5, 2026' }] },
+    { role: 'term', children: [{ role: 'text', name: 'Duration' }] },
+    { role: 'definition', children: [{ role: 'text', name: '1 hour' }] },
+    { role: 'term', children: [{ role: 'text', name: 'Host' }] },
+    { role: 'definition', children: [{ role: 'text', name: 'Sam' }] },
+    { role: 'definition', children: [{ role: 'text', name: 'Kim' }] },
+  ]);
+  const cs = one({
+    kind: 'each',
+    scope: { role: 'main' },
+    match: { role: 'term', text: 'When' },
+    assert: {
+      kind: 'value',
+      source: { from: 'node', target: { role: 'definition' }, field: 'text' },
+      normalize: [{ op: 'date', locale: 'en-US' }],
+      expect: { equals: '2026-11-05' },
+    },
+  });
+  const v = generateVariants(cs, s).find((x) => x.id === 'reorder-terms')!;
+  const order = v.snapshot.a11y.children![0]!.children!.map((n) => n.name ?? n.children?.[0]?.name);
+  expect(order).toEqual(['Lunch', 'Host', 'Sam', 'Kim', 'Duration', '1 hour', 'When', 'November 5, 2026']);
+  const r = run(cs, s);
+  expect(r.overConstrained, formatStressReport(r)).toEqual([]);
+  expect(r.fragile, formatStressReport(r)).toEqual([]);
+  expect(r.missed, formatStressReport(r)).toEqual([]);
+});
+
+test('items pick: two records swapping a field is a mutant that a paired comparison rejects', () => {
+  const items = [
+    { sku: 'MUG-BLUE', qty: 1, price: 12 },
+    { sku: 'MUG-RED', qty: 2, price: 9.5 },
+  ];
+  const s = snap([], {
+    probes: { latestOrder: { ok: true, value: { items: items.map((x) => ({ ...x, lineTotal: x.qty * x.price })) } } },
+    baseline: {
+      capturedAt: '',
+      url: 'https://shop.test/cart',
+      storage: null,
+      probes: { cart: { ok: true, value: { items } } },
+      redacted: [],
+    },
+  });
+  const order = (projection: object): CheckSet =>
+    one({
+      kind: 'value',
+      source: { from: 'probe', probe: 'latestOrder', pointer: '/items' },
+      normalize: [{ op: 'items', ...projection }],
+      expect: {
+        sameAs: {
+          source: { from: 'probe', probe: 'cart', pointer: '/items', at: 'before' },
+          normalize: [{ op: 'items', ...projection }],
+        },
+      },
+    });
+  // Order lines carry a lineTotal the cart lacks, so whole items differ; the picked fields match.
+  expect(evaluate(order({}), s).verdict).toBe('fail');
+  const paired = run(order({ pick: ['/sku', '/qty'] }), s);
+  expect(paired.missed, formatStressReport(paired)).toEqual([]);
+  expect(paired.weak, formatStressReport(paired)).toEqual([]);
+  const swaps = paired.mutants.filter((m) => m.description.includes('swap their qty') && !m.claim);
+  expect(swaps.length).toBeGreaterThan(0);
+  expect(swaps.every((m) => m.rejected)).toBe(true);
+  // A comparison of one field cannot see the swap, so no such mutant is reported against it.
+  expect(run(order({ pointer: '/sku' }), s).mutants.some((m) => m.description.includes('swap their qty'))).toBe(false);
+});
+
+test('column: a value moved into another column of its row is a mutant a column-bound cell rejects', () => {
+  const s = snap([
+    {
+      role: 'table',
+      name: 'Issues',
+      children: [
+        {
+          role: 'row',
+          name: 'Title Status',
+          children: [
+            { role: 'columnheader', name: 'Title' },
+            { role: 'columnheader', name: 'Status' },
+          ],
+        },
+        {
+          role: 'row',
+          name: 'Login button misaligned Open',
+          children: [
+            { role: 'cell', name: 'Login button misaligned' },
+            { role: 'cell', name: 'Open' },
+          ],
+        },
+      ],
+    },
+  ]);
+  const cs = one({
+    kind: 'each',
+    scope: { role: 'table', name: 'Issues' },
+    witness: { role: 'columnheader', name: 'Status' },
+    match: { role: 'row', name: { contains: 'Login button misaligned' } },
+    assert: { kind: 'contains', match: { role: 'cell', name: 'Open', column: 'Status' } },
+  });
+  const r = run(cs, s);
+  expect(r.missed, formatStressReport(r)).toEqual([]);
+  expect(r.weak, formatStressReport(r)).toEqual([]);
+  const moved = generateMutants(cs, s).find((m) => m.id === 'C1:record:contains:other-column')!;
+  expect(moved.description).toBe('cell "Open" is in column "Title" instead');
+  expect(moved.snapshot.a11y.children![0]!.children![0]!.children![1]!.name).toBe('Open Login button misaligned');
+  // Without the column, the moved value is still a cell of the row.
+  const unbound = one({
+    kind: 'each',
+    scope: { role: 'table', name: 'Issues' },
+    match: { role: 'row', name: { contains: 'Login button misaligned' } },
+    assert: { kind: 'contains', match: { role: 'cell', name: 'Open' } },
+  });
+  expect(evaluate(unbound, moved.snapshot).verdict).toBe('success');
+});
+
+test('pairing swaps are capped after the comparison filters them', () => {
+  // Three fields differ before qty does; only the qty swap violates a comparison of sku and qty.
+  const lines = [
+    { a: 1, b: 1, c: 1, sku: 'A', qty: 1 },
+    { a: 2, b: 2, c: 2, sku: 'B', qty: 2 },
+  ];
+  const s = snap([], {
+    probes: { latestOrder: { ok: true, value: { items: lines.map((x) => ({ ...x, lineTotal: 1 })) } } },
+    baseline: {
+      capturedAt: '',
+      url: 'https://shop.test/cart',
+      storage: null,
+      probes: { cart: { ok: true, value: { items: lines } } },
+      redacted: [],
+    },
+  });
+  const cs = one({
+    kind: 'value',
+    source: { from: 'probe', probe: 'latestOrder', pointer: '/items' },
+    normalize: [{ op: 'items', pick: ['/sku', '/qty'] }],
+    expect: {
+      sameAs: {
+        source: { from: 'probe', probe: 'cart', pointer: '/items', at: 'before' },
+        normalize: [{ op: 'items', pick: ['/sku', '/qty'] }],
+      },
+    },
+  });
+  const swaps = generateMutants(cs, s).filter((m) => m.description.includes(' swap their '));
+  expect(swaps.map((m) => m.description.match(/swap their (\w+)/)![1])).toEqual(expect.arrayContaining(['qty', 'sku']));
+});
+
+test('record text is read canonically: a value after a no-break space is still mutated', () => {
+  const s = snap([
+    {
+      role: 'list',
+      children: [{ role: 'listitem', children: [{ role: 'text', name: 'Blue Mug × 2' }] }],
+    },
+  ]);
+  const cs = one({
+    kind: 'each',
+    scope: { role: 'list' },
+    match: { role: 'listitem', text: { contains: 'Blue Mug' } },
+    assert: {
+      kind: 'value',
+      source: { from: 'text', pattern: '× (\\d+)' },
+      normalize: [{ op: 'number', locale: 'en-US' }],
+      expect: { equals: 2 },
+    },
+  });
+  expect(evaluate(cs, s).verdict).toBe('success');
+  const r = run(cs, s);
+  expect(r.untested, formatStressReport(r)).toEqual([]);
+  expect(r.mutants.some((m) => m.id.startsWith('C1:record:value:') && m.rejected)).toBe(true);
+});
+
+test('formatting variants reach a date read from record text', () => {
+  const s = snap([
+    {
+      role: 'region',
+      name: 'Order summary',
+      children: [
+        { role: 'paragraph', children: [{ role: 'text', name: 'Estimated delivery: Thursday, November 5, 2026' }] },
+      ],
+    },
+  ]);
+  const check = (pattern: string) =>
+    one({
+      kind: 'each',
+      scope: { role: 'region', name: 'Order summary' },
+      match: { role: 'paragraph', text: { contains: 'Estimated delivery' } },
+      assert: {
+        kind: 'value',
+        source: { from: 'text', pattern },
+        normalize: [{ op: 'date', locale: 'en-US' }],
+        expect: { equals: '2026-11-05' },
+      },
+    });
+  const loose = check('Estimated delivery: (.+)$');
+  const variants = generateVariants(loose, s).filter((v) => v.id.startsWith('format:C1:'));
+  expect(variants.map((v) => v.description)).toContain(
+    'C1\'s value shown as "2026-11-05" instead of "Thursday, November 5, 2026"',
+  );
+  expect(run(loose, s).fragile).toEqual([]);
+  // A pattern that only reads the long English format abstains on the ISO one: now caught.
+  const strict = check('Estimated delivery: (\\w+, \\w+ \\d+, \\d{4})');
+  expect(run(strict, s).fragile.map((f) => f.check)).toEqual(['C1']);
+});

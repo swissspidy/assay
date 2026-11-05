@@ -6,6 +6,7 @@ import type {
   Json,
   Locator,
   Normalizer,
+  NumberCompare,
   RequestMatch,
   Target,
   TextMatch,
@@ -15,6 +16,7 @@ import type {
 import { canonical } from '../text.ts';
 import { canonicalJson } from '../snapshot/digest.ts';
 import { instantOf } from '../runtime/values.ts';
+import { compareNumber } from '../runtime/compare.ts';
 import { checkSetSchema } from './schema.ts';
 
 const ajv = new Ajv({ allErrors: true, strict: false });
@@ -71,7 +73,7 @@ export function validateCheckSet(input: unknown): ValidationReport {
     checkIds.add(c.id);
     if (!reqIds.has(c.requirement)) errors.push(`${at}: unknown requirement ${c.requirement}`);
     covered.add(c.requirement);
-    walkAssertion(c.assert, at, errors, warnings);
+    walkAssertion(c.assert, at, errors, warnings, false);
   }
   for (const r of cs.requirements) {
     const mine = cs.checks.filter((c) => c.requirement === r.id).map((c) => c.assert);
@@ -140,11 +142,70 @@ function looseOperand(src: ValueSource, normalize: Normalizer[] | undefined, at:
       looseSchema(n.where, `${at} items where`, out);
 }
 
-function looseAssertion(a: Assertion, at: string, out: string[]): void {
+/** Some `items` step in the pipeline projects with `pick`. */
+export const usesPick = (steps: Normalizer[] | undefined): boolean =>
+  (steps ?? []).some((s) => typeof s === 'object' && s.op === 'items' && s.pick !== undefined);
+
+/** The same probe value or storage key, read at two moments: its items always have the same shape. */
+export function sameCollection(x: ValueSource, y: ValueSource): boolean {
+  if (x.from === 'probe' && y.from === 'probe')
+    return x.probe === y.probe && (x.pointer ?? '') === (y.pointer ?? '') && (x.at ?? 'after') !== (y.at ?? 'after');
+  if (x.from === 'storage' && y.from === 'storage')
+    return x.area === y.area && x.key === y.key && x.origin === y.origin && (x.at ?? 'after') !== (y.at ?? 'after');
+  return false;
+}
+
+/**
+ * `pick` drops fields; it is for two collections whose items have different shapes. On
+ * items of one shape, a change to a field it leaves out (a price, a gift note) passes.
+ */
+export const pickOnSameShape = (at: string, what: string) =>
+  `${at}: items pick compares only some fields of ${what}, whose items have the same fields, so a change to any other field passes; compare whole items (items without pick), and use pick only when the two sides' items have different fields`;
+
+/** A locator for a definition (a `dd`), directly or through `within`. */
+const locatesDefinition = (l: Locator | undefined): boolean =>
+  !!l && (l.role === 'definition' || locatesDefinition(l.within));
+
+const targetDefinition = (t: Target | undefined): boolean =>
+  !!t && ('anchors' in t ? t.anchors.some(locatesDefinition) : locatesDefinition(t));
+
+const sourceDefinition = (src: ValueSource): boolean =>
+  (src.from === 'node' && targetDefinition(src.target)) || (src.from === 'text' && targetDefinition(src.scope));
+
+/** A count that zero matches satisfy: the check asserts absence (or nothing). */
+const allowsNone = (count: NumberCompare | undefined): boolean => !!count && compareNumber(0, count);
+
+const unboundDefinition = (at: string) =>
+  `${at}: reads a definition (a dd) found by its own content, so a value shown under another term (another field of the record) also matches; select the term's record with each (match {role: "term", text: …}) and read the definition inside it`;
+
+/**
+ * `inTerm`: inside an `each` whose records are terms, where a definition is bound to its
+ * term. Outside one, a definition read for its value (not an absence check) is loose.
+ */
+function looseAssertion(a: Assertion, at: string, out: string[], inTerm = false): void {
   switch (a.kind) {
+    case 'state':
+      if (!inTerm && targetDefinition(a.target)) out.push(unboundDefinition(at));
+      return;
+    case 'contains':
+      if (!inTerm && !allowsNone(a.count) && (locatesDefinition(a.match) || targetDefinition(a.scope)))
+        out.push(unboundDefinition(at));
+      return;
+    case 'each':
+      if (!inTerm && (locatesDefinition(a.match) || targetDefinition(a.scope))) out.push(unboundDefinition(at));
+      looseAssertion(a.assert, `${at}.assert`, out, inTerm || a.match.role === 'term');
+      return;
     case 'value': {
+      if (!inTerm && [a.source, ...('sameAs' in a.expect ? [a.expect.sameAs.source] : [])].some(sourceDefinition))
+        out.push(unboundDefinition(at));
       looseOperand(a.source, a.normalize, at, out);
       if ('sameAs' in a.expect) looseOperand(a.expect.sameAs.source, a.expect.sameAs.normalize, `${at} sameAs`, out);
+      if (
+        'sameAs' in a.expect &&
+        (usesPick(a.normalize) || usesPick(a.expect.sameAs.normalize)) &&
+        sameCollection(a.source, a.expect.sameAs.source)
+      )
+        out.push(pickOnSameShape(at, 'one collection before and after the task'));
       const structured = a.source.from !== 'node' && a.source.from !== 'text';
       if (structured && 'regex' in a.expect && isLiteralPattern(a.expect.regex))
         out.push(literalRegexAdvice(a.expect.regex, at));
@@ -159,9 +220,7 @@ function looseAssertion(a: Assertion, at: string, out: string[]): void {
       return;
     case 'allOf':
     case 'anyOf':
-      a.of.forEach((s, i) => looseAssertion(s, `${at}.${a.kind}[${i}]`, out));
-      return;
-    default:
+      a.of.forEach((s, i) => looseAssertion(s, `${at}.${a.kind}[${i}]`, out, inTerm));
       return;
   }
 }
@@ -263,7 +322,10 @@ function walkSchema(s: unknown, path: string, inherited: string[], negated: bool
   }
 }
 
-/** One side of a sameAs through `items`: the collection without the items pointer, and that pointer. */
+/**
+ * One side of a sameAs through `items`: the collection without the items projection, and
+ * the fields that projection keeps (`[]` for whole items).
+ */
 function itemsSide(src: ValueSource, n: Normalizer[] | undefined) {
   const steps = n ?? [];
   const step = steps.find((x) => typeof x === 'object' && x.op === 'items') as
@@ -273,44 +335,51 @@ function itemsSide(src: ValueSource, n: Normalizer[] | undefined) {
   const rest = steps.map((x) => {
     if (typeof x === 'string') return { op: x };
     if (x.op !== 'items') return x;
-    const { pointer: _, ...keep } = x;
+    const { pointer: _, pick: __, ...keep } = x;
     return keep;
   });
-  return { key: canonicalJson({ src, n: rest } as unknown as Json), pointer: step.pointer ?? '' };
+  const fields = step.pick ? step.pick.toSorted() : step.pointer ? [step.pointer] : [];
+  return { key: canonicalJson({ src, n: rest } as unknown as Json), fields };
 }
 
 /**
  * Within one requirement, two or more sameAs comparisons of the same pair of
- * collections through `items` with different pointers: each sorts one field on
- * its own, so 1×A + 2×B passes for 2×A + 1×B. Comparing whole items avoids it.
+ * collections through `items` with different projections: each sorts its fields on
+ * their own, so 1×A + 2×B passes for 2×A + 1×B. Fine when one comparison keeps every
+ * field the others compare together (whole items, or a `pick` of all of them).
  */
 function fieldwiseCollections(cs: CheckSet, out: string[]): void {
   for (const r of cs.requirements) {
-    // pair of collections → pointer pair → checks
+    // pair of collections → projection pair → checks
     const pairs = new Map<string, Map<string, Set<string>>>();
     const visit = (a: Assertion, check: string): void => {
       if (a.kind === 'allOf' || a.kind === 'anyOf') {
         for (const b of a.of) visit(b, check);
         return;
       }
+      if (a.kind === 'each') return visit(a.assert, check);
       if (a.kind !== 'value' || !('sameAs' in a.expect)) return;
       const x = itemsSide(a.source, a.normalize);
       const y = itemsSide(a.expect.sameAs.source, a.expect.sameAs.normalize);
       if (!x || !y) return;
       const [p, q] = x.key <= y.key ? [x, y] : [y, x];
       const pair = `${p.key}\u0000${q.key}`;
-      const byPointers = pairs.get(pair) ?? new Map<string, Set<string>>();
-      pairs.set(pair, byPointers);
-      const ptrs = JSON.stringify([p.pointer, q.pointer]);
-      byPointers.set(ptrs, (byPointers.get(ptrs) ?? new Set<string>()).add(check));
+      const byProjection = pairs.get(pair) ?? new Map<string, Set<string>>();
+      pairs.set(pair, byProjection);
+      const proj = JSON.stringify([p.fields, q.fields]);
+      byProjection.set(proj, (byProjection.get(proj) ?? new Set<string>()).add(check));
     };
     for (const c of cs.checks) if (c.requirement === r.id) visit(c.assert, c.id);
-    for (const byPointers of pairs.values()) {
-      if (byPointers.size < 2 || byPointers.has(JSON.stringify(['', '']))) continue;
-      const checks = [...new Set([...byPointers.values()].flatMap((s) => [...s]))];
-      const fields = [...new Set([...byPointers.keys()].flatMap((k) => (JSON.parse(k) as string[]).filter(Boolean)))];
+    for (const byProjection of pairs.values()) {
+      if (byProjection.size < 2) continue;
+      const projections = [...byProjection.keys()].map((k) => JSON.parse(k) as [string[], string[]]);
+      const fields = [...new Set(projections.flat(2))].toSorted();
+      // Whole items ([]) keep every field; a pick keeps the fields it names.
+      const keeps = (side: string[]) => side.length === 0 || fields.every((f) => side.includes(f));
+      if (projections.some(([p, q]) => keeps(p) && keeps(q))) continue;
+      const checks = [...new Set([...byProjection.values()].flatMap((s) => [...s]))];
       out.push(
-        `requirement ${r.id}: checks ${checks.join(', ')} compare the same two collections one field at a time (items pointers ${fields.join(', ')}); each field is sorted on its own, so the fields of different records pair up (1×A + 2×B matches 2×A + 1×B); compare whole items (items without a pointer) in one check`,
+        `requirement ${r.id}: checks ${checks.join(', ')} compare the same two collections one field at a time (items fields ${fields.join(', ')}); each projection is sorted on its own, so the fields of different records pair up (1×A + 2×B matches 2×A + 1×B); compare whole items (items without a pointer), or keep the fields together with an items pick, in one check`,
       );
     }
   }
@@ -319,6 +388,7 @@ function fieldwiseCollections(cs: CheckSet, out: string[]): void {
 /** Some value read inside `a` (nested ones and sameAs operands included) comes from a request or response. */
 function readsNetworkValue(a: Assertion): boolean {
   if (a.kind === 'allOf' || a.kind === 'anyOf') return a.of.some(readsNetworkValue);
+  if (a.kind === 'each') return readsNetworkValue(a.assert);
   if (a.kind !== 'value') return false;
   return [a.source, ...('sameAs' in a.expect ? [a.expect.sameAs.source] : [])].some(
     (src) => src.from === 'request' || src.from === 'response',
@@ -361,6 +431,13 @@ function checkLocator(l: Locator, at: string, errors: string[]): void {
   checkTextMatch(l.name, `${at} name`, errors);
   checkTextMatch(l.text, `${at} text`, errors);
   checkTextMatch(l.landmark?.name, `${at} landmark name`, errors);
+  if (l.column !== undefined) {
+    checkTextMatch(l.column, `${at} column`, errors);
+    if (!['cell', 'gridcell', 'rowheader', 'columnheader'].includes(l.role))
+      errors.push(
+        `${at}: column binds a cell to its column header; role ${l.role} has no column (use cell, gridcell, rowheader or columnheader)`,
+      );
+  }
   if (l.within) checkLocator(l.within, `${at} within`, errors);
 }
 
@@ -404,6 +481,8 @@ function flowType(t: VType, steps: Normalizer[] | undefined, at: string, errors:
     }
     if (typeof step === 'object' && step.op === 'items') {
       if (step.where !== undefined) checkSchema(step.where, `${at} items where`, errors);
+      if (step.pick !== undefined && step.pointer !== undefined)
+        errors.push(`${at}: items takes either pointer (one field) or pick (several fields), not both`);
       if (t !== 'unknown') errors.push(`${at}: normalizer items needs a JSON array, but the value is ${t}`);
       t = 'unknown';
       continue;
@@ -510,7 +589,11 @@ function checkComparison(t: VType, cmp: Comparison, at: string, errors: string[]
   }
 }
 
-function walkAssertion(a: Assertion, at: string, errors: string[], warnings: string[]): void {
+/**
+ * `inRecord`: inside an `each`, where locators resolve within the record (a contains
+ * without a scope searches the record) and only the record may be read.
+ */
+function walkAssertion(a: Assertion, at: string, errors: string[], warnings: string[], inRecord: boolean): void {
   switch (a.kind) {
     case 'state':
       checkTarget(a.target, at, errors);
@@ -518,7 +601,7 @@ function walkAssertion(a: Assertion, at: string, errors: string[], warnings: str
       return;
     case 'contains':
       if (a.scope) checkTarget(a.scope, at, errors);
-      else
+      else if (!inRecord)
         warnings.push(
           `${at}: contains without a scope searches the whole page; an unrelated UI change can make it fail instead of abstain`,
         );
@@ -529,7 +612,25 @@ function walkAssertion(a: Assertion, at: string, errors: string[], warnings: str
           `${at}: an absence check without a witness passes vacuously if the scope's content loses its structure; add a witness`,
         );
       return;
+    case 'each':
+      if (a.scope) checkTarget(a.scope, at, errors);
+      else if (!inRecord)
+        warnings.push(
+          `${at}: each without a scope searches the whole page; an unrelated UI change can make it fail instead of abstain`,
+        );
+      checkLocator(a.match, `${at} match`, errors);
+      if (a.witness) checkLocator(a.witness, `${at} witness`, errors);
+      else if (allowsNone(a.count))
+        warnings.push(
+          `${at}: each with a count that allows no records passes vacuously if the scope's content loses its structure; add a witness`,
+        );
+      walkAssertion(a.assert, `${at}.assert`, errors, warnings, true);
+      return;
     case 'value': {
+      if (inRecord && a.source.from !== 'node' && a.source.from !== 'text')
+        errors.push(
+          `${at}: inside each, a value check must read the record (a node or text source); a ${a.source.from} source reads the same value for every record`,
+        );
       const t = checkValueSource(a.source, a.normalize, at, errors, warnings);
       if ('sameAs' in a.expect) {
         const other = a.expect.sameAs;
@@ -546,18 +647,23 @@ function walkAssertion(a: Assertion, at: string, errors: string[], warnings: str
       return;
     }
     case 'url':
+      if (inRecord) errors.push(notInRecord(at, 'url'));
       if (a.match.regex) checkRegex(a.match.regex, undefined, at, errors);
       for (const v of Object.values(a.match.query ?? {})) if (v) checkTextMatch(v, at, errors);
       return;
     case 'request':
+      if (inRecord) errors.push(notInRecord(at, 'request'));
       checkRequestMatch(a.match, at, errors);
       return;
     case 'allOf':
     case 'anyOf':
-      a.of.forEach((s, i) => walkAssertion(s, `${at}.${a.kind}[${i}]`, errors, warnings));
+      a.of.forEach((s, i) => walkAssertion(s, `${at}.${a.kind}[${i}]`, errors, warnings, inRecord));
       return;
   }
 }
+
+const notInRecord = (at: string, kind: string) =>
+  `${at}: a ${kind} assertion inside each does not read the record, so it is the same for every record; move it out of the each`;
 
 /** A source that reads the baseline (the state before the task). */
 const before = (src: ValueSource) => (src.from === 'probe' || src.from === 'storage') && src.at === 'before';

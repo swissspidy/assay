@@ -19,9 +19,9 @@
   ],
   "checks": [
     {
-      "id": "bookclub-location-probe",
+      "id": "R1-probe-location",
       "requirement": "R1",
-      "description": "The backend events list contains the Book club event with location exactly \"City Library\".",
+      "description": "The backend event with id 3 (Book club) has location exactly \"City Library\".",
       "assert": {
         "kind": "value",
         "source": {
@@ -34,10 +34,14 @@
             "contains": {
               "type": "object",
               "required": [
+                "id",
                 "title",
                 "location"
               ],
               "properties": {
+                "id": {
+                  "const": 3
+                },
                 "title": {
                   "const": "Book club"
                 },
@@ -57,6 +61,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T07:44:07.824Z"
+    "at": "2026-11-05T11:34:39.142Z"
   }
 }

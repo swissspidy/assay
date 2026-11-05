@@ -1,28 +1,28 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T07:43:57.097Z",
+ "recordedAt": "2026-11-05T11:34:26.816Z",
  "turns": {
   "sha256:25ae5c9a04fde0376f652c954d44d2bf102e3dc87b3424021aabcaf915da75fe": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01M1sK9WMrW4tfb3zCwBFmHN",
+     "id": "toolu_01EaJsEBzWQZaMRbwtUAnhuZ",
      "name": "submit_rubric",
      "input": {
       "requirements": [
        {
         "id": "R1",
         "kind": "hard",
-        "text": "The Team standup event is deleted.",
+        "text": "The Team standup event has been deleted.",
         "field": "outcomes",
         "quote": "the Team standup event is gone"
        },
        {
         "id": "R2",
         "kind": "hard",
-        "text": "All other events remain present.",
+        "text": "All other events remain in place.",
         "field": "outcomes",
         "quote": "the other events are still there"
        }
@@ -33,7 +33,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01M1sK9WMrW4tfb3zCwBFmHN",
+     "id": "toolu_01EaJsEBzWQZaMRbwtUAnhuZ",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -43,14 +43,14 @@
        {
         "id": "R1",
         "kind": "hard",
-        "text": "The Team standup event is deleted.",
+        "text": "The Team standup event has been deleted.",
         "field": "outcomes",
         "quote": "the Team standup event is gone"
        },
        {
         "id": "R2",
         "kind": "hard",
-        "text": "All other events remain present.",
+        "text": "All other events remain in place.",
         "field": "outcomes",
         "quote": "the other events are still there"
        }
@@ -60,23 +60,23 @@
    ],
    "usage": {
     "inputTokens": 1121,
-    "outputTokens": 152,
+    "outputTokens": 154,
     "cacheReadTokens": 0,
     "cacheWriteTokens": 1117
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:6c1f0673840a1717f9fef0f76e8398cd5239ea59a25b4876ffebbb1f04372492": {
+  "sha256:6e29e5d3fe5623fba10415bfa6cd4c984100c847e47eee7e277c2df92b1685d5": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_011PQBA84hwdEX2TGmgcKUoy",
+     "id": "toolu_01UsNEabFLVqMqPQLPundevd",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01BKrziPJSoSmxmbSyjHGXEG",
+     "id": "toolu_01L7JVcntJmeVTec35bVWSxg",
      "name": "network_log",
      "input": {}
     }
@@ -84,7 +84,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_011PQBA84hwdEX2TGmgcKUoy",
+     "id": "toolu_01UsNEabFLVqMqPQLPundevd",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -93,7 +93,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01BKrziPJSoSmxmbSyjHGXEG",
+     "id": "toolu_01L7JVcntJmeVTec35bVWSxg",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -102,26 +102,102 @@
     }
    ],
    "usage": {
-    "inputTokens": 16256,
+    "inputTokens": 17796,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16252
+    "cacheWriteTokens": 17792
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:ebd3d7a990e14d72a69ba730f316a6d08a7d4f1a8d504e4ffa69b5441f63c9e7": {
+  "sha256:96af4e56276292467154bf7ec4d86bf8e13e32e29432ae2c24e6fbcf39db8a8f": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Jt8Vd4uYk6EZdVVteT98Mo",
+     "id": "toolu_01XsYy1siMx7ivZh7CE1zTqv",
+     "name": "network_entry",
+     "input": {
+      "seq": 2
+     }
+    },
+    {
+     "id": "toolu_0136w8aiTEsiszWPNN7NvMik",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "events",
+        "at": "before"
+       },
+       "expect": {
+        "exists": true
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS6wUKEAgTGAI4AUIIdGhpbmtpbmcSDAW4645UcRXs2OWzHhoMYwlz/zgHYNNVPoy/IjBCIxcLPBf4FEFY6BbAuNcMeZ2ZZMwh8rIO9XzV89IWq5c9G8A9Oe23k/rllIamIYIqiAUkJlCsHyTY0EAaM/wTsPIpP99SGPtYp2EJGyOvIKz8GFEA9vZaeS6WkRqMJAPeSG9cw/M1B2jFWxn9hnKLmJ1ycbjJt0YmSu1RxKDan4a0l+tqnPjuP0TRkED3AzrE8piKDqY5D6rzdf0bWAjDvgJP8GmBbZ1DfW9vmviOFR5qGMafFg7KC8AlimrJXVoONZ8wGAEtgjFLmD7Mouq/kPlu5zXPqsi2JzKRq5R6odIK0yCmibAH6Lw8mC1cV1/qc1PGjXAr7It8hG65/I8TzZx3jU+e1wqsINWkl8CM94zg3VpYLWPn2wFUv7ln2bk26/GVv4IqbbmNQVyiqvvFEOZOe9F215FiIY0Spu116RBN1dCbM2i4kJYfacUIvkRZHMVPuoIsU8MvqDTlBkLYdXMUE6gjHJgHCNiZeaqr6vgW2oJLeDBeaGNcX40+4V4HhkjaX82TQdQNn1bjtyAZY0eLWq851RJBxaBpiRUGBgXavSTSJtnqr8C1d7qJjf6YGFi0KNBiaDkeKbu6Fr4ancxAqkQXNqoLRh+sIJ3vwtT4rawYS7HTQS3Fn/gbqnR6WzPYTmH7jYRLhVVWSctiGw+Yp4eEazM82UapnI1Uu1L4dbPVAJ8Y/KABBO8oOeWfTC4wE/40sDX4SaW3ytX8FWFKrh1UZvKcJvWGcoBQYmsYASbAg3s4Ulx4Wf24v3lYzhnDTlQN7QYTvuER0Cxt1e/jQYqoRNY1tKI6M0CdgOduAVkn9K2LkM10ebmF/HeDHAK0NFNDYpqWPhl3yaCyU9h7CAomgPPj0sbjDE7Sh9GP8VL/BogFZW8tcQeL38q42DiqlQPZeENWFL3eEzwB8nK8LzUKdXyIvAMYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01XsYy1siMx7ivZh7CE1zTqv",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 2
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_0136w8aiTEsiszWPNN7NvMik",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "events",
+        "at": "before"
+       },
+       "expect": {
+        "exists": true
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 18309,
+    "outputTokens": 173,
+    "cacheReadTokens": 17792,
+    "cacheWriteTokens": 515
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:40222acdfcabac1729c34c2804e41af2f39cb1f3a489622b7642e786e7434017": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Dd8yVbvnvaN4gL6SSH6SZ9",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
         "id": "r1-standup-gone",
         "requirement": "R1",
-        "description": "The backend events list no longer contains an event titled 'Team standup'.",
+        "description": "The backend events list no longer contains the Team standup event (id 1) nor any event titled Team standup.",
         "assert": {
          "kind": "value",
          "source": {
@@ -133,14 +209,29 @@
            "type": "array",
            "not": {
             "contains": {
-             "type": "object",
-             "properties": {
-              "title": {
-               "const": "Team standup"
+             "anyOf": [
+              {
+               "type": "object",
+               "properties": {
+                "id": {
+                 "const": 1
+                }
+               },
+               "required": [
+                "id"
+               ]
+              },
+              {
+               "type": "object",
+               "properties": {
+                "title": {
+                 "const": "Team standup"
+                }
+               },
+               "required": [
+                "title"
+               ]
               }
-             },
-             "required": [
-              "title"
              ]
             }
            }
@@ -149,9 +240,9 @@
         }
        },
        {
-        "id": "r2-others-remain",
+        "id": "r2-others-kept",
         "requirement": "R2",
-        "description": "The backend events list still contains the Dentist (2026-11-06) and Book club (2026-11-10) events.",
+        "description": "The backend still holds the Dentist (id 2) and Book club (id 3) events with all their original fields unchanged.",
         "assert": {
          "kind": "value",
          "source": {
@@ -166,16 +257,40 @@
              "contains": {
               "type": "object",
               "properties": {
+               "id": {
+                "const": 2
+               },
                "title": {
                 "const": "Dentist"
                },
                "date": {
                 "const": "2026-11-06"
+               },
+               "time": {
+                "const": "14:30"
+               },
+               "duration": {
+                "const": 60
+               },
+               "location": {
+                "const": "Main Street 5"
+               },
+               "reminder": {
+                "const": true
+               },
+               "rsvp": {
+                "const": "yes"
                }
               },
               "required": [
+               "id",
                "title",
-               "date"
+               "date",
+               "time",
+               "duration",
+               "location",
+               "reminder",
+               "rsvp"
               ]
              }
             },
@@ -183,16 +298,40 @@
              "contains": {
               "type": "object",
               "properties": {
+               "id": {
+                "const": 3
+               },
                "title": {
                 "const": "Book club"
                },
                "date": {
                 "const": "2026-11-10"
+               },
+               "time": {
+                "const": "19:00"
+               },
+               "duration": {
+                "const": 90
+               },
+               "location": {
+                "const": "Corner Cafe"
+               },
+               "reminder": {
+                "const": false
+               },
+               "rsvp": {
+                "const": null
                }
               },
               "required": [
+               "id",
                "title",
-               "date"
+               "date",
+               "time",
+               "duration",
+               "location",
+               "reminder",
+               "rsvp"
               ]
              }
             }
@@ -209,11 +348,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSygoKEAgTGAI4AUIIdGhpbmtpbmcSDI9ElRzMwzwNOjZ7BBoM1P7eTpbajMYAGc0SIjBgZS+7S5iOYzFt3wMRBpFqvchmydPYyEiM7s8Zhf4KBtNmhqJPIVNJN1IHuDYuELgq5wmCPyY9/kRqA5Sdv3xnq4YnA4VrIh/S3DVY7RXF3jZtbGyNC9QhX05tsN6/Wu0qu7byYdF97aZM7mszpmnzvCefY8L+ZikyM7Ly55DGRM66xSWrGfx7ksIlkN1e90ibb1Qe47h6w0fTSH0JpsTnZ6dSTDnViVd4BrFp73xDdsC47OsbhHVjLJN03agszt6dRN4D+YF0F0beRJz2j+gGgtS7YR9hK/jZ9VW6itz2jzmxTa2MDcr7YoW0nfBy+s9HGBTHZa6jJM8Irk8XYTNZbIUtMcTfTbEw1CqV1GqX2w7+8jgfUShI7dkG0X613Wa7DN6SOGkhDgvV1NMNJZ/aJyunLfFZ93uB7wmMsjZpgHId2qQV27JI94Hedg1L+YYZ3oSoegef1X7oXhASxNx6QePh70otQzuEC+PvZfTjSPpl0ivn/F61R97qLEV8GJBh7EV9vsCXsJ3+3l+9YyfBhEZCvEjDx4+W2Wz1K7m1jE9oktzV1qcE+OXjMhgrqxXPdupU1gEetvyaNjhpA7/ewXFtp10sTGHY3gNv870PJhV938mH8uw8+xsJqj8yeyYGwOWAEUvuTEwFfNuYOTXjdxMjGgvykQ06epxqBPUdoCberteBCGF0sS+/ak8VfTLB3L4udGzE5XaSeNmULJQo3qiCRNwZSfvjkV+DvTDdt2NkoqZ5n2ZzK28a552HhbVb9BcelhGEv3D0qOUjC1tj0tnF3fr+Pnz+pWLpB0WJku/3fhXXHeCeT+Bh/mqgk2p4MYOpXPTmdf2cE4DAa9Wq2BjFJjJ8ag544KrkoUflgLS9fF+M9Kfy552RYBQ59H0Yxmp7o6Gu3kuRMOuzq5wKLW1oyDrQOyKdGr5rIqssnJHhQeZbw32lKYPEWGLuekM2kUksZ1lUGBuVNXUNVNT/AgmvJaa4JGys31uSjJdmOfng1dfoWrKH7rpAqrwPA8F6KOctr3293cRn9QkFQGETHdvplDSZFB0Y4VFptpP1TZVIeAylnqjEDsYHw4JoM5p+ighSPb6v5OoCX56WFpTw1rwn9dsik6yOjhCMZb+WbHeeLuqKwsrUSHE82g/FV1iLwybZJj3SnkKgAKEv9EymD1tjMaybhTdHUj9FVs055KlQKZrzauKBtMqX5G8Kyivvlagtl4EZmd3i9CQmUVU6t/Y6oEbFCdsh8mbUKhCwCA4zqMgGi8SYQgenukRhNtY3ncmGg6yNZ0drN9q3QHuD/0bGlsiPCiUfJ9NwlmafrjeEGxDWIim/gLg4/7AgcBevqQwYbk870KzHSK7U11Am2M9jdNAmHkCqXOs3pUBglNG6iwWZg9OUBFVC6gB4gUUQ3eCXO25digj0kLTesL6iv/MDzSgWzeCLis4ugLbvzQ03SStGsCaZ7MiI3zT0m3/xfRk9U66qEoLynvrq1BVNdtbjvkVwTyNg2oBnc+7ULN6aQGp4Tuv0lq77RbpsoOcxkSqoxsAyojovK2O4LBw81NwsBddC18fIyixYOCiL8/3m96c0m/rhuTkpnbg41rTQ2g1TwHIMrqB7ho9QiOvm4TPH0tYRhwEvRXe+4ZJaPU4Utqkm/H0osnx6AjbxZ//IUw76DuUe2sE7QwPIZhbYdl+N99ANCil2dxE9xhZEqoW4Dcqk/IUJmNUGeQbZ/kD7KN0Ups0iSP5+GAE="
+     "signature": "CAQS/AkKEAgTGAI4AUIIdGhpbmtpbmcSDF/mKLC/g4FNSqJnJhoMGUQbHelrnTBevqA2IjDVuNlt943kQT+v7nUF6hYUeIvC7cEPawAmEzEdZ+yPWY2mqTj/UiKwFj4jPUM3qyYqmQnnPegN2JuPuZ/IT1pjrvbpPAesR/5MLcn75cBchIJD5XAR0GiFR+dnF/MrQYCSEddBS48NfKjGR5Uetv5d3j+RZDf+PqwwWB77dez+2g6LECcngSJp0ELeuGMXIjggSSIX0aTfV9tlKkLcqRNaNcEd3m8ubGdqkLiwM4OwfIEUzruxOLsCH31Wpifrq5DZJ0PBqjKYFssQAYhJcQXy6zjaV9dRXC+C0MlkjLWdqWoA/f357hpLJJw4bNzFlJBaRihBuuU1xUPwPGHIv3MzukPiSaIziLGCaYgHLWIIspibbTkaKHTBNn2DiC8SdIej9V+cVIbbWtSNDSuxZ45lxFTTF1M6hrNR44O5YCekJsEkN0JrViZ/6xCy+9vLwbp/QqunFep1+N4kbAQobQugRdKVaeuAzLzH/K3kf9jEUzBI0wGiTEvXbdQ24hj6xqctzH27J+9fJTF4dnw5pWMpWF+B2qNKNAt/nO8qvCfIfVGCpLL6tvFiRY4YZybkaPi5T6U/gR+mK2x8RncZmGn2QitRZz0Yw7HnqKc5tAgZ+H9HT208Ri9prJE2I5v3TrEnLC+DBtuGKoNx/gZJb2CD1st/NEHDBIYYeWeA2dLtKkgM2RvDMS1MkmVDii2zOcWNMcYqi4N2URu0iY2kQkBWdapczEXVcdxcAW4a8f0hibKvkv3G1MXyHJRJK1vKxEByXoCzMI6+LAl8LVrF3KevaaqYiG5MPtoVb6EuBUZoe1ajOhA6rSR5GScoKCgn3xo6yiLP6FcHIG5/8CZd98lf/JMcIzp9GGbcOeAYD6qsnfoCqGVjAAWOz9LTL4cq5tzIog0Nvh80Ho8252DQWBVYweyHqaxcRZTHLNYh10TDJDe8bzDWzegQmchN7EJg8hAs+D1tELQcPj0iYqfJEoriBUpcdfj9M3H67CnoHDEVWWD9Zu8KiJkYGcJ/LNuL0Eo9Dqk1mZ174wTcdkVeyRtAipK3mZ3n44gos+oZ6irVGX3yAS7mhtPhWYliPuB1uMsUPqvUqdsTadDPtdFuK2K1xpd2vzth69obIjuhlM6Lvw6Lw0xhoCrHQ047eL/IVcRhljTbSMeXXaF1PDVBSO7Q/E7OnB7na7vGxGWAMhUiT1v+4scoSp9/VJzaerRPv5sq3ebRwrGcWaES4YfNiCY93cosgFf9PMo1dZ510BosqTBNn+2k5Y82bjsfTXIHhCogSGRtvEwC/uPt9eD6xDwSaYntJsw8/E3j+Lzxwram0kUKMM6WXKsYV+Zvy6OyyS4sGoMqAOUtKBNUxwvkAVswAV0eLzHIaPuUH2l2tedUhZ9Wnzw5YW4HPxuBwx4HwVfyBEOBv0NYCaoD/ZfJh/EU2yt2DkTS6yP6x7Mnzh8ffs51sOiMWc5sN6cSyLhkv0jiulXN95AAzJlv8VnwKBwtd0fAhCzTT/0d90aAcoi0+FYcLeJ4kvEe3cwewfZTBcASErngBux2oZ0lI5MuT7bMKpumHn7IGmEuofpebbRlLXkz8JhqAj2BL0Jv/VKAANuO2Oe38JODoC4sSMrxq3C0iE2RDgfEv7GlLct6GAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Jt8Vd4uYk6EZdVVteT98Mo",
+     "id": "toolu_01Dd8yVbvnvaN4gL6SSH6SZ9",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -223,7 +362,7 @@
        {
         "id": "r1-standup-gone",
         "requirement": "R1",
-        "description": "The backend events list no longer contains an event titled 'Team standup'.",
+        "description": "The backend events list no longer contains the Team standup event (id 1) nor any event titled Team standup.",
         "assert": {
          "kind": "value",
          "source": {
@@ -235,14 +374,29 @@
            "type": "array",
            "not": {
             "contains": {
-             "type": "object",
-             "properties": {
-              "title": {
-               "const": "Team standup"
+             "anyOf": [
+              {
+               "type": "object",
+               "properties": {
+                "id": {
+                 "const": 1
+                }
+               },
+               "required": [
+                "id"
+               ]
+              },
+              {
+               "type": "object",
+               "properties": {
+                "title": {
+                 "const": "Team standup"
+                }
+               },
+               "required": [
+                "title"
+               ]
               }
-             },
-             "required": [
-              "title"
              ]
             }
            }
@@ -251,9 +405,9 @@
         }
        },
        {
-        "id": "r2-others-remain",
+        "id": "r2-others-kept",
         "requirement": "R2",
-        "description": "The backend events list still contains the Dentist (2026-11-06) and Book club (2026-11-10) events.",
+        "description": "The backend still holds the Dentist (id 2) and Book club (id 3) events with all their original fields unchanged.",
         "assert": {
          "kind": "value",
          "source": {
@@ -268,16 +422,40 @@
              "contains": {
               "type": "object",
               "properties": {
+               "id": {
+                "const": 2
+               },
                "title": {
                 "const": "Dentist"
                },
                "date": {
                 "const": "2026-11-06"
+               },
+               "time": {
+                "const": "14:30"
+               },
+               "duration": {
+                "const": 60
+               },
+               "location": {
+                "const": "Main Street 5"
+               },
+               "reminder": {
+                "const": true
+               },
+               "rsvp": {
+                "const": "yes"
                }
               },
               "required": [
+               "id",
                "title",
-               "date"
+               "date",
+               "time",
+               "duration",
+               "location",
+               "reminder",
+               "rsvp"
               ]
              }
             },
@@ -285,16 +463,40 @@
              "contains": {
               "type": "object",
               "properties": {
+               "id": {
+                "const": 3
+               },
                "title": {
                 "const": "Book club"
                },
                "date": {
                 "const": "2026-11-10"
+               },
+               "time": {
+                "const": "19:00"
+               },
+               "duration": {
+                "const": 90
+               },
+               "location": {
+                "const": "Corner Cafe"
+               },
+               "reminder": {
+                "const": false
+               },
+               "rsvp": {
+                "const": null
                }
               },
               "required": [
+               "id",
                "title",
-               "date"
+               "date",
+               "time",
+               "duration",
+               "location",
+               "reminder",
+               "rsvp"
               ]
              }
             }
@@ -308,10 +510,10 @@
     }
    ],
    "usage": {
-    "inputTokens": 16769,
-    "outputTokens": 681,
-    "cacheReadTokens": 16252,
-    "cacheWriteTokens": 515
+    "inputTokens": 18907,
+    "outputTokens": 860,
+    "cacheReadTokens": 18307,
+    "cacheWriteTokens": 598
    },
    "model": "claude-opus-5-5"
   }

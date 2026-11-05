@@ -1,21 +1,21 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T07:43:33.000Z",
+ "recordedAt": "2026-11-05T11:32:02.817Z",
  "turns": {
   "sha256:634cb3e747b8d36f92560ff5c66b078610448de11c8e7c1de9bd6ca84a273b4b": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01UJSr7PSV4eFRb2UgmYpRuy",
+     "id": "toolu_017ganuX7pkDxnuZxqrTSgy5",
      "name": "submit_rubric",
      "input": {
       "requirements": [
        {
         "id": "R1",
         "kind": "hard",
-        "text": "Issue #3 is open again (reopened).",
+        "text": "Issue #3 is in the open state again.",
         "field": "outcomes",
         "quote": "issue #3 is open again"
        }
@@ -26,7 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01UJSr7PSV4eFRb2UgmYpRuy",
+     "id": "toolu_017ganuX7pkDxnuZxqrTSgy5",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -36,7 +36,7 @@
        {
         "id": "R1",
         "kind": "hard",
-        "text": "Issue #3 is open again (reopened).",
+        "text": "Issue #3 is in the open state again.",
         "field": "outcomes",
         "quote": "issue #3 is open again"
        }
@@ -46,23 +46,23 @@
    ],
    "usage": {
     "inputTokens": 1095,
-    "outputTokens": 108,
+    "outputTokens": 107,
     "cacheReadTokens": 0,
     "cacheWriteTokens": 1091
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:a557dff8aa774eba881cd48a561b2f6f110a1d87ba929d27b0a8a6d5b225b300": {
+  "sha256:d63f4367ed68f5752ea987143a8cc44f1f4badb975dfeac675befad0b91f4050": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01W8Zq1uogrEbxeE6JC9eMQG",
+     "id": "toolu_013GexJ5cNEYJf6gvdRAsaxG",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01VGvLgd8FyUUTGGoZ9gjkXF",
+     "id": "toolu_01CSMgCs6iKAfRhwBHEtqFYi",
      "name": "network_log",
      "input": {}
     }
@@ -70,7 +70,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01W8Zq1uogrEbxeE6JC9eMQG",
+     "id": "toolu_013GexJ5cNEYJf6gvdRAsaxG",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -79,7 +79,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01VGvLgd8FyUUTGGoZ9gjkXF",
+     "id": "toolu_01CSMgCs6iKAfRhwBHEtqFYi",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -88,22 +88,55 @@
     }
    ],
    "usage": {
-    "inputTokens": 16233,
+    "inputTokens": 17770,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16229
+    "cacheWriteTokens": 17766
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:17f2fbfcc7da97f08f5eb9b9045c2ac26af54e1bc8fb7d7fc65fda0329c02e1d": {
+  "sha256:efccdfd3ff2ded382d58ee412bbc60aab0434bc61bebc58e42a004043574658f": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_0186giasvoiTDynpsztES6JW",
-     "name": "network_entry",
+     "id": "toolu_01G938K83pHgUrGZEhvYVNjm",
+     "name": "submit_checks",
      "input": {
-      "seq": 1
+      "checks": [
+       {
+        "id": "issue3-open-probe",
+        "requirement": "R1",
+        "description": "The backend stores issue #3 with status \"open\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "const": 3
+             },
+             "status": {
+              "const": "open"
+             }
+            },
+            "required": [
+             "id",
+             "status"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
      }
     }
    ],
@@ -111,214 +144,58 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSqAcKEAgTGAI4AUIIdGhpbmtpbmcSDFC5h719tFi+zkfqLBoMOh6rpwmGEYCK97XlIjCdBTDh8aiNM8k0PqgOISeBpDRh0mUhWGMMAw5uGDOCy1H4ZsbllPpIPpRQJqXXfEkqxQZYZ+pm21CIJWOV1L3kAw8Ih6JfxuUyGNG8sGntMlUtqLqbcPUr6OkPZ6cAc4j9ob4EcOz/WiIIc7xSHHWGP0jdQG9XdtqbP18KIGEnMoBaOaYaaZ5UcJTc2dIj1lTqrLdZBzJvS47BOqxGiq0hqs142fqcPsXVqvUfoaHa3ucyz+893brXJwU0CDE7zZlusgVofKOy6a4hhnPsv4lT+McTYozgT2boXFbMvsVX+OQTImYv+wYe9Z5wlQT4z+6hMXxDGAtVy7FOYXKnfjjI9Cd0pGABs/sURpUzLLuOsIvKPiELkYVjl2bHi7WvjKJZcAA+6clGWkas35FZwFReQrGDnm84GVPVNH+m/0k7FrTXbz6G2QzoTzBL2i3UuEbNBR5kGr+fUF1Ujm94gDNKeunbmyLugUWA5ZLr+SvhqNjFFpkqzdzNtbrWyxkt/e5czTRz1+IYETRXsnoNIHYFYInQRUb6RCq/cux+rYu92Kb+aRwFdfb4dY9uXfGu54e9DhmFKDm8Uo9AtvGEr8mH/A1xwpRW+iBDDQ+mWkpqkk/hGf/b/c1yAX2hIHejOvX5RUleQS9UxiYJlW9I2DiiVLdF+GRtCXXVDpe3xsv9QF4GiQdMYAQ42FhCB2W27akC+qG/a3yQjD+cR9KEMVOGidJgQGO6ipjZKGaStutxQQyuYNm0d2Oor7M0RR8UOHiH0NKqvHQ1vOWI3M2+OTIjSNkEqnKeQEq0KxGKvegG9ePbRm1fhGjo63PmhLUecXaKxtZhGOvs6wcO/uLaGEhUecCPG7QSWJkZXgRbjZ4AwKD4waiToH1UIFVEH3cvYxRurj+1vZxeCA1fhnE72uiVJ4PywjHGMjzPYZ0VKQpYBLIOS03Hr9YIMFne9IRMG1+II28C/tK4yzAjBgXS10K0Sbu9cQVYKJLE+/gp7BD3dGIsLfesFS0rbwtz4fp6xpCMHWeMoSsdX5Uao3uSkCWAoJ2ZHp5rXxeplwIyAbIbaFd66YivfOlPI8FHzRUEXzcrOZAlw84l1KF2rWia0r7KojYFyiKeXEL5wLuwTc8GgonROBai4777M7Jrc+V4sEb4KCPFAUdbuDQa8HQAmiHXHsTmEi4sud4YAQ=="
+     "signature": "CAQSiwYKEAgTGAI4AUIIdGhpbmtpbmcSDMRYwPh4QzbxdWra6RoMahilHbT2U05QHzp6IjBBG6afPdHDxXyP5b2eY9ZSiF1y8XEMVy26DlJMvlzlRREFhzIEJqee2+DK4lR8sfEqqAV1B7/PoLRz6NUS3AFb3U0K7HUwN34TjawYUkETKf8tURfUs83KdMMQBPjYlWPVN+iRPP738r9vOM5gtDdJnEQMS+MpQdewUxAJXAGkCKaaUVMQUUZHFrWe5tIfL6t4gL174mUNjj7ITfO1rcHGQPruT6UDzd8t3KKlhlsBKEAmcuXNl5i172LEhQEBqDL0/DWgiFgDXX2EDPoHT0YG6e7/uah94ejG1S4waBOBFj9IGmkry3n+i8VnZBe8obElo3trr2Ks/zOxNEiIFY9+5VDvzFoyPjoXfjGuMUCMf9VsdULAocxFQWtvuSqhDpBag9dY5eFHmOE2Go/vvboh1I4kgMq91PDtr7wufp+0H/Q7kWT6sCQ/GYQHBRA7jqEPSDYabzcj1+cNhyL/XB7jpd+wPaipcMgrdWhTqfiLctjxq+iMTtQXIUj1AugnGzu6UJXSh0SvD38OEGikNQ88A7k28MDj1onrzUgDxLQLE0eBMXvvrzv0fY7RTeT9URiS0ovSe1AVdWgucALPx/0sJ/ABaN4hZxaICkAl8lJNgek3kWWCZCooZb2aLSaQFd2f+waKKqn7z8chqir60GVpj6wOnkU0/p9vkJMG4TY5HadSRAIXo5UetEle1gTyCgo6vJ/Fk3dr6clZ6ph7ZHzLoQDGpvKMFw0wOIBxU0PfctSHrM6z2hXykd/Vj3bdqLNiGJO0ZeBd5qZzE8XFeWLxG+5siQVUfqabBuSmQw/Mpur1/Uh21erXbt1QUtLSHG7JYKsxbQQ2j460rz+xuKjYMZK2t/4lRKnXxLXrbxSxKW1y0qRcaF2qb9+zptfjykrRH4EtCveS6l86UojHeFyFCqxGlhZo/nGHGYMaytQ++5qPPhxhQwf71mOCpfM8cDag98w+KISTVX7bAxgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_0186giasvoiTDynpsztES6JW",
-     "name": "network_entry",
+     "id": "toolu_01G938K83pHgUrGZEhvYVNjm",
+     "name": "submit_checks",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "seq": 1
+      "checks": [
+       {
+        "id": "issue3-open-probe",
+        "requirement": "R1",
+        "description": "The backend stores issue #3 with status \"open\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "const": 3
+             },
+             "status": {
+              "const": "open"
+             }
+            },
+            "required": [
+             "id",
+             "status"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 16698,
-    "outputTokens": 143,
-    "cacheReadTokens": 16229,
+    "inputTokens": 18235,
+    "outputTokens": 236,
+    "cacheReadTokens": 17766,
     "cacheWriteTokens": 467
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:d52b48aec44facbb02306ecb1c8aa6607f873209f7e3fef9082deafec38b2b1c": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_014fnvJganXghyndNfve4SsA",
-     "name": "try_assertion",
-     "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "issues"
-       },
-       "expect": {
-        "schema": {
-         "type": "array",
-         "contains": {
-          "type": "object",
-          "properties": {
-           "id": {
-            "const": 3
-           },
-           "status": {
-            "const": "open"
-           }
-          },
-          "required": [
-           "id",
-           "status"
-          ]
-         }
-        }
-       }
-      }
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "thinking",
-     "thinking": "",
-     "signature": "CAQSqQgKEAgTGAI4AUIIdGhpbmtpbmcSDCnGl2NV93BaUpVQRBoMDuWz05IHTarUFOQfIjCw01zzYSPLUvHnxyvhGLS2/uy49v7UXLRMCRkNWCp4RIeqXBHdXFap7wJ7iHa1xEIqxgen9qTNG+dPFcctJVfEL11HnnU0h6TlN7fhGN6YszkeTL6sfyUewHJNy8fbb7bGGQTJ03HDbzvC1naqgQSaZJPxYdMVq0hMH76EfYldOUDDsIZr6WCJkXAT1lECOLiAa2exNwWD/kuIyrk744O04pC0qFO4cUhNTPrnpsrDYayNP/UO/yMOLJwYmCBQ3+/PU2b+H/g8s/jMY3q9dDBrphRsniOxyumOGVLSRQwVJEOfMzTOyhJKMtvVJ/Ue48p+/FVO3fA1eLXOjuP9bKGfaB3ygIlXqySumjDSBRl/WmUK5s75Jw5FK5FcG/okja+EKB6sYx4GwNe7S9iXjP6dTH1mCwiX7Q1lMn1It0M8L9BNqkGGlYoKBB0UopeV0PlsSUhL1eximvERrd/FjeN3Q7WvmDk/OHWpUySEP9inAjYxOJoNIyU8ggjLZGiw8X37VLOKHDfMRUzKM1wbMK2FzaHAyad1OObbh9wpYD24ry25OCFUlWzqdNMlBSa6cmz0pE+Iy69QRkOUL09Xvl5vO67XCJPZWwv3bjBonI+OvLVKJ/mAc/skK+GyIP62/99VsEXM9Ux8kPpM7mQiuEd6b8LMl0GKeWnUOo/h8XZVJTr7yIrW/lokvOsSjEXuA21LJD9LG5jV1TGb2lrG/zHQj4kEGwgHoIMCNxvKWl8uaS4y1uSpCXi3L1TMgmjDXJH3Ajgiq3POEsCs8pkMk3jFrThX0PCaqmDVc5S8uSad7dOBlmsfOtHp7DXh1QeSjj4RRVIv8dX59NvZFFr92fp7qMAMQe4nPDe3z9CK0/fDOWq9YWIzYUYv3BmYDKBeiMJ0t6R1irEb13qVUiqkwjkE8aDI+OIcsefjYpXRSqvWe5tuxRqas2UY1m7BhbDiianmYAPA0iyvO0Fy/qdg0hn3JJnl2zH6Ed3a6RXTa+hdCubjkRDoush53qwiVVn89WASKHyQjoAg+sF6F5XV/VS9HIjs3c1q5zK3u7EJ+7bSfC2yGZSonqUgYnrh0C8BXY8Rie4TOdQuWWbqCdrKxWaL7tWo+jjkjASCXj5IEnaNTtALAIPntJ4GZQpByncgAaZuu3OLUm7iIP96yRU3dExE3/xj7RH5necFwdjffBj6lIzHoMyCeWJ7VqVbmz3DiX+P47ig1qmXV+A3m4sdS4fkFM/PIUepHu65N64d1SWtU2FD99iZeSf9rQbK0qOBwQHFHXYUmLjcgGQj3GFbsmVMjmOL35U5dT/cPABOAwZ8fTNkjSDdMqzNgeEDxevZ03fUca8kxgLO40gYAQ=="
-    },
-    {
-     "type": "tool_use",
-     "id": "toolu_014fnvJganXghyndNfve4SsA",
-     "name": "try_assertion",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "issues"
-       },
-       "expect": {
-        "schema": {
-         "type": "array",
-         "contains": {
-          "type": "object",
-          "properties": {
-           "id": {
-            "const": 3
-           },
-           "status": {
-            "const": "open"
-           }
-          },
-          "required": [
-           "id",
-           "status"
-          ]
-         }
-        }
-       }
-      }
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 16939,
-    "outputTokens": 258,
-    "cacheReadTokens": 16696,
-    "cacheWriteTokens": 241
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:0d346bcffd8ca02ad0657d2091c8e6e92164395c0b9f87f4626afa66ef47a619": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_01SJXKf9F2Ha3YTKtDKdc2Eo",
-     "name": "submit_checks",
-     "input": {
-      "checks": [
-       {
-        "id": "issue3-open",
-        "requirement": "R1",
-        "description": "The backend issues probe shows issue #3 with status \"open\".",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "issues"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "properties": {
-             "id": {
-              "const": 3
-             },
-             "status": {
-              "const": "open"
-             }
-            },
-            "required": [
-             "id",
-             "status"
-            ]
-           }
-          }
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_01SJXKf9F2Ha3YTKtDKdc2Eo",
-     "name": "submit_checks",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "checks": [
-       {
-        "id": "issue3-open",
-        "requirement": "R1",
-        "description": "The backend issues probe shows issue #3 with status \"open\".",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "issues"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "properties": {
-             "id": {
-              "const": 3
-             },
-             "status": {
-              "const": "open"
-             }
-            },
-            "required": [
-             "id",
-             "status"
-            ]
-           }
-          }
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 17276,
-    "outputTokens": 202,
-    "cacheReadTokens": 16937,
-    "cacheWriteTokens": 337
    },
    "model": "claude-opus-5-5"
   }

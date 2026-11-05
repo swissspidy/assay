@@ -59,12 +59,13 @@ const target = (t: Target) =>
 const loc = (l: Locator) => describeLocator(l);
 const tm = (m: TextMatch) => describeTextMatch(m);
 
-function source(s: ValueSource): string {
+/** `inRecord`: inside an `each`, where an unscoped text source reads the record's text. */
+function source(s: ValueSource, inRecord = false): string {
   switch (s.from) {
     case 'node':
       return `the ${s.field} of ${target(s.target)}`;
     case 'text':
-      return `page text matching /${s.pattern}/${s.scope ? ` inside ${target(s.scope)}` : ''} (free text, spoofable)`;
+      return `${inRecord && !s.scope ? 'the record' : 'page'} text matching /${s.pattern}/${s.scope ? ` inside ${target(s.scope)}` : ''} (free text, spoofable)`;
     case 'url':
       return `the page URL's ${typeof s.part === 'object' ? `query parameter ${s.part.param}` : s.part}`;
     case 'request':
@@ -82,8 +83,12 @@ const normalized = (steps: Normalizer[] | undefined) =>
     ? `, normalized by ${steps.map((n) => (typeof n === 'string' ? n : JSON.stringify(n))).join(' → ')}`
     : '';
 
-/** A mechanical plain-language rendering of what an assertion actually tests. */
-export function describeAssertion(a: Assertion): string {
+/**
+ * A mechanical plain-language rendering of what an assertion actually tests. `inRecord`:
+ * inside an `each`, where an unscoped contains or text source reads the record.
+ */
+export function describeAssertion(a: Assertion, inRecord = false): string {
+  const where = (scope: Target | undefined) => (scope ? target(scope) : inRecord ? 'the record' : 'the page');
   switch (a.kind) {
     case 'state': {
       const parts = Object.entries(a.expect).map(([k, v]) =>
@@ -94,19 +99,23 @@ export function describeAssertion(a: Assertion): string {
       return `${target(a.target)} has ${parts.join(', ')}`;
     }
     case 'contains':
-      return `${a.scope ? target(a.scope) : 'the page'} contains ${describeNumberCompare(a.count ?? { gte: 1 })} ${loc(a.match)}${a.witness ? ` (witness: ${loc(a.witness)} must exist)` : ''}`;
+      return `${where(a.scope)} contains ${describeNumberCompare(a.count ?? { gte: 1 })} ${loc(a.match)}${a.witness ? ` (witness: ${loc(a.witness)} must exist)` : ''}`;
     case 'value':
       return 'sameAs' in a.expect
-        ? `${source(a.source)}${normalized(a.normalize)}, equals ${source(a.expect.sameAs.source)}${normalized(a.expect.sameAs.normalize)}`
-        : `${source(a.source)}${normalized(a.normalize)}, ${JSON.stringify(a.expect)}`;
+        ? `${source(a.source, inRecord)}${normalized(a.normalize)}, equals ${source(a.expect.sameAs.source, inRecord)}${normalized(a.expect.sameAs.normalize)}`
+        : `${source(a.source, inRecord)}${normalized(a.normalize)}, ${JSON.stringify(a.expect)}`;
     case 'url':
       return `the page URL matches ${describeUrlMatch(a.match)}`;
     case 'request':
       return `${describeNumberCompare(a.count ?? { gte: 1 })} request(s) match ${describeRequestMatch(a.match)}`;
+    case 'each': {
+      const record = a.match.role === 'term' ? `${loc(a.match)} (with its definitions)` : loc(a.match);
+      return `in ${where(a.scope)}, ${describeNumberCompare(a.count ?? { gte: 1 })} ${record}${a.witness ? ` (witness: ${loc(a.witness)} must exist once)` : ''}, and inside each: ${describeAssertion(a.assert, true)}`;
+    }
     case 'allOf':
-      return `all of: ${a.of.map(describeAssertion).join('; ')}`;
+      return `all of: ${a.of.map((b) => describeAssertion(b, inRecord)).join('; ')}`;
     case 'anyOf':
-      return `any of: ${a.of.map(describeAssertion).join('; ')}`;
+      return `any of: ${a.of.map((b) => describeAssertion(b, inRecord)).join('; ')}`;
   }
 }
 

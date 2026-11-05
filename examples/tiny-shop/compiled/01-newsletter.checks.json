@@ -30,7 +30,7 @@
     {
       "id": "r1-probe-newsletter",
       "requirement": "R1",
-      "description": "The backend settings probe reports newsletter set to true.",
+      "description": "The backend settings probe stores newsletter = true.",
       "assert": {
         "kind": "value",
         "source": {
@@ -40,6 +40,39 @@
         },
         "expect": {
           "equals": true
+        }
+      }
+    },
+    {
+      "id": "r1-put-request",
+      "requirement": "R1",
+      "description": "A successful PUT/PATCH/POST to /api/settings sent newsletter = true.",
+      "assert": {
+        "kind": "request",
+        "match": {
+          "method": [
+            "PUT",
+            "PATCH",
+            "POST"
+          ],
+          "url": {
+            "path": "/api/settings"
+          },
+          "status": {
+            "gte": 200,
+            "lt": 300
+          },
+          "requestBody": {
+            "type": "object",
+            "properties": {
+              "newsletter": {
+                "const": true
+              }
+            },
+            "required": [
+              "newsletter"
+            ]
+          }
         }
       }
     },
@@ -57,7 +90,7 @@
                 "contains": "newsletter",
                 "ignoreCase": true
               },
-              "landmark": {
+              "within": {
                 "role": "form",
                 "name": "Preferences"
               }
@@ -68,7 +101,7 @@
                 "contains": "newsletter",
                 "ignoreCase": true
               },
-              "within": {
+              "landmark": {
                 "role": "form",
                 "name": "Preferences"
               }
@@ -87,6 +120,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T07:43:00.578Z"
+    "at": "2026-11-05T11:28:48.140Z"
   }
 }

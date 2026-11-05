@@ -14,6 +14,8 @@ import type {
   Check,
   CheckSet,
   EvidenceSnapshot,
+  Json,
+  Normalizer,
   Requirement,
   Channel,
   Trust,
@@ -21,9 +23,9 @@ import type {
 } from '../types.ts';
 import { CHECKS_SCHEMA, CHANNEL_TRUST } from '../types.ts';
 import { checkSetSchema } from '../dsl/schema.ts';
-import { looseMatches, validateCheckSet } from '../dsl/validate.ts';
-import { evaluate, evaluateAssertion } from '../runtime/evaluate.ts';
-import { AXIndex } from '../runtime/axindex.ts';
+import { looseMatches, pickOnSameShape, sameCollection, usesPick, validateCheckSet } from '../dsl/validate.ts';
+import { evaluate, evaluateAssertion, readValue, type EvalCtx } from '../runtime/evaluate.ts';
+import { AXIndex, resolveTarget } from '../runtime/axindex.ts';
 import { canonical } from '../text.ts';
 import { ASSAY_VERSION } from '../version.ts';
 import { runAgent, type AgentTool, type AgentRun } from '../model/agent.ts';
@@ -382,6 +384,8 @@ function sourceChannels(a: Assertion): Channel[] {
       return ['network'];
     case 'value':
       return [...new Set([a.source, ...('sameAs' in a.expect ? [a.expect.sameAs.source] : [])].map(sourceChannel))];
+    case 'each':
+      return [...new Set(['a11y' as const, ...sourceChannels(a.assert)])];
     case 'allOf':
     case 'anyOf':
       return [...new Set(a.of.flatMap(sourceChannels))];
@@ -399,6 +403,9 @@ export function assertionTrust(a: Assertion): number {
       return Math.min(...a.of.map(assertionTrust));
     case 'allOf':
       return Math.max(...a.of.map(assertionTrust));
+    case 'each':
+      // Records are found in the accessibility tree; what is read inside them can be weaker.
+      return Math.min(TRUST_RANK.semantic, assertionTrust(a.assert));
     default:
       // A sameAs binding passes when one side is made to show what the other holds, so
       // faking the weaker side alone is enough: it counts as its weaker source.
@@ -435,18 +442,37 @@ interface Verification {
  * abstaining on a valid variant is an error (over-constrained or fragile); weak
  * checks and missed mutants are warnings.
  */
+/** The contexts of every record an `each` finds, in each of `ctxs`. */
+function recordContexts(ctxs: EvalCtx[], a: Extract<Assertion, { kind: 'each' }>): EvalCtx[] {
+  return ctxs.flatMap((ctx) => {
+    let scope = ctx.record ?? ctx.index.root;
+    if (a.scope) {
+      const r = resolveTarget(ctx.index, a.scope, scope);
+      if (!r.ok) return [];
+      scope = r.node;
+    }
+    return ctx.index.records(a.match, scope).map((record) => ({ ...ctx, record }));
+  });
+}
+
 /**
  * anyOf branches that abstain on every correct reference. Such a branch was never
  * seen to read its evidence, and on an incorrect run it turns the check's fail
  * into an abstain (fail OR abstain is abstain), so it is refused.
  */
 export function unreadableBranches(cs: CheckSet, refs: Reference[]): string[] {
-  const ctxs = refs
+  const top: EvalCtx[] = refs
     .filter((r) => r.kind === 'success')
     .map((r) => ({ snapshot: r.snapshot, index: new AXIndex(r.snapshot.a11y) }));
-  if (!ctxs.length) return [];
+  if (!top.length) return [];
   const errors: string[] = [];
-  const walk = (check: string, a: Assertion, path: string) => {
+  const walk = (check: string, a: Assertion, path: string, ctxs: EvalCtx[]) => {
+    if (a.kind === 'each') {
+      // Inside an each, a branch is read in every record of every correct run.
+      const inner = recordContexts(ctxs, a);
+      if (inner.length) walk(check, a.assert, `${path}.assert`, inner);
+      return;
+    }
     if (a.kind !== 'anyOf' && a.kind !== 'allOf') return;
     a.of.forEach((b, i) => {
       const at = `${path}.of[${i}]`;
@@ -460,11 +486,81 @@ export function unreadableBranches(cs: CheckSet, refs: Reference[]): string[] {
           return;
         }
       }
-      walk(check, b, at);
+      walk(check, b, at, ctxs);
     });
   };
-  for (const c of cs.checks) walk(c.id, c.assert, 'assert');
+  for (const c of cs.checks) walk(c.id, c.assert, 'assert', top);
   return errors;
+}
+
+/** Steps with every items `pick` removed: whole items, filtered and sorted. */
+const withoutPick = (steps: Normalizer[] | undefined): Normalizer[] =>
+  (steps ?? []).map((s) => {
+    if (typeof s !== 'object' || s.op !== 'items') return s;
+    const { pick: _, ...rest } = s;
+    return rest;
+  });
+
+/** The field names of a collection's items, or undefined unless it is a non-empty array of objects. */
+function shapesOf(v: Json | undefined): string[] | undefined {
+  if (!Array.isArray(v) || !v.length) return undefined;
+  const out: string[] = [];
+  for (const item of v) {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) return undefined;
+    out.push(JSON.stringify(Object.keys(item).toSorted()));
+  }
+  return out;
+}
+
+/**
+ * sameAs comparisons through items `pick` whose two collections, in every correct
+ * reference where both can be read, hold items with exactly the same fields (also inside
+ * the records of an `each`). pick drops fields, so it is for collections of different
+ * shapes; on one shape, whole items compare every field. One collection before and after
+ * is caught statically when both sides name it the same way, and here when one side
+ * leaves a storage origin to the page.
+ */
+export function pickOnSameShapes(cs: CheckSet, refs: Reference[]): string[] {
+  const top: EvalCtx[] = refs
+    .filter((r) => r.kind === 'success')
+    .map((r) => ({ snapshot: r.snapshot, index: new AXIndex(r.snapshot.a11y) }));
+  const errors: string[] = [];
+  const walk = (a: Assertion, at: string, ctxs: EvalCtx[]): void => {
+    if (a.kind === 'allOf' || a.kind === 'anyOf') return a.of.forEach((b, i) => walk(b, `${at}.${a.kind}[${i}]`, ctxs));
+    // Inside an each, both sides are read in every record (record text parsed as JSON).
+    if (a.kind === 'each') return walk(a.assert, `${at}.assert`, recordContexts(ctxs, a));
+    if (a.kind !== 'value' || !('sameAs' in a.expect)) return;
+    const other = a.expect.sameAs;
+    if (!usesPick(a.normalize) && !usesPick(other.normalize)) return;
+    // The validator already reports one collection named the same way on both sides.
+    if (sameCollection(a.source, other.source)) return;
+    // A storage key without an origin is the page's: the same key named both ways is one collection.
+    if (ctxs.some((ctx) => sameCollection(withOrigin(a.source, ctx), withOrigin(other.source, ctx)))) {
+      errors.push(pickOnSameShape(at, 'one collection before and after the task'));
+      return;
+    }
+    let seen = 0;
+    for (const ctx of ctxs) {
+      const x = shapesOf(readValue(ctx, a.source, withoutPick(a.normalize)));
+      const y = shapesOf(readValue(ctx, other.source, withoutPick(other.normalize)));
+      if (!x || !y) continue;
+      if (new Set([...x, ...y]).size !== 1) return;
+      seen++;
+    }
+    if (seen) errors.push(pickOnSameShape(at, 'two collections'));
+  };
+  for (const c of cs.checks) walk(c.assert, `check ${c.id}`, top);
+  return errors;
+}
+
+/** A storage source with its origin resolved as the runtime resolves it (the page's when omitted). */
+function withOrigin(src: ValueSource, ctx: EvalCtx): ValueSource {
+  if (src.from !== 'storage' || src.area === 'cookie') return src;
+  try {
+    return { ...src, origin: new URL(src.origin ?? ctx.snapshot.page.url).origin };
+  } catch {
+    return src;
+  }
 }
 
 export function verifyCandidate(cs: CheckSet, refs: Reference[], stress = true, skipVariants?: string[]): Verification {
@@ -499,7 +595,7 @@ export function verifyCandidate(cs: CheckSet, refs: Reference[], stress = true, 
       warnings.push(`On incorrect run "${ref.name}" the verdict is abstain rather than fail.`);
     }
   }
-  errors.push(...unreadableBranches(cs, refs));
+  errors.push(...unreadableBranches(cs, refs), ...pickOnSameShapes(cs, refs));
   for (const cov of coverage(cs)) {
     if (cov.trust === 'freetext')
       warnings.push(`Requirement ${cov.requirement} is covered only by free page text, which a page can spoof.`);

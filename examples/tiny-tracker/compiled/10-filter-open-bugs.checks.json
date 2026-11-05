@@ -13,7 +13,7 @@
       "text": "The issue list shows only open issues.",
       "source": {
         "field": "outcomes",
-        "quote": "Then the list shows only open issues"
+        "quote": "the list shows only open issues"
       }
     },
     {
@@ -22,7 +22,7 @@
       "text": "The issue list shows only issues labelled bug.",
       "source": {
         "field": "outcomes",
-        "quote": "Then the list shows only issues labelled bug"
+        "quote": "the list shows only issues labelled bug"
       }
     }
   ],
@@ -30,7 +30,7 @@
     {
       "id": "R1-open-filter",
       "requirement": "R1",
-      "description": "The issue list URL has status=open and the Issues table shows no Closed issue.",
+      "description": "The issue list URL has the status filter set to open and the Status filter shows Open selected.",
       "assert": {
         "kind": "allOf",
         "of": [
@@ -47,27 +47,21 @@
             }
           },
           {
-            "kind": "contains",
-            "scope": {
-              "role": "table",
-              "name": "Issues",
-              "landmark": {
-                "role": "main"
+            "kind": "state",
+            "target": {
+              "role": "option",
+              "name": "Open",
+              "within": {
+                "role": "combobox",
+                "name": "Status",
+                "within": {
+                  "role": "search",
+                  "name": "Filter issues"
+                }
               }
             },
-            "witness": {
-              "role": "columnheader",
-              "name": "Status"
-            },
-            "match": {
-              "role": "cell",
-              "name": {
-                "equals": "Closed",
-                "ignoreCase": true
-              }
-            },
-            "count": {
-              "eq": 0
+            "expect": {
+              "selected": true
             }
           }
         ]
@@ -76,7 +70,7 @@
     {
       "id": "R2-bug-filter",
       "requirement": "R2",
-      "description": "The issue list URL has label=bug and the Issues table shows none of the non-bug issues (Add dark mode, Typo in docs).",
+      "description": "The issue list URL has the label filter set to bug and the Label filter shows bug selected.",
       "assert": {
         "kind": "allOf",
         "of": [
@@ -93,26 +87,21 @@
             }
           },
           {
-            "kind": "contains",
-            "scope": {
-              "role": "table",
-              "name": "Issues",
-              "landmark": {
-                "role": "main"
+            "kind": "state",
+            "target": {
+              "role": "option",
+              "name": "bug",
+              "within": {
+                "role": "combobox",
+                "name": "Label",
+                "within": {
+                  "role": "search",
+                  "name": "Filter issues"
+                }
               }
             },
-            "witness": {
-              "role": "columnheader",
-              "name": "Labels"
-            },
-            "match": {
-              "role": "row",
-              "name": {
-                "regex": "Add dark mode|Typo in docs"
-              }
-            },
-            "count": {
-              "eq": 0
+            "expect": {
+              "selected": true
             }
           }
         ]
@@ -125,6 +114,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T07:44:38.292Z"
+    "at": "2026-11-05T11:32:59.162Z"
   }
 }

@@ -28,7 +28,7 @@
   ],
   "checks": [
     {
-      "id": "R1-event-stored",
+      "id": "R1-probe-event",
       "requirement": "R1",
       "description": "The backend events list contains an event titled \"Lunch with Sam\" on 2026-11-05 at 12:30.",
       "assert": {
@@ -55,8 +55,7 @@
                   "const": "2026-11-05"
                 },
                 "time": {
-                  "type": "string",
-                  "pattern": "^12:30(:00)?$"
+                  "const": "12:30"
                 }
               }
             }
@@ -65,9 +64,9 @@
       }
     },
     {
-      "id": "R2-event-page-date",
+      "id": "R2-event-page",
       "requirement": "R2",
-      "description": "The current page is the event page for \"Lunch with Sam\" and its details show the date November 5, 2026.",
+      "description": "The current page is an event page (/events/<id>) whose level-1 heading is \"Lunch with Sam\".",
       "assert": {
         "kind": "allOf",
         "of": [
@@ -80,32 +79,71 @@
           {
             "kind": "state",
             "target": {
-              "role": "heading",
-              "level": 1,
-              "within": {
-                "role": "main"
-              }
+              "anchors": [
+                {
+                  "role": "heading",
+                  "level": 1,
+                  "within": {
+                    "role": "main"
+                  }
+                },
+                {
+                  "role": "heading",
+                  "name": "Lunch with Sam",
+                  "level": 1
+                }
+              ]
             },
             "expect": {
               "name": {
                 "equals": "Lunch with Sam"
               }
             }
-          },
-          {
-            "kind": "contains",
-            "scope": {
-              "role": "main"
-            },
-            "match": {
-              "role": "definition",
-              "text": {
-                "regex": "(Nov(ember)?\\.? 0?5(th)?,? 2026|0?5\\.? Nov(ember)?\\.?,? 2026|2026-11-05|11/0?5/2026|0?5/11/2026)",
-                "flags": "i"
-              }
-            }
           }
         ]
+      }
+    },
+    {
+      "id": "R2-when-date",
+      "requirement": "R2",
+      "description": "The \"When\" field on the event page shows a date on November 5, 2026.",
+      "assert": {
+        "kind": "each",
+        "scope": {
+          "role": "main"
+        },
+        "witness": {
+          "role": "term",
+          "text": "When"
+        },
+        "match": {
+          "role": "term",
+          "text": "When"
+        },
+        "count": {
+          "eq": 1
+        },
+        "assert": {
+          "kind": "value",
+          "source": {
+            "from": "node",
+            "target": {
+              "role": "definition"
+            },
+            "field": "text"
+          },
+          "normalize": [
+            {
+              "op": "datetime",
+              "locale": "en-US",
+              "timezone": "UTC"
+            }
+          ],
+          "expect": {
+            "gte": "2026-11-05T00:00:00Z",
+            "lt": "2026-11-06T00:00:00Z"
+          }
+        }
       }
     }
   ],
@@ -115,6 +153,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T07:43:01.844Z"
+    "at": "2026-11-05T11:33:31.569Z"
   }
 }

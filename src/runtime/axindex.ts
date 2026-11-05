@@ -3,6 +3,9 @@ import { LANDMARK_ROLES } from '../types.ts';
 import { canonical, describeTextMatch, matchText } from '../text.ts';
 
 const LANDMARKS = new Set<string>(LANDMARK_ROLES);
+/** Roles that take a column position in a row. */
+const CELLS = new Set(['cell', 'gridcell', 'rowheader', 'columnheader']);
+const TABLES = new Set(['table', 'grid', 'treegrid']);
 
 export interface INode {
   id: number;
@@ -16,6 +19,7 @@ export class AXIndex {
   readonly root: INode;
   readonly all: INode[] = [];
   private readonly textCache = new Map<INode, string>();
+  private readonly headerCache = new Map<INode, INode[]>();
 
   constructor(tree: AXNode) {
     const build = (node: AXNode, parent: INode | null): INode => {
@@ -77,6 +81,7 @@ export class AXIndex {
       }
       if (!found) return false;
     }
+    if (loc.column !== undefined && !matchText(loc.column, this.columnHeader(n)?.node.name)) return false;
     if (loc.within) {
       let found = false;
       for (let a = n.parent; a; a = a.parent) {
@@ -90,8 +95,60 @@ export class AXIndex {
     return true;
   }
 
+  /**
+   * The header of a cell's column: the columnheader at the cell's position among its row's
+   * cells, in the first row of the enclosing table (grid, treegrid) that has column headers.
+   * Positions are counted, since the accessibility tree has no column indices; a cell
+   * spanning several columns shifts the cells after it.
+   */
+  columnHeader(n: INode): INode | undefined {
+    const row = n.parent;
+    if (!CELLS.has(n.node.role) || row?.node.role !== 'row') return undefined;
+    let table: INode | null = row.parent;
+    while (table && !TABLES.has(table.node.role)) table = table.parent;
+    if (!table) return undefined;
+    let headers = this.headerCache.get(table);
+    if (!headers) {
+      const headerRow = this.descendants(table).find(
+        (r) => r.node.role === 'row' && r.children.some((c) => c.node.role === 'columnheader'),
+      );
+      headers = headerRow ? headerRow.children.filter((c) => CELLS.has(c.node.role)) : [];
+      this.headerCache.set(table, headers);
+    }
+    const header = headers[row.children.filter((c) => CELLS.has(c.node.role)).indexOf(n)];
+    return header?.node.role === 'columnheader' ? header : undefined;
+  }
+
   find(loc: Locator, scope: INode = this.root): INode[] {
     return this.descendants(scope).filter((n) => this.matches(n, loc));
+  }
+
+  /**
+   * The records `loc` matches inside `scope` (an `each` assertion): each matching node
+   * with its subtree, except that a term's record is the term together with the
+   * definitions that follow it (a `dt` with its `dd`s, which the accessibility tree
+   * keeps as siblings). Consecutive terms share the definitions after the last of them.
+   */
+  records(loc: Locator, scope: INode = this.root): INode[] {
+    return this.find(loc, scope).map((n) => (n.node.role === 'term' ? this.termGroup(n) : n));
+  }
+
+  /** A term and its definitions, as a node outside the tree whose children are those siblings. */
+  termGroup(term: INode): INode {
+    const siblings = term.parent?.children ?? [term];
+    let i = siblings.indexOf(term) + 1;
+    while (i < siblings.length && siblings[i]!.node.role === 'term') i++;
+    const definitions: INode[] = [];
+    while (i < siblings.length && siblings[i]!.node.role === 'definition') definitions.push(siblings[i++]!);
+    const name = canonical(this.text(term));
+    const members = [term, ...definitions];
+    return {
+      // Negative: not a pre-order id of the tree, so edits by id never touch it.
+      id: -1 - term.id,
+      node: { role: 'term', ...(name ? { name } : {}), children: members.map((m) => m.node) },
+      parent: term.parent,
+      children: members,
+    };
   }
 
   /** Human-readable path, e.g. `main › table "Cart" › row "Blue Mug 1 $12.00"`. */
@@ -125,6 +182,7 @@ export function describeLocator(loc: Locator): string {
   if (loc.level !== undefined) s += ` (level ${loc.level})`;
   if (loc.landmark)
     s += ` in ${loc.landmark.role}${loc.landmark.name !== undefined ? ' ' + describeTextMatch(loc.landmark.name) : ''}`;
+  if (loc.column !== undefined) s += ` in column ${describeTextMatch(loc.column)}`;
   if (loc.within) s += ` within ${describeLocator(loc.within)}`;
   return s;
 }
@@ -143,22 +201,24 @@ export type Resolution =
     };
 
 /**
- * Resolve a target with redundant-anchor consensus (ADR 0001, §2.2).
+ * Resolve a target with redundant-anchor consensus (ADR 0001, §2.2), among the
+ * descendants of `scope` (the document, or a record of an `each` assertion).
  */
-export function resolveTarget(index: AXIndex, target: Target): Resolution {
+export function resolveTarget(index: AXIndex, target: Target, scope: INode = index.root): Resolution {
   const locs = targetLocators(target);
-  const results = locs.map((loc) => ({ loc, nodes: index.find(loc) }));
+  const results = locs.map((loc) => ({ loc, nodes: index.find(loc, scope) }));
   const drift = results.filter((r) => r.nodes.length === 0).map((r) => describeLocator(r.loc));
   const matched = results.filter((r) => r.nodes.length > 0);
   const what = locs.map(describeLocator).join(' | ');
+  const inside = scope === index.root ? '' : ` in ${index.path(scope)}`;
 
   if (matched.length === 0) {
-    return { ok: false, reason: 'anchor_missing', message: `Anchor not found: ${what}`, drift: [] };
+    return { ok: false, reason: 'anchor_missing', message: `Anchor not found${inside}: ${what}`, drift: [] };
   }
   const unique = matched.filter((r) => r.nodes.length === 1);
   if (unique.length === 0) {
     const counts = matched.map((r) => `${describeLocator(r.loc)} → ${r.nodes.length} matches`).join('; ');
-    return { ok: false, reason: 'anchor_ambiguous', message: `Anchor is ambiguous: ${counts}`, drift };
+    return { ok: false, reason: 'anchor_ambiguous', message: `Anchor is ambiguous${inside}: ${counts}`, drift };
   }
   const chosen = unique[0]!.nodes[0]!;
   for (const r of matched) {
