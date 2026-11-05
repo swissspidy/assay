@@ -259,6 +259,14 @@ written for the first release give no wrong verdict: they abstain where renamed 
 anchor, and catch every regression run ([stability report](stability/results/REPORT.md),
 [ADR 0005](docs/adr/0005-evaluation-and-stability.md)).
 
+On three real open-source apps run locally (Gitea, WordPress, PrestaShop: 44 tasks, 177 held-out
+runs, mostly from a Claude browser agent, labelled by oracles over each app's database), compiled
+checks reach 0.974 balanced accuracy (0.986 with escalation), against 0.942 for the LLM judge and
+0.990 for the agentic verifier. Four of the checks' five errors are checks tied to the one reference
+run's UI path where a probe lacked a field; the fifth accepted a run that removed a tag it was not
+asked to remove.
+[eval/results/real/REPORT.md](eval/results/real/REPORT.md), [ADR 0009](docs/adr/0009-real-site-evaluation.md).
+
 ## Further reading
 
 - [ADR 0001](docs/adr/0001-evidence-snapshot-and-check-dsl.md): snapshot format and check DSL
@@ -268,6 +276,7 @@ anchor, and catch every regression run ([stability report](stability/results/REP
 - [ADR 0005](docs/adr/0005-evaluation-and-stability.md): evaluation and stability
 - [ADR 0006](docs/adr/0006-npm-package-and-releases.md): the npm package and releases
 - [ADR 0007](docs/adr/0007-vercel-ai-sdk-adapter.md): the Vercel AI SDK adapter
+- [ADR 0009](docs/adr/0009-real-site-evaluation.md): evaluation on real web apps
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
 - Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)
 
