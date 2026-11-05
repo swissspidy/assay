@@ -1,0 +1,371 @@
+/** Per-record checks (`each`, ADR 0008) and multi-field `items` projections (`pick`). */
+import { test, expect } from '@playwright/test';
+import {
+  describeAssertion,
+  evaluate,
+  validateCheckSet,
+  type Assertion,
+  type Check,
+  type CheckSet,
+  type EvidenceSnapshot,
+  type Json,
+} from '../../src/index.ts';
+import { evaluateAssertion } from '../../src/runtime/evaluate.ts';
+import { applyNormalizers, fromJson, toJson } from '../../src/runtime/values.ts';
+import { AXIndex } from '../../src/runtime/axindex.ts';
+import { parseAriaSnapshot } from '../../src/snapshot/aria.ts';
+import { looseMatches } from '../../src/dsl/validate.ts';
+
+const YAML = `
+- main:
+  - heading "Lunch with Sam" [level=1]
+  - term: When
+  - definition: Thursday, November 5, 2026, 12:30 PM
+  - term: Duration
+  - definition: 1 hour
+  - term: Organizer
+  - term: Host
+  - definition: Sam
+  - term: Location
+  - definition: —
+  - table "Issues":
+    - rowgroup:
+      - row "# Title Status Labels":
+        - columnheader "#"
+        - columnheader "Title"
+        - columnheader "Status"
+        - columnheader "Labels"
+    - rowgroup:
+      - row "1 Login button misaligned Open bug":
+        - cell "1"
+        - cell "Login button misaligned":
+          - link "Login button misaligned"
+        - cell "Open"
+        - cell "bug"
+      - row "2 Add dark mode Closed feature":
+        - cell "2"
+        - cell "Add dark mode":
+          - link "Add dark mode"
+        - cell "Closed"
+        - cell "feature"
+  - list "Orders":
+    - listitem:
+      - text: Order A1
+      - list:
+        - listitem: Blue Mug × 2
+        - listitem: Red Mug × 1
+    - listitem:
+      - text: Order A2
+      - list:
+        - listitem: Tea towel × 3
+`;
+
+function snap(): EvidenceSnapshot {
+  return {
+    schema: 'assay.snapshot/v1',
+    capturedAt: '2026-11-05T00:00:00.000Z',
+    page: { url: 'https://calendar.test/events/1', title: 't' },
+    a11y: parseAriaSnapshot(YAML),
+    text: 'When\nThursday, November 5, 2026, 12:30 PM',
+    network: [],
+    storage: { cookies: [], local: {}, session: {} },
+    probes: {},
+    meta: { capturer: 'test', redacted: [] },
+  };
+}
+
+const run = (a: Assertion, s = snap()) => evaluateAssertion({ snapshot: s, index: new AXIndex(s.a11y) }, a);
+
+const issues = { role: 'table', name: 'Issues' } as const;
+const rowOf = (title: string, assert: Assertion): Assertion => ({
+  kind: 'each',
+  scope: issues,
+  match: { role: 'row', name: { contains: title } },
+  assert,
+});
+const cell = (name: string): Assertion => ({ kind: 'contains', match: { role: 'cell', name } });
+
+const dateOf = (term: string): Assertion => ({
+  kind: 'each',
+  scope: { role: 'main' },
+  match: { role: 'term', text: term },
+  assert: {
+    kind: 'value',
+    source: { from: 'node', target: { role: 'definition' }, field: 'text' },
+    normalize: [
+      { op: 'replace', regex: ', \\d{1,2}:\\d{2} [AP]M$', with: '' },
+      { op: 'date', locale: 'en-US' },
+    ],
+    expect: { equals: '2026-11-05' },
+  },
+});
+
+test.describe('each: runtime', () => {
+  test('a cell belongs to the row it is in, not to any row of the table', () => {
+    expect(run(rowOf('Login button misaligned', cell('Open'))).status).toBe('pass');
+    // "Closed" is in the table, but in another row.
+    const wrong = run(rowOf('Login button misaligned', cell('Closed')));
+    expect(wrong.status).toBe('fail');
+    expect(wrong.message).toContain('row "1 Login button misaligned Open bug"');
+    // Unscoped, the same cell is found in the other row: the gap each closes.
+    expect(run({ kind: 'contains', scope: issues, match: { role: 'cell', name: 'Closed' } }).status).toBe('pass');
+  });
+
+  test('a term record is the term with the definitions after it', () => {
+    expect(run(dateOf('When')).status).toBe('pass');
+    // The date is on the page, but not under Duration: the definition there does not parse.
+    const elsewhere = run(dateOf('Duration'));
+    expect(elsewhere.status).toBe('abstain');
+    expect(elsewhere.reason).toBe('normalize_failed');
+    // Consecutive terms share the definitions after the last of them.
+    const host = (term: string): Assertion => ({
+      kind: 'each',
+      scope: { role: 'main' },
+      match: { role: 'term', text: term },
+      assert: { kind: 'state', target: { role: 'definition' }, expect: { text: 'Sam' } },
+    });
+    expect(run(host('Organizer')).status).toBe('pass');
+    expect(run(host('Host')).status).toBe('pass');
+    // A term group's own text is the term and its definitions.
+    const idx = new AXIndex(snap().a11y);
+    const [when] = idx.records({ role: 'term', text: 'When' });
+    expect(idx.text(when!)).toBe('When Thursday, November 5, 2026, 12:30 PM');
+    expect(idx.path(when!)).toBe('main › term "When"');
+  });
+
+  test('every record must satisfy the assertion (strong Kleene conjunction)', () => {
+    const rows = (assert: Assertion): Assertion => ({
+      kind: 'each',
+      scope: issues,
+      witness: { role: 'columnheader', name: 'Status' },
+      match: { role: 'row', name: { regex: '^\\d+ ' } },
+      assert,
+    });
+    expect(run(rows({ kind: 'contains', match: { role: 'link' } })).status).toBe('pass');
+    const open = run(rows(cell('Open')));
+    expect(open.status).toBe('fail');
+    expect(open.message).toContain('[fail] main › table "Issues" › rowgroup › row "2 Add dark mode Closed feature"');
+    expect(open.message).not.toContain('[pass]');
+    // One record abstains (its anchor is missing), the others pass: abstain.
+    const status = run(rows({ kind: 'state', target: { role: 'cell', name: 'Open' }, expect: { disabled: false } }));
+    expect(status.status).toBe('abstain');
+    expect(status.reason).toBe('anchor_missing');
+  });
+
+  test('the number of records is outcome evidence; the scope and witness are anchors', () => {
+    const none = run(rowOf('Fix typo', cell('Open')));
+    expect(none.status).toBe('fail');
+    expect(none.message).toContain('0 record(s)');
+    expect(run({ ...(rowOf('Login', cell('Open')) as object), count: { eq: 2 } } as Assertion).status).toBe('fail');
+    const missing = run({
+      ...(rowOf('Login', cell('Open')) as object),
+      scope: { role: 'table', name: 'Cart' },
+    } as Assertion);
+    expect(missing.status).toBe('abstain');
+    expect(missing.reason).toBe('anchor_missing');
+    const noWitness = run({
+      ...(rowOf('Login', cell('Open')) as object),
+      witness: { role: 'columnheader', name: 'Priority' },
+    } as Assertion);
+    expect(noWitness.status).toBe('abstain');
+    expect(noWitness.message).toContain('Witness columnheader named "Priority"');
+  });
+
+  test('locators and text sources resolve inside the record', () => {
+    // A target that is ambiguous on the page is unique inside one row.
+    const status: Assertion = rowOf('Add dark mode', {
+      kind: 'value',
+      source: { from: 'node', target: { role: 'link' }, field: 'name' },
+      expect: { equals: 'Add dark mode' },
+    });
+    expect(run(status).status).toBe('pass');
+    // An anchor missing in the record abstains and says where it looked.
+    const missing = run(rowOf('Login', { kind: 'state', target: { role: 'checkbox' }, expect: { checked: true } }));
+    expect(missing.status).toBe('abstain');
+    expect(missing.message).toContain('Anchor not found in main › table "Issues" › rowgroup › row "1 Login');
+    // An unscoped text source reads the record's text, not the page text.
+    const text = (pattern: string) =>
+      run(rowOf('Login', { kind: 'value', source: { from: 'text', pattern }, expect: { exists: true } })).status;
+    expect(text('Open')).toBe('pass');
+    expect(text('Closed')).toBe('abstain');
+  });
+
+  test('records nest: the order whose items include a Blue Mug', () => {
+    const order = (item: string): Assertion => ({
+      kind: 'each',
+      scope: { role: 'list', name: 'Orders' },
+      match: { role: 'listitem', text: { contains: 'Order A1' } },
+      assert: {
+        kind: 'each',
+        match: { role: 'listitem', text: { contains: item } },
+        assert: { kind: 'value', source: { from: 'text', pattern: '× (\\d+)' }, expect: { equals: '2' } },
+      },
+    });
+    expect(run(order('Blue Mug')).status).toBe('pass');
+    expect(run(order('Red Mug')).status).toBe('fail');
+    // Tea towel is in another order: no record inside A1.
+    expect(run(order('Tea towel')).status).toBe('fail');
+  });
+
+  test('describeAssertion renders an each for review', () => {
+    expect(describeAssertion(dateOf('When'))).toContain(
+      'in main, at least 1 term with text "When" (with its definitions), and inside each: the text of definition',
+    );
+  });
+});
+
+test.describe('items pick', () => {
+  const cart: Json = [
+    { sku: 'A', qty: 1, price: 2 },
+    { sku: 'B', qty: 2, price: 3 },
+  ];
+  const pick = (v: Json) => toJson(applyNormalizers(fromJson(v), [{ op: 'items', pick: ['/sku', '/qty'] }]));
+
+  test('keeps the picked fields of each item together, sorted', () => {
+    expect(pick(cart)).toEqual([
+      { '/sku': 'A', '/qty': 1 },
+      { '/sku': 'B', '/qty': 2 },
+    ]);
+    // Extra fields are ignored; the order of the array is not significant.
+    expect(
+      pick([
+        { sku: 'B', qty: 2, lineTotal: 6 },
+        { sku: 'A', qty: 1, lineTotal: 2 },
+      ]),
+    ).toEqual(pick(cart));
+    // 1×A + 2×B is not 2×A + 1×B, though each field on its own matches.
+    expect(
+      pick([
+        { sku: 'A', qty: 2 },
+        { sku: 'B', qty: 1 },
+      ]),
+    ).not.toEqual(pick(cart));
+  });
+
+  test('a missing picked field cannot be read', () => {
+    expect(() => pick([{ sku: 'A' }])).toThrow(/\/qty not present in item 0/);
+  });
+});
+
+test.describe('each and pick: validation', () => {
+  const set = (assert: Assertion, more: Check[] = []): CheckSet => ({
+    schema: 'assay.checks/v1',
+    id: 't',
+    version: '1',
+    task: { instruction: 'Add lunch on November 5, 2026.' },
+    requirements: [{ id: 'R1', kind: 'hard', text: 't', source: { field: 'instruction', quote: 'Add lunch' } }],
+    checks: [{ id: 'C1', requirement: 'R1', description: 'd', assert }, ...more],
+  });
+
+  test('an each validates and runs in a check set', () => {
+    const cs = set(dateOf('When'));
+    expect(validateCheckSet(cs)).toEqual({ ok: true, errors: [], warnings: [] });
+    expect(evaluate(cs, snap()).verdict).toBe('success');
+  });
+
+  test('inside each, only the record may be read', () => {
+    const inside = (assert: Assertion) =>
+      validateCheckSet(set({ kind: 'each', scope: issues, match: { role: 'row' }, assert })).errors;
+    expect(inside({ kind: 'url', match: { path: '/issues' } })).toEqual([
+      expect.stringContaining('C1.assert: a url assertion inside each does not read the record'),
+    ]);
+    expect(inside({ kind: 'allOf', of: [{ kind: 'request', match: { method: 'POST' } }] })).toEqual([
+      expect.stringContaining('a request assertion inside each'),
+    ]);
+    expect(inside({ kind: 'value', source: { from: 'probe', probe: 'issues' }, expect: { exists: true } })).toEqual([
+      expect.stringContaining('inside each, a value check must read the record'),
+    ]);
+    // The other side of a binding may come from anywhere: the row's title is the probe's.
+    expect(
+      inside({
+        kind: 'value',
+        source: { from: 'node', target: { role: 'link' }, field: 'name' },
+        expect: { sameAs: { source: { from: 'probe', probe: 'issue', pointer: '/title' } } },
+      }),
+    ).toEqual([]);
+  });
+
+  test('scope warnings: each without a scope, but not a contains inside a record', () => {
+    const w = (a: Assertion) => validateCheckSet(set(a)).warnings;
+    expect(w({ kind: 'each', match: { role: 'row' }, assert: cell('Open') })).toEqual([
+      expect.stringContaining('each without a scope searches the whole page'),
+    ]);
+    expect(w(rowOf('Login', cell('Open')))).toEqual([]);
+    expect(w({ ...(rowOf('Login', cell('Open')) as object), count: { gte: 0 } } as Assertion)).toEqual([
+      expect.stringContaining('each with a count that allows no records passes vacuously'),
+    ]);
+  });
+
+  test('a definition read by its own content is loose; inside its term it is bound', () => {
+    const loose = (a: Assertion) => looseMatches(set(a));
+    const advice = expect.stringContaining('reads a definition (a dd) found by its own content');
+    expect(
+      loose({
+        kind: 'contains',
+        scope: { role: 'main' },
+        match: { role: 'definition', text: { regex: 'November 5, 2026' } },
+      }),
+    ).toEqual([advice]);
+    expect(
+      loose({
+        kind: 'value',
+        source: { from: 'node', target: { role: 'definition', text: { contains: '2026' } }, field: 'text' },
+        expect: { contains: 'November 5' },
+      }),
+    ).toEqual([advice]);
+    expect(
+      loose({ kind: 'state', target: { role: 'text', within: { role: 'definition' } }, expect: { name: 'x' } }),
+    ).toEqual([advice]);
+    expect(loose(dateOf('When'))).toEqual([]);
+    // An absence check across all definitions is a page-wide fact.
+    expect(
+      loose({
+        kind: 'contains',
+        scope: { role: 'main' },
+        witness: { role: 'term' },
+        match: { role: 'definition', text: 'Cancelled' },
+        count: { eq: 0 },
+      }),
+    ).toEqual([]);
+    // The validator reports it as a warning; the compiler refuses it.
+    expect(
+      validateCheckSet(set({ kind: 'contains', scope: { role: 'main' }, match: { role: 'definition' } })).warnings,
+    ).toEqual([advice]);
+  });
+
+  test('items takes pointer or pick, not both; pick keeps fields paired for the field-wise rule', () => {
+    const items = (proj: object): Assertion => ({
+      kind: 'value',
+      source: { from: 'probe', probe: 'latestOrder', pointer: '/items' },
+      normalize: [{ op: 'items', ...proj }],
+      expect: {
+        sameAs: {
+          source: { from: 'probe', probe: 'cart', pointer: '/items', at: 'before' },
+          normalize: [{ op: 'items', ...proj }],
+        },
+      },
+    });
+    expect(validateCheckSet(set(items({ pointer: '/sku', pick: ['/qty'] }))).errors).toEqual([
+      expect.stringContaining('items takes either pointer (one field) or pick (several fields), not both'),
+      expect.stringContaining('sameAs: items takes either pointer'),
+    ]);
+    expect(validateCheckSet(set(items({ pick: [] }))).ok).toBe(false);
+    const fieldwise = (...projections: object[]) =>
+      looseMatches(
+        set(
+          items(projections[0]!),
+          projections
+            .slice(1)
+            .map((p, i) => ({ id: `C${i + 2}`, requirement: 'R1', description: 'd', assert: items(p) })),
+        ),
+      ).filter((w) => w.includes('one field at a time'));
+    expect(fieldwise({ pick: ['/sku', '/qty'] })).toEqual([]);
+    expect(fieldwise({ pointer: '/sku' }, { pointer: '/qty' })).toHaveLength(1);
+    // A pick of every compared field keeps them paired; the per-field checks are then redundant.
+    expect(fieldwise({ pointer: '/sku' }, { pointer: '/qty' }, { pick: ['/qty', '/sku'] })).toEqual([]);
+    // Two picks that each leave a field out still pair different records' fields.
+    expect(fieldwise({ pick: ['/sku', '/qty'] }, { pick: ['/sku', '/price'] })).toEqual([
+      expect.stringContaining('items fields /price, /qty, /sku'),
+    ]);
+  });
+});

@@ -22,8 +22,8 @@ import type {
 import { CHECKS_SCHEMA, CHANNEL_TRUST } from '../types.ts';
 import { checkSetSchema } from '../dsl/schema.ts';
 import { looseMatches, validateCheckSet } from '../dsl/validate.ts';
-import { evaluate, evaluateAssertion } from '../runtime/evaluate.ts';
-import { AXIndex } from '../runtime/axindex.ts';
+import { evaluate, evaluateAssertion, type EvalCtx } from '../runtime/evaluate.ts';
+import { AXIndex, resolveTarget } from '../runtime/axindex.ts';
 import { canonical } from '../text.ts';
 import { ASSAY_VERSION } from '../version.ts';
 import { runAgent, type AgentTool, type AgentRun } from '../model/agent.ts';
@@ -382,6 +382,8 @@ function sourceChannels(a: Assertion): Channel[] {
       return ['network'];
     case 'value':
       return [...new Set([a.source, ...('sameAs' in a.expect ? [a.expect.sameAs.source] : [])].map(sourceChannel))];
+    case 'each':
+      return [...new Set(['a11y' as const, ...sourceChannels(a.assert)])];
     case 'allOf':
     case 'anyOf':
       return [...new Set(a.of.flatMap(sourceChannels))];
@@ -399,6 +401,9 @@ export function assertionTrust(a: Assertion): number {
       return Math.min(...a.of.map(assertionTrust));
     case 'allOf':
       return Math.max(...a.of.map(assertionTrust));
+    case 'each':
+      // Records are found in the accessibility tree; what is read inside them can be weaker.
+      return Math.min(TRUST_RANK.semantic, assertionTrust(a.assert));
     default:
       // A sameAs binding passes when one side is made to show what the other holds, so
       // faking the weaker side alone is enough: it counts as its weaker source.
@@ -441,12 +446,26 @@ interface Verification {
  * into an abstain (fail OR abstain is abstain), so it is refused.
  */
 export function unreadableBranches(cs: CheckSet, refs: Reference[]): string[] {
-  const ctxs = refs
+  const top: EvalCtx[] = refs
     .filter((r) => r.kind === 'success')
     .map((r) => ({ snapshot: r.snapshot, index: new AXIndex(r.snapshot.a11y) }));
-  if (!ctxs.length) return [];
+  if (!top.length) return [];
   const errors: string[] = [];
-  const walk = (check: string, a: Assertion, path: string) => {
+  const walk = (check: string, a: Assertion, path: string, ctxs: EvalCtx[]) => {
+    if (a.kind === 'each') {
+      // Inside an each, a branch is read in every record of every correct run.
+      const inner = ctxs.flatMap((ctx) => {
+        let scope = ctx.record ?? ctx.index.root;
+        if (a.scope) {
+          const r = resolveTarget(ctx.index, a.scope, scope);
+          if (!r.ok) return [];
+          scope = r.node;
+        }
+        return ctx.index.records(a.match, scope).map((record) => ({ ...ctx, record }));
+      });
+      if (inner.length) walk(check, a.assert, `${path}.assert`, inner);
+      return;
+    }
     if (a.kind !== 'anyOf' && a.kind !== 'allOf') return;
     a.of.forEach((b, i) => {
       const at = `${path}.of[${i}]`;
@@ -460,10 +479,10 @@ export function unreadableBranches(cs: CheckSet, refs: Reference[]): string[] {
           return;
         }
       }
-      walk(check, b, at);
+      walk(check, b, at, ctxs);
     });
   };
-  for (const c of cs.checks) walk(c.id, c.assert, 'assert');
+  for (const c of cs.checks) walk(c.id, c.assert, 'assert', top);
   return errors;
 }
 

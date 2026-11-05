@@ -94,6 +94,34 @@ export class AXIndex {
     return this.descendants(scope).filter((n) => this.matches(n, loc));
   }
 
+  /**
+   * The records `loc` matches inside `scope` (an `each` assertion): each matching node
+   * with its subtree, except that a term's record is the term together with the
+   * definitions that follow it (a `dt` with its `dd`s, which the accessibility tree
+   * keeps as siblings). Consecutive terms share the definitions after the last of them.
+   */
+  records(loc: Locator, scope: INode = this.root): INode[] {
+    return this.find(loc, scope).map((n) => (n.node.role === 'term' ? this.termGroup(n) : n));
+  }
+
+  /** A term and its definitions, as a node outside the tree whose children are those siblings. */
+  termGroup(term: INode): INode {
+    const siblings = term.parent?.children ?? [term];
+    let i = siblings.indexOf(term) + 1;
+    while (i < siblings.length && siblings[i]!.node.role === 'term') i++;
+    const definitions: INode[] = [];
+    while (i < siblings.length && siblings[i]!.node.role === 'definition') definitions.push(siblings[i++]!);
+    const name = canonical(this.text(term));
+    const members = [term, ...definitions];
+    return {
+      // Negative: not a pre-order id of the tree, so edits by id never touch it.
+      id: -1 - term.id,
+      node: { role: 'term', ...(name ? { name } : {}), children: members.map((m) => m.node) },
+      parent: term.parent,
+      children: members,
+    };
+  }
+
   /** Human-readable path, e.g. `main › table "Cart" › row "Blue Mug 1 $12.00"`. */
   path(n: INode): string {
     const parts: string[] = [];
@@ -143,22 +171,24 @@ export type Resolution =
     };
 
 /**
- * Resolve a target with redundant-anchor consensus (ADR 0001, §2.2).
+ * Resolve a target with redundant-anchor consensus (ADR 0001, §2.2), among the
+ * descendants of `scope` (the document, or a record of an `each` assertion).
  */
-export function resolveTarget(index: AXIndex, target: Target): Resolution {
+export function resolveTarget(index: AXIndex, target: Target, scope: INode = index.root): Resolution {
   const locs = targetLocators(target);
-  const results = locs.map((loc) => ({ loc, nodes: index.find(loc) }));
+  const results = locs.map((loc) => ({ loc, nodes: index.find(loc, scope) }));
   const drift = results.filter((r) => r.nodes.length === 0).map((r) => describeLocator(r.loc));
   const matched = results.filter((r) => r.nodes.length > 0);
   const what = locs.map(describeLocator).join(' | ');
+  const inside = scope === index.root ? '' : ` in ${index.path(scope)}`;
 
   if (matched.length === 0) {
-    return { ok: false, reason: 'anchor_missing', message: `Anchor not found: ${what}`, drift: [] };
+    return { ok: false, reason: 'anchor_missing', message: `Anchor not found${inside}: ${what}`, drift: [] };
   }
   const unique = matched.filter((r) => r.nodes.length === 1);
   if (unique.length === 0) {
     const counts = matched.map((r) => `${describeLocator(r.loc)} → ${r.nodes.length} matches`).join('; ');
-    return { ok: false, reason: 'anchor_ambiguous', message: `Anchor is ambiguous: ${counts}`, drift };
+    return { ok: false, reason: 'anchor_ambiguous', message: `Anchor is ambiguous${inside}: ${counts}`, drift };
   }
   const chosen = unique[0]!.nodes[0]!;
   for (const r of matched) {

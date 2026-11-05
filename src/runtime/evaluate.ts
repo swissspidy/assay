@@ -24,9 +24,12 @@ import { compare, compareNumber, compareValues, describeNumberCompare, jsonPoint
 import { NormalizeError, applyNormalizers, fromJson, toJson, type TypedValue } from './values.ts';
 import { describeRequestMatch, describeUrlMatch, matchRequest, matchUrl } from './network.ts';
 
-interface Ctx {
+/** What an assertion is evaluated against. */
+export interface EvalCtx {
   snapshot: EvidenceSnapshot;
   index: AXIndex;
+  /** Inside an `each` assertion: the record that locators and text sources resolve within. */
+  record?: INode;
 }
 
 const ev = (channel: Channel, extra: Partial<Evidence> = {}): Evidence => ({
@@ -75,8 +78,8 @@ export function kleeneOr(statuses: Status[]): Status {
   return 'abstain';
 }
 
-function resolve(ctx: Ctx, target: Target): { node: INode; drift: string[] } | AssertionResult {
-  const r = resolveTarget(ctx.index, target);
+function resolve(ctx: EvalCtx, target: Target): { node: INode; drift: string[] } | AssertionResult {
+  const r = resolveTarget(ctx.index, target, ctx.record);
   if (!r.ok) return abstain(r.reason, r.message, [], r.drift);
   return { node: r.node, drift: r.drift };
 }
@@ -94,7 +97,7 @@ const isResult = (x: unknown): x is AssertionResult => !!x && typeof x === 'obje
 type Read = { value: TypedValue; evidence: Evidence; drift: string[]; absent?: boolean } | AssertionResult;
 const ABSENT: TypedValue = { type: 'json', value: null };
 
-function readSource(ctx: Ctx, src: ValueSource): Read {
+function readSource(ctx: EvalCtx, src: ValueSource): Read {
   const snap = ctx.snapshot;
   switch (src.from) {
     case 'node': {
@@ -111,16 +114,22 @@ function readSource(ctx: Ctx, src: ValueSource): Read {
       let drift: string[] = [];
       let locator = 'document text';
       let channel: Channel = 'text';
-      if (src.scope) {
-        const r = resolve(ctx, src.scope);
-        if (isResult(r)) return r;
+      // Inside a record, an unscoped text source reads the record's text, not the page's.
+      const scoped = src.scope !== undefined || ctx.record !== undefined;
+      if (scoped) {
+        let node = ctx.record!;
+        if (src.scope) {
+          const r = resolve(ctx, src.scope);
+          if (isResult(r)) return r;
+          node = r.node;
+          drift = r.drift;
+        }
         // Scoped text is derived from accessible names, so it is canonicalized like a node's text.
-        text = canonical(ctx.index.text(r.node));
-        drift = r.drift;
-        locator = `text of ${ctx.index.path(r.node)}`;
+        text = canonical(ctx.index.text(node));
+        locator = `text of ${ctx.index.path(node)}`;
         channel = 'a11y';
       }
-      const m = new RegExp(src.pattern, stripGlobal(src.flags)).exec(src.scope ? text : text.replace(/[^\S\n]+/g, ' '));
+      const m = new RegExp(src.pattern, stripGlobal(src.flags)).exec(scoped ? text : text.replace(/[^\S\n]+/g, ' '));
       if (!m)
         return abstain(
           'value_unavailable',
@@ -275,7 +284,7 @@ function domainMatches(host: string, cookieDomain: string): boolean {
 /** A read and normalized value; `value` is undefined for an observed absence (normalizers do not run). */
 type Normalized = { value?: TypedValue; evidence: Evidence; drift: string[] };
 
-function readNormalized(ctx: Ctx, src: ValueSource, steps: Normalizer[] | undefined): Normalized | AssertionResult {
+function readNormalized(ctx: EvalCtx, src: ValueSource, steps: Normalizer[] | undefined): Normalized | AssertionResult {
   const read = readSource(ctx, src);
   if (isResult(read)) return read;
   if (read.absent) return { evidence: read.evidence, drift: read.drift };
@@ -296,7 +305,7 @@ function readNormalized(ctx: Ctx, src: ValueSource, steps: Normalizer[] | undefi
  * A `sameAs` binding: the value equals the value read from a second source. Either side
  * unreadable abstains; an observed absence on either side fails (there is nothing to be equal to).
  */
-function evaluateBinding(ctx: Ctx, left: Normalized, other: Operand): AssertionResult {
+function evaluateBinding(ctx: EvalCtx, left: Normalized, other: Operand): AssertionResult {
   const right = readNormalized(ctx, other.source, other.normalize);
   if (isResult(right))
     return {
@@ -326,7 +335,7 @@ function evaluateBinding(ctx: Ctx, left: Normalized, other: Operand): AssertionR
 // Assertions
 // ---------------------------------------------------------------------------
 
-export function evaluateAssertion(ctx: Ctx, a: Assertion): AssertionResult {
+export function evaluateAssertion(ctx: EvalCtx, a: Assertion): AssertionResult {
   switch (a.kind) {
     case 'state': {
       const r = resolve(ctx, a.target);
@@ -360,7 +369,7 @@ export function evaluateAssertion(ctx: Ctx, a: Assertion): AssertionResult {
         : pass(`${locator} has the expected state`, evidence, r.drift);
     }
     case 'contains': {
-      let scope = ctx.index.root;
+      let scope = ctx.record ?? ctx.index.root;
       let drift: string[] = [];
       if (a.scope) {
         const r = resolve(ctx, a.scope);
@@ -435,6 +444,8 @@ export function evaluateAssertion(ctx: Ctx, a: Assertion): AssertionResult {
         return fail(`${hits.length} request(s) match ${desc} (expected ${describeNumberCompare(count)})`, evidence);
       return pass(`${hits.length} request(s) match ${desc}`, evidence);
     }
+    case 'each':
+      return evaluateEach(ctx, a);
     case 'allOf':
     case 'anyOf': {
       const subs = a.of.map((s) => evaluateAssertion(ctx, s));
@@ -457,6 +468,58 @@ export function evaluateAssertion(ctx: Ctx, a: Assertion): AssertionResult {
   }
 }
 
+/** Per-record results shown in a message; the rest are counted. */
+const SHOWN_RECORDS = 5;
+
+/**
+ * `each`: the scope and witness are anchors (missing → abstain); the number of records is
+ * outcome evidence (outside `count` → fail); then the nested assertion must hold inside every
+ * record, combined with strong Kleene conjunction.
+ */
+function evaluateEach(ctx: EvalCtx, a: Extract<Assertion, { kind: 'each' }>): AssertionResult {
+  let scope = ctx.record ?? ctx.index.root;
+  let drift: string[] = [];
+  if (a.scope) {
+    const r = resolve(ctx, a.scope);
+    if (isResult(r)) return r;
+    scope = r.node;
+    drift = r.drift;
+  }
+  const where = ctx.index.path(scope);
+  if (a.witness && ctx.index.find(a.witness, scope).length === 0)
+    return abstain(
+      'anchor_missing',
+      `Witness ${describeLocator(a.witness)} not found in ${where}; its content no longer has the expected structure`,
+      [],
+      drift,
+    );
+  const records = ctx.index.records(a.match, scope);
+  const count = a.count ?? { gte: 1 };
+  const what = `${records.length} record(s) ${describeLocator(a.match)} in ${where}`;
+  if (!compareNumber(records.length, count))
+    return fail(
+      `${what} (expected ${describeNumberCompare(count)})`,
+      [ev('a11y', { locator: where, value: records.slice(0, 10).map((r) => ctx.index.path(r)) })],
+      drift,
+    );
+  const subs = records.map((record) => ({ record, r: evaluateAssertion({ ...ctx, record }, a.assert) }));
+  const status = kleeneAnd(subs.map((s) => s.r.status));
+  // Show the records that decided: the failing ones, the abstaining ones, or all when passing.
+  const deciding = status === 'pass' ? subs : subs.filter((s) => s.r.status === status);
+  const shown = deciding
+    .slice(0, SHOWN_RECORDS)
+    .map((s) => `[${s.r.status}] ${ctx.index.path(s.record)}: ${s.r.message}`);
+  if (deciding.length > SHOWN_RECORDS) shown.push(`… ${deciding.length - SHOWN_RECORDS} more`);
+  const message = `each of ${what}: ${shown.join(' | ')}`;
+  const evidence = deciding.slice(0, 10).flatMap((s) => s.r.evidence);
+  const allDrift = [...new Set([...drift, ...subs.flatMap((s) => s.r.drift)])];
+  if (status === 'abstain') {
+    const reasons = [...new Set(deciding.map((s) => s.r.reason))];
+    return abstain(reasons.length === 1 && reasons[0] ? reasons[0] : 'subcheck_abstained', message, evidence, allDrift);
+  }
+  return { status, message, evidence, drift: allDrift };
+}
+
 // ---------------------------------------------------------------------------
 // Check sets
 // ---------------------------------------------------------------------------
@@ -467,7 +530,7 @@ export interface EvaluateOptions {
 }
 
 export function evaluate(checkSet: CheckSet, snapshot: EvidenceSnapshot, opts: EvaluateOptions = {}): Outcome {
-  const ctx: Ctx = { snapshot, index: new AXIndex(snapshot.a11y) };
+  const ctx: EvalCtx = { snapshot, index: new AXIndex(snapshot.a11y) };
 
   const checks: CheckResult[] = checkSet.checks.map((c) => {
     let r: AssertionResult;

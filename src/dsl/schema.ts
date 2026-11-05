@@ -353,6 +353,12 @@ export const checkSetSchema = {
             op: { const: 'items' },
             where: { $ref: '#/definitions/jsonSchema' },
             pointer: { type: 'string', pattern: '^(/.*)?$' },
+            pick: {
+              type: 'array',
+              minItems: 1,
+              uniqueItems: true,
+              items: { type: 'string', pattern: '^/' },
+            },
           },
         },
       ],
@@ -487,6 +493,19 @@ export const checkSetSchema = {
             kind: { const: 'request' },
             match: { $ref: '#/definitions/requestMatch' },
             count: { $ref: '#/definitions/numberCompare' },
+          },
+        },
+        {
+          type: 'object',
+          additionalProperties: false,
+          required: ['kind', 'match', 'assert'],
+          properties: {
+            kind: { const: 'each' },
+            scope: { $ref: '#/definitions/target' },
+            witness: { $ref: '#/definitions/locator' },
+            match: { $ref: '#/definitions/locator' },
+            count: { $ref: '#/definitions/numberCompare' },
+            assert: { $ref: '#/definitions/assertion' },
           },
         },
         {

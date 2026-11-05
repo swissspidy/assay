@@ -798,17 +798,18 @@ test('a check that abstains on a valid variant of a correct run is refused', () 
     requirement: 'R1',
     description: 'The event details show the date 2026-11-05.',
     assert: {
-      kind: 'value',
-      source: {
-        from: 'node',
-        target: { role: 'definition', text: { contains: '2026' }, within: { role: 'main' } },
-        field: 'text',
+      kind: 'each',
+      scope: { role: 'main' },
+      match: { role: 'term', text: 'When' },
+      assert: {
+        kind: 'value',
+        source: { from: 'node', target: { role: 'definition' }, field: 'text' },
+        normalize: [
+          { op: 'extract', regex, group: 1 },
+          { op: 'date', locale: 'en-US' },
+        ],
+        expect: { equals: '2026-11-05' },
       },
-      normalize: [
-        { op: 'extract', regex, group: 1 },
-        { op: 'date', locale: 'en-US' },
-      ],
-      expect: { equals: '2026-11-05' },
     },
   });
   const cs = (c: Check) => ({

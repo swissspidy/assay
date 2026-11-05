@@ -103,6 +103,10 @@ export function describeAssertion(a: Assertion): string {
       return `the page URL matches ${describeUrlMatch(a.match)}`;
     case 'request':
       return `${describeNumberCompare(a.count ?? { gte: 1 })} request(s) match ${describeRequestMatch(a.match)}`;
+    case 'each': {
+      const record = a.match.role === 'term' ? `${loc(a.match)} (with its definitions)` : loc(a.match);
+      return `in ${a.scope ? target(a.scope) : 'the page'}, ${describeNumberCompare(a.count ?? { gte: 1 })} ${record}${a.witness ? ` (witness: ${loc(a.witness)} must exist)` : ''}, and inside each: ${describeAssertion(a.assert)}`;
+    }
     case 'allOf':
       return `all of: ${a.of.map(describeAssertion).join('; ')}`;
     case 'anyOf':
