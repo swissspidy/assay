@@ -23,7 +23,15 @@ import type {
 } from '../types.ts';
 import { CHECKS_SCHEMA, CHANNEL_TRUST } from '../types.ts';
 import { checkSetSchema } from '../dsl/schema.ts';
-import { looseMatches, pickOnSameShape, sameCollection, usesPick, validateCheckSet } from '../dsl/validate.ts';
+import {
+  looseMatches,
+  pickOnSameShape,
+  readsRoute,
+  routeOnly,
+  sameCollection,
+  usesPick,
+  validateCheckSet,
+} from '../dsl/validate.ts';
 import { evaluate, evaluateAssertion, readValue, type EvalCtx } from '../runtime/evaluate.ts';
 import { AXIndex, resolveTarget } from '../runtime/axindex.ts';
 import { canonical } from '../text.ts';
@@ -52,6 +60,11 @@ export interface Reference {
   /** "success": a correct run (checks must succeed). "negative": an incorrect run (checks must not succeed). */
   kind: 'success' | 'negative';
   snapshot: EvidenceSnapshot;
+  /**
+   * How this run did the task, in a few words ("through the block editor"), shown to the
+   * compiler. Useful when several correct references took different routes (ADR 0011).
+   */
+  note?: string;
 }
 
 export interface CompileOptions {
@@ -87,6 +100,12 @@ export interface RequirementCoverage {
    * anyOf counts as its weakest branch. "freetext" coverage is flagged.
    */
   trust: Trust | null;
+  /**
+   * Every check reads only route evidence (requests, responses, the URL) of the way the
+   * references did the task, and at least one reads the network (ADR 0011). A run that
+   * does it another way leaves nothing for them to read. Absent when false.
+   */
+  routeOnly?: true;
 }
 
 export interface CompileReport {
@@ -425,8 +444,21 @@ export function coverage(cs: CheckSet): RequirementCoverage[] {
       checks: checks.map((c) => c.id),
       channels,
       trust: rank ? RANK_TRUST[rank]! : null,
+      ...(routeOnlyRequirement(checks) ? { routeOnly: true as const } : {}),
     };
   });
+}
+
+/**
+ * The checks read only route evidence, at least one of them from the network. A view's
+ * URL alone is not counted: for "show me …" the URL is the state of the view.
+ */
+function routeOnlyRequirement(checks: Check[]): boolean {
+  return (
+    checks.length > 0 &&
+    checks.every((c) => routeOnly(c.assert)) &&
+    checks.some((c) => sourceChannels(c.assert).includes('network'))
+  );
 }
 
 interface Verification {
@@ -489,8 +521,157 @@ export function unreadableBranches(cs: CheckSet, refs: Reference[]): string[] {
       walk(check, b, at, ctxs);
     });
   };
-  for (const c of cs.checks) walk(c.id, c.assert, 'assert', top);
+  for (const c of cs.checks)
+    walk(c.id, c.assert, 'assert', c.onMissing === 'abstain' ? top.map((x) => ({ ...x, routeMissing: true })) : top);
   return errors;
+}
+
+// ---------------------------------------------------------------------------
+// Route evidence (ADR 0011)
+// ---------------------------------------------------------------------------
+
+/** The leaves of an assertion outside `each` records, with their paths. */
+function topLeaves(a: Assertion, at: string): { a: Assertion; at: string }[] {
+  if (a.kind === 'allOf' || a.kind === 'anyOf') return a.of.flatMap((b, i) => topLeaves(b, `${at}.of[${i}]`));
+  if (a.kind === 'each') return [];
+  return [{ a, at }];
+}
+
+/**
+ * Checks without `onMissing: "abstain"` whose route evidence (a request, a URL, a value
+ * read from the network) is missing on some correct reference while the check passes
+ * there. With references that did the task by different routes, such a leaf is route
+ * evidence by construction, and a run that takes yet another route would fail on it.
+ */
+export function unmarkedRouteChecks(cs: CheckSet, refs: Reference[]): string[] {
+  const ok = refs.filter((r) => r.kind === 'success');
+  const errors: string[] = [];
+  for (const c of cs.checks) {
+    if (c.onMissing === 'abstain' || !readsRoute(c.assert)) continue;
+    const found = new Set<string>();
+    for (const leaf of topLeaves(c.assert, 'assert')) {
+      if (!readsRoute(leaf.a)) continue;
+      for (const r of ok) {
+        const res = evaluateAssertion(
+          { snapshot: r.snapshot, index: new AXIndex(r.snapshot.a11y), routeMissing: true },
+          leaf.a,
+        );
+        if (res.reason === 'route_missing') found.add(`${leaf.at} on "${r.name}"`);
+      }
+    }
+    if (found.size)
+      errors.push(
+        `${c.id} reads route evidence that a correct run does not have (${[...found].join(', ')}): it shows one way of doing the task, so a run that does it yet another way would fail. Set "onMissing": "abstain" on ${c.id}.`,
+      );
+  }
+  return errors;
+}
+
+/** Runs of at least six literal characters (with a letter) in a regular expression. */
+export function literalRuns(pattern: string): string[] {
+  const runs: string[] = [];
+  let cur = '';
+  const end = () => {
+    if (cur.trim()) runs.push(cur.trim());
+    cur = '';
+  };
+  for (let i = 0; i < pattern.length; i++) {
+    const ch = pattern[i]!;
+    if (ch === '\\') {
+      const next = pattern[++i] ?? '';
+      if (/[sSdDwWbBpPuxk0-9]/.test(next)) end();
+      else cur += next;
+    } else if (ch === '[') {
+      end();
+      while (i < pattern.length && pattern[i] !== ']') i += pattern[i] === '\\' ? 2 : 1;
+    } else if ('?*{'.includes(ch)) {
+      // The character before an optional quantifier may be absent.
+      cur = cur.slice(0, -1);
+      end();
+      if (ch === '{') while (i < pattern.length && pattern[i] !== '}') i++;
+    } else if ('^$.+()|'.includes(ch)) end();
+    else cur += ch;
+  }
+  end();
+  return runs.filter((x) => x.length >= 6 && /\p{L}/u.test(x));
+}
+
+/** The literal strings a check compares route evidence with (bodies, values, patterns). */
+function comparedLiterals(a: Assertion): string[] {
+  const out: string[] = [];
+  const str = (x: unknown) => {
+    if (typeof x === 'string' && x.length >= 6 && /\p{L}/u.test(x)) out.push(x);
+  };
+  const schema = (x: unknown): void => {
+    if (Array.isArray(x)) return x.forEach(schema);
+    if (!x || typeof x !== 'object') return;
+    for (const [k, v] of Object.entries(x)) {
+      if (k === 'const') str(v);
+      else if (k === 'enum' && Array.isArray(v)) v.forEach(str);
+      else if (k === 'pattern' && typeof v === 'string') out.push(...literalRuns(v));
+      else schema(v);
+    }
+  };
+  for (const { a: leaf } of topLeaves(a, '')) {
+    if (leaf.kind === 'request') {
+      schema(leaf.match.requestBody);
+      schema(leaf.match.responseBody);
+    } else if (leaf.kind === 'value' && readsRoute(leaf)) {
+      const e = leaf.expect;
+      if ('equals' in e) str(e.equals);
+      if ('oneOf' in e) e.oneOf.forEach(str);
+      if ('contains' in e) str(e.contains);
+      if ('regex' in e) out.push(...literalRuns(e.regex));
+      if ('schema' in e) schema(e.schema);
+    }
+  }
+  return [...new Set(out)];
+}
+
+/**
+ * Requirements whose only evidence is route evidence (ADR 0011). Refused when a probe
+ * of a correct reference holds a value the route checks compare and did not hold it in
+ * the baseline (so the task wrote it): the state is observable independently of the route, so check it
+ * there. Otherwise a warning, naming the probes that were captured, so the test author
+ * can see which probe lacks the field.
+ */
+export function routeOnlyFindings(cs: CheckSet, refs: Reference[]): { errors: string[]; warnings: string[] } {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+  const ok = refs.filter((r) => r.kind === 'success');
+  for (const r of cs.requirements) {
+    const checks = cs.checks.filter((c) => c.requirement === r.id);
+    if (!routeOnlyRequirement(checks)) continue;
+    const literals = checks.flatMap((c) => comparedLiterals(c.assert));
+    const probes = new Set<string>();
+    const held: string[] = [];
+    for (const ref of ok) {
+      for (const [name, p] of Object.entries(ref.snapshot.probes ?? {})) {
+        if (!p.ok) continue;
+        probes.add(name);
+        const after = JSON.stringify(p.value).toLowerCase();
+        // Without a baseline, a probe value may have been there before the task: no refusal.
+        const b = ref.snapshot.baseline?.probes[name];
+        if (!b?.ok) continue;
+        const before = JSON.stringify(b.value).toLowerCase();
+        for (const lit of literals) {
+          const l = JSON.stringify(lit).slice(1, -1).toLowerCase();
+          if (after.includes(l) && !before.includes(l)) held.push(`probe ${name} holds ${JSON.stringify(lit)}`);
+        }
+      }
+    }
+    const routeChecks = checks.map((c) => c.id).join(', ');
+    if (held.length) {
+      errors.push(
+        `Requirement ${r.id} is checked only through route evidence (${routeChecks}: requests or the URL of the way the reference did it), but ${[...new Set(held)].join('; ')} after the task. Check the stored state in that probe; the route checks may stay, with "onMissing": "abstain".`,
+      );
+    } else {
+      warnings.push(
+        `Requirement ${r.id} has no evidence independent of the reference's route: ${routeChecks} read only requests or the URL of the way the reference did it, so a run that does it another way ${checks.every((c) => c.onMissing === 'abstain') ? 'abstains' : 'fails'}. ${probes.size ? `The probes (${[...probes].join(', ')}) do not show it; extending one with this state would make it checkable whatever the route.` : 'No probe was captured; a probe of this state would make it checkable whatever the route.'}`,
+      );
+    }
+  }
+  return { errors, warnings };
 }
 
 /** Steps with every items `pick` removed: whole items, filtered and sorted. */
@@ -595,7 +776,10 @@ export function verifyCandidate(cs: CheckSet, refs: Reference[], stress = true, 
       warnings.push(`On incorrect run "${ref.name}" the verdict is abstain rather than fail.`);
     }
   }
-  errors.push(...unreadableBranches(cs, refs), ...pickOnSameShapes(cs, refs));
+  errors.push(...unreadableBranches(cs, refs), ...pickOnSameShapes(cs, refs), ...unmarkedRouteChecks(cs, refs));
+  const route = routeOnlyFindings(cs, refs);
+  errors.push(...route.errors);
+  warnings.push(...route.warnings);
   for (const cov of coverage(cs)) {
     if (cov.trust === 'freetext')
       warnings.push(`Requirement ${cov.requirement} is covered only by free page text, which a page can spoof.`);
@@ -638,7 +822,10 @@ const ASSERT_TOOL_SCHEMA = {
   type: 'object',
   additionalProperties: false,
   required: ['assert'],
-  properties: { assert: { $ref: '#/definitions/assertion' } },
+  properties: {
+    assert: { $ref: '#/definitions/assertion' },
+    onMissing: { enum: ['fail', 'abstain'], description: 'Evaluate as a check with this onMissing setting.' },
+  },
   definitions: checkSetSchema.definitions,
 };
 
@@ -725,9 +912,16 @@ function discoveryTools(
           'Evaluate one assertion against every reference snapshot and report pass/fail/abstain with the reason.',
         inputSchema: ASSERT_TOOL_SCHEMA,
       },
-      run(i: { assert: Assertion }) {
+      run(i: { assert: Assertion; onMissing?: 'fail' | 'abstain' }) {
         const lines = refs.map((r) => {
-          const res = evaluateAssertion({ snapshot: r.snapshot, index: new AXIndex(r.snapshot.a11y) }, i.assert);
+          const res = evaluateAssertion(
+            {
+              snapshot: r.snapshot,
+              index: new AXIndex(r.snapshot.a11y),
+              ...(i.onMissing === 'abstain' ? { routeMissing: true } : {}),
+            },
+            i.assert,
+          );
           return `${r.name} (${r.kind}): ${res.status}${res.reason ? ` (${res.reason})` : ''} — ${res.message}`;
         });
         return { content: lines.join('\n') };
@@ -834,7 +1028,7 @@ export async function compileTask(task: TaskInput, refs: Reference[], opts: Comp
     `Instruction:\n<instruction>\n${task.instruction}\n</instruction>`,
     task.outcomes ? `Expected outcomes:\n<outcomes>\n${task.outcomes}\n</outcomes>` : '',
     `Requirements (each check must name one; a requirement means exactly what its quote says, the summary is only a label):\n${requirements.map((r) => `- ${r.id} [${r.kind}] ${JSON.stringify(r.source.quote)} (summary: ${r.text})`).join('\n')}`,
-    `Reference snapshots:\n${refs.map((r) => `- ${r.name} (${r.kind === 'success' ? 'correct run' : 'incorrect run'}): ${summary(r.snapshot)}`).join('\n')}`,
+    `Reference snapshots:\n${refs.map((r) => `- ${r.name} (${r.kind === 'success' ? 'correct run' : 'incorrect run'}${r.note ? `, ${r.note}` : ''}): ${summary(r.snapshot)}`).join('\n')}`,
     opts.trajectory
       ? `Agent trajectory of the first correct run. Context only — it tells you where to look; it is never evidence and checks must not rely on it:\n<trajectory>\n${opts.trajectory}\n</trajectory>`
       : '',
