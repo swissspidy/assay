@@ -28,10 +28,19 @@
     {
       "id": "R3",
       "kind": "hard",
-      "text": "The Workshop event is scheduled on November 12, 2026 at 10:00.",
+      "text": "The Workshop event is on November 12, 2026.",
       "source": {
         "field": "instruction",
-        "quote": "on November 12, 2026 at 10:00"
+        "quote": "November 12, 2026"
+      }
+    },
+    {
+      "id": "R4",
+      "kind": "hard",
+      "text": "The Workshop event starts at 10:00.",
+      "source": {
+        "field": "instruction",
+        "quote": "at 10:00"
       }
     }
   ],
@@ -39,7 +48,7 @@
     {
       "id": "r1-workshop-exists",
       "requirement": "R1",
-      "description": "The backend events list contains an event titled Workshop on 2026-11-12 at 10:00.",
+      "description": "The backend events list contains an event titled exactly \"Workshop\".",
       "assert": {
         "kind": "value",
         "source": {
@@ -52,21 +61,11 @@
             "contains": {
               "type": "object",
               "required": [
-                "title",
-                "date",
-                "time"
+                "title"
               ],
               "properties": {
                 "title": {
-                  "type": "string",
-                  "pattern": "^\\s*Workshop\\s*$"
-                },
-                "date": {
-                  "const": "2026-11-12"
-                },
-                "time": {
-                  "type": "string",
-                  "pattern": "^10:00(:00)?$"
+                  "const": "Workshop"
                 }
               }
             }
@@ -77,7 +76,7 @@
     {
       "id": "r2-workshop-90min",
       "requirement": "R2",
-      "description": "The Workshop event on 2026-11-12 at 10:00 has a duration of 90 minutes in the backend.",
+      "description": "The backend holds a Workshop event on 2026-11-12 at 10:00 whose duration is 90 minutes.",
       "assert": {
         "kind": "value",
         "source": {
@@ -97,8 +96,7 @@
               ],
               "properties": {
                 "title": {
-                  "type": "string",
-                  "pattern": "^\\s*Workshop\\s*$"
+                  "const": "Workshop"
                 },
                 "date": {
                   "const": "2026-11-12"
@@ -108,10 +106,7 @@
                   "pattern": "^10:00(:00)?$"
                 },
                 "duration": {
-                  "enum": [
-                    90,
-                    "90"
-                  ]
+                  "const": 90
                 }
               }
             }
@@ -120,9 +115,9 @@
       }
     },
     {
-      "id": "r3-workshop-date-time",
+      "id": "r3-workshop-date",
       "requirement": "R3",
-      "description": "The Workshop event in the backend is scheduled on 2026-11-12 at 10:00.",
+      "description": "The backend holds a 90-minute Workshop event at 10:00 dated 2026-11-12.",
       "assert": {
         "kind": "value",
         "source": {
@@ -137,12 +132,12 @@
               "required": [
                 "title",
                 "date",
-                "time"
+                "time",
+                "duration"
               ],
               "properties": {
                 "title": {
-                  "type": "string",
-                  "pattern": "^\\s*Workshop\\s*$"
+                  "const": "Workshop"
                 },
                 "date": {
                   "const": "2026-11-12"
@@ -150,6 +145,50 @@
                 "time": {
                   "type": "string",
                   "pattern": "^10:00(:00)?$"
+                },
+                "duration": {
+                  "const": 90
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r4-workshop-time",
+      "requirement": "R4",
+      "description": "The backend holds a 90-minute Workshop event on 2026-11-12 starting at 10:00.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "events"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": [
+                "title",
+                "date",
+                "time",
+                "duration"
+              ],
+              "properties": {
+                "title": {
+                  "const": "Workshop"
+                },
+                "date": {
+                  "const": "2026-11-12"
+                },
+                "time": {
+                  "type": "string",
+                  "pattern": "^10:00(:00)?$"
+                },
+                "duration": {
+                  "const": 90
                 }
               }
             }
@@ -164,6 +203,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T23:13:17.509Z"
+    "at": "2026-11-05T07:44:42.691Z"
   }
 }

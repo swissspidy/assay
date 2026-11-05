@@ -28,9 +28,9 @@
   ],
   "checks": [
     {
-      "id": "r1-issue-exists",
+      "id": "R1-issue-exists",
       "requirement": "R1",
-      "description": "The backend issues list contains an issue titled \"Add CSV export\".",
+      "description": "The backend issues list contains an issue titled exactly \"Add CSV export\".",
       "assert": {
         "kind": "value",
         "source": {
@@ -47,8 +47,7 @@
               ],
               "properties": {
                 "title": {
-                  "type": "string",
-                  "pattern": "^\\s*Add CSV export\\s*$"
+                  "const": "Add CSV export"
                 }
               }
             }
@@ -57,9 +56,9 @@
       }
     },
     {
-      "id": "r2-priority-high",
+      "id": "R2-priority-high",
       "requirement": "R2",
-      "description": "The backend issue titled \"Add CSV export\" has priority high.",
+      "description": "The backend issue titled \"Add CSV export\" has priority \"high\".",
       "assert": {
         "kind": "value",
         "source": {
@@ -77,12 +76,10 @@
               ],
               "properties": {
                 "title": {
-                  "type": "string",
-                  "pattern": "^\\s*Add CSV export\\s*$"
+                  "const": "Add CSV export"
                 },
                 "priority": {
-                  "type": "string",
-                  "pattern": "^(?i:high)$"
+                  "const": "high"
                 }
               }
             }
@@ -97,6 +94,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T23:11:47.686Z"
+    "at": "2026-11-05T07:43:18.504Z"
   }
 }

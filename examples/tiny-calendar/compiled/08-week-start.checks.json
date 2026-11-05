@@ -10,7 +10,7 @@
     {
       "id": "R1",
       "kind": "hard",
-      "text": "The week start setting is Monday.",
+      "text": "The week start day setting is Monday.",
       "source": {
         "field": "outcomes",
         "quote": "the week starts on Monday"
@@ -21,7 +21,7 @@
     {
       "id": "week-start-monday-storage",
       "requirement": "R1",
-      "description": "The saved weekStart preference in localStorage is Monday.",
+      "description": "The weekStart preference saved in localStorage is 'monday'.",
       "assert": {
         "kind": "value",
         "source": {
@@ -35,11 +35,7 @@
           "lowercase"
         ],
         "expect": {
-          "oneOf": [
-            "monday",
-            "\"monday\"",
-            "1"
-          ]
+          "equals": "monday"
         }
       }
     }
@@ -50,6 +46,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T23:12:55.878Z"
+    "at": "2026-11-05T07:44:22.179Z"
   }
 }

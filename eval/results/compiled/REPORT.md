@@ -1,22 +1,22 @@
 # Evaluation: compiled checks vs. model baselines
 
-Generated 2026-11-04T23:29:24.219Z · check sets: **compiled** · 96 labelled runs over 30 tasks (30 correct, 66 incorrect) in 3 apps.
+Generated 2026-11-05T08:00:04.151Z · check sets: **compiled** · 96 labelled runs over 30 tasks (30 correct, 66 incorrect) in 3 apps.
 
 Positive = the run really completed the task. TPR = correct runs judged success; TNR = incorrect runs judged not success (an abstain counts as not success). The agent always reports success, as agents usually do.
 
 | System | Balanced accuracy | TPR | TNR | Abstain rate | Cost / run | Latency (median / p95) |
 |---|---|---|---|---|---|---|
-| checks | 1.000 | 1.000 | 1.000 | 0.000 | $0.0000 | 290 µs / 4.6 ms |
-| checks+escalation | 1.000 | 1.000 | 1.000 | 0.000 | $0.0000 | 138 µs / 418 µs |
+| checks | 1.000 | 1.000 | 1.000 | 0.000 | $0.0000 | 275 µs / 3.5 ms |
+| checks+escalation | 1.000 | 1.000 | 1.000 | 0.000 | $0.0000 | 147 µs / 349 µs |
 | llm-judge | 0.906 | 0.933 | 0.879 | 0.000 | $0.0119 | n/a (replayed) / n/a (replayed) (0 of 96 runs timed) |
-| agentic-verifier | 0.976 | 0.967 | 0.985 | 0.000 | $0.0279 | 8.9 s / 14.4 s |
+| agentic-verifier | 0.959 | 0.933 | 0.985 | 0.000 | $0.0273 | 8.5 s / 13.5 s |
 
 ## Correct verdicts by run kind
 
 | Kind | Runs | checks | checks+escalation | llm-judge | agentic-verifier |
 |---|---|---|---|---|---|
 | no-op | 8 | 8/8 | 8/8 | 8/8 | 8/8 |
-| correct | 30 | 30/30 | 30/30 | 28/30 | 29/30 |
+| correct | 30 | 30/30 | 30/30 | 28/30 | 28/30 |
 | undone | 3 | 3/3 | 3/3 | 3/3 | 3/3 |
 | wrong-item | 28 | 28/28 | 28/28 | 27/28 | 28/28 |
 | partial | 14 | 14/14 | 14/14 | 12/14 | 13/14 |

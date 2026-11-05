@@ -19,9 +19,9 @@
   ],
   "checks": [
     {
-      "id": "bookclub-rsvp-yes-probe",
+      "id": "bookclub-rsvp-yes-backend",
       "requirement": "R1",
-      "description": "The backend events list contains the Book club event with rsvp set to \"yes\" (going).",
+      "description": "The backend events probe has a Book club event, and every event titled Book club has rsvp set to yes (going).",
       "assert": {
         "kind": "value",
         "source": {
@@ -33,19 +33,77 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "title",
-                "rsvp"
-              ],
               "properties": {
                 "title": {
                   "const": "Book club"
-                },
-                "rsvp": {
-                  "const": "yes"
                 }
+              },
+              "required": [
+                "title"
+              ]
+            },
+            "items": {
+              "if": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "const": "Book club"
+                  }
+                },
+                "required": [
+                  "title"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "rsvp": {
+                    "const": "yes"
+                  }
+                },
+                "required": [
+                  "rsvp"
+                ]
               }
             }
+          }
+        }
+      }
+    },
+    {
+      "id": "bookclub-rsvp-request",
+      "requirement": "R1",
+      "description": "The last RSVP update request for an event was accepted, and the server's reply shows Book club with rsvp yes.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "response",
+          "match": {
+            "method": "PUT",
+            "url": {
+              "path": "/api/events/*/rsvp"
+            },
+            "status": {
+              "gte": 200,
+              "lt": 300
+            }
+          },
+          "pick": "last"
+        },
+        "expect": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "const": "Book club"
+              },
+              "rsvp": {
+                "const": "yes"
+              }
+            },
+            "required": [
+              "title",
+              "rsvp"
+            ]
           }
         }
       }
@@ -57,6 +115,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T23:12:10.092Z"
+    "at": "2026-11-05T07:43:32.898Z"
   }
 }

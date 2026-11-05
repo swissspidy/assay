@@ -1,28 +1,28 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T23:23:53.871Z",
+ "recordedAt": "2026-11-05T07:54:51.806Z",
  "turns": {
-  "sha256:29d41d52617e08f6027037270f1437229c2f0ea50928427985f233b29404af63": {
+  "sha256:59cd6f5c1369c928832d5dfc2d47eb393a104e254961234358d1d52214b124b1": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01BvWnvd4snaUmjfHFHX3xwr",
-     "name": "page_outline",
+     "id": "toolu_01PX1YJzYNZqwQFo9pQ1MK1U",
+     "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01LPDvhsFbacEL6zsjpwidqw",
-     "name": "probes",
+     "id": "toolu_013aSmj6RMwr7o4VPJ5z6jHR",
+     "name": "page_outline",
      "input": {}
     }
    ],
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01BvWnvd4snaUmjfHFHX3xwr",
-     "name": "page_outline",
+     "id": "toolu_01PX1YJzYNZqwQFo9pQ1MK1U",
+     "name": "probes",
      "caller": {
       "type": "direct"
      },
@@ -30,8 +30,8 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01LPDvhsFbacEL6zsjpwidqw",
-     "name": "probes",
+     "id": "toolu_013aSmj6RMwr7o4VPJ5z6jHR",
+     "name": "page_outline",
      "caller": {
       "type": "direct"
      },
@@ -39,39 +39,39 @@
     }
    ],
    "usage": {
-    "inputTokens": 1870,
+    "inputTokens": 1874,
     "outputTokens": 49,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 1866
+    "cacheWriteTokens": 1870
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:fb53ae802dbb7e5cac86a0c6fd973ad7d81d60c5ff5f016bd6cb5d4b21d34de9": {
+  "sha256:6da2e68894291fc0367d77d34d3d4cd8b5242345896f5ec0d0bba2e4d8926b0e": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_012z9ci6EN4MtsG2VF2dF5AV",
+     "id": "toolu_01HNMxxXevSh1PVVKN2FqSn8",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
        {
-        "requirement": "the list shows only open issues",
+        "requirement": "R1",
         "status": "pass",
         "cites": [
          1,
          2
         ],
-        "reasoning": "The page has status=open applied, and the list shows only issue #1, whose status is Open. The probe data shows that #1 is the only open issue labelled bug, so the filtered list is correct."
+        "reasoning": "The page has Status=Open and Label=bug filters applied. The table has exactly one row, #1 'Login button misaligned', with status Open. In the server data the only issue that is both open and labelled bug is #1, so the list correctly shows only open issues."
        },
        {
-        "requirement": "the list shows only issues labelled bug",
+        "requirement": "R2",
         "status": "pass",
         "cites": [
          1,
          2
         ],
-        "reasoning": "The page has label=bug applied, and the only row shown is #1, labelled bug. Issues #2 (feature) and #3 (docs) are left out. The status line reads \"1 issue\"."
+        "reasoning": "The only row shown, #1, is labelled bug. The other two issues (#2 feature, #3 docs) are left out, and the status reads '1 issue'."
        }
       ]
      }
@@ -81,11 +81,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSvwUKEAgTGAI4AUIIdGhpbmtpbmcSDA6E6W6uO0/jWg2MxBoMkqVPquSPRAveRSkhIjC7HJVikE/29vW0GCzZGo5rV/aW7UzBHW99I3gQKshtl1xrMgj2e4v7F/7TqH41BFEq3ARsZcRz8BJGhAKCpP27HWfMj/rEeQNtEfG/DEIwBdwkeOjHX65PdJDlT8M9uRykWUxSYq71/hdUtZXgPcSM62G5YpXkwJEYetVBz0dQP8vmw+Bd1oYMnrbj/cxkMUEBS3CduVnWgna33IFB/01HWYK1x/Ji5YNsucn7seYhYPyLmlD8b1+mR66IHrTIRlW6yJoNvH8Y4A1tpuXLxCKyiW+n6wHka3gOOrS3gsfgQbjRB+Cb2JiLj3GWIJ32v8kVPLb/J+5+elQpRQCAB8ptv9nfOVU6f4XZjQUjtv57g3t0p6M1oYS9pIemP0UUxxWIyFahtKQgnmoq5QfbAdCVMa6Wk9aSw/mQ0UbssQ9SyARuF2kW3GcsJW+uvYW1IKfwhkpRLHdYChLW//Q0cTuKMCztjUWu2/RMc2uVJzGdyJYDSyzUMkbG34B93TKSeT0+PDL2zO3JNdzaQZXSzY87TuaMY/QO8F8dMi2GwamTJL+4R4TPUOzioctRSeK0F3JOsotcej/SIWr/0lFPpC+Gt5s/woqp9t1r2wTGgMdFGRpbZNK63W4LAD39ywhdxHoa3DUF8AVaRGmqTD+eHC6JtIUO7eGBfWIqAp2pnjw45iKISNMmX95t920udhZB7EpfBggxm7r7ZADccwQuqWpkq83yhUPpu+Z9jQT6WD5q/WyPneXXxUWNzVNZxhNCZZL0hpLuEjqdmbntF5z50SwdDeoY16JjvZz9xljJgnby8rzilz2/hqTlpVRtRbAInz4Lg19wvXM19kkT/LAm/Tu04za8ijGzenyjDTDczNnBGAE="
+     "signature": "CAQS5gUKEAgTGAI4AUIIdGhpbmtpbmcSDDkU0hn8FskrHlb70xoMPXq/GwSsiD4vFLBHIjBIRN/tO2KzvDZArtUEPwiY396vJNvhehjE/1XscveH6X2lsCXA1Jemggo7NB/tL1MqgwWrH1fsxNU29SDLk8IQzcwbuSjk4lZPhkyVHfXel1OdUpnLfZEsEUvPkPmIGd4TsGLXjzVDJCOacIw0+C2jky9CMlQN5ZAvf0rP8Aqdlf/EH4pLWmQ0Nl/NaKiZriQVELHrB7IesUVjnIUxUtFljRkGXY1lWKFlDfMclnGo2Z4uDvzxURwXYCDAmSpckNNFkSpsjcrkahU+SCj4LOdiJ4ZaITKu91HBm19WP1AhQ7ESxe5OObOvAfaW4h1NgIa2Kt3KVogePMFTtj/GfIdewbiWwitM2YV6srvEFAdvqCSWVU6qz6jvcHAXodkZTsc20Y0cZKfkFgIrjvdlJseREjNQHzmaujLuWoHT4UtnN/nVrGsq0dKgI7+uj8J5bpKj1Ud7MtGx78JpTMeoiheKxmE0LHxmR+Gij44vlWa6zzanBugVrcxF6m7FzaZS3lJeXpN81q3k1L2ynqWHUpRnmxldgRKIPOumismCRYTUWgelIbbZI6UbxCmpkZLPwV0BIfyDR4vKKuVt1K2s1elSfiB50xltffETl6PD1WBGSEMrWPFSFYxOi7lY4UEhv1PaZ/txHEPc3EdOn4X2iQ03QoQORpv93CEU4e1y4RNOJRCc7pb5o/K6QKQ/a6W0KlMtoq89oOFXHwEFvcphkINYLj1KkB2fdy7mm6rQ8g6MXkhExWsYgROcd4JHmZFKM2ux4234tOfuqvMRFHiBTBr61JXzLPyGtc14s8uwO74bMwcImyX7EX8vg91nce4d9dNok4iOKtfLDUT86e3XxTGcKXqeQWeGUmfM/rF4cqqe8AxFuDEz1rdhGu4+E1iM99Num8WGFrdJuUu/k7NaNyFZxk7YK+eMGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_012z9ci6EN4MtsG2VF2dF5AV",
+     "id": "toolu_01HNMxxXevSh1PVVKN2FqSn8",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -93,103 +93,32 @@
      "input": {
       "verdicts": [
        {
-        "requirement": "the list shows only open issues",
+        "requirement": "R1",
         "status": "pass",
         "cites": [
          1,
          2
         ],
-        "reasoning": "The page has status=open applied, and the list shows only issue #1, whose status is Open. The probe data shows that #1 is the only open issue labelled bug, so the filtered list is correct."
+        "reasoning": "The page has Status=Open and Label=bug filters applied. The table has exactly one row, #1 'Login button misaligned', with status Open. In the server data the only issue that is both open and labelled bug is #1, so the list correctly shows only open issues."
        },
        {
-        "requirement": "the list shows only issues labelled bug",
+        "requirement": "R2",
         "status": "pass",
         "cites": [
          1,
          2
         ],
-        "reasoning": "The page has label=bug applied, and the only row shown is #1, labelled bug. Issues #2 (feature) and #3 (docs) are left out. The status line reads \"1 issue\"."
+        "reasoning": "The only row shown, #1, is labelled bug. The other two issues (#2 feature, #3 docs) are left out, and the status reads '1 issue'."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2770,
-    "outputTokens": 281,
-    "cacheReadTokens": 1866,
+    "inputTokens": 2774,
+    "outputTokens": 288,
+    "cacheReadTokens": 1870,
     "cacheWriteTokens": 902
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:51db211eee2f4ab540e12e1f4a8e3f45e53266e04be471f3adf8d14dba30c270": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_017yQ7Gto5opEH75QgpjvkGi",
-     "name": "submit_verdict",
-     "input": {
-      "verdicts": [
-       {
-        "requirement": "R1",
-        "status": "pass",
-        "cites": [
-         1,
-         2
-        ],
-        "reasoning": "The page has status=open applied, and the list shows only issue #1, whose status is Open. The probe data shows that #1 is the only open issue labelled bug, so the filtered list is correct."
-       },
-       {
-        "requirement": "R2",
-        "status": "pass",
-        "cites": [
-         1,
-         2
-        ],
-        "reasoning": "The page has label=bug applied, and the only row shown is #1, labelled bug. Issues #2 (feature) and #3 (docs) are left out. The status line reads \"1 issue\"."
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_017yQ7Gto5opEH75QgpjvkGi",
-     "name": "submit_verdict",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "verdicts": [
-       {
-        "requirement": "R1",
-        "status": "pass",
-        "cites": [
-         1,
-         2
-        ],
-        "reasoning": "The page has status=open applied, and the list shows only issue #1, whose status is Open. The probe data shows that #1 is the only open issue labelled bug, so the filtered list is correct."
-       },
-       {
-        "requirement": "R2",
-        "status": "pass",
-        "cites": [
-         1,
-         2
-        ],
-        "reasoning": "The page has label=bug applied, and the only row shown is #1, labelled bug. Issues #2 (feature) and #3 (docs) are left out. The status line reads \"1 issue\"."
-       }
-      ]
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 3117,
-    "outputTokens": 246,
-    "cacheReadTokens": 2768,
-    "cacheWriteTokens": 347
    },
    "model": "claude-opus-5-5"
   }

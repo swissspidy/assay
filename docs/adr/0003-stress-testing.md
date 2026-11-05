@@ -79,7 +79,7 @@ Checks that already fail or abstain on the reference (e.g. a soft requirement) a
 
 ### Integration with the compiler
 
-`verifyCandidate` (ADR 0002) runs the stress test on every submission that otherwise passes. Over-constraint is a submission error, so the agent must fix it. Fragile, weak, missed and advisory findings are warnings in the compile report. The cheapest place to remove an unstated condition is the repair loop, before a human ever sees the check.
+`verifyCandidate` (ADR 0002) runs the stress test on every submission that otherwise passes. Over-constraint and fragility are submission errors, so the agent must fix them: a correct run that only looks different must not fail or escalate. Weak, missed and advisory findings are warnings in the compile report. (Fragile checks were warnings at first; one slipped into a recompile, see ADR 0002.) The cheapest place to remove an unstated condition is the repair loop, before a human ever sees the check.
 
 ## Consequences
 

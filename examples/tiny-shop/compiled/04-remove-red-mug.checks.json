@@ -10,7 +10,7 @@
     {
       "id": "R1",
       "kind": "hard",
-      "text": "The Red Mug is no longer in the cart.",
+      "text": "The cart no longer contains the Red Mug.",
       "source": {
         "field": "outcomes",
         "quote": "the cart no longer contains a Red Mug"
@@ -19,7 +19,7 @@
     {
       "id": "R2",
       "kind": "hard",
-      "text": "All other items stay in the cart.",
+      "text": "All other items remain in the cart.",
       "source": {
         "field": "outcomes",
         "quote": "the other items stay in the cart"
@@ -28,30 +28,52 @@
   ],
   "checks": [
     {
-      "id": "r1-no-red-mug",
+      "id": "R1-no-red-mug",
       "requirement": "R1",
-      "description": "The backend cart probe after the task holds no item named Red Mug.",
+      "description": "The backend cart probe shows no item named Red Mug (or with SKU MUG-RED) after the task.",
       "assert": {
         "kind": "value",
         "source": {
           "from": "probe",
-          "probe": "cart",
-          "pointer": "/items"
+          "probe": "cart"
         },
         "expect": {
           "schema": {
-            "type": "array",
-            "not": {
-              "contains": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "const": "Red Mug"
+            "type": "object",
+            "required": [
+              "items"
+            ],
+            "properties": {
+              "items": {
+                "type": "array",
+                "not": {
+                  "contains": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "const": "Red Mug"
+                          }
+                        },
+                        "required": [
+                          "name"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "sku": {
+                            "const": "MUG-RED"
+                          }
+                        },
+                        "required": [
+                          "sku"
+                        ]
+                      }
+                    ]
                   }
-                },
-                "required": [
-                  "name"
-                ]
+                }
               }
             }
           }
@@ -59,7 +81,7 @@
       }
     },
     {
-      "id": "r2-others-kept",
+      "id": "R2-others-kept",
       "requirement": "R2",
       "description": "The cart items after the task equal the cart items before the task minus the Red Mug.",
       "assert": {
@@ -110,6 +132,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T23:12:10.464Z"
+    "at": "2026-11-05T07:43:36.365Z"
   }
 }

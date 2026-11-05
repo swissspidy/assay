@@ -7,23 +7,25 @@
   ],
   "turns": {
     "rubric": 1,
-    "discovery": 3
+    "discovery": 4
   },
   "usage": {
-    "inputTokens": 50502,
-    "outputTokens": 854,
-    "cacheReadTokens": 32536,
-    "cacheWriteTokens": 17954
+    "inputTokens": 69044,
+    "outputTokens": 1129,
+    "cacheReadTokens": 50428,
+    "cacheWriteTokens": 18602
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "a new issue titled \"Checkout fails on Safari\" exists",
       "checks": [
-        "r1-issue-exists"
+        "R1-issue-exists",
+        "R1-create-request"
       ],
       "channels": [
-        "probe"
+        "probe",
+        "network"
       ],
       "trust": "structured"
     },
@@ -31,7 +33,7 @@
       "requirement": "R2",
       "quote": "the new issue has the bug label",
       "checks": [
-        "r2-issue-bug-label"
+        "R2-bug-label"
       ],
       "channels": [
         "probe"

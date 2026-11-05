@@ -1,24 +1,24 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T23:16:20.581Z",
+ "recordedAt": "2026-11-05T07:47:40.688Z",
  "turns": {
-  "sha256:9917620adf32c237cd93f9bdc1a8d814ff9565e308438e0612a6bc9810b019ab": {
+  "sha256:d71468530109336cf2795476e814a4c866e24caec5cd883307f9832e1690690e": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01HXoweRTp2P9APe4AZzxDmw",
+     "id": "toolu_01JTorfbK3GMtUM5sh6nZYNW",
      "name": "page_outline",
      "input": {}
     },
     {
-     "id": "toolu_01HCf9BANNbtKf8zu8kSBtuK",
+     "id": "toolu_01PcxK7D7uExUfgXa8naJPKv",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_0131M9so51VSMZL3tB4Tv7pw",
+     "id": "toolu_01GPTmmZt712AWibfUfmCiQf",
      "name": "network_log",
      "input": {}
     }
@@ -26,7 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01HXoweRTp2P9APe4AZzxDmw",
+     "id": "toolu_01JTorfbK3GMtUM5sh6nZYNW",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -35,7 +35,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01HCf9BANNbtKf8zu8kSBtuK",
+     "id": "toolu_01PcxK7D7uExUfgXa8naJPKv",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -44,7 +44,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_0131M9so51VSMZL3tB4Tv7pw",
+     "id": "toolu_01GPTmmZt712AWibfUfmCiQf",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -53,29 +53,59 @@
     }
    ],
    "usage": {
-    "inputTokens": 1897,
+    "inputTokens": 1891,
     "outputTokens": 72,
-    "cacheReadTokens": 1893,
+    "cacheReadTokens": 1887,
     "cacheWriteTokens": 0
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:2904bc6c81b980b6849eae6a5644e8fa73bcecb1225184aa0143cab73be8f7fc": {
+  "sha256:edf5ac8060d682551a70255403019c678abe746568c8f51c5370823228d170eb": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01EBTdFR32KbZNZFCoQ6zEAz",
-     "name": "network_entry",
+     "id": "toolu_016RSSVQqRX3g1WMtjxWAhH7",
+     "name": "submit_verdict",
      "input": {
-      "seq": 3
-     }
-    },
-    {
-     "id": "toolu_01WW8phE5QjDjuD3B2Tf3HcX",
-     "name": "network_entry",
-     "input": {
-      "seq": 4
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The server cart probe shows total 21.5, and the page's Cart total status reads $21.50."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The cart probe has MUG-BLUE Blue Mug with qty 1, and the page shows Blue Mug with quantity 1."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The cart probe has MUG-RED Red Mug with qty 1, and the page shows Red Mug with quantity 1."
+       },
+       {
+        "requirement": "R4",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The final URL is /cart with the title 'Cart · Tiny Shop', and the network log shows the /cart document being loaded after the two add-to-cart POSTs."
+       }
+      ]
      }
     }
    ],
@@ -83,145 +113,62 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSoAYKEAgTGAI4AUIIdGhpbmtpbmcSDExaRjT/C3+332iNaxoMkpRWtNUMZoFRhKf8IjBB4rDWO7tMfSvI3hSdZYwh/tduxQf7B4zoeHXPVJ+a1dnb0+ArP90uN6BT7yk2dsIqvQWkjquikD1UQMXbohcVVqXwc187nYlEx3LC3+lGideVDhc01IzpMGog/0bmrhkoXaz4B7xZQkj29sRPSQtikDE7o4bR7LKnBk4rOIIqAvrjCNdhdAdu2XpLbkHRlkTQ6tms5CkLdbrDGLuy0gQtkhgKMawhCymd5qNIHQDOw57hyqW7z6K7znw+K3BTxcXzLCaNpZ/WK1KNBheDeVGS1wSwdMg9a4v8mnEvdvUmK8wgkyCzro0UfeaqE7wueAl2Vml90h1yps4YyT6tNo+d0rXBucQuzQSKuSGXiPLxmdnBtaZk6jttixvDVcV2fSWUiGuwBGUllyFvL/+erwl8cAM1pDOPKrlXAorYFvtAwi6VFXmzS7bQeaX71iTJdsCwj7JIHsmBiNJgMHCFDjTCDWOVP8linEOfyA8DWMpHyONbDUDuH3fXiAkVen4CYRHip8d1ng5D+n6wgChVdSAyMbX6/bXSPgA1IRVdKyqjlYFIolx0fRxktTUOmIM3qjy7cBHhEBuwRRXLzXMtG13X2jWqiI8FhyasqpzrZEg4jqjWvU3tH56cg2RljTuXRPbDqZ6xxDxW/0JVfdiC6eHJ8S+dPPa4vD4E/ZyGK/EMHzfMgXqGyAPosPAEwI5PGhdsEf7c7Krk5A9I9qkp8i3s+v2PD7LKW52g7Vcr5RVDVdEEtXbsouIXjzb5SKjGPOw0Nbyy2p8236xtVHz/w9sWHiTVvdc5+W8e/QO7ZAzrUg/rbL9i2CWeZDdprFTRAbpQZg2y/X8hB6vfi4aJ4O8JirWoRTXXWLFL08dCnrd/41Wx1AqHIim7r6fb/fpRPmVKlMyYCfr0B2EJDf7pp8XXhjtREG1dAh76mQomKW/mfGQBgDzUEU+1dqQmCN0AVYFKQbD/oMHQW78k8OM0mB7jmnkOoaKo5wT1XWVD6jsutxgB"
+     "signature": "CAQSqQUKEAgTGAI4AUIIdGhpbmtpbmcSDNGjM9Ql1x7oPa6HqxoMm8ynTzm+0QI8UcViIjCfoJVfib9b9Ili7AkGP2G0IWEOqhG+D5bBl7roJPfak14z+tcduwTCK45ijlhrvwIqxgRuAVlDDweXPvf1sRH8awyN2BkbmyFu+IbA/CiTF8Levq4mHw/ov+D+jCp4hoc7Zt7DluljS1sViVZsmcm/1G8++axf6BkHNCFJ8B8V21+N7eWmI4822QSrv0QcCUdC7qo+wKo69u0sUKE9fJhwtac8w5rZxHxYCZRJVSXgNQf6WIXplWpnrzcgxvH3ECfqAuAm7PyffSyJRvgkYmo5SbhRahdZpfC0SlZ3jtX6fCot6xFMlGpM2jf7XoUJgU1GiFM3WAemd2OKP0bgONtdvxeffGGSYkzjG2wjCS8BGNdC+uHuQlp/mVsTa+K4IsN4/Nst/3GhbbHHRLYLu9u6wgmxmpDyqlfoCH8acpD2VuFNksDnLDsr2vSjnqlaopNQ9JrRzF1NJfwXwJr6Evct4YMgII0PDNx7rzSSRsUvB8ei3our3UER+WZ1B0937pfoHpA+H6bGIjdmp5nbpXnEktbtw4q38xHUhSgORtlLxeocCwHU9pbHK8tHS3x4uzyDM2J1io9Xg1H0oUKNy69kjmsl9f65L5tR8pnG7xSB+UbnXCWOi2kFBz+y8PnOc2Pw4K6J7HOZkYaDYOqfO+Tu91dRBmSmcrjXNlIB8UbRC94PvgsBmo2OwDeX+S/ZSVTY8ya2xuIOjCggoNWQaJ6tGRU/Nu+7pSEP679UUjEko5qiwk+1BOSpmQqgM8NPF/cos1JNxhVAE1h5omRtL9nRnlXwKVvvA205KMlpaX/pTBkQ6OnPigC3wLBzsYSVPtGqqOUlp+7VnkEYAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01EBTdFR32KbZNZFCoQ6zEAz",
-     "name": "network_entry",
+     "id": "toolu_016RSSVQqRX3g1WMtjxWAhH7",
+     "name": "submit_verdict",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "seq": 3
-     }
-    },
-    {
-     "type": "tool_use",
-     "id": "toolu_01WW8phE5QjDjuD3B2Tf3HcX",
-     "name": "network_entry",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "seq": 4
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The server cart probe shows total 21.5, and the page's Cart total status reads $21.50."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The cart probe has MUG-BLUE Blue Mug with qty 1, and the page shows Blue Mug with quantity 1."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The cart probe has MUG-RED Red Mug with qty 1, and the page shows Red Mug with quantity 1."
+       },
+       {
+        "requirement": "R4",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The final URL is /cart with the title 'Cart · Tiny Shop', and the network log shows the /cart document being loaded after the two add-to-cart POSTs."
+       }
+      ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2997,
-    "outputTokens": 154,
-    "cacheReadTokens": 1893,
+    "inputTokens": 2991,
+    "outputTokens": 365,
+    "cacheReadTokens": 1887,
     "cacheWriteTokens": 1102
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:38e2df282eee9a8dde3773635865d94bed42843439bfae2e57e5cc9e296f8651": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_01Ta2VcTMYVHvFPrvEoqKkgp",
-     "name": "submit_verdict",
-     "input": {
-      "verdicts": [
-       {
-        "requirement": "R1",
-        "status": "pass",
-        "cites": [
-         1,
-         2,
-         5
-        ],
-        "reasoning": "The server-side cart probe shows total 21.5, and the cart page shows the Cart total status as $21.50."
-       },
-       {
-        "requirement": "R2",
-        "status": "pass",
-        "cites": [
-         2,
-         5
-        ],
-        "reasoning": "A POST added MUG-BLUE with qty 1, and the cart probe shows one Blue Mug."
-       },
-       {
-        "requirement": "R3",
-        "status": "pass",
-        "cites": [
-         2,
-         4
-        ],
-        "reasoning": "A POST added MUG-RED with qty 1, and the cart probe shows one Red Mug."
-       },
-       {
-        "requirement": "R4",
-        "status": "pass",
-        "cites": [
-         1,
-         3
-        ],
-        "reasoning": "The final page is /cart, titled 'Cart · Tiny Shop' with the heading 'Your cart', after a document navigation to /cart."
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_01Ta2VcTMYVHvFPrvEoqKkgp",
-     "name": "submit_verdict",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "verdicts": [
-       {
-        "requirement": "R1",
-        "status": "pass",
-        "cites": [
-         1,
-         2,
-         5
-        ],
-        "reasoning": "The server-side cart probe shows total 21.5, and the cart page shows the Cart total status as $21.50."
-       },
-       {
-        "requirement": "R2",
-        "status": "pass",
-        "cites": [
-         2,
-         5
-        ],
-        "reasoning": "A POST added MUG-BLUE with qty 1, and the cart probe shows one Blue Mug."
-       },
-       {
-        "requirement": "R3",
-        "status": "pass",
-        "cites": [
-         2,
-         4
-        ],
-        "reasoning": "A POST added MUG-RED with qty 1, and the cart probe shows one Red Mug."
-       },
-       {
-        "requirement": "R4",
-        "status": "pass",
-        "cites": [
-         1,
-         3
-        ],
-        "reasoning": "The final page is /cart, titled 'Cart · Tiny Shop' with the heading 'Your cart', after a document navigation to /cart."
-       }
-      ]
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 3652,
-    "outputTokens": 330,
-    "cacheReadTokens": 2995,
-    "cacheWriteTokens": 655
    },
    "model": "claude-opus-5-5"
   }

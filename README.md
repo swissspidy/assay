@@ -247,9 +247,9 @@ that only claim success. Each task was compiled from one correct run; on the 96 
 
 | System           | Balanced accuracy | TPR   | TNR   | Cost / run | Latency (median / p95) | Model at run time |
 | ---------------- | ----------------- | ----- | ----- | ---------- | ---------------------- | ----------------- |
-| compiled checks  | 1.000             | 1.000 | 1.000 | $0         | 0.3 ms / 4.6 ms        | no                |
+| compiled checks  | 1.000             | 1.000 | 1.000 | $0         | 0.3 ms / 3.5 ms        | no                |
 | LLM judge        | 0.906             | 0.933 | 0.879 | $0.0119    | 4.3 s / 10.0 s         | yes               |
-| agentic verifier | 0.976             | 0.967 | 0.985 | $0.0279    | 8.9 s / 14.4 s         | yes               |
+| agentic verifier | 0.959             | 0.933 | 0.985 | $0.0273    | 8.5 s / 13.5 s         | yes               |
 
 The LLM judge accepted 3 of 8 adversarial pages, and all 3 runs that changed the starting cart
 wrongly; the checks and the verifier rejected all of them.

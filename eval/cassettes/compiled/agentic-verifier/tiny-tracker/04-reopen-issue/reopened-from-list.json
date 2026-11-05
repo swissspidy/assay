@@ -1,32 +1,27 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T23:21:18.861Z",
+ "recordedAt": "2026-11-05T07:52:24.521Z",
  "turns": {
   "sha256:43a3e089319cbbf47943dab3f04457ee59367ba2c3bcb8148c630b1f3d882524": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_011knfmPh1UVvYdpU5pd2QMs",
+     "id": "toolu_01576j22XXPaWcNeeH4Und6C",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01CB83b1pcJ4ao5N31koEHZd",
+     "id": "toolu_01HpTknSJyCbrU1PRux1jNUH",
      "name": "network_log",
-     "input": {}
-    },
-    {
-     "id": "toolu_01Y4ELQApvvNfGVD79AS2v5v",
-     "name": "page_outline",
      "input": {}
     }
    ],
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_011knfmPh1UVvYdpU5pd2QMs",
+     "id": "toolu_01576j22XXPaWcNeeH4Und6C",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -35,17 +30,8 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01CB83b1pcJ4ao5N31koEHZd",
+     "id": "toolu_01HpTknSJyCbrU1PRux1jNUH",
      "name": "network_log",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {}
-    },
-    {
-     "type": "tool_use",
-     "id": "toolu_01Y4ELQApvvNfGVD79AS2v5v",
-     "name": "page_outline",
      "caller": {
       "type": "direct"
      },
@@ -54,18 +40,18 @@
    ],
    "usage": {
     "inputTokens": 1826,
-    "outputTokens": 72,
+    "outputTokens": 48,
     "cacheReadTokens": 0,
     "cacheWriteTokens": 1822
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:70edb142b07c96d00674c55559b69fc7d5cf2c8d7db6cd0863a7fd7d1c94afc9": {
+  "sha256:a6e64697d172a2af18bf7346ab3c310ea6c7a343fa6988ca4085a1a79b1f9c2a": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01PKrZKKfPuSBDHwa2Bn6Fib",
+     "id": "toolu_01HvZkxHtTf4MTjLGBi7GUoE",
      "name": "network_entry",
      "input": {
       "seq": 3
@@ -75,7 +61,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01PKrZKKfPuSBDHwa2Bn6Fib",
+     "id": "toolu_01HvZkxHtTf4MTjLGBi7GUoE",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -86,19 +72,19 @@
     }
    ],
    "usage": {
-    "inputTokens": 3034,
+    "inputTokens": 2364,
     "outputTokens": 49,
     "cacheReadTokens": 1822,
-    "cacheWriteTokens": 1210
+    "cacheWriteTokens": 540
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:35511d923b27f19a7809d2edda7b0b62efe5dcae723465aba6eef9070a0d0bc1": {
+  "sha256:b1b9cbfe46cb0eb5161c58a7f5da1f41a37863abb3b4a2b1b779df36f98f7abe": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_018rRqVYEqLwf811tJtEPmnV",
+     "id": "toolu_01HVTSYMm41gbjFjmQwksgig",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -108,10 +94,9 @@
         "cites": [
          1,
          2,
-         4,
          3
         ],
-        "reasoning": "The agent opened the closed-issues filter and then went to issue #3, which suggests #3 was closed at the time. It then sent POST /issues/3/state with status=open, and the server answered 303. The server-side probe now shows issue #3 with status \"open\", and the page shows Status: Open with a \"Close issue\" button."
+        "reasoning": "The agent filtered issues to status=closed, then sent POST /issues/3/state with status=open, and the server replied 303. The issues probe now shows issue #3 with status \"open\"."
        }
       ]
      }
@@ -121,11 +106,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSrwYKEAgTGAI4AUIIdGhpbmtpbmcSDNRKCfDPE9Hvm2lxJxoMdmz+hM3xh42lLecEIjDoWTSgRqA6d03rWU981LxsJ7kpnMI1kVcuzpT17yU2gjlwNFgkiZxHAnShNjhje1IqzAWbOkf5DMg9xUUbA5668qcJ2Fn3WbwlEr53LtgPaTHswO9cPuRL1tlJv1HDzgTRCeD8vrCIwjCIvHYus+/77P5IZkO5O0o2lk/eGiN4VAzs1nUF/i59E1ylRIcgEYXxpp93ZHWAznTHOTSbgulO3JgWzyvnDmdkkgES6cFLM4iEhI7etuMlAnaotCpWMdhsUvnRze6vEKWmT8ARv2iDbhngxA69SoETUODW/zw/riL16+DotTZ7o9teUqwr3GoaSZ6kE8lHaPVjcUW8bdg64V5K2x/XOxPpGT3V/suXfwmqfecuCgPIP21+On5kZqgVVlG0Vk6jHkMUFbSfE+e4qVFe4NOANQXH831aRbLEPIMnW6wXnkqv+vUiueXT6+ev0oyMADHQN+xF+qvxu4DbsIu4y+M2JxYy2yTk4nVCQiWJlhqSDxOZ1INz3re+YXzebvlUadv9N8UvZ38a5Zer4NnGMCqOAIvpvm0b9jMn5NXyzrGQ3LYAl/7+u5uXFqsLV/dkgQAqQ1Sj4xqoDCm31k4zmLITelueAxDlv+As+44/0SIjJG6Kmd2jGYPhjyFGjvedtGT+0gJX33fqL3EgBQyhcmpC8jkH0aWoV5oC/WgFgsg9FiqkoYb5Mi5rxnFR/21weBWDjjKo/YCvNz6eAw6PgUyGhU4H9/myZXC4od5EzH+WnfKYPnvMLCT8la2v44PGttDqb/Q13ofMjaEMxXuvzjtOxVy6Zo8JjvTNSztsr6s1/UBCPsUgr7NmTMkvW+S46WJ1bbwxqbQNOZX9PqhHINUoBdL91U+4fLCGsp7sNK7OUOITb/ZqY7Pf9jaf6bkFDqImGcjXyDJyuNgfZE10pegrBsES3YWJ4nG9B5lYDktaL7Q8vWNJwpMNyWUCE0nKIbieotKHE/loUK1d3BLUJHL7UT91knkzoBbCaMp4ELk+bLaq7+NLqyhiAxgB"
+     "signature": "CAQSygUKEAgTGAI4AUIIdGhpbmtpbmcSDJPIp/MOBX4vjmtGGRoM5t6ou2RM+KYiXbdbIjAh91cqRQmTeVy18Kev0LEGqIp/GxhhTX93DdIEZnWZXuM+UFd8zBlofzjmxwGYAUYq5wRTTGErqgxrjZDEgGD2IyuyGIKhTKn48YYAcpKD3gWk8yV3fo3ZFONyW+hyw2Unwfo3HVf5LkVjlYU24JgkNOk78dmZeCA///Dw1IXgD03qkQwTVisany1dc/jaZRnGGs/URDetNwpXtlY5Vnrv1bUvQhlRo4T6DmB6ATqvLh2eAmdPusoPmEe79tVC+EDo2TJU3Z+M/KxkkMTxkY7aOt7MHPksuQ7pKCVUQfdbyJ39Kw045z6tW8yJjUjAz6CzYo1v6UWQpzsVOiYD1XOZu0dB7WWdw0x6hOh1opg6C5Bv+tRnqoktTlWGk+ejCAJcboPw64v5wclPEWDbvNTRsCmwLRKw719T/sVG54rSYEfvx9j89TyVKQOCS8M70jgY9YWLuCMIN88Q45SRQVg3tJQ64IE1EZJlBugR2vmBGlKgCSGJcAdZagaHGWMQmzD4fjtEU8SYypftbcA6y7ZmO+0A+EN6R61SjVK35YA+n7eYCR3dMOoqntyg3qxbcNGuf64m7184BdeELMBdMOfg0Rfd2m6fTGm4HGmYv8PFXJUzhWunVMHZO7BD9GrxIJlQfdY4Jca+lxYa2jphNrff8ydxa/50LZyt7jMEn9H3sqCczUWM1IkaMYO10et/2IuxHVr+9Lm2KSe6LlDBkTNyOorG1gUJf1pDRJkKoT7hF5irBUIRZC7rFTK3m4JZvLt/S/Hx5f9dt5Y2zT6ZEN1TTj624aVAiDo5YgfSVJD1Tvf2JK353DvMi2iw9dk7HOOaCylE298OAwyJQydRpftAtm+n8K8cYpUbtHcHOEaiXHvLW1galTbMXo8YAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_018rRqVYEqLwf811tJtEPmnV",
+     "id": "toolu_01HVTSYMm41gbjFjmQwksgig",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -138,19 +123,18 @@
         "cites": [
          1,
          2,
-         4,
          3
         ],
-        "reasoning": "The agent opened the closed-issues filter and then went to issue #3, which suggests #3 was closed at the time. It then sent POST /issues/3/state with status=open, and the server answered 303. The server-side probe now shows issue #3 with status \"open\", and the page shows Status: Open with a \"Close issue\" button."
+        "reasoning": "The agent filtered issues to status=closed, then sent POST /issues/3/state with status=open, and the server replied 303. The issues probe now shows issue #3 with status \"open\"."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 3188,
-    "outputTokens": 250,
-    "cacheReadTokens": 3032,
+    "inputTokens": 2518,
+    "outputTokens": 174,
+    "cacheReadTokens": 2362,
     "cacheWriteTokens": 154
    },
    "model": "claude-opus-5-5"

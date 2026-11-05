@@ -13,7 +13,7 @@
       "text": "The cart page lists a Blue Mug.",
       "source": {
         "field": "outcomes",
-        "quote": "the cart page lists a Blue Mug"
+        "quote": "Then the cart page lists a Blue Mug"
       }
     },
     {
@@ -22,22 +22,54 @@
       "text": "The cart page lists a Red Mug.",
       "source": {
         "field": "outcomes",
-        "quote": "the cart page lists a Red Mug"
+        "quote": "Then the cart page lists a Red Mug"
+      }
+    },
+    {
+      "id": "R3",
+      "kind": "hard",
+      "text": "The cart is shown to the user at the end.",
+      "source": {
+        "field": "instruction",
+        "quote": "show me the cart"
       }
     }
   ],
   "checks": [
     {
-      "id": "R1-cart-blue-mug",
+      "id": "r1-blue-mug-listed",
       "requirement": "R1",
-      "description": "The browser is on the cart page, the Cart table has a row containing Blue Mug, and the backend cart contains a Blue Mug item.",
+      "description": "The backend cart holds a Blue Mug and the cart page's Cart table shows a Blue Mug row.",
       "assert": {
         "kind": "allOf",
         "of": [
           {
-            "kind": "url",
-            "match": {
-              "path": "/cart"
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "cart",
+              "pointer": "/items"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "qty"
+                  ],
+                  "properties": {
+                    "name": {
+                      "const": "Blue Mug"
+                    },
+                    "qty": {
+                      "type": "number",
+                      "minimum": 1
+                    }
+                  }
+                }
+              }
             }
           },
           {
@@ -57,33 +89,9 @@
               ]
             },
             "match": {
-              "role": "row",
-              "text": {
-                "contains": "Blue Mug"
-              }
-            }
-          },
-          {
-            "kind": "value",
-            "source": {
-              "from": "probe",
-              "probe": "cart",
-              "pointer": "/items"
-            },
-            "expect": {
-              "schema": {
-                "type": "array",
-                "contains": {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "const": "Blue Mug"
-                    }
-                  },
-                  "required": [
-                    "name"
-                  ]
-                }
+              "role": "cell",
+              "name": {
+                "equals": "Blue Mug"
               }
             }
           }
@@ -91,16 +99,39 @@
       }
     },
     {
-      "id": "R2-cart-red-mug",
+      "id": "r2-red-mug-listed",
       "requirement": "R2",
-      "description": "The browser is on the cart page, the Cart table has a row containing Red Mug, and the backend cart contains a Red Mug item.",
+      "description": "The backend cart holds a Red Mug and the cart page's Cart table shows a Red Mug row.",
       "assert": {
         "kind": "allOf",
         "of": [
           {
-            "kind": "url",
-            "match": {
-              "path": "/cart"
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "cart",
+              "pointer": "/items"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "qty"
+                  ],
+                  "properties": {
+                    "name": {
+                      "const": "Red Mug"
+                    },
+                    "qty": {
+                      "type": "number",
+                      "minimum": 1
+                    }
+                  }
+                }
+              }
             }
           },
           {
@@ -120,37 +151,24 @@
               ]
             },
             "match": {
-              "role": "row",
-              "text": {
-                "contains": "Red Mug"
-              }
-            }
-          },
-          {
-            "kind": "value",
-            "source": {
-              "from": "probe",
-              "probe": "cart",
-              "pointer": "/items"
-            },
-            "expect": {
-              "schema": {
-                "type": "array",
-                "contains": {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "const": "Red Mug"
-                    }
-                  },
-                  "required": [
-                    "name"
-                  ]
-                }
+              "role": "cell",
+              "name": {
+                "equals": "Red Mug"
               }
             }
           }
         ]
+      }
+    },
+    {
+      "id": "r3-cart-shown",
+      "requirement": "R3",
+      "description": "The browser ends on the cart page (/cart).",
+      "assert": {
+        "kind": "url",
+        "match": {
+          "path": "/cart"
+        }
       }
     }
   ],
@@ -160,6 +178,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T23:11:58.980Z"
+    "at": "2026-11-05T07:43:19.700Z"
   }
 }

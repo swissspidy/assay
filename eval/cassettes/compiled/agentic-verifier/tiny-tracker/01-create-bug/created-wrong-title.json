@@ -1,19 +1,19 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T23:19:44.806Z",
+ "recordedAt": "2026-11-05T07:51:00.664Z",
  "turns": {
   "sha256:a0267d2656c3ef576a99525e8be684021f9de28fbd418f0291db038f8c3ead05": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01E35cFUC5RKGp145eFVLwCr",
+     "id": "toolu_01E1BZe8re4A2YjydiYvTfSH",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_019s6RTPVb8SttDU8ryE9CuQ",
+     "id": "toolu_01XMvoa4rFAF5ZJsjY6itj1e",
      "name": "network_log",
      "input": {}
     }
@@ -21,7 +21,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01E35cFUC5RKGp145eFVLwCr",
+     "id": "toolu_01E1BZe8re4A2YjydiYvTfSH",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -30,7 +30,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_019s6RTPVb8SttDU8ryE9CuQ",
+     "id": "toolu_01XMvoa4rFAF5ZJsjY6itj1e",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -46,12 +46,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:8621cd544a2bb3fe3f27573fd2f6032a3eac108b0dedda8ace856d439bcacff2": {
+  "sha256:b774997a0e5b1537a450770a8ed79879d1c6f2f9230670a7827b518ba6a4cb3d": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01EHut1qVF3KWmihQgo79E6p",
+     "id": "toolu_01JGZ5qyYN6CveNtGszcWmRZ",
      "name": "network_entry",
      "input": {
       "seq": 1
@@ -61,7 +61,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01EHut1qVF3KWmihQgo79E6p",
+     "id": "toolu_01JGZ5qyYN6CveNtGszcWmRZ",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -79,12 +79,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:41924a03b8e94e5ab69e93a937a5b2ccdc7674eb85677c3cf3e9fb24866f800f": {
+  "sha256:4f4b1638566bbec1c28e734f804902a5f93fbb40f67b7f9be558cd8eab5ea55f": {
    "stop": "tool_use",
-   "text": "",
+   "text": "I checked what the server stored and what was sent to it. R1 fails. R2 is a judgement call, and I'm marking it fail.",
    "toolCalls": [
     {
-     "id": "toolu_01Gxehsr9iqcKXNFAQdrotz9",
+     "id": "toolu_01UD2krnL7s2gNiJ75q8MW3q",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -95,7 +95,7 @@
          1,
          3
         ],
-        "reasoning": "The agent created issue #4, but the server got the title \"Checkout fails on Chrome\" (POST body, obs 3). The issues probe (obs 1) shows no issue titled \"Checkout fails on Safari\"."
+        "reasoning": "The stored issues (observation 1) don't include one titled \"Checkout fails on Safari\". The only new issue is #4, titled \"Checkout fails on Chrome\". The POST request body (observation 3) confirms the agent sent the title \"Checkout fails on Chrome\"."
        },
        {
         "requirement": "the new issue has the bug label",
@@ -104,7 +104,7 @@
          1,
          3
         ],
-        "reasoning": "\"The new issue\" means the one titled \"Checkout fails on Safari\", and that issue does not exist. The only new issue, #4, has the bug label, but it has the wrong title (\"Checkout fails on Chrome\"), so no issue with the requested title carries the bug label."
+        "reasoning": "\"The new issue\" means the issue titled \"Checkout fails on Safari\", and that issue doesn't exist (observation 1). So there is no Safari issue carrying the bug label. The issue the agent actually created, #4, does have the bug label (observations 1 and 3), but it has the wrong title (\"Checkout fails on Chrome\"), so it isn't the required issue."
        }
       ]
      }
@@ -114,11 +114,15 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSnAcKEAgTGAI4AUIIdGhpbmtpbmcSDBdQhv3DyeB3ZLVnGRoMJU9KXbAb1XDmBRZsIjBrgnRKvV6ngZsEa8BWrK/WH8lCQYrM0I6VgAvv8q1CZX8VY8sg9vcAO/5uceQuRuoquQZ6bkqX6n1+TNbY7U/AhdJlS2SkPeLXbRFO1P4co7ZqIcGL54aOVy+xHm61J6D/cPr/Y4d+L5HfZZBE9m51WN2utIlOVSrqfJXjChWvpxBgTLMcEkMtxRnVxd4Ayk12kgSSTs4QdRGdJ6c5BdaIlmKLfaOfursDYx46R8jrdFhj4yJt4KsqFL1tRJB8IKH7SCQfa6a3b+D73C+qqcq7W3MvAKsPa0NyJmdLd6KCNdwjdeFz7PsYDDKngpu0WeseZyhOkoZGJBauBumdRzWAR8mGz2acu1H6FDJgzikLgsATHijZG1iB/cwLoW42damZWZEvjCTTy5Fyl7yCkumtjeFGaMDnqjHuk059R9oGQJg5nfjYsR85qRcEZkVKINGJqk5HGlS+PYEBGo6Vu+M0mPwa/51GjsRsgaC05jEndq6KHSlHc4c0BSm6qUs8+Dp7I+WXPPPIHj+PDH/L4THsB2ggr3CFo2yiEVUQUOXsKvNlHEE68ujQUL+YEg17uBzMhA9GAPuPwvR4u9DlkncwIHW/vQ1IZk+wBWiisWxhHlB21RUriwvTPWZVhSkwJbFH0LrIfAGVBeRT8X0O/ZGyTkkvxqUzLK+lumh7FVtW4tGB6MaaJJdVw96MKqjvhB1NDcUbxQFIOU37aXCvXDL4DK4Dju2HWgKgH8Mx6eCghXpBI5mSMLBs4ut8rtCb8MU5sa03oHxd4k/dSreoH5vjusJybmo9qoMEzCoZOesndkO/aMoeh6E7FOgoNDhJHvnALaAl/Koy1Z7o6+R7ek2MEGWYM+8kaUq5X1KyiPdbR6ox/F9V86cdCFXQg3n3AXC9N/mCYbkcUuumkmPvkr6dbovVsY06srpQ+6ELMFQKxIEbtqREoErtsIsqcFtoO5m3g64gBDWq1bSx2x6v5sTRio3heDnAeLPVHWXfn4tVbvgrBxAw+av7MiFpxD5d8bZaYuVwzGWJOvwaivodJGeVvtqoUXDpf7h8AA/q0OLumv+mPMQSgDFODunWjC0zkgLZi/EXLsR2qYqJ0KBT0ti2ZAqOBRvJz6H1YucGR1ubGkAtwoOEI9WNlXrem+TkxOMG5X1iAwIWm1nkKF8YAQ=="
+     "signature": "CAQSjQoKEAgTGAI4AUIIdGhpbmtpbmcSDElaBSGp0gqYeIm5qRoMBwzFnKWgCjRfq44nIjCtyC18vQNZY0/q6R00iWmy9Hy5oIOmxsjY5Y6HsGSgxaIfCUp+YZ2JJN+XPa/nkIsqqgn/hAuq7edZIdPonCDDEob87ylStiHZjMyY4FptIYcDkNrUPkSYYunm2cLbRc/Ra4FTIxsPqDevYd/kAArHHKElgpvSfluZbF3VshLWvingTor/wUlch0oThYZ+nL+HAaqOK75mZbDorw5VdFLXRJmF6e6dUVy0kKNQ7ZrJp2LiVcUDUgA7NNSYA/mwK7kGKsg/yFKj3ceTNQkGeY34E3YOogob9fHkMy5ODqgjO4Y/KaMaW4sI1I99Z9m1VNMiLfUfr4H25VW152HiRylzCUoOIKqMc41yCkpHCe2gH2AQDpCsnyugSYCOjPki44EDop9mwXFywlyIq7coC+tlc+jSmOT1/r8cAvzsMEZXcY8TBzMFNhzs0YISqTY08EXoxh1g/njMIZcJ9JVScx3qJrQ3YDNl2gnK8yu4E4lsNVE4RbkQRFMNoViFO/2WATANZl47LnhBqR+/KnhDiOc48az50Jwvgg+4UOHNE5APVVPpmqJeS/tsg3IfsOjxGxruzPb1oBRKrGJDVC4VARgkZ5mVEuMfjtEyjMxk0jOJYt7Pb9W21S81yjNQkY58PhxdXiUVaBfiMoXW8YskM25KRqKlWE0Y2N4BtafsvpU2HlMcRtsseJZTJX2cN9SH3NSmwl+s/R/NMSJLh7figoqHuAPOXc9cmBSo9raa5Z5uWYKjBTrOHoyYeQ+YYj5EjH2fx59Cx25nWjLjXS4R4pgtt53HiD6/XqBlUei7qFy2q2QDthn4Zr43SCht0p1Ac1IPHOo5F8RhYTgacThy7jdYIAuSJ/z/GxXYrSagh2LfEbNJ3jz3xRkorddAURuk0hzWvH2Rsn/aecxR/cgaGNX81j4/4LQNMzS/SBJ3vCZaUjUtfW+f0t9rYi5P1Y/bWWy2+7ecmaUoBSv7CHVM7UffokPR26A0k9IFO2woC28GxyYuGE5rZiupv7rk0hhYcZxWY3ljlYoUQuR/UG6YsoGVFEOGGRqj/4WY2/s4+f7w7d9bVQW6FJVc2ToHa4oW1JRTB+KNS3mZkbt8WBJfbDr7lN6TWZ6ttZxDADQChIEPqZXpfUtk/FeuHalpE55QJ4c61KwDAHLgfLZNUdQCwAtoKSQDLT74t+1eGYy72o+bWgxqAFuueTlXQoIGURE8O2p9+AN051faEA4Qs6wNjyyTcFyeN6lu+1e5IuwZmDoov9gtWk+rSXQQXISgg5LFlBzAQMlof+86INm7aadUVU6pynr4Gt7Bfp7r2ohiU4zbT3irvPcCypPsJlEkh+riejYBkTZqkbEE4h8uU7/btRD4rhPm/uqlfUsi1v0+yophZS+NlR/M+M0usYhVT4wjr6Us77Ri/3NtdNKOafhedtYdGS6O9rWCcUce1dyN4InvLNy0egJuV05ocJ+Ih6/+kroNVzF5ma+8eMmJBH7kAsc8RkptYTPP9URNBPu8MjVIHC37bOOtwSYikfJ+bnv9eR9pKaK2/DmmP3xIyyryHtx3Td4b96zkydpqnrfGf6WmTxqw9zAxw94rHTzp/x4gOknksls7ATZqrsAyXp0l4QvHoU994WORZgWvVxrnAFaZbpSu66gyluSxx6SiD+EYAQ=="
+    },
+    {
+     "type": "text",
+     "text": "I checked what the server stored and what was sent to it. R1 fails. R2 is a judgement call, and I'm marking it fail."
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Gxehsr9iqcKXNFAQdrotz9",
+     "id": "toolu_01UD2krnL7s2gNiJ75q8MW3q",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -132,7 +136,7 @@
          1,
          3
         ],
-        "reasoning": "The agent created issue #4, but the server got the title \"Checkout fails on Chrome\" (POST body, obs 3). The issues probe (obs 1) shows no issue titled \"Checkout fails on Safari\"."
+        "reasoning": "The stored issues (observation 1) don't include one titled \"Checkout fails on Safari\". The only new issue is #4, titled \"Checkout fails on Chrome\". The POST request body (observation 3) confirms the agent sent the title \"Checkout fails on Chrome\"."
        },
        {
         "requirement": "the new issue has the bug label",
@@ -141,7 +145,7 @@
          1,
          3
         ],
-        "reasoning": "\"The new issue\" means the one titled \"Checkout fails on Safari\", and that issue does not exist. The only new issue, #4, has the bug label, but it has the wrong title (\"Checkout fails on Chrome\"), so no issue with the requested title carries the bug label."
+        "reasoning": "\"The new issue\" means the issue titled \"Checkout fails on Safari\", and that issue doesn't exist (observation 1). So there is no Safari issue carrying the bug label. The issue the agent actually created, #4, does have the bug label (observations 1 and 3), but it has the wrong title (\"Checkout fails on Chrome\"), so it isn't the required issue."
        }
       ]
      }
@@ -149,18 +153,18 @@
    ],
    "usage": {
     "inputTokens": 2659,
-    "outputTokens": 407,
+    "outputTokens": 637,
     "cacheReadTokens": 2470,
     "cacheWriteTokens": 187
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:293227bf853eaf856ce197102911a45648e030ada0e738d5744b98eab9f87fb6": {
+  "sha256:e44c0349e7e61cf423b753df8878a94eade3dbe11849d63a6f5055b326c9040d": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01ECQ85iTtLj658h4SxEPd5E",
+     "id": "toolu_01AQ12rSHxriYN4bskKgAZVj",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -171,7 +175,7 @@
          1,
          3
         ],
-        "reasoning": "The agent created issue #4, but the server got the title \"Checkout fails on Chrome\" (POST body, obs 3). The issues probe (obs 1) shows no issue titled \"Checkout fails on Safari\"."
+        "reasoning": "The stored issues (observation 1) don't include one titled \"Checkout fails on Safari\". The only new issue is #4, titled \"Checkout fails on Chrome\". The POST request body (observation 3) confirms the agent sent the title \"Checkout fails on Chrome\"."
        },
        {
         "requirement": "R2",
@@ -180,7 +184,7 @@
          1,
          3
         ],
-        "reasoning": "\"The new issue\" means the one titled \"Checkout fails on Safari\", and that issue does not exist. The only new issue, #4, has the bug label, but it has the wrong title (\"Checkout fails on Chrome\"), so no issue with the requested title carries the bug label."
+        "reasoning": "\"The new issue\" means the issue titled \"Checkout fails on Safari\", and that issue doesn't exist (observation 1). So there is no Safari issue carrying the bug label. The issue the agent actually created, #4, does have the bug label (observations 1 and 3), but it has the wrong title (\"Checkout fails on Chrome\"), so it isn't the required issue."
        }
       ]
      }
@@ -189,7 +193,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01ECQ85iTtLj658h4SxEPd5E",
+     "id": "toolu_01AQ12rSHxriYN4bskKgAZVj",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -203,7 +207,7 @@
          1,
          3
         ],
-        "reasoning": "The agent created issue #4, but the server got the title \"Checkout fails on Chrome\" (POST body, obs 3). The issues probe (obs 1) shows no issue titled \"Checkout fails on Safari\"."
+        "reasoning": "The stored issues (observation 1) don't include one titled \"Checkout fails on Safari\". The only new issue is #4, titled \"Checkout fails on Chrome\". The POST request body (observation 3) confirms the agent sent the title \"Checkout fails on Chrome\"."
        },
        {
         "requirement": "R2",
@@ -212,17 +216,17 @@
          1,
          3
         ],
-        "reasoning": "\"The new issue\" means the one titled \"Checkout fails on Safari\", and that issue does not exist. The only new issue, #4, has the bug label, but it has the wrong title (\"Checkout fails on Chrome\"), so no issue with the requested title carries the bug label."
+        "reasoning": "\"The new issue\" means the issue titled \"Checkout fails on Safari\", and that issue doesn't exist (observation 1). So there is no Safari issue carrying the bug label. The issue the agent actually created, #4, does have the bug label (observations 1 and 3), but it has the wrong title (\"Checkout fails on Chrome\"), so it isn't the required issue."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 3141,
-    "outputTokens": 290,
+    "inputTokens": 3371,
+    "outputTokens": 344,
     "cacheReadTokens": 2657,
-    "cacheWriteTokens": 482
+    "cacheWriteTokens": 712
    },
    "model": "claude-opus-5-5"
   }

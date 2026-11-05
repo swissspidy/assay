@@ -19,7 +19,7 @@
     {
       "id": "R2",
       "kind": "hard",
-      "text": "The event page displays the date November 5, 2026.",
+      "text": "The event page shows the date November 5, 2026.",
       "source": {
         "field": "outcomes",
         "quote": "the event page shows the date November 5, 2026"
@@ -28,7 +28,7 @@
   ],
   "checks": [
     {
-      "id": "r1-event-stored",
+      "id": "R1-event-stored",
       "requirement": "R1",
       "description": "The backend events list contains an event titled \"Lunch with Sam\" on 2026-11-05 at 12:30.",
       "assert": {
@@ -55,7 +55,8 @@
                   "const": "2026-11-05"
                 },
                 "time": {
-                  "const": "12:30"
+                  "type": "string",
+                  "pattern": "^12:30(:00)?$"
                 }
               }
             }
@@ -64,12 +65,18 @@
       }
     },
     {
-      "id": "r2-event-page-date",
+      "id": "R2-event-page-date",
       "requirement": "R2",
-      "description": "The event page for \"Lunch with Sam\" shows the date November 5, 2026.",
+      "description": "The current page is the event page for \"Lunch with Sam\" and its details show the date November 5, 2026.",
       "assert": {
         "kind": "allOf",
         "of": [
+          {
+            "kind": "url",
+            "match": {
+              "path": "/events/*"
+            }
+          },
           {
             "kind": "state",
             "target": {
@@ -81,38 +88,21 @@
             },
             "expect": {
               "name": {
-                "contains": "Lunch with Sam"
+                "equals": "Lunch with Sam"
               }
             }
           },
           {
-            "kind": "value",
-            "source": {
-              "from": "node",
-              "target": {
-                "role": "definition",
-                "text": {
-                  "regex": "\\d{4}"
-                },
-                "within": {
-                  "role": "main"
-                }
-              },
-              "field": "text"
+            "kind": "contains",
+            "scope": {
+              "role": "main"
             },
-            "normalize": [
-              {
-                "op": "replace",
-                "regex": ",?\\s*\\d{1,2}:\\d{2}.*$",
-                "with": ""
-              },
-              {
-                "op": "date",
-                "locale": "en-US"
+            "match": {
+              "role": "definition",
+              "text": {
+                "regex": "(Nov(ember)?\\.? 0?5(th)?,? 2026|0?5\\.? Nov(ember)?\\.?,? 2026|2026-11-05|11/0?5/2026|0?5/11/2026)",
+                "flags": "i"
               }
-            ],
-            "expect": {
-              "equals": "2026-11-05"
             }
           }
         ]
@@ -125,6 +115,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T23:11:36.607Z"
+    "at": "2026-11-05T07:43:01.844Z"
   }
 }

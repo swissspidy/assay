@@ -1,19 +1,19 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T23:23:29.717Z",
+ "recordedAt": "2026-11-05T07:54:29.245Z",
  "turns": {
   "sha256:27c69e9eba82a2f5ac9663b720ff3567c81dcbfa95452a1bb19430126c7aa1ba": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01A1CyFq81is9zZ43B7hAYVq",
+     "id": "toolu_01Go9agdMjUYdawUk2F2MWmF",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01V1jgM5d8tqdB4ZLjvbcL4z",
+     "id": "toolu_01D1MxukVkiA4yPDGovEqTVt",
      "name": "network_log",
      "input": {}
     }
@@ -21,7 +21,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01A1CyFq81is9zZ43B7hAYVq",
+     "id": "toolu_01Go9agdMjUYdawUk2F2MWmF",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -30,7 +30,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01V1jgM5d8tqdB4ZLjvbcL4z",
+     "id": "toolu_01D1MxukVkiA4yPDGovEqTVt",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -46,19 +46,19 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:be2df9717dba3e4f3b2a7dfaee83ff6e7b7ddcffba8937898c31f79ecd35583d": {
+  "sha256:098f3afb20f6130b659fd03e0592d1dcd98e87206cdd2178bdc63ff1d224aee5": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_018WosVrx9cgPSCZXHcw1smN",
+     "id": "toolu_01YUV4yyKBxURvJ6odYcwZ77",
      "name": "network_entry",
      "input": {
       "seq": 1
      }
     },
     {
-     "id": "toolu_01PFeaJC3G2771Nd3DhEjeZn",
+     "id": "toolu_01Qg7kyUA6KpnTS4sEFAg6Nr",
      "name": "find_nodes",
      "input": {
       "text": "assign"
@@ -68,7 +68,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_018WosVrx9cgPSCZXHcw1smN",
+     "id": "toolu_01YUV4yyKBxURvJ6odYcwZ77",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -79,7 +79,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01PFeaJC3G2771Nd3DhEjeZn",
+     "id": "toolu_01Qg7kyUA6KpnTS4sEFAg6Nr",
      "name": "find_nodes",
      "caller": {
       "type": "direct"
@@ -97,12 +97,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:c4ef3fe431d5f40c65db8227ca73b6ebdcc7a54f0c728ce4562a1bce24c6d13b": {
+  "sha256:1d0a5288ddc4a8da2fbd00acd3c579ae280af5aad1eaca23b7a33f59a4282bbd": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01MnnDfcBwLEqVMUSrr9PnrS",
+     "id": "toolu_01M7614ng2d6T5KtbZu8cgTz",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -114,7 +114,7 @@
          3,
          4
         ],
-        "reasoning": "Server state probe shows issue #2 assignee is \"bob\", not null. The only POST to /issues/2/assign sent assignee=bob, and the page still displays Assignee bob."
+        "reasoning": "The server-side probe shows issue #2 still has assignee \"bob\". The only assign POST the agent sent had assignee=bob, not an empty value, and the page still shows Assignee bob."
        }
       ]
      }
@@ -124,11 +124,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSswUKEAgTGAI4AUIIdGhpbmtpbmcSDD6UZw/IffraUqqHMxoMOzrLA8MbRME5knnVIjCZmIlyYMMTV+XwTvN2BZVaNa+nRtaRTclWyBHeBBqqlX61NcEIlt6wpj+bYnXZ7Hgq0ATHgS32u5BCzbK8GZh2IWRHeTb8eymbiZRIk5rE3vCgFld1fk/45lZN7C2JqkrwGlwgbGD3BB0pWQfKM96Ac2jtTq67mjxYL9sCxD+uGL/gZIBXT4NTZZtKGfw2n8NAn4dTUzziIHAFHt84R9NxxErcjJhDbmtdDSUJOLKLUbfDj7WlFwHS9Kh+wPk6padlCbmSaZqErX91+t7MwzUDLriEFv/z4Ei7tA0RL/5/GApWK+bL9JO7uY3snvnYK2B6sIFLNXRr6FUag92/G4KdilWh4rVM3zAFi6Sq2lhcgNLYshOCbdSgy9YeLCF/I9wOyoZ8XooWZyaMHGCcpEo+SbqpqYelCKiD1zTgg8wjzE5NVxKWV+8OroDKUYXHXuY7N/vf2aCTwlbuUPhfC1cSxFarMp6MXVv373hizJJzOm3XwCArxkUa2KHA9bWmuOajVLgaLfiMsaDe/0ZznqB6HK16TFS6cRe+Sj12/MhxR7QI/J478inpWB1iCy6jowClt2BN/uY9SMY92TW6hkd1odJfVMQdD2AjnHhE+fiDGbOM3JnyCBGdQohOsrKO5icN+6ClvwUD/bwSN8BtkyuNJT68Mnzz4v1eqWEtl3XQiDFJcpngkbug94FPcotnO8hSEkiNWpUwkUXQvyeNc8Zn/28SHXVD3jIaAIj4CZv/n75cvKXRq3T/7Ayw8qF+hMGLVbQ/bko+GA+WVmHsOaJc4QXUxpn3hb9yjVtaIXcmT5gBG3rupQpAFghxBKgf9jiuN+2iPTbomZUFhVHSuO7K7rB/GAE="
+     "signature": "CAQStwUKEAgTGAI4AUIIdGhpbmtpbmcSDOHEyOVer4mirTtakBoMhvkzU7QKh54rXWe6IjATpsZN/b2zQnxhd2CQ7t4QXsct9B6qVgPY+r3A4Pnr5K+cqMLVfqkpTjB3bNDgYLEq1ATNbn1F0HjEiXe6PlGwvE6BQirjhIUrYFjEZHem/WVcBl7cwncKQL2yx8hdjZ2YO/IjnYYoqg0+ToyKLfXKlQHh+dkop7xX1bARODSCfMFeV+1Zp75Hoh9MDCizdfW5X1RgnT/GavE1/35w8EE8u3jYhNdsUB4UXVInFAVIItmMfwOi+2DmDaNpAmCZdV0q/McUEMUZv+a6jqZMh8Ja6skZSnsYvXD/30YTILMVQNGWbqQZxQMDBaUgIAxwdlxVMM/HRmu0Mw9FTfhJqzlmvKeyH8EQ/KsO4keVojkxigKq0HFAw+dYSqv3oNqhW+CGQd704u4L0gR6kgAT7CGBHEQeZQxf4D3O9Hr7aCj1PovfJRC+lh8MM34UC9suY4XJzBWblDVvqEDnwPJY0NavOcN3erhQ6QuGycunYPnc46nfibKIgunCvvlUsOwDpE6KXpa8EA1jMIptxe7tpTsGo4NdnYxfuVkFR6j7GRVavmfGx5X9RfTho4rLVQBx/YypXkean6TrPK/YigasdK0CiPS80LqLxiyaXNWQc5SDPBCIE9/LWdVoauVj7q1lKwwwxJVAskBGlpAsR3n9Q1ZRX5NZ/Osvw38td0/mpyf5doAdrL602JmLwpbi2yMU0fLkjObGKg9cAfScD8kKz0276owRQUo0s+WczG5Sml8efliRNLTiILC0683pZeWtajS+SzQkE74gNMzEQ5e+nVBnMlGrO8Q/FrYtD10hVJtoUCbiA6woOJo51JFSkruZ2AHEqRkO+SCCAxGc337sPM7d12/GLLBnJBgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_01MnnDfcBwLEqVMUSrr9PnrS",
+     "id": "toolu_01M7614ng2d6T5KtbZu8cgTz",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -143,7 +143,7 @@
          3,
          4
         ],
-        "reasoning": "Server state probe shows issue #2 assignee is \"bob\", not null. The only POST to /issues/2/assign sent assignee=bob, and the page still displays Assignee bob."
+        "reasoning": "The server-side probe shows issue #2 still has assignee \"bob\". The only assign POST the agent sent had assignee=bob, not an empty value, and the page still shows Assignee bob."
        }
       ]
      }
@@ -157,12 +157,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:5e1b086584dc259371c2307cfbec10a36cc7c0b2158d62585b60bbfc13c1797a": {
+  "sha256:38ae173fbafb840b5d118be9588656318507df4fa504d6582ae30036546bceda": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_0147uo1ezFxtPiASGBJVwp9A",
+     "id": "toolu_01CpVyzoPWhgNunnVRX6GUY5",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -174,7 +174,7 @@
          3,
          4
         ],
-        "reasoning": "Server state probe shows issue #2 assignee is \"bob\", not null. The only POST to /issues/2/assign sent assignee=bob, and the page still displays Assignee bob."
+        "reasoning": "The server-side probe shows issue #2 still has assignee \"bob\". The only assign POST the agent sent had assignee=bob, not an empty value, and the page still shows Assignee bob."
        }
       ]
      }
@@ -183,7 +183,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_0147uo1ezFxtPiASGBJVwp9A",
+     "id": "toolu_01CpVyzoPWhgNunnVRX6GUY5",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -198,7 +198,7 @@
          3,
          4
         ],
-        "reasoning": "Server state probe shows issue #2 assignee is \"bob\", not null. The only POST to /issues/2/assign sent assignee=bob, and the page still displays Assignee bob."
+        "reasoning": "The server-side probe shows issue #2 still has assignee \"bob\". The only assign POST the agent sent had assignee=bob, not an empty value, and the page still shows Assignee bob."
        }
       ]
      }
@@ -206,7 +206,7 @@
    ],
    "usage": {
     "inputTokens": 3070,
-    "outputTokens": 152,
+    "outputTokens": 154,
     "cacheReadTokens": 2843,
     "cacheWriteTokens": 225
    },

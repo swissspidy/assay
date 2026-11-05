@@ -10,25 +10,29 @@
     "discovery": 4
   },
   "usage": {
-    "inputTokens": 67585,
-    "outputTokens": 798,
-    "cacheReadTokens": 49185,
-    "cacheWriteTokens": 18386
+    "inputTokens": 68607,
+    "outputTokens": 1158,
+    "cacheReadTokens": 49976,
+    "cacheWriteTokens": 18617
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "my RSVP for Book club is going",
       "checks": [
-        "bookclub-rsvp-yes-probe"
+        "bookclub-rsvp-yes-backend",
+        "bookclub-rsvp-request"
       ],
       "channels": [
-        "probe"
+        "probe",
+        "network"
       ],
       "trust": "structured"
     }
   ],
-  "warnings": [],
+  "warnings": [
+    "requirement R1: its value checks abstain when no request matches; add a \"request\" check so a missing request fails"
+  ],
   "references": [
     {
       "name": "going",

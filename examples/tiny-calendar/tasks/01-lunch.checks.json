@@ -94,6 +94,37 @@
           "equals": "2026-11-05"
         }
       }
+    },
+    {
+      "id": "C4",
+      "requirement": "R2",
+      "description": "The page shown is the event page of \"Lunch with Sam\": an /events/<id> URL whose main heading is exactly the title.",
+      "assert": {
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "url",
+            "match": {
+              "path": "/events/*"
+            }
+          },
+          {
+            "kind": "state",
+            "target": {
+              "role": "heading",
+              "level": 1,
+              "within": {
+                "role": "main"
+              }
+            },
+            "expect": {
+              "name": {
+                "equals": "Lunch with Sam"
+              }
+            }
+          }
+        ]
+      }
     }
   ]
 }

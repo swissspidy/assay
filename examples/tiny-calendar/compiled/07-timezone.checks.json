@@ -19,9 +19,9 @@
   ],
   "checks": [
     {
-      "id": "R1-timezone-probe",
+      "id": "tz-probe",
       "requirement": "R1",
-      "description": "The backend settings record has its time zone set to Europe/Berlin.",
+      "description": "The backend settings probe shows the time zone is Europe/Berlin.",
       "assert": {
         "kind": "value",
         "source": {
@@ -30,7 +30,7 @@
           "pointer": "/timezone"
         },
         "expect": {
-          "regex": "Berlin"
+          "equals": "Europe/Berlin"
         }
       }
     }
@@ -41,6 +41,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T23:12:48.990Z"
+    "at": "2026-11-05T07:44:16.897Z"
   }
 }

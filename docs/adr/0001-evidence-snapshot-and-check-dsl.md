@@ -470,6 +470,29 @@ If the value's type doesn't match the operator (for example `approx` on an
 un-normalized string), the check abstains with `type_mismatch`. The
 validator flags the obvious cases before the check runs.
 
+The validator also warns about three comparisons that accept more than they
+appear to:
+
+- A `regex` with no regex syntax (only letters, digits and escaped
+  punctuation) on structured evidence (probe, storage, request or response,
+  URL parts, a URL match's href regex or query parameters) matches any value
+  that contains it: `/Berlin/` accepts `Europe/Berlin-Test`, so an exact
+  value needs `equals` or `^…$`.
+- A JSON Schema property pinned with `const` or `enum` (directly, in a
+  combinator branch or through a local `$ref`) that is not in `required` lets
+  a value without the property pass. The walk covers `properties`, `items`,
+  `contains`, `anyOf`/`allOf`/`oneOf`, `not` and local `$ref`s (with a cycle
+  guard). A schema's own `required`, its `allOf` branches' and its `$ref`
+  target's are one conjunction, and combinator branches inherit it. Inside
+  `not` the inner schema then matches a value without the property, so `not`
+  excludes it.
+- Two or more `sameAs` checks in one requirement that compare the same pair
+  of collections through `items` with different pointers. Each sorts one
+  field on its own, so the fields of different records pair up: 1×A + 2×B
+  matches 2×A + 1×B. Whole items (no pointer) compare records.
+
+The compiler refuses all three (ADR 0002).
+
 Literals for datetimes (`equals`, `approx.value`, bounds) are ISO 8601 with an
 offset, such as `"2026-11-05T14:30:00+01:00"`, so each names one instant. A
 datetime value is compared as an instant: `14:30+01:00` equals `13:30Z`. A date

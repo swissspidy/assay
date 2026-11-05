@@ -6,8 +6,10 @@ import {
   validateCheckSet,
   snapshotDigest,
   type Assertion,
+  type Check,
   type CheckSet,
   type EvidenceSnapshot,
+  type Json,
 } from '../../src/index.ts';
 import { evaluateAssertion, kleeneAnd, kleeneOr } from '../../src/runtime/evaluate.ts';
 import { parseAriaSnapshot } from '../../src/snapshot/aria.ts';
@@ -451,6 +453,211 @@ test.describe('check set validation', () => {
     const cs = base();
     cs.checks[0]!.assert = { kind: 'contains', match: { role: 'status' } };
     expect(validateCheckSet(cs).warnings.join()).toContain('without a scope');
+  });
+  test('warns about an unanchored literal regex on structured evidence, not on page text or real patterns', () => {
+    const warns = (a: Assertion) => {
+      const cs = base();
+      cs.checks[0]!.assert = a;
+      const r = validateCheckSet(cs);
+      expect(r.errors).toEqual([]);
+      return r.warnings.filter((w) => w.includes('has no anchors'));
+    };
+    const probe = { from: 'probe', probe: 'settings', pointer: '/timezone' } as const;
+    for (const regex of ['Berlin', 'Europe/Berlin', 'Europe\\/Berlin', 'a\\.b'])
+      expect(warns({ kind: 'value', source: probe, expect: { regex } })).toEqual([
+        expect.stringContaining(`check C1: regex /${regex}/ has no anchors`),
+      ]);
+    for (const source of [
+      { from: 'storage', area: 'local', key: 'tz' },
+      { from: 'url', part: 'pathname' },
+      { from: 'response', match: { url: { path: '/api/settings' } }, pointer: '/tz' },
+    ] as const)
+      expect(warns({ kind: 'value', source, expect: { regex: 'Berlin' } })).toHaveLength(1);
+    // Anchored, or a real pattern: fine.
+    for (const regex of ['^Europe/Berlin$', '^Europe/Berlin', 'Berlin$', 'Europe/(Berlin|Paris)', '\\d+', 'Ber.in'])
+      expect(warns({ kind: 'value', source: probe, expect: { regex } })).toEqual([]);
+    // Page content (a11y, free text) is presentation, where a substring match is usual.
+    expect(
+      warns({
+        kind: 'value',
+        source: { from: 'node', target: { role: 'heading' }, field: 'name' },
+        expect: { regex: 'Berlin' },
+      }),
+    ).toEqual([]);
+    // A query parameter is a structured URL part too, in url and request assertions, nested or not.
+    const query = { query: { tz: { regex: 'Berlin' } } };
+    expect(warns({ kind: 'url', match: query })).toEqual([expect.stringContaining('check C1 query tz: regex')]);
+    expect(warns({ kind: 'anyOf', of: [{ kind: 'request', match: { url: query } }] })).toEqual([
+      expect.stringContaining('check C1.anyOf[0] query tz'),
+    ]);
+    expect(warns({ kind: 'url', match: { query: { tz: { equals: 'Berlin' } } } })).toEqual([]);
+  });
+  test('warns about a JSON Schema property pinned with const or enum but not required, at any depth', () => {
+    const warns = (a: Assertion) => {
+      const cs = base();
+      cs.checks[0]!.assert = a;
+      const r = validateCheckSet(cs);
+      expect(r.errors).toEqual([]);
+      return r.warnings.filter((w) => w.includes('not in "required"'));
+    };
+    const schemaCheck = (schema: Record<string, Json>): Assertion => ({
+      kind: 'value',
+      source: { from: 'probe', probe: 'latestOrder' },
+      expect: { schema },
+    });
+    const status = { status: { const: 'placed' } };
+    expect(warns(schemaCheck({ type: 'object', properties: status }))).toEqual([
+      expect.stringContaining('check C1 schema: JSON Schema property /properties/status pins its value with const'),
+    ]);
+    expect(warns(schemaCheck({ type: 'object', properties: status, required: ['status'] }))).toEqual([]);
+    expect(warns(schemaCheck({ properties: { shipping: { enum: ['express', 'overnight'] } } }))).toEqual([
+      expect.stringContaining('/properties/shipping pins its value with enum'),
+    ]);
+    // A property without const or enum may stay optional.
+    expect(warns(schemaCheck({ properties: { note: { type: 'string' } } }))).toEqual([]);
+    // Nested: properties, items, contains and combinators.
+    const nested: Record<string, Json>[] = [
+      { properties: { order: { type: 'object', properties: status } }, required: ['order'] },
+      { type: 'array', items: { properties: status } },
+      { type: 'array', contains: { properties: status } },
+      { anyOf: [{ properties: status }, { required: ['id'] }] },
+      { allOf: [{ properties: { items: { type: 'array', items: [{ properties: status }] } } }] },
+    ];
+    for (const s of nested) expect(warns(schemaCheck(s)), JSON.stringify(s)).toHaveLength(1);
+    expect(warns(schemaCheck({ type: 'array', contains: { properties: status, required: ['status'] } }))).toEqual([]);
+    // A combinator branch describes the same object: the parent's required counts.
+    expect(warns(schemaCheck({ required: ['status'], oneOf: [{ properties: status }] }))).toEqual([]);
+    // Request and response bodies, and the items normalizer's filter, both sides of a binding.
+    expect(warns({ kind: 'request', match: { responseBody: { properties: status } } })).toEqual([
+      expect.stringContaining('check C1 responseBody'),
+    ]);
+    expect(
+      warns({
+        kind: 'value',
+        source: { from: 'request', match: { requestBody: { properties: status } } },
+        expect: { exists: true },
+      }),
+    ).toEqual([expect.stringContaining('check C1 requestBody')]);
+    const where = { properties: { name: { const: 'Red Mug' } } };
+    expect(
+      warns({
+        kind: 'value',
+        source: { from: 'probe', probe: 'cart', pointer: '/items' },
+        normalize: [{ op: 'items' }],
+        expect: {
+          sameAs: {
+            source: { from: 'probe', probe: 'cart', pointer: '/items', at: 'before' },
+            normalize: [{ op: 'items', where }],
+          },
+        },
+      }),
+    ).toEqual([expect.stringContaining('check C1 sameAs items where')]);
+  });
+  test('schema pins: combinator pins, local $refs, allOf conjunctions and not', () => {
+    const warns = (schema: Record<string, Json>) => {
+      const cs = base();
+      cs.checks[0]!.assert = { kind: 'value', source: { from: 'probe', probe: 'latestOrder' }, expect: { schema } };
+      const r = validateCheckSet(cs);
+      expect(r.errors).toEqual([]);
+      return r.warnings.filter((w) => w.includes('not in "required"'));
+    };
+    // A pin wrapped in a combinator on the property itself.
+    for (const k of ['allOf', 'anyOf', 'oneOf'])
+      expect(warns({ properties: { status: { [k]: [{ type: 'string' }, { const: 'placed' }] } } }), k).toEqual([
+        expect.stringContaining('/properties/status pins its value with const'),
+      ]);
+    expect(warns({ properties: { status: { allOf: [{ const: 'placed' }] } }, required: ['status'] })).toEqual([]);
+    // Local $refs: the pinned property and the schema that pins, resolved against the root.
+    const defs = {
+      order: { type: 'object', properties: { status: { $ref: '#/definitions/placed' } } },
+      placed: { const: 'placed' },
+    };
+    expect(warns({ definitions: defs, $ref: '#/definitions/order' })).toEqual([
+      expect.stringContaining('property /definitions/order/properties/status pins its value with const'),
+    ]);
+    expect(warns({ definitions: defs, allOf: [{ $ref: '#/definitions/order' }], required: ['status'] })).toEqual([]);
+    expect(warns({ definitions: defs, type: 'array', items: { $ref: '#/definitions/order' } })).toHaveLength(1);
+    // A cycle ends.
+    const tree = {
+      node: { properties: { kind: { const: 'leaf' }, children: { items: { $ref: '#/definitions/node' } } } },
+    };
+    expect(warns({ definitions: tree, $ref: '#/definitions/node' })).toEqual([
+      expect.stringContaining('/definitions/node/properties/kind'),
+    ]);
+    // Sibling allOf branches are one conjunction: a required in one covers a pin in another.
+    expect(warns({ allOf: [{ properties: { status: { const: 'placed' } } }, { required: ['status'] }] })).toEqual([]);
+    expect(warns({ properties: { status: { const: 'placed' } }, allOf: [{ required: ['status'] }] })).toEqual([]);
+    // anyOf branches are alternatives: a required in one does not cover another.
+    expect(warns({ anyOf: [{ properties: { status: { const: 'placed' } } }, { required: ['status'] }] })).toHaveLength(
+      1,
+    );
+    // Under not, a value without the property matches the inner schema, so not excludes it.
+    expect(warns({ not: { properties: { name: { const: 'Red Mug' } } } })).toEqual([
+      expect.stringContaining('/not/properties/name (inside "not") pins its value with const'),
+    ]);
+    expect(warns({ not: { properties: { name: { const: 'Red Mug' } }, required: ['name'] } })).toEqual([]);
+    expect(warns({ not: { not: { properties: { name: { const: 'x' } } } } })[0]).not.toContain('inside "not"');
+  });
+  test('warns about a literal href regex in url assertions and request matches', () => {
+    const warns = (a: Assertion) => {
+      const cs = base();
+      cs.checks[0]!.assert = a;
+      return validateCheckSet(cs).warnings.filter((w) => w.includes('has no anchors'));
+    };
+    expect(warns({ kind: 'url', match: { regex: 'settings' } })).toEqual([
+      expect.stringContaining('check C1 url: regex /settings/ has no anchors'),
+    ]);
+    expect(warns({ kind: 'request', match: { url: { regex: '/api/orders' } } })).toHaveLength(1);
+    expect(
+      warns({
+        kind: 'value',
+        source: { from: 'response', match: { url: { regex: 'orders' } } },
+        expect: { exists: true },
+      }),
+    ).toHaveLength(1);
+    expect(warns({ kind: 'url', match: { regex: '/settings$' } })).toEqual([]);
+    expect(warns({ kind: 'url', match: { path: '/settings' } })).toEqual([]);
+  });
+  test('warns when one requirement compares two collections one field at a time', () => {
+    const cs = base();
+    const field = (id: string, pointer?: string): Check => ({
+      id,
+      requirement: 'R1',
+      description: id,
+      assert: {
+        kind: 'value',
+        source: { from: 'probe', probe: 'latestOrder', pointer: '/items' },
+        normalize: [{ op: 'items', ...(pointer ? { pointer } : {}) }],
+        expect: {
+          sameAs: {
+            source: { from: 'probe', probe: 'cart', pointer: '/items', at: 'before' },
+            normalize: [{ op: 'items', ...(pointer ? { pointer } : {}) }],
+          },
+        },
+      },
+    });
+    const advice = (checks: Check[]) => {
+      cs.checks = checks;
+      return validateCheckSet(cs).warnings.filter((w) => w.includes('one field at a time'));
+    };
+    expect(advice([field('sku', '/sku'), field('qty', '/qty')])).toEqual([
+      expect.stringContaining('requirement R1: checks sku, qty compare the same two collections one field at a time'),
+    ]);
+    // Nested in an allOf of one check too.
+    expect(
+      advice([
+        { ...field('both'), assert: { kind: 'allOf', of: [field('a', '/sku').assert, field('b', '/qty').assert] } },
+      ]),
+    ).toHaveLength(1);
+    // One field (the ids of kept items), or whole items alongside, are fine.
+    expect(advice([field('sku', '/sku')])).toEqual([]);
+    expect(advice([field('sku', '/sku'), field('qty', '/qty'), field('whole')])).toEqual([]);
+    // Different collections, or different requirements, are not one comparison.
+    const other = field('other', '/qty');
+    (other.assert as { source: { probe: string } }).source.probe = 'wishlist';
+    expect(advice([field('sku', '/sku'), other])).toEqual([]);
+    cs.requirements.push({ id: 'R2', kind: 'hard', text: 'q', source: { field: 'instruction', quote: 'Set' } });
+    expect(advice([field('sku', '/sku'), { ...field('qty', '/qty'), requirement: 'R2' }])).toEqual([]);
   });
   test('warns when an accessible-text regex expects a tab (tabs are normalized to spaces)', () => {
     const cs = base();

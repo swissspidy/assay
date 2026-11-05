@@ -10,7 +10,7 @@
     {
       "id": "R1",
       "kind": "hard",
-      "text": "Issue #3 is in the open state again.",
+      "text": "Issue #3 is open again (reopened).",
       "source": {
         "field": "outcomes",
         "quote": "issue #3 is open again"
@@ -19,9 +19,9 @@
   ],
   "checks": [
     {
-      "id": "issue3-open-probe",
+      "id": "issue3-open",
       "requirement": "R1",
-      "description": "The backend issues list shows issue #3 with status \"open\".",
+      "description": "The backend issues probe shows issue #3 with status \"open\".",
       "assert": {
         "kind": "value",
         "source": {
@@ -33,10 +33,6 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "id",
-                "status"
-              ],
               "properties": {
                 "id": {
                   "const": 3
@@ -44,7 +40,11 @@
                 "status": {
                   "const": "open"
                 }
-              }
+              },
+              "required": [
+                "id",
+                "status"
+              ]
             }
           }
         }
@@ -57,6 +57,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T23:12:04.365Z"
+    "at": "2026-11-05T07:43:33.000Z"
   }
 }

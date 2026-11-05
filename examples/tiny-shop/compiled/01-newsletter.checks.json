@@ -28,7 +28,7 @@
   ],
   "checks": [
     {
-      "id": "r1-settings-probe-newsletter",
+      "id": "r1-probe-newsletter",
       "requirement": "R1",
       "description": "The backend settings probe reports newsletter set to true.",
       "assert": {
@@ -44,7 +44,7 @@
       }
     },
     {
-      "id": "r2-newsletter-checkbox-checked",
+      "id": "r2-checkbox-checked",
       "requirement": "R2",
       "description": "The 'Email me the newsletter' checkbox in the Preferences form is checked.",
       "assert": {
@@ -59,9 +59,7 @@
               },
               "landmark": {
                 "role": "form",
-                "name": {
-                  "contains": "Preferences"
-                }
+                "name": "Preferences"
               }
             },
             {
@@ -71,7 +69,8 @@
                 "ignoreCase": true
               },
               "within": {
-                "role": "main"
+                "role": "form",
+                "name": "Preferences"
               }
             }
           ]
@@ -88,6 +87,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-04T23:11:36.609Z"
+    "at": "2026-11-05T07:43:00.578Z"
   }
 }
