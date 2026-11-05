@@ -55,6 +55,61 @@ export function replayModel(path: string): ReplayModel {
 }
 
 /**
+ * Replays the turns an existing cassette has and records the ones it lacks with a
+ * live model, created on the first miss only. A run whose every turn is recorded
+ * leaves the cassette as it was (`save()` writes nothing), so a replay stays byte for
+ * byte; after a miss, `save()` writes a fresh cassette with exactly the turns this
+ * run used, stamped with the time of the first miss. Used by the scripts when a
+ * prompt change invalidates only some steps (e.g. discovery, not the rubric).
+ */
+export function replayOrRecordModel(
+  path: string,
+  live: () => Promise<ModelClient>,
+): ReplayModel & { save(): void; readonly misses: number } {
+  const old = load(path);
+  if (!old) throw new ModelError(`No cassette at ${path}.`);
+  const fresh: Cassette = { schema: 'assay.cassette/v1', model: old.model, turns: {} };
+  let inner: ModelClient | undefined;
+  let misses = 0;
+  const recorded = {
+    model: old.model,
+    get at() {
+      return fresh.recordedAt ?? old.recordedAt ?? UNRECORDED_AT;
+    },
+  };
+  return {
+    id: old.model,
+    recorded,
+    get misses() {
+      return misses;
+    },
+    async turn(req) {
+      const key = requestKey(req, old.model);
+      const hit = old.turns[key];
+      if (hit) {
+        fresh.turns[key] = hit;
+        return structuredClone(hit);
+      }
+      inner ??= await live();
+      if (inner.id !== old.model)
+        throw new ModelError(`Cassette ${path} was recorded with ${old.model}, not ${inner.id}; re-record it.`);
+      misses++;
+      fresh.recordedAt ??= new Date().toISOString();
+      const out = await inner.turn(req);
+      fresh.turns[key] = out;
+      mkdirSync(dirname(path), { recursive: true });
+      writeFileSync(`${path}.partial`, JSON.stringify(fresh, null, 1) + '\n');
+      return out;
+    },
+    save() {
+      if (!misses) return;
+      writeFileSync(`${path}.partial`, JSON.stringify(fresh, null, 1) + '\n');
+      renameSync(`${path}.partial`, path);
+    },
+  };
+}
+
+/**
  * Wraps a live model and records every turn into a fresh cassette. While the run
  * is in progress, turns are written to `<path>.partial` after each turn (so a
  * crash keeps what was already paid for without replacing a complete cassette);
