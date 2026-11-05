@@ -18,7 +18,7 @@ export interface SelectedModel {
   mode: 'live' | 'record' | 'replay';
   /** The recorded model and time for a cassette (what the compiler writes as provenance). */
   provenance?: { model: string; at: string };
-  /** Move a recorded cassette into place (no-op otherwise). */
+  /** Move a recorded cassette into place (no-op when nothing was recorded, or when replaying). */
   save(): void;
 }
 
@@ -68,5 +68,15 @@ export async function selectModel(values: Values, env: Record<string, string | u
     return { model, mode: 'replay', provenance: model.recorded, save: () => {} };
   }
   const rec = recordingModel(await liveModel(provider, id, env), cassette);
-  return { model: rec, mode: 'record', provenance: rec.recorded, save: () => rec.save() };
+  // Saved only when a turn was recorded: an empty recording must not replace a cassette.
+  let turns = 0;
+  const model: ModelClient = {
+    id: rec.id,
+    async turn(req) {
+      const out = await rec.turn(req);
+      turns++;
+      return out;
+    },
+  };
+  return { model, mode: 'record', provenance: rec.recorded, save: () => turns > 0 && rec.save() };
 }

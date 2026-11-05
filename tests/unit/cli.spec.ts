@@ -401,4 +401,17 @@ test.describe('review findings', () => {
     expect(abstained.stderr).toContain('set ANTHROPIC_API_KEY');
   });
 
+  test('a recording with no turns does not replace or create a cassette', async () => {
+    const dir = tmp();
+    const existing = join(dir, 'existing.json');
+    const content = JSON.stringify({ schema: 'assay.cassette/v1', model: 'm', turns: { k: {} } });
+    writeFileSync(existing, content);
+    const env = { ASSAY_MODEL_MODE: 'record', ANTHROPIC_API_KEY: 'test' };
+    (await selectModel({ cassette: existing }, env)).save();
+    expect(readFileSync(existing, 'utf8')).toBe(content);
+    const fresh = join(dir, 'fresh.json');
+    (await selectModel({ cassette: fresh }, { ANTHROPIC_API_KEY: 'test' })).save();
+    expect(readdirSync(dir)).toEqual(['existing.json']);
+  });
+
 });
