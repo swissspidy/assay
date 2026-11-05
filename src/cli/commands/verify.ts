@@ -21,6 +21,7 @@ import {
   type Io,
 } from '../io.ts';
 import { selectModel } from '../model.ts';
+import { trustedKeys } from '../keys.ts';
 
 /** Whether `verify` with its default policy would escalate a requirement (the checks are validated by it later). */
 function escalates(checks: unknown, snapshot: EvidenceSnapshot): boolean {
@@ -41,6 +42,13 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
   const [checksPath, snapshotPath] = positionals as [string, string];
   const checks = readJson(checksPath, 'check set');
   const snapshot = toSnapshot(readSnapshotFile(snapshotPath));
+  const keys = trustedKeys(values, io.env);
+  if (values['require-signed'] && !keys)
+    throw new CliError(
+      '--require-signed needs the trusted public keys: --trusted-key <file|dir> or $ASSAY_TRUSTED_KEYS',
+    );
+  // With trusted keys, the record shows whether the lock's signature is trusted; --require-signed demands it.
+  const requireLocked = values['require-signed'] ? { trustedKeys: keys! } : !!values['require-locked'];
   // The model is selected (and a key needed) only when a requirement will actually escalate.
   const verifier = values.escalate && escalates(checks, snapshot) ? await selectModel(values, io.env) : undefined;
 
@@ -48,7 +56,8 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
   try {
     res = await verify(checks, snapshot, {
       ...(verifier ? { verifier: verifier.model } : {}),
-      ...(values['require-locked'] ? { requireLocked: true } : {}),
+      ...(requireLocked ? { requireLocked } : {}),
+      ...(keys ? { trustedKeys: keys } : {}),
       ...(typeof values['agent-report'] === 'string' ? { agentReport: values['agent-report'] } : {}),
       ...(typeof values.record === 'string' ? { recordDir: values.record } : {}),
     });

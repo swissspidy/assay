@@ -20,7 +20,7 @@ import {
   type RecordedRequirement,
   type WrittenRecord,
 } from './record.ts';
-import { assertLocked, lockState, type LockRequirement } from './lock.ts';
+import { assertLocked, lockState, type LockCheckOptions, type LockRequirement } from './lock.ts';
 
 export interface EscalationPolicy {
   /**
@@ -54,6 +54,11 @@ export interface VerifyOptions {
    * public keys (ADR 0013). Throws `LockError`, naming what changed when a lock is broken.
    */
   requireLocked?: LockRequirement;
+  /**
+   * Ed25519 public keys whose lock signatures are trusted: the record says whether the
+   * lock is signed by one of them. To require it, pass them as `requireLocked: { trustedKeys }`.
+   */
+  trustedKeys?: LockCheckOptions['trustedKeys'];
   /** Task id for the record (defaults to the check set id). */
   taskId?: string;
   maxVerifierTurns?: number;
@@ -250,10 +255,8 @@ export async function verify(
     };
   });
 
-  const lock = lockState(
-    cs,
-    typeof opts.requireLocked === 'object' ? { trustedKeys: opts.requireLocked.trustedKeys } : {},
-  );
+  const trustedKeys = typeof opts.requireLocked === 'object' ? opts.requireLocked.trustedKeys : opts.trustedKeys;
+  const lock = lockState(cs, trustedKeys ? { trustedKeys } : {});
   const onFailOf = new Map(cs.checks.map((c) => [c.id, c.onFail] as const));
   const record: OutcomeRecord = {
     schema: RECORD_SCHEMA,

@@ -329,7 +329,13 @@ export function diffBlocks(d: CheckSetDiff, level: 2 | 3 = 2): Block[] {
   blocks.push({
     p: [
       { t: 'To re-review:', b: true },
-      ` ${d.toReview.length ? d.toReview.join(', ') : 'nothing (only removals)'}.`,
+      ` ${
+        d.toReview.length
+          ? d.toReview.join(', ')
+          : r.removed.length || c.removed.length
+            ? 'none (requirements or checks were only removed)'
+            : 'none (no requirement or check changed)'
+      }.`,
       ...(unchanged.length ? [` Unchanged: ${unchanged.join('; ')}.`] : []),
     ],
   });
