@@ -579,7 +579,8 @@ export function literalRuns(pattern: string): string[] {
     const ch = pattern[i]!;
     if (ch === '\\') {
       const next = pattern[++i] ?? '';
-      if (/[sSdDwWbBpPuxk0-9]/.test(next)) end();
+      // Classes, anchors, escapes of control characters (\n, \t, …) and back-references end a run.
+      if (/[sSdDwWbBpPuxkcntrfv0-9]/.test(next)) end();
       else cur += next;
     } else if (ch === '[') {
       end();
@@ -589,7 +590,14 @@ export function literalRuns(pattern: string): string[] {
       cur = cur.slice(0, -1);
       end();
       if (ch === '{') while (i < pattern.length && pattern[i] !== '}') i++;
-    } else if ('^$.+()|'.includes(ch)) end();
+    } else if (ch === '(') {
+      end();
+      // A group's own syntax is not literal: (?:…), (?=…), (?!…), (?<=…), (?<!…), (?<name>…).
+      if (pattern[i + 1] === '?') {
+        const m = /^\?(?::|=|!|<=|<!|P?<[^>]*>)/.exec(pattern.slice(i + 1));
+        if (m) i += m[0].length;
+      }
+    } else if ('^$.+)|'.includes(ch)) end();
     else cur += ch;
   }
   end();
@@ -651,9 +659,10 @@ export function routeOnlyFindings(cs: CheckSet, refs: Reference[]): { errors: st
         probes.add(name);
         const after = JSON.stringify(p.value).toLowerCase();
         // Without a baseline, a probe value may have been there before the task: no refusal.
-        const b = ref.snapshot.baseline?.probes[name];
-        if (!b?.ok) continue;
-        const before = JSON.stringify(b.value).toLowerCase();
+        // A probe that failed in the baseline read nothing then (its record did not exist yet).
+        if (!ref.snapshot.baseline) continue;
+        const b = ref.snapshot.baseline.probes[name];
+        const before = b?.ok ? JSON.stringify(b.value).toLowerCase() : '';
         for (const lit of literals) {
           const l = JSON.stringify(lit).slice(1, -1).toLowerCase();
           if (after.includes(l) && !before.includes(l)) held.push(`probe ${name} holds ${JSON.stringify(lit)}`);

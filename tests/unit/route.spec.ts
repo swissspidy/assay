@@ -497,6 +497,12 @@ test.describe('compiler: route evidence', () => {
     const refused = routeOnlyFindings(set([check(text, 'abstain')]), withProbe);
     expect(refused.errors).toHaveLength(1);
     expect(refused.errors[0]).toContain('probe comments holds "Yes, see the docs"');
+    // A probe that failed in the baseline (its record did not exist yet) read nothing then.
+    const failedBefore = { ...baseline, probes: { comments: { ok: false as const, error: '404' } } };
+    const refusedToo = routeOnlyFindings(set([check(text, 'abstain')]), [
+      ref('reference', [ADMIN_REPLY], { probes: { comments: comments(reply) }, baseline: failedBefore }),
+    ]);
+    expect(refusedToo.errors).toHaveLength(1);
     // The probe does not hold it: a warning that names the probes.
     const warned = routeOnlyFindings(set([check(adminBranch, 'abstain')]), withProbe);
     expect(warned.errors).toEqual([]);
@@ -533,6 +539,12 @@ test.describe('compiler: route evidence', () => {
     ]);
     expect(literalRuns('^0?1$')).toEqual([]);
     expect(literalRuns('Scheduled\\s+2027/01/05 at 9:00 am')).toEqual(['Scheduled', '2027/01/05 at 9:00 am']);
+    // Group syntax is not literal text.
+    expect(literalRuns('^(?:Yes, see the docs)$')).toEqual(['Yes, see the docs']);
+    expect(literalRuns('^(?<reply>Yes, see the docs)$')).toEqual(['Yes, see the docs']);
+    expect(literalRuns('(?=Yes, see)the docs')).toEqual(['Yes, see', 'the docs']);
+    // Control-character escapes end a run instead of adding their letter.
+    expect(literalRuns('Thanks\\nYes, see the docs')).toEqual(['Thanks', 'Yes, see the docs']);
   });
 });
 
