@@ -1,32 +1,27 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T23:24:13.801Z",
+ "recordedAt": "2026-11-05T07:10:00.698Z",
  "turns": {
   "sha256:da38ca1e73b6e56fc64081fa14b04fd508643fc7fccd8502a2c6ff4933ed48ec": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01KJqk4FLYEUAAAQbC7JL8bx",
+     "id": "toolu_011nF2Ku65eF6PpMccKgUTFr",
      "name": "page_outline",
      "input": {}
     },
     {
-     "id": "toolu_01GAXJ14p17U27stB9XNTsaS",
+     "id": "toolu_01YHJdpubh3heHWduvF2dc7q",
      "name": "probes",
-     "input": {}
-    },
-    {
-     "id": "toolu_017sFx858jcWSM8aDcceDewh",
-     "name": "network_log",
      "input": {}
     }
    ],
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01KJqk4FLYEUAAAQbC7JL8bx",
+     "id": "toolu_011nF2Ku65eF6PpMccKgUTFr",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -35,17 +30,8 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01GAXJ14p17U27stB9XNTsaS",
+     "id": "toolu_01YHJdpubh3heHWduvF2dc7q",
      "name": "probes",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {}
-    },
-    {
-     "type": "tool_use",
-     "id": "toolu_017sFx858jcWSM8aDcceDewh",
-     "name": "network_log",
      "caller": {
       "type": "direct"
      },
@@ -54,87 +40,18 @@
    ],
    "usage": {
     "inputTokens": 1861,
-    "outputTokens": 72,
+    "outputTokens": 49,
     "cacheReadTokens": 0,
     "cacheWriteTokens": 1857
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:609b52e92c781a5052f1e9b260abed4b0aba7d05fb01a3aa722b227eb80f7e85": {
+  "sha256:1efaeb5d2da03402a79e518cee53a18e24b8f886975ab2fd5fbf4d81f18f38ee": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01EBk6g1iykqzcFGx5XDfeQJ",
-     "name": "submit_verdict",
-     "input": {
-      "verdicts": [
-       {
-        "requirement": "the list shows only open issues",
-        "status": "fail",
-        "cites": [
-         1,
-         3
-        ],
-        "reasoning": "The list on the page includes issue #3 'Typo in docs', and its status is Closed. The Status filter is still set to 'All', and the URL /issues has no filter parameters."
-       },
-       {
-        "requirement": "the list shows only issues labelled bug",
-        "status": "fail",
-        "cites": [
-         1
-        ],
-        "reasoning": "The list includes #2 with the label feature and #3 with the label docs. The Label filter is still set to 'Any'."
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_01EBk6g1iykqzcFGx5XDfeQJ",
-     "name": "submit_verdict",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "verdicts": [
-       {
-        "requirement": "the list shows only open issues",
-        "status": "fail",
-        "cites": [
-         1,
-         3
-        ],
-        "reasoning": "The list on the page includes issue #3 'Typo in docs', and its status is Closed. The Status filter is still set to 'All', and the URL /issues has no filter parameters."
-       },
-       {
-        "requirement": "the list shows only issues labelled bug",
-        "status": "fail",
-        "cites": [
-         1
-        ],
-        "reasoning": "The list includes #2 with the label feature and #3 with the label docs. The Label filter is still set to 'Any'."
-       }
-      ]
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 3014,
-    "outputTokens": 225,
-    "cacheReadTokens": 1857,
-    "cacheWriteTokens": 1155
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:60d0428ff1717c33def04598fec8e70759cd5ae25022073496c6d2ac847079dd": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_01TZxqv39oAUh6XNFjGBm9nX",
+     "id": "toolu_01PiS9HgnCU9y1mtmB59TTSA",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -142,10 +59,9 @@
         "requirement": "R1",
         "status": "fail",
         "cites": [
-         1,
-         3
+         1
         ],
-        "reasoning": "The list on the page includes issue #3 'Typo in docs', and its status is Closed. The Status filter is still set to 'All', and the URL /issues has no filter parameters."
+        "reasoning": "The issue list still has its default filters (Status: All, Label: Any) and shows issue #3 \"Typo in docs\" with status Closed, so the list does not show only open issues."
        },
        {
         "requirement": "R2",
@@ -153,7 +69,7 @@
         "cites": [
          1
         ],
-        "reasoning": "The list includes #2 with the label feature and #3 with the label docs. The Label filter is still set to 'Any'."
+        "reasoning": "The list shows 3 issues, including #2 labelled feature and #3 labelled docs, so it does not show only bug-labelled issues."
        }
       ]
      }
@@ -162,7 +78,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01TZxqv39oAUh6XNFjGBm9nX",
+     "id": "toolu_01PiS9HgnCU9y1mtmB59TTSA",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -173,10 +89,9 @@
         "requirement": "R1",
         "status": "fail",
         "cites": [
-         1,
-         3
+         1
         ],
-        "reasoning": "The list on the page includes issue #3 'Typo in docs', and its status is Closed. The Status filter is still set to 'All', and the URL /issues has no filter parameters."
+        "reasoning": "The issue list still has its default filters (Status: All, Label: Any) and shows issue #3 \"Typo in docs\" with status Closed, so the list does not show only open issues."
        },
        {
         "requirement": "R2",
@@ -184,17 +99,17 @@
         "cites": [
          1
         ],
-        "reasoning": "The list includes #2 with the label feature and #3 with the label docs. The Label filter is still set to 'Any'."
+        "reasoning": "The list shows 3 issues, including #2 labelled feature and #3 labelled docs, so it does not show only bug-labelled issues."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 3304,
+    "inputTokens": 2936,
     "outputTokens": 215,
-    "cacheReadTokens": 3012,
-    "cacheWriteTokens": 290
+    "cacheReadTokens": 1857,
+    "cacheWriteTokens": 1077
    },
    "model": "claude-opus-5-5"
   }

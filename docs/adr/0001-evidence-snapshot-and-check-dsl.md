@@ -470,6 +470,16 @@ If the value's type doesn't match the operator (for example `approx` on an
 un-normalized string), the check abstains with `type_mismatch`. The
 validator flags the obvious cases before the check runs.
 
+The validator also warns about two comparisons that accept more than they
+appear to. A `regex` with no regex syntax (only letters, digits and escaped
+punctuation) on structured evidence (probe, storage, request or response,
+URL parts, query parameters) matches any value that contains it: `/Berlin/`
+accepts `Europe/Berlin-Test`, so an exact value needs `equals` or `^…$`. And
+a JSON Schema property pinned with `const` or `enum` that is not in
+`required` (anywhere under `properties`, `items`, `contains`, `anyOf`,
+`allOf` or `oneOf`; a combinator branch counts its parent's `required`)
+lets a value without the property pass. The compiler refuses both (ADR 0002).
+
 Literals for datetimes (`equals`, `approx.value`, bounds) are ISO 8601 with an
 offset, such as `"2026-11-05T14:30:00+01:00"`, so each names one instant. A
 datetime value is compared as an instant: `14:30+01:00` equals `13:30Z`. A date

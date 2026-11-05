@@ -1,27 +1,32 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T23:19:34.986Z",
+ "recordedAt": "2026-11-05T07:05:48.093Z",
  "turns": {
   "sha256:5ad1cab5185ae7b35589015160e82a1fa4a14eca153b48b7de370b47e08ae18d": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_013rYggBiT984eCqoqcbgPUv",
+     "id": "toolu_01C42FWesXVqnq35RRNcnkSe",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01GY4QF8KL4afDFq3EhHwJeS",
+     "id": "toolu_01PWQfh7xMJUk7Mt66kDLCaN",
      "name": "network_log",
+     "input": {}
+    },
+    {
+     "id": "toolu_012JqawtJdrGqyWjuGZY8v7e",
+     "name": "page_outline",
      "input": {}
     }
    ],
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_013rYggBiT984eCqoqcbgPUv",
+     "id": "toolu_01C42FWesXVqnq35RRNcnkSe",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -30,8 +35,17 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01GY4QF8KL4afDFq3EhHwJeS",
+     "id": "toolu_01PWQfh7xMJUk7Mt66kDLCaN",
      "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_012JqawtJdrGqyWjuGZY8v7e",
+     "name": "page_outline",
      "caller": {
       "type": "direct"
      },
@@ -40,18 +54,18 @@
    ],
    "usage": {
     "inputTokens": 1906,
-    "outputTokens": 48,
+    "outputTokens": 72,
     "cacheReadTokens": 1902,
     "cacheWriteTokens": 0
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:f4252564136333a153dcc9e1aa2471724072794a3ce11482139f36b4224e8900": {
+  "sha256:6da46a56703c98afe12b556d14d6cbc3cce07a841ae1865781fa38dfea290955": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_012BjuKkeFZ5RfXiBBwP24wk",
+     "id": "toolu_011tvYYbF8eC5Srza8LNyp7n",
      "name": "network_entry",
      "input": {
       "seq": 1
@@ -61,7 +75,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_012BjuKkeFZ5RfXiBBwP24wk",
+     "id": "toolu_011tvYYbF8eC5Srza8LNyp7n",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -72,130 +86,92 @@
     }
    ],
    "usage": {
-    "inputTokens": 2461,
+    "inputTokens": 3124,
     "outputTokens": 49,
     "cacheReadTokens": 1902,
-    "cacheWriteTokens": 557
+    "cacheWriteTokens": 1220
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:6f76e87fa91004d8477647b63f2d5dfb2b9f65048ab23dbb2694bce05854329e": {
+  "sha256:84e47d8e5f39990f1514968c558f7cbf7e788b325243a9f608e99f69a4328764": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01DVzkGKugbDq5hfwHs2dXqX",
-     "name": "find_nodes",
+     "id": "toolu_016HU9vpHeAytffB7MxAAD62",
+     "name": "submit_verdict",
      "input": {
-      "text": "bug"
+      "verdicts": [
+       {
+        "requirement": "a new issue titled \"Checkout fails on Safari\" exists",
+        "status": "pass",
+        "cites": [
+         1,
+         4
+        ],
+        "reasoning": "The probe shows a new issue #4 titled \"Checkout fails on Safari\". The POST /issues request body has that title and the response redirects to /issues/4."
+       },
+       {
+        "requirement": "the new issue has the bug label",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The probe shows issue #4 with an empty labels list ([]), and the page shows Labels: None. The create request sent no labels, and the network log has no request that saves labels."
+       }
+      ]
      }
     }
    ],
    "raw": [
     {
-     "type": "thinking",
-     "thinking": "",
-     "signature": "CAQStwUKEAgTGAI4AUIIdGhpbmtpbmcSDGxAP0o8bIsJaU6GEBoMvr6c23tS8W/p+oElIjCTMzmDgauDiL68vo5b8S+QM7Pc+dH/2/iw159RJ1Hfdv+UIOozKqx11nx7X7Poe+Aq1ATM6c/wlo+eNl2Gj4DDOVBJcqkqMh6IKp6GclpDH7eQovTnRvi8eL2US/nVvm4UVdpZw7GxSJkPlfuOQ87QXg4Ve1nQM/mUzG3K6NkvV9RlscyTVcvJljQt6roHBUHr1kb5wpiPjhKfqQzvexZDnrtqidHRQ/dqyLQ4FmibaX73fJkTnLVKck+JPIImcNcVZsPIEqdeT3ZZdmfGQK72TEvSAVFimB0NotVLQ3WYQ2/YhNRFUZDTkmWhrTCefwShGqQTuoEmXvq30k0yiaR0KqVlCJCYfjGCHGClSx91rPqGscqwp+6Eg7hZf2U3ZxUOyfFMR87gDq5HrHzGVWzsGrheDQU48NVCtEiufmEtw1PPCz3Cy7VLVCelxZZT9afQ2Nkeri+Lm+4Cf83SIpi4bRNFZZC0qj9qH4i4D8zTvv0Q3F0vYRlJkPZHuodXP8veSbaZ3Ez8PdXLCGYrk9fgM6BJ7pBW8Sjz2cwg27WGgjSqNAcc5aI9/WjmHqKgRPK1O79NbO6pLrDqmsJQKIYxkErqEYydHCx1w7y7DOAC4kcOLeH2GZhZ56NWQ+56StukBwup5VvJZvsaEYuHN1c++wbdo26z1X21qrg65xIENEg+URh50hRgQHKAVuijUtaZfc8QRZs/SKhU3wBQfFzx/XSNTYywBHNSCiM8C3X9ZrIkzPDqNMYQbrQsbfDv4/q7PizdlvwDkG0oIS3+PSA3SsTx9NUwEng3bwpLYb0AxgOaffjkoJmSvHR7XTgC9idcB7UcnoMnWeey9Zc7/P9ied85/fDJxhgB"
-    },
-    {
      "type": "tool_use",
-     "id": "toolu_01DVzkGKugbDq5hfwHs2dXqX",
-     "name": "find_nodes",
+     "id": "toolu_016HU9vpHeAytffB7MxAAD62",
+     "name": "submit_verdict",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "text": "bug"
+      "verdicts": [
+       {
+        "requirement": "a new issue titled \"Checkout fails on Safari\" exists",
+        "status": "pass",
+        "cites": [
+         1,
+         4
+        ],
+        "reasoning": "The probe shows a new issue #4 titled \"Checkout fails on Safari\". The POST /issues request body has that title and the response redirects to /issues/4."
+       },
+       {
+        "requirement": "the new issue has the bug label",
+        "status": "fail",
+        "cites": [
+         1,
+         3,
+         4
+        ],
+        "reasoning": "The probe shows issue #4 with an empty labels list ([]), and the page shows Labels: None. The create request sent no labels, and the network log has no request that saves labels."
+       }
+      ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2637,
-    "outputTokens": 68,
-    "cacheReadTokens": 2459,
+    "inputTokens": 3300,
+    "outputTokens": 253,
+    "cacheReadTokens": 3122,
     "cacheWriteTokens": 176
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:ec828ce1e776c475c8825a78361a8e55043ad25cc5efc59a811966fc9fef82cc": {
+  "sha256:309b3b27191c9e671617180a17b2d9b1319451f16ec9eb2745bcf9ceac0f7902": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01V6WqPjRAMRDoTrwVxNUHia",
-     "name": "submit_verdict",
-     "input": {
-      "verdicts": [
-       {
-        "requirement": "a new issue titled \"Checkout fails on Safari\" exists",
-        "status": "pass",
-        "cites": [
-         1,
-         3
-        ],
-        "reasoning": "The POST /issues request had the title \"Checkout fails on Safari\", and the issues probe shows that a new issue #4 with this title exists."
-       },
-       {
-        "requirement": "the new issue has the bug label",
-        "status": "fail",
-        "cites": [
-         1,
-         3,
-         4
-        ],
-        "reasoning": "The issues probe shows issue #4 with labels: []. The create request did not include any labels, and no label-save request was made. The issue page shows Labels: None."
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_01V6WqPjRAMRDoTrwVxNUHia",
-     "name": "submit_verdict",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "verdicts": [
-       {
-        "requirement": "a new issue titled \"Checkout fails on Safari\" exists",
-        "status": "pass",
-        "cites": [
-         1,
-         3
-        ],
-        "reasoning": "The POST /issues request had the title \"Checkout fails on Safari\", and the issues probe shows that a new issue #4 with this title exists."
-       },
-       {
-        "requirement": "the new issue has the bug label",
-        "status": "fail",
-        "cites": [
-         1,
-         3,
-         4
-        ],
-        "reasoning": "The issues probe shows issue #4 with labels: []. The create request did not include any labels, and no label-save request was made. The issue page shows Labels: None."
-       }
-      ]
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 2909,
-    "outputTokens": 242,
-    "cacheReadTokens": 2635,
-    "cacheWriteTokens": 272
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:2787ac751a7ecc2c4d85e8b27eeac1cad9a539f9fe44478a6832ce65c3b62504": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_01RAkfMq1ACUcyUnPbtDc3CL",
+     "id": "toolu_016CQVauQQtgUpYHBwHnmmdU",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -204,9 +180,9 @@
         "status": "pass",
         "cites": [
          1,
-         3
+         4
         ],
-        "reasoning": "The POST /issues request had the title \"Checkout fails on Safari\", and the issues probe shows that a new issue #4 with this title exists."
+        "reasoning": "The probe shows a new issue #4 titled \"Checkout fails on Safari\". The POST /issues request body has that title and the response redirects to /issues/4."
        },
        {
         "requirement": "R2",
@@ -216,7 +192,7 @@
          3,
          4
         ],
-        "reasoning": "The issues probe shows issue #4 with labels: []. The create request did not include any labels, and no label-save request was made. The issue page shows Labels: None."
+        "reasoning": "The probe shows issue #4 with an empty labels list ([]), and the page shows Labels: None. The create request sent no labels, and the network log has no request that saves labels."
        }
       ]
      }
@@ -225,7 +201,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01RAkfMq1ACUcyUnPbtDc3CL",
+     "id": "toolu_016CQVauQQtgUpYHBwHnmmdU",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -237,9 +213,9 @@
         "status": "pass",
         "cites": [
          1,
-         3
+         4
         ],
-        "reasoning": "The POST /issues request had the title \"Checkout fails on Safari\", and the issues probe shows that a new issue #4 with this title exists."
+        "reasoning": "The probe shows a new issue #4 titled \"Checkout fails on Safari\". The POST /issues request body has that title and the response redirects to /issues/4."
        },
        {
         "requirement": "R2",
@@ -249,17 +225,17 @@
          3,
          4
         ],
-        "reasoning": "The issues probe shows issue #4 with labels: []. The create request did not include any labels, and no label-save request was made. The issue page shows Labels: None."
+        "reasoning": "The probe shows issue #4 with an empty labels list ([]), and the page shows Labels: None. The create request sent no labels, and the network log has no request that saves labels."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 3227,
-    "outputTokens": 223,
-    "cacheReadTokens": 2907,
-    "cacheWriteTokens": 318
+    "inputTokens": 3629,
+    "outputTokens": 234,
+    "cacheReadTokens": 3298,
+    "cacheWriteTokens": 329
    },
    "model": "claude-opus-5-5"
   }

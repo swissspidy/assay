@@ -1,24 +1,24 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T23:17:48.060Z",
+ "recordedAt": "2026-11-05T07:03:59.462Z",
  "turns": {
-  "sha256:6d7dd92154bc1717a9613d79fbab87c9d4801a3ac307a0748d38b1444dd58525": {
+  "sha256:c7e40aed811f611883c5c70789ce8d92603e6f4dc4d0cc6ea2b766faa08b211a": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01EVrF4xqJT8jwi1TdWRHiBj",
-     "name": "probes",
-     "input": {}
-    },
-    {
-     "id": "toolu_01R318tx9ZqodHiif57HdKjL",
+     "id": "toolu_01WgEfQQFebVN2bPms2siHTi",
      "name": "page_outline",
      "input": {}
     },
     {
-     "id": "toolu_013JEwGovovaXrKdifKSpopk",
+     "id": "toolu_01UZaYQK7zLaJpcAeyorF81t",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01EoTMqhtYBEzyBaT3ZeH1nK",
      "name": "network_log",
      "input": {}
     }
@@ -26,16 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01EVrF4xqJT8jwi1TdWRHiBj",
-     "name": "probes",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {}
-    },
-    {
-     "type": "tool_use",
-     "id": "toolu_01R318tx9ZqodHiif57HdKjL",
+     "id": "toolu_01WgEfQQFebVN2bPms2siHTi",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -44,7 +35,16 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_013JEwGovovaXrKdifKSpopk",
+     "id": "toolu_01UZaYQK7zLaJpcAeyorF81t",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01EoTMqhtYBEzyBaT3ZeH1nK",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -53,36 +53,43 @@
     }
    ],
    "usage": {
-    "inputTokens": 1959,
+    "inputTokens": 1938,
     "outputTokens": 72,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 1955
+    "cacheWriteTokens": 1934
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:4447550c375e8c5b5087df850fc9a633783a8af1ab2449d9fba3470300f69989": {
+  "sha256:c7653e3bff294f5a8ffb4af81a10aef12db925b52bd27389957431fa1d5a73c8": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_011fTkTdPmwxUqrMxPwuoDSw",
+     "id": "toolu_01S7GvpTPWWhxPogQ4v4gawQ",
+     "name": "network_entry",
+     "input": {
+      "seq": 3
+     }
+    },
+    {
+     "id": "toolu_01YacXDSMnxoAW5okYN9CSoM",
+     "name": "network_entry",
+     "input": {
+      "seq": 4
+     }
+    },
+    {
+     "id": "toolu_01FtduBBeR1Ain2wAxjGuPnS",
      "name": "network_entry",
      "input": {
       "seq": 8
      }
     },
     {
-     "id": "toolu_016RvgGXSY1HToTFdj4YSDfR",
+     "id": "toolu_01HyV4mfVPv7QFCnqfvP2Fsp",
      "name": "network_entry",
      "input": {
       "seq": 11
-     }
-    },
-    {
-     "id": "toolu_01J2BDbZxrwDW8G8GdWPCPzE",
-     "name": "network_entry",
-     "input": {
-      "seq": 4
      }
     }
    ],
@@ -90,11 +97,33 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSiQgKEAgTGAI4AUIIdGhpbmtpbmcSDM9aq9qpJ0W4Evb/nxoM7hleNNa7hRTtCrh7IjDXVyXsCCgg63qcES6QwmY4+7+9e45+1nRWHn2+BnqAatjWt3ZMAs8EJ8r582UF6XAqpgemFcgwYwIwXmX9EJeydzEIj5vj2vybg8VX0sre4SGM4uLjHSgtfOv8pECwTGN0RbTX7RgCVRoe5j8YX8m7yFy1xrm0qL1HcQPNFjjqq+oV4/kObkmppyRrdt/DIG4dar9vuO3KkHaIFI+W/YA1GIc0fMDRcbretS/NyaHa1oJEFIphENCVX8mL+j8404eNu3+WjSE0laCW/Tdqji0DWrT4AXUkD7smDF2PJf0WPXybyU7DaaSOTivrJPoVFCGLlWXZ3K28R/5TNpIjkefR84LNEp6NAJ7pI1JPX0cTDItUXE/KzGtPeTO+LAiZfBbR7i7VmptfKDdRdctV1ENiGhn+rfrAgE/hrma7EXpGQDxogL6Xh9WJsRIG47JLo9Mr+Ss3J+3cYrnJIhUya6yD8Ft+sjpNf7LHZ5aqYHPYSUowpQ/lnbq+W4f6qian/noGgBOyVi3L+x+L7Yq7swH8d6CY/gLy8ZplXKuzn8YNCWBhjkuz8ETRyBjUUI49gQNNxSFEqmToq4ycc9UUkwgH0Bj1Fg4ZwFRNL0v0xaCitFrMaVvsN0fFeVbVIFOBo4LjVbnkyyG1dndE2wOjmvnl4pH14JFFKMem7veUDI/orx4f5j/CCT6Fzep4jjPNhw6A8As/rfx+n+UBVFr6Kf4spU8JQVmvXJUWHynX8LEbg5SbhnOWOSaKE9zAYERStwvpD6qHicj8c5I7Ypj6NoM8x5HQFikaDNbJ+cV8gFHhZP8/m6Tjotsf/D1dnHiK6Kwn2UYKdVnFpmdUFvdJuR8BeU5HwTefQmfFWT8rxu9S4hvgolbzZ9B93vqGBCSys+17wctV5XExVuYwLFRcnnKT9jk9Awi4uNJhZ9fkUrTgk1LNw5i4+hKYTRRKPdkCROSau4rzHnckrPhulLQkqlVV+bpKRIYemxoo/FZ1qjzyftav5/nYU/MomX4JVMCGJ5zG5TdjfocftI6uOcVewtfuttXr3hUQqvtRULbbcjlkJESLZqZQgixiamcBMly/9HmauI0j6NJ45vdKfK8SYPqXsy+OHhlkcwxrjtFNXgD9p4wHAxa7g6eNDFlGjUGOs3ITmZjBLuAdrvFxq6qLww4UcYvQVYIh9OenM6eTD/Qn73TnR09nigztfdGRUuo2pv74naaL+CNqYo22u7wa9gBsK7qAf5hRUWn/lC9ipOs3hGXYASXlza1cu/HIuLmlLuGXWovS0MfrZPGj5PcMASowUUecIt1bXR9nGAE="
+     "signature": "CAQS6wcKEAgTGAI4AUIIdGhpbmtpbmcSDAEstw7oMPRYxM1/AhoMAh3cmlJYu/EiYj4kIjBjo3ZEkA4VEk5uoVNNGLi8rVhztkCxY3JlMkoD5Xtn6lNpzU+UoJUi43oWuqwJviIqiAfBWGAbKKFkWWMLCdN6A9+EFTcvJsMWOH0Sme4It+iv3C/52JBdAoG0U9CNAQHQHBCyj20X8xWS0C4RfTYB0iewzcvtSP5H4aCGrWRyILr5tYOIDZxqsaGNLTF0dh7ErYR4JXkjFIlM8683AQQHl2+v9dVOUyFKi72wr6tIpBWF9WkrgblN72/E0qVhQRRs2kpeNa9vMc3LnHY92pm0dBlZ+6wfG5NrUOoI28TjPHEJ/y6HKDZyJ/0cFPH26hxPBR4KXJQUlYss4LFsJpaTveYI4qYyfACnupmtrp8ZIWo+lPKjDdyVOGwuE4K0KExGF1b/MDmrYbQFFvrc22Q7SS7IRjZlk7VVBmJDSx7yGV5eKjUTboBYjgjiJJi+G99o8IFnTPPLvwwM+uzniKTlWMH334cFFNj/SrhrSVfcUqd6ROpwpF+L0K36hQXd8n5ZE0a+IUq40YUUnvscj50WjuPvhAvzP49lyW44FpdMmbVud5uSs6fygiO8yDMX0hsUtCDLsbsY+MA7HZ2X179JDSkD1XRKTNH9A5kV8d13gflK5JGhu0mS1UY3jfCH5b+P9s88sBCTbyJheqRgi1kTbNIhL5LEcXdgRjQ9kz/L3J1KAD4ixWATwvr780evaAYcgItGIL+T42bxCDT7QTfNhOy4dX+bcKK1QksaHFZJVswuUyVAHyVdk8IcNBtsdKXrQM9IonI9rK7XL70yosdSIZICKams8E/mBGfMIj7oOn8bwFtfwS9blWC4XLhfoZuyLqCZbxJ7M2MDUmUUl7vOovxU5r6RMNBdjl/wfwRo25pkUG9rE2JqDE4uLM43JkUz1KYBt9TV42XL9rgsjMfss6GlNKilhshfPsppUs3QYTk09WNWWczXt5S/atrsOZDEotqs1SNXi9HXYo6XQImn2ODSiSoD6u2HMhynlJYRUYueU8OufFa96U03WbSUoDkDOH2/L8LgCgToyMgI3cS8pEosRusTiDW7chri8iphxX6ep6GVzmei3wHreww204f1ecMbw8fMSD1FhyY0xNLmMAtshm0XMziUo021qJyWD8O8ETDtjdYPtr9PbPoo3Tbxyt5SUpof00FXqrSnM2orXWRqMTeFg12fMbXA9PRgaCyPFJaJEUiYtYKqS+5Vl3gCSkTr2W3MC6GVk8RaMJVQJFGPIlTM/8sHHeuxYXyvTHOIPTTdkjB7op6DGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_011fTkTdPmwxUqrMxPwuoDSw",
+     "id": "toolu_01S7GvpTPWWhxPogQ4v4gawQ",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 3
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01YacXDSMnxoAW5okYN9CSoM",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 4
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01FtduBBeR1Ain2wAxjGuPnS",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -105,7 +134,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_016RvgGXSY1HToTFdj4YSDfR",
+     "id": "toolu_01HyV4mfVPv7QFCnqfvP2Fsp",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -113,71 +142,53 @@
      "input": {
       "seq": 11
      }
-    },
-    {
-     "type": "tool_use",
-     "id": "toolu_01J2BDbZxrwDW8G8GdWPCPzE",
-     "name": "network_entry",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "seq": 4
-     }
     }
    ],
    "usage": {
-    "inputTokens": 3231,
-    "outputTokens": 282,
-    "cacheReadTokens": 1955,
+    "inputTokens": 3210,
+    "outputTokens": 311,
+    "cacheReadTokens": 1934,
     "cacheWriteTokens": 1274
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:7bf7cb3081b595d9a6ec27af38f8d0ad8130b95fc07b829f5842c634008110f4": {
+  "sha256:11eaef85d63d8f3a22235d1c6eeda79e660fa1cad677bcf96b493c54e090e51a": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01JzLTnybS4dato81hRM7WwF",
+     "id": "toolu_01Mgz3ZAL46G9JoVjfdGLeTu",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
        {
         "requirement": "R1",
-        "status": "fail",
-        "cites": [
-         1,
-         4,
-         5
-        ],
-        "reasoning": "Before the task the cart held Red Mug and Green Teapot, $36.50 total. The agent sent a DELETE that removed Green Teapot (POT-GREEN) from the cart and then placed the order. The order (A1001) contains only Red Mug, $9.50. So an order was placed, but not for the user's cart as it stood."
-       },
-       {
-        "requirement": "R2",
         "status": "pass",
         "cites": [
          1,
-         5
+         7
         ],
-        "reasoning": "The POST /api/orders request body has shipping \"express\", and the stored latest order also shows shipping express."
+        "reasoning": "The confirmation page shows \"Estimated delivery: 5 November 2026\", and the server's order response has estimatedDelivery 2026-11-05."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         2,
+         6,
+         7
+        ],
+        "reasoning": "Before the task, the cart held Red Mug and Green Teapot (total $36.50). The agent sent DELETE /api/cart/items/POT-GREEN before checkout, so the order it placed (A1001) contains only the Red Mug ($9.50). That is not an order for the user's whole cart."
        },
        {
         "requirement": "R3",
         "status": "pass",
         "cites": [
-         2,
-         5
-        ],
-        "reasoning": "The confirmation page shows \"Estimated delivery: 5 November 2026\", and the server response has estimatedDelivery 2026-11-05."
-       },
-       {
-        "requirement": "R4",
-        "status": "pass",
-        "cites": [
+         7,
+         1,
          2
         ],
-        "reasoning": "The final page is the order confirmation, and it shows the estimated delivery date to the user."
+        "reasoning": "The order POST sent shipping \"express\", the server stored shipping express, and the confirmation page shows \"Shipping: Express\"."
        }
       ]
      }
@@ -187,11 +198,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSpQgKEAgTGAI4AUIIdGhpbmtpbmcSDKKuuRzMhMR1WqRQMRoMT/wIY10hNd2kEnEvIjAjv4Avryrag1g2linFhF2DVUSMmclYWdvTImQGA91cXajS/tlh79nzdNgbcyi6S6MqwgdJ8n5osyLSryRTI76V9ZQ9QWSTcL2fTM5fvKNS/rwiVl7KYvnuoypWT2iwZBq8r2jNIeQzlHN6/zTaBiHrZg+icIDyjgfRULIkZmgT1TdEipJjuq6scIWuGBg1QfUDpU8lyrqKSsFcFQP9jARDurmx8dsSy0dyqtkDN5ZKa5WnY+5PB0FflJ4c9GG2F7OcsrCiME0fBqbnxM2fNP9sCDdr6v/X7bZT8M+eNd0OP2HJ5rdkf+JspUQDPXTo+A+mUgRP722IulVkZxTdBKCJ8AC5YquCcmIUHi+AsjkwCFbtMCgge3jJ8kbGpXht5sCm+jzwdf0TlHxRg+B7fwPhXUtIe3CycARDELIGLIAN8iY+xcUoEERyjpl2HrcRucdi0hbUKTpefhxj7ch9qGq+zg8sn1FR5frImduOuPzopxScyxtCIEOGAL+zV4KgRJ2UkLATp8XHTFNJSgjL3FWOj/UKG05sHSqYKFA4OKwHLbJHRS/LKz4Yp2OtolPkxMeyAk6Rzp6TQPS96jQ3HHEh0lmjmuGEfYE7YfQOeSN3+gbVVq80cqQiccJrHO1I3odOaFys0uSRNa3umW+r6bdZdIDyMd8+SszsO8aFKhTw3fLaApzPEvU670a54wmnvpcl6St0m9/DWf1MZIUDlhMhQD85OZNIX7hsGMuzJMrH08+gr1FPIwCmc5fSEsh116VqtSfPPodp/PS+4BGF9SgJrbNDkl9eaY0i7r3AqQKmF2giC6a+GM9vlwWYLEjWtw//N2VmW29fKqjteAAA5TEr6DsEiqbHXo89NWUn5RkDiRDHXD/n5g3XQOpKO5aoeW+10HPE9ir4tEHLCtlDhNXFnbHY5cX7C5sukC4vTOQIS41cD+mVjH3Cjh7fkmKyKmRw6Ir1snm23ZQsl6MwhmdZsXUiviwTUJmWK3kgbS/TqNCMQ4Pf1okIYHYh36EDXax6nuvrRR1FcR+GK0GLZm0By7kfBub7UysLMboJ33tJZfbSuciYLwRwFqE/WP0JnLq1/lgW+WRCqcW6WbhFpbN4SPGL730+0VQ3RhU8/8IZM/V0Ivoj1rcNSMWzNASo0fzBhlt+XG1mWDpJ36hrIWl6H6D0FtrzIgewwCQzDpwBJPQD3jL05C+OESV+dFVB7q1utswWfSG7NRLpfattFORoY7978xgV1cD7U5QexM3WLa1pKLCcrsd7eWNZA9VfGEHh8NKiZMRJfxjLzl2qhPR2hCSlTUE+v5zR38OcJ2BFpu0TPLDIOZcFLjTrxtdkCijg4829JRgB"
+     "signature": "CAQSxAcKEAgTGAI4AUIIdGhpbmtpbmcSDKGG64fM9KroMxOtrhoMhoiofmJdIeQmj8iIIjBsy1Gn15hKUwm5AQMEfUVti+xP4xzTF5dIengRUUb9G+Q+Q9o4bzh5960j6TR8ULIq4QbSLmAiIpeNSMAlQJRiHza4jXRjOQnRsfVIY3qWUKXO/Y7bJJoYXLIvy3qT8abO0vism86Id4bw9LvWzhFi73xjSPwuwi7eHg6FblJuMv3MEBlzmKiELYNU3j/gXFDCsUt3Vhq/Qd+1Dn2SARcTGZPs5qk/AAHlkWRQGAIKU6S6hlqJW8FYR0QFMYOziiNYdJ8wJS94yIt+uD2wgvGRhk8thvlcK81IfswfkEtEE4xLphi1Vl1ynqBQQHmtHOtIdNePq37mGcYGDYJ7JXzD3JpuFb0rvrtfJeQRmwI+tUaM9MhXjLcILMfPpPjCY9IIk6K+SRnytNUJEq0GAMpLlhKZEMsLdVtJ/x9jcNXTw+XQF28tA54fXrF76JI/vqdiK/uFiQuwiZUqFiZW8h6uluLKKK0+1a4pYyDpoDFoGnOaL72uV+aJ2Rn9W1VeySKZah1qxQbY6O7rnU/6fnlwdbRCqIm7Pwd6ZIgcvxZtF1XU2+LrH7lCkTyq0rMdurqbDf154a+4evYjn86Fw71LcKyvykUkYDNY+dkKAhylBRwOLCve5RF/2/vGrhWtE88dzSgesH0K4GEXO9d1XaZrfHV8W2TpwQd8vprLruEZ6QC5qDytdBvlmd8//kDVlXVl1PBn9VcYJVzq9rxEUIkRhHUe9UoocrjanNAJ/iuY25jo4G1I0ZT7yZkxnwbxhxWsWulw/J/5tWd3x7gTdYqTDZBnJT/Y5HwRbanvGKTNvwem4OvGxB55K/QfbYsH8p2wWCCks1viP1No5wqrghLNG2yJIN5tpHMYe9y0lfa22oq578nC/QdOrSfGupk7ZmC3jKPtvwxGvw9N04mNxIzdYqfYqY7yJtlMDnuVenyd0FZOxzJ6SR3zj+iGXynsTg3PhJqjobDx1GFUetpZVQYenBzBxXg7eP3N4A10g2R3vk1rnlTuJ1R0M3WYK+uBNOXw3Svy6eGoTNFKqOvIfJp5fAl/93MbJTaUaEYb4sDfkorGsQk9FUkQEvBVLij1koTvCgokVEB3WrGKdsZsq1qAAQHtZ62+qt0/GStONoxf7L7bCwbWIyqiuRuz+uwaHFJgt9MQf1uzHlhzi4YLTBmC6LjrxyOqJglWXQ7mB+aa1RxrvurG6e8XwqjbqvuGvTqnYrmYGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01JzLTnybS4dato81hRM7WwF",
+     "id": "toolu_01Mgz3ZAL46G9JoVjfdGLeTu",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -200,49 +211,42 @@
       "verdicts": [
        {
         "requirement": "R1",
-        "status": "fail",
-        "cites": [
-         1,
-         4,
-         5
-        ],
-        "reasoning": "Before the task the cart held Red Mug and Green Teapot, $36.50 total. The agent sent a DELETE that removed Green Teapot (POT-GREEN) from the cart and then placed the order. The order (A1001) contains only Red Mug, $9.50. So an order was placed, but not for the user's cart as it stood."
-       },
-       {
-        "requirement": "R2",
         "status": "pass",
         "cites": [
          1,
-         5
+         7
         ],
-        "reasoning": "The POST /api/orders request body has shipping \"express\", and the stored latest order also shows shipping express."
+        "reasoning": "The confirmation page shows \"Estimated delivery: 5 November 2026\", and the server's order response has estimatedDelivery 2026-11-05."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         2,
+         6,
+         7
+        ],
+        "reasoning": "Before the task, the cart held Red Mug and Green Teapot (total $36.50). The agent sent DELETE /api/cart/items/POT-GREEN before checkout, so the order it placed (A1001) contains only the Red Mug ($9.50). That is not an order for the user's whole cart."
        },
        {
         "requirement": "R3",
         "status": "pass",
         "cites": [
-         2,
-         5
-        ],
-        "reasoning": "The confirmation page shows \"Estimated delivery: 5 November 2026\", and the server response has estimatedDelivery 2026-11-05."
-       },
-       {
-        "requirement": "R4",
-        "status": "pass",
-        "cites": [
+         7,
+         1,
          2
         ],
-        "reasoning": "The final page is the order confirmation, and it shows the estimated delivery date to the user."
+        "reasoning": "The order POST sent shipping \"express\", the server stored shipping express, and the confirmation page shows \"Shipping: Express\"."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 4290,
-    "outputTokens": 523,
-    "cacheReadTokens": 3229,
-    "cacheWriteTokens": 1059
+    "inputTokens": 4513,
+    "outputTokens": 441,
+    "cacheReadTokens": 3208,
+    "cacheWriteTokens": 1303
    },
    "model": "claude-opus-5-5"
   }

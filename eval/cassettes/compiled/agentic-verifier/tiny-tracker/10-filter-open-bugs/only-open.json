@@ -1,32 +1,27 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T23:24:10.383Z",
+ "recordedAt": "2026-11-05T07:09:57.208Z",
  "turns": {
   "sha256:adaaba361b2e58d9a89fd1ae5825e9d3fce46db1a753a8a81987d180924f6a45": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01ASR77eSmMQENkhC5R1rV8W",
+     "id": "toolu_019LFHhJxk3c2fCSYBs7NwAn",
      "name": "page_outline",
      "input": {}
     },
     {
-     "id": "toolu_016hWErGsMcV2nguBKr1VqhL",
+     "id": "toolu_01Pue3sRyr1DXjTuA4E5pZo8",
      "name": "probes",
      "input": {}
     }
    ],
    "raw": [
     {
-     "type": "thinking",
-     "thinking": "",
-     "signature": "CAQSlQUKEAgTGAI4AUIIdGhpbmtpbmcSDPgFEJuQKKLart5LkxoMxeRyjK05LZNRBsceIjCyrhhLFWVx/js1fGiTzdffLBAJeHFSP9r5EarREJosu/W8jgTISxMSyK/0Iwah+ZYqsgS+e2nnPe0E+knuZyEI0Oo3o4vn4mmvftv53innKZNGDKa6wAGfr3lGug2cj0jaxo4vtypjCXcB2PCp6fVjhAJWnL1mvEkfF/uf4elqpbJ0enyBGNmAqa5OgBnY0Tfk0ohRXmCBIKWHPb5+LSlHsum0c/RlZmBEBLHKpKoKysEHpJM+xbhiTkFv6lTkVssVZGvyGwwTDAR3Eh2ZP+pMYY1r65Q/MhI13PeZfB6EtF1x9Sxul2A+boXC51sdpqwommtwE9mRF26ijRy7JDE3It/soHXRt7e64tRNV8dDQ0lo401Xw8gfZdrgEqwRLSFZ8sy98BM18p/zDmS/ZSE8Mg8GGPmFt+bNhmjibB1uHdE+woQ0cMdN5uYtO8r/n/rixdGaHg/CBX6LUHhMjvnOHY0fxCmBeQ6itdFNS3VQ/XadNvL+lmaRR5MhaTBVSgDEyW61NvKV5oMMICz+IgoYKtRMkNPenf3rR0aOMat9brdpQZzcZ3i0h6QlqaciqgzIaPW7U5ggzB7CUdc6MsDIfHX9Hlu1nRG7L/ThaV+NZo2ZRUrHT1QWfrzT+AhJ5WVyklMCRWLvz66jemv47FL5bKjMjUiT4nuxjv6aOyvMIL811zj7O01e2Bxb14vkXgVeKG2Mk6Y6kLfiULJh+bRNnalecN7c8NsxGshNDDs8IK8aoJVaJXpwiIr63/rsNW6buibs4G2E5RfDB8RX/QPim44UWdpiGW7fl3cvTOe5HHTAZ5boGAE="
-    },
-    {
      "type": "tool_use",
-     "id": "toolu_01ASR77eSmMQENkhC5R1rV8W",
+     "id": "toolu_019LFHhJxk3c2fCSYBs7NwAn",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -35,7 +30,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_016hWErGsMcV2nguBKr1VqhL",
+     "id": "toolu_01Pue3sRyr1DXjTuA4E5pZo8",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -45,18 +40,18 @@
    ],
    "usage": {
     "inputTokens": 1871,
-    "outputTokens": 66,
+    "outputTokens": 49,
     "cacheReadTokens": 0,
     "cacheWriteTokens": 1867
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:e856b27401a5ca9ced055763ac4c78e2904b86334dd1aa1a3645a037fd0677fe": {
+  "sha256:cd4f01769c8b1ec5f3ddea77b4c1eab133d3ca703d364fdcc853ba531c8403b0": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_014eT2eREccB7SLYLUgQQcmu",
+     "id": "toolu_01Wkg5zAhcGFxjCeLttmpVwy",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -67,7 +62,7 @@
          1,
          2
         ],
-        "reasoning": "The status filter is set to Open (status=open in the URL). The list shows only issues #1 and #2, and both are open. The one closed issue, #3, is left out."
+        "reasoning": "The URL has status=open, and the list shows only issues #1 and #2, which are both Open. Closed issue #3 is excluded."
        },
        {
         "requirement": "R2",
@@ -75,7 +70,7 @@
         "cites": [
          1
         ],
-        "reasoning": "The label filter is still set to Any (label= is empty in the URL). The list includes issue #2, 'Add dark mode', which is labelled feature, not bug."
+        "reasoning": "The label filter is still 'Any' (label= in the URL). The list includes #2 'Add dark mode', which is labelled feature, not bug."
        }
       ]
      }
@@ -84,7 +79,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_014eT2eREccB7SLYLUgQQcmu",
+     "id": "toolu_01Wkg5zAhcGFxjCeLttmpVwy",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -98,7 +93,7 @@
          1,
          2
         ],
-        "reasoning": "The status filter is set to Open (status=open in the URL). The list shows only issues #1 and #2, and both are open. The one closed issue, #3, is left out."
+        "reasoning": "The URL has status=open, and the list shows only issues #1 and #2, which are both Open. Closed issue #3 is excluded."
        },
        {
         "requirement": "R2",
@@ -106,17 +101,17 @@
         "cites": [
          1
         ],
-        "reasoning": "The label filter is still set to Any (label= is empty in the URL). The list includes issue #2, 'Add dark mode', which is labelled feature, not bug."
+        "reasoning": "The label filter is still 'Any' (label= in the URL). The list includes #2 'Add dark mode', which is labelled feature, not bug."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2877,
-    "outputTokens": 218,
+    "inputTokens": 2860,
+    "outputTokens": 204,
     "cacheReadTokens": 1867,
-    "cacheWriteTokens": 1008
+    "cacheWriteTokens": 991
    },
    "model": "claude-opus-5-5"
   }

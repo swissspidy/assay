@@ -35,16 +35,18 @@ ADR 0001 fixed the snapshot format and the check DSL. Milestone 2 produces check
    - anchors vs. assertions,
    - the trust order (prefer structured evidence),
    - no unstated conditions,
-   - permissive matching (contains, normalizers, schemas with only the required properties),
+   - permissive matching (contains, normalizers, schemas with only the required properties), but exact comparisons for exact values (`equals`, an anchored regex, pinned schema properties listed in `required`),
+   - a check that the page is the one a requirement names ("the event page"): its URL path or a heading or landmark only it has,
    - a witness on absence checks,
    - a request check paired with every value read from a network body.
 3. **Compile and repair.** `submit_checks` is both the output and the repair loop. A submission is accepted only when:
    - it passes the JSON Schema and the semantic validator, which also enforces traceability,
    - every requirement has at least one check,
    - every check passes on every correct reference,
-   - no incorrect reference, if any are given, is judged a success.
+   - no incorrect reference, if any are given, is judged a success,
+   - no check fails or abstains on a valid variant of a correct reference (stress testing, ADR 0003).
 
-   Otherwise the errors go back to the agent. Warnings, such as free-text-only coverage, an incorrect run that abstains instead of failing, or anchor drift, are reported but don't block acceptance.
+   Otherwise the errors go back to the agent. Warnings, such as free-text-only coverage, an incorrect run that abstains instead of failing, anchor drift or a weak check, are reported but don't block acceptance. The exception is the validator's loose-match warnings (an unanchored literal regex on structured evidence, a JSON Schema property pinned with `const` or `enum` but not required; ADR 0001 §2.6): an accepted submission ends the run, so a warning on it is never acted on, and the fix never needs new evidence. The compiler refuses them as errors; `validateCheckSet` still reports them as warnings, since a handwritten set may mean them.
 
 The report lists, per requirement, the checks covering it, the evidence channels they use, and its trust: how hard it is to satisfy by faking page content. Every check must pass, so a requirement is as strong as its strongest check. An `anyOf` is as weak as its weakest branch, because that branch alone can pass; an `allOf` is as strong as its strongest part. Requirements covered only by free text are flagged.
 
@@ -80,5 +82,6 @@ An agent trajectory may be passed as context. The prompt marks it as context onl
 
 - A compiled check set has, by construction, passed on a correct run. With negative references it has also been shown to reject at least those. Stress testing (milestone 3) checks robustness beyond the references.
 - Evaluating on held-out runs is straightforward. The Tiny Shop acceptance run compiles from one correct run per task and judges all the other labelled runs. Every task has at least one further correct run (an extra item, other changes alongside, a different order of steps), so over-constraint shows up as a rejected correct run.
-- The recompile for baselines judged every held-out run correctly, but two accepted checks abstained on valid variants, which the compiler reports as a warning and does not refuse. Both were tool bugs, not model mistakes: a `text` source scoped to a region read its text without whitespace normalization, so a pattern with a plain space missed non-breaking spaces; and date re-formatting variants replaced a node's whole text, dropping the "Estimated delivery:" label that the check cut off with a `replace` and was anchored on. Scoped text is now canonicalized like a node's text, and variants and mutants re-render only the part left after the leading steps that cut text away. The tasks were then re-recorded.
+- The recompile for baselines judged every held-out run correctly, but two accepted checks abstained on valid variants, which the compiler then reported as a warning and did not refuse (it now refuses them, see below). Both were tool bugs, not model mistakes: a `text` source scoped to a region read its text without whitespace normalization, so a pattern with a plain space missed non-breaking spaces; and date re-formatting variants replaced a node's whole text, dropping the "Estimated delivery:" label that the check cut off with a `replace` and was anchored on. Scoped text is now canonicalized like a node's text, and variants and mutants re-render only the part left after the leading steps that cut text away. The tasks were then re-recorded.
+- A later review of the compiled sets found three loose checks that every labelled run still judged correctly: an event page date checked on whatever page was open, a time zone matched with `/Berlin/`, and an order response schema pinning `status` without requiring it. The discovery prompt now asks for a page identity check (URL path, or a heading or landmark) when a requirement names a page, and the compiler refuses the two loose matches (above). The recompile then accepted a date check whose `extract` pattern stopped at the first four-digit run, so an ISO date abstained on a valid variant; abstaining on a valid variant is now refused like failing on one. That task was re-recorded; the other 29 recordings replay unchanged under the new rule.
 - Compilation depends on the model's exploration quality. The repair loop, the validator and the reference checks bound the damage: an over-constrained check that still passes on the single reference is caught by held-out correct runs and by milestone 3's valid variants, not by the compiler.

@@ -1,34 +1,34 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T23:14:57.400Z",
+ "recordedAt": "2026-11-05T07:01:02.122Z",
  "turns": {
   "sha256:84d2165bae002083161a9645ace456031d4a2d364ee178ea2e4c32112d4e5e4e": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01A1Mujmg3u5hzD4c3EqTYr1",
+     "id": "toolu_01JgvJBUoiZpEdN5CPxAvwo9",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01DgwccuvXApYRAUwGsiv4Q1",
+     "id": "toolu_01NA7i8WiCJ8vUt7QErtx8mN",
      "name": "network_log",
      "input": {}
     },
     {
-     "id": "toolu_01771tPAJXRf9Wg9VoLdXqfR",
+     "id": "toolu_01MZhgmPydrro74BxCsmYFKq",
      "name": "find_nodes",
      "input": {
-      "name": "newsletter"
+      "role": "checkbox"
      }
     }
    ],
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01A1Mujmg3u5hzD4c3EqTYr1",
+     "id": "toolu_01JgvJBUoiZpEdN5CPxAvwo9",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -37,7 +37,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01DgwccuvXApYRAUwGsiv4Q1",
+     "id": "toolu_01NA7i8WiCJ8vUt7QErtx8mN",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -46,13 +46,13 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01771tPAJXRf9Wg9VoLdXqfR",
+     "id": "toolu_01MZhgmPydrro74BxCsmYFKq",
      "name": "find_nodes",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "name": "newsletter"
+      "role": "checkbox"
      }
     }
    ],
@@ -64,12 +64,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:14e9f9589fc7803ed7761daeef02aba9979f23774f8029a132e39adfc0dd610c": {
+  "sha256:06ff67deb9add73fcaa039b79f72ab0ee57e3db06b0af868dd06f384df02c682": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Ca1tKjj7QNBSLPoqQ1zih5",
+     "id": "toolu_01Tz3KgFANexZFXDYCtzPM5q",
      "name": "network_entry",
      "input": {
       "seq": 3
@@ -79,7 +79,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01Ca1tKjj7QNBSLPoqQ1zih5",
+     "id": "toolu_01Tz3KgFANexZFXDYCtzPM5q",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -90,38 +90,38 @@
     }
    ],
    "usage": {
-    "inputTokens": 2328,
+    "inputTokens": 2287,
     "outputTokens": 49,
     "cacheReadTokens": 1886,
-    "cacheWriteTokens": 440
+    "cacheWriteTokens": 399
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:a567427eed0c4d760e8c242664fb203762890af85959dcd20a6ec1f00460abfe": {
+  "sha256:2b8e27bd76390914c1d157ab4e8376d158b20d63c6799d5616f906dcd3e178d8": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Lu6oy7e59ZUSdzyTggJL5n",
+     "id": "toolu_015x4Gao1CqKYQZyaFnmDzqQ",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
        {
-        "requirement": "the newsletter subscription is saved",
+        "requirement": "R1",
         "status": "pass",
         "cites": [
          1,
          4
         ],
-        "reasoning": "PUT /api/settings sent {newsletter:true} and got a 200 response. The server-side settings probe also returns newsletter: true."
+        "reasoning": "The PUT /api/settings request sent {newsletter:true} and the server replied 200 with {newsletter:true}. The settings probe also shows newsletter: true on the server."
        },
        {
-        "requirement": "the newsletter checkbox in the preferences is checked",
+        "requirement": "R2",
         "status": "pass",
         "cites": [
          3
         ],
-        "reasoning": "The \"Email me the newsletter\" checkbox in the Preferences form is checked."
+        "reasoning": "In the Preferences form, the checkbox \"Email me the newsletter\" is checked."
        }
       ]
      }
@@ -130,7 +130,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01Lu6oy7e59ZUSdzyTggJL5n",
+     "id": "toolu_015x4Gao1CqKYQZyaFnmDzqQ",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -138,100 +138,31 @@
      "input": {
       "verdicts": [
        {
-        "requirement": "the newsletter subscription is saved",
+        "requirement": "R1",
         "status": "pass",
         "cites": [
          1,
          4
         ],
-        "reasoning": "PUT /api/settings sent {newsletter:true} and got a 200 response. The server-side settings probe also returns newsletter: true."
+        "reasoning": "The PUT /api/settings request sent {newsletter:true} and the server replied 200 with {newsletter:true}. The settings probe also shows newsletter: true on the server."
        },
        {
-        "requirement": "the newsletter checkbox in the preferences is checked",
+        "requirement": "R2",
         "status": "pass",
         "cites": [
          3
         ],
-        "reasoning": "The \"Email me the newsletter\" checkbox in the Preferences form is checked."
+        "reasoning": "In the Preferences form, the checkbox \"Email me the newsletter\" is checked."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2483,
-    "outputTokens": 212,
-    "cacheReadTokens": 2326,
+    "inputTokens": 2442,
+    "outputTokens": 201,
+    "cacheReadTokens": 2285,
     "cacheWriteTokens": 155
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:4bfc55fe22925600b846209acc29a357457400776e8333524fabf187b657a439": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_01Uxat7CtPWLkgtVgzT6h3g4",
-     "name": "submit_verdict",
-     "input": {
-      "verdicts": [
-       {
-        "requirement": "R1",
-        "status": "pass",
-        "cites": [
-         1,
-         4
-        ],
-        "reasoning": "PUT /api/settings sent {newsletter:true} and got a 200 response. The server-side settings probe also returns newsletter: true."
-       },
-       {
-        "requirement": "R2",
-        "status": "pass",
-        "cites": [
-         3
-        ],
-        "reasoning": "The \"Email me the newsletter\" checkbox in the Preferences form is checked."
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_01Uxat7CtPWLkgtVgzT6h3g4",
-     "name": "submit_verdict",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "verdicts": [
-       {
-        "requirement": "R1",
-        "status": "pass",
-        "cites": [
-         1,
-         4
-        ],
-        "reasoning": "PUT /api/settings sent {newsletter:true} and got a 200 response. The server-side settings probe also returns newsletter: true."
-       },
-       {
-        "requirement": "R2",
-        "status": "pass",
-        "cites": [
-         3
-        ],
-        "reasoning": "The \"Email me the newsletter\" checkbox in the Preferences form is checked."
-       }
-      ]
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 2768,
-    "outputTokens": 194,
-    "cacheReadTokens": 2481,
-    "cacheWriteTokens": 285
    },
    "model": "claude-opus-5-5"
   }

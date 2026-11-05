@@ -1,19 +1,19 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-04T23:29:05.433Z",
+ "recordedAt": "2026-11-05T07:14:36.710Z",
  "turns": {
   "sha256:d9d9b3579235e1f77d94e2a7ba19633e92fa454a4a152c4345272940f093d7da": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Kmoc5pAQTgjmnAN5J1vdRV",
+     "id": "toolu_017C4uNmXtBp577GtBmTzswK",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01AghGBB2fxz6uedL6JBLNua",
+     "id": "toolu_016jHhjfYrj6fXX72vizEYcP",
      "name": "network_log",
      "input": {}
     }
@@ -21,7 +21,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01Kmoc5pAQTgjmnAN5J1vdRV",
+     "id": "toolu_017C4uNmXtBp577GtBmTzswK",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -30,7 +30,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01AghGBB2fxz6uedL6JBLNua",
+     "id": "toolu_016jHhjfYrj6fXX72vizEYcP",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -46,12 +46,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:fe0f87d3525fecfae7e6f703635e0010da73f06584ef7f8bf10eaed79406ef47": {
+  "sha256:1070b646024cc8153ed13c980310432d79b0d89904a48a2a06c7efc54a3f545d": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_016fFnvYdqEMvHLfKtxePdTy",
+     "id": "toolu_011ANRx7mSRi9WLHp7xwXTKe",
      "name": "network_entry",
      "input": {
       "seq": 2
@@ -61,7 +61,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_016fFnvYdqEMvHLfKtxePdTy",
+     "id": "toolu_011ANRx7mSRi9WLHp7xwXTKe",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -79,12 +79,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:bfed75c85c358dc4256d0d48fddbcedd02d721f56772edb781e1803a805fab0c": {
+  "sha256:45fcaeb37443370d3d9293df2f395ff0852b28c2695e5a02232950d50f68f658": {
    "stop": "tool_use",
-   "text": "The agent's report isn't evidence, and the server data shows the task was only partly done. The event was created on the right date and time, but it lasts 60 minutes, not the 90 minutes asked for.",
+   "text": "",
    "toolCalls": [
     {
-     "id": "toolu_0175kRQ2ydPWtN8Re88NEZbd",
+     "id": "toolu_012NoDbB9tJQEnd5XzPRwMug",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -95,7 +95,7 @@
          1,
          3
         ],
-        "reasoning": "The server stored an event with id 4 titled \"Workshop\". The POST returned 201, and the events probe lists it."
+        "reasoning": "The server created event id 4 with the title \"Workshop\". The POST returned 201, and the events probe lists the event."
        },
        {
         "requirement": "Then the workshop lasts 90 minutes",
@@ -104,7 +104,7 @@
          1,
          3
         ],
-        "reasoning": "Both the POST request body and the stored event have duration 60, not 90."
+        "reasoning": "The event's duration is 60, not 90. That is the value in both the POST request body and the stored record."
        },
        {
         "requirement": "on November 12, 2026 at 10:00",
@@ -121,17 +121,8 @@
    ],
    "raw": [
     {
-     "type": "thinking",
-     "thinking": "",
-     "signature": "CAQS4wUKEAgTGAI4AUIIdGhpbmtpbmcSDLJm0JZRpqsa26751RoMDwpr5iN8j9NgKmIOIjBtgeMJ4c45uzGdVlb6F4c0qzytZuQIEqJZwWfFv2oeHA6PV6asBlM6ZfZ4nf6z1uEqgAXiYqeDxL+iYXDgdB8dVK6XXG9NNWbg6CHCPo49USBwfjWJ3Na6fqeTXL9tUrghS+WesNOSeTdkB6qSXL9NOID9ez9sk5Xlz9STIYqofH09F2EQlGOpSKr383wd6IwyBRZuc33PjS7pV/FUpo0JHUwyM+q2FvrlZUVZmJamnl3FkGZtUvY+WaEYHTsAs/OxLPL6HOhh6YrgVTZOPiiT6EUN028JSDVgTZcy8VvC7y+uvend4BA5eTrBbF9p/rGDrpAsTXL9Q8syLcnxF74cniGY49FfoGnQ75NwK5UFQm+ZKB0V/zvSqWrwVzALHfl5+rB5ND5RyUJJm+4868QW2jBL4H2HfuFyU2kx/ZWv1Oa3PKgU9XNkdbl9dLY0BLLpjuP8K+fyDFcuAAAyJZ7NSU9GKWlCsgcpRR3FazycTvwwMUgUDbSa091XgmAELcpF7r6UBLqL8hnrnt/8GPvrryr3PnhCwyxIuDrNO7Wl8KUP2CUEeOP5MUSTHLGHL9YIKAT4Mtxon+epquMiBtTfywP0ESm+j1eQlQhdirLh7SKdfUh3BptWpUe+2GEPXopVDevDa7blwPdIvlJBPOr0xaVqB3OUe+2S3Xfs6gdz76eofPm75qGe4Y6/qeuT5+69RtWi23p3D0nvVctyVFMJLoa0FUFNGZ/7qMxcHIIMSiM1ihPM3yeOzqZQfUDolS1IoA59Ae+BNf8yVIa046e0cToZdNS30tfCPi8XGDDR127VJx+E1viwsmCovcltsq2LR/7EogwQdjYB0ha+Ph99pCYaFMeM7skLIxQMPILp4pkupoE/wBHdTGrBZqEsd02PrO6+Yj3U7Y5tOxnICmOUKTr3GAE="
-    },
-    {
-     "type": "text",
-     "text": "The agent's report isn't evidence, and the server data shows the task was only partly done. The event was created on the right date and time, but it lasts 60 minutes, not the 90 minutes asked for."
-    },
-    {
      "type": "tool_use",
-     "id": "toolu_0175kRQ2ydPWtN8Re88NEZbd",
+     "id": "toolu_012NoDbB9tJQEnd5XzPRwMug",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -145,7 +136,7 @@
          1,
          3
         ],
-        "reasoning": "The server stored an event with id 4 titled \"Workshop\". The POST returned 201, and the events probe lists it."
+        "reasoning": "The server created event id 4 with the title \"Workshop\". The POST returned 201, and the events probe lists the event."
        },
        {
         "requirement": "Then the workshop lasts 90 minutes",
@@ -154,7 +145,7 @@
          1,
          3
         ],
-        "reasoning": "Both the POST request body and the stored event have duration 60, not 90."
+        "reasoning": "The event's duration is 60, not 90. That is the value in both the POST request body and the stored record."
        },
        {
         "requirement": "on November 12, 2026 at 10:00",
@@ -171,18 +162,18 @@
    ],
    "usage": {
     "inputTokens": 2804,
-    "outputTokens": 363,
+    "outputTokens": 275,
     "cacheReadTokens": 2530,
     "cacheWriteTokens": 272
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:992e35d5de42b71066060238f4f872513f65ebc22aca4ce43695ac6eb0fc4f6a": {
+  "sha256:a7b0a122feac1948d1eade55ed1113e898b1d07fd92d0e111d68384b2ceb0358": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01X8rktbCWRHHYVPxXD4KAvH",
+     "id": "toolu_015tSejDuqt59S1SM9xLtD4R",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -193,7 +184,7 @@
          1,
          3
         ],
-        "reasoning": "The server stored an event with id 4 titled \"Workshop\". The POST returned 201, and the events probe lists it."
+        "reasoning": "The server created event id 4 with the title \"Workshop\". The POST returned 201, and the events probe lists the event."
        },
        {
         "requirement": "R2",
@@ -202,7 +193,7 @@
          1,
          3
         ],
-        "reasoning": "Both the POST request body and the stored event have duration 60, not 90."
+        "reasoning": "The event's duration is 60, not 90. That is the value in both the POST request body and the stored record."
        },
        {
         "requirement": "R3",
@@ -220,7 +211,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01X8rktbCWRHHYVPxXD4KAvH",
+     "id": "toolu_015tSejDuqt59S1SM9xLtD4R",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -234,7 +225,7 @@
          1,
          3
         ],
-        "reasoning": "The server stored an event with id 4 titled \"Workshop\". The POST returned 201, and the events probe lists it."
+        "reasoning": "The server created event id 4 with the title \"Workshop\". The POST returned 201, and the events probe lists the event."
        },
        {
         "requirement": "R2",
@@ -243,7 +234,7 @@
          1,
          3
         ],
-        "reasoning": "Both the POST request body and the stored event have duration 60, not 90."
+        "reasoning": "The event's duration is 60, not 90. That is the value in both the POST request body and the stored record."
        },
        {
         "requirement": "R3",
@@ -259,10 +250,10 @@
     }
    ],
    "usage": {
-    "inputTokens": 3262,
-    "outputTokens": 242,
+    "inputTokens": 3174,
+    "outputTokens": 249,
     "cacheReadTokens": 2802,
-    "cacheWriteTokens": 458
+    "cacheWriteTokens": 370
    },
    "model": "claude-opus-5-5"
   }
