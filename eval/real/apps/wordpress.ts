@@ -815,6 +815,153 @@ const TASKS: RealTask[] = [
   },
 ];
 
+// Multi-step tasks, added after the first agent runs were all correct (ADR 0009).
+const REPLY = 'Yes, see the network waits section in the docs.';
+const SEEDED_COMMENT_AUTHORS = new Set(['Lee', 'Dana', 'Cheap Watches', 'Sam', 'Priya']);
+async function createCategory(page: Page, name: string): Promise<void> {
+  await page.goto(`${BASE}/wp-admin/edit-tags.php?taxonomy=category`);
+  await page.locator('#tag-name').fill(name);
+  await page.locator('#submit').click();
+  await page.locator('#the-list a.row-title', { hasText: name }).first().waitFor();
+}
+const checkCategory = (name: string) => async (form: ReturnType<Page['locator']>) => {
+  await form.locator('.inline-edit-categories label').filter({ hasText: name }).locator('input').check();
+};
+async function schedule(page: Page, title: string, d: { mm: string; jj: string; aa: string; hh: string; mn: string }) {
+  await quickEdit(page, title, async (form) => {
+    await form.locator('select[name=mm]').selectOption(d.mm);
+    await form.locator('input[name=jj]').fill(d.jj);
+    await form.locator('input[name=aa]').fill(d.aa);
+    await form.locator('input[name=hh]').fill(d.hh);
+    await form.locator('input[name=mn]').fill(d.mn);
+    await form.locator('select[name=_status]').selectOption('publish');
+  });
+}
+TASKS.push(
+  {
+    id: 'w13-reply-comment',
+    instruction: `Reply to Priya's question on the post "Flaky tests and how to avoid them" with: "${REPLY}"`,
+    start: '/wp-admin/',
+    user: 'admin',
+    oracleDoc:
+      "Exactly one new comment exists: by the admin, approved, a reply to Priya's comment (comment_parent), with the dictated text (final period optional); no other comment changed status.",
+    async reference(page) {
+      await page.goto(`${BASE}/wp-admin/edit-comments.php`);
+      const row = page.locator('#the-comment-list tr').filter({ hasText: 'Do you have an example for network waits' });
+      await row.hover();
+      await row.locator('.row-actions .reply button, .row-actions .reply a').first().click();
+      await page.locator('#replycontent').fill(REPLY);
+      await page.locator('#replysubmit button.save, #replybtn').first().click();
+      await page.locator('#the-comment-list').getByText(REPLY).first().waitFor();
+    },
+    perturbations: [
+      {
+        name: 'perturbed-top-level-comment',
+        kind: 'wrong-item',
+        async run(page) {
+          await page.goto(`${BASE}/flaky-tests-and-how-to-avoid-them/`);
+          await page.locator('#comment, textarea[name=comment]').first().fill(REPLY);
+          await page.locator('#submit, .wp-block-post-comments-form input[type=submit]').first().click();
+          await page.waitForLoadState('load');
+        },
+      },
+    ],
+    async oracle() {
+      const rows = await q(
+        `SELECT c.comment_ID id, c.comment_parent parent, c.user_id uid, c.comment_approved status, c.comment_content content, p.post_title post,
+           (SELECT comment_author FROM wp_comments x WHERE x.comment_ID = c.comment_parent) parent_author
+         FROM wp_comments c JOIN wp_posts p ON p.ID = c.comment_post_ID WHERE c.comment_author_email NOT LIKE '%@example.org'`,
+      );
+      const facts = rows;
+      if (rows.length !== 1) return no(`${rows.length} new comments`, facts);
+      const r = rows[0]!;
+      if (r.parent_author !== 'Priya') return no('not a reply to Priya', facts);
+      if (r.uid !== '1') return no('not written by the admin', facts);
+      if (r.status !== '1') return no('reply is not approved', facts);
+      if ((r.content ?? '').trim().replace(/[.!]$/, '') !== REPLY.replace(/\.$/, '')) return no('text differs', facts);
+      // The seeded comments (authors @example.org): Lee's and Priya's approved, the others pending.
+      const changed = (await dbComments()).filter(
+        (c) =>
+          SEEDED_COMMENT_AUTHORS.has(c.author) && c.status !== (c.author === 'Lee' || c.author === 'Priya' ? '1' : '0'),
+      );
+      if (changed.length) return no('other comments changed status', { facts, changed });
+      return ok('replied to Priya', facts);
+    },
+  },
+  {
+    id: 'w14-community-category',
+    instruction: 'Create a category "Community" and add every post of the Events category to it as well.',
+    start: '/wp-admin/',
+    user: 'admin',
+    oracleDoc:
+      'A category Community exists; the posts in Community are exactly the two Events posts (one published, one draft), which keep Events and their status.',
+    async reference(page) {
+      await createCategory(page, 'Community');
+      await quickEdit(page, 'Community call: November', checkCategory('Community'));
+      await quickEdit(page, 'Spring meetup recap', checkCategory('Community'));
+    },
+    perturbations: [
+      {
+        name: 'perturbed-published-only',
+        kind: 'partial',
+        async run(page) {
+          await createCategory(page, 'Community');
+          await quickEdit(page, 'Community call: November', checkCategory('Community'));
+        },
+      },
+    ],
+    async oracle() {
+      const posts = await dbPosts();
+      const inCommunity = posts
+        .filter((p) => p.categories.includes('Community'))
+        .map((p) => p.title)
+        .toSorted();
+      const events = posts.filter((p) => p.title === 'Community call: November' || p.title === 'Spring meetup recap');
+      const facts = { inCommunity, events: events.map((p) => [p.title, p.status, p.categories.join(',')]) };
+      if (inCommunity.join('|') !== 'Community call: November|Spring meetup recap')
+        return no(`Community holds [${inCommunity.join(', ')}]`, facts);
+      if (events.some((p) => !p.categories.includes('Events'))) return no('an Events post lost Events', facts);
+      if (events.find((p) => p.title === 'Spring meetup recap')?.status !== 'draft')
+        return no('draft status changed', facts);
+      if (events.find((p) => p.title === 'Community call: November')?.status !== 'publish')
+        return no('published status changed', facts);
+      return ok('both Events posts in Community', facts);
+    },
+  },
+  {
+    id: 'w15-schedule-post',
+    instruction: 'Schedule the draft post "Roadmap 2027" to be published on January 5, 2027 at 9:00.',
+    start: '/wp-admin/',
+    user: 'admin',
+    oracleDoc:
+      'The post "Roadmap 2027" has status future and post_date 2027-01-05 09:00 (site time, UTC); no other post changed status.',
+    async reference(page) {
+      await schedule(page, 'Roadmap 2027', { mm: '01', jj: '05', aa: '2027', hh: '09', mn: '00' });
+    },
+    perturbations: [
+      {
+        name: 'perturbed-may-fifth',
+        kind: 'wrong-item',
+        async run(page) {
+          await schedule(page, 'Roadmap 2027', { mm: '05', jj: '01', aa: '2027', hh: '09', mn: '00' });
+        },
+      },
+    ],
+    async oracle() {
+      const rows = await q(
+        `SELECT post_status, post_date FROM wp_posts WHERE post_type = 'post' AND post_title = 'Roadmap 2027'`,
+      );
+      const others = await otherStatusChanges('Roadmap 2027');
+      const facts = { rows, others: others.map((o) => [o.title, o.status]) };
+      if (rows.length !== 1) return no(`${rows.length} posts titled Roadmap 2027`, facts);
+      if (rows[0]!.post_status !== 'future') return no(`status is ${rows[0]!.post_status}`, facts);
+      if (!(rows[0]!.post_date ?? '').startsWith('2027-01-05 09:00')) return no(`date is ${rows[0]!.post_date}`, facts);
+      if (others.length) return no('other posts changed status', facts);
+      return ok('scheduled for 2027-01-05 09:00', facts);
+    },
+  },
+);
+
 export const wordpress: RealApp = {
   name: 'wordpress',
   title: 'WordPress 6.6 (CMS admin: posts, block editor, comments, users, settings)',

@@ -887,6 +887,140 @@ const TASKS: RealTask[] = [
   },
 ];
 
+// Multi-step tasks, added after the first agent runs were all correct (ADR 0009).
+const POSTERS =
+  "1x The adventure begins Framed poster; 1x The best is yet to come' Framed poster; 1x Today is a good day Framed poster";
+async function editAddressPhone(page: Page, alias: string, phone: string): Promise<void> {
+  await page.goto(`${BASE}/index.php?controller=addresses`);
+  await page
+    .locator('article.address')
+    .filter({ hasText: alias })
+    .first()
+    .locator('a[data-link-action=edit-address]')
+    .click();
+  await page.locator('.js-address-form input[name=phone]').fill(phone);
+  await page.locator('.js-address-form button[type=submit]').click();
+  await page.waitForURL(/addresses|controller=addresses/);
+}
+async function newCartRule(page: Page, o: { name: string; code: string; percent?: number; amount?: number }) {
+  await adminMenu(page, 'AdminCartRules');
+  await page.getByRole('link', { name: 'Add new cart rule' }).click();
+  await page.waitForLoadState('load');
+  await page.locator('#name_1').fill(o.name);
+  await page.locator('#code').fill(o.code);
+  await page.locator('#cart_rule_link_actions').click();
+  if (o.percent !== undefined) {
+    await page.locator('#apply_discount_percent').check({ force: true });
+    await page.locator('#reduction_percent').fill(String(o.percent));
+  } else {
+    await page.locator('#apply_discount_amount').check({ force: true });
+    await page.locator('#reduction_amount').fill(String(o.amount));
+  }
+  await page
+    .locator('.panel-footer button, .panel-footer a')
+    .filter({ hasText: /^\s*Save\s*$/ })
+    .first()
+    .click();
+  await page
+    .getByText(/Successful creation/i)
+    .first()
+    .waitFor();
+}
+TASKS.push(
+  {
+    id: 's13-all-posters',
+    instruction: 'Add one of each framed poster the shop sells to my cart.',
+    start: '/',
+    user: 'customer',
+    oracleDoc: 'The open cart holds exactly one of each of the three framed posters (any size) and nothing else.',
+    async reference(page) {
+      for (const id of [3, 4, 5]) await addToCart(page, id, 1);
+    },
+    perturbations: [
+      {
+        name: 'perturbed-two-posters',
+        kind: 'partial',
+        async run(page) {
+          for (const id of [3, 4]) await addToCart(page, id, 1);
+        },
+      },
+    ],
+    oracle: () => cartIs(POSTERS, 'all three posters'),
+  },
+  {
+    id: 's14-address-phone',
+    instruction: 'Change the phone number of my address "My address" to 305-555-0199.',
+    start: '/',
+    user: 'customer',
+    oracleDoc:
+      'The (non-deleted) address "My address" has phone 305-555-0199 (digits compared) and otherwise its seeded fields; "Mon adresse" is unchanged. (PrestaShop keeps an address used by an order and saves the edit as a new record.)',
+    async reference(page) {
+      await editAddressPhone(page, 'My address', '305-555-0199');
+    },
+    perturbations: [
+      {
+        name: 'perturbed-other-address',
+        kind: 'wrong-item',
+        async run(page) {
+          await editAddressPhone(page, 'Mon adresse', '305-555-0199');
+        },
+      },
+    ],
+    async oracle() {
+      const all = await addresses();
+      const mine = all.filter((a) => a.alias === 'My address');
+      const other = all.filter((a) => a.alias === 'Mon adresse');
+      const facts = { mine, other: other.map((a) => a.phone) };
+      if (mine.length !== 1) return no(`${mine.length} addresses called My address`, facts);
+      const a = mine[0]!;
+      if (digitsOf(a.phone) !== '3055550199') return no(`phone is ${a.phone}`, facts);
+      if (a.address1 !== '16, Main street' || a.city !== 'Miami' || a.postcode !== '33133' || a.state !== 'Florida')
+        return no('other address fields changed', facts);
+      if (other.length !== 1 || digitsOf(other[0]!.phone) !== '0102030405') return no('"Mon adresse" changed', facts);
+      return ok('phone updated', facts);
+    },
+  },
+  {
+    id: 's15-admin-cart-rule',
+    instruction: 'In the back office, create a discount code WINTER15 that gives 15% off the whole order.',
+    start: '/admin-dev/index.php?controller=AdminDashboard',
+    user: 'admin',
+    oracleDoc:
+      'Exactly one cart rule has code WINTER15; it is active, gives reduction_percent 15 on the order (no product, carrier or customer restriction) and no fixed amount.',
+    async reference(page) {
+      await newCartRule(page, { name: 'Winter 15% off', code: 'WINTER15', percent: 15 });
+    },
+    perturbations: [
+      {
+        name: 'perturbed-5-percent',
+        kind: 'wrong-item',
+        async run(page) {
+          await newCartRule(page, { name: 'Winter 15% off', code: 'WINTER15', percent: 5 });
+        },
+      },
+    ],
+    async oracle() {
+      const rows = await q(
+        `SELECT code, active, reduction_percent, reduction_amount, reduction_product, product_restriction, carrier_restriction, id_customer
+         FROM ps_cart_rule WHERE code = 'WINTER15'`,
+      );
+      if (rows.length !== 1) return no(`${rows.length} cart rules with code WINTER15`, rows);
+      const r = rows[0]!;
+      if (r.active !== '1') return no('cart rule inactive', r);
+      if (Number(r.reduction_percent) !== 15) return no(`percent is ${r.reduction_percent}`, r);
+      if (Number(r.reduction_amount) !== 0) return no(`fixed amount ${r.reduction_amount}`, r);
+      if (
+        r.reduction_product !== '0' ||
+        r.product_restriction !== '0' ||
+        r.carrier_restriction !== '0' ||
+        r.id_customer !== '0'
+      )
+        return no('restricted to products, carriers or a customer', r);
+      return ok('15% order discount WINTER15', r);
+    },
+  },
+);
+
 /** Seeded order references and states, and product prices (demo data as installed). */
 const SEEDED_REFS = new Map([
   ['XKBKNABJK', 'Canceled'],

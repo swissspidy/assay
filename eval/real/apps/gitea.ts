@@ -782,6 +782,144 @@ const TASKS: RealTask[] = [
   },
 ];
 
+// Multi-step tasks, added after the first agent runs were all correct (ADR 0009).
+TASKS.push(
+  {
+    id: 'g12-answer-and-close',
+    instruction:
+      'Answer the question about resetting an API token in acme/webapp with the comment "Go to Settings > Applications to regenerate it." and then close that issue.',
+    start: `/${REPO}/issues`,
+    user: 'alice',
+    oracleDoc:
+      'Issue "How do I reset my API token?" is closed and has exactly one comment by alice with the dictated text (final period optional); alice commented nowhere else.',
+    async reference(page) {
+      await openIssue(page, 'How do I reset my API token?');
+      await page.locator('#comment-form textarea').fill('Go to Settings > Applications to regenerate it.');
+      await page.getByRole('button', { name: 'Comment', exact: true }).click();
+      await page.getByText('Go to Settings > Applications to regenerate it.').first().waitFor();
+      await page.getByRole('button', { name: 'Close Issue' }).click();
+      await page.getByRole('button', { name: 'Reopen', exact: true }).waitFor();
+    },
+    perturbations: [
+      {
+        name: 'perturbed-not-closed',
+        kind: 'partial',
+        async run(page) {
+          await openIssue(page, 'How do I reset my API token?');
+          await page.locator('#comment-form textarea').fill('Go to Settings > Applications to regenerate it.');
+          await page.getByRole('button', { name: 'Comment', exact: true }).click();
+          await page.getByText('Go to Settings > Applications to regenerate it.').first().waitFor();
+        },
+      },
+    ],
+    async oracle() {
+      const [i] = await issueByTitle('How do I reset my API token?');
+      const mine = (await comments())
+        .filter((c) => c.user.login === 'alice')
+        .map((c) => ({ issue: Number(c.issue_url.split('/').pop()), body: c.body }));
+      const facts = { state: i?.state, comments: mine };
+      const onTarget = mine.filter((c) => c.issue === i?.number);
+      if (onTarget.length !== 1) return no(`${onTarget.length} comments by alice on the question`, facts);
+      if (prose(onTarget[0]!.body) !== 'Go to Settings > Applications to regenerate it')
+        return no('comment text differs', facts);
+      if (mine.length !== 1) return no('alice also commented elsewhere', facts);
+      if (i?.state !== 'closed') return no('question is still open', facts);
+      return ok('answered and closed', facts);
+    },
+  },
+  {
+    id: 'g13-assign-open-bugs',
+    instruction: 'Assign every open bug in acme/webapp that has no assignee yet to dave.',
+    start: `/${REPO}/issues`,
+    user: 'alice',
+    oracleDoc:
+      'The five open issues labelled bug that were seeded without an assignee have exactly [dave]; every other issue keeps its seeded assignees.',
+    async reference(page) {
+      for (const t of UNASSIGNED_OPEN_BUGS) {
+        await openIssue(page, t);
+        await sidebarSelect(page, 'Assignees', ['dave']);
+      }
+    },
+    perturbations: [
+      {
+        name: 'perturbed-three-of-five',
+        kind: 'partial',
+        async run(page) {
+          for (const t of UNASSIGNED_OPEN_BUGS.slice(0, 3)) {
+            await openIssue(page, t);
+            await sidebarSelect(page, 'Assignees', ['dave']);
+          }
+        },
+      },
+    ],
+    async oracle() {
+      const all = (await issues()).map(compactIssue);
+      const bad = all.filter((i) => {
+        const want = UNASSIGNED_OPEN_BUGS.includes(i.title)
+          ? ['dave']
+          : (ISSUES.find((s) => s.title === i.title)?.assignees ?? []);
+        return i.assignees.toSorted().join(',') !== want.toSorted().join(',');
+      });
+      const facts = all.map((i) => [i.title, i.assignees.join(',')]);
+      if (bad.length) return no(`wrong assignees on: ${bad.map((b) => b.title).join(', ')}`, facts);
+      return ok('all five open unassigned bugs assigned to dave', facts);
+    },
+  },
+  {
+    id: 'g14-move-milestone',
+    instruction: 'Create a milestone "v1.2" in acme/webapp and move every open issue of milestone v1.1 into it.',
+    start: `/${REPO}/issues`,
+    user: 'alice',
+    oracleDoc:
+      'Exactly one milestone v1.2 exists; "Add CSV export" and "Upgrade to Node 24" (the open v1.1 issues) are in v1.2; no open issue is left in v1.1 and no other issue changed milestone.',
+    async reference(page) {
+      await page.goto(`${BASE}/${REPO}/milestones/new`);
+      await page.locator('input[name=title]').fill('v1.2');
+      await Promise.all([
+        page.waitForURL(/\/milestones$/),
+        page.getByRole('button', { name: 'Create Milestone' }).click(),
+      ]);
+      for (const t of ['Add CSV export', 'Upgrade to Node 24']) {
+        await openIssue(page, t);
+        await sidebarSelect(page, 'Milestone', ['v1.2']);
+      }
+    },
+    perturbations: [
+      {
+        name: 'perturbed-moved-one',
+        kind: 'partial',
+        async run(page) {
+          await page.goto(`${BASE}/${REPO}/milestones/new`);
+          await page.locator('input[name=title]').fill('v1.2');
+          await Promise.all([
+            page.waitForURL(/\/milestones$/),
+            page.getByRole('button', { name: 'Create Milestone' }).click(),
+          ]);
+          await openIssue(page, 'Add CSV export');
+          await sidebarSelect(page, 'Milestone', ['v1.2']);
+        },
+      },
+    ],
+    async oracle() {
+      const ms = (await milestones()).filter((m) => m.title.trim() === 'v1.2');
+      const all = (await issues()).map(compactIssue);
+      const moved = new Set(['Add CSV export', 'Upgrade to Node 24']);
+      const facts = { milestones: ms.length, issues: all.map((i) => [i.title, i.state, i.milestone]) };
+      if (ms.length !== 1) return no(`${ms.length} milestones v1.2`, facts);
+      const wrong = all.filter((i) => {
+        const seeded = ISSUES.find((s) => s.title === i.title)?.milestone ?? null;
+        return (moved.has(i.title) ? 'v1.2' : seeded) !== i.milestone;
+      });
+      if (wrong.length) return no(`wrong milestone on: ${wrong.map((w) => w.title).join(', ')}`, facts);
+      return ok('v1.2 holds the open v1.1 issues', facts);
+    },
+  },
+);
+
+const UNASSIGNED_OPEN_BUGS = ISSUES.filter(
+  (i) => i.labels.includes('bug') && !i.closed && !(i.assignees ?? []).length,
+).map((i) => i.title);
+
 /** Seeded open/closed state per issue title (for "nothing else changed" in g02). */
 const SEEDED_STATE = new Map(ISSUES.map((i) => [i.title, i.closed ? 'closed' : 'open']));
 
