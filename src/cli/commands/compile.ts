@@ -19,6 +19,8 @@ import { selectModel } from '../model.ts';
 
 const isFile = (p: string) => existsSync(p) && statSync(p).isFile();
 const LOOKS_LIKE_PATH = /\.(json|md|txt|feature)$/i;
+/** A single word ending in a file extension: a file name, not task text, so a missing one is an error. */
+const looksLikePath = (s: string) => LOOKS_LIKE_PATH.test(s) && !/\s/.test(s);
 const str = (x: unknown) => (typeof x === 'string' ? x : undefined);
 
 /**
@@ -39,20 +41,24 @@ export function resolveTask(arg: string, values: Invocation['values']): TaskInpu
         : [];
       task = {
         id: str(j.id) ?? str(t.id) ?? basename(arg, '.json').replace(/\.checks$/, ''),
-        instruction: t.instruction,
+        instruction: t.instruction.trim(),
         ...(typeof t.outcomes === 'string' ? { outcomes: t.outcomes } : {}),
         ...(skip.length ? { skipVariants: skip } : {}),
       };
     } else {
       task = { id: basename(arg, extname(arg)), instruction: readText(arg, 'task').trim() };
     }
-  } else if (LOOKS_LIKE_PATH.test(arg) && !arg.includes(' ')) {
+  } else if (looksLikePath(arg)) {
     throw new CliError(`task file not found: ${arg}`);
   } else {
     task = { id: 'task', instruction: arg.trim() };
   }
   const outcomes = str(values.outcomes);
-  if (outcomes !== undefined) task.outcomes = isFile(outcomes) ? readText(outcomes, 'outcomes').trim() : outcomes;
+  if (outcomes !== undefined) {
+    if (isFile(outcomes)) task.outcomes = readText(outcomes, 'outcomes').trim();
+    else if (looksLikePath(outcomes)) throw new CliError(`outcomes file not found: ${outcomes}`);
+    else task.outcomes = outcomes;
+  }
   if (typeof values.id === 'string') task.id = values.id;
   const skip = list(str(values['skip-variants']));
   if (skip.length) task.skipVariants = skip;

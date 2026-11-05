@@ -357,4 +357,18 @@ test.describe('review findings', () => {
     expect(readFileSync(named, 'utf8')).toBe('2');
   });
 
+  test('a JSON task whose instruction is only whitespace is rejected', async () => {
+    const task = join(tmp(), 'task.json');
+    writeFileSync(task, JSON.stringify({ instruction: '  \n ' }));
+    const r = await assay(['compile', task, '-r', ADDED_BLUE]);
+    expect(r.code).toBe(3);
+    expect(r.stderr).toContain('the task instruction is empty');
+  });
+
+  test('--outcomes naming a missing file is an error, not outcome text', async () => {
+    const r = await assay(['compile', 'Do it.', '--outcomes', 'outcomes.md', '-r', ADDED_BLUE]);
+    expect(r.code).toBe(4);
+    expect(r.stderr).toContain('outcomes file not found: outcomes.md');
+  });
+
 });
