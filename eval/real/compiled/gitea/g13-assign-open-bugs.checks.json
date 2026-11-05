@@ -18,90 +18,138 @@
   ],
   "checks": [
     {
-      "id": "R1-dave-on-previously-unassigned-open-bugs",
+      "id": "unassigned-open-bugs-assigned-dave",
       "requirement": "R1",
-      "description": "After the task, the bugs without dave as assignee are exactly the bugs that before the task were closed or already had a non-dave assignee, so every open bug that was unassigned now has dave assigned.",
+      "description": "In the backend, open bugs #1, #3, #4, #10 and #12 (unassigned before the task) now have dave as an assignee.",
       "assert": {
         "kind": "value",
         "source": {
           "from": "probe",
           "probe": "issues"
         },
-        "normalize": [
-          {
-            "op": "items",
-            "where": {
-              "properties": {
-                "labels": {
-                  "type": "array",
-                  "contains": {
-                    "const": "bug"
-                  }
-                },
-                "assignees": {
-                  "type": "array",
-                  "not": {
-                    "contains": {
-                      "const": "dave"
-                    }
-                  }
-                }
-              },
-              "required": [
-                "labels",
-                "assignees"
-              ]
-            },
-            "pointer": "/number"
-          }
-        ],
         "expect": {
-          "sameAs": {
-            "source": {
-              "from": "probe",
-              "probe": "issues",
-              "at": "before"
-            },
-            "normalize": [
+          "schema": {
+            "type": "array",
+            "allOf": [
               {
-                "op": "items",
-                "where": {
+                "contains": {
+                  "type": "object",
                   "properties": {
-                    "labels": {
-                      "type": "array",
-                      "contains": {
-                        "const": "bug"
-                      }
+                    "number": {
+                      "const": 1
+                    },
+                    "state": {
+                      "const": "open"
                     },
                     "assignees": {
                       "type": "array",
-                      "not": {
-                        "contains": {
-                          "const": "dave"
-                        }
+                      "contains": {
+                        "const": "dave"
                       }
                     }
                   },
                   "required": [
-                    "labels",
+                    "number",
+                    "state",
                     "assignees"
-                  ],
-                  "not": {
-                    "properties": {
-                      "state": {
-                        "const": "open"
-                      },
-                      "assignees": {
-                        "maxItems": 0
-                      }
+                  ]
+                }
+              },
+              {
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "number": {
+                      "const": 3
                     },
-                    "required": [
-                      "state",
-                      "assignees"
-                    ]
-                  }
-                },
-                "pointer": "/number"
+                    "state": {
+                      "const": "open"
+                    },
+                    "assignees": {
+                      "type": "array",
+                      "contains": {
+                        "const": "dave"
+                      }
+                    }
+                  },
+                  "required": [
+                    "number",
+                    "state",
+                    "assignees"
+                  ]
+                }
+              },
+              {
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "number": {
+                      "const": 4
+                    },
+                    "state": {
+                      "const": "open"
+                    },
+                    "assignees": {
+                      "type": "array",
+                      "contains": {
+                        "const": "dave"
+                      }
+                    }
+                  },
+                  "required": [
+                    "number",
+                    "state",
+                    "assignees"
+                  ]
+                }
+              },
+              {
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "number": {
+                      "const": 10
+                    },
+                    "state": {
+                      "const": "open"
+                    },
+                    "assignees": {
+                      "type": "array",
+                      "contains": {
+                        "const": "dave"
+                      }
+                    }
+                  },
+                  "required": [
+                    "number",
+                    "state",
+                    "assignees"
+                  ]
+                }
+              },
+              {
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "number": {
+                      "const": 12
+                    },
+                    "state": {
+                      "const": "open"
+                    },
+                    "assignees": {
+                      "type": "array",
+                      "contains": {
+                        "const": "dave"
+                      }
+                    }
+                  },
+                  "required": [
+                    "number",
+                    "state",
+                    "assignees"
+                  ]
+                }
               }
             ]
           }
@@ -109,45 +157,70 @@
       }
     },
     {
-      "id": "R1-no-unassigned-open-bugs-left",
+      "id": "out-of-scope-issues-not-assigned-dave",
       "requirement": "R1",
-      "description": "After the task, no open issue labelled bug in acme/webapp is left without an assignee.",
+      "description": "Issues that are not open bugs are not assigned to dave, and open bug #13 (already assigned) keeps only bob as assignee.",
       "assert": {
         "kind": "value",
         "source": {
           "from": "probe",
           "probe": "issues"
         },
-        "normalize": [
-          {
-            "op": "items",
-            "where": {
-              "properties": {
-                "state": {
-                  "const": "open"
-                },
-                "labels": {
-                  "type": "array",
-                  "contains": {
-                    "const": "bug"
+        "expect": {
+          "schema": {
+            "type": "array",
+            "items": {
+              "if": {
+                "not": {
+                  "type": "object",
+                  "properties": {
+                    "state": {
+                      "const": "open"
+                    },
+                    "labels": {
+                      "type": "array",
+                      "contains": {
+                        "const": "bug"
+                      }
+                    }
+                  },
+                  "required": [
+                    "state",
+                    "labels"
+                  ]
+                }
+              },
+              "then": {
+                "properties": {
+                  "assignees": {
+                    "not": {
+                      "type": "array",
+                      "contains": {
+                        "const": "dave"
+                      }
+                    }
                   }
+                }
+              }
+            },
+            "contains": {
+              "type": "object",
+              "properties": {
+                "number": {
+                  "const": 13
                 },
                 "assignees": {
-                  "type": "array",
-                  "maxItems": 0
+                  "const": [
+                    "bob"
+                  ]
                 }
               },
               "required": [
-                "state",
-                "labels",
+                "number",
                 "assignees"
               ]
-            },
-            "pointer": "/number"
+            }
           }
-        ],
-        "expect": {
-          "equals": []
         }
       }
     }
@@ -158,6 +231,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:20:24.639Z"
+    "at": "2026-11-05T21:05:12.909Z"
   }
 }

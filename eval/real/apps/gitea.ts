@@ -450,6 +450,26 @@ const TASKS: RealTask[] = [
     user: 'alice',
     oracleDoc:
       'The issue with that title is closed; every other issue keeps its seeded state (in particular "Crash when uploading large file" stays open).',
+    route: "through the issue page's Close Issue button",
+    alternatives: [
+      {
+        name: 'issue-list',
+        route: "through the issue list's bulk Close action",
+        async run(page) {
+          await page.goto(`${BASE}/${REPO}/issues?state=open`);
+          await page
+            .locator('#issue-list .flex-item')
+            .filter({ has: page.getByRole('link', { name: 'Crash when uploading empty file', exact: true }) })
+            .locator('input[type=checkbox]')
+            .check();
+          await Promise.all([
+            page.waitForResponse((r) => r.url().includes('/issues/status') && r.request().method() === 'POST'),
+            page.locator('#issue-actions').getByRole('button', { name: 'Close', exact: true }).click(),
+          ]);
+          await page.waitForLoadState('load');
+        },
+      },
+    ],
     async reference(page) {
       await openIssue(page, 'Crash when uploading empty file');
       await page.getByRole('button', { name: 'Close Issue' }).click();

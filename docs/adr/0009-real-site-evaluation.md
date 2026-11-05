@@ -63,7 +63,9 @@ Every task has:
 - one or two **scripted near misses** (`perturbed-*`): the wrong item, a partial completion, an
   over-completion, a no-op;
 - an **oracle** over the app's backend (SQL against the database, or the admin API), written
-  before any run was labelled. It also checks "nothing else changed" where a task implies it
+  before any run was labelled. (Since ADR 0011, seven tasks also have a second scripted
+  reference through another UI route, `reference-<route>`, given to the compiler and never scored.)
+  It also checks "nothing else changed" where a task implies it
   (other issues keep their state, other comments their status). For view tasks the oracle reads the
   final URL. Its decision and the facts it read are stored in every run file.
 
@@ -119,7 +121,11 @@ browser.
 
 ## Results
 
-Recorded on 2026-11-05.
+Recorded on 2026-11-05. **Update (ADR 0011):** after route-robust compilation (second references on
+seven tasks, `onMissing: "abstain"` for route evidence, "add" keeps what is there) the recompiled
+checks judge all 177 held-out runs correctly: 1.000 balanced accuracy with and without escalation,
+no abstains. The judge and the verifier are unchanged. The tables below are the original
+measurement; ADR 0011 has the new one.
 
 ### Dataset
 
@@ -209,7 +215,8 @@ evaluation replays keylessly in 2 s and gives identical verdicts and costs.
   verifier (0.990). Every error is in one app (WordPress), where a task can be done through two
   different UIs: the classic admin (Quick Edit, AJAX) and the block editor or the public site (REST,
   form posts). Gitea and PrestaShop have mostly one path per task.
-- **What to build next, in order of evidence:**
+- **What to build next, in order of evidence** (1–4 are done in ADR 0011; 5 is in progress
+  separately):
   1. **Reference diversity.** Two of the three causes are path dependence: one scripted reference
      shows one way to do the task, and when the probes lack a field, the compiler can only check
      that path's request or page. Compiling from a second correct run on another path (or asking

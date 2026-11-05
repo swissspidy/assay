@@ -7,20 +7,20 @@
   ],
   "turns": {
     "rubric": 1,
-    "discovery": 3
+    "discovery": 4
   },
   "usage": {
-    "inputTokens": 60213,
-    "outputTokens": 2119,
-    "cacheReadTokens": 37534,
-    "cacheWriteTokens": 22667
+    "inputTokens": 94086,
+    "outputTokens": 1982,
+    "cacheReadTokens": 67209,
+    "cacheWriteTokens": 26863
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "Write and publish a new post titled \"Release 0.2 is out\"",
       "checks": [
-        "R1-post-created"
+        "r1-post-created"
       ],
       "channels": [
         "probe"
@@ -31,7 +31,7 @@
       "requirement": "R2",
       "quote": "publish",
       "checks": [
-        "R2-post-published"
+        "r2-published"
       ],
       "channels": [
         "probe"
@@ -42,7 +42,7 @@
       "requirement": "R3",
       "quote": "in the News category",
       "checks": [
-        "R3-post-news-category"
+        "r3-news-category"
       ],
       "channels": [
         "probe"
@@ -53,7 +53,7 @@
       "requirement": "R4",
       "quote": "with the text \"Assay 0.2 adds per-row checks.\"",
       "checks": [
-        "R4-post-body-text"
+        "r4-body-text"
       ],
       "channels": [
         "probe"
@@ -62,7 +62,7 @@
     }
   ],
   "warnings": [
-    "check R1-post-created.allOf[1]: reads only the state before the task, which does not depend on what the agent did; compare it with the state after (sameAs)"
+    "check r1-post-created.allOf[1]: reads only the state before the task, which does not depend on what the agent did; compare it with the state after (sameAs)"
   ],
   "references": [
     {

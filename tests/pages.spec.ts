@@ -149,6 +149,27 @@ test('page assertions: missing, ambiguous and unreadable pages abstain; a wrong 
   expect(status(text, snap([receipt()]))).toBe('pass');
 });
 
+test('with onMissing "abstain", a page the run never opened is a route not taken (ADR 0011)', () => {
+  const receiptUrl: Assertion = {
+    kind: 'page',
+    match: { title: 'Receipt' },
+    assert: { kind: 'url', match: { path: '/receipt' } },
+  };
+  const cs = (onMissing?: 'abstain') => {
+    const c = checks([receiptUrl]);
+    if (onMissing) c.checks[0]!.onMissing = onMissing;
+    return c;
+  };
+  const reason = (c: CheckSet, s: EvidenceSnapshot) => evaluate(c, s).checks[0]!.reason;
+  expect(reason(cs(), snap(undefined))).toBe('anchor_missing');
+  expect(reason(cs('abstain'), snap(undefined))).toBe('route_missing');
+  // The route lives inside the page: a url check there is route evidence, so onMissing applies.
+  expect(validateCheckSet(cs('abstain')).warnings.join()).not.toMatch(/onMissing "abstain" has no effect/);
+  // Selected and on the wrong path: still decided (and route_missing again for a path elsewhere).
+  expect(evaluate(cs('abstain'), snap([receipt()])).checks[0]!.status).toBe('pass');
+  expect(reason(cs('abstain'), snap([receipt('https://shop.test/orders')]))).toBe('route_missing');
+});
+
 test('the validator keeps page assertions to what a page shows', () => {
   const errors = (a: Assertion) => validateCheckSet(checks([a])).errors;
   const on = (assert: Assertion): Assertion => ({ kind: 'page', match: { title: 'Receipt' }, assert });

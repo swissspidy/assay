@@ -18,40 +18,12 @@
   ],
   "checks": [
     {
-      "id": "R1-comment-stored",
+      "id": "r1-comment-on-dark-mode-issue",
       "requirement": "R1",
-      "description": "The backend holds a comment on issue #3 (Dark mode toggle does not persist) whose body is 'I can reproduce this in Firefox 128.' (allowing surrounding whitespace / final punctuation), and the comment was posted to acme/webapp issue 3.",
+      "description": "The backend stores a comment 'I can reproduce this in Firefox 128.' on acme/webapp issue #3, which is the issue 'Dark mode toggle does not persist'.",
       "assert": {
         "kind": "allOf",
         "of": [
-          {
-            "kind": "value",
-            "source": {
-              "from": "probe",
-              "probe": "issueComments"
-            },
-            "expect": {
-              "schema": {
-                "type": "array",
-                "contains": {
-                  "type": "object",
-                  "required": [
-                    "issue",
-                    "body"
-                  ],
-                  "properties": {
-                    "issue": {
-                      "const": 3
-                    },
-                    "body": {
-                      "type": "string",
-                      "pattern": "^\\s*I can reproduce this in Firefox 128[.!]?\\s*$"
-                    }
-                  }
-                }
-              }
-            }
-          },
           {
             "kind": "value",
             "source": {
@@ -63,10 +35,6 @@
                 "type": "array",
                 "contains": {
                   "type": "object",
-                  "required": [
-                    "number",
-                    "title"
-                  ],
                   "properties": {
                     "number": {
                       "const": 3
@@ -74,20 +42,40 @@
                     "title": {
                       "const": "Dark mode toggle does not persist"
                     }
-                  }
+                  },
+                  "required": [
+                    "number",
+                    "title"
+                  ]
                 }
               }
             }
           },
           {
-            "kind": "request",
-            "match": {
-              "method": "POST",
-              "url": {
-                "path": "/acme/webapp/issues/3/comments"
-              },
-              "status": {
-                "lt": 400
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "issueComments"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "issue": {
+                      "const": 3
+                    },
+                    "body": {
+                      "type": "string",
+                      "pattern": "^\\s*I can reproduce this in Firefox 128[.!]?\\s*$"
+                    }
+                  },
+                  "required": [
+                    "issue",
+                    "body"
+                  ]
+                }
               }
             }
           }
@@ -101,6 +89,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T11:38:23.585Z"
+    "at": "2026-11-05T21:03:25.584Z"
   }
 }

@@ -14,6 +14,7 @@ import { APPS, app as appByName } from '../examples/apps.ts';
 import { nearMiss } from '../src/stress/edit.ts';
 import type { NetworkEntry } from '../src/types.ts';
 import { renderLike } from '../src/stress/violate.ts';
+import { isTrainingRun, realRuns } from '../eval/real/dataset.ts';
 
 const shop = appByName('tiny-shop').dir;
 const checks = (id: string, root: URL = shop) =>
@@ -831,4 +832,30 @@ test('formatting variants reach a date read from record text', () => {
   // A pattern that only reads the long English format abstains on the ISO one: now caught.
   const strict = check('Estimated delivery: (\\w+, \\w+ \\d+, \\d{4})');
   expect(run(strict, s).fragile.map((f) => f.check)).toEqual(['C1']);
+});
+
+test.describe('route evidence (ADR 0011): compiled real-app sets from two references', () => {
+  for (const [app, task] of [
+    ['wordpress', 'w13-reply-comment'],
+    ['wordpress', 'w15-schedule-post'],
+  ] as const) {
+    test(`${app}/${task}: variants of both routes accepted, every mutant rejected`, () => {
+      const cs = JSON.parse(
+        readFileSync(new URL(`../eval/real/compiled/${app}/${task}.checks.json`, import.meta.url), 'utf8'),
+      ) as CheckSet;
+      const refs = realRuns(app, task)
+        .filter((r) => isTrainingRun(r.name))
+        .map((r) => ({ name: r.name, snapshot: r.snapshot }));
+      expect(refs.length).toBe(2);
+      expect(cs.checks.some((c) => c.onMissing === 'abstain')).toBe(true);
+      const r = stressTest(cs, refs);
+      expect(r.overConstrained, formatStressReport(r)).toEqual([]);
+      expect(r.fragile, formatStressReport(r)).toEqual([]);
+      expect(r.missed, formatStressReport(r)).toEqual([]);
+      expect(r.rates.variantsAccepted).toBe(r.rates.variantsTotal);
+      // Near misses on a route that was taken still fail; none slips through as success.
+      expect(r.rates.mutantsRejected).toBe(r.rates.mutantsTotal);
+      expect(r.rates.mutantsRejectedByFail).toBeGreaterThan(0);
+    });
+  }
 });

@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T12:19:10.275Z",
  "turns": {
   "sha256:edc0eb701b71c3f47d54f89dfba8e08a3d194ed16b36b2befef37771dae6e849": {
    "stop": "tool_use",
@@ -52,12 +51,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:a57816774afd781680e699371300c606ad2f5032799d130064cf88fd600e6fef": {
+  "sha256:98c5a0ee8d9fb166a396ca090fb1f0f55b8835f1d680eaca8bc593919ddcb411": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01WDd4romWgR3YqTvEJkHgqP",
+     "id": "toolu_01GiucQiMSGoHsiWZykkLgz7",
      "name": "probes",
      "input": {}
     }
@@ -65,7 +64,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01WDd4romWgR3YqTvEJkHgqP",
+     "id": "toolu_01GiucQiMSGoHsiWZykkLgz7",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -74,57 +73,50 @@
     }
    ],
    "usage": {
-    "inputTokens": 16855,
+    "inputTokens": 19934,
     "outputTokens": 25,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16851
+    "cacheWriteTokens": 19930
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:dfde594bf6ae9da4e7a98d018b806b08df8653d6e99989e4bd3fdc9073e0cead": {
+  "sha256:ededb59b68d002694617275b928611741356f0634de49777a956e79d678c9bb0": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01GHdrZoxLdXStYVNpnQ45X6",
-     "name": "submit_checks",
+     "id": "toolu_011vLAL4LmB8BXoiW3Mx3ULo",
+     "name": "try_assertion",
      "input": {
-      "checks": [
-       {
-        "id": "mug-qty-3",
-        "requirement": "R1",
-        "description": "The backend cart holds the mug 'Mug Today is a good day' as a single line with quantity 3.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "cart",
-          "pointer": "/lines"
-         },
-         "normalize": [
-          {
-           "op": "items",
-           "where": {
-            "properties": {
-             "product": {
-              "const": "Mug Today is a good day"
-             }
-            },
-            "required": [
-             "product"
-            ]
-           },
-           "pointer": "/quantity"
-          }
-         ],
-         "expect": {
-          "equals": [
-           3
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "cart",
+        "pointer": "/lines"
+       },
+       "normalize": [
+        {
+         "op": "items",
+         "where": {
+          "properties": {
+           "product": {
+            "const": "Mug Today is a good day"
+           }
+          },
+          "required": [
+           "product"
           ]
-         }
+         },
+         "pointer": "/quantity"
         }
+       ],
+       "expect": {
+        "equals": [
+         3
+        ]
        }
-      ]
+      }
      }
     }
    ],
@@ -132,11 +124,107 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSiQoKEAgTGAI4AUIIdGhpbmtpbmcSDJvxkmeTTHN3fsYuCRoMl6R99zTCt+pQFKoZIjA32EVEGuSZNeaxt32nPefVKsilcY8hzWc9e4sdFXy+KeK/3KDosME5PekH/ObOre0qpgmcL1E/sWm2moo1z22V6PGDNNHOOm1gOyW9S764bAz/2whe7hCBPbO9d9xcTceCgWtBfjUWYFHcLLDJM79zlT6g+ShSANG506w1iVLAl7Kp9BBJrnbUXCYcOX3i+EASe3GFnPCC33mhu2RyM45tP9qT8cVqqV85bY4PAAYLzFZd2UibF2OxZYW0FJ7I2sAI8r7ou7OonZFwax13ui2kL/o8giGqUBU7/4c7iPkHq2XHf+CWZcwAfybrIPV0rB7awnSVZAT3GCw4bupzY+VPGdTF8VaxtoOzLX4sUEa9lCXO57obq/eXx9Q0U5gPQW9t3pmIxya3XlKsCpAJUdZyfuRt/96G/nnjqr4eDn4govNK4q53LiR8KVREg8c4sGEZ6U4dTzfVbnF64Pyot0z8UKPbIRvARDht72JpvFaRXbpdX2jgC4KHQcmTTMvWs6gyt8gizcR9BZ1SEPJOy3gNuM+DpQfdTZmGfg493qIVbl71qI7+mCfUwaiZUuz5JL8SiST3nQXAoujkKMUpnE2XFuu9XLmn8nQWUCoC783dy8g09uPPFQLCJx5dwsJ/T9bIDnn1/2Dcam8ZZQGMMgZOAzPKcfNX6No/lzqdh1LWf7XQuJKcRH8UCK+g0rv1q7UN4//4Bk7zSY3iGeQ3TWQdWVCPKv1XY6jMtyfHI1/0gBZ14xw8U0E09bHLFUxuRXV+T1Rpa2IVwE50lov1Hh8czwZXQbL9hzFfxNejJuqDZkEq29xHCQVt5YtmQwgDmzN3EWdotCLcXVTbpoZT1Ab6WEqXiPH+9OQjaQKN5GLxRg2VYWfzdNSrVtA3TID1dHshSPPxtbWlCf0aBj+iPaXWoDU1MbbIwLKvr/v5bNF2DzCT46GA8Csmc3TqkgAIU2CVrd1/Y6jESdiPppHHbDwvI8KjO+25NlE0gsCzAB2u5bsKIz6Fyc+JEIBTI6LaPV75cbs99qhDZxZOqNsbDtnR9iit2FbJ4Ailob4JDaMk4jnqysUXSRZMq/Lq9f+uVpYVapyS0VWZPutSeu9Jy3LORcsYqG1F3kWilxBzp1AdZC3Nhbq7JrCWSz17+3KS9NqKUsQa5KU+3q1Q4mDIa5bPIE5voTKaf4SzSs09Bwdo7M2bpl+rMC6LCbF6gid5MsiZ8CpTYAE/TzllNAyY+cbBN2FGG75OlvCnNQgzlT9Q0d3rbRvtf3IQYNOEdZzordjd/zx5lgGomPLo1R42u0TBJLMeeHaX2tSMv4vUE1SaLu4KSn7t/h6PnPNZubBsl5IZFkRE0EcnJGiPUBrINJmZFsZKHrUlBvdiBtd1BiqaBFhTl6SR+rTVKKE0uXKdhEaDX04Rt7f7EdkkiqJYi9K7zq8N/qb6GClT54LRu69NQxlDVXF5hHL1KSuylxOD4Sj7X5Swm8VLxfD3AInZ8GSkFW+dlY2GTovOXv60us6wFmI1m2kAzxx5RhCU+ELcc7e1zsvj0iVJJUz/1ZON3ynKTbl2/lv4+ATfc7XqNY+7e8uRpMqTGmT+n3EehuVu/Tvo+BcSE7zU0PCb9UsTnTbENYdLh0Lw/oUqr347UINejsTjZnZUALUZmxgB"
+     "signature": "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"
     },
     {
      "type": "tool_use",
-     "id": "toolu_01GHdrZoxLdXStYVNpnQ45X6",
+     "id": "toolu_011vLAL4LmB8BXoiW3Mx3ULo",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "cart",
+        "pointer": "/lines"
+       },
+       "normalize": [
+        {
+         "op": "items",
+         "where": {
+          "properties": {
+           "product": {
+            "const": "Mug Today is a good day"
+           }
+          },
+          "required": [
+           "product"
+          ]
+         },
+         "pointer": "/quantity"
+        }
+       ],
+       "expect": {
+        "equals": [
+         3
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 24160,
+    "outputTokens": 599,
+    "cacheReadTokens": 19930,
+    "cacheWriteTokens": 4228
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a25a9e9c27b57c5f8d99256f23263cefa36dd417a27394241c092a66939bafa6": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01QVYpECYX7jgeTCKJQMNTo7",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "mug-qty-3",
+        "requirement": "R1",
+        "description": "The backend cart holds exactly one line for the mug 'Mug Today is a good day', and its quantity is 3.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+         },
+         "normalize": [
+          {
+           "op": "items",
+           "where": {
+            "properties": {
+             "product": {
+              "const": "Mug Today is a good day"
+             }
+            },
+            "required": [
+             "product"
+            ]
+           },
+           "pointer": "/quantity"
+          }
+         ],
+         "expect": {
+          "equals": [
+           3
+          ]
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01QVYpECYX7jgeTCKJQMNTo7",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -146,7 +234,7 @@
        {
         "id": "mug-qty-3",
         "requirement": "R1",
-        "description": "The backend cart holds the mug 'Mug Today is a good day' as a single line with quantity 3.",
+        "description": "The backend cart holds exactly one line for the mug 'Mug Today is a good day', and its quantity is 3.",
         "assert": {
          "kind": "value",
          "source": {
@@ -182,12 +270,13 @@
     }
    ],
    "usage": {
-    "inputTokens": 21081,
-    "outputTokens": 456,
-    "cacheReadTokens": 16851,
-    "cacheWriteTokens": 4228
+    "inputTokens": 24810,
+    "outputTokens": 239,
+    "cacheReadTokens": 24158,
+    "cacheWriteTokens": 650
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:11:09.857Z"
 }

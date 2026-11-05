@@ -36,9 +36,9 @@
   ],
   "checks": [
     {
-      "id": "R1-cart-has-tshirt",
+      "id": "r1-tshirt-in-cart",
       "requirement": "R1",
-      "description": "The backend cart contains a line for the Hummingbird printed t-shirt with quantity at least 1.",
+      "description": "The cart (backend probe) contains a Hummingbird printed t-shirt line.",
       "assert": {
         "kind": "value",
         "source": {
@@ -61,8 +61,7 @@
                 }
               },
               "required": [
-                "product",
-                "quantity"
+                "product"
               ]
             }
           }
@@ -70,48 +69,9 @@
       }
     },
     {
-      "id": "R2-tshirt-size-L",
+      "id": "r2-tshirt-size-l",
       "requirement": "R2",
-      "description": "The backend cart has a Hummingbird printed t-shirt line whose attributes include Size - L.",
-      "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "cart",
-          "pointer": "/lines"
-        },
-        "expect": {
-          "schema": {
-            "type": "array",
-            "contains": {
-              "type": "object",
-              "properties": {
-                "product": {
-                  "const": "Hummingbird printed t-shirt"
-                },
-                "attributes": {
-                  "type": "string",
-                  "pattern": "(^|,\\s*)Size - L\\s*(,|$)"
-                },
-                "quantity": {
-                  "type": "number",
-                  "minimum": 1
-                }
-              },
-              "required": [
-                "product",
-                "attributes",
-                "quantity"
-              ]
-            }
-          }
-        }
-      }
-    },
-    {
-      "id": "R3-tshirt-color-black",
-      "requirement": "R3",
-      "description": "The backend cart has a Hummingbird printed t-shirt line in size L whose attributes include Color - Black.",
+      "description": "The cart holds a Hummingbird printed t-shirt line whose attributes are size L (and color Black, the same line).",
       "assert": {
         "kind": "value",
         "source": {
@@ -132,22 +92,58 @@
                   "type": "string",
                   "allOf": [
                     {
-                      "pattern": "(^|,\\s*)Color - Black\\s*(,|$)"
+                      "pattern": "(^|,\\s*)Size\\s*-\\s*L\\s*(,|$)"
                     },
                     {
-                      "pattern": "(^|,\\s*)Size - L\\s*(,|$)"
+                      "pattern": "(^|,\\s*)Color\\s*-\\s*Black\\s*(,|$)"
                     }
                   ]
-                },
-                "quantity": {
-                  "type": "number",
-                  "minimum": 1
                 }
               },
               "required": [
                 "product",
-                "attributes",
-                "quantity"
+                "attributes"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r3-tshirt-color-black",
+      "requirement": "R3",
+      "description": "The cart holds a Hummingbird printed t-shirt line whose attributes are color Black (and size L, the same line).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "properties": {
+                "product": {
+                  "const": "Hummingbird printed t-shirt"
+                },
+                "attributes": {
+                  "type": "string",
+                  "allOf": [
+                    {
+                      "pattern": "(^|,\\s*)Color\\s*-\\s*Black\\s*(,|$)"
+                    },
+                    {
+                      "pattern": "(^|,\\s*)Size\\s*-\\s*L\\s*(,|$)"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "product",
+                "attributes"
               ]
             }
           }
@@ -161,6 +157,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T11:39:28.411Z"
+    "at": "2026-11-05T21:08:52.111Z"
   }
 }

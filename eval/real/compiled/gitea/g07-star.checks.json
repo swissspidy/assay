@@ -18,9 +18,9 @@
   ],
   "checks": [
     {
-      "id": "R1-docs-starred",
+      "id": "docs-starred",
       "requirement": "R1",
-      "description": "After the task, the backend list of repositories starred by alice includes acme/docs.",
+      "description": "Alice's starred repositories (backend) include acme/docs.",
       "assert": {
         "kind": "value",
         "source": {
@@ -36,6 +36,47 @@
           }
         }
       }
+    },
+    {
+      "id": "other-stars-kept",
+      "requirement": "R1",
+      "description": "Starring acme/docs kept every repository Alice had starred before (the starred list minus acme/docs is unchanged).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "aliceStarred"
+        },
+        "normalize": [
+          {
+            "op": "items",
+            "where": {
+              "not": {
+                "const": "acme/docs"
+              }
+            }
+          }
+        ],
+        "expect": {
+          "sameAs": {
+            "source": {
+              "from": "probe",
+              "probe": "aliceStarred",
+              "at": "before"
+            },
+            "normalize": [
+              {
+                "op": "items",
+                "where": {
+                  "not": {
+                    "const": "acme/docs"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
     }
   ],
   "compiled": {
@@ -44,6 +85,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:13:00.692Z"
+    "at": "2026-11-05T21:04:07.843Z"
   }
 }

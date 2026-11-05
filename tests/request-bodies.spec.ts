@@ -107,6 +107,10 @@ test('a multipart body that could not be read makes body checks abstain, not fai
   };
   const r = evaluate(cs(titled), snap).checks[0]!;
   expect(r.status).toBe('abstain');
+  // With onMissing "abstain" (ADR 0011) the route was taken but its body unread: not route_missing.
+  const marked = cs(titled);
+  marked.checks[0]!.onMissing = 'abstain';
+  expect(evaluate(marked, snap).checks[0]!).toMatchObject({ status: 'abstain', reason: 'value_unavailable' });
   // Without the marker, a missing body is an observed absence, as before.
   const { requestBodyUnavailable: _, ...plain } = entry;
   expect(evaluate(cs(titled), { ...snap, network: [plain] }).checks[0]!.status).toBe('fail');

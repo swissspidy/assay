@@ -27,46 +27,9 @@
   ],
   "checks": [
     {
-      "id": "r1-reply-request",
+      "id": "r1-reply-stored-on-post",
       "requirement": "R1",
-      "description": "A successful replyto-comment request was sent replying to Priya's comment (ID 6) on post 6 \"Flaky tests and how to avoid them\".",
-      "assert": {
-        "kind": "request",
-        "match": {
-          "method": "POST",
-          "url": {
-            "path": "/wp-admin/admin-ajax.php"
-          },
-          "status": {
-            "gte": 200,
-            "lt": 300
-          },
-          "requestBody": {
-            "type": "object",
-            "properties": {
-              "action": {
-                "const": "replyto-comment"
-              },
-              "comment_ID": {
-                "const": "6"
-              },
-              "comment_post_ID": {
-                "const": "6"
-              }
-            },
-            "required": [
-              "action",
-              "comment_ID",
-              "comment_post_ID"
-            ]
-          }
-        }
-      }
-    },
-    {
-      "id": "r1-comment-stored-on-post",
-      "requirement": "R1",
-      "description": "The backend holds a new comment on post 6 (Flaky tests and how to avoid them) that was not there before, besides Priya's question.",
+      "description": "The backend holds a new comment on the post 'Flaky tests and how to avoid them' (post 6) with the reply text.",
       "assert": {
         "kind": "value",
         "source": {
@@ -82,9 +45,140 @@
                 "post": {
                   "const": 6
                 },
-                "author": {
+                "id": {
                   "not": {
-                    "const": "Priya"
+                    "const": 6
+                  }
+                },
+                "content": {
+                  "type": "string",
+                  "pattern": "^\\s*Yes, see the network waits section in the docs[.!]?\\s*$"
+                }
+              },
+              "required": [
+                "post",
+                "id",
+                "content"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r1-reply-parent-is-priya",
+      "requirement": "R1",
+      "description": "The reply was submitted as a reply to Priya's comment (id 6) on post 6, via the admin Reply action or the public reply form.",
+      "onMissing": "abstain",
+      "assert": {
+        "kind": "anyOf",
+        "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "request",
+              "match": {
+                "method": "POST",
+                "url": {
+                  "path": "/wp-admin/admin-ajax.php"
+                },
+                "requestBody": {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "const": "replyto-comment"
+                    }
+                  },
+                  "required": [
+                    "action"
+                  ]
+                }
+              },
+              "pick": "last"
+            },
+            "expect": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "comment_ID": {
+                    "const": "6"
+                  },
+                  "comment_post_ID": {
+                    "const": "6"
+                  },
+                  "content": {
+                    "type": "string",
+                    "pattern": "^\\s*Yes, see the network waits section in the docs[.!]?\\s*$"
+                  }
+                },
+                "required": [
+                  "comment_ID",
+                  "comment_post_ID",
+                  "content"
+                ]
+              }
+            }
+          },
+          {
+            "kind": "value",
+            "source": {
+              "from": "request",
+              "match": {
+                "method": "POST",
+                "url": {
+                  "path": "/wp-comments-post.php"
+                }
+              },
+              "pick": "last"
+            },
+            "expect": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "comment_parent": {
+                    "const": "6"
+                  },
+                  "comment_post_ID": {
+                    "const": "6"
+                  },
+                  "comment": {
+                    "type": "string",
+                    "pattern": "^\\s*Yes, see the network waits section in the docs[.!]?\\s*$"
+                  }
+                },
+                "required": [
+                  "comment_parent",
+                  "comment_post_ID",
+                  "comment"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "r2-reply-text",
+      "requirement": "R2",
+      "description": "The stored reply comment on post 6 reads 'Yes, see the network waits section in the docs.' (allowing trailing punctuation variation and whitespace).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "comments"
+        },
+        "normalize": [
+          {
+            "op": "items",
+            "where": {
+              "type": "object",
+              "properties": {
+                "post": {
+                  "const": 6
+                },
+                "id": {
+                  "not": {
+                    "const": 6
                   }
                 },
                 "content": {
@@ -94,80 +188,20 @@
               },
               "required": [
                 "post",
-                "author",
+                "id",
                 "content"
               ]
-            }
-          }
-        }
-      }
-    },
-    {
-      "id": "r2-reply-text-request",
-      "requirement": "R2",
-      "description": "The reply sent to Priya's comment carries the text \"Yes, see the network waits section in the docs.\"",
-      "assert": {
-        "kind": "request",
-        "match": {
-          "method": "POST",
-          "url": {
-            "path": "/wp-admin/admin-ajax.php"
-          },
-          "status": {
-            "gte": 200,
-            "lt": 300
-          },
-          "requestBody": {
-            "type": "object",
-            "properties": {
-              "action": {
-                "const": "replyto-comment"
-              },
-              "comment_ID": {
-                "const": "6"
-              },
-              "content": {
-                "type": "string",
-                "pattern": "^\\s*Yes, see the network waits section in the docs[.!]?\\s*$"
-              }
             },
-            "required": [
-              "action",
-              "comment_ID",
-              "content"
-            ]
+            "pointer": "/content"
           }
-        }
-      }
-    },
-    {
-      "id": "r2-reply-text-stored",
-      "requirement": "R2",
-      "description": "A comment on post 6 is stored with the content \"Yes, see the network waits section in the docs.\"",
-      "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "comments"
-        },
+        ],
         "expect": {
           "schema": {
             "type": "array",
-            "contains": {
-              "type": "object",
-              "properties": {
-                "post": {
-                  "const": 6
-                },
-                "content": {
-                  "type": "string",
-                  "pattern": "^\\s*Yes, see the network waits section in the docs[.!]?\\s*$"
-                }
-              },
-              "required": [
-                "post",
-                "content"
-              ]
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^\\s*Yes, see the network waits section in the docs[.!]?\\s*$"
             }
           }
         }
@@ -180,6 +214,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:21:25.043Z"
+    "at": "2026-11-05T21:00:21.282Z"
   }
 }

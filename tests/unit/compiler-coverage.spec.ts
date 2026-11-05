@@ -4,7 +4,13 @@ import type { EvidenceSnapshot } from '../../src/index.ts';
 import { checkSetSchema } from '../../src/dsl/schema.ts';
 import { discoverySystem, dslDefinitions } from '../../src/compiler/compile.ts';
 import { outline, summary } from '../../src/compiler/explore.ts';
-import { DISCOVERY_FORMS, DISCOVERY_FRAMES, DISCOVERY_PAGES, DISCOVERY_SYSTEM } from '../../src/compiler/prompts.ts';
+import {
+  DISCOVERY_ABSENCE,
+  DISCOVERY_FORMS,
+  DISCOVERY_FRAMES,
+  DISCOVERY_PAGES,
+  DISCOVERY_SYSTEM,
+} from '../../src/compiler/prompts.ts';
 
 const plain: EvidenceSnapshot = {
   schema: 'assay.snapshot/v1',
@@ -18,12 +24,17 @@ const plain: EvidenceSnapshot = {
   meta: { capturer: 'test', redacted: [] },
 };
 
+const refs = (...snapshots: EvidenceSnapshot[]) =>
+  snapshots.map((snapshot, i) => ({ name: `r${i}`, kind: 'success' as const, snapshot }));
+const BASE = `${DISCOVERY_SYSTEM}\n\n${DISCOVERY_ABSENCE}`;
+
 const kinds = (defs: ReturnType<typeof dslDefinitions>) =>
   defs.assertion.oneOf.map((a) => ('const' in a.properties.kind ? a.properties.kind.const : a.properties.kind.enum));
 
 test('references of one page without frames or form bodies get the prompt and tools as before', () => {
   // An empty iframe node (a snapshot captured before frames were) is not frame content.
-  expect(discoverySystem([plain])).toBe(DISCOVERY_SYSTEM);
+  // No baseline: the absence section (ADR 0011) follows, and nothing else.
+  expect(discoverySystem(refs(plain))).toBe(BASE);
   expect(kinds(dslDefinitions(false))).not.toContain('page');
   expect('pageMatch' in dslDefinitions(false)).toBe(false);
   expect(dslDefinitions(true)).toBe(checkSetSchema.definitions);
@@ -55,9 +66,9 @@ test('frames, other pages and form bodies each add their section', () => {
       },
     ],
   };
-  expect(discoverySystem([framed])).toBe(`${DISCOVERY_SYSTEM}\n\n${DISCOVERY_FRAMES}`);
-  expect(discoverySystem([plain, paged])).toBe(`${DISCOVERY_SYSTEM}\n\n${DISCOVERY_PAGES}`);
-  expect(discoverySystem([form])).toBe(`${DISCOVERY_SYSTEM}\n\n${DISCOVERY_FORMS}`);
+  expect(discoverySystem(refs(framed))).toBe(`${BASE}\n\n${DISCOVERY_FRAMES}`);
+  expect(discoverySystem(refs(plain, paged))).toBe(`${BASE}\n\n${DISCOVERY_PAGES}`);
+  expect(discoverySystem(refs(form))).toBe(`${BASE}\n\n${DISCOVERY_FORMS}`);
   expect(kinds(dslDefinitions(true))).toContain('page');
   expect(summary(paged)).toContain(
     'other open pages (read with a page assertion): https://shop.test/receipt "Receipt"',

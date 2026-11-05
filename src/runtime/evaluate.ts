@@ -6,6 +6,7 @@ import type {
   PageMatch,
   PageView,
   CheckResult,
+  Comparison,
   CheckSet,
   Channel,
   EvidenceSnapshot,
@@ -32,6 +33,7 @@ import {
   matchPage,
   matchRequest,
   matchUrl,
+  onUrlRoute,
 } from './network.ts';
 
 /** What an assertion is evaluated against. */
@@ -40,7 +42,15 @@ export interface EvalCtx {
   index: AXIndex;
   /** Inside an `each` assertion: the record that locators and text sources resolve within. */
   record?: INode;
+  /**
+   * The check reads route evidence and abstains when it is missing (`onMissing: "abstain"`,
+   * ADR 0011): no matching request or a URL elsewhere is `route_missing`, not a failure.
+   */
+  routeMissing?: boolean;
 }
+
+/** Why a check with `onMissing: "abstain"` did not decide. */
+const ROUTE_HINT = 'this check reads one way of doing the task, and the run may have done it another way';
 
 const ev = (channel: Channel, extra: Partial<Evidence> = {}): Evidence => ({
   channel,
@@ -104,7 +114,21 @@ const isResult = (x: unknown): x is AssertionResult => !!x && typeof x === 'obje
  * `absent` marks an observed absence: the channel was captured and the key is not
  * there (storage only). Unlike an unreadable value, this is outcome evidence.
  */
-type Read = { value: TypedValue; evidence: Evidence; drift: string[]; absent?: boolean } | AssertionResult;
+type Read =
+  | { value: TypedValue; evidence: Evidence; drift: string[]; absent?: boolean; seq?: number }
+  | AssertionResult;
+
+/**
+ * A result together with the latest request it read (`seq` in the network log), so that an
+ * `anyOf` over routes can let the route taken last decide (ADR 0011). Internal: `evaluate`
+ * drops it from the check results.
+ */
+type Seq = AssertionResult & { seq?: number };
+const withSeq = (r: AssertionResult, seq: number | undefined): Seq => (seq === undefined ? r : { ...r, seq });
+const latest = (...xs: (number | undefined)[]) => {
+  const ns = xs.filter((x): x is number => x !== undefined);
+  return ns.length ? Math.max(...ns) : undefined;
+};
 const ABSENT: TypedValue = { type: 'json', value: null };
 
 function readSource(ctx: EvalCtx, src: ValueSource): Read {
@@ -184,7 +208,10 @@ function readSource(ctx: EvalCtx, src: ValueSource): Read {
         return abstain('value_unavailable', `${unknown} candidate request(s) for ${desc} could not be fully read`, [
           ev('network'),
         ]);
-      if (hits.length === 0) return abstain('value_unavailable', `no request matches ${desc}`, [ev('network')]);
+      if (hits.length === 0)
+        return ctx.routeMissing
+          ? abstain('route_missing', `no request matches ${desc}; ${ROUTE_HINT}`, [ev('network')])
+          : abstain('value_unavailable', `no request matches ${desc}`, [ev('network')]);
       const pick = src.pick ?? 'only';
       if (pick === 'only' && hits.length > 1)
         return abstain('value_ambiguous', `${hits.length} requests match ${desc}; use pick "first" or "last"`, [
@@ -202,7 +229,7 @@ function readSource(ctx: EvalCtx, src: ValueSource): Read {
         return abstain('value_unavailable', `${src.pointer} not present in ${src.from} body of #${e.seq}`, [
           ev('network', { locator }),
         ]);
-      return { value: fromJson(v), evidence: ev('network', { locator, value: v }), drift: [] };
+      return { value: fromJson(v), evidence: ev('network', { locator, value: v }), drift: [], seq: e.seq };
     }
     case 'storage': {
       const before = src.at === 'before';
@@ -292,12 +319,13 @@ function domainMatches(host: string, cookieDomain: string): boolean {
 }
 
 /** A read and normalized value; `value` is undefined for an observed absence (normalizers do not run). */
-type Normalized = { value?: TypedValue; evidence: Evidence; drift: string[] };
+type Normalized = { value?: TypedValue; evidence: Evidence; drift: string[]; seq?: number };
 
 function readNormalized(ctx: EvalCtx, src: ValueSource, steps: Normalizer[] | undefined): Normalized | AssertionResult {
   const read = readSource(ctx, src);
   if (isResult(read)) return read;
   if (read.absent) return { evidence: read.evidence, drift: read.drift };
+  const seq = read.seq;
   let v: TypedValue;
   try {
     v = applyNormalizers(read.value, steps);
@@ -308,7 +336,7 @@ function readNormalized(ctx: EvalCtx, src: ValueSource, steps: Normalizer[] | un
   const evidence = { ...read.evidence, value: toJson(v) };
   if (steps?.length)
     evidence.locator = `${read.evidence.locator ?? ''} (raw ${JSON.stringify(read.evidence.value)})`.trim();
-  return { value: v, evidence, drift: read.drift };
+  return { value: v, evidence, drift: read.drift, ...(seq !== undefined ? { seq } : {}) };
 }
 
 /** The value a source gives after `steps`, as JSON; undefined when it cannot be read (or is an observed absence). */
@@ -323,6 +351,11 @@ export function readValue(ctx: EvalCtx, src: ValueSource, steps: Normalizer[] | 
  */
 function evaluateBinding(ctx: EvalCtx, left: Normalized, other: Operand): AssertionResult {
   const right = readNormalized(ctx, other.source, other.normalize);
+  if (isResult(right)) return bindingResult(left, right);
+  return withSeq(bindingResult(left, right), latest(left.seq, right.seq));
+}
+
+function bindingResult(left: Normalized, right: Normalized | AssertionResult): AssertionResult {
   if (isResult(right))
     return {
       ...right,
@@ -412,24 +445,17 @@ export function evaluateAssertion(ctx: EvalCtx, a: Assertion): AssertionResult {
       const read = readNormalized(ctx, a.source, a.normalize);
       if (isResult(read)) return read;
       if ('sameAs' in a.expect) return evaluateBinding(ctx, read, a.expect.sameAs);
-      if (!read.value) {
-        // Normalizers do not apply to an absent value; only an expectation of null/absence passes.
-        const e = a.expect;
-        const ok = ('equals' in e && e.equals === null) || ('oneOf' in e && e.oneOf.includes(null));
-        const msg = `${read.evidence.locator} is not set`;
-        return ok ? pass(msg, [read.evidence]) : fail(msg, [read.evidence]);
-      }
-      const evidence = [read.evidence];
-      try {
-        const c = compare(read.value, a.expect);
-        return c.ok ? pass(c.message, evidence, read.drift) : fail(c.message, evidence, read.drift);
-      } catch (e) {
-        if (e instanceof NormalizeError) return abstain(e.reason, e.message, evidence, read.drift);
-        throw e;
-      }
+      return withSeq(valueResult(read, a.expect), read.seq);
     }
     case 'url': {
       const ok = matchUrl(a.match, ctx.snapshot.page.url);
+      // A URL elsewhere is a route not taken; on the route, a wrong query parameter still fails.
+      if (!ok && ctx.routeMissing && !onUrlRoute(a.match, ctx.snapshot.page.url))
+        return abstain(
+          'route_missing',
+          `page URL ${ctx.snapshot.page.url} is not on ${describeUrlMatch({ path: a.match.path!, ...(a.match.origin ? { origin: a.match.origin } : {}) })}; ${ROUTE_HINT}`,
+          [ev('url', { value: ctx.snapshot.page.url })],
+        );
       const evidence = [ev('url', { value: ctx.snapshot.page.url })];
       const msg = `page URL ${ctx.snapshot.page.url} ${ok ? 'matches' : 'does not match'} ${describeUrlMatch(a.match)}`;
       return ok ? pass(msg, evidence) : fail(msg, evidence);
@@ -456,9 +482,16 @@ export function evaluateAssertion(ctx: EvalCtx, a: Assertion): AssertionResult {
           `${hits.length} request(s) match ${desc} and ${unknown} could not be fully read (expected ${describeNumberCompare(count)})`,
           evidence,
         );
+      // No matching request at all: with onMissing "abstain" that is a route not taken. One
+      // too few (a partial completion) or too many is outcome evidence and still fails.
+      if (!lo && hits.length === 0 && unknown === 0 && ctx.routeMissing)
+        return abstain('route_missing', `no request matches ${desc}; ${ROUTE_HINT}`, evidence);
       if (!lo)
-        return fail(`${hits.length} request(s) match ${desc} (expected ${describeNumberCompare(count)})`, evidence);
-      return pass(`${hits.length} request(s) match ${desc}`, evidence);
+        return withSeq(
+          fail(`${hits.length} request(s) match ${desc} (expected ${describeNumberCompare(count)})`, evidence),
+          latest(...hits.map((e) => e.seq)),
+        );
+      return withSeq(pass(`${hits.length} request(s) match ${desc}`, evidence), latest(...hits.map((e) => e.seq)));
     }
     case 'each':
       return evaluateEach(ctx, a);
@@ -466,12 +499,22 @@ export function evaluateAssertion(ctx: EvalCtx, a: Assertion): AssertionResult {
       return evaluatePage(ctx, a);
     case 'allOf':
     case 'anyOf': {
-      const subs = a.of.map((s) => evaluateAssertion(ctx, s));
+      const all = a.of.map((s) => evaluateAssertion(ctx, s));
+      let subs = all;
+      // anyOf over alternative routes: a branch whose route the run did not take gives way to
+      // those whose route it took, so the route it took decides (and can fail).
+      if (a.kind === 'anyOf' && ctx.routeMissing) {
+        const taken: Seq[] = all.filter((s) => s.reason !== 'route_missing');
+        // Several routes taken: the one whose request came last left the final state, so it
+        // decides, and an earlier route cannot pass a value a later one overwrote.
+        const last = latest(...taken.map((s) => s.seq));
+        if (taken.length) subs = taken.filter((s) => s.seq === undefined || s.seq === last);
+      }
       const status = a.kind === 'allOf' ? kleeneAnd(subs.map((s) => s.status)) : kleeneOr(subs.map((s) => s.status));
       const relevant = subs.filter((s) => s.status === status);
       const evidence = (status === 'abstain' ? subs : relevant).flatMap((s) => s.evidence);
-      const drift = subs.flatMap((s) => s.drift);
-      const message = `${a.kind}: ${subs.map((s) => `[${s.status}] ${s.message}`).join(' | ')}`;
+      const drift = all.flatMap((s) => s.drift);
+      const message = `${a.kind}: ${all.map((s) => `[${s.status}] ${s.message}`).join(' | ')}`;
       if (status === 'abstain') {
         const reasons = [...new Set(subs.filter((s) => s.status === 'abstain').map((s) => s.reason))];
         return abstain(
@@ -481,8 +524,26 @@ export function evaluateAssertion(ctx: EvalCtx, a: Assertion): AssertionResult {
           drift,
         );
       }
-      return { status, message, evidence, drift };
+      return withSeq({ status, message, evidence, drift }, latest(...(subs as Seq[]).map((s) => s.seq)));
     }
+  }
+}
+
+/** A plain value comparison (no binding) on a value that was read. */
+function valueResult(read: Normalized, expect: Comparison): AssertionResult {
+  if (!read.value) {
+    // Normalizers do not apply to an absent value; only an expectation of null/absence passes.
+    const ok = ('equals' in expect && expect.equals === null) || ('oneOf' in expect && expect.oneOf.includes(null));
+    const msg = `${read.evidence.locator} is not set`;
+    return ok ? pass(msg, [read.evidence]) : fail(msg, [read.evidence]);
+  }
+  const evidence = [read.evidence];
+  try {
+    const c = compare(read.value, expect);
+    return c.ok ? pass(c.message, evidence, read.drift) : fail(c.message, evidence, read.drift);
+  } catch (e) {
+    if (e instanceof NormalizeError) return abstain(e.reason, e.message, evidence, read.drift);
+    throw e;
   }
 }
 
@@ -566,10 +627,13 @@ export function pageContext(ctx: EvalCtx, match: PageMatch): EvalCtx | Assertion
   const hits = views.filter((v) => matchPage(match, v));
   const what = describePageMatch(match);
   const seen = views.map((v) => v.url);
+  // With onMissing "abstain", a page the run never opened is a route it did not take (ADR 0011).
   if (hits.length === 0)
-    return abstain('anchor_missing', `No open page matches ${what} (open: ${seen.join(', ')})`, [
-      ev('url', { value: seen }),
-    ]);
+    return abstain(
+      ctx.routeMissing ? 'route_missing' : 'anchor_missing',
+      `No open page matches ${what} (open: ${seen.join(', ')})`,
+      [ev('url', { value: seen })],
+    );
   if (hits.length > 1)
     return abstain(
       'anchor_ambiguous',
@@ -578,10 +642,11 @@ export function pageContext(ctx: EvalCtx, match: PageMatch): EvalCtx | Assertion
     );
   const v = hits[0]!;
   if (v.unavailable) return abstain('evidence_unavailable', `the open page ${v.url} could not be read`);
-  if (v.a11y === s.a11y) return { snapshot: s, index: ctx.index };
+  const route = ctx.routeMissing ? { routeMissing: true } : {};
+  if (v.a11y === s.a11y) return { snapshot: s, index: ctx.index, ...route };
   let index = pageIndexes.get(v.a11y);
   if (!index) pageIndexes.set(v.a11y, (index = new AXIndex(v.a11y)));
-  return { snapshot: { ...s, page: { url: v.url, title: v.title }, a11y: v.a11y, text: v.text }, index };
+  return { snapshot: { ...s, page: { url: v.url, title: v.title }, a11y: v.a11y, text: v.text }, index, ...route };
 }
 
 /** `page`: the nested assertion reads the open page `match` selects; selecting it is an anchor. */
@@ -607,12 +672,13 @@ export function evaluate(checkSet: CheckSet, snapshot: EvidenceSnapshot, opts: E
   const checks: CheckResult[] = checkSet.checks.map((c) => {
     let r: AssertionResult;
     try {
-      r = evaluateAssertion(ctx, c.assert);
+      r = evaluateAssertion(c.onMissing === 'abstain' ? { ...ctx, routeMissing: true } : ctx, c.assert);
     } catch (e) {
       // Defensive: a check that throws must never decide. Validation should prevent this.
       r = abstain('type_mismatch', `check raised an error: ${e instanceof Error ? e.message : String(e)}`);
     }
-    return { check: c.id, requirement: c.requirement, description: c.description, ...r };
+    const { seq: _seq, ...result } = r as Seq;
+    return { check: c.id, requirement: c.requirement, description: c.description, ...result };
   });
 
   const requirements: RequirementResult[] = checkSet.requirements.map((req) => {

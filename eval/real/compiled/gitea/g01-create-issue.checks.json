@@ -36,97 +36,98 @@
   ],
   "checks": [
     {
-      "id": "r1-issue-created-open",
+      "id": "r1-new-issue-created",
       "requirement": "R1",
-      "description": "After the task, the acme/webapp issues include an open issue titled \"Search results ignore accents\" with label bug.",
+      "description": "The acme/webapp issues probe holds an open issue titled \"Search results ignore accents\" whose number did not exist before the task (all other issue numbers are the same as before).",
       "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "issues"
-        },
-        "expect": {
-          "schema": {
-            "type": "array",
-            "contains": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "const": "Search results ignore accents"
-                },
-                "state": {
-                  "const": "open"
-                },
-                "labels": {
-                  "type": "array",
-                  "contains": {
-                    "const": "bug"
-                  }
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "issues"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "const": "Search results ignore accents"
+                    },
+                    "state": {
+                      "const": "open"
+                    }
+                  },
+                  "required": [
+                    "title",
+                    "state"
+                  ]
                 }
-              },
-              "required": [
-                "title",
-                "state",
-                "labels"
-              ]
+              }
             }
-          }
-        }
-      }
-    },
-    {
-      "id": "r1-issue-is-new",
-      "requirement": "R1",
-      "description": "Before the task, no issue titled \"Search results ignore accents\" existed in acme/webapp, so the issue is new.",
-      "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "issues",
-          "at": "before"
-        },
-        "expect": {
-          "schema": {
-            "type": "array",
-            "not": {
-              "contains": {
-                "type": "object",
-                "properties": {
-                  "title": {
-                    "const": "Search results ignore accents"
+          },
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "issues"
+            },
+            "normalize": [
+              {
+                "op": "items",
+                "where": {
+                  "not": {
+                    "properties": {
+                      "title": {
+                        "const": "Search results ignore accents"
+                      }
+                    },
+                    "required": [
+                      "title"
+                    ]
                   }
                 },
-                "required": [
-                  "title"
+                "pointer": "/number"
+              }
+            ],
+            "expect": {
+              "sameAs": {
+                "source": {
+                  "from": "probe",
+                  "probe": "issues",
+                  "at": "before"
+                },
+                "normalize": [
+                  {
+                    "op": "items",
+                    "where": {
+                      "not": {
+                        "properties": {
+                          "title": {
+                            "const": "Search results ignore accents"
+                          }
+                        },
+                        "required": [
+                          "title"
+                        ]
+                      }
+                    },
+                    "pointer": "/number"
+                  }
                 ]
               }
             }
           }
-        }
-      }
-    },
-    {
-      "id": "r1-create-request",
-      "requirement": "R1",
-      "description": "A successful POST creating an issue was sent to the acme/webapp new-issue endpoint.",
-      "assert": {
-        "kind": "request",
-        "match": {
-          "method": "POST",
-          "url": {
-            "path": "/acme/webapp/issues/new"
-          },
-          "status": {
-            "gte": 200,
-            "lt": 400
-          }
-        }
+        ]
       }
     },
     {
       "id": "r2-title",
       "requirement": "R2",
-      "description": "The issues after the task include one titled exactly \"Search results ignore accents\" with label bug.",
+      "description": "An issue with the exact title \"Search results ignore accents\" exists in acme/webapp.",
       "assert": {
         "kind": "value",
         "source": {
@@ -141,17 +142,10 @@
               "properties": {
                 "title": {
                   "const": "Search results ignore accents"
-                },
-                "labels": {
-                  "type": "array",
-                  "contains": {
-                    "const": "bug"
-                  }
                 }
               },
               "required": [
-                "title",
-                "labels"
+                "title"
               ]
             }
           }
@@ -161,43 +155,33 @@
     {
       "id": "r3-label-bug",
       "requirement": "R3",
-      "description": "The open issue titled \"Search results ignore accents\" carries the bug label.",
+      "description": "The issue titled \"Search results ignore accents\" carries the label bug.",
       "assert": {
         "kind": "value",
         "source": {
           "from": "probe",
           "probe": "issues"
         },
-        "normalize": [
-          {
-            "op": "items",
-            "where": {
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
               "type": "object",
               "properties": {
                 "title": {
                   "const": "Search results ignore accents"
                 },
-                "state": {
-                  "const": "open"
+                "labels": {
+                  "type": "array",
+                  "contains": {
+                    "const": "bug"
+                  }
                 }
               },
               "required": [
                 "title",
-                "state"
+                "labels"
               ]
-            },
-            "pointer": "/labels"
-          }
-        ],
-        "expect": {
-          "schema": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-              "type": "array",
-              "contains": {
-                "const": "bug"
-              }
             }
           }
         }
@@ -210,6 +194,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T11:37:26.288Z"
+    "at": "2026-11-05T21:02:55.420Z"
   }
 }

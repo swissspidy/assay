@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T11:33:31.569Z",
  "turns": {
   "sha256:aa281783468bfdf2156e03044578932db27264963a858c408785cce5e37f192a": {
    "stop": "tool_use",
@@ -66,22 +65,22 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:26f037c915d08f97dd4fdcdc42638fbc9121b40cd6914ab87923a62c94289549": {
+  "sha256:6017db9768673892a17a060bd1c30ccffc85f281513865883e3335bced06affd": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_016RpCoFD2PaW2tdvHUVUpEm",
+     "id": "toolu_01BkrAndmAAMJujkbtvhbWLT",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01YBvMKcrHZzabkFq4uh18BN",
+     "id": "toolu_01GvfZwUr4z4aht99AhB2sxx",
      "name": "page_outline",
      "input": {}
     },
     {
-     "id": "toolu_01QvXLS7sCnicDCkXV1GP7ET",
+     "id": "toolu_01S6XzMW8WMZ5zhag8dvNZ8r",
      "name": "network_log",
      "input": {}
     }
@@ -89,7 +88,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_016RpCoFD2PaW2tdvHUVUpEm",
+     "id": "toolu_01BkrAndmAAMJujkbtvhbWLT",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -98,7 +97,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01YBvMKcrHZzabkFq4uh18BN",
+     "id": "toolu_01GvfZwUr4z4aht99AhB2sxx",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -107,7 +106,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01QvXLS7sCnicDCkXV1GP7ET",
+     "id": "toolu_01S6XzMW8WMZ5zhag8dvNZ8r",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -116,54 +115,121 @@
     }
    ],
    "usage": {
-    "inputTokens": 17883,
+    "inputTokens": 18892,
     "outputTokens": 72,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 17879
+    "cacheWriteTokens": 18888
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:188095fe002aa8c07856885c9fe44c1ce244f01369bebe8086c4632e4379e130": {
+  "sha256:733f4725db7913a50d7cf96e34c3a727057f558d5c956062bb2aef4f78e2f226": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01B3QEKbJZofuQVDC2bsjKU9",
+     "id": "toolu_01EotSB59wxChA53sxsmi4pD",
      "name": "try_assertion",
      "input": {
       "assert": {
-       "kind": "each",
-       "scope": {
-        "role": "main"
-       },
-       "witness": {
-        "role": "term",
-        "text": "When"
-       },
-       "match": {
-        "role": "term",
-        "text": "When"
-       },
-       "count": {
-        "eq": 1
-       },
-       "assert": {
-        "kind": "value",
-        "source": {
-         "from": "node",
-         "target": {
-          "role": "definition"
-         },
-         "field": "text"
-        },
-        "normalize": [
-         {
-          "op": "date",
-          "locale": "en-US"
+       "kind": "allOf",
+       "of": [
+        {
+         "kind": "url",
+         "match": {
+          "path": "/events/*"
          }
-        ],
-        "expect": {
-         "equals": "2026-11-05"
+        },
+        {
+         "kind": "state",
+         "target": {
+          "role": "heading",
+          "level": 1,
+          "within": {
+           "role": "main"
+          }
+         },
+         "expect": {
+          "name": {
+           "equals": "Lunch with Sam"
+          }
+         }
+        },
+        {
+         "kind": "each",
+         "scope": {
+          "role": "main"
+         },
+         "witness": {
+          "role": "term",
+          "text": "When"
+         },
+         "match": {
+          "role": "term",
+          "text": "When"
+         },
+         "count": {
+          "eq": 1
+         },
+         "assert": {
+          "kind": "value",
+          "source": {
+           "from": "node",
+           "target": {
+            "role": "definition"
+           },
+           "field": "text"
+          },
+          "normalize": [
+           {
+            "op": "extract",
+            "regex": "([A-Za-z]+\\.? \\d{1,2}, \\d{4})"
+           },
+           {
+            "op": "date",
+            "locale": "en-US"
+           }
+          ],
+          "expect": {
+           "equals": "2026-11-05"
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "id": "toolu_018UUc5MDyi6tifJmSGbksQc",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "events"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "title",
+           "date",
+           "time"
+          ],
+          "properties": {
+           "title": {
+            "const": "Lunch with Sam"
+           },
+           "date": {
+            "const": "2026-11-05"
+           },
+           "time": {
+            "const": "12:30"
+           }
+          }
+         }
         }
        }
       }
@@ -174,49 +240,120 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSgwoKEAgTGAI4AUIIdGhpbmtpbmcSDLXsZA2AEP1W1DcdZhoMkfkBLrPFuMdnviDNIjBvADPyo9S09M5qoFTY5tkezGI8f30Oq5Tx8YOLJzqGROKU6Wj84GCV0Hh1gUrARv0qoAkWvBDLj1RremAqwCD2vhW0qIlrt5C1NCAAf0C0BOO7RF3HP+AK2e3MmY0ncXqR6jkijMEshKRD9/2yXgAL5D3sZBa252hil/XStN9hrR2nyjQK9H34KfEvrDXvO6+tI7N8yi/hBmXqf8SuVuYIqrWfrO9zr7x23ER9gLtIZBitnBXh6PkGy8eLjBG9ndbaZ4wxKopykWlpr5rQJaAikHnUIMPGgC4TqP7g+WZ+GD3RiESpPvv/xgnjo1wVrfY5D6OfSE1Yvd1s/Kc+qmrqu/9Kzp8F6518mwLqFna4xxyg7UJuaHZm+vBPLQUsEQ13Vd6okwCwW3I615v+60sXXAAwRjxxd6vbenXGcT4iHphbM3ZZBpZiJNTy985l+I393CGIZnHzz2wzlhQXbLXQGuCJr8rp861Q+at/+AOIh4B2jmP7cCQt729pBRRd+1EBa+BpWbq8EWTTiB8kp9zoXv123Q4mltFKjfwj3QJ69IdAn+KLWd6a3VnTgkIa3yCfzLKn8jnN09HJ1pYEGegnGP/FrPB/FR4h3kMHm14B1JoLaSkA2xn/HAyi/Kncwa8RvZ1Pk6axuJz2VHY178W5zLJKJzDamfRw5VyDFlD+ZCldObjw2mG1YL/Z0r/9MlBiZAKYs3cVD3PZIwBRfbaT5iWjvLBGF2fF+8aNOzSAEwLArv5iBpqhTVr5R5dUAnQprmpL6z3CUGfYuiNiFtI7z0Px0EAO+XbYdWHNshz6XfucL2Git0MmY5Tqqu9ke+b2s74uWiU8+n/OQIEl4bac8tC1reKtE40hSlqm9QzoMFy7AxAO+tH37kaYYnaX2qZeR3MDRSorrS8aCv3a0nsGL5Op8y47lhOTehUqx55bmBkoY3BKhML1qT1FbkgPAIrCUZX9LOFsKr5CJ1W1kyczF4SoZ9jnspKVPPD5NgBYsAYNQpa+W2BE17O+0oHGCSoPJVIuAKQ6tJnqN+lZ4+cFz3zHkJp9w67bMnhZPFY6S26Hsc4R2Qpo9xnZJNrnoUPmi3VUZemxnHksXMJ8R8j5YWqQydSi0gT5E4pNS5LT7mD9YzHcoD+KU6BDP1Y/6Yy9kBrNtnDHJV38NhRnxDwR0VsEu4njuMreyGsbyxySClu/TFLeqvnfx4v5ppT84UqleJj5Vs+Ya4qVRX9crnpBJ4LGYl2dmd+vvGQ2pAMSE+KkZImP0TwBUOvRg6T1WP0ArTWk9K8IBpMJ7E9aa+1EMUMfNKVGvzocFwUDVOAHSGO84583CFJseA3KESdeM7oMcVnF/mgMfmBCM22F9cp17LzwASaivUgl3RGJ5iXYTCJNezl4McCxhOgptlaDvyg02WY181nLAChDhaq3EF2Ik7gET2XwM0fuG8Z0y3pWVLm83ze0ZFlFebMp9lvgKVjSLUfgFAZPivGOqFGXz8AQIv6B5VVk/u0fK5P9hcqnhAOk6afMFWauoAfH3qPfJgNmkFoHhDri4TaMfQo/yZhZzJZqAcdbMIUDIy54mWRpATdI0+Nt9NlFcJUWWQj7M5hmMNfk6wwMauQ4QjNSuD8yEmQ71Sc4Z0pHIFD68ZaF17Zf9xgB"
+     "signature": "CAQSvgsKEAgTGAI4AUIIdGhpbmtpbmcSDF4Dppaae6Gv0FzdgxoMql25757Ez1HZ4meIIjDpyKgkT1IlVAnQY6pGhCkEVsDMfCmnGdRojxuCxumF2EIBTn0RP6TvjMA5juVDWwgq2wr9ZacJm7kpVQCzuq5G/e/tsUB5xjRLxBUe1mWzChFlnhICOsu62NULndWZACNz2zauYsGhrIwaj59+K/HOakGwBypPdkvhGPcFEj0AMKpfxmx3iSn+wxu3Vo0RGNVACh+JMgO7g2z0L0SR8tWm/BjpgApr3g1KUMwlEO0XsplCe8YnyWcEvCnVclIEFmoegwj2h9VFQr6oyGP9xSSJL0qaJ2+saowQTeo4FIPLHwFXKx0WaVtJ8gYnUsK8CLO81FvwKND5pBdbfQo6h9tgjmZCnVX6y9s2oZ1cHYY5ED+gUvOiEie2WyxzC2IqijQKttL2FgE/ICfOvif58x2QYBEm6kGLtFT8u3MhXvbSxdmT6AMPo6/WgEUhJb0uajiTQI1xBelVqalqWP/ffpJazwPV6LWrY0BBylMFld2XR/1EqLHKMXXL5cfv8bGxMq8nrXVEVOv0Zi88891t2LYoDekQXNrkXY84evOoD2ZUSZJNIcBVzd3y3KSJ3FwmrOH8DgC3mQaCQbfBn7FH2jV1BXacw/fkW6WKndNevKTvP/ruTr7Kd0G6InSCLU6aO8U6Ccy72UYvOYGZs1NVIKoAfLfHPTQQVh9OEc24EjSVhlWUtrv2oQCaaJDISWTZFdkYqrKQfJ0gumJTfRF7QJiq2Ra7lAAxQWw33+ZWoOwMG8Ghxy9d8WuGvolxQYhsuuZK9OLhNsoyWmIVvkff3jrOB/29CpjKczyLGItHOV9k58bZSbu7yzjdJ84XLHgiq3bEvpeE1e+CVaamO1gnqG/lIwBo40QbgMy7t5P+sKplpgikZxs0LdhQM/ztloyh/L0KUyEk/O4tlIS8akJ+If/5NMGEbsn8LGMGDhpRIogsapCkhEMqW/q6gdfiZsDB5H3HpPWNuviQ9DltiG1LFxIuMgS3zcWtYwjJsCQ+mkB+XDkZhb67unrxT1zKSyfxHSll5U+Ce93vOONdv/MB+Rrcxm6yIwdrfoedT/BdllBloZFm7rXaCsoYa4v7qk7YK/4GKentIMejWxruT5Wf3zoEq24v8QtUV6dfszv/K/wRNFLAnrcim9K3qvB6k8XaSZGpF9j5OeJ4es1on2n5q5DmD0zX1ZklH2B5ooMNm02MmVmzae6XaZOy6Cx9uAk2oav1KLD/HKuWkepUdCBO0WYdBitwdRaqPDiv7dSO9fqJtCT7W7rW8bR0xujuzX3y2+kKpATgXgGUh3KZhZKl+h1SxtUfcxj3iqmWKcnYH+7G//zp2siXXPKZaprcEX9WpQ5KZTilk+/WA7yPth5BIu8cPfN7H/oOrDjydIcv2LR5ZllPJOqk7OBH5jB72fNgB+9qiEcr3KH1Whks2bOK5ptdSiM/H11GyPG2IP0glbdhU17k3533/K2P0fZ92N/kZm2ySxs5vd56A9osUGMVN4YzIM5ASft4jj5zhYKeDdHVSk+s+YZMaiuQ1WpFyft6P9b3bpTnPFE71nJEreQC4zrpeFnLdJfDJefJ5NXLOz5weCkdjj+1Bhw8PAu9xv8k4DMHB7H00ro3LCnUVcN0rNFPzeM2hNxJoNhhbqGdYXBKait5lUMVGtvF8UKwLMTde4qTIuKr4G0AN4B9crpajQvIgoCp7eLPPOoO0R3trpcpQDJlw6Qz/iNhkJSBEnCyWfEOI/wrRFnTrC2uZFILEoWYpBVWsWj/gLIuOsuQN84DHEUWotsmqdxK0hp2qQWiiRAmrs3Xsj0OuxCRxcmrhGKF5G+b6X6f+Vi0zV9VqOiVVfxV99vNbC8JF4oDglN9udgZzLCURBfuKS5VjbTeBm9gaFTJrdwWoeVG/BZzLPcYAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01B3QEKbJZofuQVDC2bsjKU9",
+     "id": "toolu_01EotSB59wxChA53sxsmi4pD",
      "name": "try_assertion",
      "caller": {
       "type": "direct"
      },
      "input": {
       "assert": {
-       "kind": "each",
-       "scope": {
-        "role": "main"
-       },
-       "witness": {
-        "role": "term",
-        "text": "When"
-       },
-       "match": {
-        "role": "term",
-        "text": "When"
-       },
-       "count": {
-        "eq": 1
-       },
-       "assert": {
-        "kind": "value",
-        "source": {
-         "from": "node",
-         "target": {
-          "role": "definition"
-         },
-         "field": "text"
-        },
-        "normalize": [
-         {
-          "op": "date",
-          "locale": "en-US"
+       "kind": "allOf",
+       "of": [
+        {
+         "kind": "url",
+         "match": {
+          "path": "/events/*"
          }
-        ],
-        "expect": {
-         "equals": "2026-11-05"
+        },
+        {
+         "kind": "state",
+         "target": {
+          "role": "heading",
+          "level": 1,
+          "within": {
+           "role": "main"
+          }
+         },
+         "expect": {
+          "name": {
+           "equals": "Lunch with Sam"
+          }
+         }
+        },
+        {
+         "kind": "each",
+         "scope": {
+          "role": "main"
+         },
+         "witness": {
+          "role": "term",
+          "text": "When"
+         },
+         "match": {
+          "role": "term",
+          "text": "When"
+         },
+         "count": {
+          "eq": 1
+         },
+         "assert": {
+          "kind": "value",
+          "source": {
+           "from": "node",
+           "target": {
+            "role": "definition"
+           },
+           "field": "text"
+          },
+          "normalize": [
+           {
+            "op": "extract",
+            "regex": "([A-Za-z]+\\.? \\d{1,2}, \\d{4})"
+           },
+           {
+            "op": "date",
+            "locale": "en-US"
+           }
+          ],
+          "expect": {
+           "equals": "2026-11-05"
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_018UUc5MDyi6tifJmSGbksQc",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "events"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "title",
+           "date",
+           "time"
+          ],
+          "properties": {
+           "title": {
+            "const": "Lunch with Sam"
+           },
+           "date": {
+            "const": "2026-11-05"
+           },
+           "time": {
+            "const": "12:30"
+           }
+          }
+         }
         }
        }
       }
@@ -224,135 +361,24 @@
     }
    ],
    "usage": {
-    "inputTokens": 19093,
-    "outputTokens": 429,
-    "cacheReadTokens": 17879,
+    "inputTokens": 20102,
+    "outputTokens": 810,
+    "cacheReadTokens": 18888,
     "cacheWriteTokens": 1212
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:779353bf6ec53c9e04756dc444d6c44e5fddffea769b5eff36f0b2066445387c": {
+  "sha256:f72e49763e23e43fdb31b0ea8161b0d9666c19317a0a37f22b981d85dd0d0ffa": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01EZ9VgcHTVhbw5jASa66TQp",
-     "name": "try_assertion",
-     "input": {
-      "assert": {
-       "kind": "each",
-       "scope": {
-        "role": "main"
-       },
-       "witness": {
-        "role": "term",
-        "text": "When"
-       },
-       "match": {
-        "role": "term",
-        "text": "When"
-       },
-       "count": {
-        "eq": 1
-       },
-       "assert": {
-        "kind": "value",
-        "source": {
-         "from": "node",
-         "target": {
-          "role": "definition"
-         },
-         "field": "text"
-        },
-        "normalize": [
-         {
-          "op": "datetime",
-          "locale": "en-US",
-          "timezone": "UTC"
-         }
-        ],
-        "expect": {
-         "approx": {
-          "value": "2026-11-05T12:30:00Z",
-          "abs": 720
-         }
-        }
-       }
-      }
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_01EZ9VgcHTVhbw5jASa66TQp",
-     "name": "try_assertion",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "assert": {
-       "kind": "each",
-       "scope": {
-        "role": "main"
-       },
-       "witness": {
-        "role": "term",
-        "text": "When"
-       },
-       "match": {
-        "role": "term",
-        "text": "When"
-       },
-       "count": {
-        "eq": 1
-       },
-       "assert": {
-        "kind": "value",
-        "source": {
-         "from": "node",
-         "target": {
-          "role": "definition"
-         },
-         "field": "text"
-        },
-        "normalize": [
-         {
-          "op": "datetime",
-          "locale": "en-US",
-          "timezone": "UTC"
-         }
-        ],
-        "expect": {
-         "approx": {
-          "value": "2026-11-05T12:30:00Z",
-          "abs": 720
-         }
-        }
-       }
-      }
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 19624,
-    "outputTokens": 237,
-    "cacheReadTokens": 19091,
-    "cacheWriteTokens": 531
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:fa9e7aca12276fcd174c9a673c82a7dbd23663a90a0b60021faedb54657afba9": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_014VjyngMxqHtbnxsmqQGEzz",
+     "id": "toolu_01BdDxbE34s8V3MjqdKDLDMc",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "R1-probe-event",
+        "id": "R1-event-stored",
         "requirement": "R1",
         "description": "The backend events list contains an event titled \"Lunch with Sam\" on 2026-11-05 at 12:30.",
         "assert": {
@@ -388,9 +414,9 @@
         }
        },
        {
-        "id": "R2-event-page",
+        "id": "R2-event-page-date",
         "requirement": "R2",
-        "description": "The current page is an event page (/events/<id>) whose level-1 heading is \"Lunch with Sam\".",
+        "description": "The current page is the event page of \"Lunch with Sam\" (URL /events/:id, h1 equals the title) and its When field shows November 5, 2026.",
         "assert": {
          "kind": "allOf",
          "of": [
@@ -403,71 +429,106 @@
           {
            "kind": "state",
            "target": {
-            "anchors": [
-             {
-              "role": "heading",
-              "level": 1,
-              "within": {
-               "role": "main"
-              }
-             },
-             {
-              "role": "heading",
-              "name": "Lunch with Sam",
-              "level": 1
-             }
-            ]
+            "role": "heading",
+            "level": 1,
+            "within": {
+             "role": "main"
+            }
            },
            "expect": {
             "name": {
              "equals": "Lunch with Sam"
             }
            }
+          },
+          {
+           "kind": "each",
+           "scope": {
+            "role": "main"
+           },
+           "witness": {
+            "role": "term",
+            "text": "When"
+           },
+           "match": {
+            "role": "term",
+            "text": "When"
+           },
+           "count": {
+            "eq": 1
+           },
+           "assert": {
+            "kind": "anyOf",
+            "of": [
+             {
+              "kind": "value",
+              "source": {
+               "from": "node",
+               "target": {
+                "role": "definition"
+               },
+               "field": "text"
+              },
+              "normalize": [
+               {
+                "op": "extract",
+                "regex": "([A-Za-z]+\\.? \\d{1,2}, \\d{4})"
+               },
+               {
+                "op": "date",
+                "locale": "en-US"
+               }
+              ],
+              "expect": {
+               "equals": "2026-11-05"
+              }
+             },
+             {
+              "kind": "value",
+              "source": {
+               "from": "node",
+               "target": {
+                "role": "definition"
+               },
+               "field": "text"
+              },
+              "normalize": [
+               {
+                "op": "extract",
+                "regex": "(\\d{1,2}\\.? [A-Za-z]+\\.? \\d{4})"
+               },
+               {
+                "op": "date",
+                "locale": "en-GB"
+               }
+              ],
+              "expect": {
+               "equals": "2026-11-05"
+              }
+             },
+             {
+              "kind": "value",
+              "source": {
+               "from": "node",
+               "target": {
+                "role": "definition"
+               },
+               "field": "text"
+              },
+              "normalize": [
+               {
+                "op": "extract",
+                "regex": "(\\d{4}-\\d{2}-\\d{2})"
+               }
+              ],
+              "expect": {
+               "equals": "2026-11-05"
+              }
+             }
+            ]
+           }
           }
          ]
-        }
-       },
-       {
-        "id": "R2-when-date",
-        "requirement": "R2",
-        "description": "The \"When\" field on the event page shows a date on November 5, 2026.",
-        "assert": {
-         "kind": "each",
-         "scope": {
-          "role": "main"
-         },
-         "witness": {
-          "role": "term",
-          "text": "When"
-         },
-         "match": {
-          "role": "term",
-          "text": "When"
-         },
-         "count": {
-          "eq": 1
-         },
-         "assert": {
-          "kind": "value",
-          "source": {
-           "from": "node",
-           "target": {
-            "role": "definition"
-           },
-           "field": "text"
-          },
-          "normalize": [
-           {
-            "op": "datetime",
-            "locale": "en-US",
-            "timezone": "UTC"
-           }
-          ],
-          "expect": {
-           "gte": "2026-11-05T00:00:00Z",
-           "lt": "2026-11-06T00:00:00Z"
-          }
-         }
         }
        }
       ]
@@ -478,11 +539,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSjgoKEAgTGAI4AUIIdGhpbmtpbmcSDKDwZD2oN49OwUofdxoMxQJbp4aDvWtZKc7LIjD7k1gQOFYoSiNzHUEr71MM6Hf61kDgj/55vVMa5Gw6O5crqiie8vTPSY5TSz+fbGYqqwku4f6JCcpJlvjwPp6S0HhdYUtPPomaUuyNdkRCrIHVnqDF4ke3hB3xPQUJpKJaxe0kC0Q/GX1efQs8W3f4YmfB/uwIhf+gNPHSKy4oGFmvJxPFOzaClJX4W7hoNMTIzvWIhSrWlIenqEgEhZf65K8UhNdadCoNaGS0HLF0kLrEscpz9SMMTdioJzFDPoUAbFHn/xMlQ+AuQzve6YFxvYIvuXFDaj7v3PwHUr38rIzRh/KfjqvNrHmh06Vob28AvZtUT/Pf2cAn1ZaGEToLoM3Ch58atqSKK9j+s7+m+0fQt705qQQ3qFKhNQeYJaPHUDVNwYwcX3oc+HXOLGFMUIKoLskFycCcoOsrl8vIsfK4t1CF0pBQPih5EmAz/aOTI3/NpxlWyEbEp1Vumq/RSaHR0bn7/8S17hQQyDfKjjfi09WZvisCQM/Nw7q5n4/I6cXkvY8XuAUsiVtvC7KGdb+oM4Av97+YxsIVmecFlzwYskojSZOOEQkRmrwlUfR7vcYtNz5+I+FGYKPtIqIPWO/hS+HnujlryV8gvX3sirfaakg++7URiGL/C8xefyi092rIqZ0b9MbEmsrbdnPLMt89nVz47rt0Hr3okTFrobsr+E3ydWh9AN+Hlpx0WBMbPfXGWBFgbT7e6MdOf3VSsNf+P5TfQCK9il7V5xR6OrPNu67JmCN5vFfFfCAHV5LSbKHkIjp6pNJUCSSKTMuOAACGw4M8P9vBFiK396+kIdott3NCDVEo/jcJLAmfur2/w3ltxLB47Lpq5/pl6voTuSWPpAyjViqoyN0PE3U7ytIZVZ1a0eYx5SBO5IrJRLs8sWAVNMtkTi3ndGYPfEU3Y5FK4WualBbsAP8fH3IQi9A1pDBg4nw8MA8fnS/JrgQ685E5rIx5liGvJ14gSiZps4T5aVlHEdW4RW6VzrLx71GPS9O6STZt+3sL9K9l6wNECh7flgBqStSQDy7VePsWpLVc2x7mCq4pbGiBR7uTGgx9WCt2iTu4g4kNduM4tSzA7oV9XCMzw0qJva5tRvgu1n2r01uhnH46Y9ZNZKQUff8lK3gvf572eu1wK/AJhxcZN5pTfm1vOfr6Fc9WBY+JtU1DQCj9+Y0LFoTYTmJbaAoDoA4i+xPjD0wwz8hYz61PAQy32q2d/kJx3QbFLm0tORpd+2oSeRoPuzo3fEOA0SLtktwbsjgntFSyIbqQNxXrnQIT2xzySs9BR/jU6mMKLaZw9fFkSmTco8HlnC740CCK6l41SGcw+U0hSSikb+7zvMYyTLkY0oS9wHOA0hIeoFqDJdyJNhnwGN2YuJpP7SWQd6AJsy4///pKzbvN2Y/F81xVi3UPVIVtzH5aYInNT0qafIpCPLt+37ffHKW//Zeca7lPbweSnpSKjhAsuw3e7mez2CBGKtzhWh7B+0ca8j7+CQK+b9M+XQ2ZjoyGjaFVZn4bT/skDNkjUCSS8nY46fuUEG4OfIcW+RT7Zn7fjYbOCjofon6f7rxMzd0eRtM6IqmcxTSGKx5/p+MSWSONC2oC0+iX9fvCyl/yVI0OXzQIWbd86GZi7kmVIodOJ4kK3w7QcdiIAZ5gDZj0GAE="
+     "signature": "CAQS4gkKEAgTGAI4AUIIdGhpbmtpbmcSDBhNE7EczrqRPuBW6RoMmZKryly2FrH8En0LIjBJTsyVMSIkWLdyjxMFSBO48sbn6TLCWFCeF0pElIpiGWFKh1CK5B1U7ztJsyQX984q/wg039ME2vzLsnuHQOCJpkLbOaQ+X3dIBHxWmTU/VdlOfay9xrK1hzmyUIJp1m0COuv+ykI2w7HXK7jrqkC+32zYA0TwyP0QA+6loD5o64d85fLaaPdCwXe8fGBtATzLqqdhyHOTgBaKv7jA5OOachHvwHZgcK65RouhMrNwFTxhfOEcZqYCSl9FLDWxgrMKx4vCsdXKRmB6jlYUllAcBwkT896mzJ8fD4/Hzb8YnsGwr+UewxDXm9j4rofeci03akD/xm1cBiwWCCTfGOETgMZC6wMoFa18uyqseovl1/gFUocfNAPeOBGZwy0YuJT5iW9RMjXD80LsOkehJjorsloVcdHI7+E7xWG650TZbV4YVF3TeuCgcYN1ppPMgkBn4hDZu7piK8u19SYq4MH8la9coVyrDak36e2HZdm0yYKc3ySf34aw7iYqFHAa2wr73DpIv5ic/ya0KC3hTHfsdlXmuWH0EpjyAejfM7ZvEWV/zSsxsqR/S/IZARRDDlhA+JZ33VxsVbKzRkfJcYzZ6bA/LoYW3T/Boc7XGEzo8Sx1xC7NerUNFbslAvAeXbBDKwETzRqJYmz+/mdb30uRQ04m0pB4RB7TNugPfANEH5fWg02y5wxBPZKDxMz7gKAv15PgTRnUzBOod15nVx+e0HeseU2e9Z72Zw7/HtrAvYrxiiRObZY1k0PZHLY6yTTTqVxDTJ5r3kLVAAZwuU4/Xb/RSw7LhjmWXa0hcrKK7FebI/E6NZtpEcFmnbzjNYMEfqfPxTzqQyzYpIbMOa/x7tgoFz51CSXYP6GrZondTTKEPH2XEGqhKcUcpdsMcUOKSEmVlZLvj2pibTCX61KzJ31m+auSTNk6QIN9eEJ/YSmmcoUkCQcyTdy0maL4ZigfqFvssM9Msp5+FiYpKt7IqCQGmuzdxzvcV8FqCbrjIarcAOc2Q7dP+OvB2zeg398C/aRti/P11cJZZpIKb8BoZPUzMgc9Gr2/Iu5E50yAbTnjOUp4yIGD0NP2URc4tjJXDSZxda/Pes9xmGHLU+vky919ItQzT5oGFbDXrdgncFK54EHlkoQjB3CJ+Tce9fI6LjPAVRvgvJkhUucHNDB348q8zq8bdEZ/s6ui90a0zoLT/2++h2CDjYeio+54O9zuK6UsZ7bIPCqB+gymgVFjeDQe3isSeyuU+es4ENURYw3nQboNApfMX5dmePhxREJdyaBDKnA72H2HknckzFVNR6CzKaEBAWA7VZReCE3YgzLG/evHuisUz1ps6G0+vdKJIUsBQeonU62vn2JF3G1/e/+CuawESaEZGdq1ZEtsqQeNCwKdtDwCirU1mmpT5i01h0vFmGDi4f/ErZ8km7J4SMqoGQyqcailjxk3TykzO72bsr9xmwQOC5M40FKiEQICIB9WtQxyfNSd/RuU8udZ4FKO6qQ+7i24Ck0EDsBaFU9j0eltLaEwFYr/55pBkJl7/2+NtbeIyecKxF7SkSUx8m7euSxHTEg6F6hMXBGyEEvYvrXfzF4FosjPgL8sJ30IoxgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_014VjyngMxqHtbnxsmqQGEzz",
+     "id": "toolu_01BdDxbE34s8V3MjqdKDLDMc",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -490,7 +551,7 @@
      "input": {
       "checks": [
        {
-        "id": "R1-probe-event",
+        "id": "R1-event-stored",
         "requirement": "R1",
         "description": "The backend events list contains an event titled \"Lunch with Sam\" on 2026-11-05 at 12:30.",
         "assert": {
@@ -526,9 +587,9 @@
         }
        },
        {
-        "id": "R2-event-page",
+        "id": "R2-event-page-date",
         "requirement": "R2",
-        "description": "The current page is an event page (/events/<id>) whose level-1 heading is \"Lunch with Sam\".",
+        "description": "The current page is the event page of \"Lunch with Sam\" (URL /events/:id, h1 equals the title) and its When field shows November 5, 2026.",
         "assert": {
          "kind": "allOf",
          "of": [
@@ -541,71 +602,106 @@
           {
            "kind": "state",
            "target": {
-            "anchors": [
-             {
-              "role": "heading",
-              "level": 1,
-              "within": {
-               "role": "main"
-              }
-             },
-             {
-              "role": "heading",
-              "name": "Lunch with Sam",
-              "level": 1
-             }
-            ]
+            "role": "heading",
+            "level": 1,
+            "within": {
+             "role": "main"
+            }
            },
            "expect": {
             "name": {
              "equals": "Lunch with Sam"
             }
            }
+          },
+          {
+           "kind": "each",
+           "scope": {
+            "role": "main"
+           },
+           "witness": {
+            "role": "term",
+            "text": "When"
+           },
+           "match": {
+            "role": "term",
+            "text": "When"
+           },
+           "count": {
+            "eq": 1
+           },
+           "assert": {
+            "kind": "anyOf",
+            "of": [
+             {
+              "kind": "value",
+              "source": {
+               "from": "node",
+               "target": {
+                "role": "definition"
+               },
+               "field": "text"
+              },
+              "normalize": [
+               {
+                "op": "extract",
+                "regex": "([A-Za-z]+\\.? \\d{1,2}, \\d{4})"
+               },
+               {
+                "op": "date",
+                "locale": "en-US"
+               }
+              ],
+              "expect": {
+               "equals": "2026-11-05"
+              }
+             },
+             {
+              "kind": "value",
+              "source": {
+               "from": "node",
+               "target": {
+                "role": "definition"
+               },
+               "field": "text"
+              },
+              "normalize": [
+               {
+                "op": "extract",
+                "regex": "(\\d{1,2}\\.? [A-Za-z]+\\.? \\d{4})"
+               },
+               {
+                "op": "date",
+                "locale": "en-GB"
+               }
+              ],
+              "expect": {
+               "equals": "2026-11-05"
+              }
+             },
+             {
+              "kind": "value",
+              "source": {
+               "from": "node",
+               "target": {
+                "role": "definition"
+               },
+               "field": "text"
+              },
+              "normalize": [
+               {
+                "op": "extract",
+                "regex": "(\\d{4}-\\d{2}-\\d{2})"
+               }
+              ],
+              "expect": {
+               "equals": "2026-11-05"
+              }
+             }
+            ]
+           }
           }
          ]
-        }
-       },
-       {
-        "id": "R2-when-date",
-        "requirement": "R2",
-        "description": "The \"When\" field on the event page shows a date on November 5, 2026.",
-        "assert": {
-         "kind": "each",
-         "scope": {
-          "role": "main"
-         },
-         "witness": {
-          "role": "term",
-          "text": "When"
-         },
-         "match": {
-          "role": "term",
-          "text": "When"
-         },
-         "count": {
-          "eq": 1
-         },
-         "assert": {
-          "kind": "value",
-          "source": {
-           "from": "node",
-           "target": {
-            "role": "definition"
-           },
-           "field": "text"
-          },
-          "normalize": [
-           {
-            "op": "datetime",
-            "locale": "en-US",
-            "timezone": "UTC"
-           }
-          ],
-          "expect": {
-           "gte": "2026-11-05T00:00:00Z",
-           "lt": "2026-11-06T00:00:00Z"
-          }
-         }
         }
        }
       ]
@@ -613,12 +709,267 @@
     }
    ],
    "usage": {
-    "inputTokens": 19954,
-    "outputTokens": 889,
-    "cacheReadTokens": 19622,
-    "cacheWriteTokens": 330
+    "inputTokens": 21183,
+    "outputTokens": 1081,
+    "cacheReadTokens": 20100,
+    "cacheWriteTokens": 1081
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:68773b9a5105b240307cd62b3dc56daa39b807e6873ff0551c5112226067d29d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FJrorgKNmxRhwiWduwkVvT",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "R1-event-stored",
+        "requirement": "R1",
+        "description": "The backend events list contains an event titled \"Lunch with Sam\" on 2026-11-05 at 12:30.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "events"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "title",
+             "date",
+             "time"
+            ],
+            "properties": {
+             "title": {
+              "const": "Lunch with Sam"
+             },
+             "date": {
+              "const": "2026-11-05"
+             },
+             "time": {
+              "const": "12:30"
+             }
+            }
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "R2-event-page-date",
+        "requirement": "R2",
+        "description": "The current page is the event page of \"Lunch with Sam\" (URL /events/:id, h1 equals the title) and its When field shows November 5, 2026.",
+        "assert": {
+         "kind": "allOf",
+         "of": [
+          {
+           "kind": "url",
+           "match": {
+            "path": "/events/*"
+           }
+          },
+          {
+           "kind": "state",
+           "target": {
+            "role": "heading",
+            "level": 1,
+            "within": {
+             "role": "main"
+            }
+           },
+           "expect": {
+            "name": {
+             "equals": "Lunch with Sam"
+            }
+           }
+          },
+          {
+           "kind": "each",
+           "scope": {
+            "role": "main"
+           },
+           "witness": {
+            "role": "term",
+            "text": "When"
+           },
+           "match": {
+            "role": "term",
+            "text": "When"
+           },
+           "count": {
+            "eq": 1
+           },
+           "assert": {
+            "kind": "value",
+            "source": {
+             "from": "node",
+             "target": {
+              "role": "definition"
+             },
+             "field": "text"
+            },
+            "normalize": [
+             {
+              "op": "extract",
+              "regex": "([A-Za-z]+\\.? \\d{1,2}, \\d{4}|\\d{1,2}\\.? [A-Za-z]+\\.? \\d{4}|\\d{4}-\\d{2}-\\d{2})"
+             },
+             {
+              "op": "date",
+              "locale": "en-US"
+             }
+            ],
+            "expect": {
+             "equals": "2026-11-05"
+            }
+           }
+          }
+         ]
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSkAgKEAgTGAI4AUIIdGhpbmtpbmcSDGCUNxFwHCB/atx4gRoMVRjlK+t6tZTHLC57IjD3hujPCae1I1M+PpN0nhOjcLr+aUjNLTB5aFF1/NYziQQXIt8X2WSuuJyPSFraSqIqrQcJJaqQqS2jBZPkcnICeUfktL8GcFLJJob84VmZOKpd/zUsRnFRxYDZ1JSvia3roN7LmG2e/xKHHpOuWAognExaMptTo9JSVkPlTn7QoaDBQruRNOhcLUIDQMIOObY32KW4cl0SOO+KDjagoKT4yDlHMPlU3Cjfp6Op+JKW5BfaInTokIqMNfQmFW0vFNrmd2gu5DKYsomUKcyE8wDy55ZjTpF1xzBLZTwSVxd6vGYe0/rK3HeNqS5AtSG3ygZVRkzehPQAmlJt+LD+LzUpPqbqR+nBb4lCVvlLoebm5XS1jb8HR5FbhGGs+iUMQPUDiT0t//Z0WjIG9mOYrs8hAglu1+JUrI19QRIVc+lHtGgHcSNhfvgd+hiVI4xUpuWCDsRIN1t0p6WVJPUkMwt7cLG2KjGcuAI9jzwnzhLHekXzkxeOzCkc7yQp4JJ8Qv2IFeiDX2GigJZFbn8g2ATeOgzWVqaH2CsyOUXKTy49K04EKypO7G7dFuRJYYIio5t3ogZqv8DijxpTPB/W9WhY/u89VC62fKQi7MMXIGM7idQ+PyVxx0aE43Aktfp3hW3WakUPSLAkYkcc+t4+De380oxdusZ8zi7/iRU+d6leYgIeKhAHp+VPqMSkN+Mc7JGZlCz60FMHFhYZQ+3SfbDx5gWDRfWzug193bteqdgZLS0FOHtJJEHGB4OJk1z73IEAPh+/aFgpr3sQr2K2sMbh/3qvFfhP2Ouu4jcCHytD3u81qTMj/7DfVftOg7dusdJbO//7BZMgQADM6i0dlzfNgdwfGXxCu2KzjSvymITu6ar2n6kdJEUyH/rUj3geza+mO2jAF9O/Is2ci4ydR5Ac8M3YWsWuu2Nza6j+u+8B9xSCnlyfYnaB2LMLV/HmkJuzJZU+GmDPHwqF8qjMPztyksY51/kTOlTwCc3uJQdJ0Er2T4FE8ZyXw4/FSEk1pX4CsPTeM4rJrnJdbkdn0QnhXOoGCuwlAfItoBMfDs4upSGgQB9IrciUc7qZfi6OQG+fSH7qi2FNQ6z5Tm9ZgWjcsgMB/p9ZYd5JjF1k8INbr+Oc1qJQkXNR0I3soNewzoab3x4PbyEZVqc9VGX6jT6B9KPAW20gcNZdHud77mvFM5m7vNp/4W602pz4IPj0oTSlTKanbNvlKoS/X4hvUnhu0PwFz1pDEk+nUsKKfsf0L6nMAPQ/+QTyWeUT7mT6JqN5Q8OSA26aEeb0wQLvHLrg7Gqczf//X8ldiNqwO3lT/RgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01FJrorgKNmxRhwiWduwkVvT",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "R1-event-stored",
+        "requirement": "R1",
+        "description": "The backend events list contains an event titled \"Lunch with Sam\" on 2026-11-05 at 12:30.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "events"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "title",
+             "date",
+             "time"
+            ],
+            "properties": {
+             "title": {
+              "const": "Lunch with Sam"
+             },
+             "date": {
+              "const": "2026-11-05"
+             },
+             "time": {
+              "const": "12:30"
+             }
+            }
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "R2-event-page-date",
+        "requirement": "R2",
+        "description": "The current page is the event page of \"Lunch with Sam\" (URL /events/:id, h1 equals the title) and its When field shows November 5, 2026.",
+        "assert": {
+         "kind": "allOf",
+         "of": [
+          {
+           "kind": "url",
+           "match": {
+            "path": "/events/*"
+           }
+          },
+          {
+           "kind": "state",
+           "target": {
+            "role": "heading",
+            "level": 1,
+            "within": {
+             "role": "main"
+            }
+           },
+           "expect": {
+            "name": {
+             "equals": "Lunch with Sam"
+            }
+           }
+          },
+          {
+           "kind": "each",
+           "scope": {
+            "role": "main"
+           },
+           "witness": {
+            "role": "term",
+            "text": "When"
+           },
+           "match": {
+            "role": "term",
+            "text": "When"
+           },
+           "count": {
+            "eq": 1
+           },
+           "assert": {
+            "kind": "value",
+            "source": {
+             "from": "node",
+             "target": {
+              "role": "definition"
+             },
+             "field": "text"
+            },
+            "normalize": [
+             {
+              "op": "extract",
+              "regex": "([A-Za-z]+\\.? \\d{1,2}, \\d{4}|\\d{1,2}\\.? [A-Za-z]+\\.? \\d{4}|\\d{4}-\\d{2}-\\d{2})"
+             },
+             {
+              "op": "date",
+              "locale": "en-US"
+             }
+            ],
+            "expect": {
+             "equals": "2026-11-05"
+            }
+           }
+          }
+         ]
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 22466,
+    "outputTokens": 844,
+    "cacheReadTokens": 21181,
+    "cacheWriteTokens": 1283
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:10:59.025Z"
 }

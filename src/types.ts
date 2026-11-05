@@ -243,9 +243,11 @@ export type Normalizer =
   /**
    * A JSON array as an unordered collection: keep items matching `where`, map each to the
    * value at `pointer` (or to an object of the fields at the `pick` pointers, keyed by
-   * pointer, so they stay paired), sort.
+   * pointer, so they stay paired), sort. With `flatten`, the value at `pointer` is itself
+   * an array (a record's tags or labels) and its elements become the items, so one
+   * record's collection can be compared member by member (ADR 0011).
    */
-  | { op: 'items'; where?: JsonSchema; pointer?: string; pick?: string[] };
+  | { op: 'items'; where?: JsonSchema; pointer?: string; pick?: string[]; flatten?: boolean };
 
 export interface Money {
   amount: number;
@@ -340,6 +342,16 @@ export interface Check {
    * the escalation policy (`policy.on`).
    */
   onFail?: 'escalate' | 'keep';
+  /**
+   * What the check concludes when the evidence of one way of doing the task is
+   * missing (ADR 0011). Unset or "fail": a missing request or a page URL that does
+   * not match fails, as an observed absence. "abstain": the check reads route
+   * evidence (the requests one UI sends, the URL it passes through), so a run that
+   * took another route has nothing for it to read; it abstains with reason
+   * `route_missing`, and inside an `anyOf` such a branch gives way to the branches
+   * whose route was taken. Evidence that was found but is wrong still fails.
+   */
+  onMissing?: 'fail' | 'abstain';
 }
 
 /** Provenance of a compiled check set. */
@@ -385,6 +397,11 @@ export type AbstainReason =
   | 'type_mismatch'
   | 'uncovered'
   | 'subcheck_abstained'
+  /**
+   * A check with `onMissing: "abstain"` found no evidence of the route it reads (no
+   * matching request, a URL elsewhere): the run may have done the task another way.
+   */
+  | 'route_missing'
   /** The agentic verifier could not observe enough to decide (escalation). */
   | 'verifier_unknown';
 

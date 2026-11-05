@@ -81,64 +81,12 @@
   ],
   "checks": [
     {
-      "id": "r1-office-address-added",
+      "id": "r1-added",
       "requirement": "R1",
-      "description": "The account's addresses now include the complete new Office address, and the previously existing addresses are unchanged (so it was added, not overwritten).",
+      "description": "The account has one more address than before and all pre-existing addresses are unchanged.",
       "assert": {
         "kind": "allOf",
         "of": [
-          {
-            "kind": "value",
-            "source": {
-              "from": "probe",
-              "probe": "addresses"
-            },
-            "expect": {
-              "schema": {
-                "type": "array",
-                "contains": {
-                  "type": "object",
-                  "required": [
-                    "alias",
-                    "address1",
-                    "city",
-                    "state",
-                    "postcode",
-                    "country",
-                    "phone"
-                  ],
-                  "properties": {
-                    "alias": {
-                      "type": "string",
-                      "pattern": "^\\s*Office\\s*$"
-                    },
-                    "address1": {
-                      "type": "string",
-                      "pattern": "^\\s*500 Market Street\\s*$"
-                    },
-                    "city": {
-                      "type": "string",
-                      "pattern": "^\\s*San Francisco\\s*$"
-                    },
-                    "state": {
-                      "const": "California"
-                    },
-                    "postcode": {
-                      "type": "string",
-                      "pattern": "^\\s*94105\\s*$"
-                    },
-                    "country": {
-                      "const": "United States"
-                    },
-                    "phone": {
-                      "type": "string",
-                      "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
-                    }
-                  }
-                }
-              }
-            }
-          },
           {
             "kind": "value",
             "source": {
@@ -188,14 +136,49 @@
                 ]
               }
             }
+          },
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "addresses"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "alias": {
+                      "pattern": "^\\s*Office\\s*$"
+                    },
+                    "address1": {
+                      "pattern": "^\\s*500 Market Street\\s*$"
+                    },
+                    "city": {
+                      "pattern": "^\\s*San Francisco\\s*$"
+                    },
+                    "postcode": {
+                      "pattern": "^\\s*94105\\s*$"
+                    }
+                  },
+                  "required": [
+                    "alias",
+                    "address1",
+                    "city",
+                    "postcode"
+                  ]
+                }
+              }
+            }
           }
         ]
       }
     },
     {
-      "id": "r2-alias-office",
+      "id": "r2-alias",
       "requirement": "R2",
-      "description": "The saved address record with all requested details has alias \"Office\".",
+      "description": "An address with alias 'Office' exists in the account.",
       "assert": {
         "kind": "value",
         "source": {
@@ -207,43 +190,14 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "alias",
-                "address1",
-                "city",
-                "state",
-                "postcode",
-                "country",
-                "phone"
-              ],
               "properties": {
                 "alias": {
-                  "type": "string",
                   "pattern": "^\\s*Office\\s*$"
-                },
-                "address1": {
-                  "type": "string",
-                  "pattern": "^\\s*500 Market Street\\s*$"
-                },
-                "city": {
-                  "type": "string",
-                  "pattern": "^\\s*San Francisco\\s*$"
-                },
-                "state": {
-                  "const": "California"
-                },
-                "postcode": {
-                  "type": "string",
-                  "pattern": "^\\s*94105\\s*$"
-                },
-                "country": {
-                  "const": "United States"
-                },
-                "phone": {
-                  "type": "string",
-                  "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
                 }
-              }
+              },
+              "required": [
+                "alias"
+              ]
             }
           }
         }
@@ -252,7 +206,7 @@
     {
       "id": "r3-street",
       "requirement": "R3",
-      "description": "The saved Office address has street (address1) 500 Market Street.",
+      "description": "The Office address has street 500 Market Street.",
       "assert": {
         "kind": "value",
         "source": {
@@ -264,43 +218,18 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "alias",
-                "address1",
-                "city",
-                "state",
-                "postcode",
-                "country",
-                "phone"
-              ],
               "properties": {
                 "alias": {
-                  "type": "string",
                   "pattern": "^\\s*Office\\s*$"
                 },
                 "address1": {
-                  "type": "string",
                   "pattern": "^\\s*500 Market Street\\s*$"
-                },
-                "city": {
-                  "type": "string",
-                  "pattern": "^\\s*San Francisco\\s*$"
-                },
-                "state": {
-                  "const": "California"
-                },
-                "postcode": {
-                  "type": "string",
-                  "pattern": "^\\s*94105\\s*$"
-                },
-                "country": {
-                  "const": "United States"
-                },
-                "phone": {
-                  "type": "string",
-                  "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
                 }
-              }
+              },
+              "required": [
+                "alias",
+                "address1"
+              ]
             }
           }
         }
@@ -309,7 +238,7 @@
     {
       "id": "r4-city",
       "requirement": "R4",
-      "description": "The saved Office address has city San Francisco.",
+      "description": "The Office address has city San Francisco.",
       "assert": {
         "kind": "value",
         "source": {
@@ -321,43 +250,18 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "alias",
-                "address1",
-                "city",
-                "state",
-                "postcode",
-                "country",
-                "phone"
-              ],
               "properties": {
                 "alias": {
-                  "type": "string",
                   "pattern": "^\\s*Office\\s*$"
                 },
-                "address1": {
-                  "type": "string",
-                  "pattern": "^\\s*500 Market Street\\s*$"
-                },
                 "city": {
-                  "type": "string",
                   "pattern": "^\\s*San Francisco\\s*$"
-                },
-                "state": {
-                  "const": "California"
-                },
-                "postcode": {
-                  "type": "string",
-                  "pattern": "^\\s*94105\\s*$"
-                },
-                "country": {
-                  "const": "United States"
-                },
-                "phone": {
-                  "type": "string",
-                  "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
                 }
-              }
+              },
+              "required": [
+                "alias",
+                "city"
+              ]
             }
           }
         }
@@ -366,7 +270,7 @@
     {
       "id": "r5-state",
       "requirement": "R5",
-      "description": "The saved Office address has state California.",
+      "description": "The Office address has state California.",
       "assert": {
         "kind": "value",
         "source": {
@@ -378,43 +282,18 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "alias",
-                "address1",
-                "city",
-                "state",
-                "postcode",
-                "country",
-                "phone"
-              ],
               "properties": {
                 "alias": {
-                  "type": "string",
                   "pattern": "^\\s*Office\\s*$"
                 },
-                "address1": {
-                  "type": "string",
-                  "pattern": "^\\s*500 Market Street\\s*$"
-                },
-                "city": {
-                  "type": "string",
-                  "pattern": "^\\s*San Francisco\\s*$"
-                },
                 "state": {
-                  "const": "California"
-                },
-                "postcode": {
-                  "type": "string",
-                  "pattern": "^\\s*94105\\s*$"
-                },
-                "country": {
-                  "const": "United States"
-                },
-                "phone": {
-                  "type": "string",
-                  "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
+                  "pattern": "^\\s*California\\s*$"
                 }
-              }
+              },
+              "required": [
+                "alias",
+                "state"
+              ]
             }
           }
         }
@@ -423,7 +302,7 @@
     {
       "id": "r6-postcode",
       "requirement": "R6",
-      "description": "The saved Office address has postal code 94105.",
+      "description": "The Office address has postal code 94105.",
       "assert": {
         "kind": "value",
         "source": {
@@ -435,43 +314,18 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "alias",
-                "address1",
-                "city",
-                "state",
-                "postcode",
-                "country",
-                "phone"
-              ],
               "properties": {
                 "alias": {
-                  "type": "string",
                   "pattern": "^\\s*Office\\s*$"
                 },
-                "address1": {
-                  "type": "string",
-                  "pattern": "^\\s*500 Market Street\\s*$"
-                },
-                "city": {
-                  "type": "string",
-                  "pattern": "^\\s*San Francisco\\s*$"
-                },
-                "state": {
-                  "const": "California"
-                },
                 "postcode": {
-                  "type": "string",
                   "pattern": "^\\s*94105\\s*$"
-                },
-                "country": {
-                  "const": "United States"
-                },
-                "phone": {
-                  "type": "string",
-                  "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
                 }
-              }
+              },
+              "required": [
+                "alias",
+                "postcode"
+              ]
             }
           }
         }
@@ -480,7 +334,7 @@
     {
       "id": "r7-country",
       "requirement": "R7",
-      "description": "The saved Office address has country United States.",
+      "description": "The Office address has country United States.",
       "assert": {
         "kind": "value",
         "source": {
@@ -492,43 +346,18 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "alias",
-                "address1",
-                "city",
-                "state",
-                "postcode",
-                "country",
-                "phone"
-              ],
               "properties": {
                 "alias": {
-                  "type": "string",
                   "pattern": "^\\s*Office\\s*$"
                 },
-                "address1": {
-                  "type": "string",
-                  "pattern": "^\\s*500 Market Street\\s*$"
-                },
-                "city": {
-                  "type": "string",
-                  "pattern": "^\\s*San Francisco\\s*$"
-                },
-                "state": {
-                  "const": "California"
-                },
-                "postcode": {
-                  "type": "string",
-                  "pattern": "^\\s*94105\\s*$"
-                },
                 "country": {
-                  "const": "United States"
-                },
-                "phone": {
-                  "type": "string",
-                  "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
+                  "pattern": "^\\s*United States\\s*$"
                 }
-              }
+              },
+              "required": [
+                "alias",
+                "country"
+              ]
             }
           }
         }
@@ -537,7 +366,7 @@
     {
       "id": "r8-phone",
       "requirement": "R8",
-      "description": "The saved Office address has phone 415-555-0100 (separators tolerated).",
+      "description": "The Office address has phone 415-555-0100 (any separators).",
       "assert": {
         "kind": "value",
         "source": {
@@ -549,43 +378,18 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "alias",
-                "address1",
-                "city",
-                "state",
-                "postcode",
-                "country",
-                "phone"
-              ],
               "properties": {
                 "alias": {
-                  "type": "string",
                   "pattern": "^\\s*Office\\s*$"
                 },
-                "address1": {
-                  "type": "string",
-                  "pattern": "^\\s*500 Market Street\\s*$"
-                },
-                "city": {
-                  "type": "string",
-                  "pattern": "^\\s*San Francisco\\s*$"
-                },
-                "state": {
-                  "const": "California"
-                },
-                "postcode": {
-                  "type": "string",
-                  "pattern": "^\\s*94105\\s*$"
-                },
-                "country": {
-                  "const": "United States"
-                },
                 "phone": {
-                  "type": "string",
-                  "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
+                  "pattern": "^\\D*(1\\D*)?415\\D*555\\D*0100\\D*$"
                 }
-              }
+              },
+              "required": [
+                "alias",
+                "phone"
+              ]
             }
           }
         }
@@ -598,6 +402,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:17:40.592Z"
+    "at": "2026-11-05T21:10:05.285Z"
   }
 }

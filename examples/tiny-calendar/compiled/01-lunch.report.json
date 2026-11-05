@@ -1,7 +1,7 @@
 {
   "task": "tiny-calendar/01-lunch",
   "status": "compiled",
-  "model": "anthropic:claude-opus-5-5@high",
+  "model": "anthropic:claude-opus-5-5@high (replay)",
   "modelsUsed": [
     "claude-opus-5-5"
   ],
@@ -10,17 +10,17 @@
     "discovery": 4
   },
   "usage": {
-    "inputTokens": 77745,
-    "outputTokens": 1838,
-    "cacheReadTokens": 56592,
-    "cacheWriteTokens": 21139
+    "inputTokens": 83834,
+    "outputTokens": 3018,
+    "cacheReadTokens": 60169,
+    "cacheWriteTokens": 23651
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "an event \"Lunch with Sam\" exists on November 5, 2026 at 12:30",
       "checks": [
-        "R1-probe-event"
+        "R1-event-stored"
       ],
       "channels": [
         "probe"
@@ -31,8 +31,7 @@
       "requirement": "R2",
       "quote": "the event page shows the date November 5, 2026",
       "checks": [
-        "R2-event-page",
-        "R2-when-date"
+        "R2-event-page-date"
       ],
       "channels": [
         "url",

@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T11:32:21.051Z",
  "turns": {
   "sha256:b9f2382643f6d586ff840254428d53143dd3c724d0119f8798dd6d61ea5cdb9c": {
    "stop": "tool_use",
@@ -66,17 +65,17 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:ccd1e7a08ba72db0952c30b6c5200a860c0b57ab5ef6d95b7cb61669b6363479": {
+  "sha256:b1339a85e947fedc44a1a9c6558c0194c5ac5267baa896216d716ce4464584c0": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_018p72jLTo5XX6uUbK5K7cDS",
+     "id": "toolu_01J2BiomzKqDjEiWMUJxMFc3",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01ByjzFFMYSRovkySRkdatpM",
+     "id": "toolu_017VDichr51otUKJtQDNw8eW",
      "name": "network_log",
      "input": {}
     }
@@ -84,7 +83,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_018p72jLTo5XX6uUbK5K7cDS",
+     "id": "toolu_01J2BiomzKqDjEiWMUJxMFc3",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -93,7 +92,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01ByjzFFMYSRovkySRkdatpM",
+     "id": "toolu_017VDichr51otUKJtQDNw8eW",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -102,19 +101,19 @@
     }
    ],
    "usage": {
-    "inputTokens": 17853,
+    "inputTokens": 18862,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 17849
+    "cacheWriteTokens": 18858
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:8c071f3c6d082227bbc6accdc39968a252b3387ca80f2931d3c9ec4804e3b1b2": {
+  "sha256:005d50259b674fdf77f39e3a6f7fa2e2a6608ba371301a787421b595cb56dd33": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Hr6q586ocJRhZcGa4E1uNZ",
+     "id": "toolu_01C2XLk4sDwqbc6vJNBhcfXU",
      "name": "try_assertion",
      "input": {
       "assert": {
@@ -140,6 +139,42 @@
             "type": "array",
             "contains": {
              "const": "feature"
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "id": "toolu_014Asjw8JoSyKhgpisCu1YQS",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "id",
+           "labels"
+          ],
+          "properties": {
+           "id": {
+            "const": 1
+           },
+           "labels": {
+            "type": "array",
+            "contains": {
+             "const": "bug"
             }
            }
           }
@@ -154,11 +189,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS5gUKEAgTGAI4AUIIdGhpbmtpbmcSDGUKQyztS8Vk/mounBoMt+pKIV59gJMPpqW2IjCNPFLjUmffdLRLh2m9gy307s26RwPCflaf8URXmLaciaXCQiHkOaMRQZ3kRZsXOj4qgwW4faX07YEJe6X/6qzvKWUV4f6MOzfmiHUvn9fAakT5I4684u+nTr4EcO6qxBAb1uZdl0lFwXpqEEFbrgkX+S1+dcpBCSggGDKNedlECFeaqD35nQuO1yRc/QrTpAoygQsnm/iDeB2+LLipk43R2h3ACK3w3CN+4zt2YRicdqFVXQ/mUkdBTTyk7DWs8qFJ6q2UGXoq+QHFftg2ijH3BIbHpXlrnpFuLtJzT4wbll7rsCQkXuIOBMNWlfCugNiCVRp61FE/O2zMOjw17NFLpal5xqUzUlnvSliWKgYWncIAbApB8vAixL3B7SjWLR1lLJQOYUlhHnZzK7TnpETrIr7agtbqHIePjRCBtMkPdWIH35M5myULQ0RGIfnjAq9rpOJppWFHH4etxgggMrfxnijfu0Z7mYe859ZguAcqt9DCOmMACF3Kxd5ZC7B8PRAXUEvwJJr2YbeB532hJl1GNbVGwsdmHG8tUK3vTpL98Kh7I1jmG9NMrjnz58hJ2OctEySPli1YxQ5UlWYONpHE8ehRcMaSTBOCSfTt9WkngBxOJiKoT6odMa6tryzw5NkHjE7ZBwhLvEKbM3n28MMkW0/jWCu3meRmo+Mjtln8snkDB/xgffcD4b5hiY4TqLjCblwt+g9kOcFApShvPUUuMLHw44xwWIlwo4gU8oV3FCJ9I8zh2kWBj5Fldiok4hBRDQJmtaE9dGh29HlQe6gw9/UDAsu2a5/w2O6owQe1EtJ/LhtGabBFsQUPSybbKfXS/kBJZSvqT+NBnECENhd4RWeQaaCgomxRizfQx+SsNwCYG6UO2o3FcnZ0JxZTT+ChsDgZI3YSvIU9afVtKEa9M40qygjJGAE="
+     "signature": "CAQS3AUKEAgTGAI4AUIIdGhpbmtpbmcSDKIXrR++ClWdByvUSBoMJ/UQ7mAl57ZKO2pAIjD7mDR2XWNtmleC+ouakBoU2RDr4OKTuJbxiZ1eNTyyvlYRifMACFelz8EbeSBRH0kq+QSA1ITwiarw5G4ehAcc0u6wqpB8ySmUmmvkrTQ8UwFoZAJqc9aUp48dGlt8+biinh1rewQxGvkD3YKD9aFfGo7rLwn35NAeemNsRA5kJznCm5ovm+NtD/P+flWXdIIhgfbM2lsLfWqh072wDqA324g20Ob1tjxbuDIuCVYNcU9pafCKo4uXdD5NDl1/NNANCFrA1E8mglSCCshOjqZNp3H4k6+l9OiDLcXhZqjFNGHB3nxhxPNN8PQ3+CmT6AbaVHiSjJhyQYbd00WtZx8JPBRIhnfCQAWAOAClIzD25kKXwJg5BhNmJXMBF1/ShMw1036IpE5d8Hq8kmGgkNqn3K1OKlt/SKFGHsaqNlLMm7ba+H08pdAnFv0iDii0NZqMxYeoU/008FPP814pQdjZ2V2/4kdke2ccYfw91y9Mk+eyuQf6DPO7qsafDE9Xfjg+UCCRAv3X9oP3T52WYm7ID+Re+SlvqPUDfB2QLVSbQENlcShklC2WuLDcjSRr+q1zEO4p+nunDrKdaAJpdxbbYxpYBVu6xaBbEIpt+mLH6RIPXYnAIPWPEZH/hj8WU7E8UbzCeyc/N0rwNfT45xAYEN0bYp6sguLcXHKldbbV0tUZ81TKP09Mu/cfczluR/dYx9q11Xb3RkRuio6v6N7p98Z8RO7PA7E3J1JLGDvrHm9+qNfqsMvb2FOKDqbXyCmCcc0jgSMrzAoNx/b4ruuYdsCk/RoZAizPL/e5WQPzSJvY4Pv7sF+yqUK3wCZD6mJBus90b+ZbLOUrNDUXt6h5d2mrnrJkrB8ABfiqzO5s1tZfuGOWWJH4NzSwb06Y05PgUq7Dv4hyH8nUDAwYAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Hr6q586ocJRhZcGa4E1uNZ",
+     "id": "toolu_01C2XLk4sDwqbc6vJNBhcfXU",
      "name": "try_assertion",
      "caller": {
       "type": "direct"
@@ -195,29 +230,69 @@
        }
       }
      }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_014Asjw8JoSyKhgpisCu1YQS",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "id",
+           "labels"
+          ],
+          "properties": {
+           "id": {
+            "const": 1
+           },
+           "labels": {
+            "type": "array",
+            "contains": {
+             "const": "bug"
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
     }
    ],
    "usage": {
-    "inputTokens": 18326,
-    "outputTokens": 188,
-    "cacheReadTokens": 17849,
+    "inputTokens": 19335,
+    "outputTokens": 336,
+    "cacheReadTokens": 18858,
     "cacheWriteTokens": 475
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:39a507d0301a1e1dab10b05dbb5006273d8986f3327c9888b93f32b7940471ed": {
+  "sha256:fa38d1fc342a3200e7ff34c4726b022fcdbf2654ec402ae2c1bbf41f4b9a0351": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01GkxDHWUHDjANxhZLpPJ7mw",
+     "id": "toolu_01N2AJDagK6hyKDDSNvCb8sh",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "r1-feature-label",
+        "id": "issue1-has-feature",
         "requirement": "R1",
-        "description": "In the backend, issue id 1 has the label 'feature' in its labels.",
+        "description": "The backend issues probe shows issue id 1 with 'feature' among its labels.",
         "assert": {
          "kind": "value",
          "source": {
@@ -250,9 +325,9 @@
         }
        },
        {
-        "id": "r2-bug-label",
+        "id": "issue1-keeps-bug",
         "requirement": "R2",
-        "description": "In the backend, issue id 1 still has the label 'bug' in its labels.",
+        "description": "The backend issues probe shows issue id 1 still with 'bug' among its labels.",
         "assert": {
          "kind": "value",
          "source": {
@@ -291,7 +366,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01GkxDHWUHDjANxhZLpPJ7mw",
+     "id": "toolu_01N2AJDagK6hyKDDSNvCb8sh",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -299,9 +374,9 @@
      "input": {
       "checks": [
        {
-        "id": "r1-feature-label",
+        "id": "issue1-has-feature",
         "requirement": "R1",
-        "description": "In the backend, issue id 1 has the label 'feature' in its labels.",
+        "description": "The backend issues probe shows issue id 1 with 'feature' among its labels.",
         "assert": {
          "kind": "value",
          "source": {
@@ -334,9 +409,9 @@
         }
        },
        {
-        "id": "r2-bug-label",
+        "id": "issue1-keeps-bug",
         "requirement": "R2",
-        "description": "In the backend, issue id 1 still has the label 'bug' in its labels.",
+        "description": "The backend issues probe shows issue id 1 still with 'bug' among its labels.",
         "assert": {
          "kind": "value",
          "source": {
@@ -373,12 +448,13 @@
     }
    ],
    "usage": {
-    "inputTokens": 18594,
-    "outputTokens": 393,
-    "cacheReadTokens": 18324,
-    "cacheWriteTokens": 268
+    "inputTokens": 19881,
+    "outputTokens": 401,
+    "cacheReadTokens": 19333,
+    "cacheWriteTokens": 546
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:09:46.822Z"
 }

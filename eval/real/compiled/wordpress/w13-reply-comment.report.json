@@ -7,25 +7,25 @@
   ],
   "turns": {
     "rubric": 1,
-    "discovery": 3
+    "discovery": 4
   },
   "usage": {
-    "inputTokens": 61520,
-    "outputTokens": 1856,
-    "cacheReadTokens": 39785,
-    "cacheWriteTokens": 21723
+    "inputTokens": 105637,
+    "outputTokens": 2347,
+    "cacheReadTokens": 74602,
+    "cacheWriteTokens": 31021
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "Reply to Priya's question on the post \"Flaky tests and how to avoid them\"",
       "checks": [
-        "r1-reply-request",
-        "r1-comment-stored-on-post"
+        "r1-reply-stored-on-post",
+        "r1-reply-parent-is-priya"
       ],
       "channels": [
-        "network",
-        "probe"
+        "probe",
+        "network"
       ],
       "trust": "structured"
     },
@@ -33,11 +33,9 @@
       "requirement": "R2",
       "quote": "with: \"Yes, see the network waits section in the docs.\"",
       "checks": [
-        "r2-reply-text-request",
-        "r2-reply-text-stored"
+        "r2-reply-text"
       ],
       "channels": [
-        "network",
         "probe"
       ],
       "trust": "structured"
@@ -47,6 +45,11 @@
   "references": [
     {
       "name": "reference",
+      "kind": "success",
+      "verdict": "success"
+    },
+    {
+      "name": "reference-public-form",
       "kind": "success",
       "verdict": "success"
     }

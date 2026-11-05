@@ -18,21 +18,41 @@
   ],
   "checks": [
     {
-      "id": "R1-catalog-price",
+      "id": "brown-bear-cushion-price",
       "requirement": "R1",
-      "description": "The backend catalog probe shows the product \"Brown bear cushion\" with a tax-excluded price of 21.90.",
+      "description": "In the backend catalog, product id 10 \"Brown bear cushion\" has a tax-excluded price of 21.90.",
       "assert": {
         "kind": "value",
         "source": {
           "from": "probe",
           "probe": "catalog"
         },
+        "normalize": [
+          {
+            "op": "items",
+            "where": {
+              "properties": {
+                "id": {
+                  "const": 10
+                }
+              },
+              "required": [
+                "id"
+              ]
+            }
+          }
+        ],
         "expect": {
           "schema": {
             "type": "array",
-            "contains": {
+            "minItems": 1,
+            "maxItems": 1,
+            "items": {
               "type": "object",
               "properties": {
+                "id": {
+                  "const": 10
+                },
                 "name": {
                   "const": "Brown bear cushion"
                 },
@@ -43,6 +63,7 @@
                 }
               },
               "required": [
+                "id",
                 "name",
                 "price"
               ]
@@ -58,6 +79,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:19:25.187Z"
+    "at": "2026-11-05T21:11:29.882Z"
   }
 }

@@ -29,7 +29,7 @@
     {
       "id": "r1-bug-removed",
       "requirement": "R1",
-      "description": "In the backend issues of acme/webapp, the issue titled \"Typo in README\" exists and no longer carries the bug label.",
+      "description": "In the backend, issue #4 \"Typo in README\" of acme/webapp no longer has the bug label.",
       "assert": {
         "kind": "value",
         "source": {
@@ -42,47 +42,104 @@
             "contains": {
               "type": "object",
               "properties": {
+                "number": {
+                  "const": 4
+                },
                 "title": {
                   "const": "Typo in README"
                 },
                 "labels": {
-                  "type": "array"
+                  "type": "array",
+                  "not": {
+                    "contains": {
+                      "const": "bug"
+                    }
+                  }
                 }
               },
               "required": [
+                "number",
                 "title",
                 "labels"
               ]
-            },
-            "items": {
-              "if": {
-                "type": "object",
-                "properties": {
-                  "title": {
-                    "const": "Typo in README"
-                  }
-                },
-                "required": [
-                  "title"
-                ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "r1-other-labels-kept",
+      "requirement": "R1",
+      "description": "Apart from bug and docs, issue #4 has the same labels as before the task (only the bug label was replaced).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "normalize": [
+          {
+            "op": "items",
+            "where": {
+              "properties": {
+                "number": {
+                  "const": 4
+                }
               },
-              "then": {
-                "type": "object",
-                "properties": {
-                  "labels": {
-                    "type": "array",
-                    "not": {
-                      "contains": {
-                        "const": "bug"
-                      }
-                    }
-                  }
-                },
-                "required": [
-                  "labels"
+              "required": [
+                "number"
+              ]
+            },
+            "pointer": "/labels",
+            "flatten": true
+          },
+          {
+            "op": "items",
+            "where": {
+              "not": {
+                "enum": [
+                  "bug",
+                  "docs"
                 ]
               }
             }
+          }
+        ],
+        "expect": {
+          "sameAs": {
+            "source": {
+              "from": "probe",
+              "probe": "issues",
+              "at": "before"
+            },
+            "normalize": [
+              {
+                "op": "items",
+                "where": {
+                  "properties": {
+                    "number": {
+                      "const": 4
+                    }
+                  },
+                  "required": [
+                    "number"
+                  ]
+                },
+                "pointer": "/labels",
+                "flatten": true
+              },
+              {
+                "op": "items",
+                "where": {
+                  "not": {
+                    "enum": [
+                      "bug",
+                      "docs"
+                    ]
+                  }
+                }
+              }
+            ]
           }
         }
       }
@@ -90,7 +147,7 @@
     {
       "id": "r2-docs-added",
       "requirement": "R2",
-      "description": "In the backend issues of acme/webapp, the issue titled \"Typo in README\" carries the docs label.",
+      "description": "In the backend, issue #4 \"Typo in README\" of acme/webapp has the docs label.",
       "assert": {
         "kind": "value",
         "source": {
@@ -103,6 +160,9 @@
             "contains": {
               "type": "object",
               "properties": {
+                "number": {
+                  "const": 4
+                },
                 "title": {
                   "const": "Typo in README"
                 },
@@ -114,6 +174,7 @@
                 }
               },
               "required": [
+                "number",
                 "title",
                 "labels"
               ]
@@ -129,6 +190,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:12:45.341Z"
+    "at": "2026-11-05T21:03:50.216Z"
   }
 }

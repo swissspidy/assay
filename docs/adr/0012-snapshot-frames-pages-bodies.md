@@ -87,7 +87,8 @@ fires it twice per submission, so identical reports from one form within a secon
 reported, and only when the multipart requests to that method and URL from that frame pair one to
 one with identical reports; otherwise the body stays unavailable. A body that was sent but not read
 is marked `requestBodyUnavailable`, and `requestBody` matching on it is `unknown` (abstain) instead
-of `no` (fail).
+of `no` (fail). Under `onMissing: "abstain"` (ADR 0011) that stays `value_unavailable`, not
+`route_missing`: the request shows the route was taken, only its body could not be read.
 
 ### 4. Open pages: the active page by default, others by a `page` assertion
 
@@ -116,6 +117,11 @@ A check reads another page with one new assertion kind:
 - The nested assertion reads that page's tree, text and URL. Only what a page shows may be read
   inside: the validator rejects request assertions and network, storage and probe sources there,
   `page` inside `each`, and `page` inside `page`.
+- Route evidence (ADR 0011): a `url` check inside a `page` assertion is route evidence, so
+  `onMissing` applies to it, and with `onMissing: "abstain"` a page the run never opened is a
+  route not taken (`route_missing`) rather than a missing anchor. Inside an `anyOf` over routes it
+  then gives way to the route the run took. A `page` assertion never counts as showing that
+  something is missing, since a missing page abstains.
 - Why a wrapper and not a `page` field on every source and target: one place selects the page, so
   an assertion cannot mix pages by accident, and every existing kind works inside unchanged. A
   presence requirement ("a receipt opened") is better checked on the network or a probe, since a

@@ -48,6 +48,31 @@ export function matchUrl(m: UrlMatch, href: string): boolean {
   return true;
 }
 
+/** A path segment that names one record (an id), not a screen: `12`, a hex digest, a UUID. */
+const ID_SEGMENT = /^(?:\d+|[0-9a-f]{8,}|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i;
+
+/**
+ * The route a url match names, for `onMissing: "abstain"` (ADR 0011): its origin and the shape
+ * of its path, with record ids as wildcards (`/repo/issues/5` names the issue page, whichever
+ * issue). `regex` and `query` are outcome, never route: a match without a path has no route,
+ * so it is always decided. Returns whether the page URL is on that route.
+ */
+export function onUrlRoute(m: UrlMatch, href: string): boolean {
+  if (m.path === undefined) return true;
+  let u: URL;
+  try {
+    u = new URL(href);
+  } catch {
+    return false;
+  }
+  if (m.origin !== undefined && u.origin !== new URL(m.origin).origin) return false;
+  const shape = m.path
+    .split('/')
+    .map((seg) => (ID_SEGMENT.test(seg) ? '*' : seg))
+    .join('/');
+  return matchPath(shape, u.pathname);
+}
+
 export function describeUrlMatch(m: UrlMatch): string {
   const parts: string[] = [];
   if (m.origin) parts.push(m.origin);
