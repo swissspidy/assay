@@ -19,10 +19,11 @@ import type {
   ValueSource,
 } from '../types.ts';
 import { AXIndex, readNodeField, resolveTarget, type INode } from '../runtime/axindex.ts';
-import { applyNormalizers, zoneOffset, type TypedValue } from '../runtime/values.ts';
+import { applyNormalizers, describeValue, zoneOffset, type TypedValue } from '../runtime/values.ts';
+import { compareValues } from '../runtime/compare.ts';
 import { canonical, stripGlobal } from '../text.ts';
 import { clone, editById, replaceText, treeChanged } from './edit.ts';
-import { readSpan, timezoneOf } from './mutants.ts';
+import { PRECISIONS, fromScalar, readSpan, readTyped, rewriteValue, scalarOf, snapTo, timezoneOf } from './mutants.ts';
 
 export interface Variant {
   id: string;
@@ -479,6 +480,91 @@ function formattingVariants(cs: CheckSet, s: EvidenceSnapshot, idx: AXIndex): Va
   return out;
 }
 
+// --- sameAs tolerance variants -------------------------------------------------
+
+/**
+ * A `sameAs` binding with a tolerance accepts values that differ by up to the tolerance:
+ * each side in turn moved toward the edge of the tolerance (all of it, or half), in both
+ * directions, at a precision its source can show. A check that rejects one is
+ * over-constrained by its own reviewed tolerance (or by another check of the set).
+ */
+function toleranceVariants(cs: CheckSet, s: EvidenceSnapshot, idx: AXIndex): Variant[] {
+  const out: Variant[] = [];
+  // A side another check also reads is left alone: that check holds the value to its own terms.
+  const readers = new Map<string, Set<string>>();
+  const sourcesOf = (a: Assertion): ValueSource[] =>
+    a.kind === 'value'
+      ? readsOf(a).map((r) => r.source)
+      : a.kind === 'allOf' || a.kind === 'anyOf'
+        ? a.of.flatMap(sourcesOf)
+        : a.kind === 'each'
+          ? sourcesOf(a.assert)
+          : [];
+  for (const c of cs.checks)
+    for (const src of sourcesOf(c.assert)) {
+      const k = JSON.stringify(src);
+      readers.set(k, new Set([...(readers.get(k) ?? []), c.id]));
+    }
+  const sharedWithOther = (src: ValueSource, check: string) =>
+    [...(readers.get(JSON.stringify(src)) ?? [])].some((x) => x !== check);
+  for (const c of cs.checks) {
+    let records = 0;
+    for (const { a, rec } of valueAssertions(c.assert, idx)) {
+      if (!('sameAs' in a.expect) || !a.expect.sameAs.tolerance) continue;
+      if (rec && ++records > 2) break;
+      const other = a.expect.sameAs;
+      const tol = other.tolerance!;
+      const left = readTyped(s, idx, a.source, a.normalize, rec);
+      const right = readTyped(s, idx, other.source, other.normalize, rec);
+      if (!left || !right || left.type !== right.type) continue;
+      const sides = [
+        { k: 0, src: a.source, steps: a.normalize, cur: left, base: right },
+        { k: 1, src: other.source, steps: other.normalize, cur: right, base: left },
+      ];
+      for (const { k, src, steps, cur, base } of sides) {
+        if (sharedWithOther(src, c.id)) continue;
+        const b = scalarOf(base);
+        if (b === undefined) continue;
+        const width = Math.max(tol.abs ?? 0, (tol.rel ?? 0) * Math.abs(b));
+        for (const sign of [1, -1]) {
+          let found: { v: TypedValue; snap: EvidenceSnapshot } | undefined;
+          for (const f of [1, 0.5]) {
+            for (const g of PRECISIONS[cur.type] ?? []) {
+              // Rounded toward the other side, so the precision never takes it past the tolerance.
+              const v = fromScalar(cur, snapTo(b + sign * f * width, g, sign < 0));
+              if (!v || JSON.stringify(v) === JSON.stringify(cur)) continue;
+              const pair = k === 0 ? [v, base] : [base, v];
+              let ok: boolean;
+              try {
+                ok = compareValues(pair[0]!, pair[1]!, tol).ok;
+              } catch {
+                ok = false;
+              }
+              if (!ok) continue;
+              const edited = rewriteValue(s, idx, src, steps, v, rec);
+              if (edited) {
+                found = { v, snap: edited };
+                break;
+              }
+            }
+            if (found) break;
+          }
+          if (!found) continue;
+          let id = `tolerance:${c.id}:${k ? 'sameAs:' : ''}${sign > 0 ? '+' : '-'}`;
+          for (let n = 2; out.some((x) => x.id === id); n++)
+            id = `tolerance:${c.id}:${k ? 'sameAs:' : ''}${sign > 0 ? '+' : '-'}#${n}`;
+          out.push({
+            id,
+            description: `${c.id}'s ${k ? 'compared ' : ''}value is ${describeValue(found.v)} instead of ${describeValue(cur)}, within its tolerance of ${describeValue(base)}`,
+            snapshot: found.snap,
+          });
+        }
+      }
+    }
+  }
+  return out;
+}
+
 export function generateVariants(cs: CheckSet, s: EvidenceSnapshot): Variant[] {
   const generic: [string, string, EvidenceSnapshot | null][] = [
     ['reorder', 'list items and table rows in reverse order', reorder(s)],
@@ -504,5 +590,6 @@ export function generateVariants(cs: CheckSet, s: EvidenceSnapshot): Variant[] {
       .filter((g): g is [string, string, EvidenceSnapshot] => g[2] !== null)
       .map(([id, description, snapshot]) => ({ id, description, snapshot })),
     ...formattingVariants(cs, s, new AXIndex(s.a11y)),
+    ...toleranceVariants(cs, s, new AXIndex(s.a11y)),
   ];
 }

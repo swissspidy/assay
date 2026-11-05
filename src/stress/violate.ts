@@ -66,6 +66,16 @@ function candidates(v: TypedValue, cmp: Comparison): TypedValue[] {
         if (typeof b !== 'number') continue;
         const t = tolerance(cmp, b) + 1;
         out.push(...[b + t, b - t, b + 1, b - 1].map((value) => ({ type: 'number' as const, value })));
+        // Just past a tolerance, at the precisions a page may show (the read-back keeps those it can).
+        const tol = tolerance(cmp, b);
+        if (tol > 0)
+          for (const step of [0.1, 0.01, 0.001])
+            out.push(
+              ...[b + tol + step, b - tol - step].map((value) => ({
+                type: 'number' as const,
+                value: +value.toFixed(6),
+              })),
+            );
       }
       out.push({ type: 'number', value: v.value - 1 });
       break;
@@ -103,6 +113,17 @@ function candidates(v: TypedValue, cmp: Comparison): TypedValue[] {
         out.push(
           ...[shiftInstant(iso, m), shiftInstant(iso, -m)].map((value) => ({ type: 'datetime' as const, value })),
         );
+        // One second past a tolerance, for values shown with seconds.
+        const tol = tolerance(cmp, 0);
+        if (tol > 0) {
+          const s = Math.floor(tol * 60) + 1;
+          out.push(
+            ...[shiftInstant(iso, s / 60), shiftInstant(iso, -s / 60)].map((value) => ({
+              type: 'datetime' as const,
+              value,
+            })),
+          );
+        }
       }
       out.push({ type: 'datetime', value: shiftInstant(v.value, -60) });
       break;

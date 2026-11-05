@@ -92,9 +92,9 @@ export function shiftDate(iso: string, days: number): string {
   return d.toISOString().slice(0, 10) + iso.slice(10);
 }
 
-/** Shift an instant ("…Z") by whole minutes, keeping its canonical form. */
+/** Shift an instant ("…Z") by minutes (to the millisecond), keeping its canonical form. */
 export function shiftInstant(iso: string, minutes: number): string {
-  return formatInstant(Date.parse(iso) + minutes * 60_000);
+  return formatInstant(Date.parse(iso) + Math.round(minutes * 60_000));
 }
 
 /**

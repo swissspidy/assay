@@ -12,6 +12,7 @@ import type {
   EvidenceSnapshot,
   Json,
   Locator,
+  Money,
   NumberCompare,
   NetworkEntry,
   Normalizer,
@@ -19,13 +20,21 @@ import type {
   StorageRecord,
   Target,
   TextMatch,
+  Tolerance,
   ValueSource,
 } from '../types.ts';
 import { AXIndex, readNodeField, resolveTarget, type INode } from '../runtime/axindex.ts';
 import { matchRequest } from '../runtime/network.ts';
-import { compare, compareNumber, jsonPointer } from '../runtime/compare.ts';
+import { compare, compareNumber, compareValues, jsonPointer, tolerable } from '../runtime/compare.ts';
 import { evaluateAssertion } from '../runtime/evaluate.ts';
-import { applyNormalizers, fromJson, toJson, type TypedValue } from '../runtime/values.ts';
+import {
+  applyNormalizers,
+  describeValue,
+  formatInstant,
+  fromJson,
+  toJson,
+  type TypedValue,
+} from '../runtime/values.ts';
 import { canonical, stripGlobal } from '../text.ts';
 import { clone, editById, nearMiss, replaceText, setPointer, treeChanged } from './edit.ts';
 import { exampleOf, schemaViolations } from './schema.ts';
@@ -412,7 +421,74 @@ function readable(s: EvidenceSnapshot, idx: AXIndex, src: ValueSource, rec?: INo
   }
 }
 
-function valueMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, { kind: 'value' }>, rec?: INode): M[] {
+/**
+ * The snapshot with the value a source reads replaced by `cand`, written in the page's own
+ * format (or as JSON); undefined unless the source's normalizers read it back as exactly
+ * `cand`. `rec`: inside an `each`, the record the source reads in.
+ */
+export function rewriteValue(
+  s: EvidenceSnapshot,
+  idx: AXIndex,
+  src: ValueSource,
+  steps: Normalizer[] | undefined,
+  cand: TypedValue,
+  rec?: INode,
+): EvidenceSnapshot | undefined {
+  const r = readable(s, idx, src, rec);
+  if (!r) return undefined;
+  let typed: TypedValue;
+  try {
+    typed = applyNormalizers(fromJson(r.raw), steps);
+  } catch {
+    return undefined;
+  }
+  let next: Json;
+  if (typeof r.raw === 'string') {
+    const span = readSpan(r.raw, steps);
+    if (span === undefined) return undefined;
+    const rendered = renderLike(span, typed, cand, localeOf(steps), timezoneOf(steps));
+    if (rendered === undefined) return undefined;
+    next = r.raw.replace(span, () => rendered);
+  } else if (cand.type === 'money') {
+    // A bare amount stays a bare amount (its currency comes from the normalizer).
+    next = typeof r.raw === 'number' ? cand.value.amount : { ...cand.value };
+  } else next = cand.value as Json;
+  try {
+    if (key(applyNormalizers(fromJson(next), steps)) !== key(cand)) return undefined;
+  } catch {
+    return undefined;
+  }
+  return r.write(next);
+}
+
+/** The value a source reads, normalized; undefined when it cannot be read. */
+export function readTyped(
+  s: EvidenceSnapshot,
+  idx: AXIndex,
+  src: ValueSource,
+  steps: Normalizer[] | undefined,
+  rec?: INode,
+): TypedValue | undefined {
+  const r = readable(s, idx, src, rec);
+  if (!r) return undefined;
+  try {
+    return applyNormalizers(fromJson(r.raw), steps);
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * `skip`: candidate values that are not near misses (inside a sameAs tolerance); they are
+ * not generated.
+ */
+function valueMutants(
+  s: EvidenceSnapshot,
+  idx: AXIndex,
+  a: Extract<Assertion, { kind: 'value' }>,
+  rec?: INode,
+  skip?: (v: TypedValue) => boolean,
+): M[] {
   const r = readable(s, idx, a.source, rec);
   if (!r) return [];
   let typed: TypedValue;
@@ -438,6 +514,7 @@ function valueMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, {
   const textual = typeof r.raw === 'string';
   const span = textual ? readSpan(r.raw as string, a.normalize) : undefined;
   for (const { value: cand, lenientProbe } of violations(typed, a.expect)) {
+    if (skip?.(cand)) continue;
     let next: Json | undefined;
     if (textual) {
       if (span === undefined) continue;
@@ -447,7 +524,12 @@ function valueMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, {
     } else {
       // A JSON value is written as the candidate itself; the read-back below drops it
       // unless the normalizers turn it back into exactly the candidate.
-      next = cand.type === 'money' ? { ...cand.value } : (cand.value as Json);
+      next =
+        cand.type === 'money'
+          ? typeof r.raw === 'number'
+            ? cand.value.amount
+            : { ...cand.value }
+          : (cand.value as Json);
     }
     // The pipeline must read back exactly the intended near miss.
     try {
@@ -460,7 +542,8 @@ function valueMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, {
   // Wrong item: the value of a sibling (another row, another array element).
   for (const sib of r.siblings.slice(0, 8)) {
     try {
-      if (key(applyNormalizers(fromJson(sib), a.normalize)) === key(typed)) continue;
+      const v = applyNormalizers(fromJson(sib), a.normalize);
+      if (key(v) === key(typed) || skip?.(v)) continue;
     } catch {
       continue;
     }
@@ -522,18 +605,52 @@ function valueMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, {
 function bindingMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, { kind: 'value' }>, rec?: INode): M[] {
   if (!('sameAs' in a.expect)) return [];
   const other = a.expect.sameAs;
-  const read = (src: ValueSource, steps: Normalizer[] | undefined): TypedValue | undefined => {
-    const r = readable(s, idx, src, rec);
-    if (!r) return undefined;
-    try {
-      return applyNormalizers(fromJson(r.raw), steps);
-    } catch {
-      return undefined;
-    }
-  };
-  const left = read(a.source, a.normalize);
-  const right = read(other.source, other.normalize);
+  const left = readTyped(s, idx, a.source, a.normalize, rec);
+  const right = readTyped(s, idx, other.source, other.normalize, rec);
   if (!left || !right) return [];
+  const tol = other.tolerance;
+  if (tol && left.type === right.type && tolerable(left.type)) {
+    // First, each side just past the tolerance (the smallest step its source can show).
+    // Then the near misses of approx with the other side as its value; a candidate the
+    // binding accepts is no near miss and is not generated.
+    const near = (target: TypedValue): Comparison => ({
+      approx: {
+        value: toJson(target) as number | string | Money,
+        ...(tol.abs !== undefined ? { abs: tol.abs } : {}),
+        ...(tol.rel !== undefined ? { rel: tol.rel } : {}),
+      },
+    });
+    const out: M[] = [];
+    const sides = [
+      { id: '', src: a.source, steps: a.normalize, cur: left, base: right, side: 'left' as const },
+      { id: 'sameAs:', src: other.source, steps: other.normalize, cur: right, base: left, side: 'right' as const },
+    ];
+    for (const { id, src, steps, cur, base, side } of sides) {
+      const done = new Set<string>();
+      for (const sign of [1, -1]) {
+        for (const v of pastTolerance(cur, base, tol, side)) {
+          if (Math.sign((scalarOf(v) ?? 0) - (scalarOf(base) ?? 0)) !== sign) continue;
+          const snapshot = rewriteValue(s, idx, src, steps, v, rec);
+          if (!snapshot) continue;
+          done.add(key(v));
+          out.push({
+            id: `${id}tolerance:${sign > 0 ? 'above' : 'below'}`,
+            description: `${describeValue(v)} instead of ${describeValue(cur)}: just past the tolerance of ${describeValue(base)}`,
+            snapshot,
+          });
+          break;
+        }
+      }
+      const within = (v: TypedValue) =>
+        done.has(key(v)) || (side === 'left' ? withinTolerance(v, base, tol) : withinTolerance(base, v, tol));
+      out.push(
+        ...valueMutants(s, idx, { kind: 'value', source: src, normalize: steps, expect: near(base) }, rec, within).map(
+          (m) => ({ ...m, id: `${id}${m.id}` }),
+        ),
+      );
+    }
+    return out;
+  }
   return [
     ...valueMutants(
       s,
@@ -548,6 +665,82 @@ function bindingMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion,
       rec,
     ).map((m) => ({ ...m, id: `sameAs:${m.id}` })),
   ];
+}
+
+/** A tolerable value as one number: its amount, or days (dates) or minutes (date-times) since the epoch. */
+export function scalarOf(v: TypedValue): number | undefined {
+  if (v.type === 'number') return v.value;
+  if (v.type === 'money') return v.value.amount;
+  if (v.type === 'date') return Date.parse(v.value + 'T00:00:00Z') / 86_400_000;
+  if (v.type === 'datetime') return Date.parse(v.value) / 60_000;
+  return undefined;
+}
+
+/** The value of `like`'s type (and currency) at scalar `x`. */
+export function fromScalar(like: TypedValue, x: number): TypedValue | undefined {
+  if (like.type === 'number') return { type: 'number', value: +x.toFixed(6) };
+  if (like.type === 'money') return { type: 'money', value: { ...like.value, amount: +x.toFixed(6) } };
+  if (like.type === 'date')
+    return { type: 'date', value: new Date(Math.round(x) * 86_400_000).toISOString().slice(0, 10) };
+  if (like.type === 'datetime') return { type: 'datetime', value: formatInstant(Math.round(x * 60_000)) };
+  return undefined;
+}
+
+/** Precisions a page may show a value at, in its scalar unit (seconds and minutes for date-times). */
+export const PRECISIONS: Partial<Record<TypedValue['type'], number[]>> = {
+  number: [0.001, 0.01, 0.1, 1],
+  money: [0.001, 0.01, 1],
+  date: [1],
+  datetime: [1 / 60, 1],
+};
+
+/** `x` rounded down (or up) to a multiple of `g`, ignoring floating-point noise. */
+export const snapTo = (x: number, g: number, up: boolean): number => {
+  const q = +(x / g).toFixed(6);
+  return (up ? Math.ceil(q) : Math.floor(q)) * g;
+};
+
+/**
+ * Values just past a binding's tolerance, on both sides: for each precision a page may
+ * show, the first multiple of it beyond the other side's value plus or minus the tolerance.
+ */
+function pastTolerance(cur: TypedValue, base: TypedValue, tol: Tolerance, side: 'left' | 'right'): TypedValue[] {
+  const b = scalarOf(base);
+  if (b === undefined) return [];
+  const width = Math.max(tol.abs ?? 0, (tol.rel ?? 0) * Math.abs(b));
+  const out: TypedValue[] = [];
+  for (const sign of [1, -1])
+    for (const g of PRECISIONS[cur.type] ?? []) {
+      const edge = b + sign * width;
+      let x = snapTo(edge, g, sign > 0);
+      if (Math.abs(x - edge) < 1e-9) x += sign * g;
+      const v = fromScalar(cur, x);
+      if (!v) continue;
+      try {
+        const [p, q] = side === 'left' ? [v, base] : [base, v];
+        if (!compareValues(p, q, tol).ok) out.push(v);
+      } catch {
+        /* not comparable: no near miss */
+      }
+    }
+  return out;
+}
+
+/**
+ * Whether a binding with tolerance `tol` accepts `a` against `b`, and the change is one a
+ * tolerance is meant for: an order-of-magnitude change (more than half the value, for
+ * numbers and money) stays a near miss, so an over-wide tolerance shows up as weak.
+ */
+export function withinTolerance(a: TypedValue, b: TypedValue, tol: Tolerance): boolean {
+  try {
+    if (!compareValues(a, b, tol).ok) return false;
+  } catch {
+    return false;
+  }
+  if ((a.type !== 'number' && a.type !== 'money') || (b.type !== 'number' && b.type !== 'money')) return true;
+  const x = scalarOf(a)!;
+  const y = scalarOf(b)!;
+  return Math.abs(x - y) <= Math.abs(y) / 2;
 }
 
 /**
