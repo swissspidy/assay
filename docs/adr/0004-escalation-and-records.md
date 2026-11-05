@@ -78,7 +78,7 @@ One JSON document per verification:
 ### Human confirmation and locking
 
 - `reviewSheet(checkSet)` renders a Markdown review: each requirement with its quote, and each check with its written description **and** a mechanical description of what it actually tests (`describeAssertion`). A reviewer can then catch a description that doesn't match the check.
-- `lockCheckSet(cs, by)` adds `locked: {by, at, digest}`. The digest covers the content together with `by` and `at`, so any later edit, including to the reviewer or the time, breaks the lock (`isLocked`). The digest is unkeyed: it makes accidental and careless edits evident, but anyone can re-lock an edited file. Where a lock must prove who confirmed what, keep a registry of locked digests outside the file, or sign them.
+- `lockCheckSet(cs, by)` adds `locked: {by, at, digest}`. The digest covers the content together with `by` and `at`, so any later edit, including to the reviewer or the time, breaks the lock (`isLocked`). The digest is unkeyed: it makes accidental and careless edits evident, but anyone can re-lock an edited file. Where a lock must prove who confirmed what, keep a registry of locked digests outside the file, or sign them ([ADR 0013](0013-review-workflow-and-signed-locks.md) adds Ed25519-signed approvals, and locks that name what changed).
 - `requireLocked: true` refuses to run an unlocked or edited set. A proposal must be reviewed and locked under a new version before it replaces the current set.
 
 ## Consequences

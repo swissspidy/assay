@@ -190,15 +190,44 @@ Design details: [ADR 0001](docs/adr/0001-evidence-snapshot-and-check-dsl.md).
    console.log(formatStressReport(stressTest(checkSet, [{ name: 'reference', snapshot }])));
    ```
 
-3. **Review and lock.** `reviewSheet` renders each check in plain language next to what it actually
-   tests. `lockCheckSet` records who confirmed it; any later edit breaks the lock:
+3. **Review and approve.** `reviewSheet` renders each check in plain language next to what it
+   actually tests and the evidence it reads, with warnings and stress findings. Approving locks the
+   set; any later edit breaks the lock (see [Review and signed locks](#review-and-signed-locks)):
 
    ```ts
-   import { lockCheckSet, reviewSheet } from '@swissspidy/assay';
+   import { approveCheckSet, reviewSheet } from '@swissspidy/assay';
 
-   console.log(reviewSheet(checkSet));
-   const locked = lockCheckSet(checkSet, 'reviewer@example.com');
+   console.log(reviewSheet(checkSet, { stress: report }));
+   const locked = approveCheckSet(checkSet, { by: 'reviewer@example.com', key: privateKeyPem });
    ```
+
+## Review and signed locks
+
+A compiled check set is a **proposal** until a reviewer approves it, which locks it, or rejects it
+with a note. The lock records the reviewer, the time, a digest of the set and of each requirement and
+check, the stress report they saw, and optionally an Ed25519 signature. `verify` can require a lock
+signed by a key you trust; an edit after approval breaks the lock and the refusal names what changed
+("changed after approval: check C2 changed"). Locks made before signing existed still verify.
+
+```sh
+assay keygen --out ~/.assay/alice.pem                      # alice.pem (secret) and alice.pub.pem
+assay review checks/order.checks.json --diff old.checks.json --format github  # only what changed
+assay approve checks/order.checks.json --reviewer alice --key ~/.assay/alice.pem --note "R2 checked"
+assay reject checks/order.checks.json --reviewer bob --note "C3 reads free text"
+assay verify checks/order.checks.json snapshot.json --require-signed --trusted-key keys/
+assay validate checks/*.checks.json --require-signed       # CI gate: exit 1 if not approved
+```
+
+```ts
+await verify(checkSet, snapshot, { requireLocked: { trustedKeys: [alicePublicKeyPem] } });
+```
+
+A recompiled set is re-reviewed against the approved version: the diff lists requirements and
+checks added, removed and changed in plain language, and which requirements to read again. Approval
+is not carried over for unchanged parts: a lock covers the whole set, so the reviewer approves it
+again. Keys come from files or `ASSAY_SIGNING_KEY` / `ASSAY_TRUSTED_KEYS` (PEM text). Design, and an
+example GitHub workflow that posts the review sheet on pull requests:
+[ADR 0013](docs/adr/0013-review-workflow-and-signed-locks.md).
 
 ## Escalation and records
 
@@ -244,6 +273,7 @@ assay compile "Add a Blue Mug to my cart." --outcomes "Then the cart contains a 
   --reference runs/added-blue-mug.json --out checks/add-blue-mug.checks.json
 assay validate checks/*.checks.json          # schema, semantic errors, loose-match warnings, lock
 assay review checks/add-blue-mug.checks.json # the review sheet: every check in plain language
+assay approve checks/add-blue-mug.checks.json --reviewer alice --key alice.pem
 assay stress checks/add-blue-mug.checks.json --reference runs/
 assay verify checks/add-blue-mug.checks.json snapshot.json --record assay-records
 assay capture http://localhost:4173/cart --out runs/
@@ -255,10 +285,13 @@ assay capture http://localhost:4173/cart --out runs/
   runs. A refused compile prints its reason and warnings.
 - **`verify <checks> <snapshot>`** prints each requirement and check with its evidence.
   `--escalate` sends abstained requirements to the agentic verifier, `--record <dir>` writes the
-  outcome record, `--require-locked` refuses an unlocked set.
+  outcome record, `--require-locked` refuses a set that is not approved, `--require-signed` one
+  not signed by a `--trusted-key`.
 - **`stress <checks> --reference <path>`** reports over-constrained, fragile and weak checks and
   missed mutants. **`validate <checks...>`** (`--strict` fails on warnings) and **`review <checks>`**
-  need no snapshot.
+  (`--diff <old>`, `--format github|html`) need no snapshot.
+- **`approve`**, **`reject`**, **`unlock`** and **`keygen`**: the
+  [review workflow](#review-and-signed-locks).
 - **`capture <url>`** opens the URL in headless Chromium and writes a snapshot (needs
   `@playwright/test` and `npx playwright install chromium`). It sees what loading the page shows; for
   probes, a baseline or a task run first, capture from a Playwright test.
@@ -351,6 +384,7 @@ asked to remove.
 - [ADR 0008](docs/adr/0008-per-record-checks.md): per-record checks and paired item fields
 - [ADR 0009](docs/adr/0009-real-site-evaluation.md): evaluation on real web apps
 - [ADR 0010](docs/adr/0010-command-line-tool.md): the `assay` command-line tool
+- [ADR 0013](docs/adr/0013-review-workflow-and-signed-locks.md): the review workflow and signed locks
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
 - Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)
 

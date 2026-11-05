@@ -28,7 +28,10 @@ onto existing library calls and add no behaviour of their own:
 | `capture`  | `EvidenceRecorder`, `captureSnapshot` in Chromium |
 
 Locking stays in code (`lockCheckSet`): it records a person's confirmation, which a flag on a
-command would make too easy to give without reading the review sheet.
+command would make too easy to give without reading the review sheet. (Amended by
+[ADR 0013](0013-review-workflow-and-signed-locks.md): `assay approve` signs with the reviewer's
+private key, which makes the confirmation an explicit act; `reject`, `unlock` and `keygen` complete
+the workflow.)
 
 ### Exit statuses
 
