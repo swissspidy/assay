@@ -86,7 +86,7 @@ export function validateCheckSet(input: unknown): ValidationReport {
     const readsNetwork = mine.some(readsNetworkValue);
     const assertsExistence = cs.checks
       .filter((c) => c.requirement === r.id)
-      .some((c) => assertsPresence(c.assert) && !(c.onMissing === 'abstain' && routeOnly(c.assert)));
+      .some((c) => assertsPresence(c.assert, c.onMissing === 'abstain'));
     if (readsNetwork && !assertsExistence)
       warnings.push(
         `requirement ${r.id}: its value checks abstain when no request matches; add a "request" check so a missing request fails`,
@@ -430,9 +430,11 @@ export function routeOnly(a: Assertion): boolean {
  * `a` fails, rather than abstains, when the thing it is about is absent: a non-value
  * assertion, an allOf with such a part, or an anyOf whose every branch is one.
  */
-function assertsPresence(a: Assertion): boolean {
-  if (a.kind === 'allOf') return a.of.some(assertsPresence);
-  if (a.kind === 'anyOf') return a.of.every(assertsPresence);
+function assertsPresence(a: Assertion, routeAbstains = false): boolean {
+  if (a.kind === 'allOf') return a.of.some((b) => assertsPresence(b, routeAbstains));
+  if (a.kind === 'anyOf') return a.of.every((b) => assertsPresence(b, routeAbstains));
+  // With onMissing "abstain", a missing request or a URL elsewhere abstains too.
+  if (routeAbstains && routeLeaf(a)) return false;
   return a.kind !== 'value';
 }
 

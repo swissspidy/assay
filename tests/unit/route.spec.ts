@@ -244,6 +244,15 @@ test.describe('onMissing "abstain": route evidence', () => {
     const marked = validateCheckSet(set([check(adminBranch, 'abstain')]));
     expect(marked.warnings.join('\n')).not.toContain('add a "request" check');
     expect(reviewSheet(set([check(adminBranch, 'abstain')]))).toContain('on missing route evidence: abstain');
+    // A request inside an abstain-marked allOf abstains when missing too: it proves nothing is sent.
+    const both = check({ kind: 'allOf', of: [{ kind: 'request', match: AJAX_ROUTE }, adminBranch] }, 'abstain');
+    expect(validateCheckSet(set([both, { ...check(adminBranch), id: 'value' }])).warnings.join('\n')).toContain(
+      'add a "request" check',
+    );
+    const plainBoth = { ...both, onMissing: undefined };
+    expect(
+      validateCheckSet(set([plainBoth, { ...check(adminBranch), id: 'value' }])).warnings.join('\n'),
+    ).not.toContain('add a "request" check');
   });
 });
 
