@@ -12,6 +12,7 @@ import {
 } from '../types.ts';
 import { parseAriaSnapshot } from './aria.ts';
 import { formObject, multipartBoundary, parseMultipart, type FormValue } from './body.ts';
+import { attachFrames } from './frames.ts';
 import { randomUUID } from 'node:crypto';
 import { ASSAY_VERSION } from '../version.ts';
 
@@ -599,6 +600,11 @@ export interface CaptureOptions {
   probes?: Record<string, Probe>;
   /** Capture cookies and web storage (default true). */
   storage?: boolean;
+  /**
+   * Capture the content of iframes (same-origin and cross-origin) under their `iframe`
+   * nodes, and their text after the page's (default true; ADR 0012).
+   */
+  frames?: boolean;
   /** Cookie names whose values are kept even if httpOnly or credential-like. */
   keepCookies?: string[];
   /** Web storage keys whose values are kept even if they look like credentials. */
@@ -732,7 +738,9 @@ export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Pr
   const baseline = opts.baseline === undefined ? baselines.get(page.context()) : opts.baseline;
   const redacted: string[] = [];
 
-  const ariaYaml = await page.locator('body').ariaSnapshot();
+  const a11y = parseAriaSnapshot(await page.locator('body').ariaSnapshot());
+  const frameTexts: string[] = [];
+  if (opts.frames !== false) await attachFrames(page.mainFrame(), a11y, frameTexts);
   const dom = await readDom(page);
   const storage = await readStorage(page, dom, opts, redacted);
   const probes = await runProbes(opts.probes);
@@ -747,8 +755,9 @@ export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Pr
     schema: SNAPSHOT_SCHEMA,
     capturedAt: new Date().toISOString(),
     page: { url: page.url(), title: dom.title },
-    a11y: parseAriaSnapshot(ariaYaml),
-    text: dom.text,
+    a11y,
+    // Frames' text follows the page's: innerText does not include it.
+    text: [dom.text, ...frameTexts].join('\n'),
     network,
     storage,
     probes,

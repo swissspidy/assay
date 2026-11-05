@@ -19,10 +19,14 @@ export interface AXStates {
 }
 
 export interface AXNode {
-  /** ARIA role, or "text" for a text run. The root is "document". */
+  /**
+   * ARIA role, or "text" for a text run. The root is "document". An `iframe` node holds
+   * the content of its frame as children (ADR 0012).
+   */
   role: string;
   name?: string;
   value?: string;
+  /** A link's target; for an `iframe`, the URL of the document in the frame. */
   url?: string;
   level?: number;
   states?: AXStates;
