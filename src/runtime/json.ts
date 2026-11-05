@@ -1,12 +1,24 @@
 /** JSON helpers shared by the runtime: compiled JSON Schemas and RFC 6901 pointers. */
-import type { ValidateFunction } from 'ajv';
+import { createRequire } from 'node:module';
+import type { Options, ValidateFunction } from 'ajv';
 import { Ajv2019 } from 'ajv/dist/2019.js';
 import type { Json, JsonSchema } from '../types.ts';
 import { canonicalJson } from '../snapshot/digest.ts';
 
 // Draft 2019-09, so minContains and maxContains (which the stress test also mutates) are
 // enforced; draft-07 schemas mean the same there. Ajv's default (draft-07) ignored them.
-const ajv = new Ajv2019({ allErrors: false, strict: false, validateFormats: false });
+const ajv = schemaAjv({ allErrors: false });
+
+/**
+ * An Ajv for the JSON Schemas inside check sets: draft 2019-09, with the draft-07 meta-schema
+ * registered so a schema that declares `"$schema": "http://json-schema.org/draft-07/schema#"`
+ * still compiles.
+ */
+export function schemaAjv(opts: Options = {}): Ajv2019 {
+  const a = new Ajv2019({ strict: false, validateFormats: false, ...opts });
+  a.addMetaSchema(createRequire(import.meta.url)('ajv/dist/refs/json-schema-draft-07.json'));
+  return a;
+}
 const schemaCache = new Map<string, ValidateFunction>();
 
 export function compileSchema(schema: JsonSchema): ValidateFunction {

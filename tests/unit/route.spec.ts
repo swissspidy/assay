@@ -413,6 +413,26 @@ test('JSON Schema comparisons enforce minContains and maxContains (draft 2019-09
   expect(evaluate(set([lines]), snap([], { probes: { comments: comments(REPLY, REPLY) } })).verdict).toBe('fail');
 });
 
+test('a JSON Schema that declares draft-07 still validates and evaluates', () => {
+  const declared: Check = {
+    ...stored,
+    assert: {
+      kind: 'value',
+      source: { from: 'probe', probe: 'comments' },
+      expect: {
+        schema: {
+          $schema: 'http://json-schema.org/draft-07/schema#',
+          type: 'array',
+          contains: { properties: { author: { const: 'admin' } }, required: ['author'] },
+        },
+      },
+    },
+  };
+  expect(validateCheckSet(set([declared]))).toMatchObject({ ok: true, errors: [] });
+  expect(evaluate(set([declared]), snap([])).verdict).toBe('success');
+  expect(evaluate(set([declared]), snap([], { probes: { comments: comments() } })).verdict).toBe('fail');
+});
+
 test.describe('compiler: route evidence', () => {
   const ref = (name: string, network: NetworkEntry[], extra: Partial<EvidenceSnapshot> = {}): Reference => ({
     name,
