@@ -76,6 +76,8 @@ export function evidenceRead(a: Assertion): string[] {
 export function checkSettings(c: Check): string[] {
   const out: string[] = [];
   if (c.onFail) out.push(`on fail: ${c.onFail === 'escalate' ? 'escalate to the verifier' : 'keep the failure'}`);
+  if (c.onMissing === 'abstain') out.push('on missing route evidence: abstain (the run may have done it another way)');
+  else if (c.onMissing === 'fail') out.push('on missing route evidence: fail');
   return out;
 }
 
@@ -155,6 +157,7 @@ const CHECK_FIELDS: Record<string, string> = {
   assert: 'what it tests',
   requirement: 'requirement',
   onFail: 'on fail',
+  onMissing: 'on missing route evidence',
 };
 
 const REQUIREMENT_FIELDS: Record<string, string> = { kind: 'kind', text: 'text', source: 'quote' };

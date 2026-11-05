@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T12:19:19.518Z",
  "turns": {
   "sha256:ed5b0c831ad1600cfd4325e554de32ec8e2cb39221be2cbe85f642bb0e91bb6e": {
    "stop": "tool_use",
@@ -52,12 +51,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:4837d73384b15ec252bf9c3d8cb5a7f230e3bdec878426c6ccaa5faaa1f723ee": {
+  "sha256:9b052a1262a72b3974c899010a474245959fcf7d2ef9dabb8f22e4269529e2c9": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01QW6ycs94DbxJxNebFsb4Cg",
+     "id": "toolu_01J4bx9vLbPnW9Eqv9qGCj76",
      "name": "probes",
      "input": {}
     }
@@ -65,7 +64,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01QW6ycs94DbxJxNebFsb4Cg",
+     "id": "toolu_01J4bx9vLbPnW9Eqv9qGCj76",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -74,26 +73,26 @@
     }
    ],
    "usage": {
-    "inputTokens": 16861,
+    "inputTokens": 19725,
     "outputTokens": 25,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16857
+    "cacheWriteTokens": 19721
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:8ae491cb52917c980e522dee95d6048cec935aa4855196641ef7cae263c4b710": {
+  "sha256:dfbf6adf0337b0711c4c8638370e4ad1b2345f4c4a5d0243641c7a0f71bc2a6a": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_013HKAQWtEWt5pZfB3KaZ9JM",
+     "id": "toolu_01JGorqa3DWAMQRzbkK4c9GU",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "r1-voucher-in-cart",
+        "id": "voucher-applied",
         "requirement": "R1",
-        "description": "The backend cart probe lists the voucher AUTUMN10 among the cart's applied vouchers.",
+        "description": "The cart stored in the backend has the voucher AUTUMN10 applied.",
         "assert": {
          "kind": "value",
          "source": {
@@ -105,7 +104,8 @@
           "schema": {
            "type": "array",
            "contains": {
-            "const": "AUTUMN10"
+            "type": "string",
+            "pattern": "^\\s*AUTUMN10\\s*$"
            }
           }
          }
@@ -119,11 +119,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS8QYKEAgTGAI4AUIIdGhpbmtpbmcSDEJMpJtFwVIp5AOngBoMDBXs/Yv6MMC0ElcqIjDJS5ZX/4btVcs7bYYtpJaDQDzA+Za1XCN1unZT0AQLn19wzMjqO5zlMVSe8GMc+MYqjgavqcQ8H4QGks7n5LkandeRuPtY5rqAb+GJFc8Um2aw+KAut5ON4d5tbS8PfJS0JkIpo0T5UsMTXytFTvjNZQ/k06mo/MyVzv8oNbDirgSo7I3bXcysffWWC9szGydBzmPtbcZ2U0amYIcJDNA2+RpRCTujdH39ibboZbC17ivtQXvj9Rt2zKJ+ynybfYXn+HSrJ19WRiywCy1BHM3hEzGtLI+Q8f84nYrLcMe11hfXn+G4Ka1vz56HOHuYt4D3yggmL4ZvJCOy73DeTncGTbvC4Bx3hzFy841TkNwFdGqhBka+kV/HhEIq7e3ttdGfRlINVaMtmQt7wxUJJEEHvBpwh+U0Rw2DHfw1klEhMy/I5qczvz3K9baxEMIS2y9mwrs31gxk3/odofU6FQWvPC30Txnyxwo9JHC6+/PNwGi39HnyeUeGsvhW768UwzboM7L0mr27hEOAO0q9u992j9v2V73oOcbCW7mtDzLoMZVKCorA7x8VQWg/LM7EGUoR5MbDrfxfdVJZSjvFklXAzdekscXiaK48WiB0zUQp0fk9o6pSf2fL/H6bxkAf2I5TZjZ9QJYia8/mg+uPzy3pzkngo2CT/1qimEutSx9gLRx6EOQlcgKpfUe2sM0UjCSMZiw8qLxFyp/2HR8ozARwFDycvSxALihsZhygd8dS8E2WT+4DIqxNX6wDY3+S0+HBVfV57LflGa8mH/X6huAGr1kZBFzvML/AIhaKCbWiFjNae0o+rurmQVqFgIibq2l5mENKVezir7iuqsO9c65fsuEk8cw0w5EwGzEitgtD2Z+t1Epq6E5RcQ5WxY2QIPDCmHCCSsjx5wUkH+zTKV/2NKDx4E2JesPYtCKnHx8ADFmFJ+tra02UFZ8VaBYYG6pEvWyFvqPWZKOn+v+RFdkHp96w7Dqp/dTBsIN3RwOPnqJryRCewFLW+vOaxn77w9p9eDnl2gHHsjIgrhSt3PlZlqHGRGGB+b7G3Ly/ixEzxSnFbDbcUydwSTwsm4WAMXf2aIT8OcIDZdImSNWsjsud+BgB"
+     "signature": "CAQSgwgKEAgTGAI4AUIIdGhpbmtpbmcSDD2+IwX+IlpnuC8a6xoMBqT8UuW60NKzqZtbIjBTnXXuy4t396n9CkxEwg7tvxg8pd4r09gDVb8plHcssWUgYmfyhizCJAhovXXY+u0qoAeGH097JOap/c6pttyHbGGwXcNYRYItGIjR5ZehAT5upkVfuwYsS8F7388zC8TeEfKsog4ygIxbbVugv3azNrKHWf2YK6AzcR5TvtlgRC8uNA+FlqWDPrH0sbP7HVkW4SsOMBxjVPoX0QIjTaKYmSt3sD/t3Iltt71pEGR+BLW3XChncvYALUNWt7uZgPLx3Z7SAa9/KY8XPcwOloc8xqjU4bxdemziwLaGwxo8YFly5eiHDv9bLnXbV8kWhcHnHH0Y1QMA3fOaIFlDPZ2qCoN7Ey3cF44NT2l3j210io6mtKyRykrz4mG0kK3CmU/FpJvYhfjZXfKZr/X0fQoRPLqbHSeTT/JzZcC3Xb4wLg5nrrM6Oi43uww4P8ZfXEUIz2WlenHL6syuyRYTdtFs64DzNs0TSCI0eqiqcjwQ+CEU5hBImW+hD8yddsweL3PmHiyIXbtHtZx8tvQgwFcFkYL9iPhqyCaj/jWpa7ZPXBhPaVW2CrXDPoSxrfgwg8IzHlfKwPDhKx3j4PoUcTXjk8cJdInUIurvhafaT1qODcGNGtjkO6WYa0lkgvTqmRn6J5KeDvo4nXyHHJdpWySnoMXDsOJweCcu6fpnh5AvIj8kFxqkR6WWgTlMzBIUYqf4XuiyR23cPYvQAYCnV+ovdKJGu6kW9AAEy4Eax/j8qnMfj+fo8U/0AaF6aqqPjxT2JR3kuMzaoyWF4XZIMnf0uhow0X0azvb4NZGWKrefJ2K9xtJBWhGXytf35YHjRl4/L62GiSAplCSNQ/oGzkXz/oxtXHVqyHZzDxLexx0EJkMXbVR76dH+LAQCeHaV6i6bAAbl7hDNGEogCnjLMpvgK7iPC9+3dWKRwGLnLi1ouTKtixC633gErWYyJbN5321iD6YbZU2Pb4Ub37YAA+e1wM2GKTkr/uSvtyXMPDsywfQ5vJy9H4PHlUyh5M4HD5Kguqv0URUMjDuDDcW2U3P9nxLs/fzhFgK7qmao6B480v0pG3IVpzpKuXIPnxxK1L0bxLNRVQcV201YsNWHw0/5g0Cp3EavSDwWJuszejqcjhpSfedjimPmGod4F3JlZglRQJ+/PM8fxBWFLCIV5EH85VFfaU2w37Z525VU50QPReNodoi7jOP8BWMRUz2Q9J2pw8xDrCFSghnM4kmRiiqa7KuAgz5QxWXP/ZxaybGZDFpg2CaK8i3Z4wEfP4FDvLOPRb0w1BOiBmPu4QJeASGskXR4GAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_013HKAQWtEWt5pZfB3KaZ9JM",
+     "id": "toolu_01JGorqa3DWAMQRzbkK4c9GU",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -131,9 +131,9 @@
      "input": {
       "checks": [
        {
-        "id": "r1-voucher-in-cart",
+        "id": "voucher-applied",
         "requirement": "R1",
-        "description": "The backend cart probe lists the voucher AUTUMN10 among the cart's applied vouchers.",
+        "description": "The cart stored in the backend has the voucher AUTUMN10 applied.",
         "assert": {
          "kind": "value",
          "source": {
@@ -145,7 +145,8 @@
           "schema": {
            "type": "array",
            "contains": {
-            "const": "AUTUMN10"
+            "type": "string",
+            "pattern": "^\\s*AUTUMN10\\s*$"
            }
           }
          }
@@ -156,12 +157,13 @@
     }
    ],
    "usage": {
-    "inputTokens": 21026,
-    "outputTokens": 279,
-    "cacheReadTokens": 16857,
+    "inputTokens": 23890,
+    "outputTokens": 345,
+    "cacheReadTokens": 19721,
     "cacheWriteTokens": 4167
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:11:22.202Z"
 }

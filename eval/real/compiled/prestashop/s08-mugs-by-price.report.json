@@ -7,21 +7,21 @@
   ],
   "turns": {
     "rubric": 1,
-    "discovery": 5
+    "discovery": 4
   },
   "usage": {
-    "inputTokens": 99079,
-    "outputTokens": 1916,
-    "cacheReadTokens": 76945,
-    "cacheWriteTokens": 22118
+    "inputTokens": 97525,
+    "outputTokens": 2195,
+    "cacheReadTokens": 68439,
+    "cacheWriteTokens": 29072
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "Show me the mugs in the shop",
       "checks": [
-        "R1-search-mugs-url",
-        "R1-mug-products-listed"
+        "r1-mug-search-view",
+        "r1-mugs-listed"
       ],
       "channels": [
         "url",
@@ -33,8 +33,7 @@
       "requirement": "R2",
       "quote": "cheapest first",
       "checks": [
-        "R2-order-price-asc-url",
-        "R2-sort-control"
+        "r2-sorted-price-asc"
       ],
       "channels": [
         "url",
@@ -44,8 +43,8 @@
     }
   ],
   "warnings": [
-    "R1-mug-products-listed still passes when its own evidence is broken (one matching item is missing (partial completion) [reference/R1-mug-products-listed:contains:one-fewer]; heading \"Search results\" is there instead [reference/R1-mug-products-listed:contains:wrong-item]).",
-    "Near-miss runs accepted as success: one matching item is missing (partial completion) [reference/R1-mug-products-listed:contains:one-fewer]; heading \"Search results\" is there instead [reference/R1-mug-products-listed:contains:wrong-item].",
+    "r1-mugs-listed still passes when its own evidence is broken (one matching item is missing (partial completion) [reference/r1-mugs-listed:allOf[0]:records:one-fewer]).",
+    "Near-miss runs accepted as success: one matching item is missing (partial completion) [reference/r1-mugs-listed:allOf[0]:records:one-fewer].",
     "Advisory: the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable [reference/claims-only]"
   ],
   "references": [

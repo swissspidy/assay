@@ -1,4 +1,4 @@
-import type { NetworkEntry, RequestMatch, UrlMatch } from '../types.ts';
+import type { NetworkEntry, PageMatch, RequestMatch, UrlMatch } from '../types.ts';
 import { matchText, describeTextMatch } from '../text.ts';
 import { compareNumber, compileSchema, describeNumberCompare } from './compare.ts';
 
@@ -48,6 +48,31 @@ export function matchUrl(m: UrlMatch, href: string): boolean {
   return true;
 }
 
+/** A path segment that names one record (an id), not a screen: `12`, a hex digest, a UUID. */
+const ID_SEGMENT = /^(?:\d+|[0-9a-f]{8,}|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i;
+
+/**
+ * The route a url match names, for `onMissing: "abstain"` (ADR 0011): its origin and the shape
+ * of its path, with record ids as wildcards (`/repo/issues/5` names the issue page, whichever
+ * issue). `regex` and `query` are outcome, never route: a match without a path has no route,
+ * so it is always decided. Returns whether the page URL is on that route.
+ */
+export function onUrlRoute(m: UrlMatch, href: string): boolean {
+  if (m.path === undefined) return true;
+  let u: URL;
+  try {
+    u = new URL(href);
+  } catch {
+    return false;
+  }
+  if (m.origin !== undefined && u.origin !== new URL(m.origin).origin) return false;
+  const shape = m.path
+    .split('/')
+    .map((seg) => (ID_SEGMENT.test(seg) ? '*' : seg))
+    .join('/');
+  return matchPath(shape, u.pathname);
+}
+
 export function describeUrlMatch(m: UrlMatch): string {
   const parts: string[] = [];
   if (m.origin) parts.push(m.origin);
@@ -58,7 +83,31 @@ export function describeUrlMatch(m: UrlMatch): string {
   return parts.join(', ') || 'any URL';
 }
 
+/** Whether an open page (its URL and title) is the one a `page` assertion selects. */
+export function matchPage(m: PageMatch, page: { url: string; title: string }): boolean {
+  if (m.url && !matchUrl(m.url, page.url)) return false;
+  return m.title === undefined || matchText(m.title, page.title);
+}
+
+export function describePageMatch(m: PageMatch): string {
+  const parts: string[] = [];
+  if (m.url) parts.push(`URL ${describeUrlMatch(m.url)}`);
+  if (m.title !== undefined) parts.push(`title ${describeTextMatch(m.title)}`);
+  return parts.join(', ');
+}
+
 export type MatchResult = 'yes' | 'no' | 'unknown';
+
+/**
+ * Whether the request or the response body of an entry was cut. Entries that say which
+ * (requestBodyTruncated, responseBodyTruncated) are read that way; in older ones
+ * bodyTruncated covers both.
+ */
+export function truncated(e: NetworkEntry, which: 'request' | 'response'): boolean {
+  if (e.requestBodyTruncated || e.responseBodyTruncated)
+    return !!(which === 'request' ? e.requestBodyTruncated : e.responseBodyTruncated);
+  return !!e.bodyTruncated;
+}
 
 /**
  * Three-valued request matching: 'unknown' when the entry could match but the
@@ -78,15 +127,18 @@ export function matchRequest(m: RequestMatch, e: NetworkEntry): MatchResult {
     } else if (typeof m.status === 'number' ? e.status !== m.status : !compareNumber(e.status, m.status)) return 'no';
   }
   if (m.requestBody !== undefined) {
-    if (e.requestBody === undefined) return 'no';
-    if (e.bodyTruncated) unknown = true;
+    if (e.requestBody === undefined) {
+      // A body was sent but could not be read (a multipart upload the page tap did not see).
+      if (!e.requestBodyUnavailable) return 'no';
+      unknown = true;
+    } else if (truncated(e, 'request')) unknown = true;
     else if (!compileSchema(m.requestBody)(e.requestBody)) return 'no';
   }
   if (m.responseBody !== undefined) {
     if (e.responseBody === undefined) {
       if (e.bodyUnavailable || (e.status === null && !e.failure)) unknown = true;
       else return 'no';
-    } else if (e.bodyTruncated) unknown = true;
+    } else if (truncated(e, 'response')) unknown = true;
     else if (!compileSchema(m.responseBody)(e.responseBody)) return 'no';
   }
   return unknown ? 'unknown' : 'yes';

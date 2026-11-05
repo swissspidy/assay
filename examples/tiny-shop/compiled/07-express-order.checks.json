@@ -55,9 +55,9 @@
   ],
   "checks": [
     {
-      "id": "r1-order-request",
+      "id": "order-created-request",
       "requirement": "R1",
-      "description": "A POST to /api/orders succeeded with a 2xx status.",
+      "description": "A POST to /api/orders succeeded (2xx), creating an order.",
       "assert": {
         "kind": "request",
         "match": {
@@ -69,46 +69,29 @@
             "gte": 200,
             "lt": 300
           }
-        },
-        "count": {
-          "gte": 1
         }
       }
     },
     {
-      "id": "r1-order-stored",
+      "id": "order-placed-probe",
       "requirement": "R1",
-      "description": "The backend's latest order exists with status 'placed'.",
+      "description": "The backend's latest order has status 'placed'.",
       "assert": {
         "kind": "value",
         "source": {
           "from": "probe",
-          "probe": "latestOrder"
+          "probe": "latestOrder",
+          "pointer": "/status"
         },
         "expect": {
-          "schema": {
-            "type": "object",
-            "required": [
-              "id",
-              "status"
-            ],
-            "properties": {
-              "id": {
-                "type": "string",
-                "minLength": 1
-              },
-              "status": {
-                "const": "placed"
-              }
-            }
-          }
+          "equals": "placed"
         }
       }
     },
     {
-      "id": "r2-express",
+      "id": "order-express",
       "requirement": "R2",
-      "description": "The backend's latest order has shipping set to 'express'.",
+      "description": "The latest order stored by the backend uses express shipping.",
       "assert": {
         "kind": "value",
         "source": {
@@ -122,9 +105,9 @@
       }
     },
     {
-      "id": "r3-url",
+      "id": "confirmation-url",
       "requirement": "R3",
-      "description": "The browser is on the order page of the order the backend stored.",
+      "description": "The page URL is the confirmation page of the latest order (/orders/<id>).",
       "assert": {
         "kind": "value",
         "source": {
@@ -150,9 +133,9 @@
       }
     },
     {
-      "id": "r3-heading",
+      "id": "confirmation-heading",
       "requirement": "R3",
-      "description": "The page shows an 'Order confirmed' heading in main.",
+      "description": "The main area shows an 'Order confirmed' heading.",
       "assert": {
         "kind": "contains",
         "scope": {
@@ -168,9 +151,9 @@
       }
     },
     {
-      "id": "r3-order-number",
+      "id": "confirmation-order-number",
       "requirement": "R3",
-      "description": "The order summary shows the order number of the stored order.",
+      "description": "The order summary shows the order number of the latest order.",
       "assert": {
         "kind": "value",
         "source": {
@@ -194,9 +177,9 @@
       }
     },
     {
-      "id": "r4-items-match-cart",
+      "id": "order-items-match-cart",
       "requirement": "R4",
-      "description": "The order's items equal the cart's items before the task (whole items, any order).",
+      "description": "The latest order's items are exactly the items that were in the cart before the task.",
       "assert": {
         "kind": "value",
         "source": {
@@ -227,9 +210,9 @@
       }
     },
     {
-      "id": "r5-name",
+      "id": "order-name",
       "requirement": "R5",
-      "description": "The backend's latest order is in the name of Ada Lovelace.",
+      "description": "The latest order is in the name of Ada Lovelace.",
       "assert": {
         "kind": "value",
         "source": {
@@ -238,8 +221,7 @@
           "pointer": "/name"
         },
         "normalize": [
-          "trim",
-          "collapseWhitespace"
+          "trim"
         ],
         "expect": {
           "equals": "Ada Lovelace"
@@ -253,6 +235,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T11:30:10.612Z"
+    "at": "2026-11-05T21:06:46.290Z"
   }
 }

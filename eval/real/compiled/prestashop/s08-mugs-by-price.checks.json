@@ -27,9 +27,9 @@
   ],
   "checks": [
     {
-      "id": "R1-search-mugs-url",
+      "id": "r1-mug-search-view",
       "requirement": "R1",
-      "description": "The current page is the shop search results for the query 'mug' or 'mugs'.",
+      "description": "The current page is the shop's search results for 'mug' (or 'mugs').",
       "assert": {
         "kind": "url",
         "match": {
@@ -44,56 +44,114 @@
       }
     },
     {
-      "id": "R1-mug-products-listed",
+      "id": "r1-mugs-listed",
       "requirement": "R1",
-      "description": "The main content lists at least one product whose title contains 'mug'.",
+      "description": "The listed products are all mugs and include the four mug products of the shop.",
       "assert": {
-        "kind": "contains",
-        "scope": {
-          "role": "main"
-        },
-        "match": {
-          "role": "heading",
-          "level": 2,
-          "name": {
-            "contains": "mug",
-            "ignoreCase": true
-          }
-        }
-      }
-    },
-    {
-      "id": "R2-order-price-asc-url",
-      "requirement": "R2",
-      "description": "The page URL has the sort order set to price ascending.",
-      "assert": {
-        "kind": "url",
-        "match": {
-          "query": {
-            "order": {
-              "equals": "product.price.asc"
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "each",
+            "scope": {
+              "role": "main"
+            },
+            "match": {
+              "role": "article"
+            },
+            "count": {
+              "gte": 4
+            },
+            "assert": {
+              "kind": "contains",
+              "match": {
+                "role": "heading",
+                "level": 2,
+                "name": {
+                  "contains": "mug",
+                  "ignoreCase": true
+                }
+              }
+            }
+          },
+          {
+            "kind": "contains",
+            "scope": {
+              "role": "main"
+            },
+            "match": {
+              "role": "heading",
+              "level": 2,
+              "name": "Mug The best is yet to come"
+            }
+          },
+          {
+            "kind": "contains",
+            "scope": {
+              "role": "main"
+            },
+            "match": {
+              "role": "heading",
+              "level": 2,
+              "name": "Mug The adventure begins"
+            }
+          },
+          {
+            "kind": "contains",
+            "scope": {
+              "role": "main"
+            },
+            "match": {
+              "role": "heading",
+              "level": 2,
+              "name": "Mug Today is a good day"
+            }
+          },
+          {
+            "kind": "contains",
+            "scope": {
+              "role": "main"
+            },
+            "match": {
+              "role": "heading",
+              "level": 2,
+              "name": "Customizable mug"
             }
           }
-        }
+        ]
       }
     },
     {
-      "id": "R2-sort-control",
+      "id": "r2-sorted-price-asc",
       "requirement": "R2",
-      "description": "The sort-by control shows 'Price, low to high'.",
+      "description": "The results are sorted by price ascending: URL order=product.price.asc and the sort control reads 'Price, low to high'.",
       "assert": {
-        "kind": "state",
-        "target": {
-          "role": "button",
-          "name": {
-            "contains": "Sort by"
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "url",
+            "match": {
+              "query": {
+                "order": {
+                  "equals": "product.price.asc"
+                }
+              }
+            }
+          },
+          {
+            "kind": "state",
+            "target": {
+              "role": "button",
+              "name": {
+                "contains": "Sort by"
+              }
+            },
+            "expect": {
+              "text": {
+                "contains": "Price, low to high"
+              }
+            }
           }
-        },
-        "expect": {
-          "text": {
-            "contains": "Price, low to high"
-          }
-        }
+        ]
       }
     }
   ],
@@ -103,6 +161,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:18:46.788Z"
+    "at": "2026-11-05T21:10:46.253Z"
   }
 }

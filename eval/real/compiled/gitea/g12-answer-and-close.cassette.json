@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T12:20:10.976Z",
  "turns": {
   "sha256:a34a50a16ddabafd6256c8de22c3de73f89e459460778d0c3e4c7caf93d2b870": {
    "stop": "tool_use",
@@ -66,12 +65,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:db9bc9c56b0efca1d535843efc6d039d0a2b973dec6aafff966179d49b7d365e": {
+  "sha256:f0fe96e1660a87be55a0de7c8ad9a6c5566ba75dc0fa05c2168b3042ad05caa9": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01RRUKGXvzi2pH22nWJEJ17p",
+     "id": "toolu_01Tou8LH8wsSasaH75wndctq",
      "name": "probes",
      "input": {}
     }
@@ -79,7 +78,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01RRUKGXvzi2pH22nWJEJ17p",
+     "id": "toolu_01Tou8LH8wsSasaH75wndctq",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -88,91 +87,59 @@
     }
    ],
    "usage": {
-    "inputTokens": 17021,
+    "inputTokens": 19885,
     "outputTokens": 25,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 17017
+    "cacheWriteTokens": 19881
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:95bde45ab84dc0fb38605574b9f60624ba99f072a2d59f64f102e71981b8a5a0": {
+  "sha256:d531eeddf2d245689cdc68dea916be866b9819a44a2a1f4388ae7e1a2fbe901c": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_014mAKWo935nrwEQc9kXbqAj",
+     "id": "toolu_013woS2xfed2qYfgRJSFYinv",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
         "id": "R1-comment-posted",
         "requirement": "R1",
-        "description": "The backend holds a comment on issue #14 (the API token question) whose body is 'Go to Settings > Applications to regenerate it.'",
+        "description": "The backend stores a comment on acme/webapp issue #14 with body 'Go to Settings > Applications to regenerate it.'",
         "assert": {
-         "kind": "allOf",
-         "of": [
-          {
-           "kind": "value",
-           "source": {
-            "from": "probe",
-            "probe": "issues"
-           },
-           "expect": {
-            "schema": {
-             "type": "array",
-             "contains": {
-              "type": "object",
-              "properties": {
-               "number": {
-                "const": 14
-               },
-               "title": {
-                "const": "How do I reset my API token?"
-               }
-              },
-              "required": [
-               "number",
-               "title"
-              ]
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issueComments"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "issue": {
+              "const": 14
+             },
+             "body": {
+              "type": "string",
+              "pattern": "^\\s*Go to Settings > Applications to regenerate it[.!]?\\s*$"
              }
-            }
-           }
-          },
-          {
-           "kind": "value",
-           "source": {
-            "from": "probe",
-            "probe": "issueComments"
-           },
-           "expect": {
-            "schema": {
-             "type": "array",
-             "contains": {
-              "type": "object",
-              "properties": {
-               "issue": {
-                "const": 14
-               },
-               "body": {
-                "type": "string",
-                "pattern": "^\\s*Go to Settings > Applications to regenerate it[.!]?\\s*$"
-               }
-              },
-              "required": [
-               "issue",
-               "body"
-              ]
-             }
-            }
+            },
+            "required": [
+             "issue",
+             "body"
+            ]
            }
           }
-         ]
+         }
         }
        },
        {
         "id": "R2-issue-closed",
         "requirement": "R2",
-        "description": "The issue 'How do I reset my API token?' (#14) is in state closed in the backend.",
+        "description": "Issue #14 'How do I reset my API token?' is in state closed in the backend.",
         "assert": {
          "kind": "value",
          "source": {
@@ -213,11 +180,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS6wkKEAgTGAI4AUIIdGhpbmtpbmcSDOCOEzYJ826ZHSEYixoMjtUmNoRmyLwahorCIjCcQZzUTI408nBJ+mYH9nA7sfoeBcel2LJMNWRltsTL43p/EArENXRcK62GqtdoazMqiAlEv7BBvd2TzVuSL2N/KefyoAkcreVtBIRzXDOAJY1/EDhdS1CUmPe+5CmiHkHblilSwdmnxsjOQ6pJRIniSglpTkjF+JQDg5QM54KehhItbhVO3ML49VRPHZ5bmumcc0RBiQXN7c11zLHJghdrxYXIySWB2Z4omeCX8G4JcA8M1afeOROp8Cc16MZhgagn156LwDLaRibSjEkYqCcIRlpWCptA39bTn2CkXgrCFgVyc6rHFU3LWPMsZdfH+0CirA64VrXIHPIFw9VJ+2O10qbLbq0b/XY0qtoL+Xr44HXfoAY5XncmxyXpVw96tiyFDgxeAnjU/Jac9qFtHCCfPRjO+/wudT7YBr7RyBp7r78CPyePf1QrnqMeVb81dKgwlihi6SridPQ0zpZIS1RUtbK76qfjEmni/8x6r3OcGjyUd91l1uN8cm4lr5H/UoTq/UnV90Jjs6DVxjqlZUbPF29JJah0apLcneyrn/EnV+JteJLuCgr3+O4uPjM9DVa3HITeLlCIYVSufFFnk5+gWrwO4/W/XKgoH2orPZjmduKeO4mWQCn/PFr0iMs4eOjK+nT6u9X2svPFjBxOPYuoTrSuPR/AIujue+tJ9QGqMIH+F4uUuQXa+13qiS1LRB3w7MmsZHEYSNW+B5tfRMujtQ/lz4WFMykLXAugL11HDmJTMeiQ4gU7naAYxMoeMh9cbkHl0JWtypwFZgwMWeITxNsGwLV5cqklSIc8kd7f1w+RDowFcyFm5HRSQRqspKmX4H76YAiUGCpXvB5Chv+YPSYENf+0C0l/iaXxOSemf/ef2y2aKYc9K4cOoMMB5rE3ivapHUPzlYEishcKqW3U3JmiWvmx1fkde8z/aaEF+GcQW/kbgBsynU262Sx1MZn7hgupxJaUBHBuLlZf+82NNblOgVUR+Z6p1zSnNDa1YTahRhbKhybfqzvJGtBhSKw3Ecrlp4LOcolP0y5G7GVLKsaQy6uZtL2iZXbs+ZNdgprW4uCw3RUBWIpRd0j7hzmeEel/bJrGfCIPE/cwdqfOs+dIRbKmnncT0G1TTUSN+F/b8HsoTDynW+kNq8PlFXzBqJlvaTcgh3m+fTWMKiHuiHs+utFmHVwJ2gZFGYfbieq6jmFxgN/IIol9R5oh0yOcEloPc3oV/VOX9L+DzQTWy9JuRL6vjWOV9F/J9NwvSZ2DLMD1EDLi+0PSAQC0Fk+9n7yEV4C7ZUk4B8ygcyOoK+AjB3lKwiU/kbuc3NFnRbp+cd0FbhFr7R2zOl2g5+XiFfhdQ0/nJJY1P6NwxnpbFYqff9TCsgnZC0duIBGxIKk3pbV5UnpqRCn+S4A4sJ+EJIuBRc7yPc3/aY5uWq+2FKNv1TXgqSZvJu8D/z1YFx+Q79V15rYnD/GQqjZadM1+CAf4CNQZrhNeqMZHRynrZ77JxR9G4sMVmr4tGLFygBRea+R3Y/33vcOe9tMh4QbPKzAJ+w9xTi5W+L2jEjMdRK2Y+Z7iLIscZbrURa6pi9Mgv5mz/ouHfJ4P38dzR33B3Nh7EOXstf9smBgB"
+     "signature": "CAQSvAcKEAgTGAI4AUIIdGhpbmtpbmcSDNd873+Y3te2/GqMlRoMdtuyjMhO40yi05+AIjBavFfzisyhJWBZBHds/+DCvEpYKymJQSQDFgdIPbarg8ULe0JOqmB5t8P2rWbWRuIq2QaK+VGK0Sl4Gp2IlHDQgonEMBhJNBsHj4K0Ffso3M0P67XHUVvu+7e8KSDTElrMegcjk4ejbyVKm37zi4zpkwjMTsQepg/NK86Lck5dJqRHLqhK4A1fwAL/SHp5CDnNBb2vvy0yTX2xoA/U+EH8WzOsXR/S3IItk/RF+Yk3Rm8PO6BjLN/hNR+gCoIlyNJ7JDTHlKySmWps8J3l4RxYysKSdjq5447+jgJG1njPQEOiHH7/QC3JD4wamiftibg7cwOXPtQnj0nyd/Lgs8QMQZUMyj73cd3zWeX++PYwGdZVuhmYb7Yp4VpU8JHFw+RxHdNjY7SpTC2jDa39cnYh393czYhq4OnxRp9MtbUeywN1skCGXPGiop6z6OLmPA3lNq5S1q9Xkcz3t9Jk4WtqT8UdcH3jK8Mqji1NkRnbRvuYoUG3OooqPQ5GPkSo05U0nU5pPF7i0uSG/fRAt5QFYTKv00yIPinswtUM9djCyDelwqgdZz7s+rMJhQak1I3e6vfauWAvspW7kTHhQiCPWJBFqLqiAEWURLr+unVKAJbLWU0AtdfSRXe+M1IpomcQfZvVRi7PDYoqvNVM9+6KsN1dWnpfF4KsvrfY3BkeVrBU8bifQTy3nyJ6RHsvpLQkUhtOjlB1xT5KsRtIfh16EU7Ukwuysl8HOMdpyNAa8kS5/ITN8whQNQvHSH2ks/BtowgOCM8JycQ0n72JaAMyyGSdMiZcL1n8WwzArppKBiq8pI/rlyI5PWw8ewvU8oTuzSfFhfC0+m/p9UlPjz05Rgyn+mNzJctNEYSX5InATefzaqiZeF3ZfJVT823+hJjyHHU9AkjbWm/fLx+BrV8MTB3aSR4BHERMezuMZURkw5j4GawFe469fUU+92cABU0dLo2YH7bWP+VPcMjs+f7+pflpucy6nuFDsMFGJjyuMW62JPa4Lsr3PrIKwIVIl0NaPpbPJ5iK3Wn3XxPQtxIy9vtpK6qH5Q5eWJJsnmIBo5u6/KR1G80sgONjyxCr5b6RgPfp7aWVb+hcyb79rV7x6wVdt3Y5Zdb7RTJ192q726MOQy2mQAC5IMHLeyilkHrlEofIojP6KoeolHqKjm/tg54kIFVOqZhmR6PcjPJoENh5nSpzcJUdBpYzqxgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_014mAKWo935nrwEQc9kXbqAj",
+     "id": "toolu_013woS2xfed2qYfgRJSFYinv",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -227,72 +194,40 @@
        {
         "id": "R1-comment-posted",
         "requirement": "R1",
-        "description": "The backend holds a comment on issue #14 (the API token question) whose body is 'Go to Settings > Applications to regenerate it.'",
+        "description": "The backend stores a comment on acme/webapp issue #14 with body 'Go to Settings > Applications to regenerate it.'",
         "assert": {
-         "kind": "allOf",
-         "of": [
-          {
-           "kind": "value",
-           "source": {
-            "from": "probe",
-            "probe": "issues"
-           },
-           "expect": {
-            "schema": {
-             "type": "array",
-             "contains": {
-              "type": "object",
-              "properties": {
-               "number": {
-                "const": 14
-               },
-               "title": {
-                "const": "How do I reset my API token?"
-               }
-              },
-              "required": [
-               "number",
-               "title"
-              ]
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issueComments"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "issue": {
+              "const": 14
+             },
+             "body": {
+              "type": "string",
+              "pattern": "^\\s*Go to Settings > Applications to regenerate it[.!]?\\s*$"
              }
-            }
-           }
-          },
-          {
-           "kind": "value",
-           "source": {
-            "from": "probe",
-            "probe": "issueComments"
-           },
-           "expect": {
-            "schema": {
-             "type": "array",
-             "contains": {
-              "type": "object",
-              "properties": {
-               "issue": {
-                "const": 14
-               },
-               "body": {
-                "type": "string",
-                "pattern": "^\\s*Go to Settings > Applications to regenerate it[.!]?\\s*$"
-               }
-              },
-              "required": [
-               "issue",
-               "body"
-              ]
-             }
-            }
+            },
+            "required": [
+             "issue",
+             "body"
+            ]
            }
           }
-         ]
+         }
         }
        },
        {
         "id": "R2-issue-closed",
         "requirement": "R2",
-        "description": "The issue 'How do I reset my API token?' (#14) is in state closed in the backend.",
+        "description": "Issue #14 'How do I reset my API token?' is in state closed in the backend.",
         "assert": {
          "kind": "value",
          "source": {
@@ -330,12 +265,13 @@
     }
    ],
    "usage": {
-    "inputTokens": 20331,
-    "outputTokens": 753,
-    "cacheReadTokens": 17017,
+    "inputTokens": 23195,
+    "outputTokens": 553,
+    "cacheReadTokens": 19881,
     "cacheWriteTokens": 3312
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:05:06.826Z"
 }

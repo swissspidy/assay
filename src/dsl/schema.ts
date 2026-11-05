@@ -167,6 +167,7 @@ export const checkSetSchema = {
         description: { type: 'string', minLength: 1 },
         assert: { $ref: '#/definitions/assertion' },
         onFail: { enum: ['escalate', 'keep'] },
+        onMissing: { enum: ['fail', 'abstain'] },
       },
     },
     locator: {
@@ -216,6 +217,15 @@ export const checkSetSchema = {
           type: 'object',
           additionalProperties: { oneOf: [{ type: 'null' }, { $ref: '#/definitions/textMatch' }] },
         },
+      },
+    },
+    pageMatch: {
+      type: 'object',
+      additionalProperties: false,
+      minProperties: 1,
+      properties: {
+        url: { $ref: '#/definitions/urlMatch' },
+        title: { $ref: '#/definitions/textMatch' },
       },
     },
     jsonSchema: { type: ['object', 'boolean'] },
@@ -386,6 +396,7 @@ export const checkSetSchema = {
               uniqueItems: true,
               items: { type: 'string', pattern: '^/' },
             },
+            flatten: { type: 'boolean' },
           },
         },
       ],
@@ -532,6 +543,16 @@ export const checkSetSchema = {
             witness: { $ref: '#/definitions/locator' },
             match: { $ref: '#/definitions/locator' },
             count: { $ref: '#/definitions/numberCompare' },
+            assert: { $ref: '#/definitions/assertion' },
+          },
+        },
+        {
+          type: 'object',
+          additionalProperties: false,
+          required: ['kind', 'match', 'assert'],
+          properties: {
+            kind: { const: 'page' },
+            match: { $ref: '#/definitions/pageMatch' },
             assert: { $ref: '#/definitions/assertion' },
           },
         },

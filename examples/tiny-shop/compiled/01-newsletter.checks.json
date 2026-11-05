@@ -30,7 +30,7 @@
     {
       "id": "r1-probe-newsletter",
       "requirement": "R1",
-      "description": "The backend settings probe stores newsletter = true.",
+      "description": "The backend settings store newsletter = true.",
       "assert": {
         "kind": "value",
         "source": {
@@ -40,39 +40,6 @@
         },
         "expect": {
           "equals": true
-        }
-      }
-    },
-    {
-      "id": "r1-put-request",
-      "requirement": "R1",
-      "description": "A successful PUT/PATCH/POST to /api/settings sent newsletter = true.",
-      "assert": {
-        "kind": "request",
-        "match": {
-          "method": [
-            "PUT",
-            "PATCH",
-            "POST"
-          ],
-          "url": {
-            "path": "/api/settings"
-          },
-          "status": {
-            "gte": 200,
-            "lt": 300
-          },
-          "requestBody": {
-            "type": "object",
-            "properties": {
-              "newsletter": {
-                "const": true
-              }
-            },
-            "required": [
-              "newsletter"
-            ]
-          }
         }
       }
     },
@@ -120,6 +87,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T11:28:48.140Z"
+    "at": "2026-11-05T21:07:58.915Z"
   }
 }

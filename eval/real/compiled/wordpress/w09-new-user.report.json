@@ -10,17 +10,17 @@
     "discovery": 2
   },
   "usage": {
-    "inputTokens": 38368,
-    "outputTokens": 1042,
-    "cacheReadTokens": 16914,
-    "cacheWriteTokens": 21444
+    "inputTokens": 44096,
+    "outputTokens": 1111,
+    "cacheReadTokens": 19778,
+    "cacheWriteTokens": 24308
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "Add a new user with the username jordan",
       "checks": [
-        "r1-user-jordan-exists"
+        "r1-user-jordan-created"
       ],
       "channels": [
         "probe"
@@ -50,7 +50,9 @@
       "trust": "structured"
     }
   ],
-  "warnings": [],
+  "warnings": [
+    "check r1-user-jordan-created.allOf[1]: reads only the state before the task, which does not depend on what the agent did; compare it with the state after (sameAs)"
+  ],
   "references": [
     {
       "name": "reference",

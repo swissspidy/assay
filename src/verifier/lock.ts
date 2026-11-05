@@ -21,7 +21,7 @@ import { assertValidCheckSet } from '../dsl/validate.ts';
 import { describeTextMatch } from '../text.ts';
 import { describeLocator } from '../runtime/axindex.ts';
 import { describeNumberCompare } from '../runtime/compare.ts';
-import { describeRequestMatch, describeUrlMatch } from '../runtime/network.ts';
+import { describePageMatch, describeRequestMatch, describeUrlMatch } from '../runtime/network.ts';
 import {
   keyId,
   signDigest,
@@ -408,6 +408,8 @@ export function describeAssertion(a: Assertion, inRecord = false): string {
       const record = a.match.role === 'term' ? `${loc(a.match)} (with its definitions)` : loc(a.match);
       return `in ${where(a.scope)}, ${describeNumberCompare(a.count ?? { gte: 1 })} ${record}${a.witness ? ` (witness: ${loc(a.witness)} must exist once)` : ''}, and inside each: ${describeAssertion(a.assert, true)}`;
     }
+    case 'page':
+      return `on the one open page (tab or popup) with ${describePageMatch(a.match)}: ${describeAssertion(a.assert)}`;
     case 'allOf':
       return `all of: ${a.of.map((b) => describeAssertion(b, inRecord)).join('; ')}`;
     case 'anyOf':

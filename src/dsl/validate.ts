@@ -1,4 +1,5 @@
 import { Ajv } from 'ajv';
+import { schemaAjv } from '../runtime/json.ts';
 import type {
   Assertion,
   CheckSet,
@@ -21,7 +22,7 @@ import { checkSetSchema } from './schema.ts';
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 const validateShape = ajv.compile(checkSetSchema);
-const schemaCompiler = new Ajv({ strict: false, validateFormats: false });
+const schemaCompiler = schemaAjv();
 
 export interface ValidationReport {
   ok: boolean;
@@ -75,11 +76,18 @@ export function validateCheckSet(input: unknown): ValidationReport {
     if (!reqIds.has(c.requirement)) errors.push(`${at}: unknown requirement ${c.requirement}`);
     covered.add(c.requirement);
     walkAssertion(c.assert, at, errors, warnings, false);
+    if (c.onMissing === 'abstain' && !readsRoute(c.assert))
+      warnings.push(
+        `${at}: onMissing "abstain" has no effect: it applies to request and url assertions and to values read from requests or responses, and this check has none`,
+      );
   }
   for (const r of cs.requirements) {
-    const mine = cs.checks.filter((c) => c.requirement === r.id).map((c) => c.assert);
+    // Route evidence marked onMissing "abstain" is meant to abstain when the run went another way.
+    const mine = cs.checks.filter((c) => c.requirement === r.id && c.onMissing !== 'abstain').map((c) => c.assert);
     const readsNetwork = mine.some(readsNetworkValue);
-    const assertsExistence = mine.some(assertsPresence);
+    const assertsExistence = cs.checks
+      .filter((c) => c.requirement === r.id)
+      .some((c) => assertsPresence(c.assert, c.onMissing === 'abstain'));
     if (readsNetwork && !assertsExistence)
       warnings.push(
         `requirement ${r.id}: its value checks abstain when no request matches; add a "request" check so a missing request fails`,
@@ -219,6 +227,10 @@ function looseAssertion(a: Assertion, at: string, out: string[], inTerm = false)
     case 'request':
       looseRequestMatch(a.match, at, out);
       return;
+    case 'page':
+      if (a.match.url) looseUrlMatch(a.match.url, `${at} page`, out);
+      looseAssertion(a.assert, `${at}.assert`, out, inTerm);
+      return;
     case 'allOf':
     case 'anyOf':
       a.of.forEach((s, i) => looseAssertion(s, `${at}.${a.kind}[${i}]`, out, inTerm));
@@ -335,11 +347,12 @@ function itemsSide(src: ValueSource, n: Normalizer[] | undefined) {
   if (!step) return undefined;
   const rest = steps.map((x) => {
     if (typeof x === 'string') return { op: x };
-    if (x.op !== 'items') return x;
+    // A flattened field is a collection of its own (a post's tags, not its categories): keep it.
+    if (x.op !== 'items' || x.flatten) return x;
     const { pointer: _, pick: __, ...keep } = x;
     return keep;
   });
-  const fields = step.pick ? step.pick.toSorted() : step.pointer ? [step.pointer] : [];
+  const fields = step.flatten ? [] : step.pick ? step.pick.toSorted() : step.pointer ? [step.pointer] : [];
   return { key: canonicalJson({ src, n: rest } as unknown as Json), fields };
 }
 
@@ -358,7 +371,7 @@ function fieldwiseCollections(cs: CheckSet, out: string[]): void {
         for (const b of a.of) visit(b, check);
         return;
       }
-      if (a.kind === 'each') return visit(a.assert, check);
+      if (a.kind === 'each' || a.kind === 'page') return visit(a.assert, check);
       if (a.kind !== 'value' || !('sameAs' in a.expect)) return;
       const x = itemsSide(a.source, a.normalize);
       const y = itemsSide(a.expect.sameAs.source, a.expect.sameAs.normalize);
@@ -389,20 +402,50 @@ function fieldwiseCollections(cs: CheckSet, out: string[]): void {
 /** Some value read inside `a` (nested ones and sameAs operands included) comes from a request or response. */
 function readsNetworkValue(a: Assertion): boolean {
   if (a.kind === 'allOf' || a.kind === 'anyOf') return a.of.some(readsNetworkValue);
-  if (a.kind === 'each') return readsNetworkValue(a.assert);
+  if (a.kind === 'each' || a.kind === 'page') return readsNetworkValue(a.assert);
   if (a.kind !== 'value') return false;
   return [a.source, ...('sameAs' in a.expect ? [a.expect.sameAs.source] : [])].some(
     (src) => src.from === 'request' || src.from === 'response',
   );
 }
 
+/** A leaf that reads route evidence: a request or url assertion, or a value read from a request or response. */
+function routeLeaf(a: Assertion): boolean {
+  if (a.kind === 'request' || a.kind === 'url') return true;
+  return a.kind === 'value' && readsNetworkValue(a);
+}
+
+const leaves = (a: Assertion): Assertion[] =>
+  a.kind === 'allOf' || a.kind === 'anyOf'
+    ? a.of.flatMap(leaves)
+    : a.kind === 'each' || a.kind === 'page'
+      ? leaves(a.assert)
+      : [a];
+
+/** Some part of `a` reads route evidence (what `onMissing` applies to). */
+export function readsRoute(a: Assertion): boolean {
+  return leaves(a).some(routeLeaf);
+}
+
+/**
+ * Every part of `a` reads route evidence: requests, responses or the page URL, which
+ * show how one run did the task rather than the state it left (ADR 0011).
+ */
+export function routeOnly(a: Assertion): boolean {
+  return leaves(a).every(routeLeaf);
+}
+
 /**
  * `a` fails, rather than abstains, when the thing it is about is absent: a non-value
  * assertion, an allOf with such a part, or an anyOf whose every branch is one.
  */
-function assertsPresence(a: Assertion): boolean {
-  if (a.kind === 'allOf') return a.of.some(assertsPresence);
-  if (a.kind === 'anyOf') return a.of.every(assertsPresence);
+function assertsPresence(a: Assertion, routeAbstains = false): boolean {
+  if (a.kind === 'allOf') return a.of.some((b) => assertsPresence(b, routeAbstains));
+  if (a.kind === 'anyOf') return a.of.every((b) => assertsPresence(b, routeAbstains));
+  // A page that is not open abstains (ADR 0012): the wrapper never shows something missing.
+  if (a.kind === 'page') return false;
+  // With onMissing "abstain", a missing request or a URL elsewhere abstains too.
+  if (routeAbstains && routeLeaf(a)) return false;
   return a.kind !== 'value';
 }
 
@@ -484,6 +527,10 @@ function flowType(t: VType, steps: Normalizer[] | undefined, at: string, errors:
       if (step.where !== undefined) checkSchema(step.where, `${at} items where`, errors);
       if (step.pick !== undefined && step.pointer !== undefined)
         errors.push(`${at}: items takes either pointer (one field) or pick (several fields), not both`);
+      if (step.flatten && step.pick !== undefined)
+        errors.push(`${at}: items flatten takes the array at pointer; pick makes objects, which cannot be flattened`);
+      if (step.flatten && !step.pointer)
+        errors.push(`${at}: items flatten needs a pointer to the array field of each item (e.g. "/tags")`);
       if (t !== 'unknown') errors.push(`${at}: normalizer items needs a JSON array, but the value is ${t}`);
       t = 'unknown';
       continue;
@@ -592,9 +639,17 @@ function checkComparison(t: VType, cmp: Comparison, at: string, errors: string[]
 
 /**
  * `inRecord`: inside an `each`, where locators resolve within the record (a contains
- * without a scope searches the record) and only the record may be read.
+ * without a scope searches the record) and only the record may be read. `onPage`: inside a
+ * `page` assertion, where only what the selected page shows may be read.
  */
-function walkAssertion(a: Assertion, at: string, errors: string[], warnings: string[], inRecord: boolean): void {
+function walkAssertion(
+  a: Assertion,
+  at: string,
+  errors: string[],
+  warnings: string[],
+  inRecord: boolean,
+  onPage = false,
+): void {
   switch (a.kind) {
     case 'state':
       checkTarget(a.target, at, errors);
@@ -625,13 +680,17 @@ function walkAssertion(a: Assertion, at: string, errors: string[], warnings: str
         warnings.push(
           `${at}: each with a count that allows no records passes vacuously if the scope's content loses its structure; add a witness`,
         );
-      walkAssertion(a.assert, `${at}.assert`, errors, warnings, true);
+      walkAssertion(a.assert, `${at}.assert`, errors, warnings, true, onPage);
       return;
     case 'value': {
       if (inRecord && a.source.from !== 'node' && a.source.from !== 'text')
         errors.push(
           `${at}: inside each, a value check must read the record (a node or text source); a ${a.source.from} source reads the same value for every record`,
         );
+      if (onPage)
+        for (const src of [a.source, ...('sameAs' in a.expect ? [a.expect.sameAs.source] : [])])
+          if (src.from !== 'node' && src.from !== 'text' && src.from !== 'url')
+            errors.push(notOnPage(at, `a ${src.from} source`));
       const t = checkValueSource(a.source, a.normalize, at, errors, warnings);
       if ('sameAs' in a.expect) {
         const other = a.expect.sameAs;
@@ -654,14 +713,27 @@ function walkAssertion(a: Assertion, at: string, errors: string[], warnings: str
       return;
     case 'request':
       if (inRecord) errors.push(notInRecord(at, 'request'));
+      if (onPage) errors.push(notOnPage(at, 'a request assertion'));
       checkRequestMatch(a.match, at, errors);
+      return;
+    case 'page':
+      if (inRecord)
+        errors.push(`${at}: a page assertion cannot be inside each; put the each inside the page assertion`);
+      if (onPage) errors.push(`${at}: a page assertion inside another page assertion; select one page`);
+      checkTextMatch(a.match.title, `${at} page title`, errors);
+      if (a.match.url?.regex) checkRegex(a.match.url.regex, undefined, `${at} page url`, errors);
+      for (const v of Object.values(a.match.url?.query ?? {})) if (v) checkTextMatch(v, `${at} page url`, errors);
+      walkAssertion(a.assert, `${at}.assert`, errors, warnings, false, true);
       return;
     case 'allOf':
     case 'anyOf':
-      a.of.forEach((s, i) => walkAssertion(s, `${at}.${a.kind}[${i}]`, errors, warnings, inRecord));
+      a.of.forEach((s, i) => walkAssertion(s, `${at}.${a.kind}[${i}]`, errors, warnings, inRecord, onPage));
       return;
   }
 }
+
+const notOnPage = (at: string, what: string) =>
+  `${at}: ${what} inside a page assertion does not read the page, so it is the same whatever page is selected; move it out of the page assertion`;
 
 const notInRecord = (at: string, kind: string) =>
   `${at}: a ${kind} assertion inside each does not read the record, so it is the same for every record; move it out of the each`;

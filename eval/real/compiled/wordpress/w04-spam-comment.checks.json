@@ -20,7 +20,7 @@
     {
       "id": "watch-comment-spam",
       "requirement": "R1",
-      "description": "The backend comments probe holds the comment advertising watches with status 'spam'.",
+      "description": "In the backend comments probe, the existing comment id 4 (Cheap Watches, advertising replica watches) has status 'spam'.",
       "assert": {
         "kind": "value",
         "source": {
@@ -33,16 +33,15 @@
             "contains": {
               "type": "object",
               "properties": {
-                "content": {
-                  "type": "string",
-                  "pattern": "[Ww]atches"
+                "id": {
+                  "const": 4
                 },
                 "status": {
                   "const": "spam"
                 }
               },
               "required": [
-                "content",
+                "id",
                 "status"
               ]
             }
@@ -57,6 +56,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:14:17.817Z"
+    "at": "2026-11-05T21:06:16.752Z"
   }
 }

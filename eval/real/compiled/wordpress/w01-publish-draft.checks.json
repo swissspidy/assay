@@ -18,73 +18,9 @@
   ],
   "checks": [
     {
-      "id": "r1-draft-now-published",
+      "id": "R1-post-11-published",
       "requirement": "R1",
-      "description": "The posts that existed before the task titled \"Spring meetup recap\" (the draft) are exactly the posts with that title now in status publish, i.e. the original draft itself was published.",
-      "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "posts"
-        },
-        "normalize": [
-          {
-            "op": "items",
-            "where": {
-              "properties": {
-                "title": {
-                  "const": "Spring meetup recap"
-                },
-                "status": {
-                  "const": "publish"
-                }
-              },
-              "required": [
-                "title",
-                "status"
-              ]
-            },
-            "pointer": "/id"
-          }
-        ],
-        "expect": {
-          "sameAs": {
-            "source": {
-              "from": "probe",
-              "probe": "posts",
-              "at": "before"
-            },
-            "normalize": [
-              {
-                "op": "items",
-                "where": {
-                  "properties": {
-                    "title": {
-                      "const": "Spring meetup recap"
-                    },
-                    "status": {
-                      "enum": [
-                        "draft",
-                        "publish"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "title",
-                    "status"
-                  ]
-                },
-                "pointer": "/id"
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "id": "r1-post-status-publish",
-      "requirement": "R1",
-      "description": "The backend posts list contains a post titled \"Spring meetup recap\" with status publish.",
+      "description": "In the backend, the existing post id 11 titled \"Spring meetup recap\" now has status \"publish\".",
       "assert": {
         "kind": "value",
         "source": {
@@ -97,6 +33,9 @@
             "contains": {
               "type": "object",
               "properties": {
+                "id": {
+                  "const": 11
+                },
                 "title": {
                   "const": "Spring meetup recap"
                 },
@@ -105,6 +44,7 @@
                 }
               },
               "required": [
+                "id",
                 "title",
                 "status"
               ]
@@ -120,6 +60,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T11:38:37.417Z"
+    "at": "2026-11-05T21:05:49.239Z"
   }
 }

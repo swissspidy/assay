@@ -13,6 +13,7 @@ import {
 } from '../../index.ts';
 import type { StressReport } from '../../stress/index.ts';
 import { lockState } from '../../verifier/lock.ts';
+import { checkSettings } from '../../verifier/diff.ts';
 import { CliError, EXIT, UsageError, readJson, type Invocation, type Io } from '../io.ts';
 import { readCheckSet, trustedKeys } from '../keys.ts';
 
@@ -71,6 +72,8 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
               tests: describeAssertion(c.assert),
               reads: evidenceRead(c.assert),
               ...(c.onFail ? { onFail: c.onFail } : {}),
+              ...(c.onMissing ? { onMissing: c.onMissing } : {}),
+              settings: checkSettings(c),
             })),
         })),
         warnings: validateCheckSet(cs).warnings,

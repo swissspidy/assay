@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T12:12:45.341Z",
  "turns": {
   "sha256:6c5b2a36445487aeaecb41b80947cfab06a22ad34eaf997f216848fd3d08dee1": {
    "stop": "tool_use",
@@ -71,12 +70,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:2e9654f3119a189c077b39225f3a1e852658f8d88532b0fc6b016406f4ce2ea6": {
+  "sha256:4f5776d3d71e468752b6cb3b4e43dcc5105d154443d99a28c936a8ec8f4290cf": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_013dYCt56AHdTdp25FHmTBBG",
+     "id": "toolu_011wVxVj7o7ZZzBfN7tUUe2G",
      "name": "probes",
      "input": {}
     }
@@ -84,7 +83,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_013dYCt56AHdTdp25FHmTBBG",
+     "id": "toolu_011wVxVj7o7ZZzBfN7tUUe2G",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -93,81 +92,138 @@
     }
    ],
    "usage": {
-    "inputTokens": 16980,
+    "inputTokens": 19844,
     "outputTokens": 25,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16976
+    "cacheWriteTokens": 19840
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:e62b184b4de7387b0b4f77f0c8ba342ce691f19ce49cd6b7f7379de58db059d1": {
+  "sha256:12c80d342e17edb57a7400a499b175bdc7420a93c636680475cf238a8a8897dc": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01NGUBvirBnNPLrDPvyxTWKM",
+     "id": "toolu_01TzfwAsvWa8ZqYBKEPWNzir",
      "name": "try_assertion",
      "input": {
       "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "issues"
-       },
-       "expect": {
-        "schema": {
-         "type": "array",
-         "contains": {
-          "type": "object",
-          "properties": {
-           "title": {
-            "const": "Typo in README"
-           },
-           "labels": {
-            "type": "array"
-           }
-          },
-          "required": [
-           "title",
-           "labels"
-          ]
+       "kind": "allOf",
+       "of": [
+        {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
          },
-         "items": {
-          "if": {
-           "type": "object",
-           "properties": {
-            "title": {
-             "const": "Typo in README"
-            }
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "number": {
+              "const": 4
+             },
+             "title": {
+              "const": "Typo in README"
+             },
+             "labels": {
+              "type": "array",
+              "not": {
+               "contains": {
+                "const": "bug"
+               }
+              }
+             }
+            },
+            "required": [
+             "number",
+             "title",
+             "labels"
+            ]
+           }
+          }
+         }
+        },
+        {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "normalize": [
+          {
+           "op": "items",
+           "where": {
+            "properties": {
+             "number": {
+              "const": 4
+             }
+            },
+            "required": [
+             "number"
+            ]
            },
-           "required": [
-            "title"
-           ]
+           "pointer": "/labels",
+           "flatten": true
           },
-          "then": {
-           "type": "object",
-           "properties": {
-            "labels": {
-             "type": "array",
-             "not": {
-              "contains": {
-               "const": "bug"
+          {
+           "op": "items",
+           "where": {
+            "not": {
+             "enum": [
+              "bug",
+              "docs"
+             ]
+            }
+           }
+          }
+         ],
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "issues",
+            "at": "before"
+           },
+           "normalize": [
+            {
+             "op": "items",
+             "where": {
+              "properties": {
+               "number": {
+                "const": 4
+               }
+              },
+              "required": [
+               "number"
+              ]
+             },
+             "pointer": "/labels",
+             "flatten": true
+            },
+            {
+             "op": "items",
+             "where": {
+              "not": {
+               "enum": [
+                "bug",
+                "docs"
+               ]
               }
              }
             }
-           },
-           "required": [
-            "labels"
            ]
           }
          }
         }
-       }
+       ]
       }
      }
     },
     {
-     "id": "toolu_01GLvCD6AFshiTMHtW8A2bpu",
+     "id": "toolu_01JeTpfnLCWqPiaarFy7DJLG",
      "name": "try_assertion",
      "input": {
       "assert": {
@@ -182,6 +238,9 @@
          "contains": {
           "type": "object",
           "properties": {
+           "number": {
+            "const": 4
+           },
            "title": {
             "const": "Typo in README"
            },
@@ -193,6 +252,7 @@
            }
           },
           "required": [
+           "number",
            "title",
            "labels"
           ]
@@ -207,77 +267,134 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSzQkKEAgTGAI4AUIIdGhpbmtpbmcSDN9XHjbaSXQRH97plhoMrX78czgcoId+osVLIjADNpJE3eagPR9bfHfCmx/NK53WOWEhFbrHpAK5157X9Jaat67JJ5cBQPsgw+js79kq6gimCCY4nwPBvP+iOIZayjuJBFFxs8+s/BDxP7Sxo/qJPfaAh1uXnyEBC1tlPQ6NHCdDqpBz5d3bwIVDVFo/ltCPNWHu9f+UKSQ+f3XMaRIyEwRbFd7ohQbWNjLc6Bz7OG0Yp5QOVm7CAQ/texXF9yBH3sqdSZUolS1P4kGnBs/Di1EDSiGIirxEiuqXgD+lvmriDSWk8aOl/5lDkrB06tDSXeqVQ5r9vVkOwv6NxOFmaglaDWT62qw4/AHsyTUxN23lnRZ4jLX3NddfKrnNZFpp34/l0RykxXRYqnKXslLuHTRG/MQqNeY29wrwTQvT03dIrUyAv6NHkL6u6j+JzDo814kQpROp+DJRvDq6nRbtpu0byVKj45s7tAb/jWG7Y6UomcjJdGloZSTsbMH01s31tfNEFUkfWoU2JZrQsnW/W42EdsAqLKGFY3UpCh+KiPvKUIojdQT+OgJ44YgcmyfD8zvDlT6ONC4JG8fGxuO2OQ+r0IZp2rwovHU4q2GWJNWaOUcFHGFhWc7X77vSDbyfh7n5VPhcUdOYxmSdJHUFNJG9TZDhBi3X6aKeb3fgZ8JQOKEUxs7LjpX7Tqms7NOMc4Axvy15VIXeZhU9DIsZkc/66+nSf+/W659XLo89/VIbFhlBPLJMlKpm5oCUCgaepNZKUXscFUvcUyP0ZFY6LF9JkMKQIaSGj/vMsUYtds4h9y+RU/veJdwNghOAsf2AD/cb5kjftV+ussubmazNH7oJ0rYIphSjp7XaqUcyE1O0xjjAjq9GxvU5FCQFrcucGUdDHw8IjiI1qH/3cYVDUwOESv++DCxU8vSwB7PJGn/vblbcv3yW1ALIk4VZkgX+EbXgcxkZwu3CSi9YqSX5r6+CMBuuTaRqmXUqy5N+OJHmqqEiVHuJHx11ChoGVR6mdsH6dz+5/K6p6ROPc6PByFSY6Cp0ft89oH2B7dxw6KNUEEiTsqJXarfA7vgr6B3qTbD4uaZpAJb8SxLFqjjWT8FJtJOKUH9byCr4mpmeF4DGDglvVWKm4tiMLqlbjrx8mnVsWLSXIMNjmClbe2PAHOiw2d2t0r1ijrWRzWhgV5vIejPi7NkiNKPNME+D6g2/iqNctZnxswZoGOrICh6Gh1MoipYJ+ThjR9pHml3LnlHYgENl1+SD6Wmw4NNjmOxj+mzPrYgsBt0djQsb4Z5OBf6XHJUvH+8fD8glCUrfmqXSgA+50dG1CEYpNwose1pW9GO5poJldmGnk5HOIm3lMRPvS0RUEsBUMsDfNk0hFx6MRI3JYBv7wOqO4CM+ZFXon8yPnF11BcsW3WXAg61QKRpeCTVUJ5DMom+yCKD0T/XHe2S+XfrrEkntRc0Dp/apAn0lvrO5DiASehxFQ9neWF5ECFqYryVmIk3pcOGVN4eDFn1gDi6UdsHeKrUb7m8jtanstqwUQuR3DZy5fjZwQyfhk5YPzjJQ3Vy97Niapji3K4HnEGjTtqXRtECL9hH+uYWn0PaC+ZHOaxgB"
+     "signature": "CAQS4QoKEAgTGAI4AUIIdGhpbmtpbmcSDOQdmFcfo0VQPqUMZBoM32rsu3Udy75YCelLIjBJwscVlVNn2E0GfNvCG6DNqMof0owmn8qzmdhkhL3hSWPMFabzNZhe3vGyIqS18zkq/glf/Zi6ui7vCfa1nS+bO4ZKESDAX44w65U3xJvkdPbhgrou0FmCQzrhKOdz3u4n4b80hk3SECm3e3Oq+aiHgeBgCrQ6afWvPLOERL5dgxJLKZQNkTw3rB0vVIXvYXif8khO0Q+3gP8TeHhUD+FxQDPgn+SNweaq0BuVkZOalz/hoGqJ+YZLhP0l4MBuImSPzs281I0mnN8xibQHeZZ75Fmdusr0MvmzOhmUqW2ya840d7gZ7+1wt360WrFS5d8q5EFtnVI77xx9bEq0Fy+/5ZjSKyDeM7MdYS18F1JOJoCqnPUznn04EZ1CxR73a+FgUXNMtoZZPxhndt84y/w02l8TtEXbyT7uFT3FVgFKPXmkNf/awRKM1clUHOS9iqQ3ZWWcfVdPuhERokSnaG/cobc7hvfOCQX5Ep/Kj0Iaw5EnKMjrVyg3auQ6xaIM09kLs6cW+vmgtMcqqG3sEIL+qpeJlk1nAQnbgNOXFW6ybXNgT2cs53vNnl69x+z/37CsQpkZ3UJ8oXmGyApdOITC3MSzAm8RgtF9u8ks991acuyfFgHFvpY/hX/LW7LkaTy6S74mLRo3FLhmOcRGWbr6+QVoT/zo5DYjA6AttE5DRidFAqqsggdsqiWkqN/tMA9dM2zYVfYx4tTKSNUywRpmpEnp2u+AX9EGv2FE478qEq0Zq8F1Zq4UdedPKqP8CbfeBedku6ibjQM6RRDI6CLzU2vJlvLgKbMOlXgHEEwva+jOsRV/u7T5ssXZvLDnrGn5RzZen/GxpD7CNUvR9clyl8vWBk1zWX7SA4nflvTf9uJ1Pay7B/V1mcPi1To/0GZ5cr3ooK0PBkLnKL/4LkcZ2eQe5gG3XP1gb8o6/noufJs5LFk0IgUGWOOoxN7dh7eSJ2yVM5naVx7mPfEs1n7bvUvOb8ZWp/awE+3AkPc8QW09TJYjHM4rY9uzfaxIwOsyq7eRjtPAvBcE9rgek1GpstP+FhqYedyz2jxLbc7+RrSl8uXm8Fip/zr8Q/5e5dpM8f8Ibthb+vJbHeKYiZkBGxHqwUco6WeMaZdysC9S/gpW5wbMUJlnBlFh5wxvmj6Z5TNF8w9fU90c7Glc7i3b+UEuOZJs2Z8Wjio2vlNjufsexUqhOVKOz8yop280lBpmB3mkZBwsJKS1XSQ9FPy3LVnbEbhs64T+pZFRfTaNd6xn4c5iITVWTmaZWKYJ5j3aTcdrCaNjEXfXZHXT9rcPzRN54hnqiiacGTWLbjMs57kO9j4Z4Ieu8Ae7sz3HusYImaZJ2mnW3qR/LnEBAB/FMhhWJCQILsdry/66Kdar2P3Wa8+za9nn5uiG/qcl2YFCy3fvSYE54dlmEyCpHL8WmyP4Gfl79//VKDGxjijNy/Ewi2wQ4Vgc0EjcFwVBuf9ObiOylta+OOcnl1J9Ld41cudQnz1LSsHTZJadH3gIscDHTn9zZHobf0iY+znhGYxSzvMHu2/iPzIyoHdgfFwel2dKKIug+PF/pivXxfA/GAz8KE63PFryPMlSkOdtOGDkatgcCdf9jZ+dklxEDeRq0i1Bdw8QQ78X8xobUjy4xeTmcvU8J8pNEVTQztJOnbRi7vXR05gRHajb/xEpHMkb5s98AZree8H5Clgj562O9lgg2EBbIwSBilk2A2M92/CPdtByU01QZBPHGdrp7z+i3gfGI30g/kQtZ7TLMuy+xlgYAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01NGUBvirBnNPLrDPvyxTWKM",
+     "id": "toolu_01TzfwAsvWa8ZqYBKEPWNzir",
      "name": "try_assertion",
      "caller": {
       "type": "direct"
      },
      "input": {
       "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "issues"
-       },
-       "expect": {
-        "schema": {
-         "type": "array",
-         "contains": {
-          "type": "object",
-          "properties": {
-           "title": {
-            "const": "Typo in README"
-           },
-           "labels": {
-            "type": "array"
-           }
-          },
-          "required": [
-           "title",
-           "labels"
-          ]
+       "kind": "allOf",
+       "of": [
+        {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
          },
-         "items": {
-          "if": {
-           "type": "object",
-           "properties": {
-            "title": {
-             "const": "Typo in README"
-            }
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "number": {
+              "const": 4
+             },
+             "title": {
+              "const": "Typo in README"
+             },
+             "labels": {
+              "type": "array",
+              "not": {
+               "contains": {
+                "const": "bug"
+               }
+              }
+             }
+            },
+            "required": [
+             "number",
+             "title",
+             "labels"
+            ]
+           }
+          }
+         }
+        },
+        {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "normalize": [
+          {
+           "op": "items",
+           "where": {
+            "properties": {
+             "number": {
+              "const": 4
+             }
+            },
+            "required": [
+             "number"
+            ]
            },
-           "required": [
-            "title"
-           ]
+           "pointer": "/labels",
+           "flatten": true
           },
-          "then": {
-           "type": "object",
-           "properties": {
-            "labels": {
-             "type": "array",
-             "not": {
-              "contains": {
-               "const": "bug"
+          {
+           "op": "items",
+           "where": {
+            "not": {
+             "enum": [
+              "bug",
+              "docs"
+             ]
+            }
+           }
+          }
+         ],
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "issues",
+            "at": "before"
+           },
+           "normalize": [
+            {
+             "op": "items",
+             "where": {
+              "properties": {
+               "number": {
+                "const": 4
+               }
+              },
+              "required": [
+               "number"
+              ]
+             },
+             "pointer": "/labels",
+             "flatten": true
+            },
+            {
+             "op": "items",
+             "where": {
+              "not": {
+               "enum": [
+                "bug",
+                "docs"
+               ]
               }
              }
             }
-           },
-           "required": [
-            "labels"
            ]
           }
          }
         }
-       }
+       ]
       }
      }
     },
     {
      "type": "tool_use",
-     "id": "toolu_01GLvCD6AFshiTMHtW8A2bpu",
+     "id": "toolu_01JeTpfnLCWqPiaarFy7DJLG",
      "name": "try_assertion",
      "caller": {
       "type": "direct"
@@ -295,6 +412,9 @@
          "contains": {
           "type": "object",
           "properties": {
+           "number": {
+            "const": 4
+           },
            "title": {
             "const": "Typo in README"
            },
@@ -306,6 +426,7 @@
            }
           },
           "required": [
+           "number",
            "title",
            "labels"
           ]
@@ -317,26 +438,26 @@
     }
    ],
    "usage": {
-    "inputTokens": 20242,
-    "outputTokens": 600,
-    "cacheReadTokens": 16976,
+    "inputTokens": 23106,
+    "outputTokens": 846,
+    "cacheReadTokens": 19840,
     "cacheWriteTokens": 3264
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:9f846ab4b67ba744fba3888a50388432162402e899a0b330302b8a5d9422d771": {
+  "sha256:e1f03537bf1dff014c48d0dc4fd689f826bc2f982bef9a0c735db06f7a309142": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01QMHRmzyYurbPu1o96zPxaJ",
+     "id": "toolu_01APjunJHsdXH6gstirFGi49",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
         "id": "r1-bug-removed",
         "requirement": "R1",
-        "description": "In the backend issues of acme/webapp, the issue titled \"Typo in README\" exists and no longer carries the bug label.",
+        "description": "In the backend, issue #4 \"Typo in README\" of acme/webapp no longer has the bug label.",
         "assert": {
          "kind": "value",
          "source": {
@@ -349,47 +470,104 @@
            "contains": {
             "type": "object",
             "properties": {
+             "number": {
+              "const": 4
+             },
              "title": {
               "const": "Typo in README"
              },
              "labels": {
-              "type": "array"
+              "type": "array",
+              "not": {
+               "contains": {
+                "const": "bug"
+               }
+              }
              }
             },
             "required": [
+             "number",
              "title",
              "labels"
             ]
-           },
-           "items": {
-            "if": {
-             "type": "object",
-             "properties": {
-              "title": {
-               "const": "Typo in README"
-              }
-             },
-             "required": [
-              "title"
-             ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r1-other-labels-kept",
+        "requirement": "R1",
+        "description": "Apart from bug and docs, issue #4 has the same labels as before the task (only the bug label was replaced).",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "normalize": [
+          {
+           "op": "items",
+           "where": {
+            "properties": {
+             "number": {
+              "const": 4
+             }
             },
-            "then": {
-             "type": "object",
-             "properties": {
-              "labels": {
-               "type": "array",
-               "not": {
-                "contains": {
-                 "const": "bug"
-                }
-               }
-              }
-             },
-             "required": [
-              "labels"
+            "required": [
+             "number"
+            ]
+           },
+           "pointer": "/labels",
+           "flatten": true
+          },
+          {
+           "op": "items",
+           "where": {
+            "not": {
+             "enum": [
+              "bug",
+              "docs"
              ]
             }
            }
+          }
+         ],
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "issues",
+            "at": "before"
+           },
+           "normalize": [
+            {
+             "op": "items",
+             "where": {
+              "properties": {
+               "number": {
+                "const": 4
+               }
+              },
+              "required": [
+               "number"
+              ]
+             },
+             "pointer": "/labels",
+             "flatten": true
+            },
+            {
+             "op": "items",
+             "where": {
+              "not": {
+               "enum": [
+                "bug",
+                "docs"
+               ]
+              }
+             }
+            }
+           ]
           }
          }
         }
@@ -397,7 +575,7 @@
        {
         "id": "r2-docs-added",
         "requirement": "R2",
-        "description": "In the backend issues of acme/webapp, the issue titled \"Typo in README\" carries the docs label.",
+        "description": "In the backend, issue #4 \"Typo in README\" of acme/webapp has the docs label.",
         "assert": {
          "kind": "value",
          "source": {
@@ -410,6 +588,9 @@
            "contains": {
             "type": "object",
             "properties": {
+             "number": {
+              "const": 4
+             },
              "title": {
               "const": "Typo in README"
              },
@@ -421,6 +602,7 @@
              }
             },
             "required": [
+             "number",
              "title",
              "labels"
             ]
@@ -437,11 +619,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSyAYKEAgTGAI4AUIIdGhpbmtpbmcSDGlBH4WiBDPwONCh8hoMvBPkCrrIVCEDSeTWIjBgbv61GMmEQ2Jcx03fpr5wkkkZ5VUM5I1BcG1xsmTQ4W52muxFKi0rAGsznck3SqAq5QUJshhheGVqt6qDU3ZFYEpjBSaTpxJ2UssBAgXxNcGq+VekIFKAxSZprhsJ3EIO3iAFwsveX8GRc49jnCded+KKsmzWLyJwYBRpgF+BSb8p2Qh9pY2+Ss5i1J7/d9Yqm8ngvey+tnE3lJli9yjdkW7DnR1q+60KYCJx4H9e4EMWILyfhXuBBn43KojP2KfwEmbesgxXPk9KIVOlIXmKsZvuEWnHbEYlI/jxz79k2cCBFJRqbVskCYDhpPUrXnOSIhRjHQbnP3uku7+cTgT1jNeulqdKvFBDb4tziyCNsCYSFKOoMfr1D/1HxjrI+ueNPdOwC70mmOEEfeU0CHECGfBujyS91NZG7DXm4ef4iiORkYXvMtIGwnSZ38dzqlUS0yJqsIE5cFc8ZQ3hnGjfwIiRUox1cnP83c+U5dLQ9jsHWgv8NFS8KNp5UsLQkUSho5u1bng2RFlO+K0pa54r/77fI6/iwo1c5M0EfcMz4etrjrQO72z9KE+d4I6+E1dTUQB/ngMS3m1SoJwXrVegGILusyCIGwHI9MiLHJj7ymIxEFNPw69wBzu1Yy3sLj7ObPS6pbxBowHMNJhuV0u/kR4Qv/epnf1MT/ZAqaKNtJaqD3o4x2B/rF1rOdVwBMSN6/xATRmF+9N0RGHrymBadmhCtyHIyyU78Ljg6s4FQv62vv7vqhzwEdG0sMs+qgIhTLRtgUJDOtREpcJs48JbZuuU0+GsrPMhLjTqJwgD3aKtiP7ql28rI8+hy+cdqFd9S3P0oxlwlYOkN0kyOn6KAACO0cDO/pz4tCuHlnSnEpn1T4iStXkNFXNCY43kSDBhUsZhj6pJkX2t30AUEZSPORWL748+DVCq/VUPphQuP48otAq1kMEwy4fJbXTyu03BCcixtAHqs9C+NPxNWuRD/pYBEpvVZJdvHpME5bB5KhZ2Tv0fDdKxBMeEN0yA4xJoWpWfamlBxCXc/YQcwM4sRPsl8S7c8igYAQ=="
+     "signature": "CAQSygcKEAgTGAI4AUIIdGhpbmtpbmcSDFzJGiy+fQjWy/F9JRoMIbYPER3+0tN38yKhIjC4bRf6ukDR9Bgz/lNzZ/iw5Pi8F9a25gR5hOlGE8FjFKY/OiNwXY6DgTbvYZSQ8Ekq5wb55U5xnMQA9tTaxG0qhN9jzPeqNuxQIkVAgRbGX1TnAcRBZouzcOBCSd9ieNiz+kIplOPxhr9HMG3YHTppuUj0cELjY00pQCk4tVH9v77HLj0bvZPx4TQ4vNlMgtT+xtbFC370feQ0kaTVPbX8pFBn4WORkZgMjVDs4NMr5sZ6M3FRH51Ww5/kIgH1KQfrWPnEfflXJPojiRsuOeMtaocr6pgvVv4h/8at8Y/1vU+qU6aw0Tum7vRqCLcJ/X8CNAIiirAH2ekTDM67cNm1ZQrK75Q0PRbQ8DbZZCHJ4kiyYqBhBzIM3TYSwe0TjP2kqtcHY+wqwrNVHWB+Hs+BuGkoAuYhKTq9LRpGZTjw2dI4HUTQp12kQYzvkKx4DEsthBomEfplGJl941F3Jwh6bPLp2VJLDA9jT+Be8JDF+pmoEfJPoikUYIvojwVtLYfMmJaeIgp24uUzj7vTLkO4xhl/xE3gA6EIAs47ozJuXuZths3M26YN5+dPUiwInSpmf52aklhMpTrvJs+q6aI8XFPeYvIHzyVn31+emSOyBisNMYoXm+CFPlo/HzQwP/E9bCFBxJGqMzJKGvblMEbVO9KP2DlSXBzQRB+vc3oBEUlAbpXkz3TI5MhH8oDqn5QNZwUroFafQFraxzCebHDIEXrziiisXtFvhLvqMlb+Ish5ra0oO5rMAH5wTergDJBwl2+KLIHauaCEVDf3ivI50+JcI4JxfwTS6P6Obq+kymL4XW1T7P8pimGyJI5+RbwZSJFccDpUcwxSL41oHuk3FU5QWdZTEstC2TVlDz4TcptXz0q+C9cv7PC/IsmF+wDxUN7CUX9TT6Erzp4ocqI4NJgDgGVp8rkgwfGD0CxCcrpTz3/IyWvOwwZeuE1CLi3PL8Z0rf8484kYYM1yQjUhBN+xxsTH2ZwHvzxGRBu2C8XgJvopWfqEK9LcYwGkk3sPKHQs+opxgKXuc3N7gujObkI1waHci9TvmZi5ip22aDK3nhjqP7012xBpddlWbsHajTXsQxKalQqJiUSSwe5lvvGyPi0uWkYgZK75Y52LTnHfAmSm9jCSVGAEt77fUbJinY5BDRpdMOXFFySjECvFjdOcWhzIIGF5KAlGD13JrHqpCgEaLK8POvxo1O+Avpnq/XrgtVfWk9+2GAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01QMHRmzyYurbPu1o96zPxaJ",
+     "id": "toolu_01APjunJHsdXH6gstirFGi49",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -451,7 +633,7 @@
        {
         "id": "r1-bug-removed",
         "requirement": "R1",
-        "description": "In the backend issues of acme/webapp, the issue titled \"Typo in README\" exists and no longer carries the bug label.",
+        "description": "In the backend, issue #4 \"Typo in README\" of acme/webapp no longer has the bug label.",
         "assert": {
          "kind": "value",
          "source": {
@@ -464,47 +646,104 @@
            "contains": {
             "type": "object",
             "properties": {
+             "number": {
+              "const": 4
+             },
              "title": {
               "const": "Typo in README"
              },
              "labels": {
-              "type": "array"
+              "type": "array",
+              "not": {
+               "contains": {
+                "const": "bug"
+               }
+              }
              }
             },
             "required": [
+             "number",
              "title",
              "labels"
             ]
-           },
-           "items": {
-            "if": {
-             "type": "object",
-             "properties": {
-              "title": {
-               "const": "Typo in README"
-              }
-             },
-             "required": [
-              "title"
-             ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r1-other-labels-kept",
+        "requirement": "R1",
+        "description": "Apart from bug and docs, issue #4 has the same labels as before the task (only the bug label was replaced).",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "normalize": [
+          {
+           "op": "items",
+           "where": {
+            "properties": {
+             "number": {
+              "const": 4
+             }
             },
-            "then": {
-             "type": "object",
-             "properties": {
-              "labels": {
-               "type": "array",
-               "not": {
-                "contains": {
-                 "const": "bug"
-                }
-               }
-              }
-             },
-             "required": [
-              "labels"
+            "required": [
+             "number"
+            ]
+           },
+           "pointer": "/labels",
+           "flatten": true
+          },
+          {
+           "op": "items",
+           "where": {
+            "not": {
+             "enum": [
+              "bug",
+              "docs"
              ]
             }
            }
+          }
+         ],
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "issues",
+            "at": "before"
+           },
+           "normalize": [
+            {
+             "op": "items",
+             "where": {
+              "properties": {
+               "number": {
+                "const": 4
+               }
+              },
+              "required": [
+               "number"
+              ]
+             },
+             "pointer": "/labels",
+             "flatten": true
+            },
+            {
+             "op": "items",
+             "where": {
+              "not": {
+               "enum": [
+                "bug",
+                "docs"
+               ]
+              }
+             }
+            }
+           ]
           }
          }
         }
@@ -512,7 +751,7 @@
        {
         "id": "r2-docs-added",
         "requirement": "R2",
-        "description": "In the backend issues of acme/webapp, the issue titled \"Typo in README\" carries the docs label.",
+        "description": "In the backend, issue #4 \"Typo in README\" of acme/webapp has the docs label.",
         "assert": {
          "kind": "value",
          "source": {
@@ -525,6 +764,9 @@
            "contains": {
             "type": "object",
             "properties": {
+             "number": {
+              "const": 4
+             },
              "title": {
               "const": "Typo in README"
              },
@@ -536,6 +778,7 @@
              }
             },
             "required": [
+             "number",
              "title",
              "labels"
             ]
@@ -549,12 +792,13 @@
     }
    ],
    "usage": {
-    "inputTokens": 21052,
-    "outputTokens": 568,
-    "cacheReadTokens": 20240,
-    "cacheWriteTokens": 810
+    "inputTokens": 24972,
+    "outputTokens": 881,
+    "cacheReadTokens": 23104,
+    "cacheWriteTokens": 1866
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:03:50.216Z"
 }

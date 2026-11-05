@@ -28,7 +28,7 @@
   ],
   "checks": [
     {
-      "id": "R1-probe-event",
+      "id": "R1-event-stored",
       "requirement": "R1",
       "description": "The backend events list contains an event titled \"Lunch with Sam\" on 2026-11-05 at 12:30.",
       "assert": {
@@ -64,9 +64,9 @@
       }
     },
     {
-      "id": "R2-event-page",
+      "id": "R2-event-page-date",
       "requirement": "R2",
-      "description": "The current page is an event page (/events/<id>) whose level-1 heading is \"Lunch with Sam\".",
+      "description": "The current page is the event page of \"Lunch with Sam\" (URL /events/:id, h1 equals the title) and its When field shows November 5, 2026.",
       "assert": {
         "kind": "allOf",
         "of": [
@@ -79,71 +79,59 @@
           {
             "kind": "state",
             "target": {
-              "anchors": [
-                {
-                  "role": "heading",
-                  "level": 1,
-                  "within": {
-                    "role": "main"
-                  }
-                },
-                {
-                  "role": "heading",
-                  "name": "Lunch with Sam",
-                  "level": 1
-                }
-              ]
+              "role": "heading",
+              "level": 1,
+              "within": {
+                "role": "main"
+              }
             },
             "expect": {
               "name": {
                 "equals": "Lunch with Sam"
               }
             }
+          },
+          {
+            "kind": "each",
+            "scope": {
+              "role": "main"
+            },
+            "witness": {
+              "role": "term",
+              "text": "When"
+            },
+            "match": {
+              "role": "term",
+              "text": "When"
+            },
+            "count": {
+              "eq": 1
+            },
+            "assert": {
+              "kind": "value",
+              "source": {
+                "from": "node",
+                "target": {
+                  "role": "definition"
+                },
+                "field": "text"
+              },
+              "normalize": [
+                {
+                  "op": "extract",
+                  "regex": "([A-Za-z]+\\.? \\d{1,2}, \\d{4}|\\d{1,2}\\.? [A-Za-z]+\\.? \\d{4}|\\d{4}-\\d{2}-\\d{2})"
+                },
+                {
+                  "op": "date",
+                  "locale": "en-US"
+                }
+              ],
+              "expect": {
+                "equals": "2026-11-05"
+              }
+            }
           }
         ]
-      }
-    },
-    {
-      "id": "R2-when-date",
-      "requirement": "R2",
-      "description": "The \"When\" field on the event page shows a date on November 5, 2026.",
-      "assert": {
-        "kind": "each",
-        "scope": {
-          "role": "main"
-        },
-        "witness": {
-          "role": "term",
-          "text": "When"
-        },
-        "match": {
-          "role": "term",
-          "text": "When"
-        },
-        "count": {
-          "eq": 1
-        },
-        "assert": {
-          "kind": "value",
-          "source": {
-            "from": "node",
-            "target": {
-              "role": "definition"
-            },
-            "field": "text"
-          },
-          "normalize": [
-            {
-              "op": "datetime",
-              "locale": "en-US",
-              "timezone": "UTC"
-            }
-          ],
-          "expect": {
-            "gte": "2026-11-05T00:00:00Z",
-            "lt": "2026-11-06T00:00:00Z"
-          }
-        }
       }
     }
   ],
@@ -153,6 +141,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T11:33:31.569Z"
+    "at": "2026-11-05T21:10:59.025Z"
   }
 }

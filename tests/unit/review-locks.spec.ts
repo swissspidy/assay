@@ -252,6 +252,11 @@ test.describe('lifecycle', () => {
       'the stress report is for tiny-shop/cart-two-mugs v1, not tiny-shop/add-blue-mug v1',
     );
     expect(reviewSheet(locked, { stress: report })).toContain('this is the report the approver saw');
+    const weak = {
+      ...report,
+      weak: [{ check: 'C1', mutants: [{ reference: 'both-mugs', id: 'm', description: 'd' }] }],
+    };
+    expect(reviewSheet(TWO_MUGS, { stress: weak })).toContain('  - stress: weak: still passes both-mugs/m (d)');
     const other = stressTest(TWO_MUGS, [{ name: 'both-mugs', snapshot: BOTH_MUGS }], { successClaims: false });
     expect(reviewSheet(locked, { stress: other })).toContain('this is not the report the approver saw');
   });
@@ -358,5 +363,47 @@ test.describe('review sheet', () => {
     });
     expect(res.outcome.verdict).toBe('success');
     expect(res.record.checkSet.locked?.signature).toEqual({ keyId: alice.keyId, status: 'trusted', signer: 'Alice' });
+  });
+});
+
+test.describe('route and page checks (ADR 0011, 0012)', () => {
+  const withRoute = (): CheckSet => {
+    const cs = clone(TWO_MUGS);
+    cs.checks[1] = {
+      ...cs.checks[1]!,
+      onMissing: 'abstain',
+      assert: {
+        kind: 'page',
+        match: { url: { path: '/cart' } },
+        assert: { kind: 'contains', match: { role: 'row', name: { contains: 'Red Mug' } } },
+      } as never,
+    };
+    return cs;
+  };
+
+  test('the lock covers onMissing and page assertions; the diff and the sheet show them', () => {
+    const cs = withRoute();
+    expect(validateCheckSet(cs).errors).toEqual([]);
+    const locked = lockCheckSet(cs, 'alice', AT);
+    expect(isLocked(locked)).toBe(true);
+
+    const fail = clone(locked);
+    fail.checks[1]!.onMissing = 'fail';
+    expect(verifyLock(fail).problems).toEqual(['changed after approval: check C2 changed']);
+    const page = clone(locked);
+    (page.checks[1]!.assert as { match: { url: { path: string } } }).match.url.path = '/checkout';
+    expect(verifyLock(page).problems).toEqual(['changed after approval: check C2 changed']);
+
+    const d = diffCheckSets(locked, fail);
+    expect(d.checks.changed).toMatchObject([{ id: 'C2', fields: ['on missing route evidence'] }]);
+    expect(formatCheckSetDiff(d)).toContain(
+      '- before: on missing route evidence: abstain (the run may have done it another way)',
+    );
+    expect(diffCheckSets(locked, page).checks.changed).toMatchObject([{ id: 'C2', fields: ['what it tests'] }]);
+
+    const sheet = reviewSheet(locked);
+    expect(sheet).toContain('  - on missing route evidence: abstain (the run may have done it another way)');
+    expect(sheet).toMatch(/ {2}- tests: on the one open page \(tab or popup\) with .*\/cart/);
+    expect(sheet).toContain('  - reads: accessibility tree (semantic)');
   });
 });

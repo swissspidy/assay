@@ -69,7 +69,12 @@ the same check run without validation or a record, for hot loops.
 
 - **Evidence snapshot.** What a run left behind: the accessibility tree, visible text, URL, network
   log, storage and the results of backend probes you define. Captured with `captureSnapshot` (or by
-  `expectOutcome`), stored as JSON, and evaluated the same way live or offline.
+  `expectOutcome`), stored as JSON, and evaluated the same way live or offline. Iframe content
+  (same- and cross-origin) sits under its `iframe` node, where locators find it like any other node
+  (scope to `{"role": "iframe", "name": "Editor canvas"}` to stay in one frame); open shadow roots
+  are included, closed ones are not. Other open tabs and popups are kept as `pages`; the snapshot's
+  page is the active one. Form request bodies, URL-encoded and multipart, are parsed into fields,
+  with uploads recorded as `{filename, type, size}` ([ADR 0012](docs/adr/0012-snapshot-frames-pages-bodies.md)).
 - **Requirements and checks.** A check set lists requirements, each quoting the task text it comes
   from, and checks, each tracing to one requirement:
 
@@ -93,7 +98,8 @@ the same check run without validation or a record, for hot loops.
 
   Assertion kinds: `state`, `contains`, `value` (read from a node, text, the URL, a request or
   response, storage or a probe, then normalized and compared with a literal, or with a second
-  source via `sameAs`), `url`, `request`, `each` and `allOf`/`anyOf`. Normalizers parse numbers,
+  source via `sameAs`), `url`, `request`, `each`, `page` (another open tab or popup, selected by
+  URL or title) and `allOf`/`anyOf`. Normalizers parse numbers,
   money, dates and date-times (`datetime`, compared as instants; `approx` on them is in minutes).
   The JSON Schema is exported as `checkSetSchema`; `validateCheckSet` adds semantic checks.
 
@@ -137,6 +143,16 @@ the same check run without validation or a record, for hot loops.
   }
   ```
 
+  For one record's own collection (a post's tags), `{"op": "items", "where": …, "pointer": "/tags", "flatten": true}`
+  makes the array's members the items, so "add the tag X" can also check that the other tags stay.
+
+- **Route evidence.** Requests, responses and the page URL show how one run did the task (Quick Edit
+  or the block editor, the admin list or the public form), not the state it left. A check that
+  reads them can set `"onMissing": "abstain"`: when none of its requests match (or the URL is
+  elsewhere) it abstains with `route_missing` and escalates, instead of failing a run that took
+  another route. Evidence that is found but wrong still fails, and inside an `anyOf` the branch of
+  the route the run took decides ([ADR 0011](docs/adr/0011-route-robust-compilation.md)).
+
 - **Pass, fail, abstain.** Checks combine with three-valued logic. A requirement passes when its
   checks pass; the run succeeds when every hard requirement passes. Abstain is never turned into a
   pass or a fail silently.
@@ -178,6 +194,13 @@ Design details: [ADR 0001](docs/adr/0001-evidence-snapshot-and-check-dsl.md).
    snapshots and submits checks; a submission is accepted only once it validates, succeeds on every
    correct reference, does not succeed on any negative one, and accepts the stress test's valid
    variants ([ADR 0002](docs/adr/0002-compiler.md)).
+
+   Correct references that did the task in different ways (give each a `note`, e.g.
+   `"through the block editor"`) make the checks route-robust: route evidence one of them lacks
+   must be marked `onMissing: "abstain"`. The report flags requirements whose only evidence is
+   route evidence (`coverage[].routeOnly`), naming the probes that could carry it, and the compiler
+   refuses them when a probe already holds the value they compare
+   ([ADR 0011](docs/adr/0011-route-robust-compilation.md)).
 
 2. **Stress-test** a check set against edited copies of correct runs: valid variants (reordered rows,
    other number and date formats, extra fields, network noise) that must still pass, and near-miss
@@ -342,7 +365,8 @@ package:
 
 **Cassettes** make model steps reproducible. `recordingModel(model, path)` records every turn under
 a digest of the full request; `replayModel(path)` replays them without a key and fails loudly if a
-request changed. Both are in `@swissspidy/assay/models`.
+request changed. Both are in `@swissspidy/assay/models`. The repository's scripts replay what a
+cassette has and, with a key, record only the turns it lacks.
 
 ## How well it works
 
@@ -366,10 +390,11 @@ anchor, and catch every regression run ([stability report](stability/results/REP
 
 On three real open-source apps run locally (Gitea, WordPress, PrestaShop: 44 tasks, 177 held-out
 runs, mostly from a Claude browser agent, labelled by oracles over each app's database), compiled
-checks reach 0.974 balanced accuracy (0.986 with escalation), against 0.942 for the LLM judge and
-0.990 for the agentic verifier. Four of the checks' five errors are checks tied to the one reference
-run's UI path where a probe lacked a field; the fifth accepted a run that removed a tag it was not
-asked to remove.
+checks judge every held-out run correctly (1.000 balanced accuracy, no abstains), against 0.942 for
+the LLM judge and 0.990 for the agentic verifier. The first measurement (0.974) lost five runs to
+checks tied to one reference's UI route and to "add a tag" read as "replace the tags"; second
+references, route evidence that abstains when missing, and "add" keeping what is there fixed all
+five ([ADR 0011](docs/adr/0011-route-robust-compilation.md)).
 [eval/results/real/REPORT.md](eval/results/real/REPORT.md), [ADR 0009](docs/adr/0009-real-site-evaluation.md).
 
 ## Further reading
@@ -384,6 +409,8 @@ asked to remove.
 - [ADR 0008](docs/adr/0008-per-record-checks.md): per-record checks and paired item fields
 - [ADR 0009](docs/adr/0009-real-site-evaluation.md): evaluation on real web apps
 - [ADR 0010](docs/adr/0010-command-line-tool.md): the `assay` command-line tool
+- [ADR 0011](docs/adr/0011-route-robust-compilation.md): route-robust compilation (several references, `onMissing`, "add" keeps)
+- [ADR 0012](docs/adr/0012-snapshot-frames-pages-bodies.md): frames, open pages and form bodies in snapshots
 - [ADR 0013](docs/adr/0013-review-workflow-and-signed-locks.md): the review workflow and signed locks
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
 - Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)

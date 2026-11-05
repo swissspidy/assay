@@ -18,9 +18,9 @@
   ],
   "checks": [
     {
-      "id": "R1-my-address-phone",
+      "id": "my-address-phone-updated",
       "requirement": "R1",
-      "description": "The backend addresses probe shows the address with alias \"My address\" has phone 305-555-0199 (tolerating only separator formatting).",
+      "description": "The stored addresses contain exactly one address with alias \"My address\", and its phone is 305-555-0199.",
       "assert": {
         "kind": "value",
         "source": {
@@ -30,22 +30,39 @@
         "expect": {
           "schema": {
             "type": "array",
-            "contains": {
-              "type": "object",
-              "properties": {
-                "alias": {
-                  "const": "My address"
-                },
-                "phone": {
-                  "type": "string",
-                  "pattern": "^\\s*\\(?305\\)?[\\s.-]*555[\\s.-]*0199\\s*$"
+            "allOf": [
+              {
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "alias": {
+                      "const": "My address"
+                    },
+                    "phone": {
+                      "const": "305-555-0199"
+                    }
+                  },
+                  "required": [
+                    "alias",
+                    "phone"
+                  ]
                 }
               },
-              "required": [
-                "alias",
-                "phone"
-              ]
-            }
+              {
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "alias": {
+                      "const": "My address"
+                    }
+                  },
+                  "required": [
+                    "alias"
+                  ]
+                },
+                "maxContains": 1
+              }
+            ]
           }
         }
       }
@@ -57,6 +74,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:23:23.336Z"
+    "at": "2026-11-05T21:12:10.798Z"
   }
 }

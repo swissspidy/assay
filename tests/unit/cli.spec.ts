@@ -214,13 +214,29 @@ test.describe('validate, review, stress', () => {
     const ok = await assay(['stress', BLUE_MUG, '-r', shop('references/02-add-blue-mug')]);
     expect(ok.code).toBe(0);
     expect(ok.stdout).toContain('No problems found.');
-    const weak = await assay([
-      'stress',
-      shop('compiled/04-remove-red-mug.checks.json'),
-      '-r',
-      shop('references/04-remove-red-mug'),
-      '--json',
-    ]);
+    // A tolerance so wide nothing can fail is weak (the compiled sets have no weak check to borrow).
+    const total = JSON.parse(readFileSync(shop('tasks/06-cart-total.checks.json'), 'utf8'));
+    const lax = join(tmp(), 'lax.checks.json');
+    writeFileSync(
+      lax,
+      JSON.stringify({
+        ...total,
+        checks: [
+          {
+            id: 'C1',
+            requirement: total.requirements[0].id,
+            description: 'The cart total is about $21.50.',
+            assert: {
+              kind: 'value',
+              source: { from: 'node', target: { role: 'status', name: 'Cart total' }, field: 'text' },
+              normalize: [{ op: 'currency', locale: 'en-US', currency: 'USD' }],
+              expect: { approx: { value: { amount: 21.5, currency: 'USD' }, abs: 1000 } },
+            },
+          },
+        ],
+      }),
+    );
+    const weak = await assay(['stress', lax, '-r', shop('references/06-cart-total'), '--json']);
     expect(weak.code).toBe(1);
     expect(JSON.parse(weak.stdout).weak.length).toBeGreaterThan(0);
     const none = await assay(['stress', BLUE_MUG, '-r', ADDED_RED]);
@@ -576,7 +592,7 @@ test.describe('review workflow (ADR 0013)', () => {
     const sheet = (await assay(['review', checks, '--stress', report])).stdout;
     expect(sheet).toContain('## Stress test');
     expect(sheet).toContain('this is the report the approver saw');
-    expect(sheet).toMatch(/ {2}- stress: weak: still passes /);
+    expect(sheet).toMatch(/ {2}- stress: no targeted mutant /);
     const wrong = await assay(['approve', copy(BLUE_MUG, dir, 'b.json'), '--reviewer', 'a', '--stress', report]);
     expect(wrong.code).toBe(4);
     expect(wrong.stderr).toContain('the stress report is for tiny-shop/04-remove-red-mug v1');

@@ -1,7 +1,7 @@
 {
   "task": "tiny-shop/07-express-order",
   "status": "compiled",
-  "model": "anthropic:claude-opus-5-5@high",
+  "model": "anthropic:claude-opus-5-5@high (replay)",
   "modelsUsed": [
     "claude-opus-5-5"
   ],
@@ -10,18 +10,18 @@
     "discovery": 3
   },
   "usage": {
-    "inputTokens": 60039,
-    "outputTokens": 2012,
-    "cacheReadTokens": 38600,
-    "cacheWriteTokens": 21427
+    "inputTokens": 63961,
+    "outputTokens": 1954,
+    "cacheReadTokens": 41218,
+    "cacheWriteTokens": 22731
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "an order is placed",
       "checks": [
-        "r1-order-request",
-        "r1-order-stored"
+        "order-created-request",
+        "order-placed-probe"
       ],
       "channels": [
         "network",
@@ -33,7 +33,7 @@
       "requirement": "R2",
       "quote": "the order ships express",
       "checks": [
-        "r2-express"
+        "order-express"
       ],
       "channels": [
         "probe"
@@ -44,9 +44,9 @@
       "requirement": "R3",
       "quote": "the order confirmation is shown",
       "checks": [
-        "r3-url",
-        "r3-heading",
-        "r3-order-number"
+        "confirmation-url",
+        "confirmation-heading",
+        "confirmation-order-number"
       ],
       "channels": [
         "url",
@@ -60,7 +60,7 @@
       "requirement": "R4",
       "quote": "Order what is in my cart",
       "checks": [
-        "r4-items-match-cart"
+        "order-items-match-cart"
       ],
       "channels": [
         "probe"
@@ -71,7 +71,7 @@
       "requirement": "R5",
       "quote": "in the name of Ada Lovelace",
       "checks": [
-        "r5-name"
+        "order-name"
       ],
       "channels": [
         "probe"
@@ -80,7 +80,7 @@
     }
   ],
   "warnings": [
-    "check r3-order-number: reads free page text, which is the easiest evidence to spoof; prefer a11y, network or probe evidence"
+    "check confirmation-order-number: reads free page text, which is the easiest evidence to spoof; prefer a11y, network or probe evidence"
   ],
   "references": [
     {

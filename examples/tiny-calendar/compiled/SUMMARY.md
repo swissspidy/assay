@@ -5,9 +5,9 @@ The remaining labelled runs were held out; the last column counts how many the c
 
 | Task | Requirements | Checks | Evidence per requirement | Held-out runs correct |
 |---|---|---|---|---|
-| 01-lunch | 2 | 3 | R1:probe, R2:url+a11y | 4/4 |
+| 01-lunch | 2 | 2 | R1:probe, R2:url+a11y | 4/4 |
 | 02-reminder | 4 | 4 | R1:probe, R2:probe, R3:probe, R4:probe | 3/3 |
-| 03-rsvp | 1 | 2 | R1:probe+network | 3/3 |
+| 03-rsvp | 1 | 1 | R1:probe | 3/3 |
 | 04-move-dentist | 1 | 1 | R1:probe | 3/3 |
 | 05-delete-standup | 2 | 2 | R1:probe, R2:probe | 4/4 |
 | 06-location | 1 | 1 | R1:probe | 3/3 |

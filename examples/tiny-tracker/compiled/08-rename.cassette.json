@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T11:32:42.678Z",
  "turns": {
   "sha256:82eaa7821b8071bad4f901d70c026c7726841ec490fd0e64d136189177bcdaec": {
    "stop": "tool_use",
@@ -52,17 +51,17 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:75c1e9f3892eaa2353b7d376e319bd48a95ab085ac09f1e6f5cb4f353df23100": {
+  "sha256:72dd0d7d181913580bcad4caed28defcaae646cc6d33e0a168c56f74fa2f429d": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_015K6Xhvve4PArkoxevV9zPv",
+     "id": "toolu_016aw8vgB2jGK7YLUznenaJi",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01KP5YzJrspuo2uGh38D5aX3",
+     "id": "toolu_018yztjxwAetButFYUC55VsJ",
      "name": "network_log",
      "input": {}
     }
@@ -70,7 +69,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_015K6Xhvve4PArkoxevV9zPv",
+     "id": "toolu_016aw8vgB2jGK7YLUznenaJi",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -79,7 +78,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01KP5YzJrspuo2uGh38D5aX3",
+     "id": "toolu_018yztjxwAetButFYUC55VsJ",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -88,26 +87,111 @@
     }
    ],
    "usage": {
-    "inputTokens": 17785,
+    "inputTokens": 18794,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 17781
+    "cacheWriteTokens": 18790
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:332f373708bda526f1a9df1308d76f3640b4b5d8c776518436edce44b0dfdad5": {
+  "sha256:008e30beba520dac420970f8a1bbefcf1eb875541670ba15fcd849b10e32735b": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_019NUTj7AUJhBL5BEdfZaRtw",
+     "id": "toolu_01GtLibPkQXuLi7Rbo9rPvof",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "id": {
+            "const": 3
+           },
+           "title": {
+            "const": "Fix typo in README"
+           }
+          },
+          "required": [
+           "id",
+           "title"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01GtLibPkQXuLi7Rbo9rPvof",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "id": {
+            "const": 3
+           },
+           "title": {
+            "const": "Fix typo in README"
+           }
+          },
+          "required": [
+           "id",
+           "title"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 19262,
+    "outputTokens": 145,
+    "cacheReadTokens": 18790,
+    "cacheWriteTokens": 470
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:bd0f46c08b5bf187ed01ab9e82e210a7d011373e560ea621ec5a080f440dfcd5": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KuUVoiNsuyEJBoPYB9iKPV",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "r1-probe-title",
+        "id": "issue3-title",
         "requirement": "R1",
-        "description": "The backend stores issue #3 with the title exactly \"Fix typo in README\".",
+        "description": "The backend issues list holds issue id 3 with title exactly \"Fix typo in README\".",
         "assert": {
          "kind": "value",
          "source": {
@@ -142,13 +226,8 @@
    ],
    "raw": [
     {
-     "type": "thinking",
-     "thinking": "",
-     "signature": "CAQS4QUKEAgTGAI4AUIIdGhpbmtpbmcSDDNZRoZn3fIED3BBGBoMjPLmypTWqh4baVK/IjAJcNVmXBT05+cUhOxwPK2tVevP1cq54ufm/afcRGPmbBshVWdWeVpj5bTmrKoZdpYq/gQmLitslfTlLULXcBV4+PpCQV9yLdtZJyqhUJKIrKQRpwSTfBi2LpavWoaNDHFiZx8gm3a93Gq/knxumDqm+NHJEXpmHDLEpyM4geXRNt/unK/pYg3jQHaDjUHZwZoETNVxFCaKhF4KtqVITohjq8JVIyB6seVOembv840FnbfgqZ2eRb/q9wHAI6BRPh1x6CSHpvSBGpi1Si6z1wODEJW3fTjDDpJkCYFRgCh52b3BKST5LmuBvw+73dvORSoOq8h6Y9h9Lo0yboL9TJMlaXnLceiFE3xCIqOgW4LJ+xOZYdxGGhn8iRJWLnGCVvNeVI0WCO/bqXHHCgD+PgKRMRxfnCvQGNUbPk2oGdCl4Ag6Cefya47virvg3lklt8KBRryDCkBbY5FmrEofE3nG7fxVhksvkFI8m3vg3W8MoCY3ydhos43M2a261ZCuE4Jhzeqj1TowKjwZDA1rmTWdUgebo5nUoMorrJL0C08zYEuCZsHuXTYLkAtbMtZe33dPGbAKy0UpJR7m3huO1g4161W5d3kNRyGnquq1INNntKmJjuxxnp7TQjvhirs/QRBmHzfSQDexKvxk0G8IpXe923lKrk8xq8AVcQghjwfseoNQeoWwHorD+VMquSifhYLok3UM0+ZU+J4MpC7ivTlZijlKtO87q1PFpuXqNFt3y1E7fQ/mRErFlq3VLkw4JsOTghPiJPd4E0zOYHtvsJzClmIromVSZQRBXPaVwx67IGmfIn2rZZDL6ij0gYrtgOlW9FssCHFC+LvMDjlGnVWqlDiUBH44zZ+Ca9KDv0XTfj4DetQtogzdQxSUWYxGsZ//6RzYOWRRW3NWsuy4nUJDphgB"
-    },
-    {
      "type": "tool_use",
-     "id": "toolu_019NUTj7AUJhBL5BEdfZaRtw",
+     "id": "toolu_01KuUVoiNsuyEJBoPYB9iKPV",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -156,9 +235,9 @@
      "input": {
       "checks": [
        {
-        "id": "r1-probe-title",
+        "id": "issue3-title",
         "requirement": "R1",
-        "description": "The backend stores issue #3 with the title exactly \"Fix typo in README\".",
+        "description": "The backend issues list holds issue id 3 with title exactly \"Fix typo in README\".",
         "assert": {
          "kind": "value",
          "source": {
@@ -192,12 +271,13 @@
     }
    ],
    "usage": {
-    "inputTokens": 18253,
-    "outputTokens": 236,
-    "cacheReadTokens": 17781,
-    "cacheWriteTokens": 470
+    "inputTokens": 19483,
+    "outputTokens": 217,
+    "cacheReadTokens": 19260,
+    "cacheWriteTokens": 221
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:10:08.269Z"
 }

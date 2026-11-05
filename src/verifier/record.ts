@@ -73,6 +73,8 @@ export interface OutcomeRecord {
     message: string;
     /** The check's own escalation setting, when it has one. */
     onFail?: 'escalate' | 'keep';
+    /** "abstain" when the check reads route evidence (ADR 0011). */
+    onMissing?: 'fail' | 'abstain';
   }[];
   drift: { check: string; locator: string }[];
   escalation?: {

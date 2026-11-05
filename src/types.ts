@@ -19,10 +19,14 @@ export interface AXStates {
 }
 
 export interface AXNode {
-  /** ARIA role, or "text" for a text run. The root is "document". */
+  /**
+   * ARIA role, or "text" for a text run. The root is "document". An `iframe` node holds
+   * the content of its frame as children (ADR 0012).
+   */
   role: string;
   name?: string;
   value?: string;
+  /** A link's target; for an `iframe`, the URL of the document in the frame. */
   url?: string;
   level?: number;
   states?: AXStates;
@@ -38,12 +42,48 @@ export interface NetworkEntry {
   status: number | null;
   failure?: string;
   requestHeaders: Record<string, string>;
+  /**
+   * Parsed JSON; a form body (URL-encoded or multipart) as an object of its fields
+   * (repeated fields become arrays, a file becomes `{filename, type, size}`); else text.
+   */
   requestBody?: Json;
+  /**
+   * The text of a form body as sent, when `requestBody` holds its parsed fields. The
+   * content of multipart file parts is left out.
+   */
+  requestBodyRaw?: string;
+  /** The request carried a body (it has a content type) that could not be read. */
+  requestBodyUnavailable?: boolean;
   responseHeaders: Record<string, string>;
   responseBody?: Json;
+  /** A body (request or response) was cut at the size limit. */
   bodyTruncated?: boolean;
+  /**
+   * Which body was cut, set with `bodyTruncated` by capturers that tell them apart (ADR
+   * 0012). Without either, `bodyTruncated` applies to both bodies, as it always did.
+   */
+  requestBodyTruncated?: true;
+  responseBodyTruncated?: true;
   /** The response body should have been captured but could not be read. */
   bodyUnavailable?: boolean;
+}
+
+/** What one open page (tab or popup) showed at capture time. */
+export interface PageView {
+  url: string;
+  title: string;
+  a11y: AXNode;
+  /** innerText of the body, followed by the text of each captured frame. */
+  text: string;
+  /** The page could not be read (it hung or crashed); its a11y and text are empty. */
+  unavailable?: true;
+}
+
+/** A file in a multipart form body: its metadata, never its content. */
+export interface FormFile {
+  filename: string;
+  type: string;
+  size: number;
 }
 
 export interface Redacted {
@@ -97,6 +137,12 @@ export interface EvidenceSnapshot {
   probes: Record<string, ProbeResult>;
   /** State before the agent started; absent = no baseline was captured. */
   baseline?: Baseline;
+  /**
+   * The other open pages of the browser context (tabs, popups), in the order they were
+   * opened; absent when the active page was the only one. `page`, `a11y` and `text`
+   * describe the active page (ADR 0012).
+   */
+  pages?: PageView[];
   meta: { capturer: string; redacted: string[] };
 }
 
@@ -158,6 +204,12 @@ export interface UrlMatch {
   query?: Record<string, TextMatch | null>;
 }
 
+/** Selects one open page of a snapshot by its URL and/or title (ADR 0012). */
+export interface PageMatch {
+  url?: UrlMatch;
+  title?: TextMatch;
+}
+
 export type JsonSchema = { [key: string]: Json } | boolean;
 
 export interface RequestMatch {
@@ -198,9 +250,11 @@ export type Normalizer =
   /**
    * A JSON array as an unordered collection: keep items matching `where`, map each to the
    * value at `pointer` (or to an object of the fields at the `pick` pointers, keyed by
-   * pointer, so they stay paired), sort.
+   * pointer, so they stay paired), sort. With `flatten`, the value at `pointer` is itself
+   * an array (a record's tags or labels) and its elements become the items, so one
+   * record's collection can be compared member by member (ADR 0011).
    */
-  | { op: 'items'; where?: JsonSchema; pointer?: string; pick?: string[] };
+  | { op: 'items'; where?: JsonSchema; pointer?: string; pick?: string[]; flatten?: boolean };
 
 export interface Money {
   amount: number;
@@ -269,6 +323,11 @@ export type Assertion =
       count?: NumberCompare;
       assert: Assertion;
     }
+  /**
+   * On one open page: `assert` reads the page (tab, popup) that `match` selects instead of
+   * the active page. No such page, or several → abstain (ADR 0012).
+   */
+  | { kind: 'page'; match: PageMatch; assert: Assertion }
   | { kind: 'allOf'; of: Assertion[] }
   | { kind: 'anyOf'; of: Assertion[] };
 
@@ -290,6 +349,16 @@ export interface Check {
    * the escalation policy (`policy.on`).
    */
   onFail?: 'escalate' | 'keep';
+  /**
+   * What the check concludes when the evidence of one way of doing the task is
+   * missing (ADR 0011). Unset or "fail": a missing request or a page URL that does
+   * not match fails, as an observed absence. "abstain": the check reads route
+   * evidence (the requests one UI sends, the URL it passes through), so a run that
+   * took another route has nothing for it to read; it abstains with reason
+   * `route_missing`, and inside an `anyOf` such a branch gives way to the branches
+   * whose route was taken. Evidence that was found but is wrong still fails.
+   */
+  onMissing?: 'fail' | 'abstain';
 }
 
 /** Provenance of a compiled check set. */
@@ -378,6 +447,11 @@ export type AbstainReason =
   | 'type_mismatch'
   | 'uncovered'
   | 'subcheck_abstained'
+  /**
+   * A check with `onMissing: "abstain"` found no evidence of the route it reads (no
+   * matching request, a URL elsewhere): the run may have done the task another way.
+   */
+  | 'route_missing'
   /** The agentic verifier could not observe enough to decide (escalation). */
   | 'verifier_unknown';
 

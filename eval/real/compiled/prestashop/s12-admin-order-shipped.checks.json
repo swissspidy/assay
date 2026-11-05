@@ -27,26 +27,25 @@
           "from": "probe",
           "probe": "orders"
         },
-        "normalize": [
-          {
-            "op": "items",
-            "where": {
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
               "properties": {
                 "reference": {
                   "const": "FFATNOMMJ"
+                },
+                "state": {
+                  "const": "Shipped"
                 }
               },
               "required": [
-                "reference"
+                "reference",
+                "state"
               ]
-            },
-            "pointer": "/state"
+            }
           }
-        ],
-        "expect": {
-          "equals": [
-            "Shipped"
-          ]
         }
       }
     }
@@ -57,6 +56,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:19:34.752Z"
+    "at": "2026-11-05T21:11:38.647Z"
   }
 }

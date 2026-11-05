@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T12:15:48.715Z",
  "turns": {
   "sha256:c333ef6327067e775e735fc4bc597334c12572137d863ea2055e190820bc36b0": {
    "stop": "tool_use",
@@ -52,20 +51,25 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:574e8edcdf7ff33b835691160b9a7fe67051cc4ae95619796f4489bbbd8dd5b2": {
+  "sha256:ab19f93af4e5e1179731d81ed450a46b5d3d0a806df6c442f4ab34e785e6f873": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01CXJuY95iQ63sunE3TCaftb",
+     "id": "toolu_01FJgHPnL4QLvq1MhL7Na8Df",
      "name": "probes",
      "input": {}
     }
    ],
    "raw": [
     {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQShwUKEAgTGAI4AUIIdGhpbmtpbmcSDBQ5O8LEM5thOcqrzxoMGY+Oq0T9xHKQ0k6YIjABW8dADMhDgXP0yy+sdti2/yO8kLHVcj3LU2XISPPtCMRXpfq/4qY79oEQ1cG5VDEqpASIf5qmR/ojBoCBm8ngVVdmsG/3pN94jjUQePHr9GbnhufDYbpAOwRnI45b2N+UdZKxCINHB4wH4thaLhDanGVffwSm/8zVPu8+Nd/+N4/Nmln7ww+5dMEOfU71X8guy5vsCpNXHV1lZKIimBj1e4b5SFQXW+ke3kM6AXbyfpK4CLNntsCjVfAmYuYn9qoLdj+BqQXL5hRRqjPnqZBPprFXJR2KiF5PIHUe9W4YGoWf6tRHR/v0gqegUPIk106f02rO3/enbdnn8kWhTbtrXHm3lKRAUPbYTNAdeJQEB2pytAvdb3L7V4rROjFRFEmiwO/JyzKbhLPOZBZH/dCoODUSPpOWGfnl5r9I5euYYIpXVv8KGOx7IZrteynGBrfYYerMwL8bRyUTtV8sPZA8MQHKRDwn8tPwa6u2nr7E0Y4NhqUKBFmk2QN39dfXMYUq8/ZYR0v/bcA4SYrq+vPHWoNPfqqTjMq/SMFvkNWO6KKhxf6TTkve4gGZf0/P3UBOm5bkpAEu3e+02I7oOCAZH9szI/voK+0aMWVxxMyKOuquRim8JZ7319h8RdwF3//O33G49lmcay7LZELqh8021SDjstHwviOpq7Qfz8c3a8/WLp1Ae8TmUVk/y8Azjx9eulESB/GxTMJvWfvvQNaZ2VDnmBgmD8CqiXtRaPDl3neE2hgLG9AnWg973C7qkz5Teyir5wMSOraFpBbhLgeElvOEqVNwcRgB"
+    },
+    {
      "type": "tool_use",
-     "id": "toolu_01CXJuY95iQ63sunE3TCaftb",
+     "id": "toolu_01FJgHPnL4QLvq1MhL7Na8Df",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -74,51 +78,133 @@
     }
    ],
    "usage": {
-    "inputTokens": 16894,
-    "outputTokens": 25,
+    "inputTokens": 19975,
+    "outputTokens": 36,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16890
+    "cacheWriteTokens": 19971
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:d72ed211e399e32ff2ace02d9667d3fea5cb23269bb7468877d53622a3712c3b": {
+  "sha256:20a3be2933db2eeb65cfc65b38c80fc69adc7623d08c17de3cfeebc1712b0df3": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_017bNc19u7PKexDiX5J9KCZJ",
-     "name": "try_assertion",
+     "id": "toolu_01Qtn5CFT7kNhHAFLVbTEziV",
+     "name": "submit_checks",
      "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "posts"
-       },
-       "expect": {
-        "schema": {
-         "type": "array",
-         "contains": {
-          "type": "object",
-          "required": [
-           "title",
-           "tags"
-          ],
-          "properties": {
-           "title": {
-            "const": "Flaky tests and how to avoid them"
-           },
-           "tags": {
-            "type": "array",
-            "contains": {
-             "const": "testing"
-            }
+      "checks": [
+       {
+        "id": "R1-tag-added",
+        "requirement": "R1",
+        "description": "The stored post with id 6 titled \"Flaky tests and how to avoid them\" has the tag \"testing\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "posts"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "const": 6
+             },
+             "title": {
+              "const": "Flaky tests and how to avoid them"
+             },
+             "tags": {
+              "type": "array",
+              "contains": {
+               "const": "testing"
+              }
+             }
+            },
+            "required": [
+             "id",
+             "title",
+             "tags"
+            ]
            }
           }
          }
         }
+       },
+       {
+        "id": "R1-existing-tags-kept",
+        "requirement": "R1",
+        "description": "The post with id 6 keeps all the tags it had before the task (its tags without \"testing\" are the same as before without \"testing\").",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "posts"
+         },
+         "normalize": [
+          {
+           "op": "items",
+           "where": {
+            "properties": {
+             "id": {
+              "const": 6
+             }
+            },
+            "required": [
+             "id"
+            ]
+           },
+           "pointer": "/tags",
+           "flatten": true
+          },
+          {
+           "op": "items",
+           "where": {
+            "not": {
+             "const": "testing"
+            }
+           }
+          }
+         ],
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "posts",
+            "at": "before"
+           },
+           "normalize": [
+            {
+             "op": "items",
+             "where": {
+              "properties": {
+               "id": {
+                "const": 6
+               }
+              },
+              "required": [
+               "id"
+              ]
+             },
+             "pointer": "/tags",
+             "flatten": true
+            },
+            {
+             "op": "items",
+             "where": {
+              "not": {
+               "const": "testing"
+              }
+             }
+            }
+           ]
+          }
+         }
+        }
        }
-      }
+      ]
      }
     }
    ],
@@ -126,146 +212,123 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "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"
+     "signature": "CAQS4AYKEAgTGAI4AUIIdGhpbmtpbmcSDPaza93Xvdg2fIAjShoMgYRBtEF0eD0xe7bUIjCCqf/LrfUSRzW/oP3bdoKPZLMy+TY1zkxhkEbzVO/0GM3qRglvbkKQ2RgcGMcBPlwq/QWGf6EBn1uRCg0ISeTSi51+who05Ga5AUvv+uoznNmWQMR3KOixS/cDHuMiAW2724Ou95/BfkiDQWj5PqMNwgLTQwgQ4FG1M0zD5CeSRfixlich8RDP2eMtW0r6v3EtJl5zDBg03y2OEF8jJlgA6ouaaJozTZMNj+p5YKKPJwmbflKHBCgWzbl1b9wfkWbMvBVvMoRMUGp41MJ86hKxnfAF/TgL+kYD7QE+8PpoNr5lmTE44U0Qg6EMKUUsonWFVfnpHm6isei+QAM1MIPsuM/ILlDGaeNqCuYPrdSvjLjEI+SJLt0Tsi6mGW5GONb+4AxC2Js95D29A09YOQpkekSefJ6SfiDSN1yMUS9ZOLpP1Ujxb1xitv5K/pMqgG3HZ72hE/KtIo1C7ExcMFp8z0K7vMxgnbHZnLtBczePJi2HK4cQB1mTQuu4t2RBUcE5rSd/Bmt7PfVthehxj03ehnOm/FjV7sYagkMHHj0ke4qry6TYMZIJ8uIvUyPdEdz290zUONwn7giE6nBBMcczZUxYRmHIkGt9YnBkDc1Tl+fqbMvDKHm67vA1cwM8OgoRV0/tc6zGqc7lgVBZtKQcBSYJwX1o5xfs79MKNFcPO+yzicWjePX86gU8v9YhC4PQJ62U9tAxAh23+/maaO/XptfYbfctCK8RmjdCujFu94jYTgDXaRvYEbQPyAuPv8CI0773OjXKImwDqoyC1u7h2JDhrlEkdVFz8KVNXwfULhiiYSsIR9h6g4BsM2dupaNXzkZHpI6ObhrgNVwgebtpz0p9IVXY6QeuyzYsyA94gOmf9Abkb5AVqUjIZBdehnRXJSfxSW6xFnkkb2BBySORdAzDRtzSaToW6/1P/0THh3DPaqeOvbWVBVapUT+/p66BR2CinCvkH466gNvI3AY8vf84XybhE5eCt8TIzoOao3QxK2fuhkwFdZMRG5njXHQU2RHbR3jND/pd9BOIlEXqUx8WeHTGijOoBkBkHKwIcEdhYCAv5ebLUJsBgFna2doYAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_017bNc19u7PKexDiX5J9KCZJ",
-     "name": "try_assertion",
+     "id": "toolu_01Qtn5CFT7kNhHAFLVbTEziV",
+     "name": "submit_checks",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "posts"
+      "checks": [
+       {
+        "id": "R1-tag-added",
+        "requirement": "R1",
+        "description": "The stored post with id 6 titled \"Flaky tests and how to avoid them\" has the tag \"testing\".",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "posts"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "const": 6
+             },
+             "title": {
+              "const": "Flaky tests and how to avoid them"
+             },
+             "tags": {
+              "type": "array",
+              "contains": {
+               "const": "testing"
+              }
+             }
+            },
+            "required": [
+             "id",
+             "title",
+             "tags"
+            ]
+           }
+          }
+         }
+        }
        },
-       "expect": {
-        "schema": {
-         "type": "array",
-         "contains": {
-          "type": "object",
-          "required": [
-           "title",
-           "tags"
-          ],
-          "properties": {
-           "title": {
-            "const": "Flaky tests and how to avoid them"
+       {
+        "id": "R1-existing-tags-kept",
+        "requirement": "R1",
+        "description": "The post with id 6 keeps all the tags it had before the task (its tags without \"testing\" are the same as before without \"testing\").",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "posts"
+         },
+         "normalize": [
+          {
+           "op": "items",
+           "where": {
+            "properties": {
+             "id": {
+              "const": 6
+             }
+            },
+            "required": [
+             "id"
+            ]
            },
-           "tags": {
-            "type": "array",
-            "contains": {
+           "pointer": "/tags",
+           "flatten": true
+          },
+          {
+           "op": "items",
+           "where": {
+            "not": {
              "const": "testing"
             }
            }
           }
-         }
-        }
-       }
-      }
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 20318,
-    "outputTokens": 484,
-    "cacheReadTokens": 20316,
-    "cacheWriteTokens": 0
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:f0bf9fbc19b81cecea270a88a32d7249111215227a20827c7aae1e112f4bfd6b": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_015pYai1FeXmWVcz2GvWq3Ly",
-     "name": "submit_checks",
-     "input": {
-      "checks": [
-       {
-        "id": "post-has-testing-tag",
-        "requirement": "R1",
-        "description": "The backend posts probe shows the post titled exactly \"Flaky tests and how to avoid them\" with \"testing\" among its tags.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "posts"
-         },
+         ],
          "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "title",
-             "tags"
-            ],
-            "properties": {
-             "title": {
-              "const": "Flaky tests and how to avoid them"
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "posts",
+            "at": "before"
+           },
+           "normalize": [
+            {
+             "op": "items",
+             "where": {
+              "properties": {
+               "id": {
+                "const": 6
+               }
+              },
+              "required": [
+               "id"
+              ]
              },
-             "tags": {
-              "type": "array",
-              "contains": {
+             "pointer": "/tags",
+             "flatten": true
+            },
+            {
+             "op": "items",
+             "where": {
+              "not": {
                "const": "testing"
               }
              }
             }
-           }
-          }
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_015pYai1FeXmWVcz2GvWq3Ly",
-     "name": "submit_checks",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "checks": [
-       {
-        "id": "post-has-testing-tag",
-        "requirement": "R1",
-        "description": "The backend posts probe shows the post titled exactly \"Flaky tests and how to avoid them\" with \"testing\" among its tags.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "posts"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "title",
-             "tags"
-            ],
-            "properties": {
-             "title": {
-              "const": "Flaky tests and how to avoid them"
-             },
-             "tags": {
-              "type": "array",
-              "contains": {
-               "const": "testing"
-              }
-             }
-            }
-           }
+           ]
           }
          }
         }
@@ -275,12 +338,13 @@
     }
    ],
    "usage": {
-    "inputTokens": 20880,
-    "outputTokens": 257,
-    "cacheReadTokens": 20316,
-    "cacheWriteTokens": 562
+    "inputTokens": 23410,
+    "outputTokens": 602,
+    "cacheReadTokens": 19971,
+    "cacheWriteTokens": 3437
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:00:15.112Z"
 }

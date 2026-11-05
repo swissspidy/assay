@@ -217,6 +217,8 @@ test('compileTask: rubric, exploration, repair until the checks pass on the refe
       checks: ['C1', 'C2'],
       channels: ['network'],
       trust: 'structured',
+      // Only the requests of the reference's way of saving it (ADR 0011): reported, not refused.
+      routeOnly: true,
     },
     {
       requirement: 'R2',
@@ -226,6 +228,7 @@ test('compileTask: rubric, exploration, repair until the checks pass on the refe
       trust: 'semantic',
     },
   ]);
+  expect(report.warnings.some((w) => w.startsWith('Requirement R1 has no evidence independent of'))).toBe(true);
   // the trajectory is never part of the prompt unless given
   expect(JSON.stringify(model.requests[1]!.messages[0])).not.toContain('<trajectory>');
 });

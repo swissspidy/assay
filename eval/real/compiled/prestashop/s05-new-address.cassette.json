@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T12:17:40.592Z",
  "turns": {
   "sha256:4ca66488b09e45b0882fdb93f496a464d229607f4e0fe4e1bb00571203d2ff57": {
    "stop": "tool_use",
@@ -155,12 +154,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:47e8b3bb3e0a691cb7c30f76ade37551c4ebfbc9c93a6743a5f49e60a70e4c09": {
+  "sha256:793967cb2026ac9b70c8f66dfbeb191de9cc319905be5c40673cecc574166f6f": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Ase1g1B2HcNQvjwyyTppLV",
+     "id": "toolu_01SEJU83sjzstAaCsQo9nUa8",
      "name": "probes",
      "input": {}
     }
@@ -168,7 +167,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01Ase1g1B2HcNQvjwyyTppLV",
+     "id": "toolu_01SEJU83sjzstAaCsQo9nUa8",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -177,22 +176,338 @@
     }
    ],
    "usage": {
-    "inputTokens": 17062,
+    "inputTokens": 19926,
     "outputTokens": 25,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 17058
+    "cacheWriteTokens": 19922
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:c51a74967fe18a25c2904ad23279493dd0c8e2cfe3fc4393071a6eb98f55795a": {
+  "sha256:9426f1d9e56705df8b60fc87a5a9e99d64b4b6c81313e266617970a1445b31e5": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_012AQpZk8Yo1rKxP9mWgbEFG",
-     "name": "network_log",
+     "id": "toolu_01XA1hTNcynmrkFjyBz1Exof",
+     "name": "submit_checks",
      "input": {
-      "method": "POST"
+      "checks": [
+       {
+        "id": "r1-added",
+        "requirement": "R1",
+        "description": "The account has one more address than before and all pre-existing addresses are unchanged.",
+        "assert": {
+         "kind": "allOf",
+         "of": [
+          {
+           "kind": "value",
+           "source": {
+            "from": "probe",
+            "probe": "addresses"
+           },
+           "normalize": [
+            {
+             "op": "items",
+             "where": {
+              "not": {
+               "properties": {
+                "alias": {
+                 "pattern": "^\\s*Office\\s*$"
+                }
+               },
+               "required": [
+                "alias"
+               ]
+              }
+             }
+            }
+           ],
+           "expect": {
+            "sameAs": {
+             "source": {
+              "from": "probe",
+              "probe": "addresses",
+              "at": "before"
+             },
+             "normalize": [
+              {
+               "op": "items",
+               "where": {
+                "not": {
+                 "properties": {
+                  "alias": {
+                   "pattern": "^\\s*Office\\s*$"
+                  }
+                 },
+                 "required": [
+                  "alias"
+                 ]
+                }
+               }
+              }
+             ]
+            }
+           }
+          },
+          {
+           "kind": "value",
+           "source": {
+            "from": "probe",
+            "probe": "addresses"
+           },
+           "expect": {
+            "schema": {
+             "type": "array",
+             "contains": {
+              "type": "object",
+              "properties": {
+               "alias": {
+                "pattern": "^\\s*Office\\s*$"
+               },
+               "address1": {
+                "pattern": "^\\s*500 Market Street\\s*$"
+               },
+               "city": {
+                "pattern": "^\\s*San Francisco\\s*$"
+               },
+               "postcode": {
+                "pattern": "^\\s*94105\\s*$"
+               }
+              },
+              "required": [
+               "alias",
+               "address1",
+               "city",
+               "postcode"
+              ]
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "id": "r2-alias",
+        "requirement": "R2",
+        "description": "An address with alias 'Office' exists in the account.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "addresses"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "pattern": "^\\s*Office\\s*$"
+             }
+            },
+            "required": [
+             "alias"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r3-street",
+        "requirement": "R3",
+        "description": "The Office address has street 500 Market Street.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "addresses"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "pattern": "^\\s*Office\\s*$"
+             },
+             "address1": {
+              "pattern": "^\\s*500 Market Street\\s*$"
+             }
+            },
+            "required": [
+             "alias",
+             "address1"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r4-city",
+        "requirement": "R4",
+        "description": "The Office address has city San Francisco.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "addresses"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "pattern": "^\\s*Office\\s*$"
+             },
+             "city": {
+              "pattern": "^\\s*San Francisco\\s*$"
+             }
+            },
+            "required": [
+             "alias",
+             "city"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r5-state",
+        "requirement": "R5",
+        "description": "The Office address has state California.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "addresses"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "pattern": "^\\s*Office\\s*$"
+             },
+             "state": {
+              "pattern": "^\\s*California\\s*$"
+             }
+            },
+            "required": [
+             "alias",
+             "state"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r6-postcode",
+        "requirement": "R6",
+        "description": "The Office address has postal code 94105.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "addresses"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "pattern": "^\\s*Office\\s*$"
+             },
+             "postcode": {
+              "pattern": "^\\s*94105\\s*$"
+             }
+            },
+            "required": [
+             "alias",
+             "postcode"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r7-country",
+        "requirement": "R7",
+        "description": "The Office address has country United States.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "addresses"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "pattern": "^\\s*Office\\s*$"
+             },
+             "country": {
+              "pattern": "^\\s*United States\\s*$"
+             }
+            },
+            "required": [
+             "alias",
+             "country"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r8-phone",
+        "requirement": "R8",
+        "description": "The Office address has phone 415-555-0100 (any separators).",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "addresses"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "pattern": "^\\s*Office\\s*$"
+             },
+             "phone": {
+              "pattern": "^\\D*(1\\D*)?415\\D*555\\D*0100\\D*$"
+             }
+            },
+            "required": [
+             "alias",
+             "phone"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
      }
     }
    ],
@@ -200,1372 +515,344 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "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"
+     "signature": "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"
     },
     {
      "type": "tool_use",
-     "id": "toolu_012AQpZk8Yo1rKxP9mWgbEFG",
-     "name": "network_log",
+     "id": "toolu_01XA1hTNcynmrkFjyBz1Exof",
+     "name": "submit_checks",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "method": "POST"
+      "checks": [
+       {
+        "id": "r1-added",
+        "requirement": "R1",
+        "description": "The account has one more address than before and all pre-existing addresses are unchanged.",
+        "assert": {
+         "kind": "allOf",
+         "of": [
+          {
+           "kind": "value",
+           "source": {
+            "from": "probe",
+            "probe": "addresses"
+           },
+           "normalize": [
+            {
+             "op": "items",
+             "where": {
+              "not": {
+               "properties": {
+                "alias": {
+                 "pattern": "^\\s*Office\\s*$"
+                }
+               },
+               "required": [
+                "alias"
+               ]
+              }
+             }
+            }
+           ],
+           "expect": {
+            "sameAs": {
+             "source": {
+              "from": "probe",
+              "probe": "addresses",
+              "at": "before"
+             },
+             "normalize": [
+              {
+               "op": "items",
+               "where": {
+                "not": {
+                 "properties": {
+                  "alias": {
+                   "pattern": "^\\s*Office\\s*$"
+                  }
+                 },
+                 "required": [
+                  "alias"
+                 ]
+                }
+               }
+              }
+             ]
+            }
+           }
+          },
+          {
+           "kind": "value",
+           "source": {
+            "from": "probe",
+            "probe": "addresses"
+           },
+           "expect": {
+            "schema": {
+             "type": "array",
+             "contains": {
+              "type": "object",
+              "properties": {
+               "alias": {
+                "pattern": "^\\s*Office\\s*$"
+               },
+               "address1": {
+                "pattern": "^\\s*500 Market Street\\s*$"
+               },
+               "city": {
+                "pattern": "^\\s*San Francisco\\s*$"
+               },
+               "postcode": {
+                "pattern": "^\\s*94105\\s*$"
+               }
+              },
+              "required": [
+               "alias",
+               "address1",
+               "city",
+               "postcode"
+              ]
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "id": "r2-alias",
+        "requirement": "R2",
+        "description": "An address with alias 'Office' exists in the account.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "addresses"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "pattern": "^\\s*Office\\s*$"
+             }
+            },
+            "required": [
+             "alias"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r3-street",
+        "requirement": "R3",
+        "description": "The Office address has street 500 Market Street.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "addresses"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "pattern": "^\\s*Office\\s*$"
+             },
+             "address1": {
+              "pattern": "^\\s*500 Market Street\\s*$"
+             }
+            },
+            "required": [
+             "alias",
+             "address1"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r4-city",
+        "requirement": "R4",
+        "description": "The Office address has city San Francisco.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "addresses"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "pattern": "^\\s*Office\\s*$"
+             },
+             "city": {
+              "pattern": "^\\s*San Francisco\\s*$"
+             }
+            },
+            "required": [
+             "alias",
+             "city"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r5-state",
+        "requirement": "R5",
+        "description": "The Office address has state California.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "addresses"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "pattern": "^\\s*Office\\s*$"
+             },
+             "state": {
+              "pattern": "^\\s*California\\s*$"
+             }
+            },
+            "required": [
+             "alias",
+             "state"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r6-postcode",
+        "requirement": "R6",
+        "description": "The Office address has postal code 94105.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "addresses"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "pattern": "^\\s*Office\\s*$"
+             },
+             "postcode": {
+              "pattern": "^\\s*94105\\s*$"
+             }
+            },
+            "required": [
+             "alias",
+             "postcode"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r7-country",
+        "requirement": "R7",
+        "description": "The Office address has country United States.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "addresses"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "pattern": "^\\s*Office\\s*$"
+             },
+             "country": {
+              "pattern": "^\\s*United States\\s*$"
+             }
+            },
+            "required": [
+             "alias",
+             "country"
+            ]
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r8-phone",
+        "requirement": "R8",
+        "description": "The Office address has phone 415-555-0100 (any separators).",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "addresses"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "pattern": "^\\s*Office\\s*$"
+             },
+             "phone": {
+              "pattern": "^\\D*(1\\D*)?415\\D*555\\D*0100\\D*$"
+             }
+            },
+            "required": [
+             "alias",
+             "phone"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 21228,
-    "outputTokens": 727,
-    "cacheReadTokens": 17058,
+    "inputTokens": 24092,
+    "outputTokens": 2181,
+    "cacheReadTokens": 19922,
     "cacheWriteTokens": 4168
    },
    "model": "claude-opus-5-5"
-  },
-  "sha256:a8b05c9f948448c2eae017b25b7ff0125881f38b8c9ac2316dacdbda2b42e066": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_01E6opjbqyzd1iPPg3qEkjvD",
-     "name": "network_entry",
-     "input": {
-      "seq": 79
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_01E6opjbqyzd1iPPg3qEkjvD",
-     "name": "network_entry",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "seq": 79
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 22039,
-    "outputTokens": 49,
-    "cacheReadTokens": 21226,
-    "cacheWriteTokens": 811
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:f6481fee545b083d1833d9d9141b2a6b9ef43307e5356aa8d21ea7d4d74181bd": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_01GLktREXbaasGTfuc5XjD54",
-     "name": "try_assertion",
-     "input": {
-      "assert": {
-       "kind": "allOf",
-       "of": [
-        {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "addresses"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "alias",
-             "address1",
-             "city",
-             "state",
-             "postcode",
-             "country",
-             "phone"
-            ],
-            "properties": {
-             "alias": {
-              "type": "string",
-              "pattern": "^\\s*Office\\s*$"
-             },
-             "address1": {
-              "type": "string",
-              "pattern": "^\\s*500 Market Street\\s*$"
-             },
-             "city": {
-              "type": "string",
-              "pattern": "^\\s*San Francisco\\s*$"
-             },
-             "state": {
-              "const": "California"
-             },
-             "postcode": {
-              "type": "string",
-              "pattern": "^\\s*94105\\s*$"
-             },
-             "country": {
-              "const": "United States"
-             },
-             "phone": {
-              "type": "string",
-              "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
-             }
-            }
-           }
-          }
-         }
-        },
-        {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "addresses"
-         },
-         "normalize": [
-          {
-           "op": "items",
-           "where": {
-            "not": {
-             "properties": {
-              "alias": {
-               "pattern": "^\\s*Office\\s*$"
-              }
-             },
-             "required": [
-              "alias"
-             ]
-            }
-           }
-          }
-         ],
-         "expect": {
-          "sameAs": {
-           "source": {
-            "from": "probe",
-            "probe": "addresses",
-            "at": "before"
-           },
-           "normalize": [
-            {
-             "op": "items",
-             "where": {
-              "not": {
-               "properties": {
-                "alias": {
-                 "pattern": "^\\s*Office\\s*$"
-                }
-               },
-               "required": [
-                "alias"
-               ]
-              }
-             }
-            }
-           ]
-          }
-         }
-        }
-       ]
-      }
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "thinking",
-     "thinking": "",
-     "signature": "CAQShAoKEAgTGAI4AUIIdGhpbmtpbmcSDN4MYrGDE6i/caMzXBoM1NvAjMFsptSddRwPIjBr2zO55voDuextzk6Sq93LOUtCfNIWCQ2df8ZoyVkt+TAJibGlMpUy82gyXfKP11gqoQmXWWi2Wk2Laz8QJPRLAJmOXgrcqunnsV5biYJ6jkqXBng2Urwkw8ZGfCJZw1hwOduHzTmcvxib4L0iFF75cn/BoplU0oR23MdnfY61BY1xei8NbXauJrFu3DzWWor76UrpHRBF3QG/MLgd1m6rfyHCF/x1mHWK0iZC9ezbLLroGwiy5BvFXhQnoXJ8AAw6h+vnxqlde5KonQ1vYIH1CW+OPjvHMv7D1evIZZeuAiDvgY7RnF7C4sT6bIqz0jgEoodsPlouif7Gg2k06TV7vXFJPTtwoC4abWKCXeeBiiJMqWxm28v2D2bcQcbtoT0xQADlLjy7Z3RdOof3ggneyAFNu32ymXVbu56uwluMKjf8vAGMaejBaycbEj95IfLO/4Hl8g7qLeyBm0AiFfIT+lVlee8F4P7mMSW7TNHXz9B3nAfA+ZvbnAbYHJNbNoRgjM3zAW+6gIVHhQoP2jKwMsDplP3djDW8TxjwHDeWvYUlxKIpCTEr8OL/xaEC/0zzIasdH6v8YGcsNtW2SaDvg9YplnfK2ZXCThpRAikZqM7v38QhrEyjKXxgtGYZIvKsnmTSRbrQ+K9m2/iSVWSqlZVmnIglt3pPJlm9DlrFyowf7oRjJt7/Q8iebszfPsx3hqnfcRv7pbHaRT+GJzwSGAzg0R/cbjr/+SY5MR+30+3zq0nmRu+auc3y56+fPBiRZ9uGEquNjlFXtouHkFTV70FQKUJJ20yHi1VkXLeojUZVFI92Bb4zCP8+CSaozrNfxqGH6km7Nh9b7G84j/xS5ZuKU1qY2ffWIH6hVggEb14agLe7Zl2PfwBkZbBJ9BJqGrIhYNnoFjFyzI2oM+l6aMQI+FibWPpZkKsvGNVX6d4DiXjtv6c+54SRe5vYsp5xMZ5HgmiQ/YbZaloJZPssd6VLicwB/r8o30HKeId22Gz6D8+FrzcoCHpi0sjNR1vEN9kNn9CQ2EXAQrH5C3J9DCM7uYls/Qf92LrMVkuy/xN1LtyScU3LaWK66LeV4q2EC48JWQ7MIQtvsPFjk4cdcwonbOSceXagVuBIUkPu0emmAskuznUHDUdyaCi+rVKnER1vOrXo6/9B+lRH0PdHR1JsOPX3XrFOc+vhOVJyVwm6b0ChRVP8sPXsLE2qaLYsjzHUGvkOAL50j5+g/uhxSGc6IBCRS2OzCT9KZbRRz/WFLLWIJsx6oh8chDNlW9ki1qcg4NAp47tiynlDLicoGpnmC8Rn26bwLWunVnKLOxJxQIv7tjSyCTMfdSsdJds6sEfhWrmAFPWTdKi6Ed7k5qMOPsMuoHaCAq1OhFpXc8/iXbEmiIj6Rh2J7K36LluiNSffFKBtSnCKR6qy3RQEen7D5iSB7F5+d6+AVaUyihdJaJktaEr9eQDW7y1W4boDsZ3kcwfotOy0F3JfjY6U7kXgxNySXLMV3RF/vSjLnM3rplXvCIhlmVHA8iJgIJEGHHMOwxG2yB+A+hrVnAy78IO7GLKIdXInwtGGLLIqCz3OCBnaBU++kRktZMOLmAdsa4Ehv8rqzs6kYOt0AVIL9lIIxpTMsWnxaD8XdgmOwK+Wj7gYAQ=="
-    },
-    {
-     "type": "tool_use",
-     "id": "toolu_01GLktREXbaasGTfuc5XjD54",
-     "name": "try_assertion",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "assert": {
-       "kind": "allOf",
-       "of": [
-        {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "addresses"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "alias",
-             "address1",
-             "city",
-             "state",
-             "postcode",
-             "country",
-             "phone"
-            ],
-            "properties": {
-             "alias": {
-              "type": "string",
-              "pattern": "^\\s*Office\\s*$"
-             },
-             "address1": {
-              "type": "string",
-              "pattern": "^\\s*500 Market Street\\s*$"
-             },
-             "city": {
-              "type": "string",
-              "pattern": "^\\s*San Francisco\\s*$"
-             },
-             "state": {
-              "const": "California"
-             },
-             "postcode": {
-              "type": "string",
-              "pattern": "^\\s*94105\\s*$"
-             },
-             "country": {
-              "const": "United States"
-             },
-             "phone": {
-              "type": "string",
-              "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
-             }
-            }
-           }
-          }
-         }
-        },
-        {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "addresses"
-         },
-         "normalize": [
-          {
-           "op": "items",
-           "where": {
-            "not": {
-             "properties": {
-              "alias": {
-               "pattern": "^\\s*Office\\s*$"
-              }
-             },
-             "required": [
-              "alias"
-             ]
-            }
-           }
-          }
-         ],
-         "expect": {
-          "sameAs": {
-           "source": {
-            "from": "probe",
-            "probe": "addresses",
-            "at": "before"
-           },
-           "normalize": [
-            {
-             "op": "items",
-             "where": {
-              "not": {
-               "properties": {
-                "alias": {
-                 "pattern": "^\\s*Office\\s*$"
-                }
-               },
-               "required": [
-                "alias"
-               ]
-              }
-             }
-            }
-           ]
-          }
-         }
-        }
-       ]
-      }
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 22372,
-    "outputTokens": 735,
-    "cacheReadTokens": 22037,
-    "cacheWriteTokens": 333
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:c7cecbeeb53101628d67b0def6ec207425525ec480582e7e91023ff3e8f7f843": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_01FkxvdPa5WCRshxUQv1nyYP",
-     "name": "submit_checks",
-     "input": {
-      "checks": [
-       {
-        "id": "r1-office-address-added",
-        "requirement": "R1",
-        "description": "The account's addresses now include the complete new Office address, and the previously existing addresses are unchanged (so it was added, not overwritten).",
-        "assert": {
-         "kind": "allOf",
-         "of": [
-          {
-           "kind": "value",
-           "source": {
-            "from": "probe",
-            "probe": "addresses"
-           },
-           "expect": {
-            "schema": {
-             "type": "array",
-             "contains": {
-              "type": "object",
-              "required": [
-               "alias",
-               "address1",
-               "city",
-               "state",
-               "postcode",
-               "country",
-               "phone"
-              ],
-              "properties": {
-               "alias": {
-                "type": "string",
-                "pattern": "^\\s*Office\\s*$"
-               },
-               "address1": {
-                "type": "string",
-                "pattern": "^\\s*500 Market Street\\s*$"
-               },
-               "city": {
-                "type": "string",
-                "pattern": "^\\s*San Francisco\\s*$"
-               },
-               "state": {
-                "const": "California"
-               },
-               "postcode": {
-                "type": "string",
-                "pattern": "^\\s*94105\\s*$"
-               },
-               "country": {
-                "const": "United States"
-               },
-               "phone": {
-                "type": "string",
-                "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
-               }
-              }
-             }
-            }
-           }
-          },
-          {
-           "kind": "value",
-           "source": {
-            "from": "probe",
-            "probe": "addresses"
-           },
-           "normalize": [
-            {
-             "op": "items",
-             "where": {
-              "not": {
-               "properties": {
-                "alias": {
-                 "pattern": "^\\s*Office\\s*$"
-                }
-               },
-               "required": [
-                "alias"
-               ]
-              }
-             }
-            }
-           ],
-           "expect": {
-            "sameAs": {
-             "source": {
-              "from": "probe",
-              "probe": "addresses",
-              "at": "before"
-             },
-             "normalize": [
-              {
-               "op": "items",
-               "where": {
-                "not": {
-                 "properties": {
-                  "alias": {
-                   "pattern": "^\\s*Office\\s*$"
-                  }
-                 },
-                 "required": [
-                  "alias"
-                 ]
-                }
-               }
-              }
-             ]
-            }
-           }
-          }
-         ]
-        }
-       },
-       {
-        "id": "r2-alias-office",
-        "requirement": "R2",
-        "description": "The saved address record with all requested details has alias \"Office\".",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "addresses"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "alias",
-             "address1",
-             "city",
-             "state",
-             "postcode",
-             "country",
-             "phone"
-            ],
-            "properties": {
-             "alias": {
-              "type": "string",
-              "pattern": "^\\s*Office\\s*$"
-             },
-             "address1": {
-              "type": "string",
-              "pattern": "^\\s*500 Market Street\\s*$"
-             },
-             "city": {
-              "type": "string",
-              "pattern": "^\\s*San Francisco\\s*$"
-             },
-             "state": {
-              "const": "California"
-             },
-             "postcode": {
-              "type": "string",
-              "pattern": "^\\s*94105\\s*$"
-             },
-             "country": {
-              "const": "United States"
-             },
-             "phone": {
-              "type": "string",
-              "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
-             }
-            }
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "r3-street",
-        "requirement": "R3",
-        "description": "The saved Office address has street (address1) 500 Market Street.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "addresses"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "alias",
-             "address1",
-             "city",
-             "state",
-             "postcode",
-             "country",
-             "phone"
-            ],
-            "properties": {
-             "alias": {
-              "type": "string",
-              "pattern": "^\\s*Office\\s*$"
-             },
-             "address1": {
-              "type": "string",
-              "pattern": "^\\s*500 Market Street\\s*$"
-             },
-             "city": {
-              "type": "string",
-              "pattern": "^\\s*San Francisco\\s*$"
-             },
-             "state": {
-              "const": "California"
-             },
-             "postcode": {
-              "type": "string",
-              "pattern": "^\\s*94105\\s*$"
-             },
-             "country": {
-              "const": "United States"
-             },
-             "phone": {
-              "type": "string",
-              "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
-             }
-            }
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "r4-city",
-        "requirement": "R4",
-        "description": "The saved Office address has city San Francisco.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "addresses"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "alias",
-             "address1",
-             "city",
-             "state",
-             "postcode",
-             "country",
-             "phone"
-            ],
-            "properties": {
-             "alias": {
-              "type": "string",
-              "pattern": "^\\s*Office\\s*$"
-             },
-             "address1": {
-              "type": "string",
-              "pattern": "^\\s*500 Market Street\\s*$"
-             },
-             "city": {
-              "type": "string",
-              "pattern": "^\\s*San Francisco\\s*$"
-             },
-             "state": {
-              "const": "California"
-             },
-             "postcode": {
-              "type": "string",
-              "pattern": "^\\s*94105\\s*$"
-             },
-             "country": {
-              "const": "United States"
-             },
-             "phone": {
-              "type": "string",
-              "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
-             }
-            }
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "r5-state",
-        "requirement": "R5",
-        "description": "The saved Office address has state California.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "addresses"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "alias",
-             "address1",
-             "city",
-             "state",
-             "postcode",
-             "country",
-             "phone"
-            ],
-            "properties": {
-             "alias": {
-              "type": "string",
-              "pattern": "^\\s*Office\\s*$"
-             },
-             "address1": {
-              "type": "string",
-              "pattern": "^\\s*500 Market Street\\s*$"
-             },
-             "city": {
-              "type": "string",
-              "pattern": "^\\s*San Francisco\\s*$"
-             },
-             "state": {
-              "const": "California"
-             },
-             "postcode": {
-              "type": "string",
-              "pattern": "^\\s*94105\\s*$"
-             },
-             "country": {
-              "const": "United States"
-             },
-             "phone": {
-              "type": "string",
-              "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
-             }
-            }
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "r6-postcode",
-        "requirement": "R6",
-        "description": "The saved Office address has postal code 94105.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "addresses"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "alias",
-             "address1",
-             "city",
-             "state",
-             "postcode",
-             "country",
-             "phone"
-            ],
-            "properties": {
-             "alias": {
-              "type": "string",
-              "pattern": "^\\s*Office\\s*$"
-             },
-             "address1": {
-              "type": "string",
-              "pattern": "^\\s*500 Market Street\\s*$"
-             },
-             "city": {
-              "type": "string",
-              "pattern": "^\\s*San Francisco\\s*$"
-             },
-             "state": {
-              "const": "California"
-             },
-             "postcode": {
-              "type": "string",
-              "pattern": "^\\s*94105\\s*$"
-             },
-             "country": {
-              "const": "United States"
-             },
-             "phone": {
-              "type": "string",
-              "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
-             }
-            }
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "r7-country",
-        "requirement": "R7",
-        "description": "The saved Office address has country United States.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "addresses"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "alias",
-             "address1",
-             "city",
-             "state",
-             "postcode",
-             "country",
-             "phone"
-            ],
-            "properties": {
-             "alias": {
-              "type": "string",
-              "pattern": "^\\s*Office\\s*$"
-             },
-             "address1": {
-              "type": "string",
-              "pattern": "^\\s*500 Market Street\\s*$"
-             },
-             "city": {
-              "type": "string",
-              "pattern": "^\\s*San Francisco\\s*$"
-             },
-             "state": {
-              "const": "California"
-             },
-             "postcode": {
-              "type": "string",
-              "pattern": "^\\s*94105\\s*$"
-             },
-             "country": {
-              "const": "United States"
-             },
-             "phone": {
-              "type": "string",
-              "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
-             }
-            }
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "r8-phone",
-        "requirement": "R8",
-        "description": "The saved Office address has phone 415-555-0100 (separators tolerated).",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "addresses"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "alias",
-             "address1",
-             "city",
-             "state",
-             "postcode",
-             "country",
-             "phone"
-            ],
-            "properties": {
-             "alias": {
-              "type": "string",
-              "pattern": "^\\s*Office\\s*$"
-             },
-             "address1": {
-              "type": "string",
-              "pattern": "^\\s*500 Market Street\\s*$"
-             },
-             "city": {
-              "type": "string",
-              "pattern": "^\\s*San Francisco\\s*$"
-             },
-             "state": {
-              "const": "California"
-             },
-             "postcode": {
-              "type": "string",
-              "pattern": "^\\s*94105\\s*$"
-             },
-             "country": {
-              "const": "United States"
-             },
-             "phone": {
-              "type": "string",
-              "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
-             }
-            }
-           }
-          }
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "thinking",
-     "thinking": "",
-     "signature": "CAQSzggKEAgTGAI4AUIIdGhpbmtpbmcSDGW+P6QNxm3OJPniQBoMsPkBrlGebuy3DyO2IjC0NClUODnaqoMdWnfUrmKZ3XD2Hfleh1Ww5fZba4uCm7ygzk88XDiC99Rdgoqomkgq6wfpoUGYBmrrJ+wRqGOlQ37QvZytorZD9B6gJAAnWLuKNqBOIxDztDuvB+SmYTLIEAwi7OU2virTV84Hvs4df+kBw2TBS/VUjRZdkn7JXunazrQ1kJMgVGDX7oFqoxhmyJE7HZQFC/MwYUA+KeSBz/qYcR4QYksOiBz3ez8So66ZJuYC9dn11ucS744SCwv4yjW+OwFvARRR5kNtgkw0JtYaF/VCk0Un2OXGqAAoGJ28ATxjUwe6Br0HscQzEWf8fkgkYyOvV/d3gRl/yI+YZDp4zgODw3yLvGhBkEooDi4q3GH2kcyXmui7zLZxlG4sJgnYoh9rWdxGAdaHwTc/bif3iHLmDnjjnQZR6XLcG7F1aYYEgXu+yHn9Fvda8yvGlP7Nzw1h6b7IhfJ6hCaVWUMJsXXt7bYa6yZeN6SKv+qVEHtKC2gtJWwagWeSWiWzCUT4fkSYpliPvzhDATs9kRAIp+oN8YN4E0dOrd9CCVrCELeVu9OFSHjjHXuDFroPWX8Moo+M65iWs/YgEwVcH+Wpb8hqq149XQiGTo97Cp+lQEDwYdM4DL5whLKF0xiz34Mo9UCh3QhDtydH9Gh09SyYCzVjNWWLT7FqKZuCk513b3zqRF4EQseMSgNezvSdDOXrjum7AGWYW3aeRu96PT0405hJqr2GbPWUH9zb6hO/Kuv40+H0JGCzs+p3s5RXgNgLXMEfSiO3yfHePjnQmKnigIcOC0/QZOlDmD69zIBg5LjOD/znqLcLf9m/PeTfBvoXFyhfvZoivkbJSXD/Nqc1g13mKsspy6q8+BpBAkokAzfKIfz9DTs7yixp6CTmm4SuhfHVzy2gs32tFzmflVRXFRXlJbcYldjpUYb8q3aldMXSBXgfqxyE8/ZnmG/CakhIu9GN2lzaKGXDun5aUuZHcesourLjF2eMxjmh98ZXwpLUC9hyhPyGIdye0wcCimgMAlXX64Z34Cub1TSKRU5KKj0gwM8flKUCBJBI7ym1nkl8rm0eVd8wjoFY07s9MHuJUbNRvYiVjrY0WiuTnytfZZx6SXLrtIG/9dSty4voWqvKiESfkrwwuxQY/ktpMqgRVc/Z/SkT4bLlBwUNajazB6QHNMtvAc/Qy661vYb8T14u4/NLWIwGBRDpFUmaY72gbv4PbAHxHGmLzv88uW0zodipQpLRZ7vknHlS7s0yAJMmw27p+b4cTqErYVEZ2Pt6XQOckYl2kqiWwBhp3+f+jNFsVl8znoZr0XZnRjnzZ/ZUUtDwtVWWjwAdS5lQJjMJZ9B9G11KeTZ1qUiHMUdWezqzozf9w4RspZ5VcsEpverB3wfUdFqXoCaFGAE="
-    },
-    {
-     "type": "tool_use",
-     "id": "toolu_01FkxvdPa5WCRshxUQv1nyYP",
-     "name": "submit_checks",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "checks": [
-       {
-        "id": "r1-office-address-added",
-        "requirement": "R1",
-        "description": "The account's addresses now include the complete new Office address, and the previously existing addresses are unchanged (so it was added, not overwritten).",
-        "assert": {
-         "kind": "allOf",
-         "of": [
-          {
-           "kind": "value",
-           "source": {
-            "from": "probe",
-            "probe": "addresses"
-           },
-           "expect": {
-            "schema": {
-             "type": "array",
-             "contains": {
-              "type": "object",
-              "required": [
-               "alias",
-               "address1",
-               "city",
-               "state",
-               "postcode",
-               "country",
-               "phone"
-              ],
-              "properties": {
-               "alias": {
-                "type": "string",
-                "pattern": "^\\s*Office\\s*$"
-               },
-               "address1": {
-                "type": "string",
-                "pattern": "^\\s*500 Market Street\\s*$"
-               },
-               "city": {
-                "type": "string",
-                "pattern": "^\\s*San Francisco\\s*$"
-               },
-               "state": {
-                "const": "California"
-               },
-               "postcode": {
-                "type": "string",
-                "pattern": "^\\s*94105\\s*$"
-               },
-               "country": {
-                "const": "United States"
-               },
-               "phone": {
-                "type": "string",
-                "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
-               }
-              }
-             }
-            }
-           }
-          },
-          {
-           "kind": "value",
-           "source": {
-            "from": "probe",
-            "probe": "addresses"
-           },
-           "normalize": [
-            {
-             "op": "items",
-             "where": {
-              "not": {
-               "properties": {
-                "alias": {
-                 "pattern": "^\\s*Office\\s*$"
-                }
-               },
-               "required": [
-                "alias"
-               ]
-              }
-             }
-            }
-           ],
-           "expect": {
-            "sameAs": {
-             "source": {
-              "from": "probe",
-              "probe": "addresses",
-              "at": "before"
-             },
-             "normalize": [
-              {
-               "op": "items",
-               "where": {
-                "not": {
-                 "properties": {
-                  "alias": {
-                   "pattern": "^\\s*Office\\s*$"
-                  }
-                 },
-                 "required": [
-                  "alias"
-                 ]
-                }
-               }
-              }
-             ]
-            }
-           }
-          }
-         ]
-        }
-       },
-       {
-        "id": "r2-alias-office",
-        "requirement": "R2",
-        "description": "The saved address record with all requested details has alias \"Office\".",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "addresses"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "alias",
-             "address1",
-             "city",
-             "state",
-             "postcode",
-             "country",
-             "phone"
-            ],
-            "properties": {
-             "alias": {
-              "type": "string",
-              "pattern": "^\\s*Office\\s*$"
-             },
-             "address1": {
-              "type": "string",
-              "pattern": "^\\s*500 Market Street\\s*$"
-             },
-             "city": {
-              "type": "string",
-              "pattern": "^\\s*San Francisco\\s*$"
-             },
-             "state": {
-              "const": "California"
-             },
-             "postcode": {
-              "type": "string",
-              "pattern": "^\\s*94105\\s*$"
-             },
-             "country": {
-              "const": "United States"
-             },
-             "phone": {
-              "type": "string",
-              "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
-             }
-            }
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "r3-street",
-        "requirement": "R3",
-        "description": "The saved Office address has street (address1) 500 Market Street.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "addresses"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "alias",
-             "address1",
-             "city",
-             "state",
-             "postcode",
-             "country",
-             "phone"
-            ],
-            "properties": {
-             "alias": {
-              "type": "string",
-              "pattern": "^\\s*Office\\s*$"
-             },
-             "address1": {
-              "type": "string",
-              "pattern": "^\\s*500 Market Street\\s*$"
-             },
-             "city": {
-              "type": "string",
-              "pattern": "^\\s*San Francisco\\s*$"
-             },
-             "state": {
-              "const": "California"
-             },
-             "postcode": {
-              "type": "string",
-              "pattern": "^\\s*94105\\s*$"
-             },
-             "country": {
-              "const": "United States"
-             },
-             "phone": {
-              "type": "string",
-              "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
-             }
-            }
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "r4-city",
-        "requirement": "R4",
-        "description": "The saved Office address has city San Francisco.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "addresses"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "alias",
-             "address1",
-             "city",
-             "state",
-             "postcode",
-             "country",
-             "phone"
-            ],
-            "properties": {
-             "alias": {
-              "type": "string",
-              "pattern": "^\\s*Office\\s*$"
-             },
-             "address1": {
-              "type": "string",
-              "pattern": "^\\s*500 Market Street\\s*$"
-             },
-             "city": {
-              "type": "string",
-              "pattern": "^\\s*San Francisco\\s*$"
-             },
-             "state": {
-              "const": "California"
-             },
-             "postcode": {
-              "type": "string",
-              "pattern": "^\\s*94105\\s*$"
-             },
-             "country": {
-              "const": "United States"
-             },
-             "phone": {
-              "type": "string",
-              "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
-             }
-            }
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "r5-state",
-        "requirement": "R5",
-        "description": "The saved Office address has state California.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "addresses"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "alias",
-             "address1",
-             "city",
-             "state",
-             "postcode",
-             "country",
-             "phone"
-            ],
-            "properties": {
-             "alias": {
-              "type": "string",
-              "pattern": "^\\s*Office\\s*$"
-             },
-             "address1": {
-              "type": "string",
-              "pattern": "^\\s*500 Market Street\\s*$"
-             },
-             "city": {
-              "type": "string",
-              "pattern": "^\\s*San Francisco\\s*$"
-             },
-             "state": {
-              "const": "California"
-             },
-             "postcode": {
-              "type": "string",
-              "pattern": "^\\s*94105\\s*$"
-             },
-             "country": {
-              "const": "United States"
-             },
-             "phone": {
-              "type": "string",
-              "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
-             }
-            }
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "r6-postcode",
-        "requirement": "R6",
-        "description": "The saved Office address has postal code 94105.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "addresses"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "alias",
-             "address1",
-             "city",
-             "state",
-             "postcode",
-             "country",
-             "phone"
-            ],
-            "properties": {
-             "alias": {
-              "type": "string",
-              "pattern": "^\\s*Office\\s*$"
-             },
-             "address1": {
-              "type": "string",
-              "pattern": "^\\s*500 Market Street\\s*$"
-             },
-             "city": {
-              "type": "string",
-              "pattern": "^\\s*San Francisco\\s*$"
-             },
-             "state": {
-              "const": "California"
-             },
-             "postcode": {
-              "type": "string",
-              "pattern": "^\\s*94105\\s*$"
-             },
-             "country": {
-              "const": "United States"
-             },
-             "phone": {
-              "type": "string",
-              "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
-             }
-            }
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "r7-country",
-        "requirement": "R7",
-        "description": "The saved Office address has country United States.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "addresses"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "alias",
-             "address1",
-             "city",
-             "state",
-             "postcode",
-             "country",
-             "phone"
-            ],
-            "properties": {
-             "alias": {
-              "type": "string",
-              "pattern": "^\\s*Office\\s*$"
-             },
-             "address1": {
-              "type": "string",
-              "pattern": "^\\s*500 Market Street\\s*$"
-             },
-             "city": {
-              "type": "string",
-              "pattern": "^\\s*San Francisco\\s*$"
-             },
-             "state": {
-              "const": "California"
-             },
-             "postcode": {
-              "type": "string",
-              "pattern": "^\\s*94105\\s*$"
-             },
-             "country": {
-              "const": "United States"
-             },
-             "phone": {
-              "type": "string",
-              "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
-             }
-            }
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "r8-phone",
-        "requirement": "R8",
-        "description": "The saved Office address has phone 415-555-0100 (separators tolerated).",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "addresses"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "alias",
-             "address1",
-             "city",
-             "state",
-             "postcode",
-             "country",
-             "phone"
-            ],
-            "properties": {
-             "alias": {
-              "type": "string",
-              "pattern": "^\\s*Office\\s*$"
-             },
-             "address1": {
-              "type": "string",
-              "pattern": "^\\s*500 Market Street\\s*$"
-             },
-             "city": {
-              "type": "string",
-              "pattern": "^\\s*San Francisco\\s*$"
-             },
-             "state": {
-              "const": "California"
-             },
-             "postcode": {
-              "type": "string",
-              "pattern": "^\\s*94105\\s*$"
-             },
-             "country": {
-              "const": "United States"
-             },
-             "phone": {
-              "type": "string",
-              "pattern": "^\\s*\\(?415\\)?[-. ]?555[-. ]?0100\\s*$"
-             }
-            }
-           }
-          }
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 23748,
-    "outputTokens": 3057,
-    "cacheReadTokens": 22370,
-    "cacheWriteTokens": 1376
-   },
-   "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:10:05.285Z"
 }
