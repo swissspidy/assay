@@ -30,7 +30,15 @@ export interface EvalCtx {
   index: AXIndex;
   /** Inside an `each` assertion: the record that locators and text sources resolve within. */
   record?: INode;
+  /**
+   * The check reads route evidence and abstains when it is missing (`onMissing: "abstain"`,
+   * ADR 0011): no matching request or a URL elsewhere is `route_missing`, not a failure.
+   */
+  routeMissing?: boolean;
 }
+
+/** Why a check with `onMissing: "abstain"` did not decide. */
+const ROUTE_HINT = 'this check reads one way of doing the task, and the run may have done it another way';
 
 const ev = (channel: Channel, extra: Partial<Evidence> = {}): Evidence => ({
   channel,
@@ -174,7 +182,10 @@ function readSource(ctx: EvalCtx, src: ValueSource): Read {
         return abstain('value_unavailable', `${unknown} candidate request(s) for ${desc} could not be fully read`, [
           ev('network'),
         ]);
-      if (hits.length === 0) return abstain('value_unavailable', `no request matches ${desc}`, [ev('network')]);
+      if (hits.length === 0)
+        return ctx.routeMissing
+          ? abstain('route_missing', `no request matches ${desc}; ${ROUTE_HINT}`, [ev('network')])
+          : abstain('value_unavailable', `no request matches ${desc}`, [ev('network')]);
       const pick = src.pick ?? 'only';
       if (pick === 'only' && hits.length > 1)
         return abstain('value_ambiguous', `${hits.length} requests match ${desc}; use pick "first" or "last"`, [
@@ -420,6 +431,13 @@ export function evaluateAssertion(ctx: EvalCtx, a: Assertion): AssertionResult {
     }
     case 'url': {
       const ok = matchUrl(a.match, ctx.snapshot.page.url);
+      // A URL elsewhere is a route not taken; on the route, a wrong query parameter still fails.
+      if (!ok && ctx.routeMissing && !matchUrl({ ...a.match, query: {} }, ctx.snapshot.page.url))
+        return abstain(
+          'route_missing',
+          `page URL ${ctx.snapshot.page.url} is not ${describeUrlMatch({ ...a.match, query: {} })}; ${ROUTE_HINT}`,
+          [ev('url', { value: ctx.snapshot.page.url })],
+        );
       const evidence = [ev('url', { value: ctx.snapshot.page.url })];
       const msg = `page URL ${ctx.snapshot.page.url} ${ok ? 'matches' : 'does not match'} ${describeUrlMatch(a.match)}`;
       return ok ? pass(msg, evidence) : fail(msg, evidence);
@@ -446,6 +464,10 @@ export function evaluateAssertion(ctx: EvalCtx, a: Assertion): AssertionResult {
           `${hits.length} request(s) match ${desc} and ${unknown} could not be fully read (expected ${describeNumberCompare(count)})`,
           evidence,
         );
+      // No matching request at all: with onMissing "abstain" that is a route not taken. One
+      // too few (a partial completion) or too many is outcome evidence and still fails.
+      if (!lo && hits.length === 0 && unknown === 0 && ctx.routeMissing)
+        return abstain('route_missing', `no request matches ${desc}; ${ROUTE_HINT}`, evidence);
       if (!lo)
         return fail(`${hits.length} request(s) match ${desc} (expected ${describeNumberCompare(count)})`, evidence);
       return pass(`${hits.length} request(s) match ${desc}`, evidence);
@@ -454,12 +476,19 @@ export function evaluateAssertion(ctx: EvalCtx, a: Assertion): AssertionResult {
       return evaluateEach(ctx, a);
     case 'allOf':
     case 'anyOf': {
-      const subs = a.of.map((s) => evaluateAssertion(ctx, s));
+      const all = a.of.map((s) => evaluateAssertion(ctx, s));
+      let subs = all;
+      // anyOf over alternative routes: a branch whose route the run did not take gives way to
+      // those whose route it took, so the route it took decides (and can fail).
+      if (a.kind === 'anyOf' && ctx.routeMissing) {
+        const taken = all.filter((s) => s.reason !== 'route_missing');
+        if (taken.length) subs = taken;
+      }
       const status = a.kind === 'allOf' ? kleeneAnd(subs.map((s) => s.status)) : kleeneOr(subs.map((s) => s.status));
       const relevant = subs.filter((s) => s.status === status);
       const evidence = (status === 'abstain' ? subs : relevant).flatMap((s) => s.evidence);
-      const drift = subs.flatMap((s) => s.drift);
-      const message = `${a.kind}: ${subs.map((s) => `[${s.status}] ${s.message}`).join(' | ')}`;
+      const drift = all.flatMap((s) => s.drift);
+      const message = `${a.kind}: ${all.map((s) => `[${s.status}] ${s.message}`).join(' | ')}`;
       if (status === 'abstain') {
         const reasons = [...new Set(subs.filter((s) => s.status === 'abstain').map((s) => s.reason))];
         return abstain(
@@ -550,7 +579,7 @@ export function evaluate(checkSet: CheckSet, snapshot: EvidenceSnapshot, opts: E
   const checks: CheckResult[] = checkSet.checks.map((c) => {
     let r: AssertionResult;
     try {
-      r = evaluateAssertion(ctx, c.assert);
+      r = evaluateAssertion(c.onMissing === 'abstain' ? { ...ctx, routeMissing: true } : ctx, c.assert);
     } catch (e) {
       // Defensive: a check that throws must never decide. Validation should prevent this.
       r = abstain('type_mismatch', `check raised an error: ${e instanceof Error ? e.message : String(e)}`);
