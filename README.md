@@ -137,6 +137,13 @@ the same check run without validation or a record, for hot loops.
   }
   ```
 
+- **Tolerance.** Where a correct run gives two sources slightly different values (a total the page
+  rounds to the cent, a time shown to the minute and stored to the second), a `sameAs` binding can
+  take an explicit, bounded tolerance with its reason, which the review sheet shows:
+  `"tolerance": { "abs": 1, "because": "the page shows the time to the minute" }` (minutes for
+  date-times, days for dates; `rel` for numbers and money, at most 5%). The stress test rejects
+  values just past it and accepts values inside it
+  ([ADR 0014](docs/adr/0014-sameas-tolerance-and-nested-mutants.md)).
 - **Pass, fail, abstain.** Checks combine with three-valued logic. A requirement passes when its
   checks pass; the run succeeds when every hard requirement passes. Abstain is never turned into a
   pass or a fail silently.
@@ -179,10 +186,11 @@ Design details: [ADR 0001](docs/adr/0001-evidence-snapshot-and-check-dsl.md).
    correct reference, does not succeed on any negative one, and accepts the stress test's valid
    variants ([ADR 0002](docs/adr/0002-compiler.md)).
 
-2. **Stress-test** a check set against edited copies of correct runs: valid variants (reordered rows,
-   other number and date formats, extra fields, network noise) that must still pass, and near-miss
-   mutants (wrong item, missing request, pages that only claim success) that must not
-   ([ADR 0003](docs/adr/0003-stress-testing.md)):
+2. **Stress-test** a check set against edited copies of correct runs: valid variants (reordered rows
+   and nested arrays, other number and date formats, extra fields, network noise) that must still
+   pass, and near-miss mutants (wrong item, an option dropped from an order line, missing request,
+   pages that only claim success) that must not
+   ([ADR 0003](docs/adr/0003-stress-testing.md), [ADR 0014](docs/adr/0014-sameas-tolerance-and-nested-mutants.md)):
 
    ```ts
    import { formatStressReport, stressTest } from '@swissspidy/assay/stress';
@@ -351,6 +359,7 @@ asked to remove.
 - [ADR 0008](docs/adr/0008-per-record-checks.md): per-record checks and paired item fields
 - [ADR 0009](docs/adr/0009-real-site-evaluation.md): evaluation on real web apps
 - [ADR 0010](docs/adr/0010-command-line-tool.md): the `assay` command-line tool
+- [ADR 0014](docs/adr/0014-sameas-tolerance-and-nested-mutants.md): `sameAs` tolerance and nested JSON array mutants
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
 - Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)
 

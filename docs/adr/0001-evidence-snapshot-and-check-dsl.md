@@ -545,6 +545,9 @@ shows `A1000`, the probe says `A1001`.
   rejects types that can't be equal and a side compared with itself.
 - The outcome's evidence lists both values (each with its raw value when
   normalized).
+- `sameAs.tolerance` `{abs?, rel?, because}` relaxes equality of numbers,
+  money, dates and date-times to |a − b| ≤ max(abs, rel × |b|), explicitly
+  and with a stated reason; bounded by the validator (ADR 0014).
 
 Why a comparison and not named captures between checks: a capture would make
 one check's result depend on another check's read, so checks would need an
