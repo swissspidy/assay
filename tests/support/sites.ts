@@ -51,7 +51,8 @@ customElements.define('x-card', class extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' }).innerHTML =
-      '<section aria-label="Card"><h2><slot name="title"></slot></h2><button>Open shadow button</button><x-inner></x-inner></section>';
+      '<section aria-label="Card"><h2><slot name="title"></slot></h2><button>Open shadow button</button><x-inner></x-inner>' +
+      '<span id="preview-label">Card preview</span><iframe aria-labelledby="preview-label" src="/receipt"></iframe></section>';
   }
 });
 customElements.define('x-closed', class extends HTMLElement {

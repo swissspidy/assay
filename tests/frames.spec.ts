@@ -2,7 +2,7 @@
 import { expect } from '@playwright/test';
 import { captureSnapshot, test } from '../src/playwright/index.ts';
 import { AXIndex } from '../src/runtime/axindex.ts';
-import type { AXNode, CheckSet, Assertion } from '../src/index.ts';
+import { evaluate, type AXNode, type CheckSet, type Assertion } from '../src/index.ts';
 import { parseAriaSnapshot } from '../src/snapshot/aria.ts';
 import { attachFrames, FRAME_LIMITS } from '../src/snapshot/frames.ts';
 import { judge } from './helpers.ts';
@@ -140,6 +140,52 @@ test('a frame that is not read stays empty and is marked unavailable', async ({ 
   expect(texts).toHaveLength(1);
 });
 
+test('a check scoped to a frame that could not be read abstains, even counting nothing', () => {
+  const tree: AXNode = {
+    role: 'document',
+    children: [
+      { role: 'iframe', name: 'Editor canvas', props: { frame: 'unavailable' } },
+      { role: 'iframe', name: 'Comments', children: [{ role: 'paragraph', name: 'ok' }] },
+    ],
+  };
+  const snapshot = {
+    schema: 'assay.snapshot/v1' as const,
+    capturedAt: '2026-11-05T00:00:00Z',
+    page: { url: 'https://cms.test/', title: '' },
+    a11y: tree,
+    text: '',
+    network: null,
+    storage: null,
+    probes: {},
+    meta: { capturer: 'test', redacted: [] },
+  };
+  const none = { kind: 'contains', match: { role: 'alert' }, count: { eq: 0 } } as const;
+  const r = evaluate(
+    checks([
+      { ...none, scope: { role: 'iframe', name: 'Editor canvas' } },
+      { ...none, scope: { role: 'iframe', name: 'Comments' } },
+      {
+        kind: 'each',
+        scope: { role: 'iframe', name: 'Editor canvas' },
+        match: { role: 'paragraph' },
+        assert: { kind: 'state', target: { role: 'text' }, expect: { name: 'x' } },
+      },
+      {
+        kind: 'value',
+        source: { from: 'text', scope: { role: 'iframe', name: 'Editor canvas' }, pattern: '.*' },
+        expect: { exists: true },
+      },
+    ]),
+    snapshot,
+  );
+  expect(r.checks.map((c) => `${c.status}${c.reason ? '/' + c.reason : ''}`)).toEqual([
+    'abstain/evidence_unavailable',
+    'pass',
+    'abstain/evidence_unavailable',
+    'abstain/evidence_unavailable',
+  ]);
+});
+
 test('open shadow roots are captured, slots included; closed ones are not', async ({ page }) => {
   await page.goto(`${app.origin}/shadow`);
   await expect(page.getByRole('button', { name: 'Open shadow button' })).toBeVisible();
@@ -151,6 +197,10 @@ test('open shadow roots are captured, slots included; closed ones are not', asyn
   expect(find(card[0]!, 'button', 'Open shadow button')).toHaveLength(1);
   // A shadow root inside a shadow root.
   expect(find(card[0]!, 'spinbutton', 'Quantity')[0]!.value).toBe('3');
+  // A frame inside a shadow root, labelled by an element of that root.
+  const preview = find(card[0]!, 'iframe', 'Card preview');
+  expect(preview).toHaveLength(1);
+  expect(find(preview[0]!, 'status')).toHaveLength(1);
   // Closed shadow roots are invisible to the page's own scripts and to Playwright.
   expect(find(s.a11y, 'button', 'Closed shadow button')).toHaveLength(0);
 

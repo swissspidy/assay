@@ -51,7 +51,12 @@ async function shownFrameElements(frame: Frame, timeout: number): Promise<{ loc:
         const by = text(
           ids
             .split(/\s+/)
-            .map((id) => el.ownerDocument.getElementById(id)?.textContent ?? '')
+            // An id refers within the iframe's own root: its shadow root, if it is in one.
+            .map((id) => {
+              const root = el.getRootNode() as Document | ShadowRoot;
+              const ref = 'getElementById' in root ? root.getElementById(id) : null;
+              return (ref ?? el.ownerDocument.getElementById(id))?.textContent ?? '';
+            })
             .join(' '),
         );
         if (by) return by;

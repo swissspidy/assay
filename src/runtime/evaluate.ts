@@ -105,6 +105,16 @@ function resolve(ctx: EvalCtx, target: Target): { node: INode; drift: string[] }
   return { node: r.node, drift: r.drift };
 }
 
+/**
+ * A scope: resolved like a target, but an iframe whose frame could not be read (ADR 0012)
+ * has no content to search, so a check scoped to it abstains instead of counting nothing.
+ */
+function resolveScope(ctx: EvalCtx, target: Target): { node: INode; drift: string[] } | AssertionResult {
+  const r = resolve(ctx, target);
+  if (isResult(r) || r.node.node.role !== 'iframe' || r.node.node.props?.frame !== 'unavailable') return r;
+  return abstain('evidence_unavailable', `the frame ${ctx.index.path(r.node)} could not be read`, [], r.drift);
+}
+
 const isResult = (x: unknown): x is AssertionResult => !!x && typeof x === 'object' && 'status' in x;
 
 // ---------------------------------------------------------------------------
@@ -154,7 +164,7 @@ function readSource(ctx: EvalCtx, src: ValueSource): Read {
       if (scoped) {
         let node = ctx.record!;
         if (src.scope) {
-          const r = resolve(ctx, src.scope);
+          const r = resolveScope(ctx, src.scope);
           if (isResult(r)) return r;
           node = r.node;
           drift = r.drift;
@@ -422,7 +432,7 @@ export function evaluateAssertion(ctx: EvalCtx, a: Assertion): AssertionResult {
       let scope = ctx.record ?? ctx.index.root;
       let drift: string[] = [];
       if (a.scope) {
-        const r = resolve(ctx, a.scope);
+        const r = resolveScope(ctx, a.scope);
         if (isResult(r)) return r;
         scope = r.node;
         drift = r.drift;
@@ -560,7 +570,7 @@ function evaluateEach(ctx: EvalCtx, a: Extract<Assertion, { kind: 'each' }>): As
   let scope = ctx.record ?? ctx.index.root;
   let drift: string[] = [];
   if (a.scope) {
-    const r = resolve(ctx, a.scope);
+    const r = resolveScope(ctx, a.scope);
     if (isResult(r)) return r;
     scope = r.node;
     drift = r.drift;
