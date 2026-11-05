@@ -44,6 +44,9 @@ export const GENERIC_VARIANTS = [
   'extra-storage',
   'url-decoration',
   'url-hash',
+  // Only for snapshots with captured frames or several open pages (ADR 0012).
+  'extra-frame',
+  'extra-page',
 ] as const;
 
 const REORDERABLE = new Set(['list', 'rowgroup', 'table', 'listbox', 'menu', 'grid', 'tree', 'feed']);
@@ -120,6 +123,70 @@ function extraContent(s: EvidenceSnapshot): EvidenceSnapshot {
   });
   if (!placed) out = { ...out, a11y: { ...out.a11y, children: [...(out.a11y.children ?? []), ...clone(UNRELATED)] } };
   return { ...out, text: `${out.text}\n${UNRELATED_TEXT.join('\n')}` };
+}
+
+const hasFrameContent = (n: AXNode): boolean =>
+  (n.role === 'iframe' && !!n.children?.length) || (n.children ?? []).some(hasFrameContent);
+
+/**
+ * An unrelated embedded frame (an advertisement) with content of its own, next to the
+ * page's content (ADR 0012). Only for pages whose frames were captured: a check that
+ * reads frame content must not pick up another frame's.
+ */
+function extraFrame(s: EvidenceSnapshot): EvidenceSnapshot | null {
+  if (!hasFrameContent(s.a11y)) return null;
+  let origin = 'https://ads.example';
+  try {
+    origin = new URL(s.page.url).origin;
+  } catch {
+    /* keep the default */
+  }
+  const ad: AXNode = { role: 'iframe', name: 'Advertisement', url: `${origin}/ads/frame`, children: clone(UNRELATED) };
+  let placed = false;
+  let out = editById(s, (n) => {
+    if (n.role !== 'main' || placed) return undefined;
+    placed = true;
+    return { ...n, children: [...(n.children ?? []), ad] };
+  });
+  if (!placed) out = { ...out, a11y: { ...out.a11y, children: [...(out.a11y.children ?? []), ad] } };
+  return { ...out, text: `${out.text}\n${UNRELATED_TEXT.join('\n')}` };
+}
+
+/** The origin of an http(s) URL, if it is one. */
+function httpOrigin(u: string): string | undefined {
+  try {
+    const o = new URL(u).origin;
+    return o.startsWith('http') ? o : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * An unrelated extra tab (a help page) on the site of the last tab opened, next to the
+ * others (ADR 0012). Only for snapshots of several pages.
+ */
+function extraPage(s: EvidenceSnapshot): EvidenceSnapshot | null {
+  if (!s.pages?.length) return null;
+  const origin = httpOrigin(s.pages.at(-1)!.url) ?? httpOrigin(s.page.url) ?? 'https://help.example';
+  const help = {
+    url: `${origin}/help/getting-started`,
+    title: 'Getting started',
+    a11y: {
+      role: 'document',
+      children: [
+        {
+          role: 'main',
+          children: [
+            { role: 'heading', name: 'Getting started', level: 1 },
+            { role: 'paragraph', children: [{ role: 'text', name: 'Read the guide.' }] },
+          ],
+        },
+      ],
+    },
+    text: 'Getting started\nRead the guide.',
+  };
+  return { ...s, pages: [...s.pages, help] };
 }
 
 function extraTableRow(s: EvidenceSnapshot): EvidenceSnapshot | null {
@@ -257,7 +324,7 @@ function readKeys(cs: CheckSet): Set<string> {
       if (a.source.from === 'storage') keys.add(a.source.key);
       if ('sameAs' in a.expect && a.expect.sameAs.source.from === 'storage') keys.add(a.expect.sameAs.source.key);
     } else if (a.kind === 'allOf' || a.kind === 'anyOf') a.of.forEach(walk);
-    else if (a.kind === 'each') walk(a.assert);
+    else if (a.kind === 'each' || a.kind === 'page') walk(a.assert);
   };
   for (const c of cs.checks) walk(c.assert);
   return keys;
@@ -498,6 +565,8 @@ export function generateVariants(cs: CheckSet, s: EvidenceSnapshot): Variant[] {
       urlVariant(s, (u) => u.searchParams.set('utm_source', 'newsletter')),
     ],
     ['url-hash', 'a fragment on the page URL', urlVariant(s, (u) => (u.hash = 'top'))],
+    ['extra-frame', 'an unrelated embedded frame (an advertisement) with its own content', extraFrame(s)],
+    ['extra-page', 'an unrelated extra tab (a help page) is open', extraPage(s)],
   ];
   return [
     ...generic
