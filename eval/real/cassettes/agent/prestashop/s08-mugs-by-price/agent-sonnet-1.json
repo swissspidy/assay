@@ -1,0 +1,95 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-sonnet-5-5@low",
+ "recordedAt": "2026-11-05T11:45:50.124Z",
+ "turns": {
+  "sha256:9b04918745816f9d96f4f691474347e65acd4621cb4e56a29257cbf38f41f3d0": {
+   "stop": "tool_use",
+   "text": "I'll use the search for \"mug\" and then sort the results.",
+   "toolCalls": [
+    {
+     "id": "toolu_01142DbpLqFkPorkjqRDNe7P",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/search?controller=search&s=mug&order=product.price.asc"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "I'll use the search for \"mug\" and then sort the results."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01142DbpLqFkPorkjqRDNe7P",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/search?controller=search&s=mug&order=product.price.asc"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7152,
+    "outputTokens": 94,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7148
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:6fb894faaff4fa141062247329bad34bfd151fe8bbf906460a4db16c726aa772": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01VGXL8XCC9eXyHQrvgLx8qr",
+     "name": "finish",
+     "input": {
+      "report": "I searched the shop for \"mug\" and sorted the results by price, low to high. There are 5 results: Mug The best is yet to come, Mug The adventure begins and Mug Today is a good day (all €11.90), then Customizable mug (€13.90) and Pack Mug + Framed poster (€35.00)."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01VGXL8XCC9eXyHQrvgLx8qr",
+       "toolName": "finish",
+       "input": {
+        "report": "I searched the shop for \"mug\" and sorted the results by price, low to high. There are 5 results: Mug The best is yet to come, Mug The adventure begins and Mug Today is a good day (all €11.90), then Customizable mug (€13.90) and Pack Mug + Framed poster (€35.00)."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12392,
+    "outputTokens": 145,
+    "cacheReadTokens": 7148,
+    "cacheWriteTokens": 5242
+   },
+   "model": "claude-sonnet-5-5"
+  }
+ }
+}

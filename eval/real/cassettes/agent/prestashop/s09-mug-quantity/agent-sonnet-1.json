@@ -1,0 +1,183 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-sonnet-5-5@low",
+ "recordedAt": "2026-11-05T11:47:05.367Z",
+ "turns": {
+  "sha256:e4a3cfd72024aaebe01e447045269d2330ae97a09701f78ee91daae005eed8c1": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015dvdxY9Ve4aZwbzGbPzBDP",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/cart?action=show"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_015dvdxY9Ve4aZwbzGbPzBDP",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/cart?action=show"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7394,
+    "outputTokens": 60,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7390
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:4e5409d6652790f702f68d900565f39a67420e37315ca21549a946ddafa1ef48": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_019VcRmrfx8KJW4H4bRs9BnN",
+     "name": "fill",
+     "input": {
+      "ref": "f4e76",
+      "text": "3",
+      "submit": true
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_019VcRmrfx8KJW4H4bRs9BnN",
+       "toolName": "fill",
+       "input": {
+        "ref": "f4e76",
+        "text": "3",
+        "submit": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 11856,
+    "outputTokens": 93,
+    "cacheReadTokens": 7390,
+    "cacheWriteTokens": 4464
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:b6e83c9dfc6cd45890852d6541e0884fb982590cb28f52a4f8a53bf95ece03be": {
+   "stop": "tool_use",
+   "text": "Totals haven't updated; check.",
+   "toolCalls": [
+    {
+     "id": "toolu_01W4n2LpGhU692Jkhw9FGyuX",
+     "name": "wait",
+     "input": {
+      "seconds": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Totals haven't updated; check."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01W4n2LpGhU692Jkhw9FGyuX",
+       "toolName": "wait",
+       "input": {
+        "seconds": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 11992,
+    "outputTokens": 60,
+    "cacheReadTokens": 7390,
+    "cacheWriteTokens": 4600
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:b808697a8b3117c829b9ec4c03923013bd8aa4ad3ee164c549a54c75d7e2264c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Lqme4fGFT13CrEFEuGwUsK",
+     "name": "finish",
+     "input": {
+      "report": "I changed the quantity of the \"Mug Today is a good day\" in your cart to 3. The cart now shows that mug at €35.70, and the cart total is €54.60 with the Hummingbird cushion (quantity 1) unchanged."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Lqme4fGFT13CrEFEuGwUsK",
+       "toolName": "finish",
+       "input": {
+        "report": "I changed the quantity of the \"Mug Today is a good day\" in your cart to 3. The cart now shows that mug at €35.70, and the cart total is €54.60 with the Hummingbird cushion (quantity 1) unchanged."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12089,
+    "outputTokens": 122,
+    "cacheReadTokens": 7390,
+    "cacheWriteTokens": 4697
+   },
+   "model": "claude-sonnet-5-5"
+  }
+ }
+}

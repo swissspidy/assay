@@ -1,0 +1,344 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:42:03.730Z",
+ "turns": {
+  "sha256:2804ca206436613e8530c391e5cc6396d9a79b1c03ccc9b5c84da0bde3212083": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01D7mj7xooxW5S3kH1tyQo4G",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/addresses"
+     }
+    },
+    {
+     "id": "toolu_01TuDBmY4EUT4BJ2EJtCgBLP",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/address"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01D7mj7xooxW5S3kH1tyQo4G",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/addresses"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01TuDBmY4EUT4BJ2EJtCgBLP",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/address"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7179,
+    "outputTokens": 109,
+    "cacheReadTokens": 7175,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:b0cf9f3d39077254904b8dda3cf587e7afeb84f61e10084fecaeebfcda32d149": {
+   "stop": "tool_use",
+   "text": "The new address form is open with the name pre-filled as John DOE and the country already set to United States. I'll fill in the rest.",
+   "toolCalls": [
+    {
+     "id": "toolu_01TAPH8N3JEHeCG1kqLtybEt",
+     "name": "fill",
+     "input": {
+      "ref": "f2e69",
+      "text": "Office"
+     }
+    },
+    {
+     "id": "toolu_01Qiw4ry3RB5vuUiuZvu1Ajh",
+     "name": "fill",
+     "input": {
+      "ref": "f2e89",
+      "text": "500 Market Street"
+     }
+    },
+    {
+     "id": "toolu_01N2bysLCsmcZtRhugh1RbKF",
+     "name": "fill",
+     "input": {
+      "ref": "f2e99",
+      "text": "San Francisco"
+     }
+    },
+    {
+     "id": "toolu_01X5RmPQuZm6XbjgLPBujs4R",
+     "name": "select",
+     "input": {
+      "ref": "f2e104",
+      "options": [
+       "California"
+      ]
+     }
+    },
+    {
+     "id": "toolu_016S4NLr4LTUkX5qjwYW4hTv",
+     "name": "fill",
+     "input": {
+      "ref": "f2e109",
+      "text": "94105"
+     }
+    },
+    {
+     "id": "toolu_017Gz2KjPQ4715nKUMZ4QYN2",
+     "name": "fill",
+     "input": {
+      "ref": "f2e119",
+      "text": "415-555-0100"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSggYKEAgTGAI4AUIIdGhpbmtpbmcSDA+kVyCDtQmJUXsVAxoMsdLzLYdF9XVYTENfIjDWUut85YFdNLqPrwTFE/KcBWZekCHPWDDY7jvDmVBu01ZcBCCLxmfVT/YebiXFDbcqnwV1KnPlvfTfIoCplU5sEtzwhRCdxQewrf5ta842rS8svukDZr6Q4fwmjyUu0P+G1cYOSbHJH8nMuwydN3rGAKQYrhxBdiRFgp69R+byhwMZNQbFXuVwYHeTPkqwj8OJbzEvMhCQAhcwgaDLPNukYFXTz5cA9cNRfgjq7Q/KilSts9aIg5W2uhYQEst80fbzjHvzGy9Su6ACQDRm4WbPSVuFmyuSajtJUXQSrXK/bJeIH5onlV/tTHIAe61AnZK4xVMyur5iMGHfAfjVuuC5+5lDBtfuapwAEG1tXebQxauKQ7YWyXd6it90bBVYb5RDINMaNn8F6ikp9ZmuS+ho6JuF7lZQ/UQLZL0TOjqyUiVqifeVDZQct4tgopZp84ffO/Xz44fRJHmotXXDdGWOtId6blDm9D3UmPv3iF74MqD2f1ITR2erk+TAIBwnMY3TceevgHHNAjCaPgHisuo0QHc91I1AFXxzBKd4M2NO5FVOUMAeQ5cp+oS2x7CKZTYcZhpZkr2dsbHxB0u6wSZa2OkLIVh+WLHVFVQXY1+gasMKoaXdBOZ8CxkcVyYGfQfSTXD/Fz5PSv6xnwqdJggeeAc3oRAnbouncU3PbYldxa5uYAx1aU6PR4DXdnRyr0jB96C7RSkT/SP0ap8AvccYon9lCYtgjPzg8CNrxW7W7eDRuk3z6JclVNpadqifRymjkXrjc/fnS1hS7JM7BgscVNz235rwdWlIa3WP/a/CJ/EpHEVWH2QO5CxcsABXvVftgS8eL7U5XBW52BEz0pPydvQTYgNq4eq1LnnRpfPJNP1Vc9bknpFNpAloDEH+VYsbBban3j0CeTSCGbKTt0lRSGEm3Zs/oZiE2EiS4aaMkdSunzUK9E7uzTZb+ue/BwSeyBgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The new address form is open with the name pre-filled as John DOE and the country already set to United States. I'll fill in the rest."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01TAPH8N3JEHeCG1kqLtybEt",
+       "toolName": "fill",
+       "input": {
+        "ref": "f2e69",
+        "text": "Office"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Qiw4ry3RB5vuUiuZvu1Ajh",
+       "toolName": "fill",
+       "input": {
+        "ref": "f2e89",
+        "text": "500 Market Street"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01N2bysLCsmcZtRhugh1RbKF",
+       "toolName": "fill",
+       "input": {
+        "ref": "f2e99",
+        "text": "San Francisco"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01X5RmPQuZm6XbjgLPBujs4R",
+       "toolName": "select",
+       "input": {
+        "ref": "f2e104",
+        "options": [
+         "California"
+        ]
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_016S4NLr4LTUkX5qjwYW4hTv",
+       "toolName": "fill",
+       "input": {
+        "ref": "f2e109",
+        "text": "94105"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_017Gz2KjPQ4715nKUMZ4QYN2",
+       "toolName": "fill",
+       "input": {
+        "ref": "f2e119",
+        "text": "415-555-0100"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 15796,
+    "outputTokens": 515,
+    "cacheReadTokens": 7175,
+    "cacheWriteTokens": 8619
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:085c9a848f8f6193d062c334ad760285b281b601a6883dedfb223bca3600c884": {
+   "stop": "tool_use",
+   "text": "All fields are filled. Now I'll save the address.",
+   "toolCalls": [
+    {
+     "id": "toolu_01RsR9PGjo4FiWVZidg2ysVH",
+     "name": "click",
+     "input": {
+      "ref": "f2e122"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "All fields are filled. Now I'll save the address."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01RsR9PGjo4FiWVZidg2ysVH",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e122"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 35822,
+    "outputTokens": 66,
+    "cacheReadTokens": 7175,
+    "cacheWriteTokens": 28645
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:ea88d655646ceb916786fb8bb92043e93242a4f94b8ff26db7fad14b7c570b17": {
+   "stop": "tool_use",
+   "text": "I added the \"Office\" address to your account: 500 Market Street, San Francisco, California 94105, United States, phone 415-555-0100. The addresses page confirms it saved, and the name on it is John DOE, which was pre-filled on the form.",
+   "toolCalls": [
+    {
+     "id": "toolu_0149t5ox4rGLWU9tY4Ucpr7r",
+     "name": "finish",
+     "input": {
+      "report": "Added the \"Office\" address (500 Market Street, San Francisco, California 94105, United States, phone 415-555-0100) to your account; the addresses page confirms it was saved."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "I added the \"Office\" address to your account: 500 Market Street, San Francisco, California 94105, United States, phone 415-555-0100. The addresses page confirms it saved, and the name on it is John DOE, which was pre-filled on the form."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_0149t5ox4rGLWU9tY4Ucpr7r",
+       "toolName": "finish",
+       "input": {
+        "report": "Added the \"Office\" address (500 Market Street, San Francisco, California 94105, United States, phone 415-555-0100) to your account; the addresses page confirms it was saved."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12511,
+    "outputTokens": 181,
+    "cacheReadTokens": 7175,
+    "cacheWriteTokens": 5334
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

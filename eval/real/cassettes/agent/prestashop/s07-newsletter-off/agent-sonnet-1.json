@@ -1,0 +1,347 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-sonnet-5-5@low",
+ "recordedAt": "2026-11-05T11:44:04.548Z",
+ "turns": {
+  "sha256:756cdba25b44eea971500c50b630c6e2a99f3602abb150e72ff085434c5300fa": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015Nd27FxRfTtbqHGoV5RSGD",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/my-account"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_015Nd27FxRfTtbqHGoV5RSGD",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/my-account"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7149,
+    "outputTokens": 57,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7145
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:64414c121f8101a10d3c77ab69fe2a29116cd29f1d1c63e351c74da0e450e201": {
+   "stop": "tool_use",
+   "text": "Newsletter is a checkbox in Information.",
+   "toolCalls": [
+    {
+     "id": "toolu_01WHaGVkwHDneR9ekv3AQihc",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/identity"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Newsletter is a checkbox in Information."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01WHaGVkwHDneR9ekv3AQihc",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/identity"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 10986,
+    "outputTokens": 72,
+    "cacheReadTokens": 7145,
+    "cacheWriteTokens": 3839
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:88365a1db276bb60544f6692cb700d082a68e015ce2351b0c84df187bd519208": {
+   "stop": "tool_use",
+   "text": "Saving requires terms and privacy checkboxes likely.",
+   "toolCalls": [
+    {
+     "id": "toolu_01D2kmDfDcrELBX6HghNZkue",
+     "name": "set_checked",
+     "input": {
+      "ref": "f2e130",
+      "checked": false
+     }
+    },
+    {
+     "id": "toolu_01ALW4scpnVqomHvB6NzWcjb",
+     "name": "set_checked",
+     "input": {
+      "ref": "f2e123",
+      "checked": true
+     }
+    },
+    {
+     "id": "toolu_01XeVbos78phnJSMLbQnW9r7",
+     "name": "set_checked",
+     "input": {
+      "ref": "f2e138",
+      "checked": true
+     }
+    },
+    {
+     "id": "toolu_01X65suNYLdUjTVUt5e2VZRH",
+     "name": "click",
+     "input": {
+      "ref": "f2e142"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Saving requires terms and privacy checkboxes likely."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01D2kmDfDcrELBX6HghNZkue",
+       "toolName": "set_checked",
+       "input": {
+        "ref": "f2e130",
+        "checked": false
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01ALW4scpnVqomHvB6NzWcjb",
+       "toolName": "set_checked",
+       "input": {
+        "ref": "f2e123",
+        "checked": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01XeVbos78phnJSMLbQnW9r7",
+       "toolName": "set_checked",
+       "input": {
+        "ref": "f2e138",
+        "checked": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01X65suNYLdUjTVUt5e2VZRH",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e142"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 11836,
+    "outputTokens": 282,
+    "cacheReadTokens": 7145,
+    "cacheWriteTokens": 4689
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:2e050210e7715022f70e5ddd8e09b7e4db738dabd883785c409e03137385e485": {
+   "stop": "end_turn",
+   "text": "I couldn't unsubscribe you, because saving the change needs your current password and I don't have it.\n\nI unticked the newsletter box on the account information page and ticked the two required consent boxes. When I clicked Save, the form stopped at the empty password field, so nothing was saved. Your subscription is unchanged.",
+   "toolCalls": [],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSzAcKEAgTGAI4AUIIdGhpbmtpbmcSDKdlAms4UfVtBN1MFRoMSHwSc9EXpC64ACicIjAH4IsS0jHH1loi9fnSNlCOnx5qtoqhWmvTmp1qObBGkiDFetF0Nak3uYzXKEnkir8q6QYCyTXYV06qo5MhcuwBcJQO2OQpotLnxQ8GA4HOoSifb7bl0MohHpmLGJhSHDFgs566vFEFANqLRb8x294hqY9cHNnZXSPrjkjVQ7Do3jt6pqJlgLELNldSB83Wjewiom/DQr96E94jKlW66xROirKdT/rkjj939YJnFNpEKS3dLv1Bn5K/3Ep/9OiJPULR0tsIJ7cfvKnJr0/2h3XlWi9S57uh343x16oikN/XfvOVe+k9Um7vOY6pzFP7OT8SBsgNqwXIkH4pVDZYHJwHcs0zK+7308s8FRwqQAXqEUyiLiS16DYqqlEWCLBzzCi8g5fL1qdc+Hf/FcpA9m5yAH/luGiDC70nRVHGRUSCQ4vFloyTJb/05YxyQuev6maLI8tTI1XqpCkj6rIbbN4aEX3sahsPMAahRMvPXEJifQiSHeV5fgbjiH/UxiGUOTxAata7g0pqVjEfp1uNR9QWIQsN+tSEH6IPvedwe1hi1Psh5YxAscZiotIbIx+Co77HBWfDdwwG5VswAzkbPmUHLYl/5a2MCab/hnqX++vJwjuZv4hllnke453QTELqmYEloZN2Bt7TAeUi6RwlhEr48th8B9oM2O3rN/Lx7BqiV6mUGP9TkBSVAwHWE+Bp3OKMIh4+W7+lGeHVVY+5HhQpIXbJe5G7bZ+hfI+ZW+dbHpE8JoXHJA1aVEeezACZKV6ceFm8SPeGy741K+8Ipkju/ybSofaWIl180ZgWmK7XEoTuDkeh/UaoTzoMlQuYL6UWnfVn2JvoObN6DNXviUFDGxVAOJJuZCHbz/Nt1VMKQjWSMyxxsaKeGxJ99uVDlrBHFV4kP2nwZZ3Ev5Hlr2U3NN77NEfH/RYoLupaviC45Dkz4+iVdR0NQQzrubbsN4NzIgxG8V/K0A+L0rFn9m5TZFR2PKIQraklTjYoxETO7PfWqjQ03uN8xW/bypARVzltIw7wHMCM1HZf3e5KDHMhpBkz0veSbX8oD7TDifTW5YVOFmu+qTtEwQjjdr4Bhua9cooRJ0LSPwO5ZIfwESGx8WjRWOhXWANF/fKoxUGUJt8jZDDhSwL2yH/z/pI6Qn5vMqhRS+dOjTsEZBOYwBIR5UzTrHl+Nfl1/kwAH3Rt4KwLBlmzpKA+q9Yf+T8S7QIw6jEJ9auJ+LXu8ZwYAQ=="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "I couldn't unsubscribe you, because saving the change needs your current password and I don't have it.\n\nI unticked the newsletter box on the account information page and ticked the two required consent boxes. When I clicked Save, the form stopped at the empty password field, so nothing was saved. Your subscription is unchanged."
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 25830,
+    "outputTokens": 198,
+    "cacheReadTokens": 7145,
+    "cacheWriteTokens": 18683
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:6acaf4a0f385f325bb357ad3a01a0f175bb7efa5f06e9dbe36890cd563290271": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01AvfudiQUuc7FhyE9qYWVEd",
+     "name": "click",
+     "input": {
+      "ref": "f2e142"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS6AgKEAgTGAI4AUIIdGhpbmtpbmcSDN8ySkJt8sOvx/ChHxoM1N++NUWa3/B26AbwIjDGwEjoPoaytvZX7oYcK1twEEX6Zgmi3aXRmWGWiysA17I8AyxpsIVCIcCA/UHeHLoqhQjc+lFQBCNVQNWxaWRfcxiXSEsulhNnscrzLv0j4qLDFQI3KVPTpi+yVguWRC0GCpDdbiiyhCXxzIJqT8YW2EIvpWZ0F4UJ0cdxPWXsaV2I/+Sol5bi9RnGKfY5OhAn6s6dF1U9yec9DsU+DjgYM1M8uCCwU5vSGRhKbtxcKP8HYDzCBXNcDcMA80eNLGN9RqSpC2b63TN79DF2LACqR1s4a7C3GPfQ0bC1xxheyftM+O25qgzSXM1To9G1TjWrf4x5bNKh4tXpqCgjwdw8X58oEDhBmjXUtN8ig4qWcq+Iebg4BM6jGdcERO2eBg/CJQ08PybIGIEivP6k5+6PGLf7vpXunj9i5L13/ub3JEaHtzHVLtM/7O2MH0ZfZqHNyQbTSK3f4ifU6ODymCz8HuPcNuZfR/pGJ4IGl+IH4DdEpmi8ur5VoYI8yKlJ3izftSq+SmfRp4/OESJdOYyHkjEhg02yM4fSaAgULDUkhFWEwavZ+Kpwa9LtVbJr60xWItK5mJtPpvdge6iJGuktfVcfXK2R1DBZZP2X/SPOExEqV7WlZS6Qy/L9bmgsSP7AOnJ8NnQOW1tufh2FewlO71EsvUwTakEKez3iILLyR3areRc8lZMtHmQhoBA8vhKN5QlgA0GkYOGmkyhY4zmVyqBHcGTYxNAUNItHkMl4/lIrbV7lkkV2g+/aAGavwZWRTZLuEofgaSNDi/daaeEkyq8chp2+03Jh5XUsFy7+XN3e3FukKbeWJQzoV497Q3z9dV2fvKzFILmdm/TCJOFoZT6IQLutCnOfKStVdbNsw26HoKxS1mDLzHXfwB76yo5JyGevLDUFBNz1urTDAX4LkkeMpEsi9fZO79PRO77X4yxQxhU+0pXfsx/dzrFUrC8kE/YCgRkY00lCY6uEVwo/ovHdTbO+JX5z+DjDilY0uk91Dg1Ih8LdSwWQVpAwnQYdicgqr8a3OxttwkN54D4yxdZCHuQcS5Ht+jUzsSppZrzdfIdYHmcItqhjI+8848t9QrZiySS0oPtW2zaVsm+69TazzRbftxaaPvLween3GiYd2YGKl3h5a/igb4Ip2HNtQjwm8In+zUbgvhZDiNa1R/vxOF8e8r2RqNzNj+NM2KXcabE57OG0vxPRl1u9EPD0Mf/jAbp3yJb+qKayUuIPnoeAVsUln8xsKXOzdxIU3Blm5WMs3S88P++dH7jhEEY27yrCSBXKpH6i/jf7zc6MtxQgSGMRSk+pZokjynRjflxC4s/zH76LkswZGJkXyWQf1NmavKNeuK+9BKyO09HKsVm5S7ZpS3ZrvSyoYcGdl769dPVSBKXma2RioTUFwC+A07b5okmHV0QZ1BUmfw08AKfwgMSPs7IYAQ=="
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01AvfudiQUuc7FhyE9qYWVEd",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e142"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 26050,
+    "outputTokens": 165,
+    "cacheReadTokens": 25828,
+    "cacheWriteTokens": 218
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:0a95b7d9df397d3350d4e0b4e7a4b43a2642325c549de85ddb6d2a90facdfbc2": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01QFagQtvN3AJiM2zLrj9vgV",
+     "name": "finish",
+     "input": {
+      "report": "I couldn't unsubscribe you from the newsletter. Saving the account information form requires your current password, which I don't have, and I didn't want to guess it. The newsletter box is unticked on the form, but nothing was saved, so your subscription is unchanged. If you give me the password, I can save the change."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS5gcKEAgTGAI4AUIIdGhpbmtpbmcSDBm5w5AY7VWYxEzq4xoM4V1wv91uCojy00V6IjB60QCrndCHnz1+x9mwJbuib/k5HyYWT649T41ZZTgHm7tSh0AbQ9o7V9iZXXsXvcEqgwfsNKD7F5WsgR1MspzkrgRXlIfS1nObs4GDwO8UYmulO6875hyk4m6SBB0zCycawpNnee6ZPGSQ1Bs4LcMax6JHKSAVsbu9DaWdn/TvXe749QCMA0nSwgQWp+Wm+TDwtpKl6yFE/GM0kmL3yicf/3NQJCaWqBpMBHwgpK2235J/ROI9LlIKFWGYRnKbDqG05Znx+O9HFwWmwPRV5i7ElzH1Wt2z763B3K+HR/pOuAginuD7of/CbJdHxTcunBxmD4G0AWZxvH9zMlMciZn3+SE6ywKsuvIOxJtmQBn1R9DKjm6yqQr3s1fpRhRbjnFbWOhfrclt0gQKjPi3RbLTST+CPNdjuf6RTt+Rm7uG8TTvABvFROgRX64G32OGvegCLuADxPOvbXwp6KeB3a0SEuyFJOaQIqi8dISjkuv9itdvD54X7HvIKkHPrL2IXU89GmdXZhPer4GbDvcyIQMYx9Ftwy5otjHU6CnHgi7+Hg0swu49IP47TbhV6omrr/UceaT6cygowRLhLatHfOUd7U85WIPdzUyizo2tUPhwslWv/O0gtO5pzkemVDbxV8nWqgBB3B/8eRjrEc0bQTrpXTg261LxgHahUX69kwMBbATKWgeJQqx7kVfOgAh9TdCcCxwkWFbNTkohumLiYufnWq9k/DWJH4247C/zNlWb1chSBmJnBqa8PeCHEmposyizckfzwBcHqbniUQuHCmYbQTloO1v/CTCENBpqq3ziSOC4dXnXciKHcGEORESYVj9olYuQMGb/PJZ3PH++5TQAFUaxhBV+rv/Fr3DRViifqpVxsHFEIwi0WFv44ZS4Z9Ft4lebEuyepduO1oKcAT4LdPwqaW8l0ACiZjfWMkR/OWkbOi1KmBosJIeeI+MlIW8rMM2Z+DwUbEkPoTndSBwNFiP6NRMnFXU6RqVENsyjIY/4xypWZhQn7RQYF5txe/SF2PzEqa9+pzAQ0CdPYxZvmiSMcsRZ/PZwVOTcRnAUqr7M4UlGAqTY8uLTQ/b1EIsIm2K7cjSSrGmeOEkZDn5bkGf98/VkIsBCmw87CxFCZ6XnN9xvOGjh/G6bxlMrNn0oT6p9XqKRzhIa2N5/+mu2Y1C9SwY+cXg76JxScKhHUfOeSjOZMJin7rCTTbWwSzgeUXs2muNbf5bEZLlsAoKZcxByvBm27S0CJRGK3MyJ+PxQpuy4AxgB"
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01QFagQtvN3AJiM2zLrj9vgV",
+       "toolName": "finish",
+       "input": {
+        "report": "I couldn't unsubscribe you from the newsletter. Saving the account information form requires your current password, which I don't have, and I didn't want to guess it. The newsletter box is unticked on the form, but nothing was saved, so your subscription is unchanged. If you give me the password, I can save the change."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12784,
+    "outputTokens": 221,
+    "cacheReadTokens": 7145,
+    "cacheWriteTokens": 5637
+   },
+   "model": "claude-sonnet-5-5"
+  }
+ }
+}

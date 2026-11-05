@@ -1,0 +1,382 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:47:12.127Z",
+ "turns": {
+  "sha256:a6eb35d9c78ca8617aa6fbaaffedbe5727a8f9ff3a9198c5675f3a64d729c320": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01MFcMWanVHaog6pe5tHCW8p",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4320/wp-admin/edit.php?s=Old+pricing+announcement"
+     }
+    },
+    {
+     "id": "toolu_014wo816e442jwbEzKdAs8jQ",
+     "name": "wait",
+     "input": {
+      "seconds": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01MFcMWanVHaog6pe5tHCW8p",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4320/wp-admin/edit.php?s=Old+pricing+announcement"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_014wo816e442jwbEzKdAs8jQ",
+       "toolName": "wait",
+       "input": {
+        "seconds": 1
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7257,
+    "outputTokens": 122,
+    "cacheReadTokens": 7253,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:6dd65ce50e593d0682f8f6ea423088a0162c35ce7238909e165de114742ff316": {
+   "stop": "tool_use",
+   "text": "The search returned one matching post. I'll select it and apply the \"Move to Trash\" bulk action.",
+   "toolCalls": [
+    {
+     "id": "toolu_01NspHVSidPTTjrqZNKLXJZW",
+     "name": "set_checked",
+     "input": {
+      "ref": "e228",
+      "checked": true
+     }
+    },
+    {
+     "id": "toolu_01HgqFQSKmdm2qgbnCB25C3i",
+     "name": "select",
+     "input": {
+      "ref": "e181",
+      "options": [
+       "Move to Trash"
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSlwYKEAgTGAI4AUIIdGhpbmtpbmcSDHkdlkoWwYrnyIg/bBoMzWgoauSnaXOmht2UIjDZrxghEUvTx6EDpR8aa6IQZzdc90tbxzIG4IiQgTSAkWWQHLD7b/Yp4R+p4fC59X8qtAX0NAD0s+RQPiOPRrkK4BqXy1s+0R/mDg4aMJ/ncDkSG1MCcJQHxYKH88uvpHblzhzMdYFajdjxaNDcvh02n+TmRYx9n7q5mIJK7rPgcXGNNDE2AnkEjcaa0RXtkDjBbrmCazJZKw7gK3KQb3gL7V8egYyiTnMcfn9p7pnBhUT9fqwNnREFyfKTIrdvqjthtvAvKtx+VMsqXBg4ag8g7YxS/90EM1H3kgnLWcfNIbjeix5X4mHIWOALYJvjWM/CMcHCicVc8jyxOmhcGOizseaDDdoI2neCBnogE2JERRsvG8NjrKxCwih4kFl3P+Jvw856c0goSDizAOgwjujV7zjjKBz92d6ftUUhg74vWMMOs+NQ6+emaY28afb0tuMXvzzXDmbrJ+fueNjTbLotsIq68H46Etyl6L8z8IB93D/77EQGh6j9EvoFbyzj/phZJzAB9Ui/5W0iJu7ktRkM+0fmX2fSr1dyMOx+LWUMWM4yoOn98IDUI/8I3S3I72uWRQb7fWZ+J2Jisp3hCLjSdIVN6FFAChhybTMvvrgXE+lTxLzTJX+zCXskrqs/0dfg7VKLyuizNXmsdQ5gntLlfk1YP20XtJOSpDd2EkfExLq4j5mo982GIFSVV1nam20dHsxH3Uw9IfW04Nox3Z+wiXOagvQ3rdg126rlI8GkRut/m97T3VRN1/ym5dHEfGU4MsKKVnrdh3/xSwcg2v458AhwIFgWb0ttkpxP6UBvVtEe+/KFR2E+lm7JenOtU7eLE+Z1TKyeF2aCJVptuR+T7XmcyuC0S0ES1P9dfKT87IsG4mbjnDpr0gc52llc75Ab4YyVGLso1DF42AIV20rw2nGaA9qcD8BcmvrcqEdvhHgYispZWWGbLhw3fNUeOakUQvh2/UHlW/Y5JxsHGSrl4h8oLGVZbBgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The search returned one matching post. I'll select it and apply the \"Move to Trash\" bulk action."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01NspHVSidPTTjrqZNKLXJZW",
+       "toolName": "set_checked",
+       "input": {
+        "ref": "e228",
+        "checked": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01HgqFQSKmdm2qgbnCB25C3i",
+       "toolName": "select",
+       "input": {
+        "ref": "e181",
+        "options": [
+         "Move to Trash"
+        ]
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 19359,
+    "outputTokens": 233,
+    "cacheReadTokens": 19357,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:99cfd40edfd31f31277cdbd7e27eec93f0c7617694afcea909964d28ffef09db": {
+   "stop": "tool_use",
+   "text": "The first attempts timed out, so I'll retry the checkbox with the current refs.",
+   "toolCalls": [
+    {
+     "id": "toolu_01BXNG9xFNvZ9PuYKfh8w5Y7",
+     "name": "click",
+     "input": {
+      "ref": "e228"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSyAcKEAgTGAI4AUIIdGhpbmtpbmcSDAXQReobwSDIielaaxoMA2qKlXnrpf5tqWfBIjDBaGTgNVunw9Y0XNx67LZDAOevp0+4f4CaTZGWP81q4qtiBt4k2DS78zLkS/TmKoUq5QYp99mXc0D5jwp4kTQHcWeckKLUpK8LW+ZU9Ohxqke01p9IwA0h+t83cdcojxZNrsF7Tf8Hdk9Pv2VBzjJrywXG6ZzySj8qvQaLgYqzFc6igYJhx8WlL30XSzdaFzgNAuwMWWIyA7aWB/ARXWkg8PSymeIUnly7IijTZHQdNa+Fg1BlALYeCjudn8tRgbMpiiwWudi92zEUrGPo2jAFvRl5DU2jabDbNibB2g34C/YywEXWfOS2s0oaWxO42HOea4UvL++nUwH0HOkanCKU716vw61uZkP4IcxqJ8hWwVZl6K6OfH0V7ks3G4aQ2ewYRIKz9CgwcufSQMj0vxlO+e4duI9iANZABkCHpPADl80wiUSLhDBTZV1y5kVwGuaqI+cZqy3Tah+Ze5JGdyp54NO+UaAd+ODRlJFiKBdyOTY4zIBtZtzaNRanZq2P/P3kjDreDqps9qGjSZctM5DXDsGRvQ6HlAEeBfaJaCTF8FyHQf2pvaZOAOzXgM68OTyit7N+mBlVzG7ipzQGPyuY5ubdJVl9iQwumW6oS7/C/ZeodFsQ1PY0oU68u4GlBlrQ38uYlKkyaWNlc5fVQ1RepNEYIZyVK3Z37H5KaPw4zJlsXoij3PhaluS8C4bi9VtIfkV9wO//qijm8BLyVM7L/SGrGcsdQXlsy9V/oAHfbJknkkublSTae14Ub8cXNWVbXG/S1GsAF4gnhWdCjQU2Xc1T1t6RBDjdtkIFQlIpoyxB92+ZqJ1/jUHzxrPWZayvNt0OOOEbh0je2VArQfm8vV28BEZP7hO+JUnBAULhxNgSLQb2FCydg93F0KPW6YivE/rVgItiQfnY/kKOenm1YLXK07/8u9BXeEJO97ILdahrT0qt1szMSZzJPjeMycG7BrrZoxM+6wFPBV8BD3q8GtXAW96DZZ28I8X2QZAIeoH1UpgSDD+9zAqBD6/ugrLuAMhS5EWspqZUaixVenRBA28q7LsJZt+D9xtGMAVZbwA4JXvHnOm7SpJG3sdyhIZBYEajErEOBjPCFrFKS54J8bczkDFwrFmqy7KUvOeDGIf+bOprieCYzxAoiR4WjZ8sn0kJsGN3q0peo9uKKAmdNg4vn+CKUgsp4snSaNpcT4O8OrS5r6zVxQ289OSAZqy96YGexzdWQBgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The first attempts timed out, so I'll retry the checkbox with the current refs."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01BXNG9xFNvZ9PuYKfh8w5Y7",
+       "toolName": "click",
+       "input": {
+        "ref": "e228"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 19837,
+    "outputTokens": 163,
+    "cacheReadTokens": 7253,
+    "cacheWriteTokens": 12582
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:d1d653ec24b45cf4613bcb9f8132a515f17b611d43e09511600260489887f1db": {
+   "stop": "tool_use",
+   "text": "The page refreshed with new refs. The post's checkbox is now f1e228, so I'll select it and set the bulk action.",
+   "toolCalls": [
+    {
+     "id": "toolu_01Qn6SqPkhQSWHbindJcVj5Y",
+     "name": "click",
+     "input": {
+      "ref": "f1e228"
+     }
+    },
+    {
+     "id": "toolu_012JPYjWruL4st8T9CoGiXuX",
+     "name": "select",
+     "input": {
+      "ref": "f1e181",
+      "options": [
+       "Move to Trash"
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS1QYKEAgTGAI4AUIIdGhpbmtpbmcSDMAPqmywjOWyshKRihoMv4j8VSac1BhZyF2JIjBJNRbpu32SVP/tWaxt7NnpBCIVE7bazezQ43Fn2kaoUcCpsMo0mDk24FgLniFjX2Aq8gV3Vwb4rLsUWfpbZ7KOdGbz6cB5IFunUcNVAzo1Bq392gVvwlJf4lZ8NhMVai6OFKJcdOMSwrY1RWXhPAmNB2GamO4FncXngK+haQMn8RPqaE+QN5m5mNFjZwnnTv8lTpN0wm4tUDG7oJtsxHAGVk8ac60NWdwuoyUl25tMx7QpFnKUxcRI2OhIhL640CJ14CutO/FJLFgRmMc5F2mQJ5cOQXZD7+2bUBz43eIIeU1hdsxKwQ2pMOrAFTSOXSPO8NwIlGACwk36OEslknIEefzerq6W94xZmXhob+JYzD6p6bl9zhe4lVl4WmVE+e+jv9uWUmGaP29KTTXx68NvH79WL60uzARHRpjaciOiI8oa37PPzpy459n2C/uKXHXjKu2jrnFzB0QLf7sIOZyjDVhNFv3ANm5jnjHbt3M+odEe8n+bQ078JK8KHaHiPYdZTHfcDVV8arNVLrIcZ/iwYyd9s9+ikf344KR9610lLfO1mS156MtWtwvQrE41km83FOqNMfGj4FFEaIJkntTrmgpic/BJBUqaqkh+idWhBg1v64ZxEgZicU/MiiZUzhuw2G09mlsy6V9dWavF4iVVWvlQdc3I9KNiwRxKjcMLVGZsWIk2cpBRIqfws6Z93d6IdCj/tthWTvSAzQqUsRJuGnqc43UrvQ7+KFDH7KrXFKwfHbTwwTBRV03UkXAHLeUhwdhdSLAq7WRkaQcWBsifjk2WWlPs3cTWUsItBYwS56Dn+QEdfz5gPDi6BjFB0i98m2EeTJbDYevmignamNfpDfaVacq9USJQy9ADAQow8BKZc6VTLWoK1CGX8vtGt7vRyd0FqefVhYD5YC2HRUIIt07WRgQf3lX3VilNE8kKuihKfVP7Q6NLpgUWHczlWUOi6RnN+L4mX8SKRefJgCZkw+VdzGf1eM73bECaYD2cvFsZgL0duMgMOUyveAwsZUDwxfNnG2wPTZJHuXXGue1JOu7h+bJimmuv7aDWM4eR9w7PlgYEGAE="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The page refreshed with new refs. The post's checkbox is now f1e228, so I'll select it and set the bulk action."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Qn6SqPkhQSWHbindJcVj5Y",
+       "toolName": "click",
+       "input": {
+        "ref": "f1e228"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_012JPYjWruL4st8T9CoGiXuX",
+       "toolName": "select",
+       "input": {
+        "ref": "f1e181",
+        "options": [
+         "Move to Trash"
+        ]
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14207,
+    "outputTokens": 216,
+    "cacheReadTokens": 7253,
+    "cacheWriteTokens": 6952
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:9e769d89f7e85bc0d2938cec0ebc0886eaecf34c1c61cdeb953e6659619f976a": {
+   "stop": "tool_use",
+   "text": "The post's checkbox is checked and \"Move to Trash\" is selected, so I'll click Apply.",
+   "toolCalls": [
+    {
+     "id": "toolu_01EpLcSxr1AAHiTLGWU4oqLH",
+     "name": "click",
+     "input": {
+      "ref": "f1e182"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The post's checkbox is checked and \"Move to Trash\" is selected, so I'll click Apply."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01EpLcSxr1AAHiTLGWU4oqLH",
+       "toolName": "click",
+       "input": {
+        "ref": "f1e182"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 20493,
+    "outputTokens": 82,
+    "cacheReadTokens": 7253,
+    "cacheWriteTokens": 13238
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:ab084742a0fb2835886d5953f11afec295031f7784fe63cd29814084af37f1ff": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01XswzfZeua2RkHMc834E6zD",
+     "name": "finish",
+     "input": {
+      "report": "Moved the post \"Old pricing announcement\" to the Trash; WordPress confirmed \"1 post moved to the Trash\" (Trash count now 1)."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01XswzfZeua2RkHMc834E6zD",
+       "toolName": "finish",
+       "input": {
+        "report": "Moved the post \"Old pricing announcement\" to the Trash; WordPress confirmed \"1 post moved to the Trash\" (Trash count now 1)."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14839,
+    "outputTokens": 95,
+    "cacheReadTokens": 7253,
+    "cacheWriteTokens": 7584
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

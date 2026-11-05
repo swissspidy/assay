@@ -1,0 +1,1464 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T12:04:49.954Z",
+ "turns": {
+  "sha256:b8a4da01d6364ed8e462b6fdeeb3801aeec1540aede88d27e503dda2af18cc90": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_016AT9AMwyZzaN588mC9MUDg",
+     "name": "show_part",
+     "input": {
+      "part": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_016AT9AMwyZzaN588mC9MUDg",
+       "toolName": "show_part",
+       "input": {
+        "part": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7496,
+    "outputTokens": 47,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7492
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:e2f35c28a80f986042b55bd315e0097cb711ea10b203d0cfd27c549ec737b20e": {
+   "stop": "tool_use",
+   "text": "Open bugs with no assignee appear to be #1, #3, #4, #10 and #12. I'll open #12 first to check its assignee sidebar.",
+   "toolCalls": [
+    {
+     "id": "toolu_016oDoViB8uV8Qbd5BUJrFaa",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/issues/12"
+     }
+    },
+    {
+     "id": "toolu_01XqsYkB2fCsVXpyPVDubSqE",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/issues/10"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS3AwKEAgTGAI4AUIIdGhpbmtpbmcSDHER7wE19Xz96OF22BoM4D9ihKEGJqJcF0RSIjC6Og9lyhHA9kC4GaXEUBZZa05FN974++csR9M7KYjLME8OYYy1DMb2WFIvclDWM0sq+QtJbRQwigXSNbZxKlycYpxc2W44bDaBkg9gMK3RK6Wy1zPthA7dez1nvvD9Tjqx/kxfaUalm9vJRLFKhMk7UgpPYzHAJALp6tcz181Mh1CuR1f+jVZtZzgFsW8A6+9Srpeb1gS1hHA9lxACASJ+pMdCM/uUKlcgxWrGUXdO2ozEbw3K0zggO4gPi67hPR0enOep5Z6e1KTPnoQFjC6wNKh0n9WP1Oe9r4PowNwBHri4XQFXW2Ogmi1aBP5Woa1O1jKfHPD6RkGUUHTRoDIr04ka9qa7cYrYvqOWWasNBPQnD2StSX5MhVjjYWYdUIxbPj+uJc9CQgkbCm+XBBiSsfQYOFRYeOkJrPuiSpFP9bWKxXm2INEQiR9C6altxmWlkE0MY0IPH9YYwtfOaNaPVlCYo9Xbx+B8KsWIxeMeHOUVb5MpGc+II0imjAFLqPsgvQ1xlp8sfsmxM1zoK+i7EDD+oAdWjToZY/choUYZTtWdfn9UCkosIiCKMHiJnZN+pCLz/KFKlInAIUC16gAhRTnBNU8MvqDDqUAAW5Dfb8cunqAEJdMrIR0JB/6MFHL+ZQsWVN7QbNHztmVpOyjAbUhCKipB3az0cHrQVXpCNt6p4W2WLM+3XKhTQaIV6IYOExltcOsF1MUMdIDl9HjX9wd2baqWnPFe+k18rZn7vSecIBud4I2SAUxnQslQURU+fjkLKvGFkXMJRT/VUK/Iiz14GnzSZ38jA9WIKhyWg1VHKyb7T9Unzo6sV90HQxs70WweJI4oXaK0LX7JPmb07S+qiXX8GBlAxa6/wjPXoURBHpfV92FyPgqJlovIDEAwOf4JsrkoVHVAqtcK30zOlWGjMtptoGsOheRM5MsFBhyNgTFRfKQvejpz3OKOATluxtZu+nr4rTIRBL0F9+tj5xBoAIif9kETAReMzz3aBQDXIM8bGGblxMsd0Isgmzx3MNBKSEvFDr1TyoCF+obeS0Oim1Z/bDG6cR8Dk+whn7MQzOcFSbX3Cu/qkeJZo4HKxgM++lo7sEfoC59/HA2rA+yCtUErAXxGuvvkq0yo7azNIe/aKnURO3YTvkBCIdGg8GEY6BkbTGPQ8BQteAVoE3Rd3yjqbHRquSlXn6jLqW01bbmAZbg4U8VN+V1804ilxFLZWqqxF2WdYLYTthZ5i0UFy7z3f8pzzJWA0jmC11OFfiEh+F4eFd43HzerizuC6IUIVP/c8mgFkn0gRrV03ijbvVL7LvIphcDaujBcJEjrji7BgmBi6OPOVeHm12pQh2RXWt6Fu+/nRXQaxU7gDOQpCMO10MykGWf5lsSCq+WCoj6v3let2K1nRUl0nfV0Fw//jnqopEueqE1fJrLg+DDxZaG4NFyFlawO7xGrvQkFVrUryhZrsKEp84FSwLf2nCetOv67iCwF2AUeJwtXONyK6KnCnm6xKO4Cth4loErqRzNKm/ktLnAgZacEbMTNy5/HUA2Iq8qeKisbDkHwoc3ZhvPeKL+4YOcrkibiMM7O1q3jbAraWiy7r8YgRzIdvpmhibSS2EHjtBcsDyCUPerm5Yz4N0wjrnBO4epHOj+sQoanIQQc7Cpldgk7BRSFWFwLNn0l6ksWAScu20zCZgykVtvi3mw4oDykz2YqU5v63wWmWGGRyb4JvIbR3H73xx6h+xw70RsXT11U3KRE1xOheXUmcXNjwXnVFm40ABNLTY+djPM/7kEl4HMusiT2tmyfY7LN4UgS2OO9I3d+j94Kn6jfC4287LtP6OYDAL5vZk6K9mRLqJVA0WwOQnZpO6Y25XdpN8bbUr9AmIrRqpZMgLPNwputUQDLjZ2tEcog4tTriCopHaD5C1Uu7GxafB0FlmpFpTtii5R9SLxnOmP6LTssuIxOduyDP6vqONQlYN0VLQftgnN9dZ2M/lWGoFeptuJt1OLCLHbKN9CUocwdhZVWPQWEuHXhxG+RgMnJKsAwwxMuxeAJauJzz8iHx3M5+ALKdiLnGNbfSxYKPNzHZpAQ2/ajpE3CmTGaMTdmC56MVBkHTw5TuhgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "Open bugs with no assignee appear to be #1, #3, #4, #10 and #12. I'll open #12 first to check its assignee sidebar."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_016oDoViB8uV8Qbd5BUJrFaa",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/issues/12"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01XqsYkB2fCsVXpyPVDubSqE",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/issues/10"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 9150,
+    "outputTokens": 605,
+    "cacheReadTokens": 7492,
+    "cacheWriteTokens": 1656
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:af62cbc1e70005b9ca53eda2116130bf1c649b9fbcfe5463dc65e6c65db0b5f9": {
+   "stop": "tool_use",
+   "text": "Both issues show \"No Assignees\". I'll open the Assignees dropdown on #12.",
+   "toolCalls": [
+    {
+     "id": "toolu_011hWzjFw3sJ3ejp3WE5sgen",
+     "name": "click",
+     "input": {
+      "ref": "f1e266"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSpgYKEAgTGAI4AUIIdGhpbmtpbmcSDHfyixyw1cK+tvYqaBoM6IqkWnopTEbvXSUkIjDNRFGb/onQFN1npbot8Yv/yH/fC1kAyGeSw1YU1V+uMLwE8tT7R/SvOF3V27PbV8oqwwVpqFOn+5ioOgfWQZQn5aUVlmdS0j3lfzValbeEyV+2I8JocGwYNODTTYVTyVqmomJPda8t061Gdsk6DnpzKxuX6RY8enKdvkSliBUa4M411XxuyoP7lPFZtHU1rGeqq9LqQl23by8KfOQEg3jAd1fBzgldzKdCr7lAiYgzkoDAb0IMMOfrVqGbym+1Vi+I9aYamH8AGQoJaNIjvAAqpihEjsHNWIim4Sa4RXD4lvDgVBZZ8yYXFTJKO1gPTZUpF0Fwk5aTzij3K93bLbP+Hnupao914hxowFzfFIeaS2ZgOS5xh4m/B83nMPqllUskF843vPGr+2FoBDvMduXuCnTqhuJCF5MN9hnJOKClfolxWwkdQZp+9/GTj2PJhawWI2DEI9jeAD2e1WntUa0VkR10U69GYBZTemSSKQ+Phz2xhcCgZfuDDhnjC9RHEGCrRRfWYG2GewAh5n4wb00cqqx0oODOAUvpwGbzH7dojskdt3fLR+8Do+eP2RxwkWhSzL7a+tH6VinBMD88xvopOdlmTOoj02ybbaPbCIrxnQbszn1JazIVAqAzlJZUw36D5ctVy1UgdDRSNIVpY3YOHT/2VI5uNXGxIgr4TDUGQ1nuMZnE5pZ88AblFWyN69jYDmkW8DSkv4LDmeVKxR+Pi+jbBFbeRmClbaJdmDGNffw+6kQ+7Y3P3nesVeOnN8Kk+mr32J5sCqspY9wQ+jRXheJmJV2ZjFZs49SAX8Tuu1WGZjPYlATZhER/CKGuO94jlI/xrCl8l4CiJps0fRNpbG5dbbzQQwRri4OC/odyNxt+q3oqgIL22S1UDupYzpQ8FI7z2S/VB4FcBxyuNhbJOyg5NJHcyMB3XPrQ8rS+7nz+7mJRW8MNkifHUK2EwwjfiUYGFmEEa6+UzBaJI1vsStzYydskwDeFFmzhHQredv+KOjIBLhgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "Both issues show \"No Assignees\". I'll open the Assignees dropdown on #12."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_011hWzjFw3sJ3ejp3WE5sgen",
+       "toolName": "click",
+       "input": {
+        "ref": "f1e266"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 17516,
+    "outputTokens": 114,
+    "cacheReadTokens": 7492,
+    "cacheWriteTokens": 10022
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:1bea613c67c38b407886f60cbf5d9e57ed8647a711ba9cbe01f9f4413f0c3dd7": {
+   "stop": "tool_use",
+   "text": "I'm on #10 now, so I'll open its Assignees dropdown.",
+   "toolCalls": [
+    {
+     "id": "toolu_019yB13bHCcdQP7TKwy3zpGk",
+     "name": "click",
+     "input": {
+      "ref": "f2e266"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSpwYKEAgTGAI4AUIIdGhpbmtpbmcSDOTcYB05yaG036g1pxoMdTXPt3ttZyNqpL+IIjCqDSgbJC0SmHJ4NIwJXs/LWUfgHcGJw4lJE1yPCp0BB1VKSNk1cfI+e3HPEtX3AeAqxAX5zxKBs2T/+PNVsbELsQ2RvJ8tXoSdgvZgjw+Drj0yI96iLdgpxmq9IfH7LgsfGleYJeMRiUPf/sv7ppbr6jN+/JhoMQhJsP5BKlEAd0Whp8sYKYQjfary+L3E9j+ilaeFrXOU6HqvyrdtRryICHi5O9Rpro9T0NQu0cPck9AvSPeLBq4jLS96XSmNWGHOMokCCh99PI0d/BHsgjTTid8uMXmqJXkUSIhcg43+T5lYVcIfmBtaPjEEYlgYZzttJEnaJbjiBr33mZAppLHe2MrL7ZgxaEeLFuATYmjNn1aowuNflXuJsgvwnVHTVZF6pBity0Q54fQZ5gRYs5f1yu8mE89AbAGDPU/+RqqHbmYpY6/FjdvnyAfEjZNHPchUc9bUIMWb1/5j70K5YZUv1+VAxHXbx7FwLPD8JhLH4wusb0LDvbe6CPcKJo9d2KdEEjwmR5QCCs5m8hm68kGt9ZhPosuHdQveZ8mYkZ+oJ0C0o1QfIorM/B799rpY/d++IdbDry00iWTcmeLB5wUXz4bnFCIt+sGh4EEHqdGvqoT/+fBFqf3MGP0sLuCf0A1ZsYvcc2OPChVeLUNSBdxm4G2Na0H8lioj1b9Wxadncn990bkpzMt4vJHwE9I0j+RGUx8WhVRLucRG1xkfirLRI0pLFIXg8WJJateoVF3ncxIoEVdWjv26RMCnE39a0u56DOmcVtufObjlwYdAcBFlO4hK5t4GVPnaSpEv8SoZbCjA8jPCCF0+GDrThPrFYSsRE9LZD7XyzWXftBA67XzUEQJa+WBQUzXH0HqW1gjwSF0Lwv0EcAoBUwDmnarZDPxKQ+L44MvOfukoKx/QoETPPValUOIKIMmG4A8DhXzbGeSJS1I70trbYYk1zbA3kQJN21FoccEGD/D3TnLl7yfAIzMn7pbVf2QYQsa3Yt0bVM9XKlqcA10YAQ=="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "I'm on #10 now, so I'll open its Assignees dropdown."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_019yB13bHCcdQP7TKwy3zpGk",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e266"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13168,
+    "outputTokens": 102,
+    "cacheReadTokens": 7492,
+    "cacheWriteTokens": 5674
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:df85be0964b8638a606e55beb246b4e940cba96ea20b82fb139972efa15108f3": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01PRBQBAXcrqXBWUDrKpAvYT",
+     "name": "click",
+     "input": {
+      "ref": "f2e369"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01PRBQBAXcrqXBWUDrKpAvYT",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e369"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13698,
+    "outputTokens": 49,
+    "cacheReadTokens": 7492,
+    "cacheWriteTokens": 6204
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:4cfef3dd53c7e325aed8d963069619a0f1397151a93040ace28fea06c774a41d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01VXVAyiMH5dUuDtBsEH3DEA",
+     "name": "click",
+     "input": {
+      "ref": "f2e371"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01VXVAyiMH5dUuDtBsEH3DEA",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e371"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13819,
+    "outputTokens": 49,
+    "cacheReadTokens": 7492,
+    "cacheWriteTokens": 6325
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:84a10e49090429930a573a45718d79a54d6a333de6acbe8e715738bf46c22511": {
+   "stop": "tool_use",
+   "text": "The dave option is in the open list, but \"No Assignees\" still shows, so I'll click the dave option itself.",
+   "toolCalls": [
+    {
+     "id": "toolu_012iYnLcRKnbaPetHyuNj9P4",
+     "name": "click",
+     "input": {
+      "ref": "f2e369"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQShAgKEAgTGAI4AUIIdGhpbmtpbmcSDJaxmOmVkPgWl+VZNhoMpCabNQGjFlhwrC9FIjAf3ui33qvN3Ae1qKojRIY+ULTlBPj2as17jC6mnTx58AG6Xksy/Xx+yjtQ2MXXwXgqoQcJwoOjO4X6/+JsP+nwA7MW/KWahF1qHmjEsdgO/Wk483Z1H1vY+otW9IbFonitU9jIvd+Niq8XiinVV4OaopUHE1odX/QrMfNloqAFr9bxuY7PkwHp/p1rJgc8a6NcD2mhGiAJj5CHMRaTzuRQ+9LQ9AvaErcgmu1SA1URszJ5gQTt/q952WoiH7T5bmzoPF2LL5vekO7tVZz9JIci2Eyt5ebE9HYYR/gZ39TXdgZf3am3708SMgM3qh82tLGeMgSm6AmGnhvQ7/GNOrIaGhVwi6PYW+aSmvencgYbC5Z/ENAu7DNWA1P+JFmsxVyKkixSsGK0rPCuUL65sEdTbGqrv/kmIXYfmN1Jp8lINK+g2gfzhiGTH5kj6HJoYof9sL4qP5SL3GO7j42dYLLqsDv9k2h5JZtBnvgnnuo6Xa7d+/IDeK6zfww2Cb04i/Tm5wxOMJqF6+QIPJ9E3konT7prQRJRqdxd6V4Lv4rl7BhQcJm+MhVg/tq9Ndn4jXZ5yhVY5QJFJuov0a6Qm1VAb05xOTcaWDQ+0MakwIbaFGn8/aRSooDB5sFk3hSFh5riMhw8C7ceNPQ6VYZWiKQ78BbTWw/puE/I3s3AMPJ/83HOrf+reCO7WmpUF75kmUDVTOsmWQwGkotKIGzrnZVGeMVS5a7+TwUfFerTlreaBh5qYSWjiOZnAzc1F5BV3TtKtUbACn4PRynrVqyodVWOr4vEyFHwh0IvATtmXAr5HUtwaZZxnFbqOIaGes4N9iCmqo5FdvbXa45nidftWMDUTlCOc6aeH7j/+qVX8kW5XVESIwS3YiHYYNpD28NlEJSSOOnaAIVB7ObpaWXdaSWWFjOvWAdGDkUTbbnppid8GMQM9WDUFAklOVn6ag/eZNWRDA0d/m3Snyn7hkS9ZKEpBWP9bAO7qoe0loxlKz06BX4UvdXNJTE0A8+d4Wc338EoUuSlsRYDWWB3szoRXjSGWIZTV2XSf0QDwiCw8vsDqnxn0q8XZTWCos/d3xji8goWBODTOQUjAIt98NiIw9LMQo2J0W2AxwqZ1QLJswkt4Q9eliUxr1PMn3e+tR2YovLFXFpQehOJdzAY2etBpnEvArCMI840i2z0GLknBHU3EL1NDeRCqvVA7+OmoAOzDhhCcItk54iUymptqy30vB2jexHHJmEUGbcmBdY1f1RsK/iPGdKuu6cbCHCGhFVVr79t/YrSzkXdu1BAqyEI42kPO8GdmBgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The dave option is in the open list, but \"No Assignees\" still shows, so I'll click the dave option itself."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_012iYnLcRKnbaPetHyuNj9P4",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e369"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13940,
+    "outputTokens": 174,
+    "cacheReadTokens": 7492,
+    "cacheWriteTokens": 6446
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:63f9dc160b3889533440d0c178ef86e39155adbb0d0c08848f5f172e3f68f728": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01GqDs3eWy3V6dWwhwbdK1wf",
+     "name": "click",
+     "input": {
+      "ref": "f2e370"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01GqDs3eWy3V6dWwhwbdK1wf",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e370"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14186,
+    "outputTokens": 49,
+    "cacheReadTokens": 7492,
+    "cacheWriteTokens": 6692
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:8c8c9a8e58bb51eb31174db11fbad2bc64f0b89f0eb372a43b711158d590ddce": {
+   "stop": "tool_use",
+   "text": "The dave option is toggled on, but Gitea saves assignees only when the dropdown closes, so I'll close it by clicking outside.",
+   "toolCalls": [
+    {
+     "id": "toolu_01U4Mb7YF7MroEvRmPXF6q68",
+     "name": "click",
+     "input": {
+      "ref": "f2e1"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS7goKEAgTGAI4AUIIdGhpbmtpbmcSDOBNF+zQgoYaKNLtcRoMYnyN1x3dJ3RXG6b5IjCfnfgrw2J9E0bMenAxQtHiLZ3rNfPQrtP7rFkBHv38poYzC7A0GjgDS7jAn7jJqRAqiwqOn0FT53TCD8A8uG3a3QN92jPg8br8O2pvAP1M3MLtlA68WWogpCUnUCTDM/60n18lqgD/GuFHOy8t8b0fW2VhiQowQsSqYKgo5g4L+YcPFynlCrmyrlfkWBizuBolMRsSEmjk8uH/S+I4ySrRGPKECjmOJDeNpwLeBVPkA3sj1pMdzjTVdDxRpDCPdrrNB6YWhGZ1s6h4F3eiafJprxkszZU9Ar8+ypO4er6LcotblFInJJI0EFtNCQNXSflPhdFL7kbrWrUtx1jSaYMmD79XTRucr3oNDkVtCqc/lpGdLRJCG/OHt+mArDCZVvwhFpTulbi8kKbMLidpMVstUdki+RY0+WNZJrV9c/UJLiw5qgQ4EvjK2MoRq4kWM8s0rlOp0gZz8JhKl05QQx3TQep4kjR8nmyIbXyFWKeu8coS/bDOm7dEV4kqVdnJdeH25k2bTtpAlGsU3NZxf0WosC8UbzYxqPw1h9IZdTvwBvoWbQEiocalGVwbv62OEq5HRFyIov1J/G2Mh/qwgptzxuLYZsliPRcfIHkFIe87845Htyp7LJR6GIFyY8kW7EGlK0edc80urEpfuW+ZMgpkPohq1xrlmAlpoM2EEYX+2gxOcM9uo5wrBB2tavilyI01xY4mU1P4j/VCRjb9LWDv3ukz4C867QrYdhCo8hnfVulbq82i7DBsiT1QKPmk9gyqNx3MAggWVutl4nubeYKkO00VOOjUMur5YYv5MvyOlODbWleEYHZysn2H+XUdO9hTwdNmoprb8Bz3lmkv+ZJ/P3BOKAfrSg2CanHO/QhbumCGKGO58Q4aZ+HsCBEZVtq48McoJ/8lqQ5baVPXb8kQ/Hfb+widQ9GUrujtnae/hKavXogGpyAZj/O5M+NJ/C5keFPhqgAZFjQYXh3Vb0O+J0M7AQPU9GMzOrsQHa5EoOPnDuZ6+cbXJDaflth7euPf2eD1ID1K3a1Hl1zQFg99X5SWZIPO/V3LlpXixM2Tqm3By55zIReIqdqon9MbC9upmckxLUkaU4qd7y0IcNX9NJ1FCChednK+ZyztgwrFXpO2TEZShl/+fZlEyhSwLAyV4RWRxJ4JHOK9G+P8Ug227kdqTzyoIXM+FDQK+qp8aZOXDeLVKps/8Y4mWdwGqa5Knq7MJm5/nJ42tiDEBOQf14/9Ene7noQ8DfFIMnUPLvd2W10pwfzp2OpkvSRko8amhzml3Wj28zQRIIPuxL2v0uHMpOqFW/0wPLtDAApWWhf+TsSHTfqoCvEwmIDbcJw6lHn/XvdMJZ25S7Uq9Uc0yq7ukQ+Cz5/pwuWzlDBeVBjcEBw2Lcw+JH691spltV8Ztr+K3lHQwCO5xeOxH/mGLGFygbajpqwE+PUKw6ZcDdF2pRyj4plRr4qpUPy02mamTCvEWruftvYdggm6c2+QM4rwcjQKR1NO0sNz1GZbipQ2XfYxBmTTi0a9bVHg301JsX/6wn374ACOew2+oHfQLwE+TzZxQr/oBv4je1lu3C/Jrb9F89gnNK26ulw8Km4tmJzY9K4lBw2I6VY4jmjFt9QLwRO98c83OFuAEKRzjK9YB7XqDKJyWFmgplnbTsOqsRO3GZQp6HXVItLOsfn1Ub/BtI3UMydQYPzOylx7aA5+99cR6XWCjJyNJuGXr+PJxN0uklnv8P9xFnnNgfJr3BWMSGe7UeqV1v2iSU8oDtG58nk1gH8TKb2MR7MtGAE="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The dave option is toggled on, but Gitea saves assignees only when the dropdown closes, so I'll close it by clicking outside."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01U4Mb7YF7MroEvRmPXF6q68",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e1"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14307,
+    "outputTokens": 316,
+    "cacheReadTokens": 7492,
+    "cacheWriteTokens": 6813
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:94784652346bd5e60425f643d53f5974d581e0477f162137eb77c9d06b043f3b": {
+   "stop": "tool_use",
+   "text": "The page still shows \"No Assignees\", so the earlier clicks did not save. I'll reload #10 and retry the Assignees dropdown step by step.",
+   "toolCalls": [
+    {
+     "id": "toolu_0148j51szy99BawN13yPQDQX",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/issues/10"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSsAcKEAgTGAI4AUIIdGhpbmtpbmcSDNtDqPb8bZD0Zy91hxoM+HceUVkJ+1vEpuR9IjCYfGWMSLcOhdocbhpRFm51wqjiuDKOVX3rqiUanrkSEQDWIV/Yz8UcwS8dyWSDmh8qzQamyrWIC6OI4QvIIl6x2oC4wY2BldSJ/GZxCybIF/yLW+nvnbkd8VG4DNs/m00VYeQ49GH1ww/KeU5puhio6bUB3iSsF7gBFlPo4cF1AKl7d0uC2juSEsKnUbvNJPS0gUUsog5XaJRKD+QhaPaC7xpdfGntLdxrFt7GwadWcRc7Hu7I8iy2UFrr2ByM3H+9nIx+hlClfxL+yesliOWUbz/p5FdTOqtD3/VxzGwf/V99ofxP1cGjm3luCh0Ni6trEQD+64QbENicDPtjdhUd60UdQ/XpArb7ijBfW7GrYj8yb20YZ2RsAzN/t2QeoDUQ8cIHRPArwKfUsxPlHjGbo/SCUBTqgpUIaj40+9R3BUXY87DC2U9g5U4HXRyIcepqn1m0IT63ztljt89kkwrHDKOAKugD73n+oCwlrcNW+upr9g2tSDfPAAv5FPNsoWgMQrBsYnp9qmom26Np7qg4Z1/+jTcaFsfuMy7UOGwJ+8yGWeXXjWNC1r8o8gSlhyGRa1L05GtZ+AVF5fVt2BT1yi90JHoeeLcY6aPK3mRYRhb6eEULkUEHi/AAtciN9JP7192Fsk+tQkBg/filJgRm4sKZsgVLXKoebgvfI1f8wvO5Snx6xPDGzsyZR4/+iu1Wsep/RHaucBCbSibzi6WKu3/nrLMS3wFHSfUrEXPTud3Zb+GJZeT+COKgOpCoV3UtFInWkDtRLkfzOmhyNEN+C4Iy8irRu9rZ3b9EXM3ObTXdL5Sd66LSx4kUDqouxVATjQhqzacCPZvY7Nf+5pfXVpOCn9M6RLa0fRIC0Xi1F/3zXlXKe5E5jVHodIJD2gHR8q9B+BYi1Q0Gvtcvs00q9weARWFsIJHOTIN8Z/oH4T4THksAu0ZW/VY/LejRY9mqmJN6op76zH4gp4s3rtwKT+9rvFNsp9MqP4WeQH5Gt5wGI8pl0F8TnfLWbfqieJngYdfTUCbZxAjWOxtpAbZxSeW8+gQ64h79H8hTmIbWdrVzDpW5R+9/paviAD5dG/euwLYVUZsEGWnCNokKoFFiMwSK9injRGOw3YSbXiyYRr9/xSFZkzCexk9YG1mCToseXw+BrBKUwUjVFvXvPGMop5WA6lufM4FJ8SCF8Ylu/BgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The page still shows \"No Assignees\", so the earlier clicks did not save. I'll reload #10 and retry the Assignees dropdown step by step."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_0148j51szy99BawN13yPQDQX",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/issues/10"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14339,
+    "outputTokens": 169,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 14337
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:7a6e73e3fb89977cdff1d6525e2d21e7b5df140fbf74ce37a43aa20b92863532": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01GuqtyyUxYEUyGttNveaVEd",
+     "name": "click",
+     "input": {
+      "ref": "f3e266"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01GuqtyyUxYEUyGttNveaVEd",
+       "toolName": "click",
+       "input": {
+        "ref": "f3e266"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14580,
+    "outputTokens": 49,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 14578
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:941afdb51a4174fc23cf5061a3afd7faf56ad5e12264f8a3cafca0ca21710af2": {
+   "stop": "tool_use",
+   "text": "The dropdown is open with a dave option. I'll click dave once, then click the page heading to close the dropdown and save.",
+   "toolCalls": [
+    {
+     "id": "toolu_011Zi12XykqhJrfstP3teqJ9",
+     "name": "click",
+     "input": {
+      "ref": "f3e369"
+     }
+    },
+    {
+     "id": "toolu_01Ldq1P9HiTmcc41u4FposAj",
+     "name": "click",
+     "input": {
+      "ref": "f3e116"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS0ggKEAgTGAI4AUIIdGhpbmtpbmcSDPGW/LPlUdZFv1tRSRoMIOqi+ZcfvGjEVPzOIjBCRp+xW3knDjtvf+CpvYcCWfPFUE/t2svbVMDWMWWWGnA4uPid/QbYc6uZMhcIw8kq7wctMYB1mihqs+rZO3bygjFSpXsm+ws2cxcNfX80IsyhkDPAn9uXyxRS3jRjE7a9JQojg61oxU4Ce3AiLsjMykySzWMxtujDnxCLXoReFHa/39jzP/p1PO3FtdP0Rk0DZVLO2CIp3oL6CPi8a9J0IiCHvLak1XQPTuXy3spvXTVOT/3X5PW9029mHilNTDSDSZOXPqV3q0wURm399RfaavS5ZNhjJ3k5YasWJWB3gUbORICQKYIVNlTuh3X4jRzh9KcrucrBAln4WN/kNnnjhm0UU/DGCVVikdTKc9B3SLUgvySXvKK6Vahfs8THZiOud+n+iqVvayUTmmINBQLmGZLTkSpvLdqTKbnVYkrUl+Cf94UJ3Z+VwbI2vK4mEOvYnhqTn2r68ImySszt248StQlVUTe4iN/p3ctdYgDI+FHqgyYCiOAQxihV3/EoYBclKkaDPUwCELqpYs2vByYfslyowaZbydutEj6jXuNOA0Cl1leF6KyDn13O9pxnrEtkGbIQ3wVM7GuoTxY6ztqCc73aUjhpq2UfO6d0xMa17tuJ59CT24ikcds7mGRgY+Az1dzRJbn5bNn8GuK8Fd4WmmBC9288Fhnp3v6jrDg4KFr5OWwKJYNxiyPuJjvV7YEHGNSe6w9A1NK9g/ElbiKHlR7mQ9of1HDe5dMN1+3NGDJiXV4QBi/Oj6aC9K45xAQ783U4B4nhj/QpzeNP3Ps7pYtxHYNDkskfIR/gJ2fC/4ov5Fa/em+7tkaPqeQcllN7cLV2cDYX6BWv4zyny+jPjy1lYoc43fWs1+ae1jqIvxZi+MxkyL+Nv4UNSrfWEUl+xZP7B+l39rTy8twoi95uTZJTQ2rcBtaIuhzyZR50u5frJWjuB04tZ9+L2oSDf7oOnIBjW/bDl37HUCdDnIj/UQdNKepUd8GF8rv4+N4qWnL65NICZXE37FYLtVvpUXz5sJLnD3a96BsdzjiqheypytZ8F4li4CmwUjvvI5RBM1aTBsiVYcrF/tZNyaIfgZ2Zp5dt0+q78K22HQDLJXIgmYRsT4x1YIg3xSze9bKx6v06tL2TOF5AAF5LnhQurzx8Jd++JIClNsrU2zyZZA+lz5zqLdvgRxX2EMHZaZen8aECyVludXDBKhsVNyUEiSQZHqv6GL/3ILViEyFIGs4Kl3JkuapCKOrvTniIIc98g57BAKpVeXrlHiwy2JOjEcENAkWD1tsoCMKQLeYoMBo4YVrP9rfCWh87cX9vEn3Yl1gFxgaW8C8yMXAZVArjpexm+fWxFaeqtOwUoQE9+sskgDhP2GU2ugDdffwFj91jR8xVZ+EcbDjMsTTViCMmTziPlBgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The dropdown is open with a dave option. I'll click dave once, then click the page heading to close the dropdown and save."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_011Zi12XykqhJrfstP3teqJ9",
+       "toolName": "click",
+       "input": {
+        "ref": "f3e369"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Ldq1P9HiTmcc41u4FposAj",
+       "toolName": "click",
+       "input": {
+        "ref": "f3e116"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 15057,
+    "outputTokens": 233,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 15055
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:20d6948994944f029d581450a46a90ed106bedd38b66d87fb9aec3bf24906fba": {
+   "stop": "tool_use",
+   "text": "#10 is now assigned to dave, and the activity shows a single assignment event. Next I'll open #12 and look at its snapshot.",
+   "toolCalls": [
+    {
+     "id": "toolu_016h5HPHSqNPMADLBsKo9QLU",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/issues/12"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS0AsKEAgTGAI4AUIIdGhpbmtpbmcSDHQ1pserBMfXTS/LhRoMLYWjRHcVdW8Bkm4gIjAy7S0CPpED4UgsNGBrK6n9haFDADC1jchNhNISreFj5Ve56ARwpchbR1+uimwdTicq7QoK+0/yoKOtMnW35bcyovp5fWA2aBudn48U8yNvbY/44dncaVbPuv8/89OpedWR6DGIlCq5+oRI80jaStpTjUYRuDf3+wUKsuRNLHz4xG3UtYjO3lUpJhpWwK3CUvSqc2O8UAxVaI6PcFX5ljBb1mcXso/K9DGSrMjuTU/qfHUm5dBjz7UTTLoEmKATiFisTnuCjnm99fCLB3nnKZzrZ7e06kQfleP6xq4QFE675rNtUx5zcSTe1+3VqPWGaBbs69Gm1X355hUoLjBMPpxXOcBMXFPaTl+o1t63QsIPzINtWPdxCK7W6bEhD9N/uy4Qq/iRiUMtJydW9jQCdj6G/rmpUTO3Q89F5sqZqn9VCXJuekN3mdNoCSqR3g87Wty4BaynXmHhCWjbaEtSJ2B9nbLFTQHwmnvvwh40FiAkW3BbwRQVkS0PdwckMeN1ewSwttw/nPvvztP2aUbQlp7VNorbTm6cY+5XZaFXcQQoCREWUNSCjornF0DEBjIC2hX3BOlzYyNyFFDawx93+k86JdUBCsQ6wKuJb7nqa18c5n13a28fJ8YDIWl5ITO7rIMucm1Kgghksw1zqZPjD4yjLFjdPRlB1pIS9aTDdV8V3thpsB3VIf2Ahjrhrp9oZy7qXbW4bFTR9UCYFiZ4CA65mjlixtqjG23eFGjuQseXu4sfvCOMxvcu/+qhUQk5IJ2VEBqg/osXMAJpvmb5sUSwT2zPnOu9l4x4GLrijaxaHHQggZ+zc232GnsAoQybWFAjYVIV10cJitoUnvMLnu0gFhPP0sih+vfawU6IfJc6Uv/a6HVTivoGdGX2x6m3YnrZ11ayWfEoPCM+VliSgIMVV9V0e4bo24wrjNQE3ksiJcd6xf4BPuPKRhNbXU9jf0NnwXFlMvypKSIcAYscD5XRixvK7oTQgfDcoZuI7Pn/az1/0eYsm2dLH5eZtPdfLPCYUDpkwnxBJcTyqNKRCeZC0mhYoPw9Z5cxD1l9WiY2aIsTrL03GSeRNLh8+Gndne7mPtFQuLgcZ+VO5OZbxieZQd8DJ9FvbsKeCAxwtNpUOCyDtZAUNDc+VVqbv/hD94nOfuDi5mVk5Dx9PJl0qQFGqP/80CX93RRoRWbXjK64PRoQ2teMn/89COFQYxVzP/lGcZ2Mf3RBmNS+pj/JfKSnvOOZrdWPXeUpxUBs15XYMIBiIgA9qt31LgL4704S3QKPig3bdWyayJ1DpbyitzV5WRAbM38UpOYj6ifDVXJp4XJe+SdScakay686Qnk/E39mKm1ixdFRDEhVymS4jl6DeRz+KS772PDOvHhzf4qTG4zqk1h5DS7KwDRuhETCQSf5Y+h7o4eXMizyruoBxTh3j2Qx+fyIKEVosWzcV7yidAYj0NyQZNUYv69I5l+srFgrNz5ypvtgf0BGE/sj3NVQJ0h4E5AtRG5CZoy0q+sv5qc6E3AkttSR77Rt89ZLMTsrZRW5twu8R6+KgOVorF59y8SSf8DUKilTq1ME4Ru6Lk+rJVmVb7Nu3FJj8BoPVcMSCkM2YLbQuz0SHSeeEmQw72631XJAhPHpbDJJ7amauZ02KCY8K1Pf3Jdoa3bguO2uDK0AHN11Fm2Nnl5bBaotGMmC2pxlqERAizSjC0EltstCRjM0ppbUN3KOQFw2Nn5XJbeChi1hZhjZMNbermDDhk36H+1bHIwG6Z6R8DUl5ttnN3fAeF9mJ9SbeB5iozCpI0EeI7M6Sz1liGVEsq5TkstSjdWVdrT+A2SJ7XiaWNDXV/jEAktJLaeyLOr2aJv3ntDeUMQQ4u6qkOuj7ywpI7rE2eQOQpij/e/sjh+GzNOzLFcxeEhD4HC3dhfWp6UYAQ=="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "#10 is now assigned to dave, and the activity shows a single assignment event. Next I'll open #12 and look at its snapshot."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_016h5HPHSqNPMADLBsKo9QLU",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/issues/12"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 20263,
+    "outputTokens": 362,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 20261
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:93d81121cd74891acedef5b0ae938a83f52f087fe63396fcacb44bf0796140db": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01JmcxeeiJohxVgB9Udoh29W",
+     "name": "click",
+     "input": {
+      "ref": "f5e266"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01JmcxeeiJohxVgB9Udoh29W",
+       "toolName": "click",
+       "input": {
+        "ref": "f5e266"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 15568,
+    "outputTokens": 49,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 15566
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:3a218c0f6583c9c192ffb0d7d3490e461bd6ca1cfc78f0d5658c677e1804ae11": {
+   "stop": "tool_use",
+   "text": "The dropdown is open on #12, so I'll select dave and then click the heading to save.",
+   "toolCalls": [
+    {
+     "id": "toolu_01JYNs2G7ZS5FZxhXzmSWtMN",
+     "name": "click",
+     "input": {
+      "ref": "f5e369"
+     }
+    },
+    {
+     "id": "toolu_012UYPMpgciR68huRNPtZ2dv",
+     "name": "click",
+     "input": {
+      "ref": "f5e116"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS9wYKEAgTGAI4AUIIdGhpbmtpbmcSDHSkQS5nIYXZDGX5YRoM/YLHvecwcglzaDueIjA0OmGPpfQ83mWyUqyJ9SrlfKTaAiTtarVHVwoJQSB09nAolcqHaavnnQysCp/UAXYqlAYByu7SsZIFGlKMjQbRBY9TQIQ6j4AZ6NYwrVgekopsd8XD/jPhTlNhLjLQmG/m/iH286XBwAbXBlWYJpxNYVgS0S/p2+ROWJl+hN+yWE6dkZkXRnZFDukMwpHCi622Pw4kXkCMS8OKQ3wq4JT0c+LFCaVYirRtRSUPINAKRVRZAFSffuUD1qh6fRiK1wI+44wTAFWsTLBBnOIueRXC0OMQ2KMXvaiUDabM6MEuzh3a1Dv3MCLMLrel92gz2zLlDP0y8Fs2pdGk7FEVp6oCwdv33LdKkLClAS32gTk/S8L3hFyAQT97EmfFSoZ4ySmjhqVcXf6rbdLbGo5/RePUfzVqqp7GnMnkrmRt0t+3mfc9DA6IE8aKG21gQzPQgru25cbCZ+3bXd2acB/XOJtrWflv9BnIHa/zM4wmbptWgQr2o29luTL+BVemIhkksXpEfhrzgjEY5ZgBhSlr1otl4yS892rra2n+LFDne7Vnu7CWeqjYjuU1La+HLUgz7dsh5O9woiy3iGV2Mrmb16ABX62Tm4wJY+Rm7xsxikB4eqYwNoTFKYMjb3hUTtdCawWf/ItdvqGKOH3R6b2b1/3TW5+UBEJsqmCkdIiOOAqixKhdBmOyHLZAgytWbG85Lxa27wqh8tYyqua18v826magt9F7S0Yttv2BCxPbpnwXuTH7pyVcot6uSNnM1ArPUWHtL6BH5nPpJBA9dH/y6drYuqZd6O33EVh+mgPcIepFu1qQKvPhWer1bNPR4mVUioGfJVSo2Ajc5/ZFEDyMNKj+4hymM8Intjv5c2wV+mvckF2ciF0Y02hCB7KXy7s8C4kgsMASrArlpyn/vci/DsxuSjwiRU0YFXdr4m+WPIjxMCsUeuEJXjs7v8uxpDHYxsVx3n1Ut3aB8yJHPrTEmjPtY+N1hRQGhj/Sc1lfxevNju2zugiGA/mZYWZWW5OPx1hYjLxU8QsJPMLZUsT47UWaiPfLb7zK1grpr8eVrfsGOFBvNUzEZaBpQJly2KYN1kirIjMlW7eg7cwf+oDA7BPlR+OAfDH8nxgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The dropdown is open on #12, so I'll select dave and then click the heading to save."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01JYNs2G7ZS5FZxhXzmSWtMN",
+       "toolName": "click",
+       "input": {
+        "ref": "f5e369"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_012UYPMpgciR68huRNPtZ2dv",
+       "toolName": "click",
+       "input": {
+        "ref": "f5e116"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 16047,
+    "outputTokens": 151,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 16045
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:9f46d05c511ece4a9cc1cd5d085a315fcdc2e4d1d16c48f749f3834f3ef02146": {
+   "stop": "tool_use",
+   "text": "#12 is now assigned to dave. Before doing more, I'll check the filtered list (open, bug label, no assignee) so I don't miss the bottom issues I haven't read.",
+   "toolCalls": [
+    {
+     "id": "toolu_01WLhhXfHE1XPdjDNAnD1qzP",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/issues?q=&type=all&sort=&state=open&labels=1&milestone=0&project=0&assignee=0&poster=0"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSvAkKEAgTGAI4AUIIdGhpbmtpbmcSDJAWTsIIzqmwzXpmnBoMrqXrBOJrK+sow99bIjAsvySFkFtwh1QboFgR+pLJnNZCQb5MjAhrm4nUhpotEXiHhy6TNEFJVdcnoyJavy4q2QicuV4/ULdXiV1W+tqC8yjVNmM053hWlgsDE0P60S1GdjkW6G8KMo37M4PgiuCRW1ghMmcNJJ7jvAjL9P/ym0DXVGq9QCqPA4OipT/lwvZ6KeK5I0jmWiV3nTDKdrkw+CzCTvSPF1O008+1Fc6IKddA2spfTaS3TvHyoPxdk1ce13cu2PHWn/vZLHXPdF+msBYr4KTyX48okU7ujqCbS6ov3i321iwfGvOc0juhUT4yARXMpUX2C00mg4o+0YJXodFsIcgtXs3oZdKsCzgyDN1bHvigmQ37IHjdHg2g9f1DEEHd6WZ38c5vsZm0loM+zhIjhJjSPZi1alxS6L7e1LX2f0v9pGqcur1nFdoSJE8y3rN8wmppKvyLVY2f1uf1ZWGB2Bxme7D3QF6ntEBb5UZPhKwrdWwzLIT/Hog6hwXAWp96xULZdrqyB39xrR6l8hcStPTP/tIVNiU8bPyrvZNL4Oh4uC0vx9+GzGkBwp3OE8ppK8wITKzp2UsqnCch2cWFERzNTHDS+8VKX8SKnxO3FGp2ii/iN5ayKBf9I+rKivn9dstJ+EhOMXmWLyerbddVGlN9xUcWXkxmre5dWsNPMj7UASYKjd7BGb09rH5+uIFQ8uWkHbvGzFiRHGt6wvkkyUH6CuYa+xnF+Sn2fvCWHh47P4whriXiPglRzcaayH8R5Slio48BL0hB3vYE/rL7C9cojlPWLFH5MH0TwW0QoZ/EYnFZpab2+9KZqi6lmT8xKZQCPq9bqph4vIrs8nPxbTXJtx4i+uHdG2Um3OEI0DIz1FtqyBzMt6ozOAy7RyB3kQk0IPr3ggUg8hqaRRQ5SDs87jJL8dD8OsgPG1HYm2N4r4yKQMv8wcBju3ISiN35p1TpzbTKUis3loz9h8SVH2jSJ9vELW9i1Ut19PRmdd4YRAKQn5OTLjPzCcfL8a4Zd2mgJd3nsCwTksCctCcemKOvhyTl6NrVR7BuR/Iu2WrVy4Kiq8SaiIlkaNs16/LdGA3RpGMakRFB6YKDAldYYnImIAM0ymxsTXLgOfZMqgTSzDKJP9sYy0zsfmEunyu+UgJPovWnzddVxODgYVKtZCIXnw5yveVJV4T3FkuV8W5Wh/MOYJQd348ejyeRi0VTEsOefqlaTjGbpnkAkkopWNKeMtEc1SooKZvCzb9YS0bjqqDswIR1R+6GXPTzQaQuduCyVBJ7dOiYQpo3lJ+LDePZIJbnuyLE44dH5sk7XJwOodt+rxLu32XlxfVYM30LcCr/38YWvdLA3ZiM+65grfL+BaYIPUHy2LMsPuKL+wjV4X+rRd4fZ9XBQmFct0WCb0IhQs72rFThvaofCuiwuTYrOOvVyXCXLmWmz88qLK9DkbxEOjIQVS52kf6ElLbRKmi8CPj3jP8Fd4GETnx5x/+zmI0m/2oYVe5NSczSpoSXzX+PRIa0OhQsrtSFNp1ey0mIiSQ6j3rA60lv7iRFDbR0CPfoXkIYAQ=="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "#12 is now assigned to dave. Before doing more, I'll check the filtered list (open, bug label, no assignee) so I don't miss the bottom issues I haven't read."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01WLhhXfHE1XPdjDNAnD1qzP",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/issues?q=&type=all&sort=&state=open&labels=1&milestone=0&project=0&assignee=0&poster=0"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 21187,
+    "outputTokens": 328,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 21185
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:15a2852726b3a49307aefc7ce70217bbbc9fb380b99259dbae517de3d10a0c51": {
+   "stop": "tool_use",
+   "text": "#12 and #10 now show dave. The remaining unassigned open bugs are #4, #3 and #1, so I'll open #4 next.",
+   "toolCalls": [
+    {
+     "id": "toolu_01U3xcd8AeVj6bb8wfyuVTku",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/issues/4"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS+wcKEAgTGAI4AUIIdGhpbmtpbmcSDKmnsHWeCjIsz9cBaxoMzpz4GLbtgTHjZXctIjBtdiQlR6UY3p7IL4dWvtjA4qqqN0p0RSGob9PLdBEG8MlFs1HvJHa86H3zXlbAvVsqmAcREXCvUDGs+1w4mYFeQmXA7BB3el805AGZKOhRHC/1RMj3lQ4q6iA6xKNdD23LCucKunBOD35/O4okdykArHtPJnUq/vRpKGnPThkpKeAaUullY+5cKDEwx904gO6d6lv5LBW4f8LfU2zKrKdqtrefNHJ0FzNFCH2HJHMkcAPL/RsN3yPH2IwGyDb8+g7CicXvznIVEhQPLR9nwjmg3OsUvtY06oOxzwUaI8FoGLmgb7NZl86iNDQeGiDYUmZj4Ir3j1XIhmWAmmp1h63vEIx2t4pDTXSVpmaCm7IWbYCEl9iM4IjC5AwsS60IvCfQRphPTLF9RftSqzdypyV0UC2w5zk5aFw/C5WixeQ9JywSDvXIrtdcQYAVXZsB2hDEC45mLVEznA0sIapdB9qb3Mdf1NmiYAwAw8IM6oIRoJHgrCKAKU/VCplwyAa8yHJjucHOX+kkqyD6QKeyM1UV1KEdGzqFqbInIBllE1pXcQ7prpEeVT1DPTAS+1THp58OtbBbkYLYqW8bgazswdCb7yrQ9tg3kg3o5y4+H/HP6chLmM3RgVpnGE9QLxDQHfswY78p19JwTUlBavW5asqmFm2Qh+LER8fup2dWBmKrgW3//RgatQUpZvbmqP7myxfDoqn25CnaW34Rads+zkhJwDrEtkJgt4zuglCDMdqxZKs2G3LEt4cu5j5AcGXyE7hmVE/L8FI1vb4B8uh9x+da9D4wGpeTLiiR5+6ZUFGxCLivDpmVCQLib1XkwJrBIk8EUzW/DyYFqLeu1hbAC1sPGoUolr5TjeVq0EMfYBQg2l5TUT5uKRvsIcky/pYcGahz5pWsYwVtPYgd7s8rTMVkgLDIKEDRv3Vmo3CZC27YtmgCC6NchxdGoaRFcBvNv/O7OdPMFls/jg3y0SYNvIOC7YqSHluX0wW3D42QIKCEokF5d6MoSoI00AIVPlw2aRsxFhlJLy0MlD4tuNiBPc6vCjAA8X8v2r2uD4/cduoXaf9p1Nj+lGACjliJyv+xTMneGiTDvihcgKRxBhCyTLcIYbJty9hrGlvEyBfnc+Ywa5wySfrP0TfQyrRrSvFN+OWrBDgP/4Yf/rVRl5u/66Y+L+ucqWiVqBbGmZk09h1+b+5BvGm2HsiOhQa3FW55p9ekg55bCceeuT7WrYiUwQVICuLbPxZtDGLNq43hL4dMhXHEvUzKSmyjC9A+p2ymINmWJF4+U+LfGUQ77BgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "#12 and #10 now show dave. The remaining unassigned open bugs are #4, #3 and #1, so I'll open #4 next."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01U3xcd8AeVj6bb8wfyuVTku",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/issues/4"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 17318,
+    "outputTokens": 213,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 17316
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:4094eb35e38e70a248803a5a3982aa210cd4346f7cc0796aa4841855d9c4fc44": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_014ySbaF5XpSzKnvAKMtcDGj",
+     "name": "click",
+     "input": {
+      "ref": "f8e266"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_014ySbaF5XpSzKnvAKMtcDGj",
+       "toolName": "click",
+       "input": {
+        "ref": "f8e266"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 16735,
+    "outputTokens": 49,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 16733
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:03af36c9d63ad70b7fcd27c7804b325c5d2dd12c9f0b8a79001ccdfa481fd2fc": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FXGSaNYoQ93UxWRsEUL4gm",
+     "name": "click",
+     "input": {
+      "ref": "f8e371"
+     }
+    },
+    {
+     "id": "toolu_01Q8Z4nTp8uS5uNShPkmWg7s",
+     "name": "click",
+     "input": {
+      "ref": "f8e116"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01FXGSaNYoQ93UxWRsEUL4gm",
+       "toolName": "click",
+       "input": {
+        "ref": "f8e371"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Q8Z4nTp8uS5uNShPkmWg7s",
+       "toolName": "click",
+       "input": {
+        "ref": "f8e116"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 17210,
+    "outputTokens": 95,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 17208
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:f383beb3c171158ff11ce0d3066c5713e68f2d316d98f58e2beac3cf0c539351": {
+   "stop": "tool_use",
+   "text": "#4 is now assigned to dave. I'll re-check the filtered list (open, bug, no assignee) to confirm what's left.",
+   "toolCalls": [
+    {
+     "id": "toolu_016u5gB7NYxtRCV8SFV8DeHt",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/issues?q=&type=all&sort=&state=open&labels=1&milestone=0&project=0&assignee=0&poster=0"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSkwkKEAgTGAI4AUIIdGhpbmtpbmcSDF2nAChcaDLk9O3WNRoMGFeUoSJXCqHrrZv1IjAMVOeGhzwwOXQRO9Qpc4ikpKcEU0zI5XXrO9A2kNVYqImhRfr3KMTNAWdxRBTCufgqsAiKlabDxeqYa0Erf1j2zioJxboVZPAkpXp/IB9oKZC2zqsxNcDG7LS4hIYHM/i2tDs0Z1UFfZ22HrVSnUuq0sK1PRDI84FvS2hRafy0cMjEjJ5vDDVtIiBDTuLNHnji7gQxs3l0q8Qlzblp0gZUu6Qgv9bGwPrV3YumNAkahJvEE8bJsdIE56D42bB5D94dbkQXJ9PGYUd15nx1/4lhFhjgMa/eu4apDQfeT5vDSBfSvZ9hM5b8L2/0SsQrHf73tlNJJsj8TrNu9cflFyETWcC5k5fZddxU74hOWWIEvRCIaF7y8DBAvR6M2EaHd01C9thGXW860esJerGoJRaeuacP4NeyA8+n1c88Czcam0pE6LcLz47w8QVEwKawW/ySNbGhpi2lHQZW8aIcmvB8gtYDCEqOwj+RlPAiKoS8DDLMmJ9Y/ThwbNQgjQsQdCWMCOgneiVpIatCmJyDPzYWkFLWaSquhUZNZky+y6RNnhtB02zQfrag2tPcIC8nmFJ2Ryq856Sh+BTb7xc2ilI78Wrboi9+1WQWmPlqlMSzJBNliEc5eOPaoa3IiMkjqmwZIK9gWnPqNx7KRZjw7VzzyrkEgDWqpK9GwyHf1fdYUUWDfWItokzQ9PPGaAFVjb6cdMCBrScyb1cbH+7HlknYzp0UIM5g3Zv9I4koFEM3u/ZTV1QTy4f5PiV6OAeoxRqW+Yx4B8mPgctw6LzZX3/so4hr3TNMTSDgIIyX1SnAqMunPZmAklnt/SxeXWjhgVwlQhG6iH+7ixufhEkIwVsEK1UMEVimYucoiaQ884nU1NS8fHKtSv4oLkJgchjjbMHSdwOenWyLUc4V4a7wlPNF48BzNnJ4Go4cmsElK2PqFfq95vjbVoni6Kv3wpyvitax3oUtJuf0jpXOyn3mqH4ww/Ww+k8ulE/+Ep8udI2Ffru7wJqWqB9alVsRoGjbWrw2ByIh7NrdQ54JMkIggGimQQOFZqK08OKZJuwJWuEPYVAAikQ0yArUKk5fwr/cyE/QHmKH0VT0kOfEB5D6j17HwTJfgGt3t5pfQRbAyup3h8pivltb9+W7s9KpHfpRICMtiDQEfyY8dYVaylhLdmyltG2yTZZ+X+vBx2PsEKz7InOnKjf5qnDwAvdWIdUTESK72YlB7Dn9jqFxWVu0rSwfTzsDhzd9+WnsjeG40c4bDZM8yIAf0xJVDdpdeKQKot8Cu90qyu1ijrnNnD4JPPDiLud33go4KiChNrpqFCck76pv63cfCi5UnFATzTVs54rxlTT4xp4mWA7mZL6uSIf9kpIKYtdx2IUcytdf0MesqwcfPXBn72GAKlJmZ4wWY/T7dJJpE1nWMfEuk7huODV7XvoG4KsVOf5qEKkS34GC+j1bYCYfs1R+fITlFix4U0b+S5IbozV2g6aMpOoTGcRXDy0ZGAE="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "#4 is now assigned to dave. I'll re-check the filtered list (open, bug, no assignee) to confirm what's left."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_016u5gB7NYxtRCV8SFV8DeHt",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/issues?q=&type=all&sort=&state=open&labels=1&milestone=0&project=0&assignee=0&poster=0"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 22275,
+    "outputTokens": 274,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 22273
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:a840912fb89f8dca3019f9cc91200231eefe5998b09a0dac6e7d9434124f78f6": {
+   "stop": "tool_use",
+   "text": "Only #3 and #1 remain unassigned among open bugs. I'll open #3 and assign dave.",
+   "toolCalls": [
+    {
+     "id": "toolu_014G39D25JAvJ8ec8hLEqdCN",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/issues/3"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS4QgKEAgTGAI4AUIIdGhpbmtpbmcSDC9Ct0dE5SYSrcFrnRoM0yKsL1KTdHB7h7kPIjDGzy0iNYfDtNbmaqiATFoNpaX2aqp9u6eMER1FPM18DpOzDoYZ88kCcsM6XEdLOmEq/gcu5/sXpPTaczbeUECIJufrMa3SRfufibRlavHXToZAGrvzEFoZ9OvAVvh68NtBuoWYvcgytkJqHMiZGb1649Rf54WYUXAbvjrzWS79ng1KkFCRZkw1NMweNglLyvnMqwa5lt8czs9oIQ7l6rRj8tzPhSr6EI8htr3Z1dV5OGxhmOUEKLZUSfmQuZpmZwTxsOqUNc8Yy3p2u9aJkJJmnrggm/qIGLPnrmV489oHbcflZZ3AwA5mRg2dlZAsWlQpmxI+CVy9XCCdazTWJZDbwiDiEkpURXMkfqOmSoHA4NqeJpk/t6M6F/2S+bA3jHaI+zjwz8slZS45tG61oYgBnDGFxkRyxyfZeiZtCIHFL9WorF2w0crgC+4jIPdMhlZTGIqi7yUZPH15v/vaiDHLdeMsQ5q/UYoq1XwqHKZS3+Yg7RHk9zTKgsGAMy6ot2Uy2S1MnGkgHk314zvhzqD6OIVRIqK2Re4Ta5QDVYL6ZeAX35CigGpwIM03sWDrO50Sps9vqEgNiMuPSKNnKbFc+lpTTMNBLMvWbU4vv4ojcMsBb1c/rPDg7266QvYb0oMIka29gm3oZWGU1e/mjQuUrz3NWocp89LKfqmjiWR1di5y3HvlA0JykqOO1Kvu6oYdLWLJO1qO111P4/F6NVUdgyXfNXcDfTfYCWfEU61tGcIitb8gzxmw50IXjVKU5bUqINFRDeybyxF+jrrvqRuL/xD69hhYyQYTL4mBeFQ40QtNUA1di5toeOZ7O7O997Hc6vCmjSy9OAw46GYeuUkNIzvZlneO/5GTrQPFiR0ACfryInXz8EBaRk+JqFGdAg+ZXecqc4H9GeaCQKRooGBZiTjcHzg+10ZDmwn+fYleJOvv7jdaIPf6Fokqda8UyN5OvYcvfT+jzaJDky+8yBw2nScRPKAgEQAWddS0g3j7Ntc8E0UXMbJWWhOAJA6OV4Y5S/uP65nOdGmSxcMcLT8e79hFT7+ilrKffwZuDMKUVHguXfIEcGnb3HKq2v5ZmYKFfRRwID/zAtsLmJ57KyU3v4bieEnYpD8Islu1xHQio63dy9/8bhZ5cs+JT3t4l77XamqqznPZPfnWw6Onqd6+VbGAil+EHAIgkGH/pVHYKCi8l55YVHrRkDCFlyXxemKS/qqa9MHf4AJd//ombwt7WOGO/6ZVkLGukyA2IuhWThCD1UFlymJdlYYeXH662qwouvf9AJKSv9SpWNEmiSoIxAAWHRdyx6tr8pGTp1UAvvOtHkNmHqlwHIY/F8DgoY1UBesRHIovUhdWyayIcptxdPc/AhfawyAJtTgv09vsTpzk/ZeQxr4A4kKP8+elB7/7h9pIJXogvJgefkpP/D5r0hgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "Only #3 and #1 remain unassigned among open bugs. I'll open #3 and assign dave."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_014G39D25JAvJ8ec8hLEqdCN",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/issues/3"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 18447,
+    "outputTokens": 221,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 18445
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:d481beb57675450e5b952deb506375bac8c70860b445de20fefb745d52fdc155": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01GKUCR7uekhVZCsv45x6NB5",
+     "name": "click",
+     "input": {
+      "ref": "f11e288"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01GKUCR7uekhVZCsv45x6NB5",
+       "toolName": "click",
+       "input": {
+        "ref": "f11e288"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 18305,
+    "outputTokens": 49,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 18303
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:dec6d6bebc678e9d4d1ff0c5b652e0d381510e155eeead97efa80c2f09f7bf62": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01RxK3e7bkqK1Qq87LHT489A",
+     "name": "click",
+     "input": {
+      "ref": "f11e393"
+     }
+    },
+    {
+     "id": "toolu_01RLDeaUmh6HaHp2KmNWtBzB",
+     "name": "click",
+     "input": {
+      "ref": "f11e116"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01RxK3e7bkqK1Qq87LHT489A",
+       "toolName": "click",
+       "input": {
+        "ref": "f11e393"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01RLDeaUmh6HaHp2KmNWtBzB",
+       "toolName": "click",
+       "input": {
+        "ref": "f11e116"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 18787,
+    "outputTokens": 95,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 18785
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:0abcdeef76a4d4c9f5fbb7cf0fc2c63604632f87b136eb481d7d388028e71e25": {
+   "stop": "tool_use",
+   "text": "#3 is now assigned to dave. The last one is #1, so I'll open it.",
+   "toolCalls": [
+    {
+     "id": "toolu_015TMtVzE1FYVt32egqEGT8E",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/issues/1"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS8wYKEAgTGAI4AUIIdGhpbmtpbmcSDGwino/C4iZ856mL+hoMUdwsii8ONsuj9uDOIjBTnij16rtVxDrIpNqdCk914YpMCiHRPUjNr55DjVdaA0+8YH8DRIEKSrkLu0pXIwEqkAaoJfGYrhTgOoxtep/AVj8mt8jQ5SmoUuDG5fZeCtt/GkX77ZnVIp8FXtZKkv7C1eXtQsTxiVI2cr7jZgBpmDG+uI32ldfbG4cOzRNdmokLcHQwdoDwYHetEGAVlo3T8WP85YzIxqTqTTe3vdBav3kfODvjjUvdlkp5db365+wOu8oAGKkAAHzl+/DfqWQPANxld7U99+J6YtlAab+N/pymBXanKa5CksHXD4AdNJZ8V+TIW4s3EJd0T/F707VVoaN3sAXnXXt6Ut5HVJEz6iKmBMBvPy/i1jOwnMG9VRXx6Nq+F9mfxG1/Y68Rwck7dHisyQGr10xZ4vnTuoy/Mu1X4rmEjljtPrUn0RvRVsRPPfrL/HlHxpcMUsb4aU5fq1T8FxLLSgZRlZDkoDYg9FQaYPAsUcLRQR2w3CX1d2a12Y3vJhG+GfrJcUWt3OLgwogT3YDZy6j4INBA5SXxB/XS5hXSjcPxhjfGL8KWjeB0JeeDXjtUtVWCFimiHIPwfSsGFwQyuoZydChG70X/+z7XexXblCp3DegXvL0MLaZE+47Dg8vLM6W+XGn6K6aKsaRFX4WTA3G2hmghEe+rZ7pXEdcNjMB7gumH7OS/kHafAJxqD4Lz80mcw/dA7ei1VXZc1TDz+A7d49jaGPfyjROmtAIqo9/UWLGredQTY2qEn2XaZEPJRD4v+LFhixYn2G/uLblM11yPCbXMVDorAndsSadniM10YrMzTv17Brv8Vxm9QsbuEE7/zgsW2B1y8YxtR1h47g4ZhCzqfmoeyb5gweas3rwb4ijvDKKXDr6BoDXIbNRZk/Rh5tI/qCQ19uu8gmTfwoxaJTgnKK5r25eHMzaefSvGMIoQY45TugvRbyD+BXWjIvhgiu7n+gWuTz0c5uaXGgz9V82yrTVnbQ0aHbrK1o6FjblaszGQKl3Qyn+ZcZ1yP0DWpgStEVCO8T3382tWsooSphwFOiD28qQSI5fO8KQIc53DNA3qDk6XRH55TEBIZs9R8ir8ASs+RGZvZOrM6KGmiEhSlnGvj4hMGAE="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "#3 is now assigned to dave. The last one is #1, so I'll open it."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_015TMtVzE1FYVt32egqEGT8E",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/issues/1"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 24389,
+    "outputTokens": 117,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 24387
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:d08a452751aedc647e93df2d6bba85c1d4e8887efce082993ad8f11dd88b3590": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Pdz2JHFkoXQjAXZ2hAFC6V",
+     "name": "click",
+     "input": {
+      "ref": "f13e288"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Pdz2JHFkoXQjAXZ2hAFC6V",
+       "toolName": "click",
+       "input": {
+        "ref": "f13e288"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 18905,
+    "outputTokens": 49,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 18903
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:966d5ee486da0afffe009663ba2f694869e4f905d17ad0a06c2ee41d82c5c2fe": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018boafDjkcuiReSXL6Y8oee",
+     "name": "click",
+     "input": {
+      "ref": "f13e393"
+     }
+    },
+    {
+     "id": "toolu_019rb9YAfu24byNQVbjQzfY5",
+     "name": "click",
+     "input": {
+      "ref": "f13e116"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_018boafDjkcuiReSXL6Y8oee",
+       "toolName": "click",
+       "input": {
+        "ref": "f13e393"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_019rb9YAfu24byNQVbjQzfY5",
+       "toolName": "click",
+       "input": {
+        "ref": "f13e116"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 19385,
+    "outputTokens": 95,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 19383
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:4c548781cb4f472b9f3e783804dc96a5348173d0622da27af7db952b63f37392": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KYZvP9tbJdHoxQHYA7R3DS",
+     "name": "finish",
+     "input": {
+      "report": "I assigned dave to the five open, unassigned bugs in acme/webapp: #1, #3, #4, #10 and #12. Each now shows dave as assignee, and #13 (already assigned to bob) was left alone."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS0QgKEAgTGAI4AUIIdGhpbmtpbmcSDPqsF5xe/tETror4QRoMxfnSZlZz8KthYLRIIjA3NjXrQbgA/xqT+Qi2x5LXs23F+WZcvUnTLWqHfmTbzif7GqCG0XKPJ2YtZpWvEkIq7gdgFh1Ue7sG3iOb1AneJ/RMWD938/UboPYoGDgfxBtu6pEqPeANYHwukmoz4Gb5vMmLViEIJHSuysJOTi6H7DNkXNWT5y4Bqj5X6eWoFzIISuFWSWO3UmhFUIw8aLYQTT4SscluASpiX6HGYwcZzkqcmq060Ea3bl3sVVgEM1yGrEJA7CwShyplGRsy6jEg6vJ19H/77TfEdF+VEHCaZEMfUQNkWc/TUeWEqNSzLdP7QQR1OlQ4TTNWS3WYLu04WaBNuRGZ6B6JCUtKaVQUA41+BrC0fUDxpks9cdvcf/NzMI7qgg4ot7dMAvtNJIQa+sdKFiAr45Cl76I/hcl1fYJ0er7oTpZw1E4OwXEML+gYzo4gX9iPvLWVW2mE32cbmJhlQTcYVAiivBoNk/JDwegqHRUnhwFfV9E5/U6qQeVUcwPOBx9o1PH2pdo8KRjo3qNeFTJONV3T8ZvprZ4j3CVcbIMZViwsPuPGjIKQRue2EeEvFqMHTkG9/yfojltxG2jYvJ2wSTq7TkL4Tdp0wsleny8UztM6jVIfs2eIybqVG1kb/uDeCXyJIgIjJZEjg6W7SSK2ZpA1j6pigAiKLxMPJJ1g4AfphxjDXZzJl+rCw7dZBieOTYqCXo1BN5INUI4LtnKo4AGEnnuaCpVDRS5lyMlPRSpJrJlQ31Z6rBjAQBfrrt/Z0DPo3yLGNjdaIR+rMNYShiZXDc0QAzEQ0vI1W9O9q6LxEpaC3Lfu9EgzBji81raykVHWMhO2L1ucXwo4fZIG/RYolMATnoNfKVq4UcaF7o1STThM87i7P8pvzxNXkfzrs+x/h2GgM/Ackc3grhZQ4CprIt4fntCoGQdiYeE+0wV0WwimqrA0xnlTMCoLKUlrA8OuaRWW97zEGCnOim9zTmMT6gfgBr4ecO5DXrnrAs+fNcQKAmBJO+MNT773WjkFLpYg1ofIH/xX07wWLIclMXb3Mk9sVvxR7jFR1FBkG5f1RCqTcajRXeIexCNppVrAmqSEDVZHMbSG/UFH5qaCJ0mbDP7zfqfbqJhep8fB3M0Plg8Vt4f9JRndrWBPu6fDwcMbxJN7nSMTFfoqMkY1E2eA32e1EhbiYBeglb/tUDdH63gYQ6uk8ywq9dM34qoBaRlC+SAEDLRWZzWjWxvqsR1jzicRIBsFuP/plKRU2+nPRuLAzDc6Q44bB2by47t3rkLzzzsW8eNxP8bKGhcMh/dxfQTqG0VtwArk1SEo1pPp/2JpLSFgT+eJ4N0QRgMi/irVbXCuG2m5wqLx4uHJlX6aBevjzxOMz2zeSoM6ghMsyYdHmp3Y6nyPmPJLwLcdpyARBCE3XAq/GAE="
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01KYZvP9tbJdHoxQHYA7R3DS",
+       "toolName": "finish",
+       "input": {
+        "report": "I assigned dave to the five open, unassigned bugs in acme/webapp: #1, #3, #4, #10 and #12. Each now shows dave as assignee, and #13 (already assigned to bob) was left alone."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 24974,
+    "outputTokens": 220,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 24972
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

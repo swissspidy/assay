@@ -1,0 +1,432 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:53:57.397Z",
+ "turns": {
+  "sha256:21df257be251c6d9d497177c863bdd2283b331392f300e1953a637695211c1b7": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LiEspdMMyxhWsi3GydhvNo",
+     "name": "show_part",
+     "input": {
+      "part": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS7gUKEAgTGAI4AUIIdGhpbmtpbmcSDN08gt7zc+bsYHYj6xoMre2amkUzWbp/gmgwIjCGinFIT965dkiqLieEEyqJceqgQNMUatjo6PjWCawUqmW2V+erG8o+55nw1IvC+8MqiwUCR1eKsoPx7a0wELJRv14e4ufpSSmP2XJAE91IoqDfMXO8hMKHml8ciCRK4COUBLVs4TmK58RAfUA7LmGuyEEfj5OZMBkWZW6lGtq563CCdGJsw36HiWjAwklWvJ1jLi8dFE/Z/sD9HdoskHvSw63vFTWhpWf7fmdQhGUP08TpoZfMbeVupR3HnSsw9hyewFJsBj1fyziW4FI5cGUmEhldTqG1m5n2H60yKqKOu1iCoEbZb8+qzPPZZQ7qReTDWABnt8g2yp32jeH37Up/s2jR0LIabAVIvu5NU3HBT2AsgtsE331ESfVDssmxL4gE5CZmPMuZ5HXrtD3OKpAFX/CdFud4vufBTwO8fCsZxPpn4vtsi7juuMHKz3D3rDqbjMHxJI6Z0Zj99sG5uM5rtdk1DYqQPQ8d7P0izEvUhkPPLJ6hdAJM3qRUtg223OrpqBIv1Tg+nZpGWJxzLOHp4JTQd0NufKxNsA742Z+dUlf7HyS1xBhkTdaql1E8WW93qvk3nmBwcJDv7cCpCQFXBkrRPHSp0YXYFDHYvJ7zFMV6jsTWnOwKprYSFIFoRwgJhjnlEpzuPf0TP+mJhZbV4ZzgrNneE7mzZndgqvnqalPuTDWmjmGq1nXZurhebuxwFbsNDdY2vK5dJwbqIzdK35s6Yiq/AZ9ovUr6xw3PpeBNX+4pa1Pw5DC5wqnwDR1MJ4P9MEJ/qDBaqhFKw/NjvpmBn6Vf/uyrDKFAS3myMAcGydknnIRSwZkO58KRu+5kQjQ752kFWRnSCfCEd8Ca153wTM/7Qjwze07prIAUBE7MXWvue9fkB0n0cjXqlP4wyEuYzYBG/uTKsvftuvX6d4D+o4hTYivOaM7vHBQYAQ=="
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01LiEspdMMyxhWsi3GydhvNo",
+       "toolName": "show_part",
+       "input": {
+        "part": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7506,
+    "outputTokens": 88,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7502
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:825dfe574d2b477fb9028f475f6c4fb55745668efce570b6ce27949614423e0b": {
+   "stop": "tool_use",
+   "text": "The issue is not in the open list, so I'll check the closed issues.",
+   "toolCalls": [
+    {
+     "id": "toolu_01TFTNWFZktoRx3iV6jtdpLK",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/issues?q=&type=all&sort=&state=closed&labels=&milestone=0&project=0&assignee=0&poster=0&archived=false"
+     }
+    },
+    {
+     "id": "toolu_018P2DwQ7KQ4WoFPA1HMdo9V",
+     "name": "wait",
+     "input": {
+      "seconds": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The issue is not in the open list, so I'll check the closed issues."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01TFTNWFZktoRx3iV6jtdpLK",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/issues?q=&type=all&sort=&state=closed&labels=&milestone=0&project=0&assignee=0&poster=0&archived=false"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_018P2DwQ7KQ4WoFPA1HMdo9V",
+       "toolName": "wait",
+       "input": {
+        "seconds": 1
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 9200,
+    "outputTokens": 176,
+    "cacheReadTokens": 7502,
+    "cacheWriteTokens": 1696
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:2b4d9d6ae3f01403eac4af5394436901a1ea966740b548023d713399b453de2c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01NUp5QjFTYm72WJ2R5WbtgT",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/issues/5"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01NUp5QjFTYm72WJ2R5WbtgT",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/issues/5"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 15120,
+    "outputTokens": 65,
+    "cacheReadTokens": 7502,
+    "cacheWriteTokens": 7616
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:6889832287f6d1d30a31a682eb6ed68fe4ea4ef9e0dcb9eae419dbcda4afb685": {
+   "stop": "tool_use",
+   "text": "Found issue #5. I'll reopen it first, then open the milestone menu.",
+   "toolCalls": [
+    {
+     "id": "toolu_013ARJ9UPxNsCeoqrrTjZwCV",
+     "name": "click",
+     "input": {
+      "ref": "f2e248"
+     }
+    },
+    {
+     "id": "toolu_01DuGv2us8yuxEFkVJPhgeS8",
+     "name": "wait",
+     "input": {
+      "seconds": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Found issue #5. I'll reopen it first, then open the milestone menu."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_013ARJ9UPxNsCeoqrrTjZwCV",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e248"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01DuGv2us8yuxEFkVJPhgeS8",
+       "toolName": "wait",
+       "input": {
+        "seconds": 1
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13154,
+    "outputTokens": 120,
+    "cacheReadTokens": 7502,
+    "cacheWriteTokens": 5650
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:f15652d7631878b108fc99786d2af0f55fb47d1b46eef73c2c6f157e357e4d65": {
+   "stop": "tool_use",
+   "text": "The issue is now open (Alice's reopen event shows \"now\"). Next I'll open the Milestone selector in the sidebar.",
+   "toolCalls": [
+    {
+     "id": "toolu_01RcKziLjTTCwDxB1N7HmyCN",
+     "name": "click",
+     "input": {
+      "ref": "f3e276"
+     }
+    },
+    {
+     "id": "toolu_01CY2poSsrV9oVW11QdA4GZr",
+     "name": "wait",
+     "input": {
+      "seconds": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSnwcKEAgTGAI4AUIIdGhpbmtpbmcSDI6jQoq2ovabzGPs5BoMtpZpmcBHffN8xLutIjDOAlbVJDjF6VRYP+SxZOEhiODumGMcrdIDxlF68Yig21Y3i+V75gge/4g1KSiAnnAqvAY84slFtGLFjqnVl+WwBAZ7WYp9ZiK4P3avFjGBmQgzGHEcfCjvhcC/ZP2dpCrhIpiptfI9tLVt+m54llLLp2ZGNtIkSKHhOpUXj3UW9qjZQKPLGcmqsmlb57fuMm7yRVdYBhb3gS+XkKGRUdQxWB9BlnATdFexHYgPWzMRu7NdZnoHMYQgrFWCicGT1tpgTR45PJvpiAzKM9Kdjq2QbIbKOHqCNxI22PCouBqJGGrdxbHK54X0Grbf3/t/VkQeltIu7Yp5MLGCVtZKHQs0E70ZQhuYfdMN9fLXJh5bUfXQKU5kd3n2KtcIN60dawyhTWZtk8tE7eyKH2UYachzK1s4/cVUEFqUU+hwSOnSq3covKoXVytU2LMpABkNIoXRl77mUuWZR5eh+6GwzdfZQgAIdxHnzFZTAeVvwYY4yQB7UAtkjoakW5GQTcVtrarBO+gbsTocMjmTsOSSCqDlsFHaSQ9YSZD7wEIQvgsRuqiTnIsmDRSnNrVO3axczFwxfMDurI8e5dfrwTFwHwD363QbP4YI8JDzyH2l8dEsMaK4WqTRqcG2lCDkr/l/2epWnkH0v/zVoPxkwa9/dDcOLJEFBPNdzHbFaquacVQUwFr6QBMokhgXGiFBResAjNHtYvYbqT6I5U4uQX2AG9ZAta/0+OjVZUvoIjrCi46QwSH6RdMT7u0dx8yceFOeiJtmq7+hAJQCE1h+6XIzIHPPKeFgww+UsjkApycKPtTpsBIuc3Ttfyy/o1gPfs8sLOb67RxKz0ARARX1FRri3Z5gSeG2WFZ4BN3P5LbnG9bv648hLN28s91OLLvxezdwkORGloZngw425rDkaqj9ehRldTljYBZ5tsJiSZiUfdDVXWz9qZbQjLlZz+f4cFpveqKGrztt0tVssq8YEJEWJ+u8ekuK477zeJrxkQpBryKy4LL9vnTmN2XHvEyYfG3rt8QyIynZeelLOySKCgGHIONhR8Lt8TB/oO+Yg+qNlJoWBhPy7tkQTN4JRCE8muKqdqIvX66wHzCDgoLXETf4nzj9n1WW1SV8jz1hTyhFm3ikPEykC/f21ycL74ewry4rF7CdrAwenSWUI4K6mWJXK/MYAQ=="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The issue is now open (Alice's reopen event shows \"now\"). Next I'll open the Milestone selector in the sidebar."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01RcKziLjTTCwDxB1N7HmyCN",
+       "toolName": "click",
+       "input": {
+        "ref": "f3e276"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01CY2poSsrV9oVW11QdA4GZr",
+       "toolName": "wait",
+       "input": {
+        "seconds": 1
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 18935,
+    "outputTokens": 201,
+    "cacheReadTokens": 7502,
+    "cacheWriteTokens": 11431
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:571781d400feb31a9c4d4db33148b1da8322dcd49d1146636db79473afdd6302": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_016bPjxDAmhaUyX28Yr4fxp5",
+     "name": "click",
+     "input": {
+      "ref": "f3e392"
+     }
+    },
+    {
+     "id": "toolu_01CVoSC3MYQWFMy3eVKbKMdK",
+     "name": "wait",
+     "input": {
+      "seconds": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_016bPjxDAmhaUyX28Yr4fxp5",
+       "toolName": "click",
+       "input": {
+        "ref": "f3e392"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01CVoSC3MYQWFMy3eVKbKMdK",
+       "toolName": "wait",
+       "input": {
+        "seconds": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 19611,
+    "outputTokens": 94,
+    "cacheReadTokens": 7502,
+    "cacheWriteTokens": 12107
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:b51b44eb6c943160214914eed1445ca80a549acfd298f1ceeacfe47ba472eeda": {
+   "stop": "tool_use",
+   "text": "I reopened issue #5, \"Session expires too early\" in acme/webapp, and moved it to the v1.1 milestone. The page now shows it as Open, and the timeline records Alice reopening it and changing the milestone from v1.0 to v1.1.",
+   "toolCalls": [
+    {
+     "id": "toolu_01YAM3V87Lhc3ajMARwr8M6w",
+     "name": "finish",
+     "input": {
+      "report": "I reopened issue #5 \"Session expires too early\" in acme/webapp and changed its milestone from v1.0 to v1.1; the issue now shows as Open with v1.1 set."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSgQcKEAgTGAI4AUIIdGhpbmtpbmcSDOB93TYryBjxbkfVNBoM42wKM0lFbId0LYLVIjAmquY5tK4qv6UsmOVzkBK5pxYDRklMdTasvFWbvTlehKnm6dJPLPIvLhUIi/FD5WEqngYh9tevlNgWxGn4i5yCSswVrNZnGAlfyRJ6aOa6O07PE6M8jpTdEmMrh9tJby4HPDqN1lLh4HVTIfPHI/ZVRQEUi7/Sr2Ruxt6V6vBvXBYgod5VkLzHoCdEwjqvxRVhcdH9K+9U6NpK6djDhP1FkHZg3YUAsLLqA5yyz/BoKEGBh1fWHL1O9YDdzMEqJiC5xKTl75XXwSOuf9a95zIQWoH3Po/hwaiX2kzVjTA7bk7R2pb/k7GNVjLrczP12sLQJglUmObTqIfvF1VmRrL7FRf74TIDZxhuhUfPdsxRaGdIUP4DQIlRwPdClI8gUry1zcdEFB/8V+lBEasCjt/aHFcThOQYDreZoaN8pwIV9EEMczZPjdtYiQKVpOVEOkElHLMUUZKOoxU/WKo/2j8ojP6Gq2Wx51O1mRy16tol77ph1pD1OkDhHsMediVb3dR/XSyO4Gr2IyHR3tM3aVpKhtbh4okUHvHCTv0Co4InqbkI+ik94gkDO4K9zJVXz85RAflN/Aaef6xS5BG9SvXry7TKWuboj2l2+LwbEkNAgSQxFCVYUffE655GkSL/IAbM3OaRDoqNpw4kJCk2bv+i8Sj/h6u5dLi4dRdYVyQK5nu2mxknGmpuQv91P+WUzOy8iCIVOnKJ3K2cuuWpjn6jx4y8VZD7xCbwW5vwKI8tIOvttPbEjVX5y5XvjxV9y8eQT1uX0qRk0+FN5WAF1ENgxPrUkLDDstzKlVmc2ZVRet5D6aQNFIN3F24GxZFcpu6NFhMXEswM7AvQVDp1/L9KpjHsOc94nAlxxVxk/SlBnq2ql4+saOqq7PMMxtITridzY6n2qe5zK3MM5q1H9OF8ylOjNlv92kvhJgF8w3MFUyLtB+TJoFUR1NUS63H4Rz5JnG0922DSjlHORVp3GxuRWVYwrdqnFgy8s2GHTCL1bjDBZbkY6JcfG9jldsv1akHgxIsU0S24XwUb6qVVq3pbFLvfEI+5rQRV/paFGPIV+uk9roHTKVsdIEcXd6UeYZegFdgVPwXcLzLFlfTy787lEfs4ASM0LEVHbmbh1rxztDYYAQ=="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "I reopened issue #5, \"Session expires too early\" in acme/webapp, and moved it to the v1.1 milestone. The page now shows it as Open, and the timeline records Alice reopening it and changing the milestone from v1.0 to v1.1."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01YAM3V87Lhc3ajMARwr8M6w",
+       "toolName": "finish",
+       "input": {
+        "report": "I reopened issue #5 \"Session expires too early\" in acme/webapp and changed its milestone from v1.0 to v1.1; the issue now shows as Open with v1.1 set."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 19916,
+    "outputTokens": 227,
+    "cacheReadTokens": 7502,
+    "cacheWriteTokens": 12412
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

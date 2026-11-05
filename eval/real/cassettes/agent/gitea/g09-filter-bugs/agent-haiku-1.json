@@ -1,0 +1,168 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:51:50.094Z",
+ "turns": {
+  "sha256:371b7e14d006afb356b1c5b1eca4680d578ae7d197216fcc26c2469a2b3ddf18": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01EVjEJDuoCkwrZd1b9ncS9c",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/issues?state=open&labels=bug"
+     }
+    },
+    {
+     "id": "toolu_017sqpZCqWbYZTLNrCc8JhaH",
+     "name": "wait",
+     "input": {
+      "seconds": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01EVjEJDuoCkwrZd1b9ncS9c",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/issues?state=open&labels=bug"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_017sqpZCqWbYZTLNrCc8JhaH",
+       "toolName": "wait",
+       "input": {
+        "seconds": 1
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 4794,
+    "outputTokens": 118,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 4790
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:bee9f84c5ec5a4f4a65384b333d574894cef1c3164d9f1a5a62894c95fa813dc": {
+   "stop": "tool_use",
+   "text": "The `labels=bug` filter was not valid here: the page reported \"Invalid data: bug\" and listed unfiltered issues. The bug label has ID 1 (from the link targets), so I'll filter by that ID.",
+   "toolCalls": [
+    {
+     "id": "toolu_013sLMFaFD5mk6xVaKQb1W44",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/issues?state=open&labels=1"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS7wYKEAgTGAI4AUIIdGhpbmtpbmcSDG+Ioiv9lblyPs/sUhoMXIrzAckU9qQvYVAJIjAiyNuL4s7pgNXonHG3ixAChczo/Pc/RXVJeocjrHtdLl7bCzEReGEf39uqgJcT7b4qjAbgOxP71wXLQ5arJ9kNoQEaCM1sl235IYpHLkaJ7A593TYsZkjsvRaan3OFVIQQRlpcTiPoO8xyisMG6eNgNXl4m0mqqPhQVhV8Sw129fkdZ+fxJmntlZWBzp7RI74eFyVjK2vhaOXBu7W/6taOxgEYUXRdUv/Cfw2jOine4e1f5G3he5MBvBMV02SJ/elU1l5ySuB3C/r+GQAPJuo/jjSsvR4Z2eSBqUJ4++Eq1YjV+E6zPJodk6yjyRyxAIELbVUFnW+SzzMJ/zIharMYe+O9Z3Tp+6NAQsFay/tJBcYatazzKQDCMIeKo+KHQjVcYohYHhkUwLEwu7j7wDmtrR0IehBFJf6qQoPCjyc20FuqPBBKo5WvFtQPQlZwIm1y1S0q9pMPnSdeyg1kUE5Hk9/fHNWfQ0wRYeju4ozrjEuu0DxOBbbinGtB4WvNwxRoOVKct1SxVD0zJU2in8Sjv7kay0SiBh2QSQLcTy/K+70+/osLsscIfn2OUBRPfFDscjIuNyxNgPjm7tGlZM9fHwchoN12OwqPIU146teZBdq1jHFBhMXHqcyEkpCE/wW2fxI+2leWHz9KvvI2xB2RRTRK9j1XNtl3azU2pOV+wfc6DPPxMgPJYtxEEbg9ayNKB6rxzyFp51L10xoGLfn/px5550SWm0uvVDu7ajClccg412oihC3BwI3NbMLKjFynNH0dFovd6Dtm295E6GrvXP1a9/HxzaHdqWeiwiTmG5tiBROTubUQCF8FkyeEwGKdn3bqrx/2ciPRuot94XlAIzJmt8EPrTTwEBgSbTKNC/dM3B0sVE9cKxeREeCpLj3/KxcKoMUfL2sP9VsOKUJF8qPRCCwi3BfAro+1JM+D2lF/U5CxOANV0ZY9bbkTKcb4SRmThWUxlx2VYMaUVKBWF7Eh3oHLwn2whd/tktvShrlF4TY9G/QEZU8JecTDKL4bipYR3kxZpmu8CaX5PDemkOMjoRM8mY4Fe26lGcXAsx9Tvx9paNRCzxY3fX1UuOfcNuC8juN/vjPsZGeH6CoYAQ=="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The `labels=bug` filter was not valid here: the page reported \"Invalid data: bug\" and listed unfiltered issues. The bug label has ID 1 (from the link targets), so I'll filter by that ID."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_013sLMFaFD5mk6xVaKQb1W44",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/issues?state=open&labels=1"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 17202,
+    "outputTokens": 233,
+    "cacheReadTokens": 4790,
+    "cacheWriteTokens": 12410
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:a136578efca7b13c001a411509c69bfe579736081f8e6d94460f1cae2c5f12c8": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01JdvkBZrG44gYxYLdUm6LAb",
+     "name": "finish",
+     "input": {
+      "report": "The acme/webapp repo has 6 open issues labelled \"bug\": #13 Settings page loads slowly, #12 Crash when uploading large file, #10 Broken link in footer, #4 Typo in README, #3 Dark mode toggle does not persist, and #1 Crash when uploading empty file. The URL filter \"labels=bug\" was rejected by Gitea, so I used the bug label's ID (1) instead, filtering on open issues. I changed nothing in the repository."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01JdvkBZrG44gYxYLdUm6LAb",
+       "toolName": "finish",
+       "input": {
+        "report": "The acme/webapp repo has 6 open issues labelled \"bug\": #13 Settings page loads slowly, #12 Crash when uploading large file, #10 Broken link in footer, #4 Typo in README, #3 Dark mode toggle does not persist, and #1 Crash when uploading empty file. The URL filter \"labels=bug\" was rejected by Gitea, so I used the bug label's ID (1) instead, filtering on open issues. I changed nothing in the repository."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 10690,
+    "outputTokens": 202,
+    "cacheReadTokens": 4790,
+    "cacheWriteTokens": 5898
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

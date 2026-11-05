@@ -1,0 +1,623 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T12:12:58.525Z",
+ "turns": {
+  "sha256:aa0eb82d46e50d44e1472d91cc580115c84e8c22d33898e2109dc9ba288b91c4": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FPZtyoqgXQPmZ2gguiYTiv",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/milestones"
+     }
+    },
+    {
+     "id": "toolu_01DFEeEUGRceXtmU7GUGoxSa",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/issues?state=open&milestone=2"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01FPZtyoqgXQPmZ2gguiYTiv",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/milestones"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01DFEeEUGRceXtmU7GUGoxSa",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/issues?state=open&milestone=2"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7507,
+    "outputTokens": 134,
+    "cacheReadTokens": 7503,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:239a0f9e9699da3e03385c384ade7bf3927f76b56a30e79a8b39e66c35140201": {
+   "stop": "tool_use",
+   "text": "v1.1 has two open issues: #7 and #2. Next I'll create the v1.2 milestone.",
+   "toolCalls": [
+    {
+     "id": "toolu_01TMYtqcRDXKyhRqc2AycPPa",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/milestones/new"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS5gUKEAgTGAI4AUIIdGhpbmtpbmcSDBUKQAB5b1DTeqwfLBoMIoC4nQ5J9XXH9w02IjAdopVrLeJRCkFgQ4PWQh0+lce5h0en8Fy4ASSInXUAR+D0FTxO16ABEfzLZa9Y+z4qgwV7DzuHzMqo3xqBtbH9kMhpQeGiql0Nxwcug6y1sexYr0tFmkKtiGiZoqROvWqAB53H855ZdFVnDmC+T1yY8X+k5pmCH5X9bp0rjj5+Dg81MRTwuwLU2dNZ15/PKB0OhUZd0rrxs5+vHfh+2U/szJR5JEdvSM6QCRbc5QlyihAFFvf1hq7wrlyjbNjJPMm+KEbdSWgFriNJluN8LMhGZqttEcHxbR1uLQf6B1TFnd9RcBBCyKG+vYrRglVsBwniAdMYxqvxVdG5qKGKeuHDGShePErX1KuvUXzgkSqDqBOq5cmZxt0WFTuEUcsN2pv1Q34g4EUcUKCKpBOuOVGVCrFrGvPfhQdTyahNaU1XO5ih0+785l1BJvLPAKQfiDJV3vsYjVlP0DSW38lJYYycI/n17maqZhMBKpA+cqwFY+oIDXGkJZfuLQblC7urDj46DF4PdBo8Z2+AVNw67e5jHxQBDJfO3ZI241ETMbbHK6Bwx0++qw1M0rgFlHrJckvpJHegLiPfxjYM6gBVtZ2luLQ8Wsc3I8mfuW3A9LcTifcrTyzQJujvjy9f1LTX5XloP4goWQCNdUQNkxIp9LaKm1DwtPf+Y8nwxAajE6b18fbP3mO0X+9AHYSNrkNhO4TEtc7ALoCzgfrEVw6bvr6l7Z0svwrt8L2AZpV4oR2/UTP8K/eut2eovKO5ASgLx92CG3Q5EsP6u6rVG15dsYhMvoq+EERvvPhroufXVRUvAn2REasIj7Pm3xKXx4yvlCISfC4Q3a1dQXd0HNnxOTPA+7ItiXnsm0Sro5FVj0E73bhGI+sfuUw4w0cB3YIHYZApVbqe/sqazjIiGxcVKwARp0g5+ShYGAE="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "v1.1 has two open issues: #7 and #2. Next I'll create the v1.2 milestone."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01TMYtqcRDXKyhRqc2AycPPa",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/milestones/new"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14085,
+    "outputTokens": 142,
+    "cacheReadTokens": 7503,
+    "cacheWriteTokens": 6580
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:6b11618c19eb1bea2166e31e1ec757fa1e044a23b2befc11f22e7ef7d09561f8": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011e45HmQb9m8coz8PRhKpv4",
+     "name": "fill",
+     "input": {
+      "ref": "f3e124",
+      "text": "v1.2"
+     }
+    },
+    {
+     "id": "toolu_018ZwcFkQbzTg2HNFFepFbtQ",
+     "name": "click",
+     "input": {
+      "ref": "f3e133"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_011e45HmQb9m8coz8PRhKpv4",
+       "toolName": "fill",
+       "input": {
+        "ref": "f3e124",
+        "text": "v1.2"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_018ZwcFkQbzTg2HNFFepFbtQ",
+       "toolName": "click",
+       "input": {
+        "ref": "f3e133"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 10176,
+    "outputTokens": 120,
+    "cacheReadTokens": 7503,
+    "cacheWriteTokens": 2671
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:ae7fedb5fb789bde94405cc3e2ed1a16dffbbfbba1fdb7a4c03dec02392e5f93": {
+   "stop": "tool_use",
+   "text": "The v1.2 milestone is created. Now I'll open the v1.1 open-issue list to see which issues need moving.",
+   "toolCalls": [
+    {
+     "id": "toolu_01PDqe6tVNXhZPkHpc6YcyZy",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/issues?q=&type=all&sort=&state=open&labels=&milestone=2&project=0&assignee=0&poster=0&archived=false"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSpwcKEAgTGAI4AUIIdGhpbmtpbmcSDJh8CwcVGLG1NwC0BxoMD+0TSHHvzY/sGRJcIjA/WEIi4N+DiQ6cVjqIdeUHrCDG9AWWJL6se6plE5u/FI1ZiVFFWSuLJBYhbaQ9UWcqxAZ/Ow3N/IiUrP3rdPCX4QKpkTI1EXcyvsLCTJdnwe5Oj1lWEggfTIIUq0VHePlatRdBl/QAvBfGOe4prUxKWfwMgxhjbakcdK9wl0bCOVaPl56vLP1w0CHZ0j9GjcxzyCrWQGvbPBus2AhwB/qAttcS1wkds6bZ5RU6aHVHxWKeqfSL8vlISZObIH2h2ibWGEzOuqJHti1+zMa70wbaZaM/VqFyXFIOAU/NeGSbNuxjX1+S8HNHHTJZ3dKvY23vV1WFI8bkuUXVe7IdEZL3vB3bmroKm9FJpZM76VfX/4Cjm/JYd46OuL0S00Hlo6zJi7tCXZFxc2S0ax9uZZcj5adKNeT+J/CZu38PhhH/n5bTZZX/lwK7ZJfrpNLQHVwvWYmoTx9wrRUuTtHO47Npr8E444tP5rP3yspBfQ5j5W1HYxaZCcka5u6MLzj1WZDW1jIj8uoIhKk0IsoJQ1ti5Ns3vXgbn5CAwqfi1S8yHc3IzB8hWsPrY2MkYqIrWodDn5AVfASXrVY+jlMfVzv90atRabdE30H+gx4sbAobHLYuDchvnIttce3VKy+qqf4jdn+rgZ08Jq78q44otqAjv9vJ7k+Hynr3Gz30k/pAPWMs8JwvdEMZOjwBnzkcdYlz0DqogUj3b8v6ySq+gFvKY+oQig7iYtvtDOrJ3hIChPWMPxbmKC/zixRxUsoYBC16sTLTxMbyvHNSh6kxAQI+iDiKncAzAuXnIE5YINi9U7MABiR4/uJJVfYOAUf3eEu/TavJJbcSwAhe975LnwkLq2JDz1fT0D9SWdk1vNZv22s7RM7JLmTPyOGBCoLKov64LX8E+1hIJNotQ3qsS0mGQW1E7rRpwmvv2LFFwQysBs0lLulIAzryH6kxxQL8rGE9Ov15KlHmTnOczeIiHcXf+AvP/F2zMTkx2IJgA+Fvga3D8m5vZJbFkwZLGEFoCff01IVfEBaEIQmUlnNBk9xNF7EGYC3yVuHrGrhAB8En0d4jph4oWqjrQVDsakrDatpE8lN2nG1peIPMDoGccETTi15YVIdi/3jeAl9O5eHcJxowyR1d+xN7vEnqNi1SHOXncHg7QEPt7PMvfZClkl+/2y6isB+ABhgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The v1.2 milestone is created. Now I'll open the v1.1 open-issue list to see which issues need moving."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01PDqe6tVNXhZPkHpc6YcyZy",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/issues?q=&type=all&sort=&state=open&labels=&milestone=2&project=0&assignee=0&poster=0&archived=false"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13602,
+    "outputTokens": 223,
+    "cacheReadTokens": 7503,
+    "cacheWriteTokens": 6097
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:cd89654ba3025844d31866e6375d3bc89f5d2f72316476a5dd34f3b071a8a359": {
+   "stop": "tool_use",
+   "text": "Before moving anything, I need to confirm the v1.2 milestone was actually created, since I filled the form without reading its snapshot.",
+   "toolCalls": [
+    {
+     "id": "toolu_01UhAmUgukaa7fCq4HdENWGe",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/milestones?state=all"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS1QgKEAgTGAI4AUIIdGhpbmtpbmcSDNrjOClmE5JMtu4zLxoMr+MRvFEzGU9kP+SNIjAJi8iBSIxqYgq5ZLMee7jSeWhMa6gTI3gYy8YXNNpxgAUsCd8why2HqPOd8HZXq2gq8gdxKrtUmaW7WPpvzHVQ+770eHVvcjkAyAR6omgTuvnmjE0uD1PwPQOdJd8ZEluELez9tIRp0hmLe48M9l2U+ArCQ/ki7hIN/TUeUwD8XEDG/N3UgQRv86xFbVMuKD29QPMw5sPhJOBT/0Lugi3BHp5dZUUeCRhTa+b35p9BhbD4+WBQrJgsvmULbH7kFpKfTccfPcd7s25qAhOmCDQCtLS2a9ZyQ0aRL1sBo3K5/0s4WKCe8PWs01PUl2WAiI6YsBepVw+Xf/0GpOiTd7w/4Ck6h4b79wOQYKLp7+b33Ph0RMZVe3Vfp4YEarW1z8I9AIrWEJqeEwgbcDDiX91tocJfu6a9fq2/KDG5VoLCBnZ9N/1iiaQdE5sH9EXRBXEn1HvLQl3Va/l87IISEc9QZolsst5Won390XnC/4/MrybAg5E4hWEOeWuRviQdJ+94bTaCje0Aj+VUd8syspe9imSqwcCrMOhLG2/043uPaXHsDzZc40iNhnhycr0h3BUAQUl4RThAuYfFAZQG18StzzslPmCSJwabBu6/ui0JQXmBmEk/1zMFr7HHo7yu+r/QcfMaIN9BSJysxPqF/Bm2rLx5nrLDwMwuJyjjPUFTSY3FpDkQKA/ixiqThvLLM93s1HqDAcGoXVsASSs7Mu2S5uZ3E6NEcqr+XEMirNMH3V9L5VxwUXXyAnaOZVa8jO1Xo75orSlyQoKEjcE05DQy/jj7v3+JY9iP1M+P8aqJ3Db0W7IdD9QumF9PjXODoHXWPrlJMJBDajmZxU5hOzcMEDhTH1ELWWyH48K3I9I1REAcjb/btWApvJBpcs6Gx1bKPh+cfm3yP6ogNU06Aqnvn48F+8ZKgXyZQlUhYSowltPheey72AVfM9AC1jm1d5eZUwivzaPlmUDjObJeE39UE8fO1mSEZVjj+q+OiekpDkr9UAU58rt3ARRf7cdTGbQwmbQQe12hmfSH8GezryaGduJEQWfvjMDLdiwCsxBRSLmYeICriJ9wO0oI95UmeUkc6Vx1pcFrgCuT1DOYqnOeEcCM6D/Xtr6WdSluRGab0rGxndm7hGHBRUz/eh1Xmqc8XbVSxvF893RZjB14dP80fq9ZhWjbB9bTDdfIffD9yVOWPLg/Pi6JbxMtsTo1Zcbsv3+TrhdmmssVf4Q4H2vufrQaXxk+T49h+lG+3Ahb+1J7jwbLSK4240xpHXNcaAeX2A1FaX+agF8iTlXdfyRaSmaCr7jEgR6pUBWE/NZbggGWh3e0DsJ9EXg461Czjly/xIf7GWHvrNBaQBHxAsSK1l7kVkTFDqS3u5stmICLWDa7IrIg1+zwP7nCX7fhKgGEn0gHPRgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "Before moving anything, I need to confirm the v1.2 milestone was actually created, since I filled the form without reading its snapshot."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01UhAmUgukaa7fCq4HdENWGe",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/milestones?state=all"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12302,
+    "outputTokens": 219,
+    "cacheReadTokens": 7503,
+    "cacheWriteTokens": 4797
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:73b9378d67f028c5a646be4741cb6632995b9e960f33101f21f5e9beb88355a9": {
+   "stop": "tool_use",
+   "text": "The v1.2 milestone exists. Now I'll load the open v1.1 issues to select them.",
+   "toolCalls": [
+    {
+     "id": "toolu_01TnE9jUrkTbBpcFeor1Rx9K",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/issues?q=&type=all&sort=&state=open&labels=&milestone=2&project=0&assignee=0&poster=0&archived=false"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSuwcKEAgTGAI4AUIIdGhpbmtpbmcSDFitjXAy8M7w/PNnJBoMw24v/EwEa6NjtzoYIjBviJzaqT45Ua+CAoolfG7SKV5gjNPhRVMCaYAVW2bo56d+3yRIRExqJs+sk5+buuQq2AYWvqNznjLtWrO2Z1+qOh54L7tr8hk5Nkkusp6GOQPagK2pHsDZm4DGyPNCi9UFwM2FmmoPy+r6Ql+bwY/vhYdA2gwd1N4juhvLnxRov4LYurMl9stp9+pGRtyimaE3bftvM6U8lIW/Zzr9ql2DNyRCqmA9vzhpOuFDZYzq6rwIzdwQ8gzseLJ8fqNNG4GKj2BDWmOUtI3U9RL0zqTokmYbHl/kTVmpZydblJlPMehQMBlPNj25BYG/vti1hqVqN/O/uYjPJ/XtU1+89sT8x9VRYeLtZekgf5S9mc58I1aSMyeHSp+qzNE2OLtQOLnjTDVEAtxSc+lf6o1pIXzakBWc1oL6QWIig7JZRlto/Y3+mMvB5KG8Dbi53wvIdelpkRrJy+JUJQRYYSwR+7I6WG8rtlnAf9s7XYksnkQ4igvt8cBbhp1Z+6bldyk3dWtpF1jI8Cf0cDwp7pbCZO1WeenW+UMWt3qGkNHmWn39KeVbRiApcEenpibYGa4YSSSdOtMXbDGlZ50djzUSmW2U/ugmo6rgKnEvRQqcAMW5fYHgwwoHHVNujXOT2uq+7SuBViZ0Tkxc+r54RihQ55bBs85x3iyQjWCKqSLaFivBno3+TdVJx1zYU38wS/HO1iBzo0IFexriCY2A+3N8L9hj3Mbz4kA2ryclC9i4HGrK0TYpb9oXju8guLJH6gyYITEr52laTRRRjRs2Ui7j9sa3p7ZXPw6Iiy7F63nOIC5ueSixgzKnLVD3rpwJsZFApbIDjo+62MCDUh2zLScvGIanhoxmD12CWxQs5NkVl2+nCpijhI+WKfZXZPehH3u+QGrTMpUNEGOSBjCsjQmhtTMkPDe9leimIAVS8p1UmSycD+9HeUo6v++3H/Qk8bahYEV7kT/5quqT9TlCTbUBPkq853jdZEbxNbrVFP9NgM2P14ny7NLzpxBekpLgNiuLcLZLuKzXIUC3cTZoMijyi6UNKFcN1hfkwAMlWD526NcK3tKTefcxY0ES97O7O8r581jVgaMP26c0P+LT5c2fg8k+P8nrNj23LyzWHxiRi61Vrz5CappsQOBqkjZMHFiuuTAujqLXd6VnYl2JWLNOVFyhvtU8pDM3Y7GeXVL0PguiYdgh1AdEszDwCetYGAE="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The v1.2 milestone exists. Now I'll load the open v1.1 issues to select them."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01TnE9jUrkTbBpcFeor1Rx9K",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/issues?q=&type=all&sort=&state=open&labels=&milestone=2&project=0&assignee=0&poster=0&archived=false"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12037,
+    "outputTokens": 209,
+    "cacheReadTokens": 7503,
+    "cacheWriteTokens": 4532
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:eb46a78fbc6f59300e69ba2e7445e1a0975f283188f94c8f9870e1310d73e7c0": {
+   "stop": "tool_use",
+   "text": "Two open v1.1 issues show up: #7 and #2. I'll select both checkboxes.",
+   "toolCalls": [
+    {
+     "id": "toolu_01JLSAk416s7NghG1DeGPyhQ",
+     "name": "set_checked",
+     "input": {
+      "ref": "f7e165",
+      "checked": true
+     }
+    },
+    {
+     "id": "toolu_01RmzF38BRJ3aq1vbjSELXuC",
+     "name": "set_checked",
+     "input": {
+      "ref": "f7e190",
+      "checked": true
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Two open v1.1 issues show up: #7 and #2. I'll select both checkboxes."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01JLSAk416s7NghG1DeGPyhQ",
+       "toolName": "set_checked",
+       "input": {
+        "ref": "f7e165",
+        "checked": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01RmzF38BRJ3aq1vbjSELXuC",
+       "toolName": "set_checked",
+       "input": {
+        "ref": "f7e190",
+        "checked": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12905,
+    "outputTokens": 177,
+    "cacheReadTokens": 7503,
+    "cacheWriteTokens": 5400
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:5a17dddef7a51d297d1da689a3dd70552fb64af33307fafc6938f8be4af08c7d": {
+   "stop": "tool_use",
+   "text": "Both issues (#7 and #2) are now checked. Next I'll open the Milestone dropdown to pick v1.2.",
+   "toolCalls": [
+    {
+     "id": "toolu_01KmCqdF3dZZRPZ2eE8r2Kex",
+     "name": "click",
+     "input": {
+      "ref": "f7e238"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Both issues (#7 and #2) are now checked. Next I'll open the Milestone dropdown to pick v1.2."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01KmCqdF3dZZRPZ2eE8r2Kex",
+       "toolName": "click",
+       "input": {
+        "ref": "f7e238"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 16700,
+    "outputTokens": 90,
+    "cacheReadTokens": 7503,
+    "cacheWriteTokens": 9195
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:862079f000ebf14afe45645b1cd4c7d1c0c583b749e0e17f52f0af7025bf320e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01TsFa7ZQSWUfjP6omHUt7W5",
+     "name": "click",
+     "input": {
+      "ref": "f7e251"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01TsFa7ZQSWUfjP6omHUt7W5",
+       "toolName": "click",
+       "input": {
+        "ref": "f7e251"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13539,
+    "outputTokens": 49,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 13537
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:a9514bdcacef588c5674b185c8df4151afb425ea34eacdc553e49e9ccfc3776f": {
+   "stop": "tool_use",
+   "text": "The v1.1 list now shows 0 open issues, so the update seems to have applied. I'll check the v1.2 milestone's issue list to confirm both issues landed there.",
+   "toolCalls": [
+    {
+     "id": "toolu_01V2Hx18MUupASXnL172wtCH",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/acme/webapp/issues?q=&type=all&sort=&state=open&labels=&milestone=3&project=0&assignee=0&poster=0&archived=false"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSxAkKEAgTGAI4AUIIdGhpbmtpbmcSDD4XjT/sEJJIpbWjIxoM5SdUbmrbM/v3cIFlIjC/mnnhk1ZoX/FaI/plP80wz1TuLyOmyRR2UbsSqWpTvl0499STSeObHsvEHsuCW7Aq4Qh0KHoCMSFgsF4oGAQohVAMwZ21WtbVD5tXouZ7jk2yz4NfuLhDek1yx3bX7WKdLokkI4N5RE2/l78WJsKyAM2fsix2bFjsUTMtei4xvl7rYYmf0JO+1Dz7+QDQmrlCK900qzd1PP4Vk4ZViQPBb+Im2sKmrgnsUJdIZzz7EvVTnkIKBJxZOpANF+39vvF/KUkJUI0rUoAZsYDdsewqKzWdpc6PKTtm2zgvcO4RP2E4q5wfQWeqL78TNDGkCvOYk0uIXetAe8WS+CEaAavVcH3IUubcx8cut4axgxICfzkP3dnX4PK89MJTYp7Cd668k9dmJKsFq1MNJrcgZDqJ7IxFmWpbElI4w57F7ER61FHzVQooLXfhn+tkovn+KqNpzyK0si8Q7oCl7SC+DfEjuj5D3W1FBzUuHTjv+BOxA/v4PJI8/CGf1w4y6cZI/xtmCdtbXtMG0K4OLzYPbdwCD7sMAaKZurT/PU6R3bRzcur0y7sknM1Yj2m2II0T8UxnBM+4B9TPOXuQGAh/Ss2q18YcozIa0QbGY96c36OQ4uBW+oI/3zvN2+5Ilky3HOvAjSYgmPy6nZe1zUlNabjcjJ8QUpWqs4LGTKUFvFH5VV9JsrDcja/8libClGke4XbOABaz74W2fQxgGSSmivHT3sBZeGl62/Oq5aYJXeHehDNvQD4aV4P0M86n6q1YwDO0XGLYmjqVZXR0pbcQG+cESUojeRQS2key8Sx3phDhY/lTdRYtoGMc5fafpKFyPS473lc/ZvOzzctbR9SYGrvLFDYOaWZtNH3BatkkCIyfMXpemxDSHEX2H83nq+L7JpAzyVl4IubypuH52QBLvlaAvO9WuQ/7zJg4OXHucnArDbcuUjw1NoasFHqSCuX3EMwab8ly8iV3RotDy8KmX7/8ClWyQyVyFky14X6bDcFiA0u+iVxiYT+rUyLbj51Dw6DBsfLcDwfnwr2M8F/pZJX11KZQaDztfrveDtypWF6YfFeSleZHnTtmGBt7Ctz0BPpGYv09SbZ4Rd38SfrsNDvpgslULcc5fcF5q4WXbyDAoMokdL/Y2OKBd+Zj9Mt6lFQKZR5GG7qlX6N8cgIEFZ2lEWxPeE9dDZfag/sTM/4dULDCilyV0zfZhEw9GjzWFdNHlAvI/UGL8o7s+oijBKm7gDBRyCxH+OS+8SD+UbyuQKzYDAtznfiKF7Z7jdgo5u5n5+bySm5auoSZmyvSZM255urDyV6U7UoPDcgubs/X4G08PA55d49BpKwVXy32vTjZ88P76DSvv5nxPivEGOFh+ro6UKL/K0wSvBLRycjr4qN2gi97FxdWAganSKZCgfEP9F93N/ctJEP3wOH0C5mowIEYt+PR6BNZDcEc27n89MN8T3Hxj+L6vc/ppbXszCaF2NrehJ0gNaF/w7VhLoDptHR/gqD9X0sFpuH7uRGbJ03T8HaJzH36hwRo8lO/OyVm5kt3PZ5fh6WBEX+pKoPlVH0AVBgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The v1.1 list now shows 0 open issues, so the update seems to have applied. I'll check the v1.2 milestone's issue list to confirm both issues landed there."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01V2Hx18MUupASXnL172wtCH",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/acme/webapp/issues?q=&type=all&sort=&state=open&labels=&milestone=3&project=0&assignee=0&poster=0&archived=false"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12670,
+    "outputTokens": 301,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 12668
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:d00b3bdd25b22c0682498a83156e531e9d782cf208755c2e22584822aaff3cea": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01PnbuAYQxBy6q1YAGzVBm2b",
+     "name": "finish",
+     "input": {
+      "report": "Created the milestone \"v1.2\" in acme/webapp and moved the two open v1.1 issues (#7 \"Upgrade to Node 24\" and #2 \"Add CSV export\") into it; v1.1 now shows 0 open issues and v1.2 shows those 2 open."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSowcKEAgTGAI4AUIIdGhpbmtpbmcSDH9iQDVCVk99jwyCbBoMn6BKjl7JSJGFs4CAIjArIvYgidk0K+R8a2t7M+l63w0AzqEW03ynp7Y2EYQzSec2cEbs5afZuesg7uP/nXUqwAbxlky/I7XK4oZtRdPvmjKB1yYwtpQZfAbXhMtyQKkz1M4xQWqSNvIbAN+Y2EWC5bKa8UA1XzQLcmN1Yh5Z/wDip3PzG+7GovFuZwb/BDnY117X2PDMvhJWoA1ZiNy42Ln+zgl6S1hmORYfYaav4j6GO7OiDbFROXZnN6hME5mpUdSYoaXmBG4SH0xaSsNqqNnUmo61mj+ecMTotnBHLM89gT8Encc0elRXE2UyfYktg4zK0w+7oGdpmURUJe5GplDcug6vt4kWOESQ8EbEdzXiDyh/6L7gxtPnKaFGuzXJaPre0BAZ8imHuSh8BXdzB5Ut558SxBiJZzsjK9tIzBepkOWlOeBvHczih2dHW8GdO3WtrkwhPhAAaQHDnBVr6sL7F30QipLaxEJZ80ZzXqH5qsqjmkL5lYNl3jRecOQj39DOlgE134BKQyXv9uLsI/fK02UqOCOIVJ1W6/NEiki2emAP2fEvIOSAQ0jcMA7mJ4eZ2GUIiMw3HcCelAKENwGemh+ljPsT9MJfTG/pmTgog97HwPd0rx2FyRK/db63bQIVfJfjySx6e8Aj6JY8BC3HAwLDiP+zw17UuqfhiRSg2UnlhCRGnJiJF+hLHe1wjbpxYIcSlZnLgJhJE+kVHAk07GKLIbRIfKVBgjg0YYt+J8t/XuNS62Yy54iH6+9DkOneaV/g5SwcKSGcijWu/YK4tRIvnpCtLI3mztUK4Y/s9XSkFYJzvZJOvBn/u+pAdFEOqD49/Zk55r3PDRS5KGsxzMHrXZz71ohJpOP1hfB//3oBAPiqDpvSRnBs2IlowAGho4OdAtlc+UfhskE2IHBK7Myfhv4e5N5JcF9BK/M2DddzZg4bZ1Y0Jn2vvo/pvmJL/dlurar3abJupvWwbSB+c0amLCi1GZfCZqDBEpDi4cReTnAiikQnZDJs93PUdmzoX7le6wcDkVKOd8n6g+vwQw+6cVS4/jOx2Vr/pXPkSaxUHfQEPtUQsDrRcPpWXe4MTwCNlavaBHIrbSpWN2lK8AVyJsAj3qTGaROyxSXJzOqMIqOFoQCuLHcrf8MZ+QB3JIbw7oZZ9Vx3N5ygPRd1aiPHpXw6Gx/if6VJBZIrGAE="
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01PnbuAYQxBy6q1YAGzVBm2b",
+       "toolName": "finish",
+       "input": {
+        "report": "Created the milestone \"v1.2\" in acme/webapp and moved the two open v1.1 issues (#7 \"Upgrade to Node 24\" and #2 \"Add CSV export\") into it; v1.1 now shows 0 open issues and v1.2 shows those 2 open."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14105,
+    "outputTokens": 189,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 14103
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

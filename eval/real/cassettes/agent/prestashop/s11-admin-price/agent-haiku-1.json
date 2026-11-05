@@ -1,0 +1,453 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:50:01.850Z",
+ "turns": {
+  "sha256:5fd848a0ec4bca4b362d0367d7d174ac17aeb271c3a8254483fea5d4d5acaba6": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01UViY2pccyNuWSARbRzXvKL",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/admin-dev/index.php/sell/catalog/products?_token=GOTCfTactTV-X5HGKvv60DmYwkfi0MN46GF5w-18CIw&product_name=Brown+bear+cushion"
+     }
+    },
+    {
+     "id": "toolu_01Ao5oA4Vg9nmwRwWDS3bdid",
+     "name": "wait",
+     "input": {
+      "seconds": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01UViY2pccyNuWSARbRzXvKL",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/admin-dev/index.php/sell/catalog/products?_token=GOTCfTactTV-X5HGKvv60DmYwkfi0MN46GF5w-18CIw&product_name=Brown+bear+cushion"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Ao5oA4Vg9nmwRwWDS3bdid",
+       "toolName": "wait",
+       "input": {
+        "seconds": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7703,
+    "outputTokens": 174,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7699
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:c888bfc1ee465d7727a07922251b18e598155d352f92c2b5795934bbba3cd95f": {
+   "stop": "tool_use",
+   "text": "Let me filter the list by name using the search box.",
+   "toolCalls": [
+    {
+     "id": "toolu_01FvuV244u6Sv4tctH9Gnb3E",
+     "name": "fill",
+     "input": {
+      "ref": "f1e188",
+      "text": "Brown bear cushion",
+      "submit": true
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Let me filter the list by name using the search box."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01FvuV244u6Sv4tctH9Gnb3E",
+       "toolName": "fill",
+       "input": {
+        "ref": "f1e188",
+        "text": "Brown bear cushion",
+        "submit": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 21173,
+    "outputTokens": 115,
+    "cacheReadTokens": 7699,
+    "cacheWriteTokens": 13472
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:4789d2e0ff56901dd887b13f573882ee52d4152affd865d6c6bc1c73f12112cd": {
+   "stop": "tool_use",
+   "text": "Found the product (ID 10, currently €18.90). Opening its edit page.",
+   "toolCalls": [
+    {
+     "id": "toolu_01N4Wf7gJ5MeoyneEoFBMY3n",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/admin-dev/index.php/sell/catalog/products-v2/10/edit?_token=GOTCfTactTV-X5HGKvv60DmYwkfi0MN46GF5w-18CIw#tab-product_pricing-tab"
+     }
+    },
+    {
+     "id": "toolu_01SoezwLpr11NGgsLdwDKNqd",
+     "name": "wait",
+     "input": {
+      "seconds": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Found the product (ID 10, currently €18.90). Opening its edit page."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01N4Wf7gJ5MeoyneEoFBMY3n",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/admin-dev/index.php/sell/catalog/products-v2/10/edit?_token=GOTCfTactTV-X5HGKvv60DmYwkfi0MN46GF5w-18CIw#tab-product_pricing-tab"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01SoezwLpr11NGgsLdwDKNqd",
+       "toolName": "wait",
+       "input": {
+        "seconds": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14885,
+    "outputTokens": 205,
+    "cacheReadTokens": 7699,
+    "cacheWriteTokens": 7184
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:9d68b17a2d4b391be8c77557b29f4b3011399df53ea25ea243dcd45ba59c4714": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01ApVzJni8vzQYM5PZF8C6Qg",
+     "name": "fill",
+     "input": {
+      "ref": "f3e197",
+      "text": "21.90"
+     }
+    },
+    {
+     "id": "toolu_017v5BdvEKdFqmyKHzAZK5bY",
+     "name": "wait",
+     "input": {
+      "seconds": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01ApVzJni8vzQYM5PZF8C6Qg",
+       "toolName": "fill",
+       "input": {
+        "ref": "f3e197",
+        "text": "21.90"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_017v5BdvEKdFqmyKHzAZK5bY",
+       "toolName": "wait",
+       "input": {
+        "seconds": 1
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 21570,
+    "outputTokens": 118,
+    "cacheReadTokens": 7699,
+    "cacheWriteTokens": 13869
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:d2f6a90b0ec6aaa4886a679ca36c411d454a1f0de2395a644fca1b20b3206395": {
+   "stop": "tool_use",
+   "text": "The tax-excluded field now reads 21.90, but the tax-included value and the Save button haven't updated, so the page may not have registered the change. I'll trigger the field's change event.",
+   "toolCalls": [
+    {
+     "id": "toolu_01TRUGMj6NBVF8AGZRPbCLD9",
+     "name": "press",
+     "input": {
+      "key": "Tab",
+      "ref": "f3e197"
+     }
+    },
+    {
+     "id": "toolu_0192sh9ECHYQU2LxA9HiNsCn",
+     "name": "wait",
+     "input": {
+      "seconds": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS9QgKEAgTGAI4AUIIdGhpbmtpbmcSDFsxULeSkqG4/zQVNBoMb/l4RwBMqlPLswSvIjDJBD4E0ir27QIlXIr4geA7vcjn4+jIY7VfaHjRhrW6GNlrYjgsxBI0gVUD7x7lwJYqkgh8ChwIJ6WET8fdy5GElSVG5EmzVeeVQbnyPinaXj3tkwAOc/Bf0vXJbwS1UtRiyusOqq9XlY/74TuzZWHakuVVsX6Z7Hwu/IQiLTvWvOgjb4hwjH63ZPNKdCc/PB/K3UOA90ZWZnHIyHvIIBWppO6sQlqTauvlWc8KNPdXGa1Uo2QUf5WFLt4V8DiL9cQmsKL4oMVzRpIjecRPRODE4mwQ8cI5EYpsxZrPLN+lN4ClayI0UFPYv5i3jJOHNe/YFiJXxvFCDYQne7sUznNiEhgqhqTfSjvaNGAkboI9OBXqly8DOvAbkWn2kloq0Wllpay+DpdKQGLNG8q7mlvR8TYxBi8CtsrOiGVs+UoL0ESWjzSkHNgHrhjEoP8zNdpp8XKPYeZzcm4saC9wEKrIkNmy4qq3XmBkp8CgOyKAaGjjwQDPShGIRRzFI6X8npZTMR5RpB0d+BcMVjmaZPZpwLXsTJY7HZ34Z1CXirEQOwtzCMCLOzTz4xc4Q91y/uJnfxd2HaMfJEQi3aS7ejcQ8/KnyLlK1EvSlBbtIA6FZBDOUEsbH1CvaRzi6ZWL+XOB/pbW0bOHvCytVVqnH/sIr804HIBoWsvwF3OR5ETBxE/Hg99WpY8pjb86wJuixuj91XIY/pazQQAkalIJyqFboG4dOs+st7E92+XexlF3ze8fcfck0fQ+CVpebE4zqJ5YQh84v6outGqenbLudCIYfHsOEuJvtMR1se6IU26tDiUvh9heyBMbct1HnzYMpjlCJh8oVCbEOGDssd1DlRcmcqDinU4u3YmqrRm1NVxzLp5224pNHQA94/jh5n7ZjOwPi/KGVFEH5JwAKi1w21NOJCGIf9857egHP4epXs8vcwYpPm7uGzI9uzWCvAosIRkj/QPnHJWxvxWjbI8P7AOfLnU9y9Kc2eoLzTpclcnZMGteqhcTODU0sUVVOtePjHITk+X+yI/9UGzElsrgkfewfRTIvP818jlxbL2q5XftZL+OIeyoY2edu05SEu6oYdQel2r27z3ULcXb9dPmRzRkGzSTdtwdcZIrNUn/fD+MZumUzuvAoUY4U+SWMKNdcrYcJP8vqNSXDmqyLlBbwKHbP3s+pmcbDqYXYRaRdiOdzeNLa68gJGUtKZeM8UX9y8OO10yCy1nYK5CpXW9YhzHEl26uPHpvOQv1z8PuE9cVWGhp6J4S+Mdp794kh4zGfXMqk6PDKwnA5bTFhiGBW9/OQLlGO8jmMJ8KvCVI5qGTnndr0CSoBC019PLH33KbuRBJR0dsg2MfAwJGebZfg4aOURCYMyXnZqdM6ydZKQHG2dyM/yh97mukuRp1J/ZWSlolxNqG9/YQAPNhq8CWzd7o/ZMlDXTwGnfDxuUjste2IudCljBAGAE="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The tax-excluded field now reads 21.90, but the tax-included value and the Save button haven't updated, so the page may not have registered the change. I'll trigger the field's change event."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01TRUGMj6NBVF8AGZRPbCLD9",
+       "toolName": "press",
+       "input": {
+        "key": "Tab",
+        "ref": "f3e197"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_0192sh9ECHYQU2LxA9HiNsCn",
+       "toolName": "wait",
+       "input": {
+        "seconds": 1
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 21972,
+    "outputTokens": 334,
+    "cacheReadTokens": 7699,
+    "cacheWriteTokens": 14271
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:251489dfed4ec4887573692ac7a33524fd80b8c40b8cf4d4968cb74b14ce9788": {
+   "stop": "tool_use",
+   "text": "The summary now shows €21.90 tax excl. I'll save with \"Save and publish\".",
+   "toolCalls": [
+    {
+     "id": "toolu_019TkAkeJhAsavNni16tNXMq",
+     "name": "click",
+     "input": {
+      "ref": "f3e159"
+     }
+    },
+    {
+     "id": "toolu_01EekNy2V7k9PMzNV4it5mYq",
+     "name": "wait",
+     "input": {
+      "seconds": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The summary now shows €21.90 tax excl. I'll save with \"Save and publish\"."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_019TkAkeJhAsavNni16tNXMq",
+       "toolName": "click",
+       "input": {
+        "ref": "f3e159"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01EekNy2V7k9PMzNV4it5mYq",
+       "toolName": "wait",
+       "input": {
+        "seconds": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 22579,
+    "outputTokens": 123,
+    "cacheReadTokens": 7699,
+    "cacheWriteTokens": 14878
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:f2650592f1efbad8ec5733358a0c5bf98eac909809c07670f6a6103831066e58": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01L82JyvGoDFcWqAgBnZWfc4",
+     "name": "finish",
+     "input": {
+      "report": "I changed the price of \"Brown bear cushion\" to €21.90 tax excluded and saved it; the product page confirmed \"Successful update\" and shows €21.90 tax excl. (the tax rule is 0%, so tax incl. is also €21.90)."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSlwcKEAgTGAI4AUIIdGhpbmtpbmcSDImM1DCFT1BZMaiIphoMt9pbmF1b9BKkvnPSIjD4SBQndQLCh4zyDzcEfirqt7NuDs2mt9f0HX39zzgARai2jB+lT9FkOwKLClDc2pwqtAYQPWmuAzpA/OqZ5lWn/1ormjrNmbZe0lSjniqLU+HDJqj8tTnmkHNesUowDbNcdDPBN7hPRYVkKWHvYgMRpORZE31j/4R45cYoCnTbxAUoOqGEDuQhjX8sbeipeT0eGWciB+T+QlwRfCzrWciS9zU771io0K2FLRF2MJodwTupuiRivU1x0wNFXZG6/TdkzkgKGPJtfwLSaBJTg6p0qnmnYmpD+YRx4KXrX/T8kGzIXTph2J0VM2Xii5NiQy2LniuMmWj7E2RkJsUbqUl0ary3kyrW2lsGDXQLpOxKqu2OEN3nsAfN1DES1AWc7gJDAaAHrhTZ4wwxM7a2wXkNyODBlzA9qVkom/p3kCyNTn1nPGH8L04jDhRCUJyibdS2kPoG39DULldGrib8SzsZvDB9P8fkHUxrxFetJchavlJrACTQAlsFNSUcdinaNfds/qWZON60iV9gCEgQIL666KLNK074jMniDEx4CBHyAn/jj2J2nR5Fqj0ZpLdtBFu+2Fc+Vhp8MYlE9vFZLhwopjy+gAbBup7+XkUFKAiy0B85nDS85rskrR1NmGb3vYvvJacTnADFL4iQh3gQWGMEgo6ghAieBUAPNUqi89awagZ0LCmpmLUFNNZYdu7RRv34MBMf+Qej3mxSl50DEYM3KFEvtGjCD9Wt0oN/l9ronLnStF/8NzJJsMgWobfVC9X/YSKyHjuDaXXAPOYsTjsQiuz9Fc0scmgX7lC6naCKBZLQ5Fmqc4PLZmEe2a/d4VmxKiyalzsUF3UqcgHn03R1GrGGNmknCPAV+DkoH+guL4BZjTVtjWLKl+2YC2CI+B5Gdd1mnHpzukCVwKovJa5PZjAsCcyRixmzFuSnmxUZ7tT5oW8xFN7RFJP4nh9QCqbKi1DgKriRx1fnJwSOdMWfkD502xpGd3DNXTYcUj5o5QZ6RIsjzfOLiNj/t+LJTh+VGtEyiCatJiau7wme1ovixztV6Gc3b5htp/Kiizm/88q5Ysm0tg0tR7GtkGfcDtORL0AWElrnmxL/ZCkbQyXuooirSWLW7AEfULFrOApFS2HGhTHXx8ZYBbZ2M7BDwMrdQjZAdov4GAE="
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01L82JyvGoDFcWqAgBnZWfc4",
+       "toolName": "finish",
+       "input": {
+        "report": "I changed the price of \"Brown bear cushion\" to €21.90 tax excluded and saved it; the product page confirmed \"Successful update\" and shows €21.90 tax excl. (the tax rule is 0%, so tax incl. is also €21.90)."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 23013,
+    "outputTokens": 181,
+    "cacheReadTokens": 7699,
+    "cacheWriteTokens": 15312
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

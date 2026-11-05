@@ -1,0 +1,372 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-sonnet-5-5@low",
+ "recordedAt": "2026-11-05T12:04:39.710Z",
+ "turns": {
+  "sha256:bce209213f497d7662b954640c2fbeea2de7458d9f04160716d20a04957e475e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HcTt43dHsUMksQwWwzx7gn",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4320/wp-admin/edit-tags.php?taxonomy=category"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01HcTt43dHsUMksQwWwzx7gn",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4320/wp-admin/edit-tags.php?taxonomy=category"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7260,
+    "outputTokens": 75,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 7256
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:bd751db35487032a1682e171bd7fac11deb01c70789caf667d7c50bd1bb32491": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_012oeQNUsn4vEB5NtAQuQmYb",
+     "name": "fill",
+     "input": {
+      "ref": "f1e173",
+      "text": "Community",
+      "submit": true
+     }
+    },
+    {
+     "id": "toolu_01Wj2YqwW69DijbQvrm4prqy",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4320/wp-admin/edit.php?category_name=events&post_status=all"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_012oeQNUsn4vEB5NtAQuQmYb",
+       "toolName": "fill",
+       "input": {
+        "ref": "f1e173",
+        "text": "Community",
+        "submit": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Wj2YqwW69DijbQvrm4prqy",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4320/wp-admin/edit.php?category_name=events&post_status=all"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13221,
+    "outputTokens": 167,
+    "cacheReadTokens": 7256,
+    "cacheWriteTokens": 5963
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:a976d482faa3521ab5c037e457e005f01e55ddd0be28bbb61940a163987a0a8e": {
+   "stop": "tool_use",
+   "text": "Category exists. Bulk edit both posts.",
+   "toolCalls": [
+    {
+     "id": "toolu_019KXwqraFBHVDtmz4BMS7bD",
+     "name": "click",
+     "input": {
+      "ref": "f2e195"
+     }
+    },
+    {
+     "id": "toolu_01BQYRrU5idg6LZjvpDhHEbq",
+     "name": "select",
+     "input": {
+      "ref": "f2e179",
+      "options": [
+       "Edit"
+      ]
+     }
+    },
+    {
+     "id": "toolu_01T6D61Er1XFpq2ijT9cBmHX",
+     "name": "click",
+     "input": {
+      "ref": "f2e180"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Category exists. Bulk edit both posts."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_019KXwqraFBHVDtmz4BMS7bD",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e195"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01BQYRrU5idg6LZjvpDhHEbq",
+       "toolName": "select",
+       "input": {
+        "ref": "f2e179",
+        "options": [
+         "Edit"
+        ]
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01T6D61Er1XFpq2ijT9cBmHX",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e180"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 19452,
+    "outputTokens": 183,
+    "cacheReadTokens": 7256,
+    "cacheWriteTokens": 12194
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:9c327ad2fec8b9e7868fcd5ff855add5a10b8ebf647548c4e3d2fcdf54690efe": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Sstxsgx4JU5PPcvXVewUE9",
+     "name": "show_part",
+     "input": {
+      "part": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSuAYKEAgTGAI4AUIIdGhpbmtpbmcSDBL8K3uqlof0AOM61RoM2JyGbmlLoeaHSsUpIjDu8aeRd+LSKXSIA4hXc/42mAxmgRgLdo/JCGFrLfu+um9ml2maCb1UZOZOothXTncq1QUrkKXz1Xj4Ls50eu+uMI+w5UvuOUpg8qdn9h4n58Kj15L2jT5Wv7jTYMwJzOg03Vk1U18TSnahGqv037coqHfQpAWt3l3phEKh/skM6ZsAC3ryNzNIQ/xESeB7MC/XXzwBSDL6P44QabvVoGK3sG9T8xm/eqd22UKQUZGvLmaVOXJAHrC+NYOyUOO+iTzceOd96CknX6XSvZ1oWIF94rzjqqO5XHkbcMqFuUrVzwEwgBnAEYFmoYaHK3Vrg7FNu8RkmrC63h0Cmt+uoWRJg/K24NhGALkj27673w/zaP6l1ZGwoXax0nI4WP+wBOOCO4lBl3uBb95g5R4pr4Y+ZL1dLnwk4i3VXMo4WATOvAy6hDfejGsH3Eh0GQBsyKBGyPF/42VGaLI/+BJCBIhJTyd34v+vesSziKJlGXo8DZXbiPIux1FnGkTiHZMqbC6yjMhlKKKl4emzq2wfdDV4loxzN2B4Wpswtm5QAhTrwW3RW5bQ67tU9wyDf6fxbn1xU/kJSI6Y9MmKN6Yfaf60iIXD4DenkpQTjUFd8u9PQDYpuf5zE2BK3ijv7qjdDzEheBQGahLOzod7vuR9zvCW7DQ8/t/CMwwl179EfuEYMU9xKxLHNc7b0IQ06ZWGeOML+gxic2m7ZdecszYY6yOBOyrwkuWeE2CudG0REPsdRzv5BN48uTQ5ObICEA1Sx1DV7Je56lZy/PLhydPGN8s4hkW8OUdOXZDYWJ9JHpz5qQ33dr/zNmheBs5kpkHO1ayqdvgI4sRsS7Fvq76/N3dXMCsbQllBOnKoI6DxKqV1POectamqfUhdXKy8szMZG//Ka0Vp1kv6rGYam+dBbglGjPiyAsz54vzUwBQ1ieflNVH7fDVYppblUEp8IFQ5EispkDvYTsCIxWbURgqhQV8LRTpM5ZXTDOpQVLPwa9n/GNH7zEBPIHtzQRX2hDgbylcUWAn4gCppLhgB"
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Sstxsgx4JU5PPcvXVewUE9",
+       "toolName": "show_part",
+       "input": {
+        "part": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 25645,
+    "outputTokens": 99,
+    "cacheReadTokens": 7256,
+    "cacheWriteTokens": 18387
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:70eba51917eed6b11b3550590a1265ae88764040949b8a8f3a3ee0bb5a3bbab6": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01DpiiU9QUmc2Bm9gDLrRSEG",
+     "name": "set_checked",
+     "input": {
+      "ref": "f2e346",
+      "checked": true
+     }
+    },
+    {
+     "id": "toolu_01REtkrgwNDdh8FP7sWcn5fK",
+     "name": "click",
+     "input": {
+      "ref": "f2e387"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01DpiiU9QUmc2Bm9gDLrRSEG",
+       "toolName": "set_checked",
+       "input": {
+        "ref": "f2e346",
+        "checked": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01REtkrgwNDdh8FP7sWcn5fK",
+       "toolName": "click",
+       "input": {
+        "ref": "f2e387"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12821,
+    "outputTokens": 120,
+    "cacheReadTokens": 7256,
+    "cacheWriteTokens": 5563
+   },
+   "model": "claude-sonnet-5-5"
+  },
+  "sha256:1101e9bb8fc3b4f7d797f88f5be304c3b64841299b6898ab3d8cce7a3bd31db7": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KFsqaf5wV2cYd8aHmBK7v2",
+     "name": "finish",
+     "input": {
+      "report": "I created the \"Community\" category and bulk-edited the two Events posts to add it. WordPress reported \"2 posts updated.\" I didn't open the Categories column afterward to confirm the assignment. The two posts were \"Spring meetup recap\" (a draft) and one other, and both stayed in Events."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01KFsqaf5wV2cYd8aHmBK7v2",
+       "toolName": "finish",
+       "input": {
+        "report": "I created the \"Community\" category and bulk-edited the two Events posts to add it. WordPress reported \"2 posts updated.\" I didn't open the Categories column afterward to confirm the assignment. The two posts were \"Spring meetup recap\" (a draft) and one other, and both stayed in Events."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 20247,
+    "outputTokens": 139,
+    "cacheReadTokens": 7256,
+    "cacheWriteTokens": 12989
+   },
+   "model": "claude-sonnet-5-5"
+  }
+ }
+}

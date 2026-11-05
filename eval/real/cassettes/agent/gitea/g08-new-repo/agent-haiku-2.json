@@ -1,0 +1,273 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:50:45.870Z",
+ "turns": {
+  "sha256:1befa6531c862eadf6f4377bdda2f5515edd0ad8ac7285d70b88e2cb4d4d897d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01PDN7QUT2Fs757VM6EMTKc4",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4310/repo/create"
+     }
+    },
+    {
+     "id": "toolu_013kimxd5nytjVHbaz68o4Lt",
+     "name": "wait",
+     "input": {
+      "seconds": 1
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01PDN7QUT2Fs757VM6EMTKc4",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4310/repo/create"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_013kimxd5nytjVHbaz68o4Lt",
+       "toolName": "wait",
+       "input": {
+        "seconds": 1
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7139,
+    "outputTokens": 103,
+    "cacheReadTokens": 7135,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:13a6ff24b586f46e8f49cd11414f8cd170c7b599356c7ed0bfe258cabc5a441e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01P7wZwhbDt585hoNP4FnhC5",
+     "name": "fill",
+     "input": {
+      "ref": "f1e49",
+      "text": "meeting-notes"
+     }
+    },
+    {
+     "id": "toolu_01TUgEhAFj52rVp2ud3q3xA4",
+     "name": "set_checked",
+     "input": {
+      "ref": "f1e54",
+      "checked": true
+     }
+    },
+    {
+     "id": "toolu_01NQARDdPZfvXsNLSL8WAfsM",
+     "name": "set_checked",
+     "input": {
+      "ref": "f1e92",
+      "checked": true
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01P7wZwhbDt585hoNP4FnhC5",
+       "toolName": "fill",
+       "input": {
+        "ref": "f1e49",
+        "text": "meeting-notes"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01TUgEhAFj52rVp2ud3q3xA4",
+       "toolName": "set_checked",
+       "input": {
+        "ref": "f1e54",
+        "checked": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01NQARDdPZfvXsNLSL8WAfsM",
+       "toolName": "set_checked",
+       "input": {
+        "ref": "f1e92",
+        "checked": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12222,
+    "outputTokens": 218,
+    "cacheReadTokens": 7135,
+    "cacheWriteTokens": 5085
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:30322329522fc00637984e7a8182ed76f3b4187a35d54338ef738e2997efb91d": {
+   "stop": "tool_use",
+   "text": "The form is filled: name \"meeting-notes\", private checked, initialize checked, owner alice. Submitting now.",
+   "toolCalls": [
+    {
+     "id": "toolu_015KpeZFJ4sbHFcNwDBYCYyB",
+     "name": "click",
+     "input": {
+      "ref": "f1e109"
+     }
+    },
+    {
+     "id": "toolu_014vzYVL4oDJDqDXm2KfRep8",
+     "name": "wait",
+     "input": {
+      "seconds": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "The form is filled: name \"meeting-notes\", private checked, initialize checked, owner alice. Submitting now."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_015KpeZFJ4sbHFcNwDBYCYyB",
+       "toolName": "click",
+       "input": {
+        "ref": "f1e109"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_014vzYVL4oDJDqDXm2KfRep8",
+       "toolName": "wait",
+       "input": {
+        "seconds": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 15116,
+    "outputTokens": 131,
+    "cacheReadTokens": 7135,
+    "cacheWriteTokens": 7979
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:6df21b4669aeae9c885bd0b478580e70bb651a0d54c597ece4207fe0d983b8fa": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01F3abxkeCQEYzy3RGpvfnUt",
+     "name": "finish",
+     "input": {
+      "report": "Created the private repository alice/meeting-notes under your account, initialized with a README.md on the main branch; the repo page shows the \"Private\" label and the README."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01F3abxkeCQEYzy3RGpvfnUt",
+       "toolName": "finish",
+       "input": {
+        "report": "Created the private repository alice/meeting-notes under your account, initialized with a README.md on the main branch; the repo page shows the \"Private\" label and the README."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14931,
+    "outputTokens": 94,
+    "cacheReadTokens": 7135,
+    "cacheWriteTokens": 7794
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

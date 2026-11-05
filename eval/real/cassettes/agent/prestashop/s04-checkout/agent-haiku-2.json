@@ -1,0 +1,881 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-haiku-5-5@low",
+ "recordedAt": "2026-11-05T11:40:34.542Z",
+ "turns": {
+  "sha256:8493a5011ea791cfc7f21fc827a80bbf8a9521ad64c7121a7deddf54c7192d51": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FogBsXYsYSDVUjtfQKNDKS",
+     "name": "goto",
+     "input": {
+      "url": "http://localhost:4330/cart?action=show"
+     }
+    },
+    {
+     "id": "toolu_016dWfpZ63ce3XeE1gbxn8Nc",
+     "name": "show_part",
+     "input": {
+      "part": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01FogBsXYsYSDVUjtfQKNDKS",
+       "toolName": "goto",
+       "input": {
+        "url": "http://localhost:4330/cart?action=show"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_016dWfpZ63ce3XeE1gbxn8Nc",
+       "toolName": "show_part",
+       "input": {
+        "part": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 7410,
+    "outputTokens": 104,
+    "cacheReadTokens": 7406,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:30b1111bc585ffc0106844976eee8ad1a0ce84bab3a4f8af6ee62feb784a73c9": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_019xGrR8N8ciJ4qtygxVpfvR",
+     "name": "click",
+     "input": {
+      "ref": "f4e142"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_019xGrR8N8ciJ4qtygxVpfvR",
+       "toolName": "click",
+       "input": {
+        "ref": "f4e142"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12012,
+    "outputTokens": 49,
+    "cacheReadTokens": 7406,
+    "cacheWriteTokens": 4604
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:c3b4a26da9e5b0edcb6ccc438c90934d84b8180e4d6db759c534917e8e54fe7a": {
+   "stop": "tool_use",
+   "text": "The checkout page loaded. \"My address\" is not selected yet, so I'll select it and continue.",
+   "toolCalls": [
+    {
+     "id": "toolu_01VjYSsKSJVBKYctzRSpxz95",
+     "name": "click",
+     "input": {
+      "ref": "f5e52"
+     }
+    },
+    {
+     "id": "toolu_01JtKFiwK4wsJwEtPFS1tpQy",
+     "name": "click",
+     "input": {
+      "ref": "f5e67"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS5wYKEAgTGAI4AUIIdGhpbmtpbmcSDPQujZ83+oLSsNBeJxoMfkxS+qgZDtnbqzlwIjCt2cy3bBaOCgrXadLeJhsF77DCRZuWVyGuLdsEYi/faZpiqkp74t+nEBXkc4BYPMAqhAbEJiva3qpZfNSxb2Hj95Yv/57Ygx1+fGVYVWCFHVX4ZiK42OcRu7r7ZqIxSFCyldBuMJdUkcn5LVJq+rlwYK8TQkW0Bp0tKstBU6lSmpRE37CjyLK+sSe83g/DggcTG/fZ0kVTO2Vt6HfZh+X/PSL5zOH3/N6LLLGL+802bzj8JBNJmw2jQd/qdRC+1NnPYBTOjq01FYm2PNeXxw4qFKhd3a6y+jzTIlhuhl+mnESvj/s0i95dolLWLOx9TVSndaJdjSa5nOpsGdn7cd3vEWgo4G+LDXoX8viLnygFNKiUH9dvUakbfIRgJbQQKV2cFaQKvm/8nThX344PfsRQuRmdW5IiLACO5NBX3h6mnqXjlrFSyN0wmZVA+T7FjAnLkuDD/2/uVn+4qGUeliRWnJ2e/oISddwi4oMHZ1Gz9427YiWBrSENo5ZrsC5ywwnPRJQmLfKokhvrX1EQWiALaDK0WegivniE2dPk9d/kJtngxM5B/wUTHMf85DKqQYWPFiAmNIXLoL7lT97WV0scbsxzwRKO/y5rE9PE/Hxnt+iGTlYPN5B7TiES/uJB7Akkdq8bXzTQ/SJvQf2/9AS15lBnszjXmFxnDlKjPKqNLQ0O8KXInQpI0OBfCh46laLlqprpxEpDpuoWXbNgzzKVgVZxG7yYwpRDVFk1/gUuIj4vuLTqsgcu7NBU+FP31moAwl7bfQChuMQeLgVtHcBS3gym3Qc4r+xjQic8yg3wX9/TYqmiRt0AR1VQINImHfQ1f1703igDiJGvfj/sEPfiBFCEVEHBcDXL82WSlgoCmu1ghomT97K6fzWB4jBFN93nYEEpDhOlxYaGSSYKxRg5EGQiOOMmd1jHLELGpyQGbzjwRNkBaUSbFY0zkRCsYh5W2kQTEzccXdYmKZjVUAhU2wL2FdAnywiOnwVntY4SiuwmFQy1dhdxyDtzCIWFdpzqOXjQKF/P27EGBt1W1VuMrRrQcBapB+MsXIWe5cVEiDwkBMOnMmGf8c9KIf4KDL6BtLupMuRvGAE="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The checkout page loaded. \"My address\" is not selected yet, so I'll select it and continue."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01VjYSsKSJVBKYctzRSpxz95",
+       "toolName": "click",
+       "input": {
+        "ref": "f5e52"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01JtKFiwK4wsJwEtPFS1tpQy",
+       "toolName": "click",
+       "input": {
+        "ref": "f5e67"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 9986,
+    "outputTokens": 198,
+    "cacheReadTokens": 7406,
+    "cacheWriteTokens": 2578
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:95f09b51e47e3ff070d026057e96bc208ae6c00d0ebd286ca8e5fd645d9442b6": {
+   "stop": "tool_use",
+   "text": "My carrier is already selected. Continuing to payment.",
+   "toolCalls": [
+    {
+     "id": "toolu_01J8rGgccuV3YtwMWEHSoirs",
+     "name": "click",
+     "input": {
+      "ref": "f6e59"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "My carrier is already selected. Continuing to payment."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01J8rGgccuV3YtwMWEHSoirs",
+       "toolName": "click",
+       "input": {
+        "ref": "f6e59"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 11847,
+    "outputTokens": 67,
+    "cacheReadTokens": 7406,
+    "cacheWriteTokens": 4439
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:16bf6b22043a376c5a42313ddfc0095988f56b4eeca615df06bedbfaabf0955b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01U2FdgHtZxm39PvjQMbWZ4s",
+     "name": "click",
+     "input": {
+      "ref": "f7e44"
+     }
+    },
+    {
+     "id": "toolu_01PXa2kGTF1b8GxBGDSCZAx4",
+     "name": "click",
+     "input": {
+      "ref": "f7e59"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQStAsKEAgTGAI4AUIIdGhpbmtpbmcSDCxRIOntkSgxD5Bz0BoMqNsMq6RmFWMI8m5cIjDMlyx24lDwmtIYWt4Itxj0p4b3zdU8q6cOg1Nn+IAqWjHaFgQfHM/oEojezG/wVWQq0Qp8FxOSaNXOVtymkbxdJzZ9ClWkiDol5svzdgoSxwQhQW5ixewMRRhEtOuLGDLStB23MkdU7aCWxebtiIE+AB/fAluhpjwDR3PSMQMnB5qSi8X8HJQU5xNE2/aUYrJjtX6xDlmI7nE68viyz10PhfPFDsF1jFxvfBkPddNCUYu6FICb6gP6YD0FHdo6KoTAZh/4lvbrIX3VjTTlJJ3KfE4SKGXuerE/RkZSoKfdA81yXx2wc3Yk3W+aXcs3aQZ29WnYNk+DAH+O20eHWaIfulOiNdHGwoWBTdS70aOwebpdF1wUYQJsbTvzV2dUDlCFvte8mYw5KqMnsUY7NJpG8s20rs/KHCP/QPMtC/hKsjrOD+nJAr4lLKIH8YHpqeHd2rBMhYSyNMjiok6dCU6n6W5gdlzcZqTrQux7jc5rFZsEBmDlin061nwrGdy7sWMR9AHugkfnp/gQXiOowmEEqQiyC5dMLwo2Ymu3pD5Lduy6uZllf/MQ+b8cRMYbrq2tknA4/PrWoI19R8X2qlKmaL1Rxe54C2LopRI2/TweWYft2YfKf3aKNCVhqji+d/89x8NwNqBNJ3kt3pNGeUUa2qtYuGAX6FpPcQDbWsbsimKgYcjCkvF/F6U/Fa2ab8RQupjzQQ1q67kVTy0lOHAIigr8AAqTrHJptUUk6vPW1vtBJkA/xAQZEn2Y35ddt7dYqiIn9Jsk3sMFNYydkT1cLWAVMTcquxJWrLfigpXXGbE9HcNqRSqNQV/UqNCdhmyg9MHFVsaasL/N/orGiLRq93E8lO8ZXoAdu22si0uvE9jG/wJ8VoG2VCN1iqKRydOUdgtqpnwPyq6vhVcyb22YTyvCv8xWxavQkIAH1A7B7w7rLMwWvkKh/pL0sHtsSmuRkXrpdCnx9s1Dhs3IvcE5qmickMYCug0wdV/9OOp3r0AesFirFfEhPp7RGgWpJaicneDDJHvflS381LhWBWAWLrEhDEBeA4dR+goNaFtoYU6vAXWmbDHZwLqqfazlgH7lkHtsK5l4axRgQGwkfXww2+nGcA9WmkhkIlY+Gyvih52xKxBp19wU10mPjzTPNN4P23xeaNznkerMceeeHFz4O7XYH/YFdZ3XopP4D/6G5QRJv4yZyvzenu/Xz9ZxA9BJ1EcHUprK1u/9hxzhyLk3rMdQrkykwO244iLI+3Z5x3mOxNbmXelCMUTLT9qiBxcF+5u7J+YGw2eF7E16bYx8W+65yI9q0mQi3JIduIxY1p4QOjUvoKhvoVpkyl1aG39YP+NlJANMzQv6r4KpXkJAtpZSmfSAQI5hne4Ejn3q9AdV+T8uI6wM4EzbwN3gECAPH3mRywWraHUDf0I2nT50WWTh42anXygCV+Pqo450LNVVyTJmYCVDmu3auVzb5aKTLPj1lux+kphCQVbWmEJ/4a/2x9y8tU8bxkcC00W6F0NYB7RbUjd2lJnxODm182Fu0kHwQPgeVpwsdbki/O6LqA57+lj5ZtGwOyuMIJKieBbMCErU9Rf1HEbF8oIr4asbYbmdZwJOuqldhc+v3m4l8wy3917rr5/wTHNuWRke2x24usVVdC819ntZfn5iVWccURTg8wSkoD9QSYY6M5rCDAHZ2NcqalOxy5xHy/rFmfdRG3R0hVPYZHOwe4PLDD+gsUwqh+xcG7KSvEYN2P5jwcM7Duuwkt/4EDydjybxELzuJFmlqq1E0y6bf9dpW8Z7IapqKufHB7ZEd1aQNSwucSYYrP0ToFj8sUbd8BFzjQZjpFfSWC9Nk3c+CvR7J92nnAIYM6HO69sShaKA+XOvWTofZhgB"
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01U2FdgHtZxm39PvjQMbWZ4s",
+       "toolName": "click",
+       "input": {
+        "ref": "f7e44"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01PXa2kGTF1b8GxBGDSCZAx4",
+       "toolName": "click",
+       "input": {
+        "ref": "f7e59"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 9851,
+    "outputTokens": 325,
+    "cacheReadTokens": 7406,
+    "cacheWriteTokens": 2443
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:05ab727229437f3c31db7e5e9648d1d62d9ba2cd5a922eda5f296fea3b5704fb": {
+   "stop": "tool_use",
+   "text": "Before placing the order, I want to verify the address selection, since I clicked that step without confirming it.",
+   "toolCalls": [
+    {
+     "id": "toolu_01Xg9PK8SrMndkPmDyvR28yY",
+     "name": "click",
+     "input": {
+      "ref": "f7e27"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSiwoKEAgTGAI4AUIIdGhpbmtpbmcSDKaDWU5cvWTrNKTmTxoMxQZtecVR9nbLmmvmIjBffuRju10PeJAlVIA7HQdjKAgLwMC4wlTvuvm2gN/vLCXyEcz9pfNMp52JSxAgeAsqqAnKj48Zz7DcbNqWDo3ktHk6pwUkinzDA4JkKDN20+TDfb7zVOlps7UgQZveiXCcJYn+cBvyGZdKE52jUDtFtpDpfSYkrbanzTvnzr1MEkAhYmLNDVL/VwYJyyAZjCFQCNRBhfTR7oPkFlnjgLKWjsFgfaRDdBxhVyrNyRZQHfbQUXtCoAkcN61d6CNjNsOWyX1MS3ZDaCvuGHVB9T9Z51SNnfXbMrx36Vin8I9EOBkj3Q7pL+N7Q2Tau+22+s1WBEOEiMACCaLgA/qtUZMn7OeXj+FcNxa23FNn77gl6+M5CV9tHappXaTiNYoNEo/gxJMlH8Qo/ZEsWs+/oLpkUsWpMoVT2QqRy4Pxwl77mvrGM8vOdrUrJ6mcWUEYr9TrfoHHtfnwhBciFpPHjrh/NzjiWVdr6qvTFl/KCYqChpi+ij9enZiOs18P+wZlEnU/1lrAFsn24zHRLwMqxOUgv7UucOMfilJq4ZU2SpSyjVHCImryvGNxXgkqqTqknLDbuqRe5/3sRhaGLmBAueysZzaJH9oFbzEs2bsbW9+YMcXVzPGmLavxGz7ZgIdPG4uD/Vh5XvI5QehWH/ChIzVf8/t6NMZV2bPLr+x/8eZyspTC8GLCnN1AGbb5yNly93h9/JNr8BD6VJRQ6aGs+Ye+QcUukzV4ZeM+6dLYI0GzWoYb2kOYHYw2XDGC9BZDDA/KrRacpYmGrvCdhY1IyJBccVWS9WnFXThO4bbTS2qsZ9xJISciGSEmkV1fBc7gk37b/FnPEhktYsR9y512J7ol3ampEuFrTqAZbIwVYF0LzKLmTr6lQuyBVBoRvOFjWcDNIX1fG7RzA3JfPqTUMbQ5UXmcVEVm7QiL00DAV8bQH4oz/nA+seMLUweFpke01Z4wj6yDjqbv9Rv/wxmIS6vyc74lGSsEfOFyS18dmOr0QwsyJ24et1iX27cQjnhRrNx4gikiEi4VNl7zUo5opG0F9mwuCIuWstKtxqL++dWH2Xq19eBLuYFqtclfV4dQT69gK/GdSlcGNz7j2ecqPemJXJZUmXksVP7wB/cVtNHUeP7BhVRj2fgWbCJPCqfJI5pcgfzpA7o2CPdL1FD+zvd0ZbZ/wbJwTClwk93BF4bV+RxFkdvmN73bI0sNdbee0qPIWi/2+707sw90t4Vd2fFm3LzifvTbz73VYNdySaJeHJFEzcMau5EXYq0+2CzA5SLYSzE0/0fhS71ONK+zBNeIoIKVQkIaGSBKRuJggc7PJAUNEumO2eI8/T/5VBGVssNTnO+AEht00NyfsPK0M9hqrzmH9rrBmdv1JRP8h1gGEMmPeVzTDh6ni0vu0fYFpO+1ly9qhf2ZRsavjpM6iGvufwv5Z3Lt4GEh4++a/lfmE887dik/HzvOcH9ODjyLyUWX1sRyKXUkJxsQLUhwUTwJCrNdWE8mKFsvHID5dOp8fdM+sYkGnQXZB0Y3woaP9ss9RJblO3Y0GlBsXgRORm9cNBl0WYmql2SHsE/qxYH08abYdBAR8uttO96iEckSzg45qfHTgnRUQVWPtWK0EM6VKIjbPFJCd44a7HAyo0z0O5fePZ4aZUGkr0Q3GAE="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "Before placing the order, I want to verify the address selection, since I clicked that step without confirming it."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Xg9PK8SrMndkPmDyvR28yY",
+       "toolName": "click",
+       "input": {
+        "ref": "f7e27"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12179,
+    "outputTokens": 242,
+    "cacheReadTokens": 7406,
+    "cacheWriteTokens": 4771
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:6f52ae033e1dc3a8cb49c0941e017a2768691da45ad4bbd5b402e768c18bf294": {
+   "stop": "tool_use",
+   "text": "\"My address\" is confirmed as the selected delivery address. I'll continue through the steps.",
+   "toolCalls": [
+    {
+     "id": "toolu_01VGpyYCSLqd2zwQBRsYQK2r",
+     "name": "click",
+     "input": {
+      "ref": "f7e144"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS4gcKEAgTGAI4AUIIdGhpbmtpbmcSDFEEfhWoMgZKtBe7MhoM+BzAHaT4jojYY6T5IjDvzoiqSLOUlhBKIINSfLe+2bgP/99S+wgNbioJC9iz0eQFVTsxMIL+d5sekDFpDrgq/waMVMY+g+AC0FRb/b+hJgYE61xQjWjrqV5oBqE6/E4952mAgQv0anMi9ThBMW2RNpxRYTLKx92CHr9YWQD5q0jX3LetBXdHOShNYPgYR7I47wibEaN3qSVQ6DiNckUDQGwSA+tGQxOkouHv0045GlC3LoeJ1uhxjvFd+W7dLJYnDI/GvLSoACgUAcIRwCmNr+YFoA7o2L2+tirhkeHDOyhBKUfX7xGUuKs7zgEOGyQrz35j/k0Kh56lu3Tfa6scNy0U7792eeOLsa7PKd0G0exK5J26zFnQiEp/wFtKwJ9/CHmSbGpRoaEqUp8z7lL2oWl8+gcXEb9CsLXapjusSPOrJKjwu1t+ENCypY8KafHJfutMaUS86z5klMeLfgDNQDdSc5mIG0GvVJxu3WtuE+xmP6AERi1ZlONzWSI+R1EMRwn4bc5oGZGEOK0ctrBR2lDCN/4NdQOImQisEPGOM1GqgzaGPrSx8kfbVg0+2GbrWHqsJvfDkCjNiNMAepaZJmBspoWB+s9r7lzYvZeOjooqBdY9Ma9CiJd6HFbb5EMGCYiM/P6tMX4qu5ANlc9+tiV+E70l+ZM4+n7kAiuvXhsPLtJ0D5obPUC2KtyrZ5ytP7ah9yguksCdjTfhMK9ofbNwmNSGOE7nlPCP4P4qG4t9hr6XXDVw6EvVpsgNdGzQ5wvhel13B1jO85J7tYtEywXP2Xwk6FZIrRVPBd/hUEN/wHS8XhID3UDmVuTN1vf9grrQ6mOXw5FQ1nAPeyLei6OSHcNK0fOBoL0919snChepqwIotFuYuP6+D0PPrEwVLFC8sAfi7l2EWhzcPgVeLf07VfNEZKcmlivkLzhDvjpv3VH5r0eSohg6uDJKesygo33PKirjhAUPN3vbktlrhwmju5cxBWgFucHtfv9/tUezEO+qAhRlqorYi8crkbs+6IfS+k8EWYPclkN5405viU3eSS+vCFVYHeWPrWwucfriidIm4m6enCbaUIxjOf0GZxCAoGA+eRf/24R/vR6FMoDH1NvMaV96ACWdrjNMf9C20+Darngvrh/kURhVHE76JdgXbnz3mOQ8Jeob2jj2As2CXiqfq1XhmyvDxqrwk4iHbmmwgEatMXp2uSfj0D1zF7/nxj7Qg1IaArO282mZFMTpqSAzO5cxDNuAiBL1I2bNAsod3CwWC+NqzazuMTiUGAE="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "\"My address\" is confirmed as the selected delivery address. I'll continue through the steps."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01VGpyYCSLqd2zwQBRsYQK2r",
+       "toolName": "click",
+       "input": {
+        "ref": "f7e144"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 11125,
+    "outputTokens": 147,
+    "cacheReadTokens": 7406,
+    "cacheWriteTokens": 3717
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:2cbda4795aa6a4d613894fb2273a2272944ad7223419194ce018e96dfcec99a8": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01T28hwxTaM6yEbrPC4VzxuH",
+     "name": "set_checked",
+     "input": {
+      "ref": "f8e44",
+      "checked": true
+     }
+    },
+    {
+     "id": "toolu_01Ta4vTpABBmYsR8YCuinkaH",
+     "name": "set_checked",
+     "input": {
+      "ref": "f8e59",
+      "checked": true
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSsQkKEAgTGAI4AUIIdGhpbmtpbmcSDJUzmtKS+DujIC1dcBoMr50ofT2DpE6Ty+98IjCD8SpQkHSoTmwe5PRAVjeL/wYXWxJ5hPRZsSGqQHZBu5ms8P+8WuhgtWKUrX2kISQqzgjlu8vQp+wI93EmyEzMoEJC2DMZEou2ubVZwfRKSPXz0ZevNzoSOSyKKWH5lMLfetutnc8Z8gsPrlhQgR4ilWNfgty3R0bkvgien4jQCUP6kKVjlvPa2Oir+fSWUriHI5IAc6Gau37ZHyUW2hzZVUCyQJ0NVN88pZv5Z2qYPmfG1WUQ2L7JP3JFVPqsw6UeP+jm36LhCupPRjaRtSmAXNQiNvrQztF/kGNjaWVQSziJjGf1n2iY5a4/MkGThXXzlIpSzM6w7wniM+6lAHDvBt/wok9pTt6pCxs4psb4jUyBwOMvI/O0UwenpDdHGZHwp5fM8KlglhIaowBf8srd3b5Ah0F/c87eY3w+p/4uoB+L5OG6RX5xYqoI/EmplMCjP5H8QeOBIJ3qsCzYKy/AfNqyiMcU8sANQr5JTrML9vdJpBCO+tLoW03j2TdKi6mf7ZUATtq6Nc8YLYUX/sLrzXfE2PRJkfTHbBjb8J7StJczP67/iDQKQJkIh5nGc+l+E35gDamV2HFT8StPe4FgoPK7sdRBCIOOohJEg9Bxi1VOEXcsuZLxqmIZPwrKZAX5u6d7naswjtsSLMfwFe7K30NMlR3qfeOufpvZ78hshyA9xeusSS0EJVS8eOBiYD9JzkhPBCy3wIV7959fmajSaJKBBoD4fDWgygfAM52/bWQ9hDru+S2iGRYYm0x5cB8f/bSDDIGGzikKekeJPoHGYl3Ac44i6lwDfK9AqbvTUi4drSXZdEc2PlzfwAAzxNPxDYL2Z31T+ltB4jn59OPSFyMbfmbwdtadsWFg7T/GfiQ70fU7ZgJmnaWxRjO+T2Epc7SkxUaFjuBTKrHZ6ifvjjefR3orKiFkjr5tkYw8XJU1cdWWSg9vLRIxJUziM2rys5flxIXiDlDvPu8ovt3VldZN1eNY1COUtvOimHnFoySGo0Ymnp6tXKK10Cp2/8IhtP1a61pMAG/uemGHAQ6lv+ZIv8G29ZaN9fv5/xBw7SF1BwRDhjfN9C3AmAhHBGuaCmfmBY9GQGvRlVKwup2AxD/9fkGF+WKSrk940PsR/HaJPbhwW3Itbf9fn1xR471nBdjkBQRB+H+OQBSuS/ocg3XpPuftOZr3TpoH1izZdchHvKocOY+WP/mSTPNobLvENCFie1RNzRdFEaYCRNMd3HB77GQTHNxdeE5FCzcOdcFtWauLyDHtDpg7n8ERyF3jwSjhS/wYAniwDDjD/iYADgVIM2gvuJs27XsIQbtAUnd8AVujx94wUA6XAW4vNkXcPiYeu+eAM/UE/wAMlvU3YTlpa/15iVpWu/Xj4xOHFdzd2bH8NO9sae8Zm6gr6DsL1b3PX5VnBfhHRAfgdAc9Lr5knNbND+8UO8tfM8cr9dRY4Dtyh9IKBAqKeZ/nyDEAfRM/Sbcvjh7MsXsR32YSfR7Aov3dl0P5gPoY3WzkwesQliRTgjCN9aargc4dpTPBGAE="
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01T28hwxTaM6yEbrPC4VzxuH",
+       "toolName": "set_checked",
+       "input": {
+        "ref": "f8e44",
+        "checked": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01Ta4vTpABBmYsR8YCuinkaH",
+       "toolName": "set_checked",
+       "input": {
+        "ref": "f8e59",
+        "checked": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 10759,
+    "outputTokens": 285,
+    "cacheReadTokens": 7406,
+    "cacheWriteTokens": 3351
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:fe3fc354e3c1ad99c5f4d652c550e227f8c22b3026157bb6411f34fdbd226fe5": {
+   "stop": "tool_use",
+   "text": "Bank wire and terms are set. I haven't verified the carrier yet, so I'll check the Shipping Method section before placing the order.",
+   "toolCalls": [
+    {
+     "id": "toolu_01MvXJUgPSYbnc3C7bZuppEQ",
+     "name": "click",
+     "input": {
+      "ref": "f8e34"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSsQgKEAgTGAI4AUIIdGhpbmtpbmcSDOZAHsdfyocupK/2choM1OOy1V0CPHh5H1fzIjAAHA+PZX68lWjYx1T3lXbKk/T3W5PKVgsY6i/ANW2EU4705wsFrtuVE/qNGaTvapAqzgfj6Xl1QR7qghcmRB1Vp3FiY4Da7yj6iHow2x5EwvCpPt3dTuvkv/CVmnnutDEYNef1obHrzAkKLkZKZItyPCHc0m2pykejTbdAz2xlZnjlZbyh76P3azOqMu5YGT+cUfXLme5W+p8Ax+sbDczSSuaiMvgMfISPxSkk7y/ImdMlPGuWoOnQCb8ing23c2NwMQxd34Pxse8uOLdxg+88bGVD4JozAC8eDBfm4vcTheOk7mnmYGYhZnyllh92Aic1lXDAAa8z4sTCBv5QBCWwWwAgpVRumtfXdOp2cRJcp9Jeb3ruE4a6pEKbC7Bwm1qSk0un/vLExN1JHy8t17yrhAISxC0uNmB9cTm0rK+uclVikOw52ehTU9dz6XL8ExtrQyTnvDDD/jxk4m+y8NylBW5GtSfjDSjLXehvk4m5fuwDx/p/+GJN/vWKM9nZyfpMNKCTLreF8J0HdWjP+T0URvTFo2u0g/3g/zAHD+oGI9PT0138Esw96YyMuSAr1Y82sQ7EVRAp4x0z6rwlsz3bySmhXx6/vPM/Ym/LPe6fzyNV7EmSqn7bPHsyzMuIsWbWZTgAmqnlZ4/dlUnOq5h1QncXGTFS8gCIYr8vec4itUoV/1xF8Pet1xmWKehhlhyHq2cPhhn7WF/LcrKcLRHLqMdzQdN5SNIR6eey49CWgP4UuN34dyqe4LKzxG4EDTGs6b3KD9l2CXjRDUD9bCC+dgZUpdWAVAMWrLj+zAIL3wHvwpH4MnX7zpKTK79R1RvU2oKewFevNR01G6dDQsW+4xaw/qVcGTs92a4yNmWG7Gi3QHuZyvznf42rv2hcJv12EZ6mF/BjUkJYnKy/mhXeIGb+BEWajR+/RzNxyonyaOhnQ3C9tsV2sXMr6ST20Y7MNRvZnJxiwPXNdgPBXIdlrjhSyYFVUQgTle769tQoiPwQOBbys/ki8Kn8xl8z4p4BWnH5ddJ2I+3YmpV9m6YayA67dP97KmnAdAdlimnK6/oxPnSCijsJgO2G6XVXDidgNIDwVrYP8/RkaXyX/KyKeJkhlnTo2NHyr2UP/2wpUdzv9z9Lnm4ehlqiA4mBJQNjSyTwSy5DyZd4kGwQpjV0jWfMXj9vreBWE5SAxe+oG/GxLUFk+KY1ePS3wIOwCplMlhQT6A7dUh/UwFF6E74k5eHodcIHm0LvoE7E3v0X2QMQW9JOjbTbsxH10RSeAT1gE23rHjOZi67ZFnKGncoQze/PrEmxaSJsBKF2OqmoHuBnj14BzkXgd+25p3daVBh2OKrXV4cFGycWB362i9++DRgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "Bank wire and terms are set. I haven't verified the carrier yet, so I'll check the Shipping Method section before placing the order."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01MvXJUgPSYbnc3C7bZuppEQ",
+       "toolName": "click",
+       "input": {
+        "ref": "f8e34"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 13053,
+    "outputTokens": 186,
+    "cacheReadTokens": 7406,
+    "cacheWriteTokens": 5645
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:ac1d62f45d8d20eed6a9dcda20a3dd57bffb5d3f6e62a59dc3f47e5ffc05e256": {
+   "stop": "tool_use",
+   "text": "The carrier is confirmed as \"My carrier.\" The payment details aren't visible in this snapshot, so I'll open the Payment section to check my selection.",
+   "toolCalls": [
+    {
+     "id": "toolu_01QuZtQH8FE9j58BnAr76tXG",
+     "name": "click",
+     "input": {
+      "ref": "f8e37"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSzwoKEAgTGAI4AUIIdGhpbmtpbmcSDOk8faHTCV9EWPnPRhoM7gWV/kw5cd7l6KUdIjBoGM7WkV38VIke/CamGzXKJZmVkNXoWQMWk0Qu3dafobfcN1Hr5Tw9JQRLYd6D1T4q7An7HNwA+SLt4ZwROrL6L+Sxsqwm8imQrzCpfu+zOgijZbRIPwKAcN7XsVmi03Q2x73tOhFhgg0S+DSJJHzr3gfZuKCFne1uXU4RqfJK8WIEvSY5pDKnU1FvBH5V0XJPzBSGzJ0uL3/mdn3oAEh0awQleXR4z9gC5mMn0g3FxNLBTYVzkOfftUD3WDr3jqX77hxhlfjh+ibPpoDUyVikpbbNwbtNk5vtA6nAFUbp9GqAVAf0Kx+DskwzsevbXY6ABqmucyzOr0Oabm7pp1h4gmin5xX2h034KVqjEDNQUQEoYzXbMEnq7RT1dLWGXjEHJkbwNOOBtK5CrQ+kps0AdIEcD54P120OQw2PnpmFFdBG43qWamYB0fR3oDuHsqq1e3Lguz9gah04GWVmy2TjYlBZ0QIQqTyVS+ge8DkDU2wvtLs03eM+OnH2G7eQPBe/ZUgtEWYcLBn3D6tZvbXz77cvTRCWKafg2wp5C9HufTQ/f7cL2AYtnEnrBhkmzZ8lMVhj7/7Ezy8VSi5epq3mqQaFFbVgPPoDh41EkIT0KMAWjmU0PXu7L/cfu7fd03aa4SZLOSsxjKyniLKngLPHFtDrMXJOCq0iB/xjlfGBdI7nSAiROihMmwmRyUv2bcUMILkGNLSwvrrrp25DODC7eWDryJUFk34zu2FaQZGwJZFqyaBFOW6T5OQ4xYR28j3wPFZUpLuJxJLRRDdIqMs7RPu5O5zKtSNepMhGvZa5GCzTSMnRFdmPzFDhUETEQMlkrQypYfRUXeHOuPoYkO3y44gq+TNXo6zZOklSlZU2hZwNMJjIUj0f9f0QlqG61MDNGzskP1SKMNMGUd5GKvOxosFWoqSdbvWUM7AHlOPdGMPYGJs0HQQAJK4q6/M59K12ZbWOLE+cuhu6c8Vr3zqKkx5lKvqZG0A+bx24Hxpfamnh3e0Iv6+QFr7cQxppOf8yejrHrUp2566GD2ss3R8x9ax4IvT5PoXOjvkcAyrFL6n+0Uv/YbqxUWflzEDOGI4/TXzTTsbcQxpQAYn5tTAbTp2xGWkaptbFaxPH+Q3WJplSF0CjjwIepFTnQ3rl0HQ2UiR6BdCemVecmKB/oySvK2AY2wy3Af9qI04+HI035XmIelgkEghwPfrO0cOCXgk4pPBh4SOY0L+I81oYFnAzvVJszqeIVLY13DylWtWNVC3wYPN1x0AKWUHfZn/pAGePLFMwxwcBvoH4tTIMO9wpqQ19sD4vCcDXAPvuW77+SCjqTN92zQiBPdotJ5mx0Nxc5KaV1XxGnmL83kUO2LOp/8rnbxKTkp6HbLXkna8lCbI+94k0ch8v1iy6j0q+2rn3aLqexOs6r/jyoFUBwVl9qyF71BN+40p52RXIu+clcZrD77lWocObJk+w1bxKP/gOseUVvrTr+YOOKgMy6uLxhSKFeFemU+Wre0Vz0hN3S9drzgeStQIqxJl7NNLHEG3bvmObTu849GX+i9CR2MoW9qWoFAyvNdUzNeRZJ/Txk2lgy33cp0G+vQxSqISZgO+Q2d3buCzImG+pjXMC5zk2d8ri2dpNgewY+Unmc1nXnDdrTqNF581Nigo5nDCcJlmuKQCOinVBSTJPOCxLXLuP5HENjy1cnuvrTR5bVyWi6tPky5PrWuhZIsxC1Zts+cMPjYblgZJkrvBwJkL9s0QYAQ=="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The carrier is confirmed as \"My carrier.\" The payment details aren't visible in this snapshot, so I'll open the Payment section to check my selection."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01QuZtQH8FE9j58BnAr76tXG",
+       "toolName": "click",
+       "input": {
+        "ref": "f8e37"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 11203,
+    "outputTokens": 287,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 11201
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:361f21879e5209e18a31c8ce1c3a38b7f87ce1ed4a1d1823938dd17a5af3e38c": {
+   "stop": "tool_use",
+   "text": "The Payment step isn't open yet; the Shipping Method step still has a Continue button. I'll continue from there.",
+   "toolCalls": [
+    {
+     "id": "toolu_019yHTb9Wr5NkqpRQfUSBGDy",
+     "name": "click",
+     "input": {
+      "ref": "f8e131"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQS0ggKEAgTGAI4AUIIdGhpbmtpbmcSDBvZzVW09sZsu2KBwBoM8ycaXBJLnVxPJ4bWIjCfK7bJgBSvIM9SJrsYodzpxaTmSNrnaHK3y+m+lbMHCNkiABiuCFXWPZCweayXSMMq7weTZJGCHoUE/+KtRloHJ80TfAShG2gcvZcq0OmoTqBbKQlguAHvRTL74k0e5YjwAPowN92OCW8Tvs9WhZ6PItmH0kKQew1tIdMkoTKp/TcDOjB8qm2wrv4gkaWgqZ54J/Mel1HA+800BI9SyeezbBO7J8yfQZF6PNvKZamA1tqq+XnpoPG+bxD9f/HeacDQ/aZQ5uecSq2d588nq+43JoTHlHPlQ9Whrs1H9enyNkO8habSQ1mjc6g0+pi467a7pKvaKMb+QYqzjAQ1tgz+KruCrXjETQjhii5D3oXLKjB2IQgygFKWJE+kD9m7q9wUFTniVq3pxB8QvD5EiPj0UXv8jNB8zIHQSqLyi9SYqE0Qa7eixAv8B0NyMEsr82lXpuUJbsl3zxaD13xUR7bkfLO0CQlVMpmSZXGFAiWYwqvlxrl5IZq8rUAos+KOMLJKv+TKp70ssz67AuYGLXsDgK2ozt3FbGacD0jCMNwh2HpfxYamXIJ8qmfokybNkHWDnjMPo2CPvOVF7Hyw1WSpChuiH/pkXtQxud0I9NrznCNLNQLdMxldSgfmofOwtHDqiKJpPf66AU+yiMcGR6dPWnCBFv+kIilcZ0gR3JwJ7cRRSr3/DVnyKKjBcL/nj9dJmClzjie1Yy5N/CXY5FtjP76D5u4HIHWONcDVDSo3X/iveZ/VY6O5bEii0Ng4HnxqcnbYiTjyUAXM3TSqMENqNA+EAa3xhdHiA+QOVfi5S2KrjmxhrOGKFjhuBCVSE774YF/NsqBO4uHXvcjpBlZpqenn3x9xrxf3hE+Y1T/eiGHQqhqRfe92TuVGcMeXM4vNi90uaU4edS+tQ98MExCYa8Tm2ufAPdR+JxQY+9xw7v3pYJg2NNZm5ITlLMs/LQQDgPpHV5jkkIZBetZ7otha98M+L6EM/N7fuNTtsSURS/rpoYf3MojXgXm7TKvgXnb2QsyvWq6aDO3xe/aPvmzjEyLyuqc76hjtKZAg5qZ1a8WcHhbTIOrr7YCNosF4tzbkyD4FIxTrWQHdTstP5Q3PuxB9jNyfDumUJ7mZez3PoXd4sdQ+qZkw3EiY1SOq+N4b53JDUEYXgtpGBSjCRU0x+0f3jSebPUBdsCqUaYsbpJETXyOSmARXVOlDar94q/EXOeIzp0dy4PwXWgTVyCVGgnyKX2oLON9TEwJQJTGEhZlhUn0nFqx1ReJJcWjdzybuRGyEOs2Xi6CbzauauslH6L1kd2Dv8q161B7XPqrLR1VqcxlogLRcuT42ax9JExBqDohQaCCCydo3lrsevQYep12NDBp2icWZaZKycb4oOmO/wFQ7s7WxDDhA4XJj5d0EYBgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The Payment step isn't open yet; the Shipping Method step still has a Continue button. I'll continue from there."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_019yHTb9Wr5NkqpRQfUSBGDy",
+       "toolName": "click",
+       "input": {
+        "ref": "f8e131"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 11528,
+    "outputTokens": 178,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 11526
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:49d52dd429fd138582065e661f29d820e92478684b4f161a1f2be993f279be73": {
+   "stop": "tool_use",
+   "text": "The Payment step is now open. I'll select bank wire and accept the terms.",
+   "toolCalls": [
+    {
+     "id": "toolu_01FLEutEts3rY9Tarxhky62k",
+     "name": "set_checked",
+     "input": {
+      "ref": "f9e44",
+      "checked": true
+     }
+    },
+    {
+     "id": "toolu_015ftkH6YAjrJw32w8f6JxUC",
+     "name": "set_checked",
+     "input": {
+      "ref": "f9e59",
+      "checked": true
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQSxgcKEAgTGAI4AUIIdGhpbmtpbmcSDOt6HcXHFgrL13FI2RoMmeh+Ixk47k8uCchmIjBfURownzQvHJu+Qa4ew00orRBcLvH3Vs37EXlt7Yt1S50VrAIdgxiAGd9kyhVTC+Mq4wZnhEY2rILD50/k7TG0fFV4xRTKK9aSvmTyQDe33jz3TGTLAmwdU5TioCWNKrtBFKPIa9tiA2acNgdOorOj5q/bnCmaM2yCjJtvxx7mmgKiGZ8d2yCXeT8sWtUcSXt8INHudPvP+KiBVcQLj9/BgtslS5JjPxIIthEsp+dBc/3vzFwAKsNSjp/GUcK/rrz+FLoR8LeeBmfOjX5ysr9oS0uF1X7AuwEOtaWygY6fZE+QfMvMvpO7BA95+1BsBn4cuVdWVSDTeoUAQOdTdqVG4Zb7wDKd8TmdX5upjmFb1hkgcebtNmtzY3JljYs6ns+kwGJJuX0ElcO7pAGmIrg0G3i7N7yH5JczPXg3MfQvosDIc9II6l1RTUOVJh7UHkcScM4K7vRwoqStDuuAOfvahkeeXuU0/ThQK5eMol4dBFNjTztn4R4R7GAmsyYkDgPi3SD7gscL4oZme+fVNQOV0IdFnPl5xcg5SUjYD8vZ1koxv8Rsqt+eocidwkx5lOQ7arulQ1B5Lz0paQKMgzGblhSUSPAx+Nq8XYGt3EVzBx7IUeVXbxAJWLMudzdpSlKyc+qOMFlxqWM9KPrBW129qe2A01YvCVzE8GB6eq/PMtzKhfMpgGzQuT8UH+aReg0CatH3dzY5fwbhRRoyY8s+1VYDbtXP9+d9TY2ZpRpGpEqQVcuHM4M9MSMlD03H7pqhr7IGv39l4QgJX5agSa76lTgfSKtPSXX6Kf4xURcqWKUnoMOeVlC+3KhpRWpeV0h0HNV0q6IiDlYrCg5a6I0ko8GPym1SC84tWEuPmfnPpMhP7jrWsbMLnNzp5KFi5jgYVH2C81M/yO9AOl5/Mf3cbVgT/WC/xUI7AIQNDDK1BNGyjz4e7EHV2We4HAyIVhql+ABR8EnZPI1U0GpTxRjLpO9GKmUGaEb+iODA4VyAyOGdsurWJQo8MNmjzD1BnceTb7d2nB6LhkrLo/ihQvDxvetVOxMQGvhu9ZViK/LtBBsIZnb40ZEcqJ/yoDYnVj5fxPGkYrKKttlWycJ+1QC+jqzClGapt21xgXCVfueQzZSqV9VYWPhgU/oZkJ0QM3VvAA/d7gi8u1QH2weX0Ps4GJhQrV5mVGlFcWfGQoBIUhgvOFoON9IDN9dIh+iChm1Z16CVWVsYAQ=="
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The Payment step is now open. I'll select bank wire and accept the terms."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01FLEutEts3rY9Tarxhky62k",
+       "toolName": "set_checked",
+       "input": {
+        "ref": "f9e44",
+        "checked": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_015ftkH6YAjrJw32w8f6JxUC",
+       "toolName": "set_checked",
+       "input": {
+        "ref": "f9e59",
+        "checked": true
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 11933,
+    "outputTokens": 232,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 11931
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:7dd609c0f5fe689f1ad943516d2f99d03db89e7baaf27b61cc57fd801733df3c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FUXUGHBgwUdQvUTo4QATvq",
+     "name": "click",
+     "input": {
+      "ref": "f9e65"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01FUXUGHBgwUdQvUTo4QATvq",
+       "toolName": "click",
+       "input": {
+        "ref": "f9e65"
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 14174,
+    "outputTokens": 49,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 14172
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:da91e8130db56eaf63d40c9a577847fbaf04b1b2474be3a17768c8963094afb4": {
+   "stop": "tool_use",
+   "text": "The page still shows the checkout with \"Place order\" available, so I'll wait briefly to see whether the order went through.",
+   "toolCalls": [
+    {
+     "id": "toolu_0153YrehkzyzmB9HwQnHe3bV",
+     "name": "wait",
+     "input": {
+      "seconds": 2
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "",
+       "providerOptions": {
+        "anthropic": {
+         "signature": "CAQStAgKEAgTGAI4AUIIdGhpbmtpbmcSDJxmNm99yDmU/9o8EBoM4pWG76MhGnE1gosfIjARscPiKXt8xxfvO7kbYhwqds3uRZAVotR1Qgvi2ECH1FZcIYvjFJAJGSKg/Wwsg+Uq0QfyY6vzB3v6nMO2ZQw5dofFCzf7tsXZzKXXcLo+rSLM6/vywKa8Zy8RrWQ1FkWvbd01JvhURmSqoKpWXXKAYJxhFpLWf7H62DhUQRepAfOnqFwItz2guoOSJM09APzG4ds1T6Lqy7NXEv1z2bN2gEcHp2KpwPvGJpjPnBpNx40IqXH7c4ouIuHN9722bXN1VFiGYikB04vGyN1vcIuwLG8daN8IDescgjwjRetX14mhSP0iCofrbYZ28gi3i+Jwfg1vNrg4kcL0FCX7R567F7sAcxyOy8LxHY+3oI1HzLWxkdru82hFZAP62OYJLoSlD2NSoL40kBvors+JoEqiUx+KTI/MvQXkW/T6WmeIH/UfiJdBPbTh+08b3pcAm6rdBbeKv4rlFbSzLaIcaWqgJiwFoJSAaKM5KMzSBT7JDtFcTRHbgTXx30RQFbj0vRWQAkKt/Xt5oNb81o6jF7go4vAm3DMKdJiL/NKvi8n/l78O5MQtWsXqVSZMt/ErUYghYCK8xQ+USvtqi4RU21nRDB3pk+sELIJm7JJ/WHRX7FrYm3ct3HcT7YzuWzomQ+gSHKgFm6wOAjOJnGpCNoiZHK6TWfxvKVC31qfmngnCdv9W5RhUY3YWLYdlZk43w4SEGt0qgEJ/Ja5N8vzuRYZ4o+xjJ1jCt/7djBCN8bGfwEfDbXMP2kBJJ1O1+lWTsi5W6EhDTNZmFwUo4yKCHxPPpst/yjdRoJwI6BYst7PJ2easY95BHWUVOpgRfYf6jWBdPJeF6dY+zepsrUmvS9ldvVIzrgWwG4wt7q9zCWWhgoDaGr0gWckt1hDtiQa5GqEeegi7OLCqZpgsxBSbz9eIqDN/OdnFKgZOPJin4F1UHDRe9VaVl20uijaiEaq4DAwNf/h1BXgUyzJxHNmLiJKhMQQRH/fGD0N7O7/mtqS4UhYpN9xucuvcYW8DoKu2W3C4zCoxZi8tWr0Q5k3k8OSyd7NLY1mKBmP+5CrBn66TVKNXGk2kezGN++gfcX4KKDBtAP1oeE9DUqP53mA/uFefWqO/MOBR+oLnZvQ4nUFL7zLnYrIwZMUY23/1lw2eXXautPxHA/4C12mkIVaReAik0W0uLZbOUfmPaDLVPWyndJqC7UZ6QENhUSZ/ZY1TSR66TCOxUw+VKlMrQjLIml+5Az0cgnVpQ1DGUzXpixI/2ROk3f+cj/TU7CJ17BE5+1sBMMxEscq7PuUks0Lz6CjYoiAPFQQ/S7vhRpGgaV/d/phe9vGl9qtp9OkyPC9qk5U3+fs9sBFxMZ5v64AoZRvaeIK37BgB"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "The page still shows the checkout with \"Place order\" available, so I'll wait briefly to see whether the order went through."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_0153YrehkzyzmB9HwQnHe3bV",
+       "toolName": "wait",
+       "input": {
+        "seconds": 2
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 12468,
+    "outputTokens": 163,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 12466
+   },
+   "model": "claude-haiku-5-5"
+  },
+  "sha256:034e9ed263be2e8fa92c98449ede926fabd072ca98175f94e3b76590a6f37df7": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01GQBeZGr4Z5tqVm94dKdmez",
+     "name": "finish",
+     "input": {
+      "report": "I placed the order from your cart (order reference CUFCJMPDF) for delivery to \"My address\" with \"My carrier\" and paid by bank transfer; the total is €38.80 including €7.00 shipping, and the confirmation page shows it is confirmed."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "toolu_01GQBeZGr4Z5tqVm94dKdmez",
+       "toolName": "finish",
+       "input": {
+        "report": "I placed the order from your cart (order reference CUFCJMPDF) for delivery to \"My address\" with \"My carrier\" and paid by bank transfer; the total is €38.80 including €7.00 shipping, and the confirmation page shows it is confirmed."
+       },
+       "providerOptions": {
+        "anthropic": {
+         "caller": {
+          "type": "direct"
+         }
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "usage": {
+    "inputTokens": 16408,
+    "outputTokens": 128,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 16406
+   },
+   "model": "claude-haiku-5-5"
+  }
+ }
+}

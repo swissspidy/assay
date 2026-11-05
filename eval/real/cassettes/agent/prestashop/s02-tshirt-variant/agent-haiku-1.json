@@ -1,0 +1,229 @@
+{
+  "schema": "assay.cassette/v1",
+  "model": "anthropic:claude-haiku-5-5@low",
+  "recordedAt": "2026-11-05T11:36:44.904Z",
+  "turns": {
+    "sha256:cb0f96caa1aaea4913f8401fcd192e74e86b8b25515a79484e4a6d7e150ec5a0": {
+      "stop": "tool_use",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "toolu_01W2bvM4aiKocgwRmdEenhNH",
+          "name": "goto",
+          "input": {
+            "url": "http://localhost:4330/men/1-2-hummingbird-printed-t-shirt.html#/1-size-s/11-color-black"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01W2bvM4aiKocgwRmdEenhNH",
+              "toolName": "goto",
+              "input": {
+                "url": "http://localhost:4330/men/1-2-hummingbird-printed-t-shirt.html#/1-size-s/11-color-black"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 7162,
+        "outputTokens": 89,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 7158
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:bd9766dc0a3345bed9069d2b6eb841eba58f6309272993ed0445832e95c31b41": {
+      "stop": "tool_use",
+      "text": "Black is already selected. I need to set size to L.",
+      "toolCalls": [
+        {
+          "id": "toolu_01JN7TVBFsUiq5u3NFYLhyA9",
+          "name": "select",
+          "input": {
+            "ref": "f1e91",
+            "options": ["L"]
+          }
+        },
+        {
+          "id": "toolu_019ynbxGGvTvAiVd6C9697ky",
+          "name": "wait",
+          "input": {
+            "seconds": 1
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "Black is already selected. I need to set size to L."
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01JN7TVBFsUiq5u3NFYLhyA9",
+              "toolName": "select",
+              "input": {
+                "ref": "f1e91",
+                "options": ["L"]
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_019ynbxGGvTvAiVd6C9697ky",
+              "toolName": "wait",
+              "input": {
+                "seconds": 1
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 12549,
+        "outputTokens": 134,
+        "cacheReadTokens": 7158,
+        "cacheWriteTokens": 5389
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:0228836b080d61864582cc4eebff07a7597d5ad5544bbc954b9671304f7820a3": {
+      "stop": "tool_use",
+      "text": "Size is now L with Black selected. Adding to cart.",
+      "toolCalls": [
+        {
+          "id": "toolu_01Rqs5HULTBWD1civaW4TGic",
+          "name": "click",
+          "input": {
+            "ref": "f1e273"
+          }
+        },
+        {
+          "id": "toolu_01WuxvaznRqhFddNMoMZMg9T",
+          "name": "wait",
+          "input": {
+            "seconds": 2
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "Size is now L with Black selected. Adding to cart."
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01Rqs5HULTBWD1civaW4TGic",
+              "toolName": "click",
+              "input": {
+                "ref": "f1e273"
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01WuxvaznRqhFddNMoMZMg9T",
+              "toolName": "wait",
+              "input": {
+                "seconds": 2
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 18027,
+        "outputTokens": 113,
+        "cacheReadTokens": 7158,
+        "cacheWriteTokens": 10867
+      },
+      "model": "claude-haiku-5-5"
+    },
+    "sha256:09c76622bb1f332ace5bda139650b2e533fc3d3b31a0fe9ab1ee12c03d8e160f": {
+      "stop": "tool_use",
+      "text": "",
+      "toolCalls": [
+        {
+          "id": "toolu_01TdS3XRuVvez3MzUhM39CbX",
+          "name": "finish",
+          "input": {
+            "report": "Added the Hummingbird printed t-shirt in size L, color Black, to your cart; the cart now shows 1 item and the confirmation dialog appeared."
+          }
+        }
+      ],
+      "raw": [
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "tool-call",
+              "toolCallId": "toolu_01TdS3XRuVvez3MzUhM39CbX",
+              "toolName": "finish",
+              "input": {
+                "report": "Added the Hummingbird printed t-shirt in size L, color Black, to your cart; the cart now shows 1 item and the confirmation dialog appeared."
+              },
+              "providerOptions": {
+                "anthropic": {
+                  "caller": {
+                    "type": "direct"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "inputTokens": 18641,
+        "outputTokens": 97,
+        "cacheReadTokens": 7158,
+        "cacheWriteTokens": 11481
+      },
+      "model": "claude-haiku-5-5"
+    }
+  }
+}
