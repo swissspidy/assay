@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { EXIT, parse, run } from '../../src/cli/main.ts';
 import { colorReport, type Io } from '../../src/cli/io.ts';
 import { selectModel } from '../../src/cli/model.ts';
-import { loadPlaywright, outFile } from '../../src/cli/commands/capture.ts';
+import { loadPlaywright, outFile, writeSnapshot } from '../../src/cli/commands/capture.ts';
 import { lockCheckSet, type CheckSet } from '../../src/index.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
@@ -337,4 +337,24 @@ test.describe('capture and output', () => {
     await run(['verify', BLUE_MUG, ADDED_RED, '--no-color'], off);
     expect(off.stdout.join('')).not.toContain('\u001b[');
   });
+});
+
+test.describe('review findings', () => {
+  test('capture into a directory never overwrites a capture from the same millisecond', () => {
+    const dir = tmp();
+    const url = new URL('http://localhost:4173/');
+    const at = new Date('2026-11-05T10:00:00.000Z');
+    const a = writeSnapshot(dir, url, '{"n":1}\n', at);
+    const b = writeSnapshot(dir, url, '{"n":2}\n', at);
+    expect(b).not.toBe(a);
+    expect(b).toBe(join(dir, 'localhost_4173-2026-11-05T10-00-00-000Z-2.json'));
+    expect(readFileSync(a, 'utf8')).toBe('{"n":1}\n');
+    expect(readFileSync(b, 'utf8')).toBe('{"n":2}\n');
+    // A named file is the caller's choice and is replaced.
+    const named = join(dir, 'snap.json');
+    writeSnapshot(named, url, '1', at);
+    expect(writeSnapshot(named, url, '2', at)).toBe(named);
+    expect(readFileSync(named, 'utf8')).toBe('2');
+  });
+
 });

@@ -34,6 +34,29 @@ export function outFile(out: string, url: URL, now = new Date()): string {
   return join(out, `${host}-${now.toISOString().replace(/[:.]/g, '-')}.json`);
 }
 
+/**
+ * Write the snapshot where `--out` says. A named `.json` file is replaced; a file the command
+ * names in a directory is created exclusively, so a capture in the same millisecond gets a
+ * suffixed name (`-2`, `-3`, …) instead of overwriting another one.
+ */
+export function writeSnapshot(out: string, url: URL, json: string, now = new Date()): string {
+  const file = outFile(out, url, now);
+  mkdirSync(dirname(file), { recursive: true });
+  if (out.endsWith('.json')) {
+    writeFileSync(file, json);
+    return file;
+  }
+  for (let n = 1; ; n++) {
+    const candidate = n === 1 ? file : file.replace(/\.json$/, `-${n}.json`);
+    try {
+      writeFileSync(candidate, json, { flag: 'wx' });
+      return candidate;
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code !== 'EEXIST') throw e;
+    }
+  }
+}
+
 export async function run({ values, positionals }: Invocation, io: Io): Promise<number> {
   let url: URL;
   try {
@@ -72,9 +95,7 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
     io.out(json.trimEnd());
     return EXIT.ok;
   }
-  const file = outFile(out, url);
-  mkdirSync(dirname(file), { recursive: true });
-  writeFileSync(file, json);
+  const file = writeSnapshot(out, url, json);
   io.out(values.json ? JSON.stringify({ file }) : `Wrote ${file}`);
   return EXIT.ok;
 }
