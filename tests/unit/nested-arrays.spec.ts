@@ -26,7 +26,13 @@ const snap = (order: Json, cart: Json = lines, local: Record<string, string> = {
   network: [],
   storage: { cookies: [], local: { 'https://shop.test': local }, session: {} },
   probes: { order: { ok: true, value: { id: 'A1', lines: order } } },
-  baseline: { capturedAt: '', url: '', storage: null, probes: { cart: { ok: true, value: { items: cart } } } },
+  baseline: {
+    capturedAt: '',
+    url: '',
+    storage: null,
+    redacted: [],
+    probes: { cart: { ok: true, value: { items: cart } } },
+  },
   meta: { capturer: 't', redacted: [] },
 });
 
@@ -104,10 +110,11 @@ test.describe('nested JSON arrays', () => {
   test('variant: nested arrays reversed, outer order kept, before and after the task and in storage', () => {
     const cart = JSON.stringify({ items: lines });
     const v = generateVariants(one(ordered), snap(lines, lines, { cart })).find((x) => x.id === 'nested-array-order')!;
-    const order = (v.snapshot.probes.order as { value: { lines: { sku: string; options: string[] }[] } }).value;
+    const order = (v.snapshot.probes.order as unknown as { value: { lines: { sku: string; options: string[] }[] } })
+      .value;
     expect(order.lines.map((l) => l.sku)).toEqual(['MUG-BLUE', 'MUG-RED']);
     expect(order.lines[0]!.options).toEqual(['engraving', 'gift-wrap']);
-    const before = v.snapshot.baseline!.probes.cart as { value: { items: { options: string[] }[] } };
+    const before = v.snapshot.baseline!.probes.cart as unknown as { value: { items: { options: string[] }[] } };
     expect(before.value.items[0]!.options).toEqual(['engraving', 'gift-wrap']);
     expect(JSON.parse(v.snapshot.storage!.local['https://shop.test']!.cart as string).items[0].options).toEqual([
       'engraving',
