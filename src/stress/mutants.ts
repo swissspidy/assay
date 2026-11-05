@@ -17,6 +17,7 @@ import type {
   Normalizer,
   RequestMatch,
   StorageRecord,
+  Target,
   TextMatch,
   ValueSource,
 } from '../types.ts';
@@ -25,7 +26,7 @@ import { matchRequest } from '../runtime/network.ts';
 import { compare, compareNumber, jsonPointer } from '../runtime/compare.ts';
 import { evaluateAssertion } from '../runtime/evaluate.ts';
 import { applyNormalizers, fromJson, toJson, type TypedValue } from '../runtime/values.ts';
-import { stripGlobal } from '../text.ts';
+import { canonical, stripGlobal } from '../text.ts';
 import { clone, editById, nearMiss, replaceText, setPointer, treeChanged } from './edit.ts';
 import { exampleOf, schemaViolations } from './schema.ts';
 import { renderLike, violations } from './violate.ts';
@@ -148,6 +149,36 @@ function arrayEdits(arr: Json[]): { what: string; value: Json }[] {
   });
   const extra = arr.length ? nearMiss(arr[0]!) : undefined;
   if (extra !== undefined) out.push({ what: 'an extra item', value: [...arr, extra] });
+  out.push(...pairingSwaps(arr));
+  return out;
+}
+
+const isRecord = (x: Json | undefined): x is { [key: string]: Json } =>
+  !!x && typeof x === 'object' && !Array.isArray(x);
+
+/**
+ * Two records swap one field (quantities, prices): every field taken on its own still holds
+ * the same values, only which record has which value changed. A comparison that sorts each
+ * field separately cannot see it; one that keeps the fields of a record together can.
+ */
+function pairingSwaps(arr: Json[]): { what: string; value: Json }[] {
+  const out: { what: string; value: Json }[] = [];
+  const keys = [...new Set(arr.slice(0, 8).flatMap((x) => (isRecord(x) ? Object.keys(x) : [])))];
+  for (const k of keys) {
+    const pair = arr.slice(0, 8).flatMap((x, i) =>
+      arr.slice(i + 1, 8).flatMap((y, d) => {
+        if (!isRecord(x) || !isRecord(y) || !(k in x) || !(k in y)) return [];
+        return JSON.stringify(x[k]) !== JSON.stringify(y[k]) ? [[i, i + 1 + d] as const] : [];
+      }),
+    )[0];
+    if (!pair) continue;
+    const [i, j] = pair;
+    const a = arr[i] as { [key: string]: Json };
+    const b = arr[j] as { [key: string]: Json };
+    const value = arr.map((x, n) => (n === i ? { ...a, [k]: b[k]! } : n === j ? { ...b, [k]: a[k]! } : x));
+    out.push({ what: `items ${i} and ${j} swap their ${k}`, value });
+    if (out.length >= 3) break;
+  }
   return out;
 }
 
@@ -178,10 +209,11 @@ interface Readable {
   what: string;
 }
 
-function readable(s: EvidenceSnapshot, idx: AXIndex, src: ValueSource): Readable | undefined {
+/** `rec`: inside an `each`, the record that locators and text sources resolve within. */
+function readable(s: EvidenceSnapshot, idx: AXIndex, src: ValueSource, rec?: INode): Readable | undefined {
   switch (src.from) {
     case 'node': {
-      const r = resolveTarget(idx, src.target);
+      const r = resolveTarget(idx, src.target, rec);
       if (!r.ok) return undefined;
       const raw = readNodeField(idx, r.node, src.field);
       if (raw === undefined) return undefined;
@@ -215,13 +247,14 @@ function readable(s: EvidenceSnapshot, idx: AXIndex, src: ValueSource): Readable
     case 'text': {
       // Read what the evaluator reads: the scoped subtree's text, or the free page text.
       let hay = s.text.replace(/[^\S\n]+/g, ' ');
-      let scopeNode: INode | undefined;
+      // Inside a record, an unscoped text source reads the record's text.
+      let scopeNode: INode | undefined = rec;
       if (src.scope) {
-        const r = resolveTarget(idx, src.scope);
+        const r = resolveTarget(idx, src.scope, rec);
         if (!r.ok) return undefined;
         scopeNode = r.node;
-        hay = idx.text(r.node);
       }
+      if (scopeNode) hay = idx.text(scopeNode);
       const m = new RegExp(src.pattern, stripGlobal(src.flags)).exec(hay);
       const g = src.group ?? (m && m.length > 1 ? 1 : 0);
       const got = m ? (typeof g === 'number' ? m[g] : m.groups?.[g]) : undefined;
@@ -371,8 +404,8 @@ function readable(s: EvidenceSnapshot, idx: AXIndex, src: ValueSource): Readable
   }
 }
 
-function valueMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, { kind: 'value' }>): M[] {
-  const r = readable(s, idx, a.source);
+function valueMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, { kind: 'value' }>, rec?: INode): M[] {
+  const r = readable(s, idx, a.source, rec);
   if (!r) return [];
   let typed: TypedValue;
   try {
@@ -475,11 +508,11 @@ function valueMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, {
  * other (near misses, another item's value, an unset key), as an `equals` against the
  * other side's current value would be.
  */
-function bindingMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, { kind: 'value' }>): M[] {
+function bindingMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, { kind: 'value' }>, rec?: INode): M[] {
   if (!('sameAs' in a.expect)) return [];
   const other = a.expect.sameAs;
   const read = (src: ValueSource, steps: Normalizer[] | undefined): TypedValue | undefined => {
-    const r = readable(s, idx, src);
+    const r = readable(s, idx, src, rec);
     if (!r) return undefined;
     try {
       return applyNormalizers(fromJson(r.raw), steps);
@@ -491,18 +524,18 @@ function bindingMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion,
   const right = read(other.source, other.normalize);
   if (!left || !right) return [];
   return [
-    ...valueMutants(s, idx, {
-      kind: 'value',
-      source: a.source,
-      normalize: a.normalize,
-      expect: { equals: toJson(right) },
-    }),
-    ...valueMutants(s, idx, {
-      kind: 'value',
-      source: other.source,
-      normalize: other.normalize,
-      expect: { equals: toJson(left) },
-    }).map((m) => ({ ...m, id: `sameAs:${m.id}` })),
+    ...valueMutants(
+      s,
+      idx,
+      { kind: 'value', source: a.source, normalize: a.normalize, expect: { equals: toJson(right) } },
+      rec,
+    ),
+    ...valueMutants(
+      s,
+      idx,
+      { kind: 'value', source: other.source, normalize: other.normalize, expect: { equals: toJson(left) } },
+      rec,
+    ).map((m) => ({ ...m, id: `sameAs:${m.id}` })),
   ];
 }
 
@@ -676,8 +709,8 @@ function requestMutants(s: EvidenceSnapshot, a: Extract<Assertion, { kind: 'requ
 
 // --- a11y ----------------------------------------------------------------------
 
-function stateMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, { kind: 'state' }>): M[] {
-  const r = resolveTarget(idx, a.target);
+function stateMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, { kind: 'state' }>, rec?: INode): M[] {
+  const r = resolveTarget(idx, a.target, rec);
   if (!r.ok) return [];
   const target = r.node;
   const out: M[] = [];
@@ -739,10 +772,15 @@ function stateMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, {
   return out;
 }
 
-function containsMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, { kind: 'contains' }>): M[] {
-  let scope: INode = idx.root;
+function containsMutants(
+  s: EvidenceSnapshot,
+  idx: AXIndex,
+  a: Extract<Assertion, { kind: 'contains' }>,
+  rec?: INode,
+): M[] {
+  let scope: INode = rec ?? idx.root;
   if (a.scope) {
-    const r = resolveTarget(idx, a.scope);
+    const r = resolveTarget(idx, a.scope, rec);
     if (!r.ok) return [];
     scope = r.node;
   }
@@ -796,7 +834,7 @@ function containsMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion
         : editById(s, (n, id) =>
             id === scopeId ? { ...n, children: [...(n.children ?? []), ...copies()] } : undefined,
           );
-      if (treeChanged(s, snap) && noneHolds(snap, [a])) {
+      if (treeChanged(s, snap) && noneHolds(snap, [a], rec)) {
         out.push({
           id: 'contains:extra',
           description:
@@ -811,9 +849,224 @@ function containsMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion
   return out;
 }
 
-/** No assertion in `subs` passes on `s`. */
-function noneHolds(s: EvidenceSnapshot, subs: Assertion[]): boolean {
-  const ctx = { snapshot: s, index: new AXIndex(s.a11y) };
+// --- records (each) --------------------------------------------------------------
+
+/** The text a node shows, derived as AXIndex.text derives it. */
+function textOf(n: AXNode): string {
+  if (n.role === 'text') return n.name ?? '';
+  if (n.children?.length) return n.children.map(textOf).filter(Boolean).join(' ');
+  return n.name ?? '';
+}
+
+const hasHeader = (n: AXNode): boolean => n.role === 'columnheader' || (n.children ?? []).some(hasHeader);
+
+/**
+ * The snapshot with nodes replaced (by pre-order id) and nodes inserted after others. An
+ * ancestor whose name was its derived text (a row named by its cells) gets the new text as
+ * its name, so a moved or swapped cell does not leave a stale row name behind.
+ */
+function rebuild(
+  s: EvidenceSnapshot,
+  idx: AXIndex,
+  replace: Map<number, AXNode>,
+  insertAfter: Map<number, AXNode[]> = new Map(),
+): EvidenceSnapshot {
+  const touched = new Set<number>();
+  for (const id of [...replace.keys(), ...insertAfter.keys()])
+    for (let a = idx.all[id]?.parent; a; a = a.parent) touched.add(a.id);
+  return editById(s, (n, id) => {
+    const r = replace.get(id);
+    let node = r ? clone(r) : n;
+    const orig = idx.all[id]?.node;
+    if (!r && touched.has(id) && orig?.name !== undefined && orig.children?.length) {
+      if (canonical(orig.name) === canonical(textOf(orig))) {
+        const { name: _, ...rest } = n;
+        const t = canonical(textOf(n));
+        node = t ? { ...rest, name: t } : rest;
+      }
+    }
+    const extra = insertAfter.get(id);
+    if (extra) return [node, ...extra.map((x) => clone(x))];
+    return node === n ? undefined : node;
+  });
+}
+
+/** Child indices from the root to `n`. */
+function indexPath(n: INode): number[] {
+  const out: number[] = [];
+  for (let x = n; x.parent; x = x.parent) out.unshift(x.parent.children.indexOf(x));
+  return out;
+}
+
+/** Whether the record at `rec`'s place in the edited snapshot still matches the each's locator. */
+function keepsIdentity(snap: EvidenceSnapshot, rec: INode, match: Locator): boolean {
+  const anchor = rec.id < 0 ? rec.children[0]! : rec;
+  const idx = new AXIndex(snap.a11y);
+  let n: INode | undefined = idx.root;
+  for (const i of indexPath(anchor)) n = n?.children[i];
+  return !!n && idx.matches(n, match);
+}
+
+/** Nodes inside the record `rec` whose content `a` reads (an absence check reads none). */
+function readNodes(idx: AXIndex, a: Assertion, rec: INode): INode[] {
+  const at = (t: Target): INode[] => {
+    const r = resolveTarget(idx, t, rec);
+    return r.ok ? [r.node] : [];
+  };
+  switch (a.kind) {
+    case 'state':
+      return at(a.target);
+    case 'contains': {
+      const scope = a.scope ? at(a.scope)[0] : rec;
+      return scope ? idx.find(a.match, scope) : [];
+    }
+    case 'value':
+      return [a.source, ...('sameAs' in a.expect ? [a.expect.sameAs.source] : [])].flatMap((src) =>
+        src.from === 'node' ? at(src.target) : src.from === 'text' ? (src.scope ? at(src.scope) : [rec]) : [],
+      );
+    case 'each': {
+      const scope = a.scope ? at(a.scope)[0] : rec;
+      return scope ? idx.records(a.match, scope).flatMap((r) => readNodes(idx, a.assert, r)) : [];
+    }
+    case 'allOf':
+    case 'anyOf':
+      return a.of.flatMap((b) => readNodes(idx, b, rec));
+    default:
+      return [];
+  }
+}
+
+/** Other records like `rec`: sibling rows (not header rows), items or articles; the other terms' records. */
+function peerRecords(idx: AXIndex, rec: INode): INode[] {
+  if (rec.id < 0) {
+    const term = rec.children[0]!;
+    return (term.parent?.children ?? [])
+      .filter((c) => c !== term && c.node.role === 'term')
+      .map((t) => idx.termGroup(t));
+  }
+  return (rec.parent?.children ?? []).filter((c) => c !== rec && c.node.role === rec.node.role && !hasHeader(c.node));
+}
+
+/**
+ * Near misses that keep every value on the page but move it out of its record: the
+ * content the nested assertion reads is swapped with another record's (whose own
+ * content does not satisfy the assertion), or blanked in the record and shown right
+ * after it instead. A check that reads the value anywhere on the page accepts both.
+ */
+function recordMutants(
+  s: EvidenceSnapshot,
+  idx: AXIndex,
+  a: Extract<Assertion, { kind: 'each' }>,
+  rec: INode,
+  records: INode[],
+): M[] {
+  const members = rec.children;
+  const memberOf = (n: INode): number => {
+    for (let x: INode | null = n; x; x = x.parent) {
+      const i = members.indexOf(x);
+      if (i >= 0) return i;
+    }
+    return -1;
+  };
+  const read = readNodes(idx, a.assert, rec);
+  const blank = (i: number): AXNode => ({ role: members[i]!.node.role });
+  // Content that identifies the record (its term, a row's title cell) is not moved.
+  const positions = [
+    ...new Set(read.flatMap((n) => (n === rec ? members.map((_, i) => i) : [memberOf(n)])).filter((i) => i >= 0)),
+  ]
+    .toSorted((x, y) => x - y)
+    .filter((i) => keepsIdentity(rebuild(s, idx, new Map([[members[i]!.id, blank(i)]])), rec, a.match));
+  if (!positions.length) return [];
+  const label = idx.path(rec);
+  const roles = [...new Set(positions.map((i) => members[i]!.node.role))].join(' and ');
+  const out: M[] = [];
+  const matched = new Set(records.map((r) => r.id));
+  for (const peer of peerRecords(idx, rec)) {
+    if (matched.has(peer.id)) continue;
+    let status: string;
+    try {
+      status = evaluateAssertion({ snapshot: s, index: idx, record: peer }, a.assert).status;
+    } catch {
+      continue;
+    }
+    if (status === 'pass') continue;
+    const swaps = new Map<number, AXNode>();
+    for (const i of positions) {
+      const x = members[i]!;
+      const y = peer.children[i];
+      if (!y || x.node.role !== y.node.role || JSON.stringify(x.node) === JSON.stringify(y.node)) continue;
+      swaps.set(x.id, y.node);
+      swaps.set(y.id, x.node);
+    }
+    if (!swaps.size) continue;
+    const snap = rebuild(s, idx, swaps);
+    if (!treeChanged(s, snap) || !keepsIdentity(snap, rec, a.match)) continue;
+    out.push({
+      id: `record:swap:${out.length}`,
+      description: `the ${roles} of ${label} and of ${idx.path(peer)} are swapped`,
+      snapshot: snap,
+    });
+    if (out.length >= 2) break;
+  }
+  // Shown right after the record: after the row (item, article), or after a term's last definition.
+  const after = rec.id < 0 ? members.at(-1)!.id : rec.id;
+  const moved: AXNode = { role: 'paragraph', children: positions.map((i) => clone(members[i]!.node)) };
+  const snap = rebuild(s, idx, new Map(positions.map((i) => [members[i]!.id, blank(i)])), new Map([[after, [moved]]]));
+  if (treeChanged(s, snap) && keepsIdentity(snap, rec, a.match))
+    out.push({
+      id: 'record:moved',
+      description: `the ${roles} of ${label} is empty there and shown after it instead`,
+      snapshot: snap,
+    });
+  return out;
+}
+
+/**
+ * `each`: the number of records (as for contains: all removed, one fewer, another item in
+ * place of the first, an extra one past an upper bound), the nested assertion's mutants
+ * inside the first record, and its values moved out of the record (recordMutants).
+ */
+function eachMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, { kind: 'each' }>, rec?: INode): M[] {
+  let scope = rec ?? idx.root;
+  if (a.scope) {
+    const r = resolveTarget(idx, a.scope, rec);
+    if (!r.ok) return [];
+    scope = r.node;
+  }
+  if (a.witness && idx.find(a.witness, scope).length === 0) return [];
+  const count: Extract<Assertion, { kind: 'contains' }> = {
+    kind: 'contains',
+    ...(a.scope ? { scope: a.scope } : {}),
+    ...(a.witness ? { witness: a.witness } : {}),
+    match: a.match,
+    count: a.count ?? { gte: 1 },
+  };
+  const out = containsMutants(s, idx, count, rec).map((m) => ({ ...m, id: m.id.replace(/^contains:/, 'records:') }));
+  const records = idx.records(a.match, scope);
+  const first = records[0];
+  if (!first) return out;
+  out.push(...assertionMutants(s, idx, a.assert, first).map((m) => ({ ...m, id: `record:${m.id}` })));
+  out.push(...recordMutants(s, idx, a, first, records));
+  return out;
+}
+
+/**
+ * The record `rec` (of the snapshot an edit started from) in the edited tree `idx`. Edits
+ * inside a record leave its pre-order id, and its term's, unchanged.
+ */
+function recordIn(idx: AXIndex, rec: INode | undefined): INode | undefined {
+  if (!rec) return undefined;
+  const n = idx.all[rec.id < 0 ? -1 - rec.id : rec.id];
+  if (!n) return undefined;
+  return rec.id < 0 ? idx.termGroup(n) : n;
+}
+
+/** No assertion in `subs` passes on `s` (inside the record `rec` of the snapshot `s` was edited from). */
+function noneHolds(s: EvidenceSnapshot, subs: Assertion[], rec?: INode): boolean {
+  const index = new AXIndex(s.a11y);
+  const record = recordIn(index, rec);
+  if (rec && !record) return true;
+  const ctx = { snapshot: s, index, ...(record ? { record } : {}) };
   return subs.every((sub) => {
     try {
       return evaluateAssertion(ctx, sub).status !== 'pass';
@@ -823,14 +1076,19 @@ function noneHolds(s: EvidenceSnapshot, subs: Assertion[]): boolean {
   });
 }
 
-function assertionMutants(s: EvidenceSnapshot, idx: AXIndex, a: Assertion): M[] {
+/** `rec`: inside an `each`, the record the assertion is evaluated in. */
+function assertionMutants(s: EvidenceSnapshot, idx: AXIndex, a: Assertion, rec?: INode): M[] {
   switch (a.kind) {
     case 'state':
-      return stateMutants(s, idx, a);
+      return stateMutants(s, idx, a, rec);
     case 'contains':
-      return containsMutants(s, idx, a);
+      return containsMutants(s, idx, a, rec);
     case 'value':
-      return 'sameAs' in a.expect ? [...bindingMutants(s, idx, a), ...noOpMutants(s, idx, a)] : valueMutants(s, idx, a);
+      return 'sameAs' in a.expect
+        ? [...bindingMutants(s, idx, a, rec), ...noOpMutants(s, idx, a)]
+        : valueMutants(s, idx, a, rec);
+    case 'each':
+      return eachMutants(s, idx, a, rec);
     case 'url': {
       let u: URL;
       try {
@@ -861,16 +1119,21 @@ function assertionMutants(s: EvidenceSnapshot, idx: AXIndex, a: Assertion): M[] 
     case 'request':
       return requestMutants(s, a);
     case 'allOf':
-      return a.of.flatMap((sub, i) => assertionMutants(s, idx, sub).map((m) => ({ ...m, id: `allOf[${i}]:${m.id}` })));
+      return a.of.flatMap((sub, i) =>
+        assertionMutants(s, idx, sub, rec).map((m) => ({ ...m, id: `allOf[${i}]:${m.id}` })),
+      );
     case 'anyOf': {
       // Only breaking every alternative at once is a definite near miss. Each step
       // must keep the alternatives broken so far broken (they may share evidence).
       let snap = s;
       const parts: string[] = [];
       for (const [i, sub] of a.of.entries()) {
-        if (noneHolds(snap, [sub])) continue;
-        const next = assertionMutants(snap, new AXIndex(snap.a11y), sub).find((m) =>
-          noneHolds(m.snapshot, a.of.slice(0, i + 1)),
+        if (noneHolds(snap, [sub], rec)) continue;
+        const index = new AXIndex(snap.a11y);
+        const here = recordIn(index, rec);
+        if (rec && !here) return [];
+        const next = assertionMutants(snap, index, sub, here).find((m) =>
+          noneHolds(m.snapshot, a.of.slice(0, i + 1), here),
         );
         if (!next) return [];
         snap = next.snapshot;

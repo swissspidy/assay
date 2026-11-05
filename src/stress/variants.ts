@@ -18,7 +18,7 @@ import type {
   ProbeResult,
   ValueSource,
 } from '../types.ts';
-import { AXIndex, readNodeField, resolveTarget } from '../runtime/axindex.ts';
+import { AXIndex, readNodeField, resolveTarget, type INode } from '../runtime/axindex.ts';
 import { applyNormalizers, zoneOffset, type TypedValue } from '../runtime/values.ts';
 import { clone, editById, replaceText, treeChanged } from './edit.ts';
 import { readSpan, timezoneOf } from './mutants.ts';
@@ -31,6 +31,7 @@ export interface Variant {
 
 export const GENERIC_VARIANTS = [
   'reorder',
+  'reorder-terms',
   'extra-content',
   'extra-row',
   'wrap-main',
@@ -55,6 +56,37 @@ function reorder(s: EvidenceSnapshot): EvidenceSnapshot | null {
     const body = n.children.filter((c) => !head.includes(c));
     if (body.length < 2) return undefined;
     return { ...n, children: [...head, ...body.toReversed()] };
+  });
+  return treeChanged(s, out) ? out : null;
+}
+
+/**
+ * Term groups (a term with the definitions after it) in reverse order within a run of
+ * terms and definitions, as a description list may order its fields.
+ */
+const isTermPart = (n: AXNode) => n.role === 'term' || n.role === 'definition';
+
+function reorderTerms(s: EvidenceSnapshot): EvidenceSnapshot | null {
+  const out = editById(s, (n) => {
+    const kids = n.children ?? [];
+    if (!kids.some((c) => c.role === 'term')) return undefined;
+    const next: AXNode[] = [];
+    for (let i = 0; i < kids.length;) {
+      if (!isTermPart(kids[i]!)) {
+        next.push(kids[i++]!);
+        continue;
+      }
+      // One run of terms and definitions, split into groups that each start at a term.
+      const groups: AXNode[][] = [];
+      for (; i < kids.length && isTermPart(kids[i]!); i++) {
+        const k = kids[i]!;
+        const prev = groups.at(-1);
+        if (!prev || (k.role === 'term' && prev.at(-1)!.role === 'definition')) groups.push([k]);
+        else prev.push(k);
+      }
+      next.push(...groups.toReversed().flat());
+    }
+    return { ...n, children: next };
   });
   return treeChanged(s, out) ? out : null;
 }
@@ -224,6 +256,7 @@ function readKeys(cs: CheckSet): Set<string> {
       if (a.source.from === 'storage') keys.add(a.source.key);
       if ('sameAs' in a.expect && a.expect.sameAs.source.from === 'storage') keys.add(a.expect.sameAs.source.key);
     } else if (a.kind === 'allOf' || a.kind === 'anyOf') a.of.forEach(walk);
+    else if (a.kind === 'each') walk(a.assert);
   };
   for (const c of cs.checks) walk(c.assert);
   return keys;
@@ -338,9 +371,23 @@ function localeOf(steps: Normalizer[] | undefined): string | undefined {
   return undefined;
 }
 
-function* valueAssertions(a: Assertion): Generator<Extract<Assertion, { kind: 'value' }>> {
-  if (a.kind === 'value') yield a;
-  if (a.kind === 'allOf' || a.kind === 'anyOf') for (const s of a.of) yield* valueAssertions(s);
+/** The value assertions inside `a`, each with the record it reads in (undefined: the page). */
+function* valueAssertions(
+  a: Assertion,
+  idx: AXIndex,
+  rec?: INode,
+): Generator<{ a: Extract<Assertion, { kind: 'value' }>; rec: INode | undefined }> {
+  if (a.kind === 'value') yield { a, rec };
+  if (a.kind === 'allOf' || a.kind === 'anyOf') for (const s of a.of) yield* valueAssertions(s, idx, rec);
+  if (a.kind === 'each') {
+    let scope = rec ?? idx.root;
+    if (a.scope) {
+      const r = resolveTarget(idx, a.scope, rec);
+      if (!r.ok) return;
+      scope = r.node;
+    }
+    for (const record of idx.records(a.match, scope)) yield* valueAssertions(a.assert, idx, record);
+  }
 }
 
 /** The sources a value assertion reads, with their normalizers: its own, and a `sameAs` operand. */
@@ -351,11 +398,11 @@ function readsOf(a: Extract<Assertion, { kind: 'value' }>): { source: ValueSourc
 function formattingVariants(cs: CheckSet, s: EvidenceSnapshot, idx: AXIndex): Variant[] {
   const out: Variant[] = [];
   for (const c of cs.checks) {
-    for (const a of valueAssertions(c.assert)) {
+    for (const { a, rec } of valueAssertions(c.assert, idx)) {
       for (const [k, { source, normalize }] of readsOf(a).entries()) {
         const locale = localeOf(normalize);
         if (source.from !== 'node' || !locale) continue;
-        const r = resolveTarget(idx, source.target);
+        const r = resolveTarget(idx, source.target, rec);
         if (!r.ok) continue;
         const raw = readNodeField(idx, r.node, source.field);
         if (raw === undefined) continue;
@@ -378,8 +425,11 @@ function formattingVariants(cs: CheckSet, s: EvidenceSnapshot, idx: AXIndex): Va
             return replaceText(n, span, alt) ?? undefined;
           });
           if (!treeChanged(s, snap)) continue; // the value spans several text runs: no faithful edit
+          // Several value assertions (or records of an each) can read the same check's values.
+          let id = `format:${c.id}:${k ? 'sameAs:' : ''}${i}`;
+          for (let n = 2; out.some((v) => v.id === id); n++) id = `format:${c.id}:${k ? 'sameAs:' : ''}${i}#${n}`;
           out.push({
-            id: `format:${c.id}:${k ? 'sameAs:' : ''}${i}`,
+            id,
             description: `${c.id}'s ${k ? 'compared ' : ''}value shown as ${JSON.stringify(alt)} instead of ${JSON.stringify(span)}`,
             snapshot: snap,
           });
@@ -393,6 +443,7 @@ function formattingVariants(cs: CheckSet, s: EvidenceSnapshot, idx: AXIndex): Va
 export function generateVariants(cs: CheckSet, s: EvidenceSnapshot): Variant[] {
   const generic: [string, string, EvidenceSnapshot | null][] = [
     ['reorder', 'list items and table rows in reverse order', reorder(s)],
+    ['reorder-terms', 'term groups (a term with its definitions) in reverse order', reorderTerms(s)],
     ['extra-content', 'unrelated recommendations and a promotional status message on the page', extraContent(s)],
     ['extra-row', 'an unrelated extra row in each table', extraTableRow(s)],
     ['wrap-main', 'main content wrapped in an extra region', wrapMain(s)],
