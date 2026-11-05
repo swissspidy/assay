@@ -1,0 +1,80 @@
+/** `assay capture <url>`: open a URL in headless Chromium and capture an evidence snapshot. */
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import type { BrowserType } from '@playwright/test';
+import { CliError, EXIT, UsageError, type Invocation, type Io } from '../io.ts';
+
+/** The part of Playwright that capture uses. */
+interface PlaywrightTest {
+  chromium: BrowserType;
+}
+
+const WAIT_UNTIL = ['load', 'domcontentloaded', 'networkidle'] as const;
+
+/** Load Playwright (an optional peer for the CLI); a missing install becomes a clear error. */
+export async function loadPlaywright(
+  importer: () => Promise<PlaywrightTest> = () => import('@playwright/test'),
+): Promise<PlaywrightTest> {
+  try {
+    return await importer();
+  } catch (e) {
+    if ((e as NodeJS.ErrnoException)?.code === 'ERR_MODULE_NOT_FOUND') {
+      throw new CliError(
+        'assay capture needs Playwright: npm install -D @playwright/test, then npx playwright install chromium',
+      );
+    }
+    throw e;
+  }
+}
+
+/** Where `--out` puts the snapshot: a `.json` path as is, else a file in that directory. */
+export function outFile(out: string, url: URL, now = new Date()): string {
+  if (out.endsWith('.json')) return out;
+  const host = (url.host || 'page').replace(/[^\w.-]+/g, '_');
+  return join(out, `${host}-${now.toISOString().replace(/[:.]/g, '-')}.json`);
+}
+
+export async function run({ values, positionals }: Invocation, io: Io): Promise<number> {
+  let url: URL;
+  try {
+    url = new URL(positionals[0]!);
+  } catch {
+    throw new UsageError(`not a URL: ${positionals[0]}`);
+  }
+  const waitUntil = (values['wait-until'] as string | undefined) ?? 'load';
+  if (!(WAIT_UNTIL as readonly string[]).includes(waitUntil)) {
+    throw new UsageError(`--wait-until must be one of ${WAIT_UNTIL.join(', ')}`);
+  }
+  const wait = values.wait === undefined ? 0 : Number(values.wait);
+  if (!Number.isFinite(wait) || wait < 0) throw new UsageError('--wait must be a number of milliseconds');
+
+  const { chromium } = await loadPlaywright();
+  const { EvidenceRecorder, captureSnapshot } = await import('../../snapshot/capture.ts');
+  const exe = values['executable-path'] as string | undefined;
+  const browser = await chromium.launch(exe ? { executablePath: exe } : {});
+  let snapshot;
+  try {
+    const context = await browser.newContext();
+    // Attached before navigating, so the log holds every request the page makes.
+    await EvidenceRecorder.attach(context);
+    const page = await context.newPage();
+    const response = await page.goto(url.href, { waitUntil: waitUntil as (typeof WAIT_UNTIL)[number] });
+    if (wait) await page.waitForTimeout(wait);
+    snapshot = await captureSnapshot(page, values.storage === false ? { storage: false } : {});
+    if (response && !response.ok()) io.err(`warning: ${url.href} answered ${response.status()}`);
+  } finally {
+    await browser.close();
+  }
+
+  const json = JSON.stringify(snapshot, null, 2) + '\n';
+  const out = values.out as string | undefined;
+  if (!out) {
+    io.out(json.trimEnd());
+    return EXIT.ok;
+  }
+  const file = outFile(out, url);
+  mkdirSync(dirname(file), { recursive: true });
+  writeFileSync(file, json);
+  io.out(values.json ? JSON.stringify({ file }) : `Wrote ${file}`);
+  return EXIT.ok;
+}
