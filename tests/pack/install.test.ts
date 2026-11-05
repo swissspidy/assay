@@ -14,10 +14,11 @@ import { promisify } from 'node:util';
 
 const run = promisify(execFile);
 const root = fileURLToPath(new URL('../..', import.meta.url));
-const { name, version, exports } = JSON.parse(await readFile(join(root, 'package.json'), 'utf8')) as {
+const { name, version, exports, bin } = JSON.parse(await readFile(join(root, 'package.json'), 'utf8')) as {
   name: string;
   version: string;
   exports: Record<string, string>;
+  bin: Record<string, string>;
 };
 /** The AI SDK version the repository tests against (from the lockfile), for the `/ai-sdk` entry. */
 const aiVersion = (
@@ -57,6 +58,7 @@ test('the package holds the build, the docs and its metadata, and nothing else',
     assert.ok(files.includes(js), js);
     assert.ok(files.includes(js.replace(/\.js$/, '.d.ts')), js.replace(/\.js$/, '.d.ts'));
   }
+  for (const file of Object.values(bin)) assert.ok(files.includes(file), file);
   assert.ok(files.includes('LICENSE'));
   assert.ok(!files.some((f) => f.endsWith('.ts') && !f.endsWith('.d.ts')), 'no TypeScript sources');
 });
@@ -147,6 +149,77 @@ console.log(JSON.stringify(out));
     if (e === `${name}/ai-sdk`) assert.equal(loaded[e], 'ERR_MODULE_NOT_FOUND', e);
     else assert.equal(loaded[e], true, e);
   }
+});
+
+/** Run the installed `assay` executable; resolves with its exit status and output. */
+function assay(cwd: string, args: string[], env: Record<string, string> = {}) {
+  return new Promise<{ code: number; stdout: string; stderr: string }>((resolve) => {
+    execFile(
+      join(cwd, 'node_modules/.bin/assay'),
+      args,
+      { cwd, env: { ...process.env, ANTHROPIC_API_KEY: '', ...env }, maxBuffer: 64 << 20 },
+      (err, stdout, stderr) => resolve({ code: err ? Number(err.code) : 0, stdout, stderr }),
+    );
+  });
+}
+
+test('the installed assay executable verifies, validates, reviews, stress-tests and compiles', async () => {
+  const ex = (p: string) => join(root, 'examples/tiny-shop', p);
+  const checks = ex('tasks/02-add-blue-mug.checks.json');
+  assert.equal((await assay(dir, ['--version'])).stdout.trim(), version);
+  const ok = await assay(dir, ['verify', checks, ex('references/02-add-blue-mug/added-blue-mug.json')]);
+  assert.equal(ok.code, 0, ok.stderr);
+  assert.match(ok.stdout, /^Verdict: SUCCESS/);
+  assert.equal((await assay(dir, ['verify', checks, ex('references/02-add-blue-mug/added-red-mug.json')])).code, 1);
+  const abstain = [
+    'verify',
+    ex('tasks/03-cart-two-mugs.checks.json'),
+    ex('references/01-newsletter/never-subscribed.json'),
+  ];
+  assert.equal((await assay(dir, abstain)).code, 2);
+  assert.equal((await assay(dir, ['verify'])).code, 3);
+  assert.equal((await assay(dir, ['validate', checks])).code, 0);
+  assert.match((await assay(dir, ['review', checks])).stdout, /# Review: tiny-shop\/add-blue-mug v1/);
+  assert.equal((await assay(dir, ['stress', checks, '-r', ex('references/02-add-blue-mug')])).code, 0);
+  const out = join(dir, 'compiled.checks.json');
+  const compiled = await assay(
+    dir,
+    [
+      'compile',
+      checks,
+      '--id',
+      'tiny-shop/02-add-blue-mug',
+      '-r',
+      ex('references/02-add-blue-mug/added-blue-mug.json'),
+      '--cassette',
+      ex('compiled/02-add-blue-mug.cassette.json'),
+      '-o',
+      out,
+    ],
+    { ASSAY_MODEL_MODE: 'replay' },
+  );
+  assert.equal(compiled.code, 0, compiled.stderr);
+  assert.equal(await readFile(out, 'utf8'), await readFile(ex('compiled/02-add-blue-mug.checks.json'), 'utf8'));
+});
+
+test('without the optional peers, the executable runs and names what a live model needs', async () => {
+  const bare = await mkdtemp(join(tmpdir(), 'assay-pack-bin-'));
+  after(() => rm(bare, { recursive: true, force: true }));
+  await writeFile(join(bare, 'package.json'), JSON.stringify({ name: 'bare-bin', private: true, type: 'module' }));
+  await run('npm', ['install', '--no-audit', '--no-fund', '--ignore-scripts', tarball], {
+    cwd: bare,
+    maxBuffer: 64 << 20,
+  });
+  const ex = (p: string) => join(root, 'examples/tiny-shop', p);
+  const ref = ex('references/02-add-blue-mug/added-blue-mug.json');
+  const ok = await assay(bare, ['verify', ex('tasks/02-add-blue-mug.checks.json'), ref]);
+  assert.equal(ok.code, 0, ok.stderr);
+  const live = await assay(bare, ['compile', 'Add a Blue Mug to my cart.', '-r', ref], { ANTHROPIC_API_KEY: 'x' });
+  assert.equal(live.code, 4);
+  assert.match(live.stderr, /requires the optional dependency @anthropic-ai\/sdk/);
+  const ai = await assay(bare, ['compile', 'Add it.', '-r', ref, '--provider', 'ai-sdk', '--model', 'a/b']);
+  assert.equal(ai.code, 4);
+  assert.match(ai.stderr, /requires the optional dependency `ai`/);
 });
 
 test('the capturer id names the installed version', async () => {
