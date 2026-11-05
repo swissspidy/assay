@@ -27,18 +27,28 @@ export interface ReviewSheetOptions extends LockCheckOptions {
   warnings?: string[] | false;
 }
 
+/** The id (of `ids`) a warning starting with "<kind> " is about: the longest that matches, since ids may contain dots. */
+function about(w: string, kind: string, ids: string[]): string | undefined {
+  const prefix = `${kind} `;
+  if (!w.startsWith(prefix)) return undefined;
+  return ids
+    .filter((id) => w.startsWith(prefix + id) && /^($|[:. [])/.test(w.slice(prefix.length + id.length)))
+    .toSorted((a, b) => b.length - a.length)[0];
+}
+
 /** Warnings about one check or requirement go next to it, the rest at the top. */
-function placeWarnings(warnings: string[]) {
+function placeWarnings(warnings: string[], cs: CheckSet) {
   const byCheck = new Map<string, string[]>();
   const byRequirement = new Map<string, string[]>();
   const general: string[] = [];
+  const checkIds = cs.checks.map((c) => c.id);
+  const requirementIds = cs.requirements.map((r) => r.id);
   for (const w of warnings) {
-    const m = /^(check|requirement) ([A-Za-z0-9_.-]+)[:. ]/.exec(w);
-    if (!m) general.push(w);
-    else {
-      const map = m[1] === 'check' ? byCheck : byRequirement;
-      map.set(m[2]!, [...(map.get(m[2]!) ?? []), w]);
-    }
+    const check = about(w, 'check', checkIds);
+    const requirement = check === undefined ? about(w, 'requirement', requirementIds) : undefined;
+    const [map, id] = check !== undefined ? [byCheck, check] : [byRequirement, requirement];
+    if (id === undefined) general.push(w);
+    else map.set(id, [...(map.get(id) ?? []), w]);
   }
   return { byCheck, byRequirement, general };
 }
@@ -134,7 +144,7 @@ export function reviewSheet(cs: CheckSet, opts: ReviewSheetOptions = {}): string
     });
 
   const warnings = opts.warnings === false ? [] : (opts.warnings ?? validateCheckSet(cs).warnings);
-  const placed = placeWarnings(warnings);
+  const placed = placeWarnings(warnings, cs);
   if (placed.general.length) blocks.push({ h: 2, text: 'Warnings' }, { ul: placed.general.map((w) => ({ text: w })) });
 
   let diff: CheckSetDiff | undefined;
@@ -150,6 +160,14 @@ export function reviewSheet(cs: CheckSet, opts: ReviewSheetOptions = {}): string
   for (const r of cs.requirements) {
     const checks = cs.checks.filter((c) => c.requirement === r.id);
     if (review && !review.has(r.id)) {
+      // Unchanged, but what the stress test and validation say about it still shows.
+      const notes: ListItem[] = [
+        ...(placed.byRequirement.get(r.id) ?? []).map((w) => ({ text: `warning: ${w}` })),
+        ...checks.flatMap((c) => [
+          ...(findings.get(c.id) ?? []).map((f) => ({ text: `${c.id} stress: ${f}` })),
+          ...(placed.byCheck.get(c.id) ?? []).map((w) => ({ text: `warning: ${w}` })),
+        ]),
+      ];
       unchanged.push({
         ul: [
           {
@@ -157,6 +175,7 @@ export function reviewSheet(cs: CheckSet, opts: ReviewSheetOptions = {}): string
               { t: r.id, b: true },
               ` (${r.kind}): "${r.source.quote}": checks ${checks.map((c) => c.id).join(', ') || 'none'}`,
             ),
+            ...(notes.length ? { items: notes } : {}),
           },
         ],
       });

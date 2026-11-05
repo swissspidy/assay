@@ -12,7 +12,7 @@ import {
   type CheckSet,
 } from '../../index.ts';
 import type { StressReport } from '../../stress/index.ts';
-import { lockState } from '../../verifier/lock.ts';
+import { lockState, stressDigest, stressReportProblem } from '../../verifier/lock.ts';
 import { checkSettings } from '../../verifier/diff.ts';
 import { CliError, EXIT, UsageError, readJson, type Invocation, type Io } from '../io.ts';
 import { readCheckSet, trustedKeys } from '../keys.ts';
@@ -20,9 +20,9 @@ import { readCheckSet, trustedKeys } from '../keys.ts';
 const FORMATS = ['markdown', 'github', 'html'] as const;
 
 function readStress(file: string): StressReport {
-  const r = readJson(file, 'stress report') as Partial<StressReport> | null;
-  if (!r || typeof r !== 'object' || !r.checkSet || !r.rates || !Array.isArray(r.weak))
-    throw new CliError(`${file} is not a stress report (assay stress --json)`);
+  const r = readJson(file, 'stress report');
+  const problem = stressReportProblem(r);
+  if (problem) throw new CliError(`${file} is not a stress report (assay stress --json): ${problem}`);
   return r as StressReport;
 }
 
@@ -81,6 +81,24 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
         ...(lock.broken ? { lockProblems: lock.problems, changes: state.lock.changes } : {}),
         ...(state.rejected ? { rejected: state.rejected } : {}),
         ...(previous ? { diff: diffCheckSets(previous, cs) } : {}),
+        ...(stress
+          ? {
+              stress: {
+                checkSet: stress.checkSet,
+                references: stress.references,
+                rates: stress.rates,
+                overConstrained: stress.overConstrained,
+                fragile: stress.fragile,
+                weak: stress.weak,
+                missed: stress.missed,
+                advisories: stress.advisories,
+                untested: stress.untested,
+                digest: stressDigest(stress),
+                // Whether this is the report the approver saw (absent when the lock records none).
+                ...(state.lock.lock?.stress ? { approved: state.lock.lock.stress === stressDigest(stress) } : {}),
+              },
+            }
+          : {}),
       },
       null,
       2,

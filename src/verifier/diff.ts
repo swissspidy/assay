@@ -55,6 +55,10 @@ function channels(a: Assertion, out: Set<Channel>): void {
     case 'request':
       out.add('network');
       break;
+    case 'page':
+      // The page is selected by its URL (and/or title); then the inner assertion reads it.
+      if (a.match.url) out.add('url');
+      break;
   }
   // Composite assertions (allOf, anyOf, each, and any that wrap another) read what their parts read.
   const parts = a as { assert?: Assertion; of?: Assertion[] };
@@ -135,6 +139,8 @@ export interface CheckSetDiff {
     added: RequirementView[];
     removed: RequirementView[];
     changed: Changed<RequirementView>[];
+    /** Same content under a new id. */
+    renamed: { from: string; to: string }[];
     unchanged: string[];
   };
   checks: {
@@ -145,6 +151,8 @@ export interface CheckSetDiff {
     renamed: { from: string; to: string }[];
     unchanged: string[];
   };
+  /** Requirements or checks kept in both versions now come in another order. */
+  reordered: { requirements: boolean; checks: boolean };
   /**
    * Requirements of the new set a reviewer must look at again: added or changed, or with
    * a check added, removed, changed, renamed or moved; every requirement when the task changed.
@@ -160,7 +168,7 @@ const CHECK_FIELDS: Record<string, string> = {
   onMissing: 'on missing route evidence',
 };
 
-const REQUIREMENT_FIELDS: Record<string, string> = { kind: 'kind', text: 'text', source: 'quote' };
+const REQUIREMENT_FIELDS: Record<string, string> = { kind: 'kind', text: 'text', source: 'source' };
 
 const get = (o: object, k: string) => canonicalJson((o as Record<string, unknown>)[k] ?? null);
 
@@ -170,8 +178,19 @@ function fieldsChanged(a: object, b: object, names: Record<string, string>): str
 }
 
 const prov = (cs: CheckSet) =>
-  cs.compiled ? `${cs.compiled.compiler} with ${cs.compiled.model} at ${cs.compiled.at}` : undefined;
-const sameContent = (c: Check) => canonicalJson({ ...c, id: '' });
+  cs.compiled
+    ? `${cs.compiled.compiler} with ${cs.compiled.model} (served by ${cs.compiled.modelsUsed.join(', ') || 'none'}) at ${cs.compiled.at}`
+    : undefined;
+const sameContent = (c: { id: string }) => canonicalJson({ ...c, id: '' });
+
+/** Whether the ids both lists keep appear in another order. */
+function reorderedIds(a: { id: string }[], b: { id: string }[]): boolean {
+  const inB = new Set(b.map((x) => x.id));
+  const inA = new Set(a.map((x) => x.id));
+  const x = a.map((r) => r.id).filter((id) => inB.has(id));
+  const y = b.map((r) => r.id).filter((id) => inA.has(id));
+  return x.some((id, i) => id !== y[i]);
+}
 
 /** Compare two versions of a check set (requirements and checks are matched by id). */
 export function diffCheckSets(before: CheckSet, after: CheckSet): CheckSetDiff {
@@ -191,18 +210,29 @@ export function diffCheckSets(before: CheckSet, after: CheckSet): CheckSetDiff {
 
   const reqsA = new Map(a.requirements.map((r) => [r.id, r]));
   const reqsB = new Map(b.requirements.map((r) => [r.id, r]));
-  const requirements: CheckSetDiff['requirements'] = { added: [], removed: [], changed: [], unchanged: [] };
+  const requirements: CheckSetDiff['requirements'] = {
+    added: [],
+    removed: [],
+    changed: [],
+    renamed: [],
+    unchanged: [],
+  };
+  const removedReqs = a.requirements.filter((r) => !reqsB.has(r.id));
   for (const r of b.requirements) {
     const old = reqsA.get(r.id);
-    if (!old) requirements.added.push(requirementView(r));
-    else {
+    if (!old) {
+      // Same content under a new id: renamed, not rewritten.
+      const i = removedReqs.findIndex((x) => sameContent(x) === sameContent(r));
+      if (i === -1) requirements.added.push(requirementView(r));
+      else requirements.renamed.push({ from: removedReqs.splice(i, 1)[0]!.id, to: r.id });
+    } else {
       const fields = fieldsChanged(old, r, REQUIREMENT_FIELDS);
       if (fields.length)
         requirements.changed.push({ id: r.id, before: requirementView(old), after: requirementView(r), fields });
       else requirements.unchanged.push(r.id);
     }
   }
-  for (const r of a.requirements) if (!reqsB.has(r.id)) requirements.removed.push(requirementView(r));
+  requirements.removed.push(...removedReqs.map(requirementView));
 
   const checksA = new Map(a.checks.map((c) => [c.id, c]));
   const checksB = new Map(b.checks.map((c) => [c.id, c]));
@@ -233,6 +263,7 @@ export function diffCheckSets(before: CheckSet, after: CheckSet): CheckSetDiff {
   const touched = new Set<string>([
     ...requirements.added.map((r) => r.id),
     ...requirements.changed.map((r) => r.id),
+    ...requirements.renamed.map((r) => r.to),
     ...checks.added.map((c) => c.requirement),
     ...checks.changed.flatMap((c) => [c.before.requirement, c.after.requirement]),
     ...checks.removed.map((c) => c.requirement),
@@ -242,7 +273,11 @@ export function diffCheckSets(before: CheckSet, after: CheckSet): CheckSetDiff {
 
   const from = { id: a.id, version: a.version, content: contentDigest(a) };
   const to = { id: b.id, version: b.version, content: contentDigest(b) };
-  return { from, to, identical: from.content === to.content, set, requirements, checks, toReview };
+  const reordered = {
+    requirements: reorderedIds(a.requirements, b.requirements),
+    checks: reorderedIds(a.checks, b.checks),
+  };
+  return { from, to, identical: from.content === to.content, set, requirements, checks, reordered, toReview };
 }
 
 const quoted = (r: RequirementView): Inline => [{ t: r.id, b: true }, ` (${r.kind}): "${r.quote}"`];
@@ -298,12 +333,18 @@ export function diffBlocks(d: CheckSetDiff, level: 2 | 3 = 2): Block[] {
   const reqItems: ListItem[] = [
     ...r.added.map((x) => ({ text: cat('added ', quoted(x)), items: [{ text: x.text }] })),
     ...r.removed.map((x) => ({ text: cat('removed ', quoted(x)) })),
+    ...r.renamed.map((x) => ({ text: `renamed ${x.from} → ${x.to} (unchanged otherwise)` })),
+    ...(d.reordered.requirements ? [{ text: 'reordered (the order of results changes)' }] : []),
     ...r.changed.map((x) => ({
       text: cat({ t: x.id, b: true }, ` changed: ${x.fields.join(', ')}`),
       items: [
         ...(x.before.kind !== x.after.kind ? [{ text: `kind: ${x.before.kind} → ${x.after.kind}` }] : []),
         ...(x.before.quote !== x.after.quote || x.before.field !== x.after.field
-          ? [{ text: `quote: "${x.before.quote}" → "${x.after.quote}"` }]
+          ? [
+              {
+                text: `source: ${x.before.field} "${x.before.quote}" → ${x.after.field} "${x.after.quote}"`,
+              },
+            ]
           : []),
         ...(x.before.text !== x.after.text ? [{ text: `text: ${x.before.text} → ${x.after.text}` }] : []),
       ],
@@ -322,6 +363,7 @@ export function diffBlocks(d: CheckSetDiff, level: 2 | 3 = 2): Block[] {
     }),
     ...c.changed.map(changedCheck),
     ...c.renamed.map((x) => ({ text: `renamed ${x.from} → ${x.to} (unchanged otherwise)` })),
+    ...(d.reordered.checks ? [{ text: 'reordered (the order of results changes)' }] : []),
   ];
   if (checkItems.length) blocks.push({ h: sub, text: 'Checks' }, { ul: checkItems });
   const settled = r.unchanged.filter((id) => !d.toReview.includes(id));

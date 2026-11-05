@@ -219,8 +219,10 @@ Design details: [ADR 0001](docs/adr/0001-evidence-snapshot-and-check-dsl.md).
 
    ```ts
    import { approveCheckSet, reviewSheet } from '@swissspidy/assay';
+   import { stressTest } from '@swissspidy/assay/stress';
 
-   console.log(reviewSheet(checkSet, { stress: report }));
+   const stress = stressTest(checkSet, [{ name: 'reference', snapshot }]);
+   console.log(reviewSheet(checkSet, { stress }));
    const locked = approveCheckSet(checkSet, { by: 'reviewer@example.com', key: privateKeyPem });
    ```
 
@@ -238,7 +240,7 @@ assay review checks/order.checks.json --diff old.checks.json --format github  # 
 assay approve checks/order.checks.json --reviewer alice --key ~/.assay/alice.pem --note "R2 checked"
 assay reject checks/order.checks.json --reviewer bob --note "C3 reads free text"
 assay verify checks/order.checks.json snapshot.json --require-signed --trusted-key keys/
-assay validate checks/*.checks.json --require-signed       # CI gate: exit 1 if not approved
+assay validate checks/*.checks.json --require-signed --trusted-key keys/  # CI gate: exit 1 if not approved
 ```
 
 ```ts

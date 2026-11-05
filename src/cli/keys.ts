@@ -1,6 +1,6 @@
 /** Signing and trusted keys for the review commands (ADR 0013): PEM files, directories or variables. */
-import { existsSync, readdirSync, statSync, writeFileSync } from 'node:fs';
-import { basename, join } from 'node:path';
+import { existsSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { basename, dirname, join } from 'node:path';
 import { CheckSetError, assertValidCheckSet, type CheckSet } from '../index.ts';
 import { pemBlocks, privateKeyOf, trustedKeySet, type TrustedKeySet } from '../verifier/sign.ts';
 import { CliError, readJson, readText, type Io, type Values } from './io.ts';
@@ -9,6 +9,7 @@ import { CliError, readJson, readText, type Io, type Values } from './io.ts';
 export function signingKey(values: Values, env: Io['env']): string | undefined {
   const file = values.key as string | undefined;
   const pem = file !== undefined ? readText(file, 'signing key') : env.ASSAY_SIGNING_KEY;
+  if (file !== undefined && !pem!.trim()) throw new CliError(`signing key ${file} is empty`);
   if (pem === undefined || pem === '') return undefined;
   const where = file ?? '$ASSAY_SIGNING_KEY';
   try {
@@ -66,7 +67,26 @@ export function readCheckSet(file: string, what = 'check set'): CheckSet {
   }
 }
 
+/** A new file name next to `file`, for writing before renaming over it. */
+export const tempFileFor = (file: string) =>
+  join(dirname(file), `.${basename(file)}.${process.pid}.${Math.random().toString(36).slice(2)}.tmp`);
+
+/**
+ * Replace `file` atomically: write a temporary file in the same directory (created
+ * exclusively, with `mode`), then rename it over the file. A failure leaves the file as it was.
+ */
+export function writeFileAtomic(file: string, data: string, mode = 0o666): void {
+  const tmp = tempFileFor(file);
+  try {
+    writeFileSync(tmp, data, { flag: 'wx', mode });
+    renameSync(tmp, file);
+  } catch (e) {
+    rmSync(tmp, { force: true });
+    throw e;
+  }
+}
+
 /** Write a check set as the repository stores them: two-space JSON and a final newline. */
 export function writeCheckSet(file: string, cs: CheckSet): void {
-  writeFileSync(file, JSON.stringify(cs, null, 2) + '\n');
+  writeFileAtomic(file, JSON.stringify(cs, null, 2) + '\n');
 }

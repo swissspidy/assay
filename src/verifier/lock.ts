@@ -55,6 +55,35 @@ export function stressDigest(report: unknown): string {
   return sha256(canonicalJson(report));
 }
 
+const isObj = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x);
+
+/**
+ * Why `report` is not a stress report (as `stressTest` returns it or `assay stress --json`
+ * prints it), or undefined when it is one.
+ */
+export function stressReportProblem(report: unknown): string | undefined {
+  if (!isObj(report)) return 'not an object';
+  const cs = report.checkSet;
+  if (!isObj(cs) || typeof cs.id !== 'string' || typeof cs.version !== 'string') return 'no checkSet { id, version }';
+  for (const k of [
+    'references',
+    'variants',
+    'mutants',
+    'overConstrained',
+    'fragile',
+    'weak',
+    'missed',
+    'advisories',
+    'untested',
+  ])
+    if (!Array.isArray(report[k])) return `no ${k} list`;
+  if (!isObj(report.rates) || !Object.values(report.rates).every((v) => typeof v === 'number')) return 'no rates';
+  for (const k of ['overConstrained', 'fragile', 'weak'])
+    if (!(report[k] as unknown[]).every((f) => isObj(f) && typeof f.check === 'string'))
+      return `a malformed ${k} entry`;
+  return undefined;
+}
+
 /** Digests of each part of a set, keyed "id", "version", "task", "compiled", "requirement:<id>", "check:<id>". */
 const h = (v: unknown) => sha256(canonicalJson(v));
 
@@ -92,9 +121,12 @@ export function approveCheckSet(cs: CheckSet, opts: ApproveOptions): LockedCheck
   const base = unlocked(valid);
   if (!opts.by.trim()) throw new Error('approving needs the reviewer');
   const previous = (cs as Reviewed).locked;
+  if (opts.at !== undefined && !opts.at.trim()) throw new Error('approving needs a time (`at` is empty)');
   if (opts.stress !== undefined) {
-    const of = (opts.stress as { checkSet?: { id?: unknown; version?: unknown } } | null)?.checkSet;
-    if (of?.id !== base.id || of?.version !== base.version)
+    const problem = stressReportProblem(opts.stress);
+    if (problem) throw new Error(`not a stress report: ${problem}`);
+    const of = (opts.stress as { checkSet: { id: string; version: string } }).checkSet;
+    if (of.id !== base.id || of.version !== base.version)
       throw new Error(
         `the stress report is for ${String(of?.id)} v${String(of?.version)}, not ${base.id} v${base.version}`,
       );
@@ -127,6 +159,7 @@ export function lockCheckSet(cs: CheckSet, by: string, at = new Date().toISOStri
 export function rejectCheckSet(cs: CheckSet, opts: { by: string; note: string; at?: string }): CheckSet {
   if (!opts.by.trim()) throw new Error('rejecting needs the reviewer');
   if (!opts.note.trim()) throw new Error('rejecting needs a note saying why');
+  if (opts.at !== undefined && !opts.at.trim()) throw new Error('rejecting needs a time (`at` is empty)');
   const base = unlocked(cs);
   const rejected: Rejection = {
     by: opts.by,
@@ -225,14 +258,18 @@ export function verifyLock(cs: CheckSet, opts: LockCheckOptions = {}): LockStatu
   const base = unlocked(cs);
   const { digest, signature: sig, ...fields } = lock;
   const problems: string[] = [];
+  if ((cs as Reviewed).rejected) problems.push('the set is both locked and rejected');
   let changes: LockChange[] = [];
   if (lockDigest(base, fields) !== digest) {
-    if (lock.items) changes = changedItems(lock.items, itemDigests(base));
-    if (changes.length) problems.push(`changed after approval: ${changes.map(describeChange).join(', ')}`);
-    else if (lock.content && lock.content !== checkSetDigest(base))
-      problems.push('changed after approval: requirements or checks were reordered');
-    else if (lock.content) problems.push("the lock's own fields (reviewer, time, note or digests) were edited");
-    else problems.push('content, reviewer or time changed after locking (an older lock cannot say which)');
+    // The set still has the approved content: the lock itself was edited.
+    if (lock.content === checkSetDigest(base))
+      problems.push("the lock's own fields (reviewer, time, note or digests) were edited");
+    else {
+      if (lock.items) changes = changedItems(lock.items, itemDigests(base));
+      if (changes.length) problems.push(`changed after approval: ${changes.map(describeChange).join(', ')}`);
+      else if (lock.content) problems.push('changed after approval: requirements or checks were reordered');
+      else problems.push('content, reviewer or time changed after locking (an older lock cannot say which)');
+    }
   }
   let signature: SignatureStatus = 'none';
   let signer: string | undefined;
@@ -286,7 +323,7 @@ export function assertLocked(cs: CheckSet, requireLocked: LockRequirement | unde
   if (status.state === 'none') {
     const rejected = (cs as Reviewed).rejected;
     throw new LockError(
-      rejected
+      rejected && rejected.content === contentDigest(cs)
         ? `${name} is not locked: ${rejected.by} rejected it (${rejected.note.replace(/\s+/g, ' ').trim()}).`
         : `${name} is not locked: it is a proposal nobody has approved.`,
       status,

@@ -31,7 +31,8 @@ Locking stays in code (`lockCheckSet`): it records a person's confirmation, whic
 command would make too easy to give without reading the review sheet. (Amended by
 [ADR 0013](0013-review-workflow-and-signed-locks.md): `assay approve` signs with the reviewer's
 private key, which makes the confirmation an explicit act; `reject`, `unlock` and `keygen` complete
-the workflow.)
+the workflow. Signing is optional: without `--key` or `ASSAY_SIGNING_KEY`, `approve` writes an
+unsigned lock, and a consumer that needs a signature demands it with `--require-signed`.)
 
 ### Exit statuses
 

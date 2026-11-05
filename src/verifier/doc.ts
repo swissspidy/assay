@@ -31,8 +31,9 @@ const spans = (i: Inline): Span[] => (Array.isArray(i) ? i : [i]);
 /** Join inline runs. */
 export const cat = (...parts: Inline[]): Span[] => parts.flatMap(spans);
 
-// Markdown: only angle brackets are escaped (HTML in a PR comment); the rest stays readable in a terminal.
-const mdText = (s: string) => oneLine(s).replace(/[<>]/g, (c) => `\\${c}`);
+// Markdown: backslashes, HTML, links and images, and code spans are escaped, so check set text cannot
+// add markup to a PR comment; emphasis characters are left alone to keep patterns readable in a terminal.
+const mdText = (s: string) => oneLine(s).replace(/[\\<>[\]`]/g, (c) => `\\${c}`);
 const mdCode = (s: string) => {
   const t = oneLine(s);
   const fence = '`'.repeat(Math.max(0, ...[...t.matchAll(/`+/g)].map((m) => m[0].length)) + 1);

@@ -10,6 +10,7 @@ import {
   type Verdict,
 } from '../../index.ts';
 import { selectRequirement } from '../../verifier/escalate.ts';
+import { assertLocked } from '../../verifier/lock.ts';
 import {
   CliError,
   EXIT,
@@ -49,6 +50,8 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
     );
   // With trusted keys, the record shows whether the lock's signature is trusted; --require-signed demands it.
   const requireLocked = values['require-signed'] ? { trustedKeys: keys! } : !!values['require-locked'];
+  // The lock is enforced before anything else, so a missing model key cannot hide a refused lock.
+  if (requireLocked && validateCheckSet(checks).ok) assertLocked(checks as CheckSet, requireLocked);
   // The model is selected (and a key needed) only when a requirement will actually escalate.
   const verifier = values.escalate && escalates(checks, snapshot) ? await selectModel(values, io.env) : undefined;
 

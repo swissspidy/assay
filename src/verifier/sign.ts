@@ -118,12 +118,15 @@ export function trustedKeySet(keys: readonly TrustedKey[]): TrustedKeySet {
     const id = keyId(key);
     out.set(id, { name: name ?? id, key });
   };
+  const addPem = (text: string, name?: string) => {
+    const blocks = pemBlocks(text);
+    if (!blocks.length) throw new Error('a trusted key holds no PEM block');
+    for (const b of blocks) add(b, name);
+  };
   for (const k of keys) {
-    if (typeof k === 'string') {
-      const blocks = pemBlocks(k);
-      if (!blocks.length) throw new Error('a trusted key holds no PEM block');
-      for (const b of blocks) add(b);
-    } else if (k instanceof KeyObject) add(k);
+    if (typeof k === 'string') addPem(k);
+    else if (k instanceof KeyObject) add(k);
+    else if (typeof k.key === 'string') addPem(k.key, k.name);
     else add(k.key, k.name);
   }
   return { keys: out };

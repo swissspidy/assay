@@ -27,6 +27,7 @@ import {
 } from '../../src/index.ts';
 import { stressTest } from '../../src/stress/index.ts';
 import { pemBlocks, trustedKeySet } from '../../src/verifier/sign.ts';
+import { itemDigests, stressReportProblem } from '../../src/verifier/lock.ts';
 
 const read = (p: string) => JSON.parse(readFileSync(new URL(`../../${p}`, import.meta.url), 'utf8'));
 const TWO_MUGS: CheckSet = read('examples/tiny-shop/tasks/03-cart-two-mugs.checks.json');
@@ -129,10 +130,13 @@ test.describe('locks', () => {
     const note = clone(locked);
     note.locked.note = 'not ok';
     expect(verifyLock(note).state).toBe('broken');
-    // Editing the recorded item digests to hide a change still breaks the digest.
-    const items = clone(check);
-    items.locked.items = { ...items.locked.items };
-    expect(isLocked(items)).toBe(false);
+    // Editing one recorded item digest breaks the lock, and so does updating it to hide a change.
+    const items = clone(locked);
+    items.locked.items!['check:C1'] = `sha256:${'0'.repeat(64)}`;
+    expect(problems(items)).toEqual(["the lock's own fields (reviewer, time, note or digests) were edited"]);
+    const hidden = clone(check);
+    hidden.locked.items!['check:C1'] = itemDigests(hidden)['check:C1']!;
+    expect(isLocked(hidden)).toBe(false);
   });
 
   test('signatures: trusted, untrusted, unchecked and invalid', () => {
@@ -404,6 +408,96 @@ test.describe('route and page checks (ADR 0011, 0012)', () => {
     const sheet = reviewSheet(locked);
     expect(sheet).toContain('  - on missing route evidence: abstain (the run may have done it another way)');
     expect(sheet).toMatch(/ {2}- tests: on the one open page \(tab or popup\) with .*\/cart/);
-    expect(sheet).toContain('  - reads: accessibility tree (semantic)');
+    expect(sheet).toContain('  - reads: URL (structured), accessibility tree (semantic)');
+  });
+});
+
+test.describe('review findings (PR #24)', () => {
+  test('approve and reject refuse an empty time and a malformed stress report', () => {
+    expect(() => approveCheckSet(TWO_MUGS, { by: 'a', at: ' ' })).toThrow('`at` is empty');
+    expect(() => rejectCheckSet(TWO_MUGS, { by: 'a', note: 'no', at: '' })).toThrow('`at` is empty');
+    const report = stressTest(TWO_MUGS, [{ name: 'both-mugs', snapshot: BOTH_MUGS }]);
+    expect(stressReportProblem(JSON.parse(JSON.stringify(report)))).toBeUndefined();
+    const { weak: _w, ...noWeak } = report;
+    expect(() => approveCheckSet(TWO_MUGS, { by: 'a', stress: noWeak })).toThrow('not a stress report: no weak list');
+    expect(stressReportProblem({ ...report, rates: { a: 'x' } })).toBe('no rates');
+  });
+
+  test('a set both locked and rejected is broken; a revised rejection reads as a plain proposal', () => {
+    const locked = lockCheckSet(TWO_MUGS, 'a', AT);
+    const both = { ...locked, rejected: rejectCheckSet(TWO_MUGS, { by: 'b', note: 'no', at: AT }).rejected };
+    expect(verifyLock(both)).toMatchObject({ state: 'broken', problems: ['the set is both locked and rejected'] });
+    const revised = { ...rejectCheckSet(TWO_MUGS, { by: 'bob', note: 'no', at: AT }), version: '2' };
+    expect(() => assertLocked(revised, true)).toThrow('is not locked: it is a proposal nobody has approved.');
+  });
+
+  test('the diff reports provenance models, requirement renames, reordering and source changes', () => {
+    const compiled: CheckSet = read('examples/tiny-shop/compiled/02-add-blue-mug.checks.json');
+    const served = clone(compiled);
+    served.compiled!.modelsUsed = ['other-model'];
+    const prov = diffCheckSets(compiled, served).set;
+    expect(prov).toHaveLength(1);
+    expect(prov[0]!.after).toContain('served by other-model');
+
+    const renamed = clone(TWO_MUGS);
+    renamed.requirements[1]!.id = 'R2b';
+    renamed.checks[1]!.requirement = 'R2b';
+    const d = diffCheckSets(TWO_MUGS, renamed);
+    expect(d.requirements).toMatchObject({ added: [], removed: [], renamed: [{ from: 'R2', to: 'R2b' }] });
+    expect(formatCheckSetDiff(d)).toContain('- renamed R2 → R2b (unchanged otherwise)');
+
+    const reordered = { ...clone(TWO_MUGS), checks: TWO_MUGS.checks.toReversed() };
+    const r = diffCheckSets(TWO_MUGS, reordered);
+    expect(r).toMatchObject({ identical: false, reordered: { requirements: false, checks: true } });
+    expect(formatCheckSetDiff(r)).toContain('- reordered (the order of results changes)');
+
+    const moved = clone(TWO_MUGS);
+    moved.task.instruction += ' The cart page lists a Blue Mug.';
+    moved.requirements[0]!.source.field = 'instruction';
+    const src = diffCheckSets(TWO_MUGS, moved);
+    expect(src.requirements.changed).toMatchObject([{ id: 'R1', fields: ['source'] }]);
+    expect(formatCheckSetDiff(src)).toContain(
+      '- source: outcomes "the cart page lists a Blue Mug" → instruction "the cart page lists a Blue Mug"',
+    );
+  });
+
+  test('warnings go to the right check, dotted ids included; unmatched ones are general', () => {
+    const cs = clone(TWO_MUGS);
+    cs.checks[0]!.id = 'C1.a';
+    const sheet = reviewSheet(cs, {
+      warnings: ['check C1.a.allOf[0]: dotted', 'check C2: plain', 'check C9: unknown', 'requirement R1 has none'],
+    });
+    expect(sheet).toMatch(/- \*\*C1\.a\*\* .*\n( {2}- .*\n)*? {2}- warning: check C1\.a\.allOf\\\[0\\\]: dotted/);
+    expect(sheet).toMatch(/- \*\*C2\*\* .*\n( {2}- .*\n)*? {2}- warning: check C2: plain/);
+    expect(sheet).toContain('## Warnings\n\n- check C9: unknown');
+    expect(sheet).toContain('- warning: requirement R1 has none');
+  });
+
+  test('unchanged requirements keep their stress findings and warnings in the collapsed section', () => {
+    const report = stressTest(TWO_MUGS, [{ name: 'both-mugs', snapshot: BOTH_MUGS }]);
+    const weak = {
+      ...report,
+      weak: [{ check: 'C1', mutants: [{ reference: 'both-mugs', id: 'm', description: 'd' }] }],
+    };
+    const v2 = clone(TWO_MUGS);
+    v2.checks[1]!.description = 'Changed.';
+    const sheet = reviewSheet(v2, { previous: TWO_MUGS, stress: weak, warnings: ['check C1: careful'] });
+    expect(sheet).toContain(
+      '- **R1** (hard): "the cart page lists a Blue Mug": checks C1\n  - C1 stress: weak: still passes both-mugs/m (d)\n  - warning: check C1: careful',
+    );
+  });
+
+  test('a named trusted key holding several PEM blocks indexes each under its name', () => {
+    const set = trustedKeySet([{ name: 'team', key: alice.publicKey + mallory.publicKey }]);
+    expect([...set.keys.values()].map((k) => k.name)).toEqual(['team', 'team']);
+    expect(set.keys.has(mallory.keyId)).toBe(true);
+  });
+
+  test('Markdown escapes backslashes, links, images and code spans in check set text', () => {
+    const evil = clone(BLUE_MUG);
+    evil.checks[0]!.description = '![x](https://e.test/a.png) [ok](https://e.test) \\<b> `x`';
+    expect(reviewSheet(evil)).toContain(
+      '- **C1** !\\[x\\](https://e.test/a.png) \\[ok\\](https://e.test) \\\\\\<b\\> \\`x\\`',
+    );
   });
 });

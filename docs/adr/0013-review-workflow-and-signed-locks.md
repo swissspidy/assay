@@ -165,8 +165,11 @@ answer about the input, like an invalid set.
 ### Example: a pull request gate (documentation only)
 
 Posts the review sheet with the diff against the base branch as a PR comment, and fails when a
-changed check set has no fresh approval by a trusted key. The trusted public keys are a repository
-variable, not files in the pull request, which could add its own key.
+changed check set has no fresh approval by a trusted key. Everything that runs comes from the base
+branch: Assay is installed from the base checkout, and the pull request's checkout is only data,
+read by `git` and by `assay` (no `npm ci`, no scripts from the pull request). The trusted public keys
+are a repository variable, not files in the pull request, which could add its own key. The token
+that can comment is given to the one step that comments, never to a step that installs packages.
 
 ```yaml
 name: Check set review
@@ -182,32 +185,42 @@ jobs:
     env:
       BASE: ${{ github.base_ref }}
       ASSAY_TRUSTED_KEYS: ${{ vars.ASSAY_TRUSTED_KEYS }}
-      GH_TOKEN: ${{ github.token }}
-      PR: ${{ github.event.pull_request.number }}
     steps:
-      - uses: actions/checkout@v4
-        with: { fetch-depth: 0, persist-credentials: false }
+      - uses: actions/checkout@v4 # trusted code: the base branch, which pins @swissspidy/assay
+        with: { ref: '${{ github.base_ref }}', path: base, persist-credentials: false }
+      - uses: actions/checkout@v4 # data only: the pull request
+        with: { ref: '${{ github.event.pull_request.head.sha }}', path: pr, fetch-depth: 0, persist-credentials: false }
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - run: npm ci
+      - run: npm ci --prefix base
       - name: Review sheets
         run: |
-          : > sheet.md
-          for f in $(git diff --name-only "origin/$BASE...HEAD" -- 'checks/*.checks.json'); do
+          shopt -s globstar nullglob
+          assay=$PWD/base/node_modules/.bin/assay
+          cd pr
+          : > ../sheet.md
+          for f in $(git diff --name-only "origin/$BASE...HEAD" -- 'checks/**/*.checks.json'); do
             [ -f "$f" ] || continue
-            if git show "origin/$BASE:$f" > old.json 2>/dev/null; then diff=(--diff old.json); else diff=(); fi
-            npx assay review "$f" "${diff[@]}" --format github >> sheet.md
-            echo >> sheet.md
+            if git show "origin/$BASE:$f" > ../old.json 2>/dev/null; then diff=(--diff ../old.json); else diff=(); fi
+            "$assay" review "$f" "${diff[@]}" --format github >> ../sheet.md
+            echo >> ../sheet.md
           done
-          if [ -s sheet.md ]; then gh pr comment "$PR" --body-file sheet.md --edit-last --create-if-none; fi
+      - name: Comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          if [ -s sheet.md ]; then gh pr comment "$PR" -R "$GITHUB_REPOSITORY" --body-file sheet.md --edit-last --create-if-none; fi
       - name: Require a signed approval
-        run: npx assay validate checks/*.checks.json --require-signed
+        run: |
+          shopt -s globstar nullglob
+          cd pr && ../base/node_modules/.bin/assay validate checks/**/*.checks.json --require-signed
 ```
 
 The reviewer reads the comment, runs `assay approve <file> --reviewer <name> --key <pem>` locally and
-pushes; the next run passes. The gate covers every set, so a repository adopting it signs its
-existing sets once. Pull requests from forks get a read-only token, so commenting needs a
-separate `workflow_run` job there.
+pushes; the next run passes. The gate covers every set, including those in subdirectories of
+`checks/` (`globstar`), so a repository adopting it signs its existing sets once. Pull requests from
+forks get a read-only token, so commenting needs a separate `workflow_run` job there.
 
 ## Consequences
 

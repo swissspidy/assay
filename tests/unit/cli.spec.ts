@@ -12,6 +12,7 @@ import { colorReport, lineWriter, type Io } from '../../src/cli/io.ts';
 import { Writable } from 'node:stream';
 import { selectModel } from '../../src/cli/model.ts';
 import { loadPlaywright, outFile, writeSnapshot } from '../../src/cli/commands/capture.ts';
+import { installFiles } from '../../src/cli/commands/keygen.ts';
 import { lockCheckSet, type CheckSet } from '../../src/index.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
@@ -597,5 +598,94 @@ test.describe('review workflow (ADR 0013)', () => {
     expect(wrong.code).toBe(4);
     expect(wrong.stderr).toContain('the stress report is for tiny-shop/04-remove-red-mug v1');
     expect((await assay(['review', checks, '--stress', BLUE_MUG])).stderr).toContain('is not a stress report');
+  });
+});
+
+test.describe('review workflow: file safety and ordering (PR #24 review)', () => {
+  test('approve rewrites the file atomically, leaving no temporary files', async () => {
+    const dir = tmp();
+    const checks = join(dir, 'checks.json');
+    writeFileSync(checks, readFileSync(BLUE_MUG, 'utf8'));
+    expect((await assay(['approve', checks, '--reviewer', 'a'])).code).toBe(0);
+    expect(readdirSync(dir)).toEqual(['checks.json']);
+    expect(JSON.parse(readFileSync(checks, 'utf8')).locked.by).toBe('a');
+  });
+
+  test('keygen: --force replaces both files with a private key of mode 600; otherwise nothing is half-written', async () => {
+    const dir = tmp();
+    const key = join(dir, 'k.pem');
+    const pub = join(dir, 'k.pub.pem');
+    writeFileSync(key, 'old', { mode: 0o644 });
+    writeFileSync(pub, 'old');
+    expect((await assay(['keygen', '--out', key])).code).toBe(4);
+    expect(readFileSync(key, 'utf8')).toBe('old');
+    expect((await assay(['keygen', '--out', key, '--force'])).code).toBe(0);
+    expect(statSync(key).mode & 0o777).toBe(0o600);
+    expect(readFileSync(key, 'utf8')).toContain('BEGIN PRIVATE KEY');
+    expect(readFileSync(pub, 'utf8')).toContain('BEGIN PUBLIC KEY');
+    expect(readdirSync(dir).toSorted()).toEqual(['k.pem', 'k.pub.pem']);
+    // Only the public key exists: the private key is not created either.
+    const lone = join(dir, 'lone.pem');
+    writeFileSync(join(dir, 'lone.pub.pem'), 'old');
+    expect((await assay(['keygen', '--out', lone])).stderr).toContain('lone.pub.pem exists');
+    expect(readdirSync(dir)).not.toContain('lone.pem');
+  });
+
+  test('keygen restores the old files when installing the new ones fails', () => {
+    const dir = tmp();
+    const dest = join(dir, 'a.pem');
+    writeFileSync(dest, 'old');
+    const staged = join(dir, 'staged');
+    writeFileSync(staged, 'new');
+    // The second staged file does not exist, so linking it fails after the first is installed.
+    expect(() =>
+      installFiles(
+        [
+          { staged, dest },
+          { staged: join(dir, 'missing'), dest: join(dir, 'b.pem') },
+        ],
+        true,
+      ),
+    ).toThrow();
+    expect(readFileSync(dest, 'utf8')).toBe('old');
+    expect(readdirSync(dir)).toEqual(['a.pem']);
+  });
+
+  test('an empty --key file is an error, not an unsigned approval', async () => {
+    const dir = tmp();
+    const checks = join(dir, 'checks.json');
+    writeFileSync(checks, readFileSync(BLUE_MUG, 'utf8'));
+    writeFileSync(join(dir, 'empty.pem'), '');
+    const r = await assay(['approve', checks, '--reviewer', 'a', '--key', join(dir, 'empty.pem')]);
+    expect(r.code).toBe(4);
+    expect(r.stderr).toContain('is empty');
+    expect(JSON.parse(readFileSync(checks, 'utf8')).locked).toBeUndefined();
+  });
+
+  test('review --stress --json includes the stress results and whether the approver saw them', async () => {
+    const dir = tmp();
+    const checks = join(dir, 'checks.json');
+    writeFileSync(checks, readFileSync(BLUE_MUG, 'utf8'));
+    const report = join(dir, 'stress.json');
+    writeFileSync(report, (await assay(['stress', checks, '-r', shop('references/02-add-blue-mug'), '--json'])).stdout);
+    await assay(['approve', checks, '--reviewer', 'a', '--stress', report]);
+    const j = JSON.parse((await assay(['review', checks, '--stress', report, '--json'])).stdout);
+    expect(j.stress).toMatchObject({ checkSet: { id: 'tiny-shop/add-blue-mug' }, approved: true, weak: [] });
+    expect(j.stress.rates.variantsTotal).toBeGreaterThan(0);
+  });
+
+  test('verify --require-signed refuses the lock before it looks for a model key', async () => {
+    const dir = tmp();
+    const checks = join(dir, 'checks.json');
+    writeFileSync(checks, readFileSync(TWO_MUGS, 'utf8'));
+    await assay(['approve', checks, '--reviewer', 'bob']);
+    await assay(['keygen', '--out', join(dir, 'k.pem')]);
+    // This run abstains, so --escalate would need a model (and its key) first.
+    const r = await assay(
+      ['verify', checks, NEWSLETTER_RUN, '--escalate', '--require-signed', '--trusted-key', join(dir, 'k.pub.pem')],
+      {},
+    );
+    expect(r.code).toBe(4);
+    expect(r.stderr).toContain('is locked by bob but not signed');
   });
 });
