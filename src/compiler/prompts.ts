@@ -82,5 +82,19 @@ Use it for requirements that relate the end state to the start: "keep everything
 - "order what is in my cart": the order's items (from the order response or a probe) sameAs the cart's items before the task, both through {op:"items"}.
 - "pointer" keeps one field of each item: use it only when that one field is all the task is about (e.g. which items are kept). When several fields matter together (a product and its quantity), compare whole items ({op:"items"} without a pointer) in one check, never separate checks per field. "pick" drops every field it does not name, so a change to those fields passes: use it only when the two sides' items have different fields (order lines with a lineTotal the cart lacks), to keep the fields both have together, e.g. {op:"items", pick:["/sku", "/qty"]} on both sides. When both sides hold items with the same fields (the cart after and the cart before; order lines shaped like the cart's items), compare whole items; pick there is refused.`;
 
+/**
+ * Appended to DISCOVERY_SYSTEM, each only when a reference snapshot has captured frame
+ * content, other open pages or parsed form bodies (ADR 0012), so prompts for tasks
+ * without them are unchanged.
+ */
+export const DISCOVERY_FRAMES = `## Frames
+Frame content is in the tree under its iframe node (named by the iframe's title; its url is the frame's URL), and locators find it like any other node. To keep a check to one frame, scope it to the iframe: scope {role:"iframe", name:"Editor canvas"}, or within the same.`;
+
+export const DISCOVERY_PAGES = `## Other open pages
+Some references had several pages open (tabs, popups); the outline lists the others after the active page. The page, tree, text and URL a check reads are the active page's. To read another open page, wrap the assertion: {kind:"page", match:{url?: UrlMatch, title?: TextMatch}, assert: Assertion}. Select the page by what identifies it (its path); a match that fits several pages or none abstains. Inside, read only the page: state, contains, each, url, and value from node, text or url sources.`;
+
+export const DISCOVERY_FORMS = `## Form bodies
+Form request bodies (URL-encoded and multipart) are objects of their fields: a repeated field is an array, an uploaded file is {filename, type, size}. Match a field with a requestBody JSON Schema or read it with a pointer ("/title").`;
+
 export const DISCOVERY_NUDGE =
   'Continue exploring if needed, then call submit_checks with your checks. Every requirement needs at least one check.';

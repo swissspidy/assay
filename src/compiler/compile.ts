@@ -11,6 +11,7 @@
  */
 import type {
   Assertion,
+  AXNode,
   Check,
   CheckSet,
   EvidenceSnapshot,
@@ -33,7 +34,15 @@ import type { ModelClient } from '../model/types.ts';
 import { parseOutcomes, parseOutcomesDetailed, type Clause } from './outcomes.ts';
 import { stressTest, type FindingRef } from '../stress/stress.ts';
 import { findNodes, networkEntry, networkLog, outline, probesView, storageView, summary } from './explore.ts';
-import { DISCOVERY_BASELINE, DISCOVERY_NUDGE, DISCOVERY_SYSTEM, RUBRIC_SYSTEM } from './prompts.ts';
+import {
+  DISCOVERY_BASELINE,
+  DISCOVERY_FORMS,
+  DISCOVERY_FRAMES,
+  DISCOVERY_NUDGE,
+  DISCOVERY_PAGES,
+  DISCOVERY_SYSTEM,
+  RUBRIC_SYSTEM,
+} from './prompts.ts';
 
 export interface TaskInput {
   id: string;
@@ -630,21 +639,56 @@ export function verifyCandidate(cs: CheckSet, refs: Reference[], stress = true, 
   return { errors, warnings, references };
 }
 
-const CHECKS_TOOL_SCHEMA = {
+const hasFrameContent = (n: AXNode): boolean =>
+  (n.role === 'iframe' && !!n.children?.length) || (n.children ?? []).some(hasFrameContent);
+
+/**
+ * The discovery prompt, with a section for each kind of evidence the references hold
+ * beyond a single page's (a baseline; frames, other pages and form bodies, ADR 0012), so
+ * the prompt for references without them is unchanged.
+ * @internal Exported for tests.
+ */
+export function discoverySystem(snapshots: EvidenceSnapshot[]): string {
+  const parts = [DISCOVERY_SYSTEM];
+  if (snapshots.some((s) => s.baseline)) parts.push(DISCOVERY_BASELINE);
+  if (snapshots.some((s) => hasFrameContent(s.a11y) || s.pages?.some((p) => hasFrameContent(p.a11y))))
+    parts.push(DISCOVERY_FRAMES);
+  if (snapshots.some((s) => s.pages?.length)) parts.push(DISCOVERY_PAGES);
+  if (snapshots.some((s) => s.network?.some((e) => e.requestBodyRaw !== undefined))) parts.push(DISCOVERY_FORMS);
+  return parts.join('\n\n');
+}
+
+/**
+ * The DSL definitions the compiler's tools take. The `page` assertion (ADR 0012) is offered
+ * only when a reference has other open pages, so the tools (and the recordings keyed on
+ * them) change only for such tasks.
+ * @internal Exported for tests.
+ */
+export function dslDefinitions(withPages: boolean) {
+  const defs = checkSetSchema.definitions;
+  if (withPages) return defs;
+  const { pageMatch: _, ...rest } = defs;
+  const oneOf = defs.assertion.oneOf.filter(
+    (a) => !('const' in a.properties.kind && a.properties.kind.const === 'page'),
+  );
+  return { ...rest, assertion: { oneOf } };
+}
+
+const checksToolSchema = (withPages: boolean) => ({
   type: 'object',
   additionalProperties: false,
   required: ['checks'],
   properties: { checks: { type: 'array', minItems: 1, items: { $ref: '#/definitions/check' } } },
-  definitions: checkSetSchema.definitions,
-};
+  definitions: dslDefinitions(withPages),
+});
 
-const ASSERT_TOOL_SCHEMA = {
+const assertToolSchema = (withPages: boolean) => ({
   type: 'object',
   additionalProperties: false,
   required: ['assert'],
   properties: { assert: { $ref: '#/definitions/assertion' } },
-  definitions: checkSetSchema.definitions,
-};
+  definitions: dslDefinitions(withPages),
+});
 
 const show = (f: FindingRef) => `${f.description} [${f.reference}/${f.id}]`;
 
@@ -662,6 +706,7 @@ function discoveryTools(
   onAccept: (v: Verification) => void,
 ) {
   const refNames = refs.map((r) => r.name);
+  const withPages = refs.some((r) => r.snapshot.pages?.length);
   const pickRef = (name: string | undefined): Reference => refs.find((r) => r.name === name) ?? refs[0]!;
   const refProp = {
     reference: { type: 'string', enum: refNames, description: 'Reference snapshot name (default: the first one).' },
@@ -727,7 +772,7 @@ function discoveryTools(
         name: 'try_assertion',
         description:
           'Evaluate one assertion against every reference snapshot and report pass/fail/abstain with the reason.',
-        inputSchema: ASSERT_TOOL_SCHEMA,
+        inputSchema: assertToolSchema(withPages),
       },
       run(i: { assert: Assertion }) {
         const lines = refs.map((r) => {
@@ -742,7 +787,7 @@ function discoveryTools(
         name: 'submit_checks',
         description:
           'Submit the complete list of checks. They are validated and run against all references; you get errors to fix, or acceptance.',
-        inputSchema: CHECKS_TOOL_SCHEMA,
+        inputSchema: checksToolSchema(withPages),
       },
       run(i: { checks: Check[] }) {
         const cs: CheckSet = {
@@ -847,7 +892,7 @@ export async function compileTask(task: TaskInput, refs: Reference[], opts: Comp
     .join('\n\n');
   const run = await runAgent<CheckSet>({
     model: opts.model,
-    system: refs.some((r) => r.snapshot.baseline) ? `${DISCOVERY_SYSTEM}\n\n${DISCOVERY_BASELINE}` : DISCOVERY_SYSTEM,
+    system: discoverySystem(refs.map((r) => r.snapshot)),
     prompt,
     tools,
     maxTurns: opts.maxTurns ?? 40,
