@@ -435,4 +435,22 @@ test.describe('review findings', () => {
     expect(written).toEqual(['one\n']);
   });
 
+  test('help and version take no further arguments; inherited names are not commands', () => {
+    expect(() => parse(['--help', 'verify'])).toThrow('unexpected argument "verify" after --help');
+    expect(() => parse(['-h', 'x'])).toThrow('unexpected argument');
+    expect(() => parse(['help', 'verify', 'x'])).toThrow('unexpected argument "x" after help');
+    expect(() => parse(['--version', 'x'])).toThrow('unexpected argument "x" after --version');
+    expect(() => parse(['help', 'toString'])).toThrow('unknown command "toString"');
+    expect(() => parse(['help', '__proto__'])).toThrow('unknown command');
+  });
+
+  test('--no-color applies to usage errors too', async () => {
+    const c = io({}, true);
+    expect(await run(['verify', '--no-color'], c)).toBe(3);
+    expect(c.stderr.join('')).toContain('error: missing argument');
+    expect(c.stderr.join('')).not.toContain('\u001b[');
+    const colored = io({}, true);
+    await run(['verify'], colored);
+    expect(colored.stderr.join('')).toContain('\u001b[');
+  });
 });

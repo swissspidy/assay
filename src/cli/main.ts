@@ -213,12 +213,23 @@ export type Parsed = { kind: 'help'; command?: string } | { kind: 'version' } | 
 export function parse(argv: string[]): Parsed {
   const [first, ...rest] = argv;
   if (first === undefined) throw new UsageError('missing command');
-  if (first === '-h' || first === '--help') return { kind: 'help' };
+  const noMore = (max: number) => {
+    if (rest.length > max) throw new UsageError(`unexpected argument "${rest[max]}" after ${first}`);
+  };
+  if (first === '-h' || first === '--help') {
+    noMore(0);
+    return { kind: 'help' };
+  }
   if (first === 'help') {
-    if (rest[0] !== undefined && !COMMANDS[rest[0]]) throw new UsageError(`unknown command "${rest[0]}"`);
+    noMore(1);
+    if (rest[0] !== undefined && !Object.hasOwn(COMMANDS, rest[0]))
+      throw new UsageError(`unknown command "${rest[0]}"`);
     return rest[0] ? { kind: 'help', command: rest[0] } : { kind: 'help' };
   }
-  if (first === '-v' || first === '--version') return { kind: 'version' };
+  if (first === '-v' || first === '--version') {
+    noMore(0);
+    return { kind: 'version' };
+  }
   const def = Object.hasOwn(COMMANDS, first) ? COMMANDS[first] : undefined;
   if (!def) {
     throw new UsageError(first.startsWith('-') ? `unknown option "${first}"` : `unknown command "${first}"`);
@@ -248,6 +259,13 @@ const errorText = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
 /** Run the tool and return the exit status. */
 export async function run(argv: string[], io: Io = processIo()): Promise<number> {
+  // --color / --no-color apply to every message, including a usage error (the last one wins).
+  const end = argv.indexOf('--');
+  const colorFlag = (end === -1 ? argv : argv.slice(0, end)).findLast((a) => a === '--color' || a === '--no-color');
+  if (colorFlag) {
+    const on = colorFlag === '--color';
+    io = { ...io, color: on, errColor: on };
+  }
   let parsed: Parsed;
   try {
     parsed = parse(argv);
@@ -263,10 +281,6 @@ export async function run(argv: string[], io: Io = processIo()): Promise<number>
   if (parsed.kind === 'version') {
     io.out(version());
     return EXIT.ok;
-  }
-  if (parsed.values.color !== undefined) {
-    const on = parsed.values.color === true;
-    io = { ...io, color: on, errColor: on };
   }
   try {
     const mod = await COMMANDS[parsed.command]!.load();
