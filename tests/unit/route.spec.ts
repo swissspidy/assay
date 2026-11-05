@@ -330,6 +330,44 @@ test.describe('items flatten: "add X" keeps what was there', () => {
     expect(r.rates.mutantsTotal).toBeGreaterThan(0);
   });
 
+  test('two flattened fields of one probe are two collections, not a field-wise comparison', () => {
+    const categoriesOf: Normalizer[] = [
+      {
+        op: 'items',
+        where: { properties: { title: { const: 'Flaky tests' } }, required: ['title'] },
+        pointer: '/categories',
+        flatten: true,
+      },
+    ];
+    const keptCategories: Check = {
+      ...kept,
+      id: 'categories',
+      assert: {
+        kind: 'value',
+        source: { from: 'probe', probe: 'posts' },
+        normalize: categoriesOf,
+        expect: { sameAs: { source: { from: 'probe', probe: 'posts', at: 'before' }, normalize: categoriesOf } },
+      },
+    };
+    const both = { ...cs, checks: [added, kept, keptCategories] };
+    expect(validateCheckSet(both).warnings.join('\n')).not.toContain('one field at a time');
+    const withCats = (tags: string[]) => [
+      { id: 3, title: 'Flaky tests', tags, categories: ['Tutorials'] },
+      { id: 4, title: 'Other', tags: ['release'], categories: ['News'] },
+    ];
+    const ref = snap([], {
+      probes: { posts: { ok: true, value: withCats(['performance', 'testing']) } },
+      baseline: {
+        capturedAt: '',
+        url: ORIGIN,
+        storage: null,
+        probes: { posts: { ok: true, value: withCats(['performance']) } },
+        redacted: [],
+      },
+    });
+    expect(verifyCandidate(both, [{ name: 'ok', kind: 'success', snapshot: ref }], false).errors).toEqual([]);
+  });
+
   test('validation: flatten needs a pointer and cannot take pick', () => {
     const withSteps = (normalize: unknown) =>
       validateCheckSet({ ...cs, checks: [{ ...kept, assert: { ...kept.assert, normalize } }] });

@@ -342,11 +342,12 @@ function itemsSide(src: ValueSource, n: Normalizer[] | undefined) {
   if (!step) return undefined;
   const rest = steps.map((x) => {
     if (typeof x === 'string') return { op: x };
-    if (x.op !== 'items') return x;
+    // A flattened field is a collection of its own (a post's tags, not its categories): keep it.
+    if (x.op !== 'items' || x.flatten) return x;
     const { pointer: _, pick: __, ...keep } = x;
     return keep;
   });
-  const fields = step.pick ? step.pick.toSorted() : step.pointer ? [step.pointer] : [];
+  const fields = step.flatten ? [] : step.pick ? step.pick.toSorted() : step.pointer ? [step.pointer] : [];
   return { key: canonicalJson({ src, n: rest } as unknown as Json), fields };
 }
 
