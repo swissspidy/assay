@@ -69,7 +69,12 @@ the same check run without validation or a record, for hot loops.
 
 - **Evidence snapshot.** What a run left behind: the accessibility tree, visible text, URL, network
   log, storage and the results of backend probes you define. Captured with `captureSnapshot` (or by
-  `expectOutcome`), stored as JSON, and evaluated the same way live or offline.
+  `expectOutcome`), stored as JSON, and evaluated the same way live or offline. Iframe content
+  (same- and cross-origin) sits under its `iframe` node, where locators find it like any other node
+  (scope to `{"role": "iframe", "name": "Editor canvas"}` to stay in one frame); open shadow roots
+  are included, closed ones are not. Other open tabs and popups are kept as `pages`; the snapshot's
+  page is the active one. Form request bodies, URL-encoded and multipart, are parsed into fields,
+  with uploads recorded as `{filename, type, size}` ([ADR 0012](docs/adr/0012-snapshot-frames-pages-bodies.md)).
 - **Requirements and checks.** A check set lists requirements, each quoting the task text it comes
   from, and checks, each tracing to one requirement:
 
@@ -93,7 +98,8 @@ the same check run without validation or a record, for hot loops.
 
   Assertion kinds: `state`, `contains`, `value` (read from a node, text, the URL, a request or
   response, storage or a probe, then normalized and compared with a literal, or with a second
-  source via `sameAs`), `url`, `request`, `each` and `allOf`/`anyOf`. Normalizers parse numbers,
+  source via `sameAs`), `url`, `request`, `each`, `page` (another open tab or popup, selected by
+  URL or title) and `allOf`/`anyOf`. Normalizers parse numbers,
   money, dates and date-times (`datetime`, compared as instants; `approx` on them is in minutes).
   The JSON Schema is exported as `checkSetSchema`; `validateCheckSet` adds semantic checks.
 
@@ -299,6 +305,7 @@ asked to remove.
 - [ADR 0007](docs/adr/0007-vercel-ai-sdk-adapter.md): the Vercel AI SDK adapter
 - [ADR 0008](docs/adr/0008-per-record-checks.md): per-record checks and paired item fields
 - [ADR 0009](docs/adr/0009-real-site-evaluation.md): evaluation on real web apps
+- [ADR 0012](docs/adr/0012-snapshot-frames-pages-bodies.md): frames, open pages and form bodies in snapshots
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
 - Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)
 
