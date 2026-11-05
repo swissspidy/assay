@@ -31,6 +31,7 @@ import {
   TRAINING_RUN,
 } from '../eval/real/dataset.ts';
 import { modelFromEnv } from './model-from-env.ts';
+import { NO_RECORDING } from '../src/model/replay.ts';
 
 const arg = (name: string, dflt: string) => {
   const i = process.argv.indexOf(`--${name}`);
@@ -191,7 +192,7 @@ type ModelOutcome = { row: Row; model: string } | { unavailable: string };
 
 const errorText = (e: unknown) => (e instanceof Error ? e.message : String(e));
 /** A replayed request that the cassette has no recording for: the inputs changed since recording. */
-const isStale = (msg: string | undefined) => !!msg && msg.includes('has no recording for this request');
+const isStale = (msg: string | undefined) => !!msg && msg.includes(NO_RECORDING);
 
 /** The LLM judge never sees the check set, so its recordings serve both modes; the others are kept per mode. */
 const cassetteDir = (system: string) =>
@@ -259,8 +260,13 @@ async function modelRun(system: string, r: Run): Promise<ModelOutcome> {
     note = `model error: ${errorText(e)}`;
   }
   // In replay, a request the cassette never saw is a stale recording, not a model outcome.
-  if (env.mode === 'replay' && isStale(note))
-    return { unavailable: 'stale cassette (re-record with ANTHROPIC_API_KEY)' };
+  // Also with a key: a turn that could not be recorded (model mismatch, API failure) is no outcome either.
+  if (isStale(note))
+    return {
+      unavailable: process.env.ANTHROPIC_API_KEY
+        ? 'stale cassette that could not be re-recorded (model mismatch or API error)'
+        : 'stale cassette (re-record with ANTHROPIC_API_KEY)',
+    };
   const ms = performance.now() - t0;
   env.save();
   return {

@@ -24,7 +24,7 @@ import { discoverySystem, literalRuns, routeOnlyFindings, unmarkedRouteChecks } 
 import { selectRequirement } from '../../src/verifier/escalate.ts';
 import { applyNormalizers, NormalizeError } from '../../src/runtime/values.ts';
 import { stressTest } from '../../src/stress/index.ts';
-import { recordingModel, replayOrRecordModel } from '../../src/model/replay.ts';
+import { NO_RECORDING, recordingModel, replayOrRecordModel } from '../../src/model/replay.ts';
 import type { ModelClient, ModelRequest } from '../../src/model/types.ts';
 
 const ORIGIN = 'https://blog.test';
@@ -534,6 +534,69 @@ test.describe('compiler: route evidence', () => {
     expect(literalRuns('^0?1$')).toEqual([]);
     expect(literalRuns('Scheduled\\s+2027/01/05 at 9:00 am')).toEqual(['Scheduled', '2027/01/05 at 9:00 am']);
   });
+});
+
+test.describe('cassettes: a turn that cannot be recorded reads as a stale cassette', () => {
+  const req: ModelRequest = { system: 's', messages: [{ role: 'user', text: 'new' }], tools: [] };
+  const cassette = () => {
+    const path = join(mkdtempSync(join(tmpdir(), 'assay-hybrid-')), 'c.json');
+    const rec = recordingModel(
+      {
+        id: 'fake:model',
+        turn: async () => ({
+          stop: 'end_turn',
+          text: 'x',
+          toolCalls: [],
+          raw: null,
+          usage: { inputTokens: 1, outputTokens: 1 },
+          model: 'm',
+        }),
+      },
+      path,
+    );
+    rec.save();
+    return { path, before: readFileSync(path, 'utf8') };
+  };
+  for (const [what, live] of [
+    [
+      'another model',
+      async (): Promise<ModelClient> => ({
+        id: 'fake:other',
+        turn: async () => {
+          throw new Error('unused');
+        },
+      }),
+    ],
+    [
+      'a failed live call',
+      async (): Promise<ModelClient> => ({
+        id: 'fake:model',
+        turn: async () => {
+          throw new Error('HTTP 529 overloaded');
+        },
+      }),
+    ],
+    [
+      'no live model',
+      async (): Promise<ModelClient> => {
+        throw new Error('no SDK');
+      },
+    ],
+  ] as const) {
+    test(what, async () => {
+      const { path, before } = cassette();
+      const m = replayOrRecordModel(path, live);
+      const err = await m.turn(req).then(
+        () => undefined,
+        (e: Error) => e,
+      );
+      expect(err?.message).toContain(NO_RECORDING);
+      expect(m.misses).toBe(0);
+      expect(m.id).toBe('fake:model (replay)');
+      m.save();
+      expect(readFileSync(path, 'utf8')).toBe(before);
+    });
+  }
 });
 
 test.describe('cassettes: replay what is recorded, record what is not', () => {
