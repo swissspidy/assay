@@ -142,6 +142,26 @@ function looseOperand(src: ValueSource, normalize: Normalizer[] | undefined, at:
       looseSchema(n.where, `${at} items where`, out);
 }
 
+/** Some `items` step in the pipeline projects with `pick`. */
+export const usesPick = (steps: Normalizer[] | undefined): boolean =>
+  (steps ?? []).some((s) => typeof s === 'object' && s.op === 'items' && s.pick !== undefined);
+
+/** The same probe value or storage key, read at two moments: its items always have the same shape. */
+export function sameCollection(x: ValueSource, y: ValueSource): boolean {
+  if (x.from === 'probe' && y.from === 'probe')
+    return x.probe === y.probe && (x.pointer ?? '') === (y.pointer ?? '') && (x.at ?? 'after') !== (y.at ?? 'after');
+  if (x.from === 'storage' && y.from === 'storage')
+    return x.area === y.area && x.key === y.key && x.origin === y.origin && (x.at ?? 'after') !== (y.at ?? 'after');
+  return false;
+}
+
+/**
+ * `pick` drops fields; it is for two collections whose items have different shapes. On
+ * items of one shape, a change to a field it leaves out (a price, a gift note) passes.
+ */
+export const pickOnSameShape = (at: string, what: string) =>
+  `${at}: items pick compares only some fields of ${what}, whose items have the same fields, so a change to any other field passes; compare whole items (items without pick), and use pick only when the two sides' items have different fields`;
+
 /** A locator for a definition (a `dd`), directly or through `within`. */
 const locatesDefinition = (l: Locator | undefined): boolean =>
   !!l && (l.role === 'definition' || locatesDefinition(l.within));
@@ -180,6 +200,12 @@ function looseAssertion(a: Assertion, at: string, out: string[], inTerm = false)
         out.push(unboundDefinition(at));
       looseOperand(a.source, a.normalize, at, out);
       if ('sameAs' in a.expect) looseOperand(a.expect.sameAs.source, a.expect.sameAs.normalize, `${at} sameAs`, out);
+      if (
+        'sameAs' in a.expect &&
+        (usesPick(a.normalize) || usesPick(a.expect.sameAs.normalize)) &&
+        sameCollection(a.source, a.expect.sameAs.source)
+      )
+        out.push(pickOnSameShape(at, 'one collection before and after the task'));
       const structured = a.source.from !== 'node' && a.source.from !== 'text';
       if (structured && 'regex' in a.expect && isLiteralPattern(a.expect.regex))
         out.push(literalRegexAdvice(a.expect.regex, at));

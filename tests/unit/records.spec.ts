@@ -15,6 +15,7 @@ import { applyNormalizers, fromJson, toJson } from '../../src/runtime/values.ts'
 import { AXIndex } from '../../src/runtime/axindex.ts';
 import { parseAriaSnapshot } from '../../src/snapshot/aria.ts';
 import { looseMatches } from '../../src/dsl/validate.ts';
+import { pickOnSameShapes, type Reference } from '../../src/compiler/compile.ts';
 
 const YAML = `
 - main:
@@ -367,5 +368,70 @@ test.describe('each and pick: validation', () => {
     expect(fieldwise({ pick: ['/sku', '/qty'] }, { pick: ['/sku', '/price'] })).toEqual([
       expect.stringContaining('items fields /price, /qty, /sku'),
     ]);
+  });
+});
+
+test.describe('pick only for collections of different shapes', () => {
+  const binding = (source: object, other: object, proj: object = { pick: ['/sku', '/qty'] }): Assertion => ({
+    kind: 'value',
+    source: source as Extract<Assertion, { kind: 'value' }>['source'],
+    normalize: [{ op: 'items', ...proj }],
+    expect: {
+      sameAs: {
+        source: other as Extract<Assertion, { kind: 'value' }>['source'],
+        normalize: [{ op: 'items', ...proj }],
+      },
+    },
+  });
+  const cartAfter = { from: 'probe', probe: 'cart', pointer: '/items' };
+  const cartBefore = { ...cartAfter, at: 'before' };
+  const order = { from: 'probe', probe: 'latestOrder', pointer: '/items' };
+  const set = (a: Assertion): CheckSet => ({
+    schema: 'assay.checks/v1',
+    id: 't',
+    version: '1',
+    task: { instruction: 'Keep everything else.' },
+    requirements: [{ id: 'R1', kind: 'hard', text: 't', source: { field: 'instruction', quote: 'Keep' } }],
+    checks: [{ id: 'C1', requirement: 'R1', description: 'd', assert: a }],
+  });
+
+  test('the same collection before and after is one shape: pick is loose', () => {
+    const advice = expect.stringContaining('items pick compares only some fields of one collection before and after');
+    expect(looseMatches(set(binding(cartAfter, cartBefore)))).toEqual([advice]);
+    expect(validateCheckSet(set(binding(cartAfter, cartBefore))).warnings).toEqual([advice]);
+    // Whole items, a pointer (one field is all the task is about), or two collections are not flagged statically.
+    expect(looseMatches(set(binding(cartAfter, cartBefore, {})))).toEqual([]);
+    expect(looseMatches(set(binding(cartAfter, cartBefore, { pointer: '/sku' })))).toEqual([]);
+    expect(looseMatches(set(binding(order, cartBefore)))).toEqual([]);
+  });
+
+  test('the compiler refuses pick when both collections hold items with the same fields', () => {
+    const items = [
+      { sku: 'MUG-BLUE', qty: 1, price: 12 },
+      { sku: 'MUG-RED', qty: 2, price: 9.5 },
+    ];
+    const reference = (lines: Json[]): Reference => ({
+      name: 'r',
+      kind: 'success',
+      snapshot: {
+        ...snap(),
+        probes: { latestOrder: { ok: true, value: { items: lines } } },
+        baseline: {
+          capturedAt: '',
+          url: 'https://shop.test/cart',
+          storage: null,
+          probes: { cart: { ok: true, value: { items } } },
+          redacted: [],
+        },
+      },
+    });
+    const errors = (lines: Json[]) => pickOnSameShapes(set(binding(order, cartBefore)), [reference(lines)]);
+    expect(errors(items)).toEqual([
+      expect.stringContaining('check C1: items pick compares only some fields of two collections'),
+    ]);
+    // Order lines with a field the cart lacks: pick is what keeps them comparable.
+    expect(errors(items.map((x) => ({ ...x, lineTotal: x.qty * x.price })))).toEqual([]);
+    // Nothing to judge the shapes by: not refused.
+    expect(errors([])).toEqual([]);
   });
 });

@@ -301,6 +301,12 @@ function readNormalized(ctx: EvalCtx, src: ValueSource, steps: Normalizer[] | un
   return { value: v, evidence, drift: read.drift };
 }
 
+/** The value a source gives after `steps`, as JSON; undefined when it cannot be read (or is an observed absence). */
+export function readValue(ctx: EvalCtx, src: ValueSource, steps: Normalizer[] | undefined): Json | undefined {
+  const r = readNormalized(ctx, src, steps);
+  return isResult(r) || !r.value ? undefined : toJson(r.value);
+}
+
 /**
  * A `sameAs` binding: the value equals the value read from a second source. Either side
  * unreadable abstains; an observed absence on either side fails (there is nothing to be equal to).

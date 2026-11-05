@@ -14,6 +14,8 @@ import type {
   Check,
   CheckSet,
   EvidenceSnapshot,
+  Json,
+  Normalizer,
   Requirement,
   Channel,
   Trust,
@@ -21,8 +23,8 @@ import type {
 } from '../types.ts';
 import { CHECKS_SCHEMA, CHANNEL_TRUST } from '../types.ts';
 import { checkSetSchema } from '../dsl/schema.ts';
-import { looseMatches, validateCheckSet } from '../dsl/validate.ts';
-import { evaluate, evaluateAssertion, type EvalCtx } from '../runtime/evaluate.ts';
+import { looseMatches, pickOnSameShape, sameCollection, usesPick, validateCheckSet } from '../dsl/validate.ts';
+import { evaluate, evaluateAssertion, readValue, type EvalCtx } from '../runtime/evaluate.ts';
 import { AXIndex, resolveTarget } from '../runtime/axindex.ts';
 import { canonical } from '../text.ts';
 import { ASSAY_VERSION } from '../version.ts';
@@ -486,6 +488,56 @@ export function unreadableBranches(cs: CheckSet, refs: Reference[]): string[] {
   return errors;
 }
 
+/** Steps with every items `pick` removed: whole items, filtered and sorted. */
+const withoutPick = (steps: Normalizer[] | undefined): Normalizer[] =>
+  (steps ?? []).map((s) => {
+    if (typeof s !== 'object' || s.op !== 'items') return s;
+    const { pick: _, ...rest } = s;
+    return rest;
+  });
+
+/** The field names of a collection's items, or undefined unless it is a non-empty array of objects. */
+function shapesOf(v: Json | undefined): string[] | undefined {
+  if (!Array.isArray(v) || !v.length) return undefined;
+  const out: string[] = [];
+  for (const item of v) {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) return undefined;
+    out.push(JSON.stringify(Object.keys(item).toSorted()));
+  }
+  return out;
+}
+
+/**
+ * sameAs comparisons through items `pick` whose two collections, in every correct
+ * reference where both can be read, hold items with exactly the same fields. pick drops
+ * fields, so it is for collections of different shapes; on one shape, whole items
+ * compare every field. (The same collection before and after is caught statically.)
+ */
+export function pickOnSameShapes(cs: CheckSet, refs: Reference[]): string[] {
+  const ctxs = refs
+    .filter((r) => r.kind === 'success')
+    .map((r) => ({ snapshot: r.snapshot, index: new AXIndex(r.snapshot.a11y) }));
+  const errors: string[] = [];
+  const walk = (a: Assertion, at: string): void => {
+    if (a.kind === 'allOf' || a.kind === 'anyOf') return a.of.forEach((b, i) => walk(b, `${at}.${a.kind}[${i}]`));
+    if (a.kind !== 'value' || !('sameAs' in a.expect)) return;
+    const other = a.expect.sameAs;
+    if (!usesPick(a.normalize) && !usesPick(other.normalize)) return;
+    if (sameCollection(a.source, other.source)) return;
+    let seen = 0;
+    for (const ctx of ctxs) {
+      const x = shapesOf(readValue(ctx, a.source, withoutPick(a.normalize)));
+      const y = shapesOf(readValue(ctx, other.source, withoutPick(other.normalize)));
+      if (!x || !y) continue;
+      if (new Set([...x, ...y]).size !== 1) return;
+      seen++;
+    }
+    if (seen) errors.push(pickOnSameShape(at, 'two collections'));
+  };
+  for (const c of cs.checks) walk(c.assert, `check ${c.id}`);
+  return errors;
+}
+
 export function verifyCandidate(cs: CheckSet, refs: Reference[], stress = true, skipVariants?: string[]): Verification {
   const v = validateCheckSet(cs);
   // A warning on an accepted submission ends the discovery run unread, so the loose
@@ -518,7 +570,7 @@ export function verifyCandidate(cs: CheckSet, refs: Reference[], stress = true, 
       warnings.push(`On incorrect run "${ref.name}" the verdict is abstain rather than fail.`);
     }
   }
-  errors.push(...unreadableBranches(cs, refs));
+  errors.push(...unreadableBranches(cs, refs), ...pickOnSameShapes(cs, refs));
   for (const cov of coverage(cs)) {
     if (cov.trust === 'freetext')
       warnings.push(`Requirement ${cov.requirement} is covered only by free page text, which a page can spoof.`);
