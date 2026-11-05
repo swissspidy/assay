@@ -11,6 +11,7 @@ import {
   type Redacted,
 } from '../types.ts';
 import { parseAriaSnapshot } from './aria.ts';
+import { formObject, multipartBoundary, parseMultipart, type FormValue } from './body.ts';
 import { randomUUID } from 'node:crypto';
 import { ASSAY_VERSION } from '../version.ts';
 
@@ -82,15 +83,34 @@ export function decodeBody(
   if (contentType && /application\/x-www-form-urlencoded/i.test(contentType)) {
     // HTML form posts become objects (repeated fields become arrays), so checks can
     // match them with JSON Schema like JSON bodies.
-    // No prototype: field names like "constructor" or "__proto__" are plain keys.
-    const form = Object.create(null) as Record<string, Json>;
-    for (const [k, v] of new URLSearchParams(text)) {
-      const prev = Object.hasOwn(form, k) ? form[k] : undefined;
-      form[k] = prev === undefined ? v : Array.isArray(prev) ? [...prev, v] : [prev, v];
-    }
-    return { body: form, truncated: false };
+    return { body: formObject(new URLSearchParams(text)), truncated: false };
   }
   return { body: text, truncated: false };
+}
+
+/**
+ * A request body as recorded: JSON parsed, form bodies (URL-encoded and multipart) parsed
+ * into their fields with their text kept as `raw`, anything else as text. In a multipart
+ * body, files are recorded by filename, type and size; their content is never kept, and
+ * does not count towards `max`. A body over `max` bytes is kept as cut text.
+ * @internal Exported for tests.
+ */
+export function decodeRequestBody(
+  buf: Buffer,
+  contentType: string | undefined,
+  max: number,
+): { body: Json; raw?: string; truncated: boolean } {
+  const boundary = multipartBoundary(contentType);
+  const multipart = boundary !== undefined ? parseMultipart(buf, boundary) : undefined;
+  if (multipart) {
+    const cut = cutUtf8(multipart.raw, max);
+    if (cut !== undefined) return { body: cut, truncated: true };
+    return { body: formObject(multipart.fields), raw: multipart.raw, truncated: false };
+  }
+  const text = buf.toString('utf8');
+  const decoded = decodeBody(text, contentType, max);
+  const form = !decoded.truncated && contentType && /application\/x-www-form-urlencoded/i.test(contentType);
+  return form ? { ...decoded, raw: text } : decoded;
 }
 
 function isTextual(contentType: string | undefined): boolean {
@@ -98,7 +118,7 @@ function isTextual(contentType: string | undefined): boolean {
   return /json|text\/|xml|javascript|x-www-form-urlencoded/i.test(contentType);
 }
 
-/** Body observed inside the page by the init-script tap (see PAGE_TAP). */
+/** Response body observed inside the page by the init-script tap (see pageTap). */
 interface TappedBody {
   method: string;
   url: string;
@@ -106,6 +126,38 @@ interface TappedBody {
   contentType: string;
   body: string;
   truncated: boolean;
+}
+
+/**
+ * Multipart form fields the tap saw the page send (a form submission, or FormData given
+ * to fetch or XHR). Browsers leave file uploads out of the request's post data, so this is
+ * the only place their names, types and sizes can be read. `id` numbers a form's report;
+ * `supersedes` names an earlier report of the same FormData that a fetch or XHR sent.
+ */
+interface TappedForm {
+  method: string;
+  url: string;
+  fields: [string, FormValue][];
+  id?: number;
+  supersedes?: number;
+}
+
+type TapMessage = ({ kind?: undefined } & TappedBody) | ({ kind: 'form' } & TappedForm);
+
+/** A reported form field has the shape the tap sends: a name and text, or a file's metadata. */
+function isFormField(x: unknown): x is [string, FormValue] {
+  if (!Array.isArray(x) || x.length !== 2 || typeof x[0] !== 'string') return false;
+  const v: unknown = x[1];
+  if (typeof v === 'string') return true;
+  if (!v || typeof v !== 'object') return false;
+  const f = v as Record<string, unknown>;
+  return (
+    Object.keys(f).length === 3 &&
+    typeof f.filename === 'string' &&
+    typeof f.type === 'string' &&
+    typeof f.size === 'number' &&
+    Number.isFinite(f.size)
+  );
 }
 
 /**
@@ -136,8 +188,79 @@ function pageTap(bindingName: string, token: string, max: number): string {
       send({ token: T, method: String(method).toUpperCase(), url: String(url), status, contentType: ct || '', body: text, truncated: !!wasCut || cut });
     } catch {}
   };
+  // Multipart form fields as sent; files by name, type and size only, never content.
+  const FD = window.FormData;
+  const fields = (fd) => {
+    const out = [];
+    for (const [k, v] of fd) out.push([String(k), typeof v === 'string' ? v : { filename: String(v.name || ''), type: String(v.type || 'application/octet-stream'), size: Number(v.size) || 0 }]);
+    return out;
+  };
+  // FormData objects a form built (formdata event) -> the id of their report.
+  const formIds = new WeakMap();
+  let lastId = 0;
+  const postForm = (method, url, fd, extra) => {
+    try {
+      const u = new URL(String(url), location.href);
+      u.hash = ''; // requests never carry the fragment
+      send({ token: T, kind: 'form', method: String(method || 'GET').toUpperCase(), url: u.href, fields: fields(fd), ...extra });
+    } catch {}
+  };
+  const sentForm = (method, url, body) => {
+    try {
+      if (!FD || !(body instanceof FD)) return;
+      const id = formIds.get(body);
+      postForm(method, url, body, id ? { supersedes: id } : {});
+    } catch {}
+  };
   // Captured now, so page scripts that replace timers cannot stall the tap.
   const later = window.setTimeout.bind(window);
+  if (FD) {
+    // The button that submitted each form, for its formaction/formmethod/formenctype.
+    const submitters = new WeakMap();
+    // The last report per form, for a moment: Chromium builds one submission's entry list
+    // (and fires formdata) twice, a task apart, which must not count as two submissions.
+    // A second identical submission within that moment is then reported once; the
+    // recorder sees two requests for one report and leaves both bodies unavailable.
+    const recent = new WeakMap();
+    const DEDUPE_MS = 1000;
+    window.addEventListener('submit', (e) => {
+      try {
+        const form = e.target;
+        submitters.set(form, e.submitter || null);
+        later(() => submitters.delete(form), 0);
+      } catch {}
+    }, true);
+    // A multipart form submission (or new FormData(form)): read the entries at the form
+    // itself, after the page's own formdata listeners there have added theirs.
+    window.addEventListener('formdata', (e) => {
+      try {
+        const form = e.target, fd = e.formData;
+        if (!form || form.tagName !== 'FORM' || !fd) return;
+        const s = submitters.get(form);
+        const pick = (attr, prop, own) => (s && s.hasAttribute && s.hasAttribute(attr) ? s[prop] : form[own]);
+        const method = String(pick('formmethod', 'formMethod', 'method') || 'get').toLowerCase();
+        const enc = String(pick('formenctype', 'formEnctype', 'enctype') || '').toLowerCase();
+        if (method !== 'post' || enc !== 'multipart/form-data') return;
+        const url = String(pick('formaction', 'formAction', 'action'));
+        const atForm = (ev) => {
+          if (ev.formData !== fd) return;
+          form.removeEventListener('formdata', atForm);
+          const key = url + '\\n' + JSON.stringify(fields(fd));
+          const prev = recent.get(form);
+          if (prev && prev.key === key) {
+            formIds.set(fd, prev.id);
+            return;
+          }
+          const id = ++lastId;
+          formIds.set(fd, id);
+          recent.set(form, { key, id });
+          later(() => { if (recent.get(form)?.id === id) recent.delete(form); }, DEDUPE_MS);
+          postForm('POST', url, fd, { id });
+        };
+        form.addEventListener('formdata', atForm);
+      } catch {}
+    }, true);
+  }
   const WAIT = 500;
   // Reads at most MAX bytes of a body, then stops (streams may never end).
   // Reads at most MAX bytes of a body, then stops (streams may never end). A body
@@ -168,11 +291,12 @@ function pageTap(bindingName: string, token: string, max: number): string {
     // location.href = ...) can unload before a concurrent read finishes. The bound keeps
     // streaming responses from being held up; their read continues in the background.
     window.fetch = function (input, init) {
-      const p = origFetch.apply(this, arguments);
       let method = 'GET';
       try {
         method = (init && init.method) || (input && typeof input === 'object' && 'method' in input ? input.method : 'GET');
+        if (init && init.body) sentForm(method, input && typeof input === 'object' && 'url' in input ? input.url : input, init.body);
       } catch {}
+      const p = origFetch.apply(this, arguments);
       return p.then((res) => {
         try {
           const ct = res.headers.get('content-type');
@@ -191,8 +315,11 @@ function pageTap(bindingName: string, token: string, max: number): string {
   const X = window.XMLHttpRequest && window.XMLHttpRequest.prototype;
   if (X) {
     const open = X.open, sendX = X.send;
-    X.open = function (method) { this.__assayMethod = method; return open.apply(this, arguments); };
-    X.send = function () {
+    X.open = function (method, url) { this.__assayMethod = method; this.__assayUrl = url; return open.apply(this, arguments); };
+    X.send = function (body) {
+      try {
+        if (body) sentForm(this.__assayMethod, this.__assayUrl, body);
+      } catch {}
       try {
         // Once per XHR object: a reused XHR must not report each response twice.
         if (!this.__assayTapped) {
@@ -227,6 +354,7 @@ export class EvidenceRecorder {
   private readonly byRequest = new Map<Request, NetworkEntry>();
   private readonly pending = new Set<Promise<void>>();
   private readonly tapped: (TappedBody & { frame: Frame | undefined })[] = [];
+  private readonly tappedForms: (TappedForm & { frame: Frame | undefined })[] = [];
   /** The frame that issued each entry's request, to group it with bodies tapped in that frame. */
   private readonly frameOf = new WeakMap<NetworkEntry, Frame>();
   private readonly frameIds = new WeakMap<Frame, number>();
@@ -267,9 +395,23 @@ export class EvidenceRecorder {
 
   private async install(): Promise<void> {
     const name = `__assay_${this.token.replace(/-/g, '').slice(0, 12)}`;
-    await this.context.exposeBinding(name, (source, payload: TappedBody & { token?: string }) => {
+    await this.context.exposeBinding(name, (source, payload: TapMessage & { token?: string }) => {
       if (!payload || payload.token !== this.token) return;
-      const { token: _t, ...body } = payload;
+      if (payload.kind === 'form') {
+        const { method, url, fields, id, supersedes } = payload;
+        if (typeof method !== 'string' || typeof url !== 'string' || !Array.isArray(fields)) return;
+        if (!fields.every(isFormField)) return;
+        this.tappedForms.push({
+          method,
+          url,
+          fields: fields.map(([k, v]) => [k, typeof v === 'string' ? v : { ...v }]),
+          ...(typeof id === 'number' ? { id } : {}),
+          ...(typeof supersedes === 'number' ? { supersedes } : {}),
+          frame: source.frame,
+        });
+        return;
+      }
+      const { token: _t, kind: _k, ...body } = payload;
       this.tapped.push({ ...body, frame: source.frame });
     });
     await this.context.addInitScript({ content: pageTap(name, this.token, this.maxBody) });
@@ -291,11 +433,16 @@ export class EvidenceRecorder {
       requestHeaders: pick(headers, KEEP_REQUEST_HEADERS),
       responseHeaders: {},
     };
-    const post = req.postData();
+    const post = req.postDataBuffer();
     if (post != null) {
-      const { body, truncated } = decodeBody(post, headers['content-type'], this.maxBody);
+      const { body, raw, truncated } = decodeRequestBody(post, headers['content-type'], this.maxBody);
       entry.requestBody = body;
+      if (raw !== undefined) entry.requestBodyRaw = raw;
       if (truncated) entry.bodyTruncated = true;
+    } else if (headers['content-type'] !== undefined) {
+      // A body was sent but the browser does not report it (Chromium leaves out
+      // multipart bodies with files); the page tap may fill it in at settle().
+      entry.requestBodyUnavailable = true;
     }
     this.entries.push(entry);
     this.byRequest.set(req, entry);
@@ -373,6 +520,7 @@ export class EvidenceRecorder {
         if (truncated || t.truncated) e.bodyTruncated = true;
       }
     }
+    this.fillForms();
     for (const e of this.entries) {
       const ct = e.responseHeaders['content-type'];
       const expected =
@@ -382,6 +530,43 @@ export class EvidenceRecorder {
         isTextual(ct);
       if (expected && e.responseBody === undefined) e.bodyUnavailable = true;
       else delete e.bodyUnavailable;
+    }
+  }
+
+  /**
+   * Fill multipart request bodies the browser did not report from the forms the page tap
+   * saw sent, by the same rule as response bodies: the multipart requests to a method and
+   * URL from a frame pair one to one with the tapped forms (equal counts), and those forms
+   * are identical. Otherwise the body stays unavailable.
+   */
+  private fillForms(): void {
+    const superseded = new Set(this.tappedForms.flatMap((t) => (t.supersedes !== undefined ? [t.supersedes] : [])));
+    const groups = new Map<string, { entries: NetworkEntry[]; forms: string[] }>();
+    const group = (frame: Frame | undefined, method: string, url: string) => {
+      const key = `${frame ? this.frameId(frame) : '-'} ${method} ${url}`;
+      let g = groups.get(key);
+      if (!g) groups.set(key, (g = { entries: [], forms: [] }));
+      return g;
+    };
+    for (const e of this.entries) {
+      if (multipartBoundary(e.requestHeaders['content-type']) !== undefined)
+        group(this.frameOf.get(e), e.method, e.url).entries.push(e);
+    }
+    for (const t of this.tappedForms) {
+      if (t.id !== undefined && superseded.has(t.id)) continue;
+      group(t.frame, t.method, t.url).forms.push(JSON.stringify(t.fields));
+    }
+    for (const { entries, forms } of groups.values()) {
+      const [first] = forms;
+      if (first === undefined || entries.length !== forms.length || !forms.every((f) => f === first)) continue;
+      // Too large to keep: the body stays unavailable rather than cut.
+      if (Buffer.byteLength(first, 'utf8') > this.maxBody) continue;
+      const fields = JSON.parse(first) as [string, FormValue][];
+      for (const e of entries) {
+        if (!e.requestBodyUnavailable) continue;
+        e.requestBody = formObject(fields);
+        delete e.requestBodyUnavailable;
+      }
     }
   }
 

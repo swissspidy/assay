@@ -38,12 +38,30 @@ export interface NetworkEntry {
   status: number | null;
   failure?: string;
   requestHeaders: Record<string, string>;
+  /**
+   * Parsed JSON; a form body (URL-encoded or multipart) as an object of its fields
+   * (repeated fields become arrays, a file becomes `{filename, type, size}`); else text.
+   */
   requestBody?: Json;
+  /**
+   * The text of a form body as sent, when `requestBody` holds its parsed fields. The
+   * content of multipart file parts is left out.
+   */
+  requestBodyRaw?: string;
+  /** The request carried a body (it has a content type) that could not be read. */
+  requestBodyUnavailable?: boolean;
   responseHeaders: Record<string, string>;
   responseBody?: Json;
   bodyTruncated?: boolean;
   /** The response body should have been captured but could not be read. */
   bodyUnavailable?: boolean;
+}
+
+/** A file in a multipart form body: its metadata, never its content. */
+export interface FormFile {
+  filename: string;
+  type: string;
+  size: number;
 }
 
 export interface Redacted {

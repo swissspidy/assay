@@ -78,8 +78,11 @@ export function matchRequest(m: RequestMatch, e: NetworkEntry): MatchResult {
     } else if (typeof m.status === 'number' ? e.status !== m.status : !compareNumber(e.status, m.status)) return 'no';
   }
   if (m.requestBody !== undefined) {
-    if (e.requestBody === undefined) return 'no';
-    if (e.bodyTruncated) unknown = true;
+    if (e.requestBody === undefined) {
+      // A body was sent but could not be read (a multipart upload the page tap did not see).
+      if (!e.requestBodyUnavailable) return 'no';
+      unknown = true;
+    } else if (e.bodyTruncated) unknown = true;
     else if (!compileSchema(m.requestBody)(e.requestBody)) return 'no';
   }
   if (m.responseBody !== undefined) {

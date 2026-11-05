@@ -103,6 +103,7 @@ export function networkEntry(snapshot: EvidenceSnapshot, seq: number): string {
     `request body: ${body(e.requestBody)}`,
     `response headers: ${JSON.stringify(e.responseHeaders)}`,
     `response body: ${body(e.responseBody)}`,
+    e.requestBodyUnavailable ? 'NOTE: the request body could not be captured.' : '',
     e.bodyTruncated ? 'NOTE: a body was truncated.' : '',
     e.bodyUnavailable ? 'NOTE: the response body could not be captured.' : '',
   ]
