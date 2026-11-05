@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T12:19:34.752Z",
  "turns": {
   "sha256:5ccd6bba9c72f2fbf484dd506a861829df39b08a8e427cb18e0775ba54bac6a1": {
    "stop": "tool_use",
@@ -52,89 +51,77 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:edf952265298b408ca8a52768b0b975f9bd3170f30682c0781c076f7b8b097ff": {
+  "sha256:310e4434107e0c26ff6830f6902e4240e2707a99e3c1f953bd39859b242cd053": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_011Dw6QW6eBvVEjW2FByqavu",
+     "id": "toolu_01PCLZb26xxXKy3rPT1VEoMc",
      "name": "probes",
      "input": {}
-    },
-    {
-     "id": "toolu_01EiaJF4Y2sdk9X53zMJ4QsT",
-     "name": "network_log",
-     "input": {
-      "method": "POST"
-     }
     }
    ],
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_011Dw6QW6eBvVEjW2FByqavu",
+     "id": "toolu_01PCLZb26xxXKy3rPT1VEoMc",
      "name": "probes",
      "caller": {
       "type": "direct"
      },
      "input": {}
-    },
-    {
-     "type": "tool_use",
-     "id": "toolu_01EiaJF4Y2sdk9X53zMJ4QsT",
-     "name": "network_log",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "method": "POST"
-     }
     }
    ],
    "usage": {
-    "inputTokens": 16947,
-    "outputTokens": 70,
+    "inputTokens": 19811,
+    "outputTokens": 25,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16943
+    "cacheWriteTokens": 19807
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:e62fdcd82ab84528776ea729487172832ab93fbd51500504d13df996c7da99c2": {
+  "sha256:3c3c6f96a9a92722dcda3ebacfa8b18500c4a22ed021fe9015b2040aa7a84ff9": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Mq6o3f8N362ea8RRKwnqPG",
-     "name": "try_assertion",
+     "id": "toolu_011JEHJM9ErPwPyupbLtTgYT",
+     "name": "submit_checks",
      "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "orders"
-       },
-       "normalize": [
-        {
-         "op": "items",
-         "where": {
-          "properties": {
-           "reference": {
-            "const": "FFATNOMMJ"
-           }
-          },
-          "required": [
-           "reference"
-          ]
+      "checks": [
+       {
+        "id": "order-ffatnommj-shipped",
+        "requirement": "R1",
+        "description": "The backend orders probe shows order FFATNOMMJ with state 'Shipped'.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "orders"
          },
-         "pointer": "/state"
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "reference": {
+              "const": "FFATNOMMJ"
+             },
+             "state": {
+              "const": "Shipped"
+             }
+            },
+            "required": [
+             "reference",
+             "state"
+            ]
+           }
+          }
+         }
         }
-       ],
-       "expect": {
-        "equals": [
-         "Shipped"
-        ]
        }
-      }
+      ]
      }
     }
    ],
@@ -142,141 +129,46 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS1AkKEAgTGAI4AUIIdGhpbmtpbmcSDEh53U+XLHaOAj761BoMihADsFd0W/vfgXlYIjDGnW3QBLugA+GlR0M68PPv27YYAN+/u0EKf0rPM34PMBlotfSRDby++39o/k0a4WAq8Qg3MMep0s4M4T4xD8WcgfJ1auADTR4ZXK61qCpU8ee5v1BtqC+zn8DAoAPGzxvaqEMqPFGoohPk7K+hegoiHj+iOudcsOY+/YKJN6vqZ0kwAooWBww9nXhpCqYyP9dtjXfqTcidpK2yNq9HTXIRbcG52jJ3ogtmlxVOHqFikoPZD22S+ibVEHFd4pjh1KIOinymmBAH56edg9eKtf+KBM9LkPJzzlVolSgRSZJVwxXMmygFnzyMbanUBUlNwZfE289fTr4Cg0DFWcLbryDk5mNCivnaUSsKapy4B8PQVraKFKc0MFPH1jbP/Wi30zyOpiYjOB8KiBmBYYUrCkk/VKKpzPDNEvX1xEVLKoP4prxsiIg6wT9v+H57cSSBm7o1aQfipjSw303Yo19dpBelVdOeYaIRiEu4nGzIHYBJ1wJlWZA2H2skGc03TVXBC0B+pDZH2Ff+g8+Y0jXC/4tf3OeG+ppb2QIXvYmV0mCSXM+wpYD9yQJ1BtEpcWgjoDPB1+Hy0cItDn6XAsBkb/FgvP4e0gR0iHMmR6shKxBb3Cs462hoLlMJWZNchvCbKQH4e5DDY4vVIWaKZsNYPTtVekFfN1w1kZpxfQelvlejTD75lDsFUGQBugeA/h3c+wMhavboYtnE2yYAuUvavSNhAa2BRDZkNtZ9hz52mCh5BaaMTI+/eQO0EEWF3N/fQXkF9jmg7jdRWxDBTe30GoD2v2+WEYxl3McqkvtlNLvqKmlA1MbGn7kA3q2R10jyCCXgTE9fE8izUMn0UfVVxBBAst57N+3yco6AnhiIOhgG3e6WARCgrsVF8xuIwG3tkfMqzcITquDAXPj7lv0vJNmTLKFu/s3x2gIQ52Xv3UbgoWvXBYLu8q/yaPhg6+HLXxrftH5nELunzOzYPbynpgGmJzcIXawX0zz5HyiDcDCGB5XcqRqLGYpd3Aj6tWyO9VloXSJp1JvqZGFkq+wYhBowHyrxTHumElRF6mQK397OTDnP8xveAZUSfPN3x8CN3Z5KPQOu8hxsT0i+ezS/IyH6qz6VBQyAJ4sP6ujb75ssQHSnBjh1SLfQLpqfw0p/gzGlVM6sQr0UfZb7nCpmQa/fQIUnoeqCb+vnWCqSy082uF65H4P1fk+JGqDbZ7rehXBChldXrrj/yQXwYCn2s7ojZjpWlVl4BPJe0nXXEMCEi0LANse2jQn/0JN9Jm7HQ+aRrfjLlizf9pFgw8N9hFiHXPwez4fh3W93G7fr+KbtpWDhX0L0ceAuHP7KlxtQwc50ehSzIiJT+bwTAL6+KxTwV1cjiza7Sn/kX938Kx/CT7kWS4syWzEwBUEonaJh3CJUxlxfLYmnJCwBZuLPiLgPz4y7ueR+JhetqR8ZalnUtC2eHRCEXxWCj6axnL5vgQ1c7+yn4hgrN6R4xUFoWzmzOKfur+r+jLd55+3FxB6Z1R8sg1WbSBksXlBvQS5bUK66t9lhl+yTChXZtJwIooHxEx3ZAzsKe5afBrNKzpLO2CMlaQwYAQ=="
+     "signature": "CAQSlggKEAgTGAI4AUIIdGhpbmtpbmcSDFk9N4rvW6ay6zDXiRoMbKC057QTPcTWjN3tIjCcgsJAmLO/xgc/ObPOYR5Miqm7oMJCNe+dLT5uhFR+cQ2L++SAievF+qrQJlLtx94qsweuV+x5waqLUXnz49lKNfKSbedMVv7oIVR5HKKVATwudUNTU6wYu1CHJQEUY8CNXdSRMd20eMhj16YoGf75tmbM34sC3lYXnu79NZoTxysq0xyICynZXlBPzk1U1Kkfv+Vis9Dg0eXQQwJ0K4BRD0ew8Y4gTohet6o2ffo/4ctlttjcopZbKwcp4ylZQen6qzEZt6rB5w0txU09P/YF6crJRYetHiaGUTuvVAqq53Byz/KRSdKhHD7oXAhLLwL+G/LsdEKpGz0SqWnF2sJQE1n2l5fzkVnvb2Y56vMtDrAlfILk3FC5tQ8prxsF0BIjEU/hZkm8GwSYp7I7X62De0D7Mi/IdJ9GcVTouo7IwvVoSdYZczyhtv4jvdlcuEL1IoEYNpC5PcN88D+tSrXhplCMZvhK1HMX5dqDzkmp7LVeWQvxP0keqdZ8KrM/r082xaDxNeNDl4O4Qf9yuagPUo0FiL11kUNBp1z4fsglLulgufjB14Lee6I6DZcBR2i9XSx4DIDMK8a0O137BEwnOe2xenYFNj+sKjwCAD4x/AcSO3h452FCWxOjtSSO0PufX6QO43cWabxuLKChZZJiR1di+nGdWiMuCPG5T5l/kpIkugKtzZw4zsY2AHqqHJJWDPDdZIWPWvZ/4EfXfKlmT3Gp8gLxkvDwzeEAURmAuoAKqD3/Qyp8LI1jmGB0bqT6sFiFwlbIQUc3dOI6EY/fh+OitImn+ha2K+LkVyOk6TeRAbI9/Yctujj6WAkIclXSjlJtqoUCJQz7UQj6REINPiASSP+3rAUydWbZf9xhlZJncMNYyatlRiWyJSSbDZFNdh49bRDIuy/WMy7FzAyafKWziN2n4pzn15astG8JhXeEJpyOYy+N1RB2sSMz6z5hk6k2rvz5F/jyMfFTNvOHdBultrwEXPhW3lWfsydUFCILASXajSxFKVBihdN7+Js1+/xV1ktg2IRv66CHhCU9YGZkmnIpAfbt40PAXcCXZsdIJ4jahNeGDYllXKQZyUeaSyOP8D+2wNN8KGiNA638oTbjcPEA8NvmnP0BEy4+Rn+SRSl5M/t7xOqqdRsjwDmKKc+ynVMaC0gAY/P9xPlPwD8x2mIN2RyGk0F6vbEwFPJicp9DTafJtBTC1YrG0ldNZ45PH7aB25tZfuIL2uEZbXQzzDdLlXe5a/WdfuY8h3qg4cXMkZRX1g1vabcWJK2tRz8ioTUE8YiR0hbG93Pi7UjrvgiAcbGOP99/rGRwi4gxa7Zm3hgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Mq6o3f8N362ea8RRKwnqPG",
-     "name": "try_assertion",
+     "id": "toolu_011JEHJM9ErPwPyupbLtTgYT",
+     "name": "submit_checks",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "orders"
-       },
-       "normalize": [
-        {
-         "op": "items",
-         "where": {
-          "properties": {
-           "reference": {
-            "const": "FFATNOMMJ"
+      "checks": [
+       {
+        "id": "order-ffatnommj-shipped",
+        "requirement": "R1",
+        "description": "The backend orders probe shows order FFATNOMMJ with state 'Shipped'.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "orders"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "properties": {
+             "reference": {
+              "const": "FFATNOMMJ"
+             },
+             "state": {
+              "const": "Shipped"
+             }
+            },
+            "required": [
+             "reference",
+             "state"
+            ]
            }
-          },
-          "required": [
-           "reference"
-          ]
-         },
-         "pointer": "/state"
-        }
-       ],
-       "expect": {
-        "equals": [
-         "Shipped"
-        ]
-       }
-      }
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 22149,
-    "outputTokens": 356,
-    "cacheReadTokens": 16943,
-    "cacheWriteTokens": 5204
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:1268e8cfc89fb16c4b463a86864475cf42d86dfcadf9facf16b3e4cc21510d31": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_018GPBSyzRGWSzX1uyKB4cBL",
-     "name": "submit_checks",
-     "input": {
-      "checks": [
-       {
-        "id": "order-ffatnommj-shipped",
-        "requirement": "R1",
-        "description": "The backend orders probe shows order FFATNOMMJ with state 'Shipped'.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "orders"
-         },
-         "normalize": [
-          {
-           "op": "items",
-           "where": {
-            "properties": {
-             "reference": {
-              "const": "FFATNOMMJ"
-             }
-            },
-            "required": [
-             "reference"
-            ]
-           },
-           "pointer": "/state"
           }
-         ],
-         "expect": {
-          "equals": [
-           "Shipped"
-          ]
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_018GPBSyzRGWSzX1uyKB4cBL",
-     "name": "submit_checks",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "checks": [
-       {
-        "id": "order-ffatnommj-shipped",
-        "requirement": "R1",
-        "description": "The backend orders probe shows order FFATNOMMJ with state 'Shipped'.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "orders"
-         },
-         "normalize": [
-          {
-           "op": "items",
-           "where": {
-            "properties": {
-             "reference": {
-              "const": "FFATNOMMJ"
-             }
-            },
-            "required": [
-             "reference"
-            ]
-           },
-           "pointer": "/state"
-          }
-         ],
-         "expect": {
-          "equals": [
-           "Shipped"
-          ]
          }
         }
        }
@@ -285,12 +177,13 @@
     }
    ],
    "usage": {
-    "inputTokens": 22543,
-    "outputTokens": 231,
-    "cacheReadTokens": 22147,
-    "cacheWriteTokens": 394
+    "inputTokens": 23878,
+    "outputTokens": 367,
+    "cacheReadTokens": 19807,
+    "cacheWriteTokens": 4069
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:11:38.647Z"
 }

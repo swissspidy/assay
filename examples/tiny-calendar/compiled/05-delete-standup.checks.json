@@ -28,9 +28,9 @@
   ],
   "checks": [
     {
-      "id": "r1-standup-gone",
+      "id": "R1-standup-gone",
       "requirement": "R1",
-      "description": "The backend events list no longer contains the Team standup event (id 1) nor any event titled Team standup.",
+      "description": "The backend events list no longer contains the Team standup event (id 1) or any event titled Team standup.",
       "assert": {
         "kind": "value",
         "source": {
@@ -40,11 +40,11 @@
         "expect": {
           "schema": {
             "type": "array",
-            "not": {
-              "contains": {
+            "items": {
+              "type": "object",
+              "not": {
                 "anyOf": [
                   {
-                    "type": "object",
                     "properties": {
                       "id": {
                         "const": 1
@@ -55,7 +55,6 @@
                     ]
                   },
                   {
-                    "type": "object",
                     "properties": {
                       "title": {
                         "const": "Team standup"
@@ -73,9 +72,9 @@
       }
     },
     {
-      "id": "r2-others-kept",
+      "id": "R2-others-kept",
       "requirement": "R2",
-      "description": "The backend still holds the Dentist (id 2) and Book club (id 3) events with all their original fields unchanged.",
+      "description": "The backend events list still contains Dentist (id 2) and Book club (id 3) with all their original fields unchanged.",
       "assert": {
         "kind": "value",
         "source": {
@@ -180,6 +179,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T11:34:26.816Z"
+    "at": "2026-11-05T21:11:47.725Z"
   }
 }

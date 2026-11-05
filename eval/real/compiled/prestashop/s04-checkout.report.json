@@ -7,26 +7,23 @@
   ],
   "turns": {
     "rubric": 1,
-    "discovery": 6
+    "discovery": 5
   },
   "usage": {
-    "inputTokens": 139324,
-    "outputTokens": 5277,
-    "cacheReadTokens": 111191,
-    "cacheWriteTokens": 28115
+    "inputTokens": 127975,
+    "outputTokens": 5139,
+    "cacheReadTokens": 96937,
+    "cacheWriteTokens": 31022
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "Check out my cart",
       "checks": [
-        "R1-order-with-cart-lines",
-        "R1-cart-emptied",
-        "R1-payment-validation-request"
+        "r1-order-placed"
       ],
       "channels": [
-        "probe",
-        "network"
+        "probe"
       ],
       "trust": "structured"
     },
@@ -34,7 +31,7 @@
       "requirement": "R2",
       "quote": "deliver it to my address called \"My address\"",
       "checks": [
-        "R2-order-address"
+        "r2-address"
       ],
       "channels": [
         "probe"
@@ -45,7 +42,7 @@
       "requirement": "R3",
       "quote": "with My carrier",
       "checks": [
-        "R3-order-carrier"
+        "r3-carrier"
       ],
       "channels": [
         "probe"
@@ -56,12 +53,10 @@
       "requirement": "R4",
       "quote": "pay by bank wire",
       "checks": [
-        "R4-order-bankwire",
-        "R4-wirepayment-module"
+        "r4-bankwire"
       ],
       "channels": [
-        "probe",
-        "network"
+        "probe"
       ],
       "trust": "structured"
     }

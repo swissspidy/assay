@@ -18,9 +18,101 @@
   ],
   "checks": [
     {
-      "id": "cart-two-mountain-fox-cushions",
+      "id": "cart-has-two-mountain-fox-cushions",
       "requirement": "R1",
-      "description": "The backend cart holds Mountain fox cushion lines totalling a quantity of two (one line of 2, or two variant lines of 1 each).",
+      "description": "The stored cart holds exactly two Mountain fox cushions (one line of quantity 2, or two lines of quantity 1).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "anyOf": [
+              {
+                "allOf": [
+                  {
+                    "contains": {
+                      "type": "object",
+                      "properties": {
+                        "product": {
+                          "const": "Mountain fox cushion"
+                        },
+                        "quantity": {
+                          "const": 2
+                        }
+                      },
+                      "required": [
+                        "product",
+                        "quantity"
+                      ]
+                    }
+                  },
+                  {
+                    "contains": {
+                      "type": "object",
+                      "properties": {
+                        "product": {
+                          "const": "Mountain fox cushion"
+                        }
+                      },
+                      "required": [
+                        "product"
+                      ]
+                    },
+                    "maxContains": 1
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "contains": {
+                      "type": "object",
+                      "properties": {
+                        "product": {
+                          "const": "Mountain fox cushion"
+                        },
+                        "quantity": {
+                          "const": 1
+                        }
+                      },
+                      "required": [
+                        "product",
+                        "quantity"
+                      ]
+                    },
+                    "minContains": 2,
+                    "maxContains": 2
+                  },
+                  {
+                    "contains": {
+                      "type": "object",
+                      "properties": {
+                        "product": {
+                          "const": "Mountain fox cushion"
+                        }
+                      },
+                      "required": [
+                        "product"
+                      ]
+                    },
+                    "maxContains": 2
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "cart-other-lines-kept",
+      "requirement": "R1",
+      "description": "All cart lines other than Mountain fox cushions are the same as before the task (adding does not remove or change other items).",
       "assert": {
         "kind": "value",
         "source": {
@@ -32,28 +124,45 @@
           {
             "op": "items",
             "where": {
-              "properties": {
-                "product": {
-                  "const": "Mountain fox cushion"
-                }
-              },
-              "required": [
-                "product"
-              ]
-            },
-            "pointer": "/quantity"
+              "not": {
+                "properties": {
+                  "product": {
+                    "const": "Mountain fox cushion"
+                  }
+                },
+                "required": [
+                  "product"
+                ]
+              }
+            }
           }
         ],
         "expect": {
-          "oneOf": [
-            [
-              2
-            ],
-            [
-              1,
-              1
+          "sameAs": {
+            "source": {
+              "from": "probe",
+              "probe": "cart",
+              "pointer": "/lines",
+              "at": "before"
+            },
+            "normalize": [
+              {
+                "op": "items",
+                "where": {
+                  "not": {
+                    "properties": {
+                      "product": {
+                        "const": "Mountain fox cushion"
+                      }
+                    },
+                    "required": [
+                      "product"
+                    ]
+                  }
+                }
+              }
             ]
-          ]
+          }
         }
       }
     }
@@ -64,6 +173,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T11:39:15.127Z"
+    "at": "2026-11-05T21:08:30.333Z"
   }
 }

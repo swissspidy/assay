@@ -1,323 +1,347 @@
 {
-  "schema": "assay.cassette/v1",
-  "model": "anthropic:claude-opus-5-5@high",
-  "recordedAt": "2026-11-05T11:38:23.585Z",
-  "turns": {
-    "sha256:0630e672a7cc9b24365854a2f30dda08a8998470dbc580adc937f899f3469a2d": {
-      "stop": "tool_use",
-      "text": "",
-      "toolCalls": [
-        {
-          "id": "toolu_01VsknrJoth175f7idJXHzbA",
-          "name": "submit_rubric",
-          "input": {
-            "requirements": [
-              {
-                "id": "R1",
-                "kind": "hard",
-                "text": "A comment with the text \"I can reproduce this in Firefox 128.\" is added to the acme/webapp issue about the dark mode setting not being saved.",
-                "field": "instruction",
-                "quote": "On the acme/webapp issue about the dark mode setting not being saved, add the comment \"I can reproduce this in Firefox 128.\""
-              }
-            ]
-          }
-        }
-      ],
-      "raw": [
-        {
-          "type": "tool_use",
-          "id": "toolu_01VsknrJoth175f7idJXHzbA",
-          "name": "submit_rubric",
-          "caller": {
-            "type": "direct"
-          },
-          "input": {
-            "requirements": [
-              {
-                "id": "R1",
-                "kind": "hard",
-                "text": "A comment with the text \"I can reproduce this in Firefox 128.\" is added to the acme/webapp issue about the dark mode setting not being saved.",
-                "field": "instruction",
-                "quote": "On the acme/webapp issue about the dark mode setting not being saved, add the comment \"I can reproduce this in Firefox 128.\""
-              }
-            ]
-          }
-        }
-      ],
-      "usage": {
-        "inputTokens": 1084,
-        "outputTokens": 180,
-        "cacheReadTokens": 0,
-        "cacheWriteTokens": 1080
-      },
-      "model": "claude-opus-5-5"
-    },
-    "sha256:41844f7a761c5c523bac41d35b85f7c93ce0184556aeec7334ad30642439282f": {
-      "stop": "tool_use",
-      "text": "",
-      "toolCalls": [
-        {
-          "id": "toolu_017sgM4WuoNC5iZN2hbP34Si",
-          "name": "probes",
-          "input": {}
-        },
-        {
-          "id": "toolu_018FhQhHHjuefWL3C4nqVy7h",
-          "name": "network_log",
-          "input": {
-            "method": "POST"
-          }
-        }
-      ],
-      "raw": [
-        {
-          "type": "tool_use",
-          "id": "toolu_017sgM4WuoNC5iZN2hbP34Si",
-          "name": "probes",
-          "caller": {
-            "type": "direct"
-          },
-          "input": {}
-        },
-        {
-          "type": "tool_use",
-          "id": "toolu_018FhQhHHjuefWL3C4nqVy7h",
-          "name": "network_log",
-          "caller": {
-            "type": "direct"
-          },
-          "input": {
-            "method": "POST"
-          }
-        }
-      ],
-      "usage": {
-        "inputTokens": 16983,
-        "outputTokens": 70,
-        "cacheReadTokens": 0,
-        "cacheWriteTokens": 16979
-      },
-      "model": "claude-opus-5-5"
-    },
-    "sha256:b2e2eb00dab3340e7f8fffac5e32a806563baf182712db4c0ac0222df7f06f2c": {
-      "stop": "tool_use",
-      "text": "",
-      "toolCalls": [
-        {
-          "id": "toolu_019xGUbx3tAo4QXJBtYfUJgW",
-          "name": "network_entry",
-          "input": {
-            "seq": 44
-          }
-        }
-      ],
-      "raw": [
-        {
-          "type": "thinking",
-          "thinking": "",
-          "signature": "CAQS+gcKEAgTGAI4AUIIdGhpbmtpbmcSDE76ai2G6qbYWVvP5RoMW2VS9P9fEE+aTs8+IjAubbL29kKnaykALjq9211B6ZEzeEH64Hdz7vFqjDmR4ibGGdd8Rbo9K9j+x9kXr5oqlwdoNVhA7aktQMvbYNl9no6iJhET2jVElAwRE2BYWACM974+cpgHcJvCF3Up6lnze7TB/jHs3mLm+MwfjLHpv2qjcJTVkC2sdh1//8cZeNW8anB75DFbfqCQuQffaMeWcQAmK/nyehVnzRAXXmrAAgKpDP/42BygXlHcHDY/xVsFGweDoIticvv8t8qQp/WFSJDHyGQ2JJN0DaulTKYCx8G8WsGBtpF0qN5gaYSCgQmLEtpWy+M2kw7/Cg6Fwp9Smss4aTN5zvPwaT35i3K+dL4WnZuOrjGA4wnEgNjK4MLI5a0758rbOp4W8Mr4Adv6//u1yfZKgbS84Ez9CoP/UqDsCfYaC6pYjiG7iybjmBeZl+CZSznDY9BR1gMOSWZkdUYz/9xz06yB+uh8r8OiINIoNKiJMQRmdwnDFJktr+aGsrqOS8GMS3l/xoQl+pqT4vJOY+M0Tt9YzYj4r8d2V/hY4CtRnquZwFqWBqf/H+kUyJ/Q3uXj3DMZYfRqosNgo7cVTCnWllDD2TlHyVj7q9pJmyPArZjI9ZMgLh6tLwNHWWb4lpXHm8Lq9Rc062ovLSZkM8CEuJCeeysj9IpwPQwQ4tMQndYVAvPDzhpayOjrj9X9oocT1IlL5M2UwtSBTXKWS4agmFiDrAa8AORBdIbWHHlR68oCVPl3a0gVAkns7xxsPIVBHnOr/d3wilwrxvBpSpgDNV+7pGHWk82BGgIBp2l6UPTAniSgmwdIqpzNHMvQWm8aSzx9Rs/QBAW8CaS0XmW/hD9H5Kj+RaBrPDS5i7vH4G9+5oZEcohpb4OYhqSUj2MyiV/M2GC4v6M1SCHkfri47HPfibrRmQDV8uOVbSI3X81fpjSNTG5ozC4sQS/ACtUfn2oqLdYQHz/weRHKNdZ0cirfebbOklJPQj6KokWXEQg+6LNa9P76bxiXi5JRQ1NOZNAEI8zjRg09nZA/LJvRAxao4huD0Ri+pZQte2/jGWoOElLCCY9qbMhjy1PWiwt1+iy3YfjFNJJpKzS+DUDzAyQirDlXPU5wQXgwZVLmEJiB29ZusOYVcppxonjpfOb2KxFVNdadb3pThCs1Ztwuw7oBznjR8+Al8kZn0VxVDUa8OaxLTeVqribmLuuiXthQdj48LU6h2Q246WFyBvfnoNlZiRSvZf2FukrSmIxv28E3jgptO2q2ocM3Jq6G1w+OpOrWuXLuTgdWBODIxpHuZ5a+GAE="
-        },
-        {
-          "type": "tool_use",
-          "id": "toolu_019xGUbx3tAo4QXJBtYfUJgW",
-          "name": "network_entry",
-          "caller": {
-            "type": "direct"
-          },
-          "input": {
-            "seq": 44
-          }
-        }
-      ],
-      "usage": {
-        "inputTokens": 20465,
-        "outputTokens": 189,
-        "cacheReadTokens": 16979,
-        "cacheWriteTokens": 3484
-      },
-      "model": "claude-opus-5-5"
-    },
-    "sha256:72a0aa29c9e28a7b2060b94404df0b6fb558a14108bddb0212116bef7c4818b8": {
-      "stop": "tool_use",
-      "text": "",
-      "toolCalls": [
-        {
-          "id": "toolu_01JnuUidezxQ9bd4BykumUgZ",
-          "name": "submit_checks",
-          "input": {
-            "checks": [
-              {
-                "id": "R1-comment-stored",
-                "requirement": "R1",
-                "description": "The backend holds a comment on issue #3 (Dark mode toggle does not persist) whose body is 'I can reproduce this in Firefox 128.' (allowing surrounding whitespace / final punctuation), and the comment was posted to acme/webapp issue 3.",
-                "assert": {
-                  "kind": "allOf",
-                  "of": [
-                    {
-                      "kind": "value",
-                      "source": {
-                        "from": "probe",
-                        "probe": "issueComments"
-                      },
-                      "expect": {
-                        "schema": {
-                          "type": "array",
-                          "contains": {
-                            "type": "object",
-                            "required": ["issue", "body"],
-                            "properties": {
-                              "issue": {
-                                "const": 3
-                              },
-                              "body": {
-                                "type": "string",
-                                "pattern": "^\\s*I can reproduce this in Firefox 128[.!]?\\s*$"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    },
-                    {
-                      "kind": "value",
-                      "source": {
-                        "from": "probe",
-                        "probe": "issues"
-                      },
-                      "expect": {
-                        "schema": {
-                          "type": "array",
-                          "contains": {
-                            "type": "object",
-                            "required": ["number", "title"],
-                            "properties": {
-                              "number": {
-                                "const": 3
-                              },
-                              "title": {
-                                "const": "Dark mode toggle does not persist"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    },
-                    {
-                      "kind": "request",
-                      "match": {
-                        "method": "POST",
-                        "url": {
-                          "path": "/acme/webapp/issues/3/comments"
-                        },
-                        "status": {
-                          "lt": 400
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "raw": [
-        {
-          "type": "thinking",
-          "thinking": "",
-          "signature": "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"
-        },
-        {
-          "type": "tool_use",
-          "id": "toolu_01JnuUidezxQ9bd4BykumUgZ",
-          "name": "submit_checks",
-          "caller": {
-            "type": "direct"
-          },
-          "input": {
-            "checks": [
-              {
-                "id": "R1-comment-stored",
-                "requirement": "R1",
-                "description": "The backend holds a comment on issue #3 (Dark mode toggle does not persist) whose body is 'I can reproduce this in Firefox 128.' (allowing surrounding whitespace / final punctuation), and the comment was posted to acme/webapp issue 3.",
-                "assert": {
-                  "kind": "allOf",
-                  "of": [
-                    {
-                      "kind": "value",
-                      "source": {
-                        "from": "probe",
-                        "probe": "issueComments"
-                      },
-                      "expect": {
-                        "schema": {
-                          "type": "array",
-                          "contains": {
-                            "type": "object",
-                            "required": ["issue", "body"],
-                            "properties": {
-                              "issue": {
-                                "const": 3
-                              },
-                              "body": {
-                                "type": "string",
-                                "pattern": "^\\s*I can reproduce this in Firefox 128[.!]?\\s*$"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    },
-                    {
-                      "kind": "value",
-                      "source": {
-                        "from": "probe",
-                        "probe": "issues"
-                      },
-                      "expect": {
-                        "schema": {
-                          "type": "array",
-                          "contains": {
-                            "type": "object",
-                            "required": ["number", "title"],
-                            "properties": {
-                              "number": {
-                                "const": 3
-                              },
-                              "title": {
-                                "const": "Dark mode toggle does not persist"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    },
-                    {
-                      "kind": "request",
-                      "match": {
-                        "method": "POST",
-                        "url": {
-                          "path": "/acme/webapp/issues/3/comments"
-                        },
-                        "status": {
-                          "lt": 400
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        }
-      ],
-      "usage": {
-        "inputTokens": 21012,
-        "outputTokens": 775,
-        "cacheReadTokens": 20463,
-        "cacheWriteTokens": 547
-      },
-      "model": "claude-opus-5-5"
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "turns": {
+  "sha256:0630e672a7cc9b24365854a2f30dda08a8998470dbc580adc937f899f3469a2d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01VsknrJoth175f7idJXHzbA",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "A comment with the text \"I can reproduce this in Firefox 128.\" is added to the acme/webapp issue about the dark mode setting not being saved.",
+        "field": "instruction",
+        "quote": "On the acme/webapp issue about the dark mode setting not being saved, add the comment \"I can reproduce this in Firefox 128.\""
+       }
+      ]
+     }
     }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01VsknrJoth175f7idJXHzbA",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "A comment with the text \"I can reproduce this in Firefox 128.\" is added to the acme/webapp issue about the dark mode setting not being saved.",
+        "field": "instruction",
+        "quote": "On the acme/webapp issue about the dark mode setting not being saved, add the comment \"I can reproduce this in Firefox 128.\""
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1084,
+    "outputTokens": 180,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1080
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a02227e26d8be5d8b263ce74608e2985ef2efc76897367ec9052dda1df208923": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HH9tkE1ezetSXX3vFs4NoM",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01HH9tkE1ezetSXX3vFs4NoM",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 19847,
+    "outputTokens": 25,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 19843
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:8fffc3debb920972ba77addbf83ed034281dfcd21a49f2131d8f36649dac8a32": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01UAq1g7M3K7qsvbcmB9f7RH",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issueComments"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "issue": {
+            "const": 3
+           },
+           "body": {
+            "type": "string",
+            "pattern": "^\\s*I can reproduce this in Firefox 128[.!]?\\s*$"
+           }
+          },
+          "required": [
+           "issue",
+           "body"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSsggKEAgTGAI4AUIIdGhpbmtpbmcSDABzKBwzjPIgiLZxtRoMoVcyCwP4G+uqWzuqIjBpHbSf4iivmphy+0BZJ6eCiZ4gsybyrg9QBZWYKDOuu5NI3HqhtclGbxK1JoNHTlcqzwcULtvWx5LNKOtYfJcnKJh647v1rJ3xFygxcYV0AoZAwt5MnnGS74kAFXuHOtmoBjLB+GxBv+UfRnrWEtLxQYurl56OjLP+X3vB+pKL1Lxy+YXCdF33YYt7OrnN556gtgcRU99tAnxN7fbvq5hWkVhXf/Yls9+ZALDMjTUWYnXvr0lERppYk99/SD8IlOQNiaY27tUv0pfpMs+7pG+NsgNBfeRRNvloc+Z71LMBu2WnfjPdjBwHBWhTskAhsjzPtRXObPrHbfwNbewG3GaPMYwnxBficdYxLiqLpnAJywpuDbPffmjIZjd3SCq04m0Unv9vi6xso+A1LbjPZTlZvtmvS1COc8W4CDp2f/rBcVWFGpCcmeeI59r/1Ya1qCSuxqBL7MB3IxcRNhIttu1tkgpknRAT6dtxjC6VzhU6nRy9nmG+7OAjoAAkN+x3z0AMZgBAqD+1OGxW2kCa8XCVwEbWDhw3i1p8FWVCCJCc+ZncX6YLew8PP6Q0aBMOItUGva9SW9fBrl9E0tD1XI7W8jzj57mPmlP8234wyrToCgwK2VusEXUK9PdsPhn85QjT//fN4Ktunx5tenV/C2yGdwcNJG+fVbkOh9MEd6YDb6553OqtZZFfF0FjdGNRAQ9Gquwz23PmtZK5gpSMnCK4D6d/nPw53ZH0TpuNfJX23+S1fqp0b87IzBJRlxUliT+ZAOpHsEoso1R5uZN01GrMJBYAZJYCPv6JtTXkQ7DfDHqNOVsQPUj7gfLaxgqCTnzxDWUGLly8bbOyjkshfvXRaICyN7q7fTpowvud+/1NZzs9pbL7yZo7fd8KHhAa8p7rFH1uVy8EZ1GVJ9m42fS6rrUJdnoVbuq7E5d/mBKSTCmqhvWhuM2y9ImB2OcV43yYEbj8sTdvXMP8ddkcu9am6lT9pljERaYqRCn1FUP+D2NjgMq2WSgpdy+EcWoHwe6+e41ue8WHCWVJ78cD58Y2YRID6f24aRNwZmZr0dw/QhELROc08gCAMM/xARu7+zeSQwh3I2D52XhhFmPhMro0oTwvRb4UpyWuLvGuxmBdbniFEP+shuCI2Lg7PyZdRJkW/sE3TTyfh0ZZszoT9/iG0rk6OSnB2168izov6cBmHiTqmjBl3YyWBo6IkzspS/gnayuZnOjObW4YQc4UAmwgUo78htVx6jO//HtPne8Zo/g1xrlP0FTP2aDzu5B8ZkVF5a4wbzXz6PakkQq82ZlsU73BL1hwOvLKD4imUF7+P9ri3VpBv9AEBiAV1QXeZJUl3Yj0fNvoHawL610M+/Hij40YAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01UAq1g7M3K7qsvbcmB9f7RH",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issueComments"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "properties": {
+           "issue": {
+            "const": 3
+           },
+           "body": {
+            "type": "string",
+            "pattern": "^\\s*I can reproduce this in Firefox 128[.!]?\\s*$"
+           }
+          },
+          "required": [
+           "issue",
+           "body"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 23154,
+    "outputTokens": 346,
+    "cacheReadTokens": 19843,
+    "cacheWriteTokens": 3309
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a4965c2f35d7aaf9405df9e270878e1cc7821149287525d7f3c8effd86eddeea": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01BHcLwm4SKJ2QY1Vg57Xgij",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "r1-comment-on-dark-mode-issue",
+        "requirement": "R1",
+        "description": "The backend stores a comment 'I can reproduce this in Firefox 128.' on acme/webapp issue #3, which is the issue 'Dark mode toggle does not persist'.",
+        "assert": {
+         "kind": "allOf",
+         "of": [
+          {
+           "kind": "value",
+           "source": {
+            "from": "probe",
+            "probe": "issues"
+           },
+           "expect": {
+            "schema": {
+             "type": "array",
+             "contains": {
+              "type": "object",
+              "properties": {
+               "number": {
+                "const": 3
+               },
+               "title": {
+                "const": "Dark mode toggle does not persist"
+               }
+              },
+              "required": [
+               "number",
+               "title"
+              ]
+             }
+            }
+           }
+          },
+          {
+           "kind": "value",
+           "source": {
+            "from": "probe",
+            "probe": "issueComments"
+           },
+           "expect": {
+            "schema": {
+             "type": "array",
+             "contains": {
+              "type": "object",
+              "properties": {
+               "issue": {
+                "const": 3
+               },
+               "body": {
+                "type": "string",
+                "pattern": "^\\s*I can reproduce this in Firefox 128[.!]?\\s*$"
+               }
+              },
+              "required": [
+               "issue",
+               "body"
+              ]
+             }
+            }
+           }
+          }
+         ]
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS9wYKEAgTGAI4AUIIdGhpbmtpbmcSDNY/T00lw4L7lGzkihoMbOaqSesfVAExnjtiIjD5v9o2ZWv+mOVuao4TDSJwqzV0xQ59gT5CQSYkAcKz+2VKAe0YNVLriOpDsqoWguIqlAYyk4zSxBMYqJkdEojQieyXGwMww4cePKtXIRQULZT9yOzZk3VSvEvznxe1V9M3/8kynToQF3c1iKDtNwf0FKqqZ5pXsbTtw/Kb/FgRR7EmdwTB+lH6S6Bx62lbl1PE+hqNdLI84+0ZrR+PYOoMcrZaw51xj2Dwkf1Ir2RfMT2WbEJRuJE+zQFmGD0MGI29i+NgJ+dLWUt3a/3oWyBuqfge4ry8qqKDaBuGtLwzdi+IsD++2mMPB1V4TF5Jw5cGCY88Ub/Hup3ZaMybiz/vAiNmYK6AaSi6nCBf+Yelkq704C/e07cweJE0zeDCZPkrZwmfhDj+AbiH2hYHbp2ol7BXLJVvfFi8ZOHEOE2NAbMhGX5Qr8yBl3Un32zhgZdBedSB5OIXTBi9JN0288kPDA52TnL8kX4/gsTAd9Dm1p+T6wa28qiNl9YbPA8y/M4wCuP3e/YcWGbf9ckMIeGgCEmKKLXGROhasuTeJ8RZbybSncaiWSfZsNQJZkHl+4S+LLFvs3URMVx3tZYBLfAZM0uRZv+rzJMY4efWjBzVpNMcuMiOxjuwWt0/r7ahjA2Jp5pACr7nnR5LIU7IA92E16Rp5DIdtD+eQspiPZ+YxjeH4jDyGa44Ndquwy3FZ1DxWrH4ORAhorwafXcwaH+DKT901UaIUMjuanRvYZY8pFJ5x/+OarqgDfTPtOd50L4bHEN8nrwJFwN7O7Cg9/HQ5HR7oWKCSp1jUR5i3SzwN16NlvTFhasLugRyimmIx/v6NHVJRQhNnAtgt3W7UV2+wzaowD8FWobvpuaCnexCvQUn5Sz2ydhOlm5Fk98Vi4AIIwOKmqbWwN8gVggsLNGt7zipOgrvjbRCf/ZuBLgd5/DA7+PB6JqyMeA8jDnCSJ/VBEZ4jGVpRVwhBPU/sB6w2WUZgl9FjRPkZZA0EKQ77GTwZQSMx+zQmCFyjiv5OY+d+EqR/O0O2m0wj/vGNKTRWKkbktetoHDe7GkCbaEcjqoy+teLHPJJpYO0ELJYZwhKw074iaVtKI9QbYAoi0AE+RnUKZSneBgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01BHcLwm4SKJ2QY1Vg57Xgij",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "r1-comment-on-dark-mode-issue",
+        "requirement": "R1",
+        "description": "The backend stores a comment 'I can reproduce this in Firefox 128.' on acme/webapp issue #3, which is the issue 'Dark mode toggle does not persist'.",
+        "assert": {
+         "kind": "allOf",
+         "of": [
+          {
+           "kind": "value",
+           "source": {
+            "from": "probe",
+            "probe": "issues"
+           },
+           "expect": {
+            "schema": {
+             "type": "array",
+             "contains": {
+              "type": "object",
+              "properties": {
+               "number": {
+                "const": 3
+               },
+               "title": {
+                "const": "Dark mode toggle does not persist"
+               }
+              },
+              "required": [
+               "number",
+               "title"
+              ]
+             }
+            }
+           }
+          },
+          {
+           "kind": "value",
+           "source": {
+            "from": "probe",
+            "probe": "issueComments"
+           },
+           "expect": {
+            "schema": {
+             "type": "array",
+             "contains": {
+              "type": "object",
+              "properties": {
+               "issue": {
+                "const": 3
+               },
+               "body": {
+                "type": "string",
+                "pattern": "^\\s*I can reproduce this in Firefox 128[.!]?\\s*$"
+               }
+              },
+              "required": [
+               "issue",
+               "body"
+              ]
+             }
+            }
+           }
+          }
+         ]
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 23581,
+    "outputTokens": 486,
+    "cacheReadTokens": 23152,
+    "cacheWriteTokens": 427
+   },
+   "model": "claude-opus-5-5"
   }
+ },
+ "recordedAt": "2026-11-05T21:03:25.584Z"
 }

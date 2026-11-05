@@ -18,11 +18,11 @@
   ],
   "checks": [
     {
-      "id": "r1-url-draft-filter",
+      "id": "url-draft-filter",
       "requirement": "R1",
-      "description": "The browser is on the WordPress admin posts list (edit.php) filtered by post_status=draft for posts (post_type post or default).",
+      "description": "The page is the WordPress admin posts list filtered to post_status=draft (post type post or unspecified).",
       "assert": {
-        "kind": "allOf",
+        "kind": "anyOf",
         "of": [
           {
             "kind": "url",
@@ -31,40 +31,64 @@
               "query": {
                 "post_status": {
                   "equals": "draft"
+                },
+                "post_type": {
+                  "equals": "post"
                 }
               }
             }
           },
           {
-            "kind": "anyOf",
-            "of": [
-              {
-                "kind": "url",
-                "match": {
-                  "query": {
-                    "post_type": {
-                      "equals": "post"
-                    }
-                  }
-                }
-              },
-              {
-                "kind": "url",
-                "match": {
-                  "query": {
-                    "post_type": null
-                  }
-                }
+            "kind": "url",
+            "match": {
+              "path": "/wp-admin/edit.php",
+              "query": {
+                "post_status": {
+                  "equals": "draft"
+                },
+                "post_type": null
               }
-            ]
+            }
           }
         ]
       }
     },
     {
-      "id": "r1-drafts-listed",
+      "id": "rows-are-drafts",
       "requirement": "R1",
-      "description": "The posts table in the main area lists the draft posts Spring meetup recap, Roadmap 2027 and Pricing update for teams.",
+      "description": "Every post row in the posts table shows a 'Last Modified' date, which WordPress shows only for drafts.",
+      "assert": {
+        "kind": "each",
+        "scope": {
+          "role": "table",
+          "landmark": {
+            "role": "main"
+          }
+        },
+        "match": {
+          "role": "row",
+          "name": {
+            "contains": "Quick edit"
+          }
+        },
+        "assert": {
+          "kind": "contains",
+          "match": {
+            "role": "cell",
+            "name": {
+              "contains": "Last Modified"
+            },
+            "column": {
+              "contains": "Date"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "draft-posts-listed",
+      "requirement": "R1",
+      "description": "The posts table lists the three draft posts: Pricing update for teams, Roadmap 2027 and Spring meetup recap.",
       "assert": {
         "kind": "allOf",
         "of": [
@@ -77,9 +101,9 @@
               }
             },
             "match": {
-              "role": "row",
+              "role": "link",
               "name": {
-                "contains": "Spring meetup recap"
+                "equals": "“Pricing update for teams” (Edit)"
               }
             }
           },
@@ -92,9 +116,9 @@
               }
             },
             "match": {
-              "role": "row",
+              "role": "link",
               "name": {
-                "contains": "Roadmap 2027"
+                "equals": "“Roadmap 2027” (Edit)"
               }
             }
           },
@@ -107,40 +131,13 @@
               }
             },
             "match": {
-              "role": "row",
+              "role": "link",
               "name": {
-                "contains": "Pricing update for teams"
+                "equals": "“Spring meetup recap” (Edit)"
               }
             }
           }
         ]
-      }
-    },
-    {
-      "id": "r1-no-published-listed",
-      "requirement": "R1",
-      "description": "The posts table shows no published posts, only drafts.",
-      "assert": {
-        "kind": "contains",
-        "scope": {
-          "role": "table",
-          "landmark": {
-            "role": "main"
-          }
-        },
-        "witness": {
-          "role": "columnheader",
-          "name": "Author"
-        },
-        "match": {
-          "role": "row",
-          "name": {
-            "regex": "Getting started with Assay|Writing your first check|Flaky tests and how to avoid them|Old pricing announcement|Community call: November|Release 0\\.1 notes|Why outcome verification matters"
-          }
-        },
-        "count": {
-          "eq": 0
-        }
       }
     }
   ],
@@ -150,6 +147,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:16:17.902Z"
+    "at": "2026-11-05T21:07:40.744Z"
   }
 }

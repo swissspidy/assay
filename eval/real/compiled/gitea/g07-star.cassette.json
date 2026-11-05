@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T12:13:00.692Z",
  "turns": {
   "sha256:fb3c64f2e1075068f1dde500194ee74defe364bd76b25be4c00ad33fb132a150": {
    "stop": "tool_use",
@@ -52,66 +51,48 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:2d0092a7fcf6fbadd1b9cb6c370621d4bafc9d7724be88720f95d58bbab4f6fe": {
+  "sha256:06102fa8469ec20c5bb72ebea61bedef5c73f2155c0b7f79ebf084066983a247": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01PY9uYZz7fByV4JSwS3Gfr5",
+     "id": "toolu_01KpAczP5uTuR8T8LyExtoyx",
      "name": "probes",
      "input": {}
-    },
-    {
-     "id": "toolu_01JDosxDdg824no1YqAoHQCz",
-     "name": "network_log",
-     "input": {
-      "method": "POST"
-     }
     }
    ],
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01PY9uYZz7fByV4JSwS3Gfr5",
+     "id": "toolu_01KpAczP5uTuR8T8LyExtoyx",
      "name": "probes",
      "caller": {
       "type": "direct"
      },
      "input": {}
-    },
-    {
-     "type": "tool_use",
-     "id": "toolu_01JDosxDdg824no1YqAoHQCz",
-     "name": "network_log",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "method": "POST"
-     }
     }
    ],
    "usage": {
-    "inputTokens": 16858,
-    "outputTokens": 70,
+    "inputTokens": 19722,
+    "outputTokens": 25,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16854
+    "cacheWriteTokens": 19718
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:e50993a6bc46af656573110eb087026cc259234798519ce0520de722ccb24edb": {
+  "sha256:fe6a2cd082f4707831e5e7af900c6e1ed62f03ad5a161e7507bd068b7d278b2f": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_019eLuySY1ZmoNRxWo1M77F1",
+     "id": "toolu_01KLAsJeUh7gEde7nN7z1aML",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "R1-docs-starred",
+        "id": "docs-starred",
         "requirement": "R1",
-        "description": "After the task, the backend list of repositories starred by alice includes acme/docs.",
+        "description": "Alice's starred repositories (backend) include acme/docs.",
         "assert": {
          "kind": "value",
          "source": {
@@ -124,6 +105,47 @@
            "contains": {
             "const": "acme/docs"
            }
+          }
+         }
+        }
+       },
+       {
+        "id": "other-stars-kept",
+        "requirement": "R1",
+        "description": "Starring acme/docs kept every repository Alice had starred before (the starred list minus acme/docs is unchanged).",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "aliceStarred"
+         },
+         "normalize": [
+          {
+           "op": "items",
+           "where": {
+            "not": {
+             "const": "acme/docs"
+            }
+           }
+          }
+         ],
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "aliceStarred",
+            "at": "before"
+           },
+           "normalize": [
+            {
+             "op": "items",
+             "where": {
+              "not": {
+               "const": "acme/docs"
+              }
+             }
+            }
+           ]
           }
          }
         }
@@ -136,11 +158,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSrAcKEAgTGAI4AUIIdGhpbmtpbmcSDPiqOHgHV0HQnDEeoBoM/DOEaWhx1SsNXHG9IjBUmQApsH1yF53oOdxDx24QM8mp2Q3wPv4HP6u1TkeGb4JL9A/IhiEznQZSCB9BTtcqyQa6GyGWJIfaaPBKqrNjecF2gCyacs3kjRgID/zI56paAVY848YkRUnTZjgU05IDH7UsOu1CArhub2rKMEZ7xwDYK9VWMa9Ahd0bvu76pn35h17EdYltWTB1GBzKGByBJlfzYu+BhwJ6pGqcgwrpK9Be07tcpFfkB+y6wefPCIQV5nZ1EwgJ9anaRWluM8Hl9PI7m9LsVOCIC6nZy8ZcFzE1Fzow0UsH/+LvRi2LQfLpYy8e/ZTslyNrZNg3hHvGazGC5kdTW6uVzaA3Rs2vDfb0MhtC063+mOcx98jd5oQLFVofnv1gj4eEjH8zRlhlEUgi9EQix2bf+MdUjXIGriPdh2me2PJK5RS91r9ydvFvl5yYuX/dbSc+hQw9wK4qegujFV21IPwj4X3HRsaIaeUa0kAWlemyMAp+rxPdExja54d2XG6ad9sGuR7epkimFuBwRgHQbyBmW4DOEqFGld9695N6Vf2OmHZFfI2eNLncEZrmhEB0Kslf4vK1nKEeNUutelri6qrMQ7LiTaRFJ91nTVnCl7WaxOaIpURA9SMJX49uA2XN/aQ9lFAIFFwddhNzWbFfxAOst2BzPPxvcf3V1b84/Lpic9LGfIP1xyDk1v7Z7hBbqigfmjUzEgFLm5v7iqwdfH9R2WOi2Kwj6q5OVJ42Gy8DdRTRBg7e7mhxxdVZ62cxnIHHFrh5PxDfJw3g9cBTYgs2eWqMPyjiYJ1ajhffotjSWStPWTQx8vtoLIAK5BSyyjyYROTNtFQMHbLiMqyk8U7dFQTFEYKEsWkb8I3pKS9IhwbyIcj5iz2cby8+kYGP9VIJQkyYeZpDsTUEXRxJfmuHeq9U776XXVxEYIIFGIsvYCnWlfowwyAr1ncXOe40TJ0IbU4woSoHun4NNrSLiNZm/Llk6haYrJG4EZppLkH4p50xxJwiEp5e/vronSI4QuSTjhZHIk5Kqz377UbSLIcLcVqIau0221+GZaZq92lXIlz428G+ZSAALjbir/3NNzAlyNjHy0ML5uXPwKe9i6LfRyxtkua1Q/20B0aKR6HtiipkAEpZsDIB5CAiLvQYxGGxEHyy5wiRxBSAVT8un4IuY1f8AZSfbIKsaMykTbpNPhtcGAE="
+     "signature": "CAQSwgkKEAgTGAI4AUIIdGhpbmtpbmcSDKNqGliHhEssPtwshBoM75IObHnyoU3drhXoIjAgfRGYvC4WnLAyDRzoZtN4SpEJetkOpUbpbnNJP7D8zCSkq+Nw0grg/88TT2ruTTAq3wjTLxf9XWI7pzuqvE21fWmwSpXgENIK12agtSAggzuNcLP7bhy+9nXkO5nQrbwHjfzTQnUui+Ki9C9ghgtdWK5D7U6QrDoPeQQ6w7v0c/9QM+NjUaj9ESsrGQJzZpBCOqIdAPxtVJv00ekDPk5BceBCFxkdQneu7vytMo17pp2FdfjVys8TSrva/JpZcooszFpHGY4cwAmEW8qAlP6aDGIvvU/ZNhHFOC6NY2FoBBenvYYkUt321adLnkRglOYTeteR2gWJe58pihzoOjExz3EuKjLCOM5FIAhdsApm58/cN2h+2E+8lgDjXCxmbiJGszwOMNcL8RxQG7Ha5dKq6c4mU8a1lqPWmyqklH0krGYSQw7tLgaX84BCZh5UkPTbNZC6zCdw2kOhWkkhDCIrmZ4L9KyCQbWWm1WXUcmmk3UGQXy513beyd4QWo6oy8FCQ1MZMOKyl4dnXlNhI4mzle37P/uBfITxzN91Ny8El2HHiDr6Tu3w/Qxjdpx5bhE6Y6Dvggup9ThkVzi4lCR73Tp2NbGQYzTFdEcQSq2deoWp+/YGaM7GlZmxtLI6VD1RaBb2BsC9kxzwAS/7gQQfXF1QZXCqssBy4R3fSPdf0BFplQSqIvEp9bH46huoxoSTaWgT1wZCYnVcbLw0gWNZuFXw7BkXUlr+4FLHEjONDeZwRhRNW+lNgfb/2YUiGAUo5UREhSe5U9qxu9sK4+OjL1l9SQNff11oEhrH974CPkLptHVf3zZTuPforrQxYWN6fAzafqM8g42oYi98guYu4QhFaWjc07a/KTo/gsjv52BWGjHW/8e0hkvUvmrJK0i3IGMnJGDL1KBzZtFIqAXYrLjr/V2rlmfEW/nJMz8XBvHRvqfyaxnbB+bvVPCg3aQnsYXxVnXL4+Ly7Kt0sfCLP1vKepsYuvn4SfXfRC7hbKUaiOYNokQN0QyvuYQ1qYTA/AWgccwMaY1rlKFLWaiMeYoXbb2Xj3vIMTPnSD+16WwSvE+GiGwNYJRQSdcppaogepCH7aZqHa0zc156Z8Qy6XREw+dmXM7cPXFQK03/1/1FzYU9Mmh+Oyd74aIjFogT7z4swLcK1Gx8fThesZ7aJLFyq8EE3nokgiuDTxfM38Om5oywZ4+ZD0Lzg58ad+KYsXYP324TlDppO0eWirMXZKlb+28Nm7ws3qztE2dpOm1dUnDFvwtDB0kYCxlsC0BSTzFbc+2wrRQb0RHoXiEGQX8zGLH60b1uXNbor3cPBNH0jID2OtA6UTxPH8qqfZozgRhwV6d3My5HCmkFncUQ6RjADB/o5Mhn9dmzG59/8nvIzwAD0RTvqZbMt88gLS2+CqZmtACbjXHYLGSgnURp1Gs/V48MCv5wWC+WmUuTzi7yTUx0fzmDjbpJM3vWyyinLlYuDMNw2LF+Fyda6eW9y3dTWFtar+gGsi22DNzXhXzD8c9DU/k7WAo93qlZh4YIiR+sFds/B0pNvEAhafov2s0YAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_019eLuySY1ZmoNRxWo1M77F1",
+     "id": "toolu_01KLAsJeUh7gEde7nN7z1aML",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -148,9 +170,9 @@
      "input": {
       "checks": [
        {
-        "id": "R1-docs-starred",
+        "id": "docs-starred",
         "requirement": "R1",
-        "description": "After the task, the backend list of repositories starred by alice includes acme/docs.",
+        "description": "Alice's starred repositories (backend) include acme/docs.",
         "assert": {
          "kind": "value",
          "source": {
@@ -166,18 +188,60 @@
           }
          }
         }
+       },
+       {
+        "id": "other-stars-kept",
+        "requirement": "R1",
+        "description": "Starring acme/docs kept every repository Alice had starred before (the starred list minus acme/docs is unchanged).",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "aliceStarred"
+         },
+         "normalize": [
+          {
+           "op": "items",
+           "where": {
+            "not": {
+             "const": "acme/docs"
+            }
+           }
+          }
+         ],
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "aliceStarred",
+            "at": "before"
+           },
+           "normalize": [
+            {
+             "op": "items",
+             "where": {
+              "not": {
+               "const": "acme/docs"
+              }
+             }
+            }
+           ]
+          }
+         }
+        }
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 20252,
-    "outputTokens": 275,
-    "cacheReadTokens": 16854,
-    "cacheWriteTokens": 3396
+    "inputTokens": 22985,
+    "outputTokens": 573,
+    "cacheReadTokens": 19718,
+    "cacheWriteTokens": 3265
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:04:07.843Z"
 }

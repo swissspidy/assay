@@ -30,7 +30,7 @@
     {
       "id": "theme-dark",
       "requirement": "R1",
-      "description": "The localStorage 'theme' preference for Tiny Shop is 'dark'.",
+      "description": "The Tiny Shop localStorage theme preference is set to \"dark\".",
       "assert": {
         "kind": "value",
         "source": {
@@ -39,10 +39,6 @@
           "key": "theme",
           "origin": "http://localhost:4173"
         },
-        "normalize": [
-          "trim",
-          "lowercase"
-        ],
         "expect": {
           "equals": "dark"
         }
@@ -51,7 +47,7 @@
     {
       "id": "lang-german",
       "requirement": "R2",
-      "description": "The 'lang' cookie preference for Tiny Shop is 'de' (German).",
+      "description": "The Tiny Shop lang cookie is set to German (\"de\").",
       "assert": {
         "kind": "value",
         "source": {
@@ -59,12 +55,8 @@
           "area": "cookie",
           "key": "lang"
         },
-        "normalize": [
-          "trim",
-          "lowercase"
-        ],
         "expect": {
-          "regex": "^de(-[a-z]{2})?$"
+          "regex": "^de(-[A-Za-z]+)?$"
         }
       }
     }
@@ -75,6 +67,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T11:31:24.604Z"
+    "at": "2026-11-05T21:08:57.827Z"
   }
 }

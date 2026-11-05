@@ -27,9 +27,9 @@
   ],
   "checks": [
     {
-      "id": "R1-cart-has-all-framed-posters",
+      "id": "r1-all-posters-in-cart",
       "requirement": "R1",
-      "description": "The backend cart contains a line for each of the three framed posters: 'The best is yet to come' Framed poster', 'The adventure begins Framed poster' and 'Today is a good day Framed poster'.",
+      "description": "The cart (backend probe) has a line for each of the three framed posters: The best is yet to come', The adventure begins, and Today is a good day.",
       "assert": {
         "kind": "value",
         "source": {
@@ -43,6 +43,7 @@
             "allOf": [
               {
                 "contains": {
+                  "type": "object",
                   "properties": {
                     "product": {
                       "const": "The best is yet to come' Framed poster"
@@ -55,6 +56,7 @@
               },
               {
                 "contains": {
+                  "type": "object",
                   "properties": {
                     "product": {
                       "const": "The adventure begins Framed poster"
@@ -67,6 +69,7 @@
               },
               {
                 "contains": {
+                  "type": "object",
                   "properties": {
                     "product": {
                       "const": "Today is a good day Framed poster"
@@ -83,105 +86,134 @@
       }
     },
     {
-      "id": "R2-one-of-each-poster",
+      "id": "r2-one-line-per-poster",
       "requirement": "R2",
-      "description": "The cart has exactly one line per framed poster in the catalog (excluding the mug+poster pack), and every framed-poster line has quantity 1.",
+      "description": "The cart's framed-poster lines are exactly one per framed poster in the active catalog (no poster duplicated in a second line).",
       "assert": {
-        "kind": "allOf",
-        "of": [
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+        },
+        "normalize": [
           {
-            "kind": "value",
+            "op": "items",
+            "where": {
+              "properties": {
+                "product": {
+                  "type": "string",
+                  "pattern": "Framed poster$"
+                }
+              },
+              "required": [
+                "product"
+              ],
+              "not": {
+                "properties": {
+                  "product": {
+                    "pattern": "^Pack"
+                  }
+                },
+                "required": [
+                  "product"
+                ]
+              }
+            },
+            "pointer": "/product"
+          }
+        ],
+        "expect": {
+          "sameAs": {
             "source": {
               "from": "probe",
-              "probe": "cart",
-              "pointer": "/lines"
+              "probe": "catalog"
             },
             "normalize": [
               {
                 "op": "items",
                 "where": {
                   "properties": {
-                    "product": {
-                      "pattern": "Framed poster$",
-                      "not": {
-                        "const": "Pack Mug + Framed poster"
+                    "name": {
+                      "type": "string",
+                      "pattern": "Framed poster$"
+                    },
+                    "active": {
+                      "const": 1
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "active"
+                  ],
+                  "not": {
+                    "properties": {
+                      "name": {
+                        "pattern": "^Pack"
                       }
+                    },
+                    "required": [
+                      "name"
+                    ]
+                  }
+                },
+                "pointer": "/name"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "r2-quantity-one",
+      "requirement": "R2",
+      "description": "Every framed-poster line in the cart has quantity 1.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/lines"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "items": {
+              "if": {
+                "type": "object",
+                "properties": {
+                  "product": {
+                    "type": "string",
+                    "pattern": "Framed poster$"
+                  }
+                },
+                "required": [
+                  "product"
+                ],
+                "not": {
+                  "properties": {
+                    "product": {
+                      "pattern": "^Pack"
                     }
                   },
                   "required": [
                     "product"
                   ]
-                },
-                "pointer": "/product"
-              }
-            ],
-            "expect": {
-              "sameAs": {
-                "source": {
-                  "from": "probe",
-                  "probe": "catalog"
-                },
-                "normalize": [
-                  {
-                    "op": "items",
-                    "where": {
-                      "properties": {
-                        "name": {
-                          "pattern": "Framed poster$",
-                          "not": {
-                            "const": "Pack Mug + Framed poster"
-                          }
-                        }
-                      },
-                      "required": [
-                        "name"
-                      ]
-                    },
-                    "pointer": "/name"
+                }
+              },
+              "then": {
+                "properties": {
+                  "quantity": {
+                    "const": 1
                   }
+                },
+                "required": [
+                  "quantity"
                 ]
               }
             }
-          },
-          {
-            "kind": "value",
-            "source": {
-              "from": "probe",
-              "probe": "cart",
-              "pointer": "/lines"
-            },
-            "expect": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "if": {
-                    "properties": {
-                      "product": {
-                        "pattern": "Framed poster$",
-                        "not": {
-                          "const": "Pack Mug + Framed poster"
-                        }
-                      }
-                    },
-                    "required": [
-                      "product"
-                    ]
-                  },
-                  "then": {
-                    "properties": {
-                      "quantity": {
-                        "const": 1
-                      }
-                    },
-                    "required": [
-                      "quantity"
-                    ]
-                  }
-                }
-              }
-            }
           }
-        ]
+        }
       }
     }
   ],
@@ -191,6 +223,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:22:55.328Z"
+    "at": "2026-11-05T21:11:45.079Z"
   }
 }

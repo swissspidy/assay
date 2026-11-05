@@ -1,7 +1,7 @@
 {
   "task": "tiny-shop/06-cart-total",
   "status": "compiled",
-  "model": "anthropic:claude-opus-5-5@high",
+  "model": "anthropic:claude-opus-5-5@high (replay)",
   "modelsUsed": [
     "claude-opus-5-5"
   ],
@@ -10,18 +10,18 @@
     "discovery": 2
   },
   "usage": {
-    "inputTokens": 37967,
-    "outputTokens": 1454,
-    "cacheReadTokens": 17883,
-    "cacheWriteTokens": 20074
+    "inputTokens": 39985,
+    "outputTokens": 1633,
+    "cacheReadTokens": 18892,
+    "cacheWriteTokens": 21083
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "the cart total is $21.50",
       "checks": [
-        "r1-total-backend",
-        "r1-total-page"
+        "r1-probe-total",
+        "r1-page-total"
       ],
       "channels": [
         "probe",
@@ -55,7 +55,8 @@
       "requirement": "R4",
       "quote": "open the cart",
       "checks": [
-        "r4-cart-open"
+        "r4-cart-url",
+        "r4-cart-heading"
       ],
       "channels": [
         "url",

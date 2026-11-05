@@ -7,20 +7,20 @@
   ],
   "turns": {
     "rubric": 1,
-    "discovery": 3
+    "discovery": 4
   },
   "usage": {
-    "inputTokens": 59120,
-    "outputTokens": 1140,
-    "cacheReadTokens": 37335,
-    "cacheWriteTokens": 21773
+    "inputTokens": 92252,
+    "outputTokens": 1503,
+    "cacheReadTokens": 66892,
+    "cacheWriteTokens": 25346
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "Create a new private repository called \"meeting-notes\" under my account",
       "checks": [
-        "r1-repo-exists"
+        "repo-created"
       ],
       "channels": [
         "probe"
@@ -31,7 +31,7 @@
       "requirement": "R2",
       "quote": "private",
       "checks": [
-        "r2-repo-private"
+        "repo-private"
       ],
       "channels": [
         "probe"
@@ -42,15 +42,19 @@
       "requirement": "R3",
       "quote": "initialized with a README",
       "checks": [
-        "r3-repo-initialized"
+        "repo-initialized",
+        "repo-create-readme"
       ],
       "channels": [
-        "probe"
+        "probe",
+        "network"
       ],
       "trust": "structured"
     }
   ],
-  "warnings": [],
+  "warnings": [
+    "check repo-created.allOf[1]: reads only the state before the task, which does not depend on what the agent did; compare it with the state after (sameAs)"
+  ],
   "references": [
     {
       "name": "reference",

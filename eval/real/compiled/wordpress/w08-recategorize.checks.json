@@ -36,12 +36,46 @@
   ],
   "checks": [
     {
-      "id": "r1-same-post-moved",
+      "id": "r1-post-moved",
       "requirement": "R1",
-      "description": "The same existing post titled \"Writing your first check\" (same id as before the task) is now in Tutorials and not in News.",
+      "description": "Post id 5 \"Writing your first check\" still exists in Tutorials, and apart from swapping News for Tutorials its categories are the same as before the task.",
       "assert": {
         "kind": "allOf",
         "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "posts"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "const": 5
+                    },
+                    "title": {
+                      "const": "Writing your first check"
+                    },
+                    "categories": {
+                      "type": "array",
+                      "contains": {
+                        "const": "Tutorials"
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "categories"
+                  ]
+                }
+              }
+            }
+          },
           {
             "kind": "value",
             "source": {
@@ -53,15 +87,24 @@
                 "op": "items",
                 "where": {
                   "properties": {
-                    "title": {
-                      "const": "Writing your first check"
+                    "id": {
+                      "const": 5
                     }
                   },
                   "required": [
-                    "title"
+                    "id"
                   ]
                 },
-                "pointer": "/id"
+                "pointer": "/categories",
+                "flatten": true
+              },
+              {
+                "op": "items",
+                "where": {
+                  "not": {
+                    "const": "Tutorials"
+                  }
+                }
               }
             ],
             "expect": {
@@ -76,52 +119,26 @@
                     "op": "items",
                     "where": {
                       "properties": {
-                        "title": {
-                          "const": "Writing your first check"
+                        "id": {
+                          "const": 5
                         }
                       },
                       "required": [
-                        "title"
+                        "id"
                       ]
                     },
-                    "pointer": "/id"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            "kind": "value",
-            "source": {
-              "from": "probe",
-              "probe": "posts"
-            },
-            "expect": {
-              "schema": {
-                "type": "array",
-                "contains": {
-                  "type": "object",
-                  "required": [
-                    "title",
-                    "categories"
-                  ],
-                  "properties": {
-                    "title": {
-                      "const": "Writing your first check"
-                    },
-                    "categories": {
-                      "type": "array",
-                      "contains": {
-                        "const": "Tutorials"
-                      },
+                    "pointer": "/categories",
+                    "flatten": true
+                  },
+                  {
+                    "op": "items",
+                    "where": {
                       "not": {
-                        "contains": {
-                          "const": "News"
-                        }
+                        "const": "News"
                       }
                     }
                   }
-                }
+                ]
               }
             }
           }
@@ -131,7 +148,7 @@
     {
       "id": "r2-in-tutorials",
       "requirement": "R2",
-      "description": "Every post titled \"Writing your first check\" exists and has the Tutorials category in the backend.",
+      "description": "In the backend, post id 5 \"Writing your first check\" has Tutorials among its categories.",
       "assert": {
         "kind": "value",
         "source": {
@@ -143,40 +160,25 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "title"
-              ],
               "properties": {
+                "id": {
+                  "const": 5
+                },
                 "title": {
                   "const": "Writing your first check"
-                }
-              }
-            },
-            "items": {
-              "if": {
-                "type": "object",
-                "required": [
-                  "title"
-                ],
-                "properties": {
-                  "title": {
-                    "const": "Writing your first check"
+                },
+                "categories": {
+                  "type": "array",
+                  "contains": {
+                    "const": "Tutorials"
                   }
                 }
               },
-              "then": {
-                "required": [
-                  "categories"
-                ],
-                "properties": {
-                  "categories": {
-                    "type": "array",
-                    "contains": {
-                      "const": "Tutorials"
-                    }
-                  }
-                }
-              }
+              "required": [
+                "id",
+                "title",
+                "categories"
+              ]
             }
           }
         }
@@ -185,7 +187,7 @@
     {
       "id": "r3-not-in-news",
       "requirement": "R3",
-      "description": "The post \"Writing your first check\" exists and no post with that title is in the News category.",
+      "description": "In the backend, post id 5 \"Writing your first check\" no longer has the News category.",
       "assert": {
         "kind": "value",
         "source": {
@@ -197,42 +199,27 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "title"
-              ],
               "properties": {
+                "id": {
+                  "const": 5
+                },
                 "title": {
                   "const": "Writing your first check"
-                }
-              }
-            },
-            "items": {
-              "if": {
-                "type": "object",
-                "required": [
-                  "title"
-                ],
-                "properties": {
-                  "title": {
-                    "const": "Writing your first check"
-                  }
-                }
-              },
-              "then": {
-                "required": [
-                  "categories"
-                ],
-                "properties": {
-                  "categories": {
-                    "type": "array",
-                    "not": {
-                      "contains": {
-                        "const": "News"
-                      }
+                },
+                "categories": {
+                  "type": "array",
+                  "not": {
+                    "contains": {
+                      "const": "News"
                     }
                   }
                 }
-              }
+              },
+              "required": [
+                "id",
+                "title",
+                "categories"
+              ]
             }
           }
         }
@@ -245,6 +232,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:15:15.109Z"
+    "at": "2026-11-05T21:07:07.468Z"
   }
 }

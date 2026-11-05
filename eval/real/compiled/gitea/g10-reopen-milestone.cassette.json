@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T12:13:54.200Z",
  "turns": {
   "sha256:435e98a70492d93aa2769345bd8013dc68e09de5a689e626c1164837a860b582": {
    "stop": "tool_use",
@@ -66,12 +65,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:7e1d68b25329d41766422a5cf0fb11471d9164d64031d7a3500b1f8f7cd198cb": {
+  "sha256:06d1673e2f04f17461fc81f03e5a9ca43709682d65bfbe89dce7bf869c1056ea": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01TFkcGfGGVtuFEMw8XxRLiZ",
+     "id": "toolu_013nwTVNBFeyyy8BreWkRF4y",
      "name": "probes",
      "input": {}
     }
@@ -79,7 +78,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01TFkcGfGGVtuFEMw8XxRLiZ",
+     "id": "toolu_013nwTVNBFeyyy8BreWkRF4y",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -88,26 +87,26 @@
     }
    ],
    "usage": {
-    "inputTokens": 16978,
+    "inputTokens": 19842,
     "outputTokens": 25,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16974
+    "cacheWriteTokens": 19838
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:137ef0c1cf141c44c65cfd06cdb695ca441ff3bcc7c29c23940b03f6948e3393": {
+  "sha256:2ee5eb31363fb458e45b09cf842faef6168ca3df6c4496f2cd35d5c69f668e43": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01VaJTG5oLs8c4Wf6oDkkTtX",
+     "id": "toolu_013qiPbhoHjUs8Y3ZypKkTTx",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "r1-issue-open",
+        "id": "r1-issue5-open",
         "requirement": "R1",
-        "description": "The backend issues probe for acme/webapp shows the issue titled 'Session expires too early' with state open.",
+        "description": "Backend probe shows issue #5 \"Session expires too early\" has state open.",
         "assert": {
          "kind": "value",
          "source": {
@@ -120,6 +119,9 @@
            "contains": {
             "type": "object",
             "properties": {
+             "number": {
+              "const": 5
+             },
              "title": {
               "const": "Session expires too early"
              },
@@ -128,6 +130,7 @@
              }
             },
             "required": [
+             "number",
              "title",
              "state"
             ]
@@ -137,9 +140,9 @@
         }
        },
        {
-        "id": "r2-issue-milestone",
+        "id": "r2-issue5-milestone-v11",
         "requirement": "R2",
-        "description": "The backend issues probe shows the issue titled 'Session expires too early' assigned to milestone v1.1.",
+        "description": "Backend probe shows issue #5 \"Session expires too early\" is in milestone v1.1.",
         "assert": {
          "kind": "value",
          "source": {
@@ -152,6 +155,9 @@
            "contains": {
             "type": "object",
             "properties": {
+             "number": {
+              "const": 5
+             },
              "title": {
               "const": "Session expires too early"
              },
@@ -160,6 +166,7 @@
              }
             },
             "required": [
+             "number",
              "title",
              "milestone"
             ]
@@ -176,11 +183,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS9wYKEAgTGAI4AUIIdGhpbmtpbmcSDAGePeg36GhomDYjnBoM/XTyN3vXTQm7uhNRIjD6M05cDwUTIKpQH2Ala4hCXFmZc0nTC13tfJyjyXUiix022s75QdkBUGv2A9VhkBkqlAZMQHkrYYpUuqk+vbyvxwJz24Rp0+At4lXcwRy4ktSx43Se1whHxkL4zzyUdceImvOuW80TdAja8yrA5Eu2qrbwBI7+nHigPdUzyMCMzt00HfQ/LmXnEiB5jnv0h08K8Dk4/KBpx7fCofyxH673wJjw4iICYdijpT/uJBUKZmTzHjJ4jm+YcMJqasRIQpbcZNmM4P/W2+/pHw9rn+t4n6GuJ0FhCTp7C/xHbrmqLpkqc5s32bNBmYgbZOZ9g7bAS1BU2uFvCtD5R4/WQ5DXeNFZIivwqXULma02mWzhAUkQbau+tZTtJxGb16DxK/mkF38LYipwiJrNrRu358rN7dMsroC9DbTZVaJSw2bVs2NNlBr0Kosr6mqZ9aO06/eT/KWDtGAp1tY1TpPWaxLsHr/v7ajCDi8U7ydKzpbWqct6chEZJvoFvuzjQYoa049CAQHJi0wwH8/DXFtVpZRTl7e3UZE+pEt90BS1xraPDD3GmhRsRIPS/g6i+EdBqkB6+grsKRukcsDejtfokGGJRJDmoIvry5Ml7rqzzhEk1OtQFIhpn/lxCcR2J7DplBDV8fk1MsX1l+1iAiQ0+hpgYdqCLo07sN/A4edJPqguRgZDS/8x3KpV12EMwQur7YxHclp7iZgRb39KSm0l7El/gx+R30fe3FIip5IW/UB7ytw8EcYpjmpIs81fGrZmM6u5MKu/p6R+R+lcCDTsFWHqaGp9SVGC/ZvktCld+Qixh2Fg9BtX/xoPztKC8vf2VsobtT/lxnP1m+C5deWK20miWou4iiVVa6wiWMmvBcoQzPUsDyif3pa468dTOBqfeCJObq4206/22+QVqXU5qZNLcP2OfNr2CsRTWtsh0Ie+qU59xnQipF7+7JOkhmLn9yEOoVY+HMOTseMVfSYvZ1WyMtX+Yb6hGCYpwOwRupJd+6aT2Pv1rm/ag1XLU+QUuX+jVacJuDZMQgg8Z1aK7y8U5CzTpfQvbLfeeNnNr1tD5MyKqfOZAtCdP/U2NFa20R1t+uNGvn+T6kt8oj/vwI3llrlC+HV2HBgB"
+     "signature": "CAQS2wYKEAgTGAI4AUIIdGhpbmtpbmcSDLzsK4xhOqbXYvONJBoMVyjSSZLqoCm1VO/UIjCoDKubuzB+lNL47JuUsMLbJ4fsNwlDmbNxYPEGUy+zVU9C/LbgzX567+3iHI/WWv4q+AVUqg7puFE5pBIHUP8Ho541ARZkTPX7ZzxBJbMPu9tTr8W3T357RiJXbzgYghuMySHur/+0ZZw7ZKqCTWsOV4zIwdlY1gkGsDfl3NGwTeaO5oT33NjxaCZioHasqd2bODyZCtNFFP6s4bA5yqN7y3qrj6jTivvUOeONkVyRC0h4C95F/t+6O7QrlisxN9yqe0S1dkTKSOriBpPzNt5PboNLAlwBWVZUvumE2qcCIxL5nMHtyzK2WBFDfdM/4hZIEqewg7SVejKpV9LmlJjn0r75caKQ0TRIEfzwEPtzxZCtPtNZHIKjbAoJRbcVmba6j+gadbkhQ1P06x9swLIfQkQO173G3BNTvIwVGuc8EBW/oobXkL7yhKxUWIpHWVvQX8UJKmZUT4bq520HhrGm3rJMK+xMlvdXkKdm8ATk45FDmwp95vJeGQJCXSeLxc4148TfRdXjhKHj2sqoQrYpYnS1kVJ2WUiIgxH4F1WJVovX1/qT+QrGr26yaUR05ty8j2136YwT2eDzvxymHfXwYLVPuw14RWRMHSmDAm+iPB7HNVNxg6UI1IldLNx6DPRkac+b05m4yIJEMG7J5ZTqaYJaG1AjRCPE+wEqCLgGX/MRI2Ik6Zi4Rbpz1a+gQPnp+QA3JmmZUc1ZGiX0gNFlplF1nIjwjEh6Oqk4uYiRSITAxIOj3lOfBsu6WZRQHmiYrI2UO8rfs55LOmtRvj1Od/yOUGk8F4nxQjPzutnQv9qiDnCXB3xL+9/uBT8oVxClBV3DIwO5RVqwNfCZvIamzr6Hcjo0rq9w/vXCmdfKHwvYzont71WmiKBWs34gF9vvIzN1scD+CoLHvhq2U3Gzs4jvUftvNxs4AVN2YfizS0HqOks+N0UsBmqc8HOdwYSd47BEF34JY/OHLyhnX66FRmDduP0TV7xNW+Wk9Lmjxhq3Pcbd14LUHMJXF/n6w/kBtnEgkhv87fwM0CqeeWeKomMcqIOCp8IFrmU+1SuTCMW2m3oLrTys0PzSGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01VaJTG5oLs8c4Wf6oDkkTtX",
+     "id": "toolu_013qiPbhoHjUs8Y3ZypKkTTx",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -188,9 +195,9 @@
      "input": {
       "checks": [
        {
-        "id": "r1-issue-open",
+        "id": "r1-issue5-open",
         "requirement": "R1",
-        "description": "The backend issues probe for acme/webapp shows the issue titled 'Session expires too early' with state open.",
+        "description": "Backend probe shows issue #5 \"Session expires too early\" has state open.",
         "assert": {
          "kind": "value",
          "source": {
@@ -203,6 +210,9 @@
            "contains": {
             "type": "object",
             "properties": {
+             "number": {
+              "const": 5
+             },
              "title": {
               "const": "Session expires too early"
              },
@@ -211,6 +221,7 @@
              }
             },
             "required": [
+             "number",
              "title",
              "state"
             ]
@@ -220,9 +231,9 @@
         }
        },
        {
-        "id": "r2-issue-milestone",
+        "id": "r2-issue5-milestone-v11",
         "requirement": "R2",
-        "description": "The backend issues probe shows the issue titled 'Session expires too early' assigned to milestone v1.1.",
+        "description": "Backend probe shows issue #5 \"Session expires too early\" is in milestone v1.1.",
         "assert": {
          "kind": "value",
          "source": {
@@ -235,6 +246,9 @@
            "contains": {
             "type": "object",
             "properties": {
+             "number": {
+              "const": 5
+             },
              "title": {
               "const": "Session expires too early"
              },
@@ -243,6 +257,7 @@
              }
             },
             "required": [
+             "number",
              "title",
              "milestone"
             ]
@@ -256,12 +271,13 @@
     }
    ],
    "usage": {
-    "inputTokens": 20239,
-    "outputTokens": 464,
-    "cacheReadTokens": 16974,
+    "inputTokens": 23103,
+    "outputTokens": 498,
+    "cacheReadTokens": 19838,
     "cacheWriteTokens": 3263
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:04:47.517Z"
 }

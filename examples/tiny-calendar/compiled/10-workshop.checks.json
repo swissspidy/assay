@@ -39,7 +39,7 @@
     {
       "id": "R1-workshop-exists",
       "requirement": "R1",
-      "description": "The backend events probe holds an event titled exactly \"Workshop\" on 2026-11-12 at 10:00.",
+      "description": "The backend events list contains an event titled exactly \"Workshop\".",
       "assert": {
         "kind": "value",
         "source": {
@@ -51,23 +51,14 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "title",
-                "date",
-                "time"
-              ],
               "properties": {
                 "title": {
                   "const": "Workshop"
-                },
-                "date": {
-                  "const": "2026-11-12"
-                },
-                "time": {
-                  "type": "string",
-                  "pattern": "^10:00(:00)?$"
                 }
-              }
+              },
+              "required": [
+                "title"
+              ]
             }
           }
         }
@@ -88,12 +79,6 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "title",
-                "date",
-                "time",
-                "duration"
-              ],
               "properties": {
                 "title": {
                   "const": "Workshop"
@@ -102,13 +87,21 @@
                   "const": "2026-11-12"
                 },
                 "time": {
-                  "type": "string",
-                  "pattern": "^10:00(:00)?$"
+                  "enum": [
+                    "10:00",
+                    "10:00:00"
+                  ]
                 },
                 "duration": {
                   "const": 90
                 }
-              }
+              },
+              "required": [
+                "title",
+                "date",
+                "time",
+                "duration"
+              ]
             }
           }
         }
@@ -117,7 +110,7 @@
     {
       "id": "R3-workshop-date-time",
       "requirement": "R3",
-      "description": "The stored 90-minute Workshop event is scheduled on 2026-11-12 starting at 10:00.",
+      "description": "The stored Workshop event is on 2026-11-12 starting at 10:00.",
       "assert": {
         "kind": "value",
         "source": {
@@ -129,12 +122,6 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "title",
-                "date",
-                "time",
-                "duration"
-              ],
               "properties": {
                 "title": {
                   "const": "Workshop"
@@ -143,13 +130,17 @@
                   "const": "2026-11-12"
                 },
                 "time": {
-                  "type": "string",
-                  "pattern": "^10:00(:00)?$"
-                },
-                "duration": {
-                  "const": 90
+                  "enum": [
+                    "10:00",
+                    "10:00:00"
+                  ]
                 }
-              }
+              },
+              "required": [
+                "title",
+                "date",
+                "time"
+              ]
             }
           }
         }
@@ -162,6 +153,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T11:35:13.242Z"
+    "at": "2026-11-05T21:12:27.864Z"
   }
 }
