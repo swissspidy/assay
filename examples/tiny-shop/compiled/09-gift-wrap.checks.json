@@ -10,7 +10,7 @@
     {
       "id": "R1",
       "kind": "hard",
-      "text": "The order has gift wrapping.",
+      "text": "The order is gift wrapped.",
       "source": {
         "field": "outcomes",
         "quote": "the order is gift wrapped"
@@ -19,7 +19,7 @@
     {
       "id": "R2",
       "kind": "hard",
-      "text": "The user's cart is checked out, so an order is placed.",
+      "text": "The cart is checked out, so an order is placed.",
       "source": {
         "field": "instruction",
         "quote": "Check out my cart"
@@ -30,7 +30,7 @@
     {
       "id": "order-placed-request",
       "requirement": "R2",
-      "description": "A POST to /api/orders succeeded with a 2xx status, placing an order.",
+      "description": "A POST to /api/orders succeeded, placing an order.",
       "assert": {
         "kind": "request",
         "match": {
@@ -42,16 +42,13 @@
             "gte": 200,
             "lt": 300
           }
-        },
-        "count": {
-          "gte": 1
         }
       }
     },
     {
       "id": "order-placed-probe",
       "requirement": "R2",
-      "description": "The backend's latest order has status 'placed' and is the order created by the checkout request.",
+      "description": "The backend's latest order is the one created by the checkout request and has status placed.",
       "assert": {
         "kind": "allOf",
         "of": [
@@ -99,7 +96,7 @@
     {
       "id": "order-gift-wrapped",
       "requirement": "R1",
-      "description": "The backend's latest order has giftWrap set to true.",
+      "description": "The stored latest order has gift wrap enabled.",
       "assert": {
         "kind": "value",
         "source": {
@@ -119,6 +116,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T10:43:55.544Z"
+    "at": "2026-11-05T11:31:12.042Z"
   }
 }

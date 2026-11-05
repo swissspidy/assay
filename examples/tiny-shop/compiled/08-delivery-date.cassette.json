@@ -1,37 +1,44 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T10:59:38.068Z",
+ "recordedAt": "2026-11-05T11:30:31.341Z",
  "turns": {
   "sha256:0aaf65912bbe1fb40d2b8e6a7574b59232866c8efe07e16a496b2e304e564d63": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01AzbV4o2WwKZRFZiMJuC2YN",
+     "id": "toolu_01E6rWXUbizAaHi8reADmiKo",
      "name": "submit_rubric",
      "input": {
       "requirements": [
        {
         "id": "R1",
         "kind": "hard",
+        "text": "The order confirmation shows an estimated delivery date of 5 November 2026.",
+        "field": "outcomes",
+        "quote": "the confirmation shows an estimated delivery of 5 November 2026"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
         "text": "An order is placed for the items in the user's cart.",
         "field": "instruction",
         "quote": "Place an order for my cart"
        },
        {
-        "id": "R2",
+        "id": "R3",
         "kind": "hard",
         "text": "The order uses express shipping.",
         "field": "instruction",
         "quote": "with express shipping"
        },
        {
-        "id": "R3",
+        "id": "R4",
         "kind": "hard",
-        "text": "The confirmation shows an estimated delivery date of 5 November 2026.",
-        "field": "outcomes",
-        "quote": "the confirmation shows an estimated delivery of 5 November 2026"
+        "text": "The estimated delivery date is reported to the user.",
+        "field": "instruction",
+        "quote": "show me the estimated delivery date"
        }
       ]
      }
@@ -41,11 +48,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSnAkKEAgTGAI4AUIIdGhpbmtpbmcSDGgylprwP9+Ia5d1zRoM7KHNoQdflPcc95NWIjCBTy28VKLb8rlsxjsiRppIT8auYZVNU1WIVTRsiiwQTmtuG/5gWHI/Ir/FoVXw1OcquQgxDSewimR0ERbP55QKYhehB2SNn1r79+MvBnAsMYVPgRrzIIBw1oPzbvIS4hWigKtsrgD8s9vcEd3Bjua0RlpaqNRFfS66q4UcTdqd6jgBEOT5e6+dqBruu6CY2fcCkGvheYA5wF4dJAfINj06Yqiv8JkBjTbCleZMmjDhUE2E9dlty/HqBPCBkBCK99zWLFIqlI7FQ4eiXIAFH5DjE0SEZzXzo3jbgSiR2/6BmeeY/5DgK1IrdDWq4XLsb4foILbXZehNQUsBEscUOeB6PwRpKOJWJlbDVe6eZ6ptOcbKZ+5i3tlIrqSYIn+kFzCD9xLFk9VDgzYSytw3xY6a0qszOZuX/1qelV6g5rf7SvcQARGxYo80IOCurrf4L3iNl6dh8qI21ZA0DiOk6HcxEeEfU7hSX7fQ0mzXUFA0aEakAlkD9IALTSTKAP8XCfXeSsSlbcHiEiJiMYTFa+Oox+mAR7jiYjtqRQI5VlUTnC7X6ycx+96pnm1hOZOOSkOWySLxgjjZMUmXi75/1iLXZ/vQ3CJQF56L1ftuhY64SIepSB/8Z2VxQ2GqHW7vKsexPfobEsNRb82cd1LMovMzmqG+NUoUg8wsPACi8QJg0r+swp+b68W/2BE7VjsAK3lqD1sKMX/+OveygZHvqaQgXNW81MPoz/pLo7/jgNHJosaC6dtr813ldmhLeogUFgxCyeUPG1ssPFCydAPsxdwWA0a0ZloJYZtrazp7RCqCycOrfUl6SqJY2smXgaExNol9dvpegzz/IGnEgmXsWtXfMpJgoCVnYxCl0OPwc16pdoXX1j5WDIhy6IOR7L2Gihk2f5JT6BQIYYjVJ9BGPLOhXlZQnyyDJWsCjpChiVhdhRdxf5RVAm9k6gRRun8dZsRoqtSTWfBnOHR3+vyt95Zq/FzqoQRKWxFDkl4QPalhww2t0XQFi3b9/xytZbJD6jbSin9bAF9SvwdkIE2UurTgO50LUxhTY7uHcrucrT9Nx0aAOOWJMlfX4MI7bucJX0HW6bRJ+SqmNBIAUbOfJS4R9oyZTizQnBLSwQLnY/gPZvyDkTYlCsdAi7Sv2mfd5/3ZWKAxWa6HCW3a9zUvyGQke7FLyHNBAF12qdbWvh6pL9jkp9/6JySmATh1i6ETfhAtyIt+u3cUGvLJzY5mH3bNfV3MMReadieMqN364/NGJ1rKpujrBsfGbwp4SBnUcq6Rl6iPWYSSFxtiogcJqvMdE+pTRMtilG0s3Djf1Bk0JkAFpR15h/59xGqd2ECz9JIkRgSSleIYxkrj4xIbTFqnPfQVl4Lrz4hHpBBgSfMtF6l+OTL5wpxopyaTdN5cD8sldkwhQ6rDXBcl8p/lSP5ug85SOcS2W7TZCOmmFcJ5p5SOJFqKVk93QyijM4QdNtX8xQwev1TCxI9hfjQAArvT/7svQS0o+Na+WbgbGAE="
+     "signature": "CAQSoAoKEAgTGAI4AUIIdGhpbmtpbmcSDLZI66sq56b3GegC9xoM3Pex54F/b5TEhfJ+IjD3bzp3GEIHdUzxedKGZHpT83MfANX1zpJVYc3wnpjWeW7pa1p5mbuUqT6fTJFmpdsqvQkOoiEbKNXI/L0MigLqyD8YsDv99/hA5k1kvSCVs/FnSqyP+4xA7bjcsUlUWUsqqOotYN+jr7HKw3PWPFRfm+ZfGDILDhaDmy2dwN+Dl5WzwThpGMXLgtWG2lGwIKBCr8dPNpZxeKmFFbBAs2VktDq3P+Z5nO8uOqMaMeu7tFfG9zh/wRft4GPd7QxRpxK3BTCSpXlJisUxQGmwRJ0sEl2LZ8hj/im3tK0+PFFJYJqQJuCXVDYv1Toh4NQXE9FeSqEb/Kj9QsivFS3dnkAUm1j8XF0YFyY1ed90jvTnnPTr7iKvHdq+yBDxKpaF8A8mxslO/llLXVUqMEkKuoFwQT/iCfnzk9sIihfaKnlLEpYQ+yJXse7fvTh4zANe8VwyX2Rpxb2FKY2NKkdaGkAeu/asGYZGaxTWSHeSsBD1e5QkbIm4TP6tSv75ZvNPnPoKTTCpPtNCwA9CIbg3nuKQ8pg/Q+vmS64qyI/5RJhTLERt3+QGrCqk+8YaYYCIQgKPIC6uzlGiDeKCZmHcX8dURCeeLSHTVO9B483/bctjPph46NJHk9gs6lZ5TOeZHd5pH5Fq5V4199kcronyRKk8B2gEzUW8mkKIwhOL+H++bms92H3w26+U7gYnpBFEPPL4LKH/HG65gpylh4qopSJ18t08RAwzlp+ARsaNI3f8WCM1X3iZELGl/gWlCsV8CGKJFms4UFrHC+10s8K6oaNbZqbTrq20GpcPacbge9Rtvu/y8r7FcACWAFtheNmnDhsOal9sMdYPPwhNwgtJnKFnO/aPgCtOHb3JOmnQ+4iG4TnxbohuiFEa6iztP9x3klGhn6mvBK0cO7Zkin7rOp2eTL7z58FxfVpxyrzT42X4j4mlLElee0Vi1vDe4a4xVYLMgU47V57QC19+zuUuT11p6IEnimt5Nqxpl164jAyrEo1zT+8IeyznYvl0lx9BO36YMmURGREYPHwMS86PXUnB+8+g2L9XBSq+l0r7cpwsaN6LdPFq0RnRe/xEqRCMJz7KHDtaVm6HiQxlJWI6pqeejfg46WiDSMC+xE/Ncm3Pt6rtnHKk65xXTW1+wrDYZ5paOnwK0JND4VBW3ynpSO2CoXFWIeBmXw71yRn9rzZVth18CJMDTZ7brpGGvm3IMBw93pBOC9/U9XhGdRYgwndw/Jg1OCLxtz8e7XdkxoeXSvIGmXSlQUxqzrFoISBrYxDzM5vKT0cxzBQ9x7MLvSQ5esWSVtUhNzRFPC/5739C1H6GxFwmJfCgVwC9syZdwBQGUBLYQ9uNYFfW/bMk4d3fzJBzMWmEY1AryQV9s/EDgeOTMf/FH/4r3g9C1XqRxz2LjMZIAoP33Z0Kj3mVwb4PiMWxYJswlCqW+pUpLM/ewKqghVPjdzsf5n5LqLmikAJ4efyedkfykss8fkmnxrzYemL4CJ/AdicJViBrtvkNySUyXCpNFuA+aUXseYXXwgyMayV/Sftc8roar65NFpvisKT3abeCKrZgNH9ily7hIxsk8aRT099Z+YYBBR8mc8wfjtlg3axnS9sH7Ni9nRiIZSI9KCXpKMf0aO6UxudOnVf9HqM20y8XnqoWH6DjFYn1KS2fCWRYqRxJei5l5BGzGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01AzbV4o2WwKZRFZiMJuC2YN",
+     "id": "toolu_01E6rWXUbizAaHi8reADmiKo",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -55,23 +62,30 @@
        {
         "id": "R1",
         "kind": "hard",
+        "text": "The order confirmation shows an estimated delivery date of 5 November 2026.",
+        "field": "outcomes",
+        "quote": "the confirmation shows an estimated delivery of 5 November 2026"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
         "text": "An order is placed for the items in the user's cart.",
         "field": "instruction",
         "quote": "Place an order for my cart"
        },
        {
-        "id": "R2",
+        "id": "R3",
         "kind": "hard",
         "text": "The order uses express shipping.",
         "field": "instruction",
         "quote": "with express shipping"
        },
        {
-        "id": "R3",
+        "id": "R4",
         "kind": "hard",
-        "text": "The confirmation shows an estimated delivery date of 5 November 2026.",
-        "field": "outcomes",
-        "quote": "the confirmation shows an estimated delivery of 5 November 2026"
+        "text": "The estimated delivery date is reported to the user.",
+        "field": "instruction",
+        "quote": "show me the estimated delivery date"
        }
       ]
      }
@@ -79,28 +93,28 @@
    ],
    "usage": {
     "inputTokens": 1139,
-    "outputTokens": 437,
+    "outputTokens": 514,
     "cacheReadTokens": 0,
     "cacheWriteTokens": 1135
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:071fd05bbe82c9852602552fe88fc562804a06fddbfb5ceba3d108031ab18326": {
+  "sha256:93e0683191b53db5a3632f9a1dce43bac75b572064f12af627923c360973ab2c": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_014xjmowtmqLWdVE89nEVs5C",
+     "id": "toolu_01RqahzoAxcqCiDV8JNzUVFX",
      "name": "page_outline",
      "input": {}
     },
     {
-     "id": "toolu_01SEHwSrZrziRpG4jKZ4DfJ8",
+     "id": "toolu_01UA9Ceh64caEQBkCwt8qG7Q",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01DvBqkABnxEebt9eJLgndJ1",
+     "id": "toolu_01Dy82ZRtqbmv4yvpxCysHWp",
      "name": "network_log",
      "input": {}
     }
@@ -108,7 +122,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_014xjmowtmqLWdVE89nEVs5C",
+     "id": "toolu_01RqahzoAxcqCiDV8JNzUVFX",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -117,7 +131,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01SEHwSrZrziRpG4jKZ4DfJ8",
+     "id": "toolu_01UA9Ceh64caEQBkCwt8qG7Q",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -126,7 +140,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01DvBqkABnxEebt9eJLgndJ1",
+     "id": "toolu_01Dy82ZRtqbmv4yvpxCysHWp",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -135,19 +149,19 @@
     }
    ],
    "usage": {
-    "inputTokens": 18228,
+    "inputTokens": 18747,
     "outputTokens": 72,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 18224
+    "cacheWriteTokens": 18743
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:1c82857562dc6ad00eb29ce984e706a01dc331e42d32dcfc345c04b74b6073e9": {
+  "sha256:6825944e40d0a588407cdd9e75c01cdc7a48b184eb1159027f1d3781e6bcdbed": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01FboKWNRtK9Zy9QReAngJs1",
+     "id": "toolu_014vuCEp5pLEMnwpwYRoKqnq",
      "name": "network_entry",
      "input": {
       "seq": 9
@@ -156,13 +170,8 @@
    ],
    "raw": [
     {
-     "type": "thinking",
-     "thinking": "",
-     "signature": "CAQS4gYKEAgTGAI4AUIIdGhpbmtpbmcSDDCB6Bmkx6aFV9KB2hoM2Y1V616O0HZV9AtAIjAzfnm0ib6xVOIF2CtTyLyOOX/d64i0m9i6oQZJay9MPiWdCUgLsBtPeNVDWGTkVBcq/wV3KbXHN0MXMu4j4vFKRZ4g7X0PI7JKgzap+rdzq0F/gec1I+6c3WSolLw8xShCqxYXD8qRLrkJ06GU+WJoGQoZ3NvkzRhdCaeTzYT9FexaCyAItIKbAjdnQ3XwQQ2mXRMkB0f3BsXB7JPf3MDSGUHoz4nwi+MGqkFZFFlyN24Rf47o3iXijds5uoEq0ZRa+pMOtayMgm7LoUG6kJ7+EYgOd89Zkntvxg+Ern7pGHMgfGzTocMKc/+hTx7+nIlBCNHIuormLGq2AYHV5l8GzGcZ5+VH0xeheI+KAlQTdK38BWRPIRLCE9LHLWggvIyO4CJW2for24a/TPZgLTI6JRnNc19F35lYzMUI3SRtdyOaKBtDDX2GwqZgVmfjWAEckX4ghMW1FaL4tHugIMdfwPKEzDB8SYQW8EwsWMrgNCcCNQWJ3Tcl9SxIA6Z7saIIdJrGctmPUu4yZ7OfhiP2ZZprfL2jgRvWmh4K+EPJ4Bt6fqsILOUYt4umtCEjeJKSe8E3oyUjr6T7GqtiazsuSIA8ID/bAokJteaYHllacPbz+zOyAnmMAAVQ+KwQkjATrRMEaXzZHd/F2fJCEJkq0aDb89mX+AEbQwCkLYFyg3j1aIUTP09phTjlH9MjmWNrTCun0bRGiCzf19lY+zzkc3sum1Dr44UZYJzzq89zdRBYf6oh2EoC4UpYELvfxmjqRCslAEAE15ttv3g8zlFzc7YlU8SVj8lg/kiW5/7Irea3DjrgP4GLkVH3P9p/M+KM2K5VVdGB9eiWz4j9n9STceyBINvVomd5IyX5yg8JPvMWfdS8dXIex8Aq39EvsgOUubQ+j03ISLoiDkLBde0TP74q1v5zp4U3WRCvmtaVq6tDk/dv5VXleXz8QZHYPxFe1fY1eaR2ev9EcxT5+NJVWNO+89oNHmTLHCOPMddmgKfxDnSl3Su72o+dROtAEL1jCHZrYQgqO+moPIl398aOAZW/DWTZt8WIeKUFxkgfNSuELB+mDX+rP5aEGVc9wnhItBgB"
-    },
-    {
      "type": "tool_use",
-     "id": "toolu_01FboKWNRtK9Zy9QReAngJs1",
+     "id": "toolu_014vuCEp5pLEMnwpwYRoKqnq",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -173,26 +182,317 @@
     }
    ],
    "usage": {
-    "inputTokens": 19335,
-    "outputTokens": 129,
-    "cacheReadTokens": 18224,
+    "inputTokens": 19854,
+    "outputTokens": 49,
+    "cacheReadTokens": 18743,
     "cacheWriteTokens": 1109
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:2b0e9c98b60e7ab5cd516554ab64c5d4bacccc36200698cc451744d9c14c9b14": {
+  "sha256:8b0423cbfbd5615b8939efc4c9edbeed500aa5f4cc552b816a85ac478d1413f6": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01BNYXjxQUiKbpsukyLgYHtr",
+     "id": "toolu_01D9i6zWcWkbbHxsETNJJATU",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "allOf",
+       "of": [
+        {
+         "kind": "url",
+         "match": {
+          "path": "/orders/*"
+         }
+        },
+        {
+         "kind": "value",
+         "source": {
+          "from": "text",
+          "scope": {
+           "role": "region",
+           "name": "Order summary"
+          },
+          "pattern": "Estimated delivery:?\\s*(\\d{4}-\\d{2}-\\d{2}|[^\\n]*?\\d{4})",
+          "group": 1
+         },
+         "normalize": [
+          "trim",
+          {
+           "op": "date",
+           "locale": "en"
+          }
+         ],
+         "expect": {
+          "equals": "2026-11-05"
+         }
+        },
+        {
+         "kind": "value",
+         "source": {
+          "from": "text",
+          "scope": {
+           "role": "region",
+           "name": "Order summary"
+          },
+          "pattern": "Order number:?\\s*([A-Za-z0-9-]+)",
+          "group": 1
+         },
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "latestOrder",
+            "pointer": "/id"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "id": "toolu_014oyfFY4wp3wqB9oWCgNXqj",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "latestOrder",
+        "pointer": "/items"
+       },
+       "normalize": [
+        {
+         "op": "items"
+        }
+       ],
+       "expect": {
+        "sameAs": {
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/items",
+          "at": "before"
+         },
+         "normalize": [
+          {
+           "op": "items"
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "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"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01D9i6zWcWkbbHxsETNJJATU",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "allOf",
+       "of": [
+        {
+         "kind": "url",
+         "match": {
+          "path": "/orders/*"
+         }
+        },
+        {
+         "kind": "value",
+         "source": {
+          "from": "text",
+          "scope": {
+           "role": "region",
+           "name": "Order summary"
+          },
+          "pattern": "Estimated delivery:?\\s*(\\d{4}-\\d{2}-\\d{2}|[^\\n]*?\\d{4})",
+          "group": 1
+         },
+         "normalize": [
+          "trim",
+          {
+           "op": "date",
+           "locale": "en"
+          }
+         ],
+         "expect": {
+          "equals": "2026-11-05"
+         }
+        },
+        {
+         "kind": "value",
+         "source": {
+          "from": "text",
+          "scope": {
+           "role": "region",
+           "name": "Order summary"
+          },
+          "pattern": "Order number:?\\s*([A-Za-z0-9-]+)",
+          "group": 1
+         },
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "latestOrder",
+            "pointer": "/id"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_014oyfFY4wp3wqB9oWCgNXqj",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "latestOrder",
+        "pointer": "/items"
+       },
+       "normalize": [
+        {
+         "op": "items"
+        }
+       ],
+       "expect": {
+        "sameAs": {
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/items",
+          "at": "before"
+         },
+         "normalize": [
+          {
+           "op": "items"
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 20175,
+    "outputTokens": 1100,
+    "cacheReadTokens": 19852,
+    "cacheWriteTokens": 321
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:3bd74bb1294cb32135524589ab8dbf91f337fe4654efc9d854f11fc7769bf3eb": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017arpi2bns9SnQgWhjq6Zxs",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "r1-order-request",
+        "id": "r1-confirmation-delivery-date",
         "requirement": "R1",
-        "description": "A POST to /api/orders succeeded and created a placed order.",
+        "description": "The order confirmation page (/orders/:id) for the latest order shows an estimated delivery date of 5 November 2026 in its Order summary.",
+        "assert": {
+         "kind": "allOf",
+         "of": [
+          {
+           "kind": "url",
+           "match": {
+            "path": "/orders/*"
+           }
+          },
+          {
+           "kind": "value",
+           "source": {
+            "from": "text",
+            "scope": {
+             "role": "region",
+             "name": "Order summary"
+            },
+            "pattern": "Estimated delivery:?\\s*(\\d{4}-\\d{2}-\\d{2}|[^\\n]*?\\d{4})",
+            "group": 1
+           },
+           "normalize": [
+            "trim",
+            {
+             "op": "date",
+             "locale": "en"
+            }
+           ],
+           "expect": {
+            "equals": "2026-11-05"
+           }
+          },
+          {
+           "kind": "value",
+           "source": {
+            "from": "text",
+            "scope": {
+             "role": "region",
+             "name": "Order summary"
+            },
+            "pattern": "Order number:?\\s*([A-Za-z0-9-]+)",
+            "group": 1
+           },
+           "expect": {
+            "sameAs": {
+             "source": {
+              "from": "probe",
+              "probe": "latestOrder",
+              "pointer": "/id"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "id": "r1-stored-delivery-date",
+        "requirement": "R1",
+        "description": "The stored latest order has estimated delivery 2026-11-05.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/estimatedDelivery"
+         },
+         "expect": {
+          "equals": "2026-11-05"
+         }
+        }
+       },
+       {
+        "id": "r2-order-request",
+        "requirement": "R2",
+        "description": "A POST to /api/orders succeeded.",
         "assert": {
          "kind": "request",
          "match": {
@@ -203,26 +503,30 @@
           "status": {
            "gte": 200,
            "lt": 300
-          },
-          "responseBody": {
-           "type": "object",
-           "required": [
-            "id",
-            "status"
-           ],
-           "properties": {
-            "status": {
-             "const": "placed"
-            }
-           }
           }
          }
         }
        },
        {
-        "id": "r1-order-items-match-cart",
-        "requirement": "R1",
-        "description": "The latest order's items are exactly the items that were in the cart before the task.",
+        "id": "r2-order-placed",
+        "requirement": "R2",
+        "description": "The latest order has status placed.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/status"
+         },
+         "expect": {
+          "equals": "placed"
+         }
+        }
+       },
+       {
+        "id": "r2-order-items-match-cart",
+        "requirement": "R2",
+        "description": "The latest order's items are exactly the cart's items before the task.",
         "assert": {
          "kind": "value",
          "source": {
@@ -253,51 +557,72 @@
         }
        },
        {
-        "id": "r2-express-shipping",
-        "requirement": "R2",
-        "description": "The placed order (backend) uses express shipping, and the order request asked for express shipping.",
+        "id": "r3-express-shipping",
+        "requirement": "R3",
+        "description": "The stored latest order uses express shipping.",
         "assert": {
-         "kind": "allOf",
-         "of": [
-          {
-           "kind": "value",
-           "source": {
-            "from": "probe",
-            "probe": "latestOrder",
-            "pointer": "/shipping"
-           },
-           "expect": {
-            "equals": "express"
-           }
-          },
-          {
-           "kind": "value",
-           "source": {
-            "from": "request",
-            "match": {
-             "method": "POST",
-             "url": {
-              "path": "/api/orders"
-             },
-             "status": {
-              "gte": 200,
-              "lt": 300
-             }
-            },
-            "pick": "last",
-            "pointer": "/shipping"
-           },
-           "expect": {
-            "equals": "express"
-           }
-          }
-         ]
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/shipping"
+         },
+         "expect": {
+          "equals": "express"
+         }
         }
        },
        {
-        "id": "r3-confirmation-page",
-        "requirement": "R3",
-        "description": "The browser is on the confirmation page of the placed order, whose number matches the latest order.",
+        "id": "r4-delivery-date-shown",
+        "requirement": "R4",
+        "description": "The page shows the order's estimated delivery date, matching the date stored on the latest order.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "text",
+          "scope": {
+           "role": "region",
+           "name": "Order summary"
+          },
+          "pattern": "Estimated delivery:?\\s*(\\d{4}-\\d{2}-\\d{2}|[^\\n]*?\\d{4})",
+          "group": 1
+         },
+         "normalize": [
+          "trim",
+          {
+           "op": "date",
+           "locale": "en"
+          }
+         ],
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "latestOrder",
+            "pointer": "/estimatedDelivery"
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_017arpi2bns9SnQgWhjq6Zxs",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "r1-confirmation-delivery-date",
+        "requirement": "R1",
+        "description": "The order confirmation page (/orders/:id) for the latest order shows an estimated delivery date of 5 November 2026 in its Order summary.",
         "assert": {
          "kind": "allOf",
          "of": [
@@ -310,16 +635,36 @@
           {
            "kind": "value",
            "source": {
-            "from": "url",
-            "part": "pathname"
+            "from": "text",
+            "scope": {
+             "role": "region",
+             "name": "Order summary"
+            },
+            "pattern": "Estimated delivery:?\\s*(\\d{4}-\\d{2}-\\d{2}|[^\\n]*?\\d{4})",
+            "group": 1
            },
            "normalize": [
+            "trim",
             {
-             "op": "extract",
-             "regex": "^/orders/([^/]+)/?$",
-             "group": 1
+             "op": "date",
+             "locale": "en"
             }
            ],
+           "expect": {
+            "equals": "2026-11-05"
+           }
+          },
+          {
+           "kind": "value",
+           "source": {
+            "from": "text",
+            "scope": {
+             "role": "region",
+             "name": "Order summary"
+            },
+            "pattern": "Order number:?\\s*([A-Za-z0-9-]+)",
+            "group": 1
+           },
            "expect": {
             "sameAs": {
              "source": {
@@ -334,48 +679,351 @@
         }
        },
        {
-        "id": "r3-delivery-date-shown",
-        "requirement": "R3",
-        "description": "The order summary on the confirmation shows an estimated delivery date of 5 November 2026.",
+        "id": "r1-stored-delivery-date",
+        "requirement": "R1",
+        "description": "The stored latest order has estimated delivery 2026-11-05.",
         "assert": {
-         "kind": "each",
-         "scope": {
-          "anchors": [
-           {
-            "role": "region",
-            "name": {
-             "contains": "Order summary",
-             "ignoreCase": true
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/estimatedDelivery"
+         },
+         "expect": {
+          "equals": "2026-11-05"
+         }
+        }
+       },
+       {
+        "id": "r2-order-request",
+        "requirement": "R2",
+        "description": "A POST to /api/orders succeeded.",
+        "assert": {
+         "kind": "request",
+         "match": {
+          "method": "POST",
+          "url": {
+           "path": "/api/orders"
+          },
+          "status": {
+           "gte": 200,
+           "lt": 300
+          }
+         }
+        }
+       },
+       {
+        "id": "r2-order-placed",
+        "requirement": "R2",
+        "description": "The latest order has status placed.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/status"
+         },
+         "expect": {
+          "equals": "placed"
+         }
+        }
+       },
+       {
+        "id": "r2-order-items-match-cart",
+        "requirement": "R2",
+        "description": "The latest order's items are exactly the cart's items before the task.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/items"
+         },
+         "normalize": [
+          {
+           "op": "items"
+          }
+         ],
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "cart",
+            "pointer": "/items",
+            "at": "before"
+           },
+           "normalize": [
+            {
+             "op": "items"
+            }
+           ]
+          }
+         }
+        }
+       },
+       {
+        "id": "r3-express-shipping",
+        "requirement": "R3",
+        "description": "The stored latest order uses express shipping.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/shipping"
+         },
+         "expect": {
+          "equals": "express"
+         }
+        }
+       },
+       {
+        "id": "r4-delivery-date-shown",
+        "requirement": "R4",
+        "description": "The page shows the order's estimated delivery date, matching the date stored on the latest order.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "text",
+          "scope": {
+           "role": "region",
+           "name": "Order summary"
+          },
+          "pattern": "Estimated delivery:?\\s*(\\d{4}-\\d{2}-\\d{2}|[^\\n]*?\\d{4})",
+          "group": 1
+         },
+         "normalize": [
+          "trim",
+          {
+           "op": "date",
+           "locale": "en"
+          }
+         ],
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "latestOrder",
+            "pointer": "/estimatedDelivery"
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 21625,
+    "outputTokens": 1304,
+    "cacheReadTokens": 20173,
+    "cacheWriteTokens": 1450
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:e96854e0da2d55aadc1b3e1d770a47a037739ad200cab3fcc3e9f5b38dff9c42": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Dtk4U9Wp7VDgcT23itH3Fo",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "r1-confirmation-delivery-date",
+        "requirement": "R1",
+        "description": "The order confirmation page (/orders/:id) for the latest order shows an estimated delivery date of 5 November 2026 in its Order summary.",
+        "assert": {
+         "kind": "allOf",
+         "of": [
+          {
+           "kind": "url",
+           "match": {
+            "path": "/orders/*"
+           }
+          },
+          {
+           "kind": "value",
+           "source": {
+            "from": "text",
+            "scope": {
+             "role": "region",
+             "name": "Order summary"
+            },
+            "pattern": "Estimated delivery:?\\s*(\\d{4}-\\d{2}-\\d{2}|[^\\n]*?\\d{4})",
+            "group": 1
+           },
+           "normalize": [
+            "trim",
+            {
+             "op": "date",
+             "locale": "en"
+            }
+           ],
+           "expect": {
+            "equals": "2026-11-05"
+           }
+          },
+          {
+           "kind": "value",
+           "source": {
+            "from": "text",
+            "scope": {
+             "role": "region",
+             "name": "Order summary"
+            },
+            "pattern": "Order number:?\\s*([A-Za-z0-9-]+)",
+            "group": 1
+           },
+           "expect": {
+            "sameAs": {
+             "source": {
+              "from": "probe",
+              "probe": "latestOrder",
+              "pointer": "/id"
+             }
             }
            }
-          ]
-         },
-         "match": {
-          "role": "paragraph",
-          "text": {
-           "contains": "Estimated delivery",
-           "ignoreCase": true
           }
+         ]
+        }
+       },
+       {
+        "id": "r1-stored-delivery-date",
+        "requirement": "R1",
+        "description": "The stored latest order has estimated delivery 2026-11-05.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/estimatedDelivery"
          },
-         "count": {
-          "eq": 1
-         },
-         "assert": {
-          "kind": "value",
-          "source": {
-           "from": "text",
-           "pattern": "Estimated delivery:?\\s*(.+?)\\s*$",
-           "flags": "i",
-           "group": 1
+         "expect": {
+          "equals": "2026-11-05"
+         }
+        }
+       },
+       {
+        "id": "r2-order-request",
+        "requirement": "R2",
+        "description": "A POST to /api/orders succeeded.",
+        "assert": {
+         "kind": "request",
+         "match": {
+          "method": "POST",
+          "url": {
+           "path": "/api/orders"
           },
-          "normalize": [
-           {
-            "op": "date",
-            "locale": "en-GB"
-           }
-          ],
-          "expect": {
-           "equals": "2026-11-05"
+          "status": {
+           "gte": 200,
+           "lt": 300
+          }
+         }
+        }
+       },
+       {
+        "id": "r2-order-placed",
+        "requirement": "R2",
+        "description": "The latest order has status placed.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/status"
+         },
+         "expect": {
+          "equals": "placed"
+         }
+        }
+       },
+       {
+        "id": "r2-order-items-match-cart",
+        "requirement": "R2",
+        "description": "The latest order's items are exactly the cart's items before the task.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/items"
+         },
+         "normalize": [
+          {
+           "op": "items"
+          }
+         ],
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "cart",
+            "pointer": "/items",
+            "at": "before"
+           },
+           "normalize": [
+            {
+             "op": "items"
+            }
+           ]
+          }
+         }
+        }
+       },
+       {
+        "id": "r3-express-shipping",
+        "requirement": "R3",
+        "description": "The stored latest order uses express shipping.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/shipping"
+         },
+         "expect": {
+          "equals": "express"
+         }
+        }
+       },
+       {
+        "id": "r4-delivery-date-shown",
+        "requirement": "R4",
+        "description": "The page shows the order's estimated delivery date, matching the date stored on the latest order.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "text",
+          "scope": {
+           "role": "region",
+           "name": "Order summary"
+          },
+          "pattern": "Estimated delivery:?\\s*(\\d{4}-\\d{2}-\\d{2}|[^\\n]*?\\d{4})",
+          "group": 1
+         },
+         "normalize": [
+          "trim",
+          {
+           "op": "date",
+           "locale": "en"
+          }
+         ],
+         "expect": {
+          "sameAs": {
+           "source": {
+            "from": "probe",
+            "probe": "latestOrder",
+            "pointer": "/estimatedDelivery"
+           },
+           "normalize": [
+            {
+             "op": "date",
+             "locale": "en"
+            }
+           ]
           }
          }
         }
@@ -388,11 +1036,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "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"
+     "signature": "CAQSiQcKEAgTGAI4AUIIdGhpbmtpbmcSDAIalau1adL793tL1RoMsfyXuidG+gbPjE6JIjBKPVJqSjCEro8myTU6vbRwNkSq74ikeQMC79JOvE74AqAcFaD/+PvSUnJ9vZb70YsqpgYyrZULtOQEYj8HgFhglvPQl7NZwcEj8J5nA7UniSFZ9kE1z1cDZM87MdWNLZZMJ2V/dmGJP9c98JXHIVzZVteeQigp4UcognxJV/UoMCfFiT3R0DHuKyFM7lRoR5O65Pstz79FLIuim3ljGmTtS8/Ao0XKIeJ+dHaYvTYuzqnnmi4rzTBuDkO5Nq1+8wYnQiCvAqACUdaSNitNpxsnVfv0QDEgow9mX491MWKERYAiGs1RiXCs9dmzN0YvJdVHW2sRCEXFvqK8+9yO384/ug6bXu9PoD4S2Fq6FRhB9ZSEKBnVj+tWoNVZRZ90VUtpoGnIZZnKqlPNvOhbs+beIc0axgJcbh50zJB8foF80XQU3uVtRvUVsInYVaBzI2k4+40D2MfXZyrrnQGkMUcxtuOCbq5W0kbiHaVhR/MjCk4VmOXEOml/ruwB9DzPpwsC/rrLusfz4yyIuFPzE4q+UYWHaMxpm9wdC6nXzT7zdwN7MW1/5EKF6BOqPxLRG3Zv9ZxTLnGY5/ylj30hchWViMwqV/EyYWcReX7SVqwArntYqc5dbGOl2GfKM63V5XQhnmoyfJk4xbgtHlxjtKHYaZhWNupty9W33BlPdEQM8dkIoH7n6IBf5sul4H75TM443tNP8QXxjl7VYPos30yIDEd6ST29GamRFcUHJukPL+Asuj/OJ4TfjGCZsiQT5gJBa/ziaNPnJc6kQ3bcHKh6pPw2lfX4IsSglZm0SQOTZgIvsC0wh8Nxhy9dQFO8tDoqSqbFs/PepbCdwVDC7Z6kcOAM41n4YfukORzAKlV+rzrEnMyzJFnpflmt1gOr9KG6Hc57RuVyjGG5Pz2T+gf8AId1tAPTR96gJBw5LVW6yMEzxDayalyUCay7eNEMa/IRiboofo2g8kjT4T7gv3u1dNd9FeD5XiL+M4eyi4yIPGVXrMT0PtXAMFjti49HBS+vIUtEETVjxwjlcvu7JPP0KUrXV2mjpVaEFPPlCDGS3Qt0IZQPUPZhYalDuJQqbwhfwXU6xIF5IJE+CMe1xVTifzF2xP3uzCswA8D27KugQHR8Fg6BB04BYBgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_01BNYXjxQUiKbpsukyLgYHtr",
+     "id": "toolu_01Dtk4U9Wp7VDgcT23itH3Fo",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -400,9 +1048,84 @@
      "input": {
       "checks": [
        {
-        "id": "r1-order-request",
+        "id": "r1-confirmation-delivery-date",
         "requirement": "R1",
-        "description": "A POST to /api/orders succeeded and created a placed order.",
+        "description": "The order confirmation page (/orders/:id) for the latest order shows an estimated delivery date of 5 November 2026 in its Order summary.",
+        "assert": {
+         "kind": "allOf",
+         "of": [
+          {
+           "kind": "url",
+           "match": {
+            "path": "/orders/*"
+           }
+          },
+          {
+           "kind": "value",
+           "source": {
+            "from": "text",
+            "scope": {
+             "role": "region",
+             "name": "Order summary"
+            },
+            "pattern": "Estimated delivery:?\\s*(\\d{4}-\\d{2}-\\d{2}|[^\\n]*?\\d{4})",
+            "group": 1
+           },
+           "normalize": [
+            "trim",
+            {
+             "op": "date",
+             "locale": "en"
+            }
+           ],
+           "expect": {
+            "equals": "2026-11-05"
+           }
+          },
+          {
+           "kind": "value",
+           "source": {
+            "from": "text",
+            "scope": {
+             "role": "region",
+             "name": "Order summary"
+            },
+            "pattern": "Order number:?\\s*([A-Za-z0-9-]+)",
+            "group": 1
+           },
+           "expect": {
+            "sameAs": {
+             "source": {
+              "from": "probe",
+              "probe": "latestOrder",
+              "pointer": "/id"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "id": "r1-stored-delivery-date",
+        "requirement": "R1",
+        "description": "The stored latest order has estimated delivery 2026-11-05.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/estimatedDelivery"
+         },
+         "expect": {
+          "equals": "2026-11-05"
+         }
+        }
+       },
+       {
+        "id": "r2-order-request",
+        "requirement": "R2",
+        "description": "A POST to /api/orders succeeded.",
         "assert": {
          "kind": "request",
          "match": {
@@ -413,26 +1136,30 @@
           "status": {
            "gte": 200,
            "lt": 300
-          },
-          "responseBody": {
-           "type": "object",
-           "required": [
-            "id",
-            "status"
-           ],
-           "properties": {
-            "status": {
-             "const": "placed"
-            }
-           }
           }
          }
         }
        },
        {
-        "id": "r1-order-items-match-cart",
-        "requirement": "R1",
-        "description": "The latest order's items are exactly the items that were in the cart before the task.",
+        "id": "r2-order-placed",
+        "requirement": "R2",
+        "description": "The latest order has status placed.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/status"
+         },
+         "expect": {
+          "equals": "placed"
+         }
+        }
+       },
+       {
+        "id": "r2-order-items-match-cart",
+        "requirement": "R2",
+        "description": "The latest order's items are exactly the cart's items before the task.",
         "assert": {
          "kind": "value",
          "source": {
@@ -463,129 +1190,56 @@
         }
        },
        {
-        "id": "r2-express-shipping",
-        "requirement": "R2",
-        "description": "The placed order (backend) uses express shipping, and the order request asked for express shipping.",
+        "id": "r3-express-shipping",
+        "requirement": "R3",
+        "description": "The stored latest order uses express shipping.",
         "assert": {
-         "kind": "allOf",
-         "of": [
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/shipping"
+         },
+         "expect": {
+          "equals": "express"
+         }
+        }
+       },
+       {
+        "id": "r4-delivery-date-shown",
+        "requirement": "R4",
+        "description": "The page shows the order's estimated delivery date, matching the date stored on the latest order.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "text",
+          "scope": {
+           "role": "region",
+           "name": "Order summary"
+          },
+          "pattern": "Estimated delivery:?\\s*(\\d{4}-\\d{2}-\\d{2}|[^\\n]*?\\d{4})",
+          "group": 1
+         },
+         "normalize": [
+          "trim",
           {
-           "kind": "value",
+           "op": "date",
+           "locale": "en"
+          }
+         ],
+         "expect": {
+          "sameAs": {
            "source": {
             "from": "probe",
             "probe": "latestOrder",
-            "pointer": "/shipping"
-           },
-           "expect": {
-            "equals": "express"
-           }
-          },
-          {
-           "kind": "value",
-           "source": {
-            "from": "request",
-            "match": {
-             "method": "POST",
-             "url": {
-              "path": "/api/orders"
-             },
-             "status": {
-              "gte": 200,
-              "lt": 300
-             }
-            },
-            "pick": "last",
-            "pointer": "/shipping"
-           },
-           "expect": {
-            "equals": "express"
-           }
-          }
-         ]
-        }
-       },
-       {
-        "id": "r3-confirmation-page",
-        "requirement": "R3",
-        "description": "The browser is on the confirmation page of the placed order, whose number matches the latest order.",
-        "assert": {
-         "kind": "allOf",
-         "of": [
-          {
-           "kind": "url",
-           "match": {
-            "path": "/orders/*"
-           }
-          },
-          {
-           "kind": "value",
-           "source": {
-            "from": "url",
-            "part": "pathname"
+            "pointer": "/estimatedDelivery"
            },
            "normalize": [
             {
-             "op": "extract",
-             "regex": "^/orders/([^/]+)/?$",
-             "group": 1
+             "op": "date",
+             "locale": "en"
             }
-           ],
-           "expect": {
-            "sameAs": {
-             "source": {
-              "from": "probe",
-              "probe": "latestOrder",
-              "pointer": "/id"
-             }
-            }
-           }
-          }
-         ]
-        }
-       },
-       {
-        "id": "r3-delivery-date-shown",
-        "requirement": "R3",
-        "description": "The order summary on the confirmation shows an estimated delivery date of 5 November 2026.",
-        "assert": {
-         "kind": "each",
-         "scope": {
-          "anchors": [
-           {
-            "role": "region",
-            "name": {
-             "contains": "Order summary",
-             "ignoreCase": true
-            }
-           }
-          ]
-         },
-         "match": {
-          "role": "paragraph",
-          "text": {
-           "contains": "Estimated delivery",
-           "ignoreCase": true
-          }
-         },
-         "count": {
-          "eq": 1
-         },
-         "assert": {
-          "kind": "value",
-          "source": {
-           "from": "text",
-           "pattern": "Estimated delivery:?\\s*(.+?)\\s*$",
-           "flags": "i",
-           "group": 1
-          },
-          "normalize": [
-           {
-            "op": "date",
-            "locale": "en-GB"
-           }
-          ],
-          "expect": {
-           "equals": "2026-11-05"
+           ]
           }
          }
         }
@@ -595,10 +1249,10 @@
     }
    ],
    "usage": {
-    "inputTokens": 19736,
-    "outputTokens": 1336,
-    "cacheReadTokens": 19333,
-    "cacheWriteTokens": 401
+    "inputTokens": 23231,
+    "outputTokens": 1386,
+    "cacheReadTokens": 21623,
+    "cacheWriteTokens": 1606
    },
    "model": "claude-opus-5-5"
   }

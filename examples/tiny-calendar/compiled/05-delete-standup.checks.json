@@ -13,24 +13,24 @@
       "text": "The Team standup event has been deleted.",
       "source": {
         "field": "outcomes",
-        "quote": "Then the Team standup event is gone"
+        "quote": "the Team standup event is gone"
       }
     },
     {
       "id": "R2",
       "kind": "hard",
-      "text": "All other events remain undeleted.",
+      "text": "All other events remain in place.",
       "source": {
         "field": "outcomes",
-        "quote": "Then the other events are still there"
+        "quote": "the other events are still there"
       }
     }
   ],
   "checks": [
     {
-      "id": "R1-standup-gone",
+      "id": "r1-standup-gone",
       "requirement": "R1",
-      "description": "The backend events list no longer contains an event titled 'Team standup'.",
+      "description": "The backend events list no longer contains the Team standup event (id 1) nor any event titled Team standup.",
       "assert": {
         "kind": "value",
         "source": {
@@ -42,14 +42,29 @@
             "type": "array",
             "not": {
               "contains": {
-                "type": "object",
-                "properties": {
-                  "title": {
-                    "const": "Team standup"
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "const": 1
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "const": "Team standup"
+                      }
+                    },
+                    "required": [
+                      "title"
+                    ]
                   }
-                },
-                "required": [
-                  "title"
                 ]
               }
             }
@@ -58,30 +73,9 @@
       }
     },
     {
-      "id": "R1-delete-request",
-      "requirement": "R1",
-      "description": "A successful DELETE request was sent for the Team standup event (id 1).",
-      "assert": {
-        "kind": "request",
-        "match": {
-          "method": "DELETE",
-          "url": {
-            "path": "/api/events/1"
-          },
-          "status": {
-            "gte": 200,
-            "lt": 300
-          }
-        },
-        "count": {
-          "gte": 1
-        }
-      }
-    },
-    {
-      "id": "R2-others-remain",
+      "id": "r2-others-kept",
       "requirement": "R2",
-      "description": "The backend events list still contains Dentist (id 2) and Book club (id 3).",
+      "description": "The backend still holds the Dentist (id 2) and Book club (id 3) events with all their original fields unchanged.",
       "assert": {
         "kind": "value",
         "source": {
@@ -101,11 +95,35 @@
                     },
                     "title": {
                       "const": "Dentist"
+                    },
+                    "date": {
+                      "const": "2026-11-06"
+                    },
+                    "time": {
+                      "const": "14:30"
+                    },
+                    "duration": {
+                      "const": 60
+                    },
+                    "location": {
+                      "const": "Main Street 5"
+                    },
+                    "reminder": {
+                      "const": true
+                    },
+                    "rsvp": {
+                      "const": "yes"
                     }
                   },
                   "required": [
                     "id",
-                    "title"
+                    "title",
+                    "date",
+                    "time",
+                    "duration",
+                    "location",
+                    "reminder",
+                    "rsvp"
                   ]
                 }
               },
@@ -118,11 +136,35 @@
                     },
                     "title": {
                       "const": "Book club"
+                    },
+                    "date": {
+                      "const": "2026-11-10"
+                    },
+                    "time": {
+                      "const": "19:00"
+                    },
+                    "duration": {
+                      "const": 90
+                    },
+                    "location": {
+                      "const": "Corner Cafe"
+                    },
+                    "reminder": {
+                      "const": false
+                    },
+                    "rsvp": {
+                      "const": null
                     }
                   },
                   "required": [
                     "id",
-                    "title"
+                    "title",
+                    "date",
+                    "time",
+                    "duration",
+                    "location",
+                    "reminder",
+                    "rsvp"
                   ]
                 }
               }
@@ -138,6 +180,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T10:46:52.970Z"
+    "at": "2026-11-05T11:34:26.816Z"
   }
 }

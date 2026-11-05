@@ -13,7 +13,7 @@
       "text": "An event named \"Workshop\" exists.",
       "source": {
         "field": "outcomes",
-        "quote": "an event \"Workshop\" exists"
+        "quote": "Then an event \"Workshop\" exists"
       }
     },
     {
@@ -22,33 +22,24 @@
       "text": "The Workshop event lasts 90 minutes.",
       "source": {
         "field": "outcomes",
-        "quote": "the workshop lasts 90 minutes"
+        "quote": "Then the workshop lasts 90 minutes"
       }
     },
     {
       "id": "R3",
       "kind": "hard",
-      "text": "The Workshop event is on November 12, 2026.",
+      "text": "The Workshop event is scheduled for November 12, 2026, starting at 10:00.",
       "source": {
         "field": "instruction",
-        "quote": "on November 12, 2026"
-      }
-    },
-    {
-      "id": "R4",
-      "kind": "hard",
-      "text": "The Workshop event starts at 10:00.",
-      "source": {
-        "field": "instruction",
-        "quote": "at 10:00"
+        "quote": "on November 12, 2026 at 10:00"
       }
     }
   ],
   "checks": [
     {
-      "id": "r1-workshop-exists",
+      "id": "R1-workshop-exists",
       "requirement": "R1",
-      "description": "The backend events list contains an event titled exactly \"Workshop\" on 2026-11-12 at 10:00.",
+      "description": "The backend events probe holds an event titled exactly \"Workshop\" on 2026-11-12 at 10:00.",
       "assert": {
         "kind": "value",
         "source": {
@@ -83,7 +74,7 @@
       }
     },
     {
-      "id": "r2-duration-90",
+      "id": "R2-workshop-90min",
       "requirement": "R2",
       "description": "The stored Workshop event on 2026-11-12 at 10:00 has a duration of 90 minutes.",
       "assert": {
@@ -124,9 +115,9 @@
       }
     },
     {
-      "id": "r3-date",
+      "id": "R3-workshop-date-time",
       "requirement": "R3",
-      "description": "The stored Workshop event (at 10:00) is dated 2026-11-12.",
+      "description": "The stored 90-minute Workshop event is scheduled on 2026-11-12 starting at 10:00.",
       "assert": {
         "kind": "value",
         "source": {
@@ -141,7 +132,8 @@
               "required": [
                 "title",
                 "date",
-                "time"
+                "time",
+                "duration"
               ],
               "properties": {
                 "title": {
@@ -153,43 +145,9 @@
                 "time": {
                   "type": "string",
                   "pattern": "^10:00(:00)?$"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "id": "r4-time",
-      "requirement": "R4",
-      "description": "The stored Workshop event on 2026-11-12 starts at 10:00.",
-      "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "events"
-        },
-        "expect": {
-          "schema": {
-            "type": "array",
-            "contains": {
-              "type": "object",
-              "required": [
-                "title",
-                "date",
-                "time"
-              ],
-              "properties": {
-                "title": {
-                  "const": "Workshop"
                 },
-                "date": {
-                  "const": "2026-11-12"
-                },
-                "time": {
-                  "type": "string",
-                  "pattern": "^10:00(:00)?$"
+                "duration": {
+                  "const": 90
                 }
               }
             }
@@ -204,6 +162,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T10:48:03.194Z"
+    "at": "2026-11-05T11:35:13.242Z"
   }
 }

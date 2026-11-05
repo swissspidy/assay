@@ -21,7 +21,7 @@
     {
       "id": "issue2-unassigned-probe",
       "requirement": "R1",
-      "description": "The backend issues list contains issue #2 with a null/empty assignee.",
+      "description": "The backend issues list holds issue id 2 with a null (or missing) assignee.",
       "assert": {
         "kind": "value",
         "source": {
@@ -34,18 +34,39 @@
             "contains": {
               "type": "object",
               "required": [
-                "id",
-                "assignee"
+                "id"
               ],
               "properties": {
                 "id": {
                   "const": 2
-                },
-                "assignee": {
-                  "enum": [
-                    null,
-                    ""
-                  ]
+                }
+              }
+            },
+            "items": {
+              "if": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "const": 2
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "assignee": {
+                    "anyOf": [
+                      {
+                        "type": "null"
+                      },
+                      {
+                        "type": "string",
+                        "maxLength": 0
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -60,6 +81,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T10:45:38.444Z"
+    "at": "2026-11-05T11:32:49.835Z"
   }
 }

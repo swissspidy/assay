@@ -19,9 +19,9 @@
   ],
   "checks": [
     {
-      "id": "dentist-on-nov-7",
+      "id": "dentist-date-probe",
       "requirement": "R1",
-      "description": "The backend events list has the Dentist event dated 2026-11-07, and no Dentist event on any other date.",
+      "description": "The backend stores the Dentist event (id 2) with date 2026-11-07.",
       "assert": {
         "kind": "value",
         "source": {
@@ -33,40 +33,21 @@
             "type": "array",
             "contains": {
               "type": "object",
+              "required": [
+                "id",
+                "title",
+                "date"
+              ],
               "properties": {
+                "id": {
+                  "const": 2
+                },
                 "title": {
                   "const": "Dentist"
                 },
                 "date": {
                   "const": "2026-11-07"
                 }
-              },
-              "required": [
-                "title",
-                "date"
-              ]
-            },
-            "items": {
-              "if": {
-                "type": "object",
-                "properties": {
-                  "title": {
-                    "const": "Dentist"
-                  }
-                },
-                "required": [
-                  "title"
-                ]
-              },
-              "then": {
-                "properties": {
-                  "date": {
-                    "const": "2026-11-07"
-                  }
-                },
-                "required": [
-                  "date"
-                ]
               }
             }
           }
@@ -80,6 +61,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T10:46:42.968Z"
+    "at": "2026-11-05T11:34:18.387Z"
   }
 }

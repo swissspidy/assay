@@ -30,7 +30,7 @@
     {
       "id": "R1-issue-exists",
       "requirement": "R1",
-      "description": "The backend issues list contains an issue titled exactly \"Checkout fails on Safari\".",
+      "description": "The backend issues list contains an issue titled exactly \"Checkout fails on Safari\" that is not one of the seeded issues (id 1-3).",
       "assert": {
         "kind": "value",
         "source": {
@@ -42,69 +42,62 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "title"
-              ],
               "properties": {
                 "title": {
                   "const": "Checkout fails on Safari"
+                },
+                "id": {
+                  "not": {
+                    "enum": [
+                      1,
+                      2,
+                      3,
+                      "1",
+                      "2",
+                      "3"
+                    ]
+                  }
                 }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "id": "R1-create-request",
-      "requirement": "R1",
-      "description": "A POST to /issues creating the issue with title \"Checkout fails on Safari\" was sent and succeeded.",
-      "assert": {
-        "kind": "request",
-        "match": {
-          "method": "POST",
-          "url": {
-            "path": "/issues"
-          },
-          "status": {
-            "lt": 400
-          },
-          "requestBody": {
-            "type": "object",
-            "required": [
-              "title"
-            ],
-            "properties": {
-              "title": {
-                "const": "Checkout fails on Safari"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "id": "R2-bug-label",
-      "requirement": "R2",
-      "description": "The backend issue titled \"Checkout fails on Safari\" has the \"bug\" label.",
-      "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "issues"
-        },
-        "expect": {
-          "schema": {
-            "type": "array",
-            "contains": {
-              "type": "object",
+              },
               "required": [
                 "title",
-                "labels"
-              ],
+                "id"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "R2-issue-has-bug-label",
+      "requirement": "R2",
+      "description": "The stored issue titled \"Checkout fails on Safari\" has the \"bug\" label among its labels.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "issues"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
               "properties": {
                 "title": {
                   "const": "Checkout fails on Safari"
+                },
+                "id": {
+                  "not": {
+                    "enum": [
+                      1,
+                      2,
+                      3,
+                      "1",
+                      "2",
+                      "3"
+                    ]
+                  }
                 },
                 "labels": {
                   "type": "array",
@@ -112,7 +105,12 @@
                     "const": "bug"
                   }
                 }
-              }
+              },
+              "required": [
+                "title",
+                "id",
+                "labels"
+              ]
             }
           }
         }
@@ -125,6 +123,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T10:44:23.377Z"
+    "at": "2026-11-05T11:31:34.294Z"
   }
 }

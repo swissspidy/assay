@@ -37,19 +37,19 @@
     {
       "id": "R4",
       "kind": "hard",
-      "text": "The order is placed in the name of Ada Lovelace.",
+      "text": "The order contains the items in the user's cart.",
       "source": {
         "field": "instruction",
-        "quote": "in the name of Ada Lovelace"
+        "quote": "Order what is in my cart"
       }
     },
     {
       "id": "R5",
       "kind": "hard",
-      "text": "The order contains the items that were in the cart.",
+      "text": "The order is placed in the name of Ada Lovelace.",
       "source": {
         "field": "instruction",
-        "quote": "Order what is in my cart"
+        "quote": "in the name of Ada Lovelace"
       }
     }
   ],
@@ -69,13 +69,16 @@
             "gte": 200,
             "lt": 300
           }
+        },
+        "count": {
+          "gte": 1
         }
       }
     },
     {
-      "id": "r1-order-placed-probe",
+      "id": "r1-order-stored",
       "requirement": "R1",
-      "description": "The backend's latest order exists and has status 'placed'.",
+      "description": "The backend's latest order exists with status 'placed'.",
       "assert": {
         "kind": "value",
         "source": {
@@ -105,7 +108,7 @@
     {
       "id": "r2-express",
       "requirement": "R2",
-      "description": "The backend's latest order uses express shipping.",
+      "description": "The backend's latest order has shipping set to 'express'.",
       "assert": {
         "kind": "value",
         "source": {
@@ -121,7 +124,7 @@
     {
       "id": "r3-url",
       "requirement": "R3",
-      "description": "The browser is on the order page whose id matches the latest order.",
+      "description": "The browser is on the order page of the order the backend stored.",
       "assert": {
         "kind": "value",
         "source": {
@@ -149,7 +152,7 @@
     {
       "id": "r3-heading",
       "requirement": "R3",
-      "description": "The main area shows the 'Order confirmed' heading.",
+      "description": "The page shows an 'Order confirmed' heading in main.",
       "assert": {
         "kind": "contains",
         "scope": {
@@ -167,18 +170,14 @@
     {
       "id": "r3-order-number",
       "requirement": "R3",
-      "description": "The order summary shows the order number of the latest order.",
+      "description": "The order summary shows the order number of the stored order.",
       "assert": {
         "kind": "value",
         "source": {
           "from": "text",
           "scope": {
-            "anchors": [
-              {
-                "role": "region",
-                "name": "Order summary"
-              }
-            ]
+            "role": "region",
+            "name": "Order summary"
           },
           "pattern": "Order number:\\s*([A-Za-z0-9-]+)",
           "group": 1
@@ -195,29 +194,9 @@
       }
     },
     {
-      "id": "r4-name",
+      "id": "r4-items-match-cart",
       "requirement": "R4",
-      "description": "The latest order is in the name of Ada Lovelace.",
-      "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "latestOrder",
-          "pointer": "/name"
-        },
-        "normalize": [
-          "trim",
-          "collapseWhitespace"
-        ],
-        "expect": {
-          "equals": "Ada Lovelace"
-        }
-      }
-    },
-    {
-      "id": "r5-items",
-      "requirement": "R5",
-      "description": "The latest order's items equal the cart's items before the task.",
+      "description": "The order's items equal the cart's items before the task (whole items, any order).",
       "assert": {
         "kind": "value",
         "source": {
@@ -246,6 +225,26 @@
           }
         }
       }
+    },
+    {
+      "id": "r5-name",
+      "requirement": "R5",
+      "description": "The backend's latest order is in the name of Ada Lovelace.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/name"
+        },
+        "normalize": [
+          "trim",
+          "collapseWhitespace"
+        ],
+        "expect": {
+          "equals": "Ada Lovelace"
+        }
+      }
     }
   ],
   "compiled": {
@@ -254,6 +253,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T10:59:16.261Z"
+    "at": "2026-11-05T11:30:10.612Z"
   }
 }

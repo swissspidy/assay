@@ -19,7 +19,7 @@
     {
       "id": "R2",
       "kind": "hard",
-      "text": "The event page displays the date November 5, 2026.",
+      "text": "The event page shows the date November 5, 2026.",
       "source": {
         "field": "outcomes",
         "quote": "the event page shows the date November 5, 2026"
@@ -28,9 +28,9 @@
   ],
   "checks": [
     {
-      "id": "r1-event-stored",
+      "id": "R1-probe-event",
       "requirement": "R1",
-      "description": "The backend events list contains an event titled 'Lunch with Sam' on 2026-11-05 at 12:30.",
+      "description": "The backend events list contains an event titled \"Lunch with Sam\" on 2026-11-05 at 12:30.",
       "assert": {
         "kind": "value",
         "source": {
@@ -42,6 +42,11 @@
             "type": "array",
             "contains": {
               "type": "object",
+              "required": [
+                "title",
+                "date",
+                "time"
+              ],
               "properties": {
                 "title": {
                   "const": "Lunch with Sam"
@@ -52,89 +57,56 @@
                 "time": {
                   "const": "12:30"
                 }
-              },
-              "required": [
-                "title",
-                "date",
-                "time"
-              ]
+              }
             }
           }
         }
       }
     },
     {
-      "id": "r1-create-request",
-      "requirement": "R1",
-      "description": "A POST to /api/events succeeded creating 'Lunch with Sam' on 2026-11-05 at 12:30.",
+      "id": "R2-event-page",
+      "requirement": "R2",
+      "description": "The current page is an event page (/events/<id>) whose level-1 heading is \"Lunch with Sam\".",
       "assert": {
-        "kind": "request",
-        "match": {
-          "method": "POST",
-          "url": {
-            "path": "/api/events"
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "url",
+            "match": {
+              "path": "/events/*"
+            }
           },
-          "status": {
-            "gte": 200,
-            "lt": 300
-          },
-          "requestBody": {
-            "type": "object",
-            "properties": {
-              "title": {
-                "const": "Lunch with Sam"
-              },
-              "date": {
-                "const": "2026-11-05"
-              },
-              "time": {
-                "const": "12:30"
-              }
+          {
+            "kind": "state",
+            "target": {
+              "anchors": [
+                {
+                  "role": "heading",
+                  "level": 1,
+                  "within": {
+                    "role": "main"
+                  }
+                },
+                {
+                  "role": "heading",
+                  "name": "Lunch with Sam",
+                  "level": 1
+                }
+              ]
             },
-            "required": [
-              "title",
-              "date",
-              "time"
-            ]
+            "expect": {
+              "name": {
+                "equals": "Lunch with Sam"
+              }
+            }
           }
-        }
+        ]
       }
     },
     {
-      "id": "r2-on-event-page",
+      "id": "R2-when-date",
       "requirement": "R2",
-      "description": "The browser is on an event detail page (/events/:id).",
-      "assert": {
-        "kind": "url",
-        "match": {
-          "path": "/events/*"
-        }
-      }
-    },
-    {
-      "id": "r2-event-heading",
-      "requirement": "R2",
-      "description": "The event page heading is exactly 'Lunch with Sam'.",
-      "assert": {
-        "kind": "state",
-        "target": {
-          "role": "heading",
-          "level": 1,
-          "within": {
-            "role": "main"
-          }
-        },
-        "expect": {
-          "name": {
-            "equals": "Lunch with Sam"
-          }
-        }
-      }
-    },
-    {
-      "id": "r2-when-date",
-      "requirement": "R2",
-      "description": "The 'When' field on the event page shows the date November 5, 2026.",
+      "description": "The \"When\" field on the event page shows a date on November 5, 2026.",
       "assert": {
         "kind": "each",
         "scope": {
@@ -162,18 +134,14 @@
           },
           "normalize": [
             {
-              "op": "replace",
-              "regex": "(,|\\bat)?\\s*\\d{1,2}[:.]\\d{2}.*$",
-              "with": ""
-            },
-            "trim",
-            {
-              "op": "date",
-              "locale": "en-US"
+              "op": "datetime",
+              "locale": "en-US",
+              "timezone": "UTC"
             }
           ],
           "expect": {
-            "equals": "2026-11-05"
+            "gte": "2026-11-05T00:00:00Z",
+            "lt": "2026-11-06T00:00:00Z"
           }
         }
       }
@@ -185,6 +153,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T10:45:58.032Z"
+    "at": "2026-11-05T11:33:31.569Z"
   }
 }

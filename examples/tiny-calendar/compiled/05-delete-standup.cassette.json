@@ -1,14 +1,14 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T10:46:52.970Z",
+ "recordedAt": "2026-11-05T11:34:26.816Z",
  "turns": {
   "sha256:25ae5c9a04fde0376f652c954d44d2bf102e3dc87b3424021aabcaf915da75fe": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_018nH2Zk8HzkEXDTdkgpCcuq",
+     "id": "toolu_01EaJsEBzWQZaMRbwtUAnhuZ",
      "name": "submit_rubric",
      "input": {
       "requirements": [
@@ -17,14 +17,14 @@
         "kind": "hard",
         "text": "The Team standup event has been deleted.",
         "field": "outcomes",
-        "quote": "Then the Team standup event is gone"
+        "quote": "the Team standup event is gone"
        },
        {
         "id": "R2",
         "kind": "hard",
-        "text": "All other events remain undeleted.",
+        "text": "All other events remain in place.",
         "field": "outcomes",
-        "quote": "Then the other events are still there"
+        "quote": "the other events are still there"
        }
       ]
      }
@@ -33,7 +33,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_018nH2Zk8HzkEXDTdkgpCcuq",
+     "id": "toolu_01EaJsEBzWQZaMRbwtUAnhuZ",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -45,14 +45,14 @@
         "kind": "hard",
         "text": "The Team standup event has been deleted.",
         "field": "outcomes",
-        "quote": "Then the Team standup event is gone"
+        "quote": "the Team standup event is gone"
        },
        {
         "id": "R2",
         "kind": "hard",
-        "text": "All other events remain undeleted.",
+        "text": "All other events remain in place.",
         "field": "outcomes",
-        "quote": "Then the other events are still there"
+        "quote": "the other events are still there"
        }
       ]
      }
@@ -60,23 +60,23 @@
    ],
    "usage": {
     "inputTokens": 1121,
-    "outputTokens": 160,
+    "outputTokens": 154,
     "cacheReadTokens": 0,
     "cacheWriteTokens": 1117
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:076fa8d7e6263a75620d24e212a345136489a1d6d48d4c4fc0b2b0d010abdcec": {
+  "sha256:6e29e5d3fe5623fba10415bfa6cd4c984100c847e47eee7e277c2df92b1685d5": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01KMXRFQeiexpmBjuZstnRmi",
+     "id": "toolu_01UsNEabFLVqMqPQLPundevd",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01G61XVFuj814zfLJ6oVHjy4",
+     "id": "toolu_01L7JVcntJmeVTec35bVWSxg",
      "name": "network_log",
      "input": {}
     }
@@ -84,7 +84,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01KMXRFQeiexpmBjuZstnRmi",
+     "id": "toolu_01UsNEabFLVqMqPQLPundevd",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -93,7 +93,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01G61XVFuj814zfLJ6oVHjy4",
+     "id": "toolu_01L7JVcntJmeVTec35bVWSxg",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -102,22 +102,39 @@
     }
    ],
    "usage": {
-    "inputTokens": 17325,
+    "inputTokens": 17796,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 17321
+    "cacheWriteTokens": 17792
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:450e7b8292d0bd0f0289282d192e16b253280b030a0e4eea8e40f4db70950995": {
+  "sha256:96af4e56276292467154bf7ec4d86bf8e13e32e29432ae2c24e6fbcf39db8a8f": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01FsK9u7ZTkY8X3D9v6cUQjY",
+     "id": "toolu_01XsYy1siMx7ivZh7CE1zTqv",
      "name": "network_entry",
      "input": {
       "seq": 2
+     }
+    },
+    {
+     "id": "toolu_0136w8aiTEsiszWPNN7NvMik",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "events",
+        "at": "before"
+       },
+       "expect": {
+        "exists": true
+       }
+      }
      }
     }
    ],
@@ -125,11 +142,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS4QYKEAgTGAI4AUIIdGhpbmtpbmcSDKnxevsAT0tFGmnZTxoM1DlP5TsrVsOZbmdYIjBVtbxwQ+DT7br7+Iuf1AAnjrIfEt0ZbCrEuAdasYBpPgRhQKXbzKP9UvTJOcrgBAkq/gW4o1FOOYPgqgGVC4vrQrvQQdRlhpUAIMYH2rL0+nrA0sHQXiuf1Td7bOZk7U3zQEJwyYuooU2SgMLIZ/67HN0LFUmQeP+rR18FHMpMjhODjM4tqUQiIOD7jlwVvqNzwXZT1J2H6EY05TBXvrRBzgqmzmQ0Wh76CakPjvSEtgCwghxU34PgPQ+eiqYYm2Ff63RsmaZ3oZgLlPKbg337gNyrhg3NGn7eXqhizOGTN3hP8LqlYleTjAKyFPyOPOacsaSjPE6gQdzH/6Nl6aGine9fVg7bLU7ZXlkSZxzQNSlGTw+5qISlmn8hG2nBM6Eh0fYSUBl5QT4MIDe7obZyZ5f5MmuwTSGActDs29OWD5WDAIhMLmg/MPHxJ1W/1420cDkKj4OLvsQqkhJdikVrnOMXILd6Dtf3T/zhVT8Yzn9Q0VOdw+mRpOYPn/Wc6ifkmPOjuV6n4d1QMtyZf5q87Yoou584+50ftO8eCi2jb8FZgkNs5nSlZvyBOpqcYYoVMI7q/YU2NFGGDn36HjlnPeC3KCqmJQt9Fg95BAc1hOmrt3S9kWGrEYlhHsTgbChUVqBvy09Emd0etRgF0QTjNv+iiEBx1+tEc8kMV4GfuylPzbJ7dOrS++isjay/wSccVX3IgntD8bNx8m0qy/bSrqdjd3RQ88EmTwc3Nm0VYca/0McfmWJjYUGcugNMh8zjr6JinoEFj5oIvQkwiUcaZFv3TQjg4r8K/bzuytYoZHKECwE+QqhnOMdrJW2MaqM6lrUolYW2l6q5P9uBCQby0Oah93hIYmrk034x5RJY9c7o4LnNRR+OI80vZ6yV/6ctdhVHAHy8eulAnuTUlmfGMkcpCuHhd+zbyZYxtwB9bXQAzUPY1NO4pkxkIUY5RVIb2HQRng7ayjhfkVAiGk9Ee/8KcvIJY4iFuvQAasAWufsoanqcWbPIafZqc+BxduYRTQfTq9hytNLLciw9kCa2y35/nlBh8Vak3TdL/GupLW3BBv0oFeA1xoWnGXtSQoGtGAE="
+     "signature": "CAQS6wUKEAgTGAI4AUIIdGhpbmtpbmcSDAW4645UcRXs2OWzHhoMYwlz/zgHYNNVPoy/IjBCIxcLPBf4FEFY6BbAuNcMeZ2ZZMwh8rIO9XzV89IWq5c9G8A9Oe23k/rllIamIYIqiAUkJlCsHyTY0EAaM/wTsPIpP99SGPtYp2EJGyOvIKz8GFEA9vZaeS6WkRqMJAPeSG9cw/M1B2jFWxn9hnKLmJ1ycbjJt0YmSu1RxKDan4a0l+tqnPjuP0TRkED3AzrE8piKDqY5D6rzdf0bWAjDvgJP8GmBbZ1DfW9vmviOFR5qGMafFg7KC8AlimrJXVoONZ8wGAEtgjFLmD7Mouq/kPlu5zXPqsi2JzKRq5R6odIK0yCmibAH6Lw8mC1cV1/qc1PGjXAr7It8hG65/I8TzZx3jU+e1wqsINWkl8CM94zg3VpYLWPn2wFUv7ln2bk26/GVv4IqbbmNQVyiqvvFEOZOe9F215FiIY0Spu116RBN1dCbM2i4kJYfacUIvkRZHMVPuoIsU8MvqDTlBkLYdXMUE6gjHJgHCNiZeaqr6vgW2oJLeDBeaGNcX40+4V4HhkjaX82TQdQNn1bjtyAZY0eLWq851RJBxaBpiRUGBgXavSTSJtnqr8C1d7qJjf6YGFi0KNBiaDkeKbu6Fr4ancxAqkQXNqoLRh+sIJ3vwtT4rawYS7HTQS3Fn/gbqnR6WzPYTmH7jYRLhVVWSctiGw+Yp4eEazM82UapnI1Uu1L4dbPVAJ8Y/KABBO8oOeWfTC4wE/40sDX4SaW3ytX8FWFKrh1UZvKcJvWGcoBQYmsYASbAg3s4Ulx4Wf24v3lYzhnDTlQN7QYTvuER0Cxt1e/jQYqoRNY1tKI6M0CdgOduAVkn9K2LkM10ebmF/HeDHAK0NFNDYpqWPhl3yaCyU9h7CAomgPPj0sbjDE7Sh9GP8VL/BogFZW8tcQeL38q42DiqlQPZeENWFL3eEzwB8nK8LzUKdXyIvAMYAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01FsK9u7ZTkY8X3D9v6cUQjY",
+     "id": "toolu_01XsYy1siMx7ivZh7CE1zTqv",
      "name": "network_entry",
      "caller": {
       "type": "direct"
@@ -137,29 +154,50 @@
      "input": {
       "seq": 2
      }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_0136w8aiTEsiszWPNN7NvMik",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "events",
+        "at": "before"
+       },
+       "expect": {
+        "exists": true
+       }
+      }
+     }
     }
    ],
    "usage": {
-    "inputTokens": 17838,
-    "outputTokens": 121,
-    "cacheReadTokens": 17321,
+    "inputTokens": 18309,
+    "outputTokens": 173,
+    "cacheReadTokens": 17792,
     "cacheWriteTokens": 515
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:efb9f2496222a2899492f5ef0901c287e0bd7353c0c08ec9c5ff8bc642d58ab3": {
+  "sha256:40222acdfcabac1729c34c2804e41af2f39cb1f3a489622b7642e786e7434017": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01YavmyphgnWJuSWaWAmDi78",
+     "id": "toolu_01Dd8yVbvnvaN4gL6SSH6SZ9",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "R1-standup-gone",
+        "id": "r1-standup-gone",
         "requirement": "R1",
-        "description": "The backend events list no longer contains an event titled 'Team standup'.",
+        "description": "The backend events list no longer contains the Team standup event (id 1) nor any event titled Team standup.",
         "assert": {
          "kind": "value",
          "source": {
@@ -171,14 +209,29 @@
            "type": "array",
            "not": {
             "contains": {
-             "type": "object",
-             "properties": {
-              "title": {
-               "const": "Team standup"
+             "anyOf": [
+              {
+               "type": "object",
+               "properties": {
+                "id": {
+                 "const": 1
+                }
+               },
+               "required": [
+                "id"
+               ]
+              },
+              {
+               "type": "object",
+               "properties": {
+                "title": {
+                 "const": "Team standup"
+                }
+               },
+               "required": [
+                "title"
+               ]
               }
-             },
-             "required": [
-              "title"
              ]
             }
            }
@@ -187,30 +240,9 @@
         }
        },
        {
-        "id": "R1-delete-request",
-        "requirement": "R1",
-        "description": "A successful DELETE request was sent for the Team standup event (id 1).",
-        "assert": {
-         "kind": "request",
-         "match": {
-          "method": "DELETE",
-          "url": {
-           "path": "/api/events/1"
-          },
-          "status": {
-           "gte": 200,
-           "lt": 300
-          }
-         },
-         "count": {
-          "gte": 1
-         }
-        }
-       },
-       {
-        "id": "R2-others-remain",
+        "id": "r2-others-kept",
         "requirement": "R2",
-        "description": "The backend events list still contains Dentist (id 2) and Book club (id 3).",
+        "description": "The backend still holds the Dentist (id 2) and Book club (id 3) events with all their original fields unchanged.",
         "assert": {
          "kind": "value",
          "source": {
@@ -230,11 +262,35 @@
                },
                "title": {
                 "const": "Dentist"
+               },
+               "date": {
+                "const": "2026-11-06"
+               },
+               "time": {
+                "const": "14:30"
+               },
+               "duration": {
+                "const": 60
+               },
+               "location": {
+                "const": "Main Street 5"
+               },
+               "reminder": {
+                "const": true
+               },
+               "rsvp": {
+                "const": "yes"
                }
               },
               "required": [
                "id",
-               "title"
+               "title",
+               "date",
+               "time",
+               "duration",
+               "location",
+               "reminder",
+               "rsvp"
               ]
              }
             },
@@ -247,11 +303,35 @@
                },
                "title": {
                 "const": "Book club"
+               },
+               "date": {
+                "const": "2026-11-10"
+               },
+               "time": {
+                "const": "19:00"
+               },
+               "duration": {
+                "const": 90
+               },
+               "location": {
+                "const": "Corner Cafe"
+               },
+               "reminder": {
+                "const": false
+               },
+               "rsvp": {
+                "const": null
                }
               },
               "required": [
                "id",
-               "title"
+               "title",
+               "date",
+               "time",
+               "duration",
+               "location",
+               "reminder",
+               "rsvp"
               ]
              }
             }
@@ -268,11 +348,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSugkKEAgTGAI4AUIIdGhpbmtpbmcSDId02unpIq2q8Q8okBoM3+ppsj3V4NUVo4AvIjCGBYe5RFnjNsPntbLm93EpxdBv3ZyVW+6Ii+fKeegkzAOqsuK3siY8vEvoVeHSsJUq1wjXO84BtGNj1bc6pklWRau6KqWyR8L9rhD7NjCSvrG0g3hGPpzCfaVze+Dm3GIvb45gguc+hwmJkoRaqElYEQWVAvRr/xLjqkG+9JBOpCleE0wVhO6bZiYPr0PR+N2Bzkule852BddZwEoGAljojQD/IxwkNxEzni6BF3sgUmqN+3Zwhrz2UWuGT4+DgtvFH3tKjgpm9NXCUWJ0y5ulk4KI+EHckoM19oIjpdxieAA0KwN2jcr/Q34C4HcIis/ErovK/CLZ0gcCmBwKiyuzhrCovHi8MT0B3thfJ8csCV30YAbs73MvxLrapyMc5Z6Yp9VidGGSUQYn8cZOYv0v/S8feAxg2xwC0YMM6c3VBRI4zb8PPWFhCF6dO/gqjR6l5QztYwifzzWjkRyUF0I4UgC6sF/zVFU1Ni2tq9O+sXhZdg+dZVc/E1VkFIo//GQaHl0BtkbG4xS64zxVaGx71dUdZASsJWbQlgrRDt+JTvWLc7h5C4I4JCRoHgbcJdqm/ZKVkDf2pksJY7S4EXLZrD8Z3rBeOJLqIx7yjumOB/Mqs0w5lfCvrgWAN5A1gwbVs5mOf7hfaVXZq23W6SdaIMrGpY9LhqCo3mTcEGL4hM3VJ+tcVkIAv293yLmKwKrdWvM0VKPUf7A63jkrfEckIYT4PGUS4RMVlo5sxkl1ZSF0q+1+F1nETUgtcNUwTO4BbJJL0L61jcYj0ytkD4Nt0n7NGxUpi0JlbVdAVDm6/oeAxSFDd9FsP+PBQiWMVrSlxaXpk+rm0HNH2uGnoAy9PLufm0s/q6u20DonUNomZxGefBtd7G+zwvjVonAm7ggSjoRnivL+mU6XvDzhpyRzEq+Uc7p825YofGOLa4nwWMbxRKkThCXdaJfK92S8yt2T2k5Z3bGXt4+9PMGXLmvWWf2ul1lGQby8tKF0dh4KBM1/B2smRV/deJPRH9YBSUC2l8rxfuYCSpRi9Iufjbulz/QOqtRAiyksyNrZZSfB9C7W99yD+x+MOcRiqZKk5oTcFyimCd/Cj7iTIJhQ/4xvrQ79BduCa+TGYUyyDNyaX36zgdVbwI32BnKIJqQIuBIVqziq+2caiFJetx87tU69pyE2QDpgeKjGMWf1XLXTdATV/59usaRSjIx/tbEFUVBGIT3XpDF9SDu/7z8QQJLDcsXyuKzQhi5KuhNwnccmosarb+2fV0v+L01U6AY/F/4cpoE5vBf2iK7hdOGcTY3Yi9EsYJQKKsoBrn/ZL8adzfSXP8neSN0BDy7VJUo9x3osjS3trwoVP2lwd3PYO72xqhS0C8/GrAtBRQkz5bxZvsbCTu2O1Q44AyKOE2k/suxVGwb2IRMgaSLjciiQfmXQX4P7zvZoTESJLNzsq/iUIGNLC5FnX14vr/Xb4vV14YW0S2OGE828Vf+V/qnYD1IJOuakAIAogfqZatZ71R9Y/f81+uB1W//S2nRZvCpVIbeKNBQM0JN6aoqEGAE="
+     "signature": "CAQS/AkKEAgTGAI4AUIIdGhpbmtpbmcSDF/mKLC/g4FNSqJnJhoMGUQbHelrnTBevqA2IjDVuNlt943kQT+v7nUF6hYUeIvC7cEPawAmEzEdZ+yPWY2mqTj/UiKwFj4jPUM3qyYqmQnnPegN2JuPuZ/IT1pjrvbpPAesR/5MLcn75cBchIJD5XAR0GiFR+dnF/MrQYCSEddBS48NfKjGR5Uetv5d3j+RZDf+PqwwWB77dez+2g6LECcngSJp0ELeuGMXIjggSSIX0aTfV9tlKkLcqRNaNcEd3m8ubGdqkLiwM4OwfIEUzruxOLsCH31Wpifrq5DZJ0PBqjKYFssQAYhJcQXy6zjaV9dRXC+C0MlkjLWdqWoA/f357hpLJJw4bNzFlJBaRihBuuU1xUPwPGHIv3MzukPiSaIziLGCaYgHLWIIspibbTkaKHTBNn2DiC8SdIej9V+cVIbbWtSNDSuxZ45lxFTTF1M6hrNR44O5YCekJsEkN0JrViZ/6xCy+9vLwbp/QqunFep1+N4kbAQobQugRdKVaeuAzLzH/K3kf9jEUzBI0wGiTEvXbdQ24hj6xqctzH27J+9fJTF4dnw5pWMpWF+B2qNKNAt/nO8qvCfIfVGCpLL6tvFiRY4YZybkaPi5T6U/gR+mK2x8RncZmGn2QitRZz0Yw7HnqKc5tAgZ+H9HT208Ri9prJE2I5v3TrEnLC+DBtuGKoNx/gZJb2CD1st/NEHDBIYYeWeA2dLtKkgM2RvDMS1MkmVDii2zOcWNMcYqi4N2URu0iY2kQkBWdapczEXVcdxcAW4a8f0hibKvkv3G1MXyHJRJK1vKxEByXoCzMI6+LAl8LVrF3KevaaqYiG5MPtoVb6EuBUZoe1ajOhA6rSR5GScoKCgn3xo6yiLP6FcHIG5/8CZd98lf/JMcIzp9GGbcOeAYD6qsnfoCqGVjAAWOz9LTL4cq5tzIog0Nvh80Ho8252DQWBVYweyHqaxcRZTHLNYh10TDJDe8bzDWzegQmchN7EJg8hAs+D1tELQcPj0iYqfJEoriBUpcdfj9M3H67CnoHDEVWWD9Zu8KiJkYGcJ/LNuL0Eo9Dqk1mZ174wTcdkVeyRtAipK3mZ3n44gos+oZ6irVGX3yAS7mhtPhWYliPuB1uMsUPqvUqdsTadDPtdFuK2K1xpd2vzth69obIjuhlM6Lvw6Lw0xhoCrHQ047eL/IVcRhljTbSMeXXaF1PDVBSO7Q/E7OnB7na7vGxGWAMhUiT1v+4scoSp9/VJzaerRPv5sq3ebRwrGcWaES4YfNiCY93cosgFf9PMo1dZ510BosqTBNn+2k5Y82bjsfTXIHhCogSGRtvEwC/uPt9eD6xDwSaYntJsw8/E3j+Lzxwram0kUKMM6WXKsYV+Zvy6OyyS4sGoMqAOUtKBNUxwvkAVswAV0eLzHIaPuUH2l2tedUhZ9Wnzw5YW4HPxuBwx4HwVfyBEOBv0NYCaoD/ZfJh/EU2yt2DkTS6yP6x7Mnzh8ffs51sOiMWc5sN6cSyLhkv0jiulXN95AAzJlv8VnwKBwtd0fAhCzTT/0d90aAcoi0+FYcLeJ4kvEe3cwewfZTBcASErngBux2oZ0lI5MuT7bMKpumHn7IGmEuofpebbRlLXkz8JhqAj2BL0Jv/VKAANuO2Oe38JODoC4sSMrxq3C0iE2RDgfEv7GlLct6GAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01YavmyphgnWJuSWaWAmDi78",
+     "id": "toolu_01Dd8yVbvnvaN4gL6SSH6SZ9",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -280,9 +360,9 @@
      "input": {
       "checks": [
        {
-        "id": "R1-standup-gone",
+        "id": "r1-standup-gone",
         "requirement": "R1",
-        "description": "The backend events list no longer contains an event titled 'Team standup'.",
+        "description": "The backend events list no longer contains the Team standup event (id 1) nor any event titled Team standup.",
         "assert": {
          "kind": "value",
          "source": {
@@ -294,14 +374,29 @@
            "type": "array",
            "not": {
             "contains": {
-             "type": "object",
-             "properties": {
-              "title": {
-               "const": "Team standup"
+             "anyOf": [
+              {
+               "type": "object",
+               "properties": {
+                "id": {
+                 "const": 1
+                }
+               },
+               "required": [
+                "id"
+               ]
+              },
+              {
+               "type": "object",
+               "properties": {
+                "title": {
+                 "const": "Team standup"
+                }
+               },
+               "required": [
+                "title"
+               ]
               }
-             },
-             "required": [
-              "title"
              ]
             }
            }
@@ -310,30 +405,9 @@
         }
        },
        {
-        "id": "R1-delete-request",
-        "requirement": "R1",
-        "description": "A successful DELETE request was sent for the Team standup event (id 1).",
-        "assert": {
-         "kind": "request",
-         "match": {
-          "method": "DELETE",
-          "url": {
-           "path": "/api/events/1"
-          },
-          "status": {
-           "gte": 200,
-           "lt": 300
-          }
-         },
-         "count": {
-          "gte": 1
-         }
-        }
-       },
-       {
-        "id": "R2-others-remain",
+        "id": "r2-others-kept",
         "requirement": "R2",
-        "description": "The backend events list still contains Dentist (id 2) and Book club (id 3).",
+        "description": "The backend still holds the Dentist (id 2) and Book club (id 3) events with all their original fields unchanged.",
         "assert": {
          "kind": "value",
          "source": {
@@ -353,11 +427,35 @@
                },
                "title": {
                 "const": "Dentist"
+               },
+               "date": {
+                "const": "2026-11-06"
+               },
+               "time": {
+                "const": "14:30"
+               },
+               "duration": {
+                "const": 60
+               },
+               "location": {
+                "const": "Main Street 5"
+               },
+               "reminder": {
+                "const": true
+               },
+               "rsvp": {
+                "const": "yes"
                }
               },
               "required": [
                "id",
-               "title"
+               "title",
+               "date",
+               "time",
+               "duration",
+               "location",
+               "reminder",
+               "rsvp"
               ]
              }
             },
@@ -370,11 +468,35 @@
                },
                "title": {
                 "const": "Book club"
+               },
+               "date": {
+                "const": "2026-11-10"
+               },
+               "time": {
+                "const": "19:00"
+               },
+               "duration": {
+                "const": 90
+               },
+               "location": {
+                "const": "Corner Cafe"
+               },
+               "reminder": {
+                "const": false
+               },
+               "rsvp": {
+                "const": null
                }
               },
               "required": [
                "id",
-               "title"
+               "title",
+               "date",
+               "time",
+               "duration",
+               "location",
+               "reminder",
+               "rsvp"
               ]
              }
             }
@@ -388,10 +510,10 @@
     }
    ],
    "usage": {
-    "inputTokens": 18296,
-    "outputTokens": 703,
-    "cacheReadTokens": 17836,
-    "cacheWriteTokens": 458
+    "inputTokens": 18907,
+    "outputTokens": 860,
+    "cacheReadTokens": 18307,
+    "cacheWriteTokens": 598
    },
    "model": "claude-opus-5-5"
   }

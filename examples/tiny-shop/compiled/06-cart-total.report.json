@@ -10,17 +10,18 @@
     "discovery": 2
   },
   "usage": {
-    "inputTokens": 37017,
-    "outputTokens": 1359,
-    "cacheReadTokens": 18518,
-    "cacheWriteTokens": 18489
+    "inputTokens": 37967,
+    "outputTokens": 1454,
+    "cacheReadTokens": 17883,
+    "cacheWriteTokens": 20074
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "the cart total is $21.50",
       "checks": [
-        "r1-total"
+        "r1-total-backend",
+        "r1-total-page"
       ],
       "channels": [
         "probe",
@@ -32,7 +33,7 @@
       "requirement": "R2",
       "quote": "Add one Blue Mug",
       "checks": [
-        "r2-blue"
+        "r2-blue-mug"
       ],
       "channels": [
         "probe"
@@ -41,9 +42,9 @@
     },
     {
       "requirement": "R3",
-      "quote": "one Red Mug to my cart",
+      "quote": "one Red Mug",
       "checks": [
-        "r3-red"
+        "r3-red-mug"
       ],
       "channels": [
         "probe"
@@ -54,10 +55,11 @@
       "requirement": "R4",
       "quote": "open the cart",
       "checks": [
-        "r4-cart-page"
+        "r4-cart-open"
       ],
       "channels": [
-        "url"
+        "url",
+        "a11y"
       ],
       "trust": "structured"
     }

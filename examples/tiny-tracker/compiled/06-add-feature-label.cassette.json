@@ -1,14 +1,14 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T10:45:13.683Z",
+ "recordedAt": "2026-11-05T11:32:21.051Z",
  "turns": {
   "sha256:b9f2382643f6d586ff840254428d53143dd3c724d0119f8798dd6d61ea5cdb9c": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01WrP9CSBbufeRs83WtEdGWK",
+     "id": "toolu_01HtMUTzxfSxV4zThhgjhsAT",
      "name": "submit_rubric",
      "input": {
       "requirements": [
@@ -17,14 +17,14 @@
         "kind": "hard",
         "text": "Issue #1 has the feature label.",
         "field": "outcomes",
-        "quote": "Then issue #1 has the feature label"
+        "quote": "issue #1 has the feature label"
        },
        {
         "id": "R2",
         "kind": "hard",
         "text": "Issue #1 still has the bug label.",
         "field": "outcomes",
-        "quote": "Then issue #1 still has the bug label"
+        "quote": "issue #1 still has the bug label"
        }
       ]
      }
@@ -33,7 +33,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01WrP9CSBbufeRs83WtEdGWK",
+     "id": "toolu_01HtMUTzxfSxV4zThhgjhsAT",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -45,14 +45,14 @@
         "kind": "hard",
         "text": "Issue #1 has the feature label.",
         "field": "outcomes",
-        "quote": "Then issue #1 has the feature label"
+        "quote": "issue #1 has the feature label"
        },
        {
         "id": "R2",
         "kind": "hard",
         "text": "Issue #1 still has the bug label.",
         "field": "outcomes",
-        "quote": "Then issue #1 still has the bug label"
+        "quote": "issue #1 still has the bug label"
        }
       ]
      }
@@ -60,23 +60,23 @@
    ],
    "usage": {
     "inputTokens": 1138,
-    "outputTokens": 169,
+    "outputTokens": 165,
     "cacheReadTokens": 0,
     "cacheWriteTokens": 1134
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:825618a91be1657bebc6a3753ff9cfc824963d1b54a2577cf5beef754f41c3c1": {
+  "sha256:ccd1e7a08ba72db0952c30b6c5200a860c0b57ab5ef6d95b7cb61669b6363479": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01LSymdhQvMVFLZunGxuWp3q",
+     "id": "toolu_018p72jLTo5XX6uUbK5K7cDS",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_013bfE9tQpmSGQNcuvgorurV",
+     "id": "toolu_01ByjzFFMYSRovkySRkdatpM",
      "name": "network_log",
      "input": {}
     }
@@ -84,7 +84,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01LSymdhQvMVFLZunGxuWp3q",
+     "id": "toolu_018p72jLTo5XX6uUbK5K7cDS",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -93,7 +93,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_013bfE9tQpmSGQNcuvgorurV",
+     "id": "toolu_01ByjzFFMYSRovkySRkdatpM",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -102,93 +102,51 @@
     }
    ],
    "usage": {
-    "inputTokens": 17380,
+    "inputTokens": 17853,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 17376
+    "cacheWriteTokens": 17849
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:2bab62e1e98f59d02c9751c1d2a1e7ca4a5da77944b4e1974e5b0ee212937e10": {
+  "sha256:8c071f3c6d082227bbc6accdc39968a252b3387ca80f2931d3c9ec4804e3b1b2": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Buy5V7PhuEmtrBC5Pgt2GX",
-     "name": "submit_checks",
+     "id": "toolu_01Hr6q586ocJRhZcGa4E1uNZ",
+     "name": "try_assertion",
      "input": {
-      "checks": [
-       {
-        "id": "R1-probe-feature",
-        "requirement": "R1",
-        "description": "Backend issue with id 1 has the 'feature' label in its labels.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "issues"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "id",
-             "labels"
-            ],
-            "properties": {
-             "id": {
-              "const": 1
-             },
-             "labels": {
-              "type": "array",
-              "contains": {
-               "const": "feature"
-              }
-             }
-            }
-           }
-          }
-         }
-        }
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
        },
-       {
-        "id": "R2-probe-bug",
-        "requirement": "R2",
-        "description": "Backend issue with id 1 still has the 'bug' label in its labels.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "issues"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "id",
-             "labels"
-            ],
-            "properties": {
-             "id": {
-              "const": 1
-             },
-             "labels": {
-              "type": "array",
-              "contains": {
-               "const": "bug"
-              }
-             }
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "id",
+           "labels"
+          ],
+          "properties": {
+           "id": {
+            "const": 1
+           },
+           "labels": {
+            "type": "array",
+            "contains": {
+             "const": "feature"
             }
            }
           }
          }
         }
        }
-      ]
+      }
      }
     }
    ],
@@ -196,21 +154,70 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS6wcKEAgTGAI4AUIIdGhpbmtpbmcSDOzk407yUXxJCDjn9xoM+NssQp2cwqAnI6PsIjDtj2wgy4zZhlBvBT7STFW/nSRRYAS/5DKCRqOCkUPmoZPSMS5QNrbgIS3z7zlfTsoqiAfMsX/FsdS5Wp1UFTdPXVe9JL38LzQqYqQ5ncFDvd8Jboq4EpwnmrAoR83ltzC21HBmBofCfol3juYYQjpxY3rOIOD/5fin+f+6FepIfR5UTPEwUn9oCNewPW86k3fc31vkL1r/RqlNBUtkzzgzC2FsLp0FXUSfcPzZx0pTT9Rm+DI5SdyWYF+AUwPbe/zPfKxzbi+jlkU396n0BpscJVMg7eJJ4JzS5rGJfnjOSr13P1ReY6OWG+VCFpQbEB4bmR+oreMeNKbu8lTqb04dsEUDOwKAdQOkUamY2Pi916JObtHGJ/x4Mlf/zvC9hwcVZLGXmwKFzv3qmHfLr5og85x+DrU/SyO/8n2WVKczCqi1/XzIlh8xKYb0JcxBxtYtuWjPGVyaoga5rb6ifoEvVlaIKSJtycZu9x9YBR4X4nY98+EwQGoEbXngb8Rk3MzZuvDLZLRQ4Qex+4sEzaSvC2iH2WayUe3MVCQv79SsEw+MTldJy9fT/E8TD6XxCj9jh1L8iBGp8XAKMfTPlubDynoH5STkrOJNBJVdBeRtfE+k6RdwYrS7K83sWqBMhXvyQYrIa5SfzXuEKQ6zoqgbiTF40A5LAsgPJpShBkB2NvfQXY+0yyLG6eoAi7fcAQS16f5Yxho7hExCxNbebuJFsA1Gn8ZZ5iPWKeG5zezkwq15V6NR7Q45gEvk3uyXCfjCIA9liG50qAv2w3/VYpCDSVtpvvKq873RyKGt8gl3trzcpXcZkf21m0urYXCG9qSOPOG9U5ytoBeA+0x/tPrYx9F3GAZeVEcxQlCgThn0+BJ6/yMyoV916jkNxc960AUkPOgJbpLe5Qfgyj0w+awW3SDV8CdGP77tejkqD21Cfu6FvltLM1scANNpgNetQV28mZLSIS6X1+4hb/QtQTRp0UUaOqvLgV3gYqLVcMsjxx8iQqaZ7s4dfqKF62uLvY9o/NAJpGpPJ9TC9/pABbfPZPVLk1iLAML/ckvWaCEq8748KNknFUf/DF4m7/T56o8cnLcpvvYz1H7dMIS3m5oMQaiVQo6XEMCvxGqmyoKJjHDscFlu6+NNjiVtMqFFWczIeFkjuzEvZJIYBLNz2kAJcKlatcOU/cKTWHQDxX2BIIC+omoNDT6uROryBGUHGJ/Yf53kesti0/lVE1b9MPtA8hWUJSlA9ZA9ckw1BJbQO9hnOiNiyxmlUrseGAE="
+     "signature": "CAQS5gUKEAgTGAI4AUIIdGhpbmtpbmcSDGUKQyztS8Vk/mounBoMt+pKIV59gJMPpqW2IjCNPFLjUmffdLRLh2m9gy307s26RwPCflaf8URXmLaciaXCQiHkOaMRQZ3kRZsXOj4qgwW4faX07YEJe6X/6qzvKWUV4f6MOzfmiHUvn9fAakT5I4684u+nTr4EcO6qxBAb1uZdl0lFwXpqEEFbrgkX+S1+dcpBCSggGDKNedlECFeaqD35nQuO1yRc/QrTpAoygQsnm/iDeB2+LLipk43R2h3ACK3w3CN+4zt2YRicdqFVXQ/mUkdBTTyk7DWs8qFJ6q2UGXoq+QHFftg2ijH3BIbHpXlrnpFuLtJzT4wbll7rsCQkXuIOBMNWlfCugNiCVRp61FE/O2zMOjw17NFLpal5xqUzUlnvSliWKgYWncIAbApB8vAixL3B7SjWLR1lLJQOYUlhHnZzK7TnpETrIr7agtbqHIePjRCBtMkPdWIH35M5myULQ0RGIfnjAq9rpOJppWFHH4etxgggMrfxnijfu0Z7mYe859ZguAcqt9DCOmMACF3Kxd5ZC7B8PRAXUEvwJJr2YbeB532hJl1GNbVGwsdmHG8tUK3vTpL98Kh7I1jmG9NMrjnz58hJ2OctEySPli1YxQ5UlWYONpHE8ehRcMaSTBOCSfTt9WkngBxOJiKoT6odMa6tryzw5NkHjE7ZBwhLvEKbM3n28MMkW0/jWCu3meRmo+Mjtln8snkDB/xgffcD4b5hiY4TqLjCblwt+g9kOcFApShvPUUuMLHw44xwWIlwo4gU8oV3FCJ9I8zh2kWBj5Fldiok4hBRDQJmtaE9dGh29HlQe6gw9/UDAsu2a5/w2O6owQe1EtJ/LhtGabBFsQUPSybbKfXS/kBJZSvqT+NBnECENhd4RWeQaaCgomxRizfQx+SsNwCYG6UO2o3FcnZ0JxZTT+ChsDgZI3YSvIU9afVtKEa9M40qygjJGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Buy5V7PhuEmtrBC5Pgt2GX",
-     "name": "submit_checks",
+     "id": "toolu_01Hr6q586ocJRhZcGa4E1uNZ",
+     "name": "try_assertion",
      "caller": {
       "type": "direct"
      },
      "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "id",
+           "labels"
+          ],
+          "properties": {
+           "id": {
+            "const": 1
+           },
+           "labels": {
+            "type": "array",
+            "contains": {
+             "const": "feature"
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 18326,
+    "outputTokens": 188,
+    "cacheReadTokens": 17849,
+    "cacheWriteTokens": 475
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:39a507d0301a1e1dab10b05dbb5006273d8986f3327c9888b93f32b7940471ed": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01GkxDHWUHDjANxhZLpPJ7mw",
+     "name": "submit_checks",
+     "input": {
       "checks": [
        {
-        "id": "R1-probe-feature",
+        "id": "r1-feature-label",
         "requirement": "R1",
-        "description": "Backend issue with id 1 has the 'feature' label in its labels.",
+        "description": "In the backend, issue id 1 has the label 'feature' in its labels.",
         "assert": {
          "kind": "value",
          "source": {
@@ -243,9 +250,93 @@
         }
        },
        {
-        "id": "R2-probe-bug",
+        "id": "r2-bug-label",
         "requirement": "R2",
-        "description": "Backend issue with id 1 still has the 'bug' label in its labels.",
+        "description": "In the backend, issue id 1 still has the label 'bug' in its labels.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "labels"
+            ],
+            "properties": {
+             "id": {
+              "const": 1
+             },
+             "labels": {
+              "type": "array",
+              "contains": {
+               "const": "bug"
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01GkxDHWUHDjANxhZLpPJ7mw",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "r1-feature-label",
+        "requirement": "R1",
+        "description": "In the backend, issue id 1 has the label 'feature' in its labels.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "labels"
+            ],
+            "properties": {
+             "id": {
+              "const": 1
+             },
+             "labels": {
+              "type": "array",
+              "contains": {
+               "const": "feature"
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r2-bug-label",
+        "requirement": "R2",
+        "description": "In the backend, issue id 1 still has the label 'bug' in its labels.",
         "assert": {
          "kind": "value",
          "source": {
@@ -282,10 +373,10 @@
     }
    ],
    "usage": {
-    "inputTokens": 17853,
-    "outputTokens": 499,
-    "cacheReadTokens": 17376,
-    "cacheWriteTokens": 475
+    "inputTokens": 18594,
+    "outputTokens": 393,
+    "cacheReadTokens": 18324,
+    "cacheWriteTokens": 268
    },
    "model": "claude-opus-5-5"
   }

@@ -19,9 +19,9 @@
   ],
   "checks": [
     {
-      "id": "book-club-location-city-library",
+      "id": "R1-probe-location",
       "requirement": "R1",
-      "description": "The backend events list has a Book club event whose location is exactly \"City Library\", and no Book club event with any other location.",
+      "description": "The backend event with id 3 (Book club) has location exactly \"City Library\".",
       "assert": {
         "kind": "value",
         "source": {
@@ -33,36 +33,21 @@
             "type": "array",
             "contains": {
               "type": "object",
+              "required": [
+                "id",
+                "title",
+                "location"
+              ],
               "properties": {
+                "id": {
+                  "const": 3
+                },
                 "title": {
                   "const": "Book club"
                 },
                 "location": {
                   "const": "City Library"
                 }
-              },
-              "required": [
-                "title",
-                "location"
-              ]
-            },
-            "not": {
-              "contains": {
-                "type": "object",
-                "properties": {
-                  "title": {
-                    "const": "Book club"
-                  },
-                  "location": {
-                    "not": {
-                      "const": "City Library"
-                    }
-                  }
-                },
-                "required": [
-                  "title",
-                  "location"
-                ]
               }
             }
           }
@@ -76,6 +61,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T10:47:08.468Z"
+    "at": "2026-11-05T11:34:39.142Z"
   }
 }

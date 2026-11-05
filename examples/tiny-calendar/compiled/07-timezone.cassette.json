@@ -1,14 +1,14 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T10:47:18.143Z",
+ "recordedAt": "2026-11-05T11:34:46.601Z",
  "turns": {
   "sha256:d0884dc02f042b4ff087b308ec80b82243337baf6c4a6f87d559be7e7432b01d": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01DHrr9jyRms7nkqpZqcM8wB",
+     "id": "toolu_01XripoAtbDGDPe9vhFNTZPy",
      "name": "submit_rubric",
      "input": {
       "requirements": [
@@ -26,7 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01DHrr9jyRms7nkqpZqcM8wB",
+     "id": "toolu_01XripoAtbDGDPe9vhFNTZPy",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -52,17 +52,17 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:71bd4cd35bfc09d77480c94a0aac6f44a6b9fe4dbb61847ff601dabf68319f25": {
+  "sha256:e82ca7bc2a3bab88c2d0a40b407521932924561447cdde2901ff2ec8759c643e": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01YV1QEBaaJebHpRmDFyoZY1",
+     "id": "toolu_01PJdGsSKYno3Nyf2khzJWcU",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01QeZRzwtVywGtCKwg6Gcuet",
+     "id": "toolu_01RuMr4uVVCh4yRK7ZmeGX13",
      "name": "network_log",
      "input": {}
     }
@@ -70,7 +70,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01YV1QEBaaJebHpRmDFyoZY1",
+     "id": "toolu_01PJdGsSKYno3Nyf2khzJWcU",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -79,7 +79,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01QeZRzwtVywGtCKwg6Gcuet",
+     "id": "toolu_01RuMr4uVVCh4yRK7ZmeGX13",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -88,59 +88,79 @@
     }
    ],
    "usage": {
-    "inputTokens": 17286,
+    "inputTokens": 17763,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 17282
+    "cacheWriteTokens": 17759
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:3d15cd6da9f161dd9b9e72a5a545fe46f21970534ca858915a67605c0ebec083": {
+  "sha256:7942d525d1d5ddfffb65fcd124de1a63a3093c8cb2cd08439b7ef1b5871a4cc2": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01NcLn2tTxvNGutYxqkRG4hi",
-     "name": "network_entry",
+     "id": "toolu_01TKR6DpRZmZRWNLgP6Lh2xB",
+     "name": "try_assertion",
      "input": {
-      "seq": 3
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "settings",
+        "pointer": "/timezone"
+       },
+       "expect": {
+        "equals": "Europe/Berlin"
+       }
+      }
      }
     }
    ],
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01NcLn2tTxvNGutYxqkRG4hi",
-     "name": "network_entry",
+     "id": "toolu_01TKR6DpRZmZRWNLgP6Lh2xB",
+     "name": "try_assertion",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "seq": 3
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "settings",
+        "pointer": "/timezone"
+       },
+       "expect": {
+        "equals": "Europe/Berlin"
+       }
+      }
      }
     }
    ],
    "usage": {
-    "inputTokens": 17778,
-    "outputTokens": 49,
-    "cacheReadTokens": 17282,
+    "inputTokens": 18255,
+    "outputTokens": 106,
+    "cacheReadTokens": 17759,
     "cacheWriteTokens": 494
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:7ffe4feb1e9ab8973620101579dd24a943dd41f4137a96450d227d884214003e": {
+  "sha256:609c146751ec534cc6efc9c3670b62ba4bf532bd002b2318edce9652473375ea": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Ms7YHrFaVYHzBYGevNYkne",
+     "id": "toolu_01F97MMx8se4D2FziPifA7To",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "R1-probe-timezone",
+        "id": "tz-berlin-probe",
         "requirement": "R1",
-        "description": "The backend settings record has the time zone set to Europe/Berlin.",
+        "description": "The stored calendar settings have timezone Europe/Berlin.",
         "assert": {
          "kind": "value",
          "source": {
@@ -159,13 +179,8 @@
    ],
    "raw": [
     {
-     "type": "thinking",
-     "thinking": "",
-     "signature": "CAQS3gYKEAgTGAI4AUIIdGhpbmtpbmcSDAm31E2u758C/E/8BRoMnXH7GTM/DoAwBj2MIjDe7ZtgZtquNDx4KZkBJJMSj3hB0AWMW1tMyEsazxmh8nU6FFBn/nUDsSeJQn6Qrl4q+wWT4PnlAHYeZIKuCXpag0gysZTApq7aGcgwI/lgLejK+90fo1yAtPvwph8bdr3nAAOTb7ItDsFNmcqkP+2CByvO4NaFH20oqcguyHG+V2EioW3KTe5/4V5N159M8k/U5j8R76kGAkC4S9dMnlFiiG4U4La6GmFNapy27NdbrdWHhIfUm3TB19dLJBlEDP6yCWJVwfGnk1uZCXOJ78cbax+/RC4yNlty4Ma0FzL5L4TD2fvdKJUWkfH9iBrnGcsboCoXDCZGbheORzj3rCjLaV88VpwLZrqv9JBXAvX3WnCmSwBkq0R8PudSKlBrBxneFeXRaajigGWWC4FzzHc4NVcr8uSU+nwslic3uHwop2H76Yw+0ZQfjU4hwEzK3HEFwfA/hSvAGZulSbI2tMXtpqDXpUryhVvicQdaX+i6NNvjPnJpVn5DKMUaZgcpdipEnW8M3yxr/PQWsrpdTwecBmvcpnVuemprjvMuYYrsFtblv1Sy8Y1mbU2sjYxCvrFBciuhFRUzc2O/+JNt5ZzOZscak4PT2vDK/hxqIiT8kxrZ1Zj1rnU9CM5nOO1P4cm2LLToYpvq/XjmpYpUlJKu86br94688CEnrBbSPJFZ05aDR4vQ7IQxvU9XEy3JOaLXo6pu/iTbQpQ353gvpn10+m4Uy1oPvcLFA8ijGhSemh1RjW+RkP1bj58SHWXYFT3vdbBrGlk0xplIDtxdFAp8KyaRitEVPEyerPFEAJY/dxEjJSXSs+eh/7c8B8dU4R5ztpLyO295y5bLH6IwiDl5pEP9cf5WeetJ6R6mEb6PiBPvIl9imUtbSX+0TAbyKc93EJojfCf9aW/oiDv84O6jI7UP5ApmMqHeQXIk6jVUVp3s4FBFquvzq8UXxFbe2FFxbLWYEAzMZVSaxIkp2/bl8sf9IX+uJi8F0McpnXmv1uyQkXnFUiBjk4hTHqQcGRecjAExbL+GgeTejkfITQ/DGVo/5FAN/LTFwyAdzRsad6va7EDurp5RX8FsjEpQGAE="
-    },
-    {
      "type": "tool_use",
-     "id": "toolu_01Ms7YHrFaVYHzBYGevNYkne",
+     "id": "toolu_01F97MMx8se4D2FziPifA7To",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -173,9 +188,9 @@
      "input": {
       "checks": [
        {
-        "id": "R1-probe-timezone",
+        "id": "tz-berlin-probe",
         "requirement": "R1",
-        "description": "The backend settings record has the time zone set to Europe/Berlin.",
+        "description": "The stored calendar settings have timezone Europe/Berlin.",
         "assert": {
          "kind": "value",
          "source": {
@@ -193,10 +208,10 @@
     }
    ],
    "usage": {
-    "inputTokens": 17942,
-    "outputTokens": 248,
-    "cacheReadTokens": 17776,
-    "cacheWriteTokens": 164
+    "inputTokens": 18400,
+    "outputTokens": 167,
+    "cacheReadTokens": 18253,
+    "cacheWriteTokens": 145
    },
    "model": "claude-opus-5-5"
   }
