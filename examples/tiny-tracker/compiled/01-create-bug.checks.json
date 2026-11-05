@@ -28,7 +28,7 @@
   ],
   "checks": [
     {
-      "id": "issue-exists",
+      "id": "R1-issue-exists",
       "requirement": "R1",
       "description": "The backend issues list contains an issue titled exactly \"Checkout fails on Safari\".",
       "assert": {
@@ -42,21 +42,50 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "title"
-              ],
               "properties": {
                 "title": {
                   "const": "Checkout fails on Safari"
                 }
-              }
+              },
+              "required": [
+                "title"
+              ]
             }
           }
         }
       }
     },
     {
-      "id": "issue-has-bug-label",
+      "id": "R1-create-request",
+      "requirement": "R1",
+      "description": "A successful POST creating an issue titled \"Checkout fails on Safari\" was sent during the run.",
+      "assert": {
+        "kind": "request",
+        "match": {
+          "method": "POST",
+          "url": {
+            "path": "/issues"
+          },
+          "status": {
+            "gte": 200,
+            "lt": 400
+          },
+          "requestBody": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "const": "Checkout fails on Safari"
+              }
+            },
+            "required": [
+              "title"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "R2-bug-label",
       "requirement": "R2",
       "description": "The backend issue titled \"Checkout fails on Safari\" has \"bug\" among its labels.",
       "assert": {
@@ -70,10 +99,6 @@
             "type": "array",
             "contains": {
               "type": "object",
-              "required": [
-                "title",
-                "labels"
-              ],
               "properties": {
                 "title": {
                   "const": "Checkout fails on Safari"
@@ -84,7 +109,11 @@
                     "const": "bug"
                   }
                 }
-              }
+              },
+              "required": [
+                "title",
+                "labels"
+              ]
             }
           }
         }
@@ -97,6 +126,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T06:55:39.330Z"
+    "at": "2026-11-05T07:43:02.869Z"
   }
 }

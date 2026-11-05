@@ -1,14 +1,14 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T06:56:37.604Z",
+ "recordedAt": "2026-11-05T07:43:57.097Z",
  "turns": {
   "sha256:25ae5c9a04fde0376f652c954d44d2bf102e3dc87b3424021aabcaf915da75fe": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01QdnVDJiRbrMnYiWnuRpEV6",
+     "id": "toolu_01M1sK9WMrW4tfb3zCwBFmHN",
      "name": "submit_rubric",
      "input": {
       "requirements": [
@@ -22,7 +22,7 @@
        {
         "id": "R2",
         "kind": "hard",
-        "text": "All other events still exist.",
+        "text": "All other events remain present.",
         "field": "outcomes",
         "quote": "the other events are still there"
        }
@@ -33,7 +33,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01QdnVDJiRbrMnYiWnuRpEV6",
+     "id": "toolu_01M1sK9WMrW4tfb3zCwBFmHN",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -50,7 +50,7 @@
        {
         "id": "R2",
         "kind": "hard",
-        "text": "All other events still exist.",
+        "text": "All other events remain present.",
         "field": "outcomes",
         "quote": "the other events are still there"
        }
@@ -66,17 +66,17 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:2d027e1125a26dc03fb271095f00fa2379c19281805b14da8b9efbcafd47f47b": {
+  "sha256:6c1f0673840a1717f9fef0f76e8398cd5239ea59a25b4876ffebbb1f04372492": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01QEk2KbpmfvR8w6nAJYasbb",
+     "id": "toolu_011PQBA84hwdEX2TGmgcKUoy",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01Y2puxfVmbf4XY341Psqvia",
+     "id": "toolu_01BKrziPJSoSmxmbSyjHGXEG",
      "name": "network_log",
      "input": {}
     }
@@ -84,7 +84,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01QEk2KbpmfvR8w6nAJYasbb",
+     "id": "toolu_011PQBA84hwdEX2TGmgcKUoy",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -93,7 +93,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Y2puxfVmbf4XY341Psqvia",
+     "id": "toolu_01BKrziPJSoSmxmbSyjHGXEG",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -102,22 +102,106 @@
     }
    ],
    "usage": {
-    "inputTokens": 16123,
+    "inputTokens": 16256,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16119
+    "cacheWriteTokens": 16252
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:4d845658136bbd15ab99b8cddb14b2b69871b9a1f07dce2f4ddbaa4877c112a7": {
+  "sha256:ebd3d7a990e14d72a69ba730f316a6d08a7d4f1a8d504e4ffa69b5441f63c9e7": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Bvod5rkEGCipf5hghmPWHQ",
-     "name": "network_entry",
+     "id": "toolu_01Jt8Vd4uYk6EZdVVteT98Mo",
+     "name": "submit_checks",
      "input": {
-      "seq": 2
+      "checks": [
+       {
+        "id": "r1-standup-gone",
+        "requirement": "R1",
+        "description": "The backend events list no longer contains an event titled 'Team standup'.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "events"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "not": {
+            "contains": {
+             "type": "object",
+             "properties": {
+              "title": {
+               "const": "Team standup"
+              }
+             },
+             "required": [
+              "title"
+             ]
+            }
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r2-others-remain",
+        "requirement": "R2",
+        "description": "The backend events list still contains the Dentist (2026-11-06) and Book club (2026-11-10) events.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "events"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "allOf": [
+            {
+             "contains": {
+              "type": "object",
+              "properties": {
+               "title": {
+                "const": "Dentist"
+               },
+               "date": {
+                "const": "2026-11-06"
+               }
+              },
+              "required": [
+               "title",
+               "date"
+              ]
+             }
+            },
+            {
+             "contains": {
+              "type": "object",
+              "properties": {
+               "title": {
+                "const": "Book club"
+               },
+               "date": {
+                "const": "2026-11-10"
+               }
+              },
+              "required": [
+               "title",
+               "date"
+              ]
+             }
+            }
+           ]
+          }
+         }
+        }
+       }
+      ]
      }
     }
    ],
@@ -125,247 +209,109 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS1QUKEAgTGAI4AUIIdGhpbmtpbmcSDCva9vpK7Mnsh4dw7xoMjkLwUIiP9A00O2DrIjBWalcNJiD7khuqxHLOlv4uQom6WmjMV6c1gKZ+ZqEPRRG11bZKkt42Vy1+1JCpHjsq8gRYVbrYMjLxdwhTWjZEsRdHGA1DlLgS1ZFYRqAzXkAOyFJp8MueJKKEfO+nDNUGbSeOZgvBRHvaeYAMO0HyfpQYVrScblrWQPUL9J0smSHIaGIYkNMm2CLfLiI+5Ok/2MSsbuSy2g5UW9w1/XHY2BQ75OTv8c7woBlPuLEYjpGefusIeK7Y4WHLeomVoY9I9L+TNFT49qud/cUbTX+EeUPQ/ktGoEDBUu84kbH1xE8eSySUMM98M4wLtW6b9pUrIWnQiqyJ+hkrqRN4+BnazvEqSxQySevzaJlDBykXkIt70EpcVGikmqbdCHaNtUtT63vWwhvxANJx57F1ocvp8N5Dkufzl/nkw/sTdDaBIPxhVgSzxAUrKnqfz+QEzRak3Ihd0WawO6OAUoJnbuBx0O7q62mfAY+EYxFU31585VEtbpSA/hp26QdAzQyHraS/sOy2NaA2nXjNsD3PNQWKUjChT8GYszUxglaeed4hysz3B8hP5g2qVSejZH9+uuZ5jRg+zhRhEG3BEgT1k1oESy3z+MzCg2cuJJu4jBzZ8f8QImHtKkY5b9XK5YtPFEw/PzTsS0/nb7whV3ZI1mK1qyKDnf5FFtr2YcvirzmQZqcXQ7I4BQ3DSueMA3fu0ltbP9OZ/f3bq77T6WReld/BkK3oH6DvUg9P5dXi0xl95NIrkPawtl7oWvAztyq8yzag2guHz8HBIc44UUcrOrfJo9txI78+nyKRNh1D0yXszYmRFodl7AdfxqQUUHTD/n47F60Mdu/m5aSv4uje3nhJvbmpIj+9VZrmIo/UhumqgEhz0JePx9Yv0H0q77tRMACTebKoYhgB"
+     "signature": "CAQSygoKEAgTGAI4AUIIdGhpbmtpbmcSDI9ElRzMwzwNOjZ7BBoM1P7eTpbajMYAGc0SIjBgZS+7S5iOYzFt3wMRBpFqvchmydPYyEiM7s8Zhf4KBtNmhqJPIVNJN1IHuDYuELgq5wmCPyY9/kRqA5Sdv3xnq4YnA4VrIh/S3DVY7RXF3jZtbGyNC9QhX05tsN6/Wu0qu7byYdF97aZM7mszpmnzvCefY8L+ZikyM7Ly55DGRM66xSWrGfx7ksIlkN1e90ibb1Qe47h6w0fTSH0JpsTnZ6dSTDnViVd4BrFp73xDdsC47OsbhHVjLJN03agszt6dRN4D+YF0F0beRJz2j+gGgtS7YR9hK/jZ9VW6itz2jzmxTa2MDcr7YoW0nfBy+s9HGBTHZa6jJM8Irk8XYTNZbIUtMcTfTbEw1CqV1GqX2w7+8jgfUShI7dkG0X613Wa7DN6SOGkhDgvV1NMNJZ/aJyunLfFZ93uB7wmMsjZpgHId2qQV27JI94Hedg1L+YYZ3oSoegef1X7oXhASxNx6QePh70otQzuEC+PvZfTjSPpl0ivn/F61R97qLEV8GJBh7EV9vsCXsJ3+3l+9YyfBhEZCvEjDx4+W2Wz1K7m1jE9oktzV1qcE+OXjMhgrqxXPdupU1gEetvyaNjhpA7/ewXFtp10sTGHY3gNv870PJhV938mH8uw8+xsJqj8yeyYGwOWAEUvuTEwFfNuYOTXjdxMjGgvykQ06epxqBPUdoCberteBCGF0sS+/ak8VfTLB3L4udGzE5XaSeNmULJQo3qiCRNwZSfvjkV+DvTDdt2NkoqZ5n2ZzK28a552HhbVb9BcelhGEv3D0qOUjC1tj0tnF3fr+Pnz+pWLpB0WJku/3fhXXHeCeT+Bh/mqgk2p4MYOpXPTmdf2cE4DAa9Wq2BjFJjJ8ag544KrkoUflgLS9fF+M9Kfy552RYBQ59H0Yxmp7o6Gu3kuRMOuzq5wKLW1oyDrQOyKdGr5rIqssnJHhQeZbw32lKYPEWGLuekM2kUksZ1lUGBuVNXUNVNT/AgmvJaa4JGys31uSjJdmOfng1dfoWrKH7rpAqrwPA8F6KOctr3293cRn9QkFQGETHdvplDSZFB0Y4VFptpP1TZVIeAylnqjEDsYHw4JoM5p+ighSPb6v5OoCX56WFpTw1rwn9dsik6yOjhCMZb+WbHeeLuqKwsrUSHE82g/FV1iLwybZJj3SnkKgAKEv9EymD1tjMaybhTdHUj9FVs055KlQKZrzauKBtMqX5G8Kyivvlagtl4EZmd3i9CQmUVU6t/Y6oEbFCdsh8mbUKhCwCA4zqMgGi8SYQgenukRhNtY3ncmGg6yNZ0drN9q3QHuD/0bGlsiPCiUfJ9NwlmafrjeEGxDWIim/gLg4/7AgcBevqQwYbk870KzHSK7U11Am2M9jdNAmHkCqXOs3pUBglNG6iwWZg9OUBFVC6gB4gUUQ3eCXO25digj0kLTesL6iv/MDzSgWzeCLis4ugLbvzQ03SStGsCaZ7MiI3zT0m3/xfRk9U66qEoLynvrq1BVNdtbjvkVwTyNg2oBnc+7ULN6aQGp4Tuv0lq77RbpsoOcxkSqoxsAyojovK2O4LBw81NwsBddC18fIyixYOCiL8/3m96c0m/rhuTkpnbg41rTQ2g1TwHIMrqB7ho9QiOvm4TPH0tYRhwEvRXe+4ZJaPU4Utqkm/H0osnx6AjbxZ//IUw76DuUe2sE7QwPIZhbYdl+N99ANCil2dxE9xhZEqoW4Dcqk/IUJmNUGeQbZ/kD7KN0Ups0iSP5+GAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Bvod5rkEGCipf5hghmPWHQ",
-     "name": "network_entry",
+     "id": "toolu_01Jt8Vd4uYk6EZdVVteT98Mo",
+     "name": "submit_checks",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "seq": 2
+      "checks": [
+       {
+        "id": "r1-standup-gone",
+        "requirement": "R1",
+        "description": "The backend events list no longer contains an event titled 'Team standup'.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "events"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "not": {
+            "contains": {
+             "type": "object",
+             "properties": {
+              "title": {
+               "const": "Team standup"
+              }
+             },
+             "required": [
+              "title"
+             ]
+            }
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r2-others-remain",
+        "requirement": "R2",
+        "description": "The backend events list still contains the Dentist (2026-11-06) and Book club (2026-11-10) events.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "events"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "allOf": [
+            {
+             "contains": {
+              "type": "object",
+              "properties": {
+               "title": {
+                "const": "Dentist"
+               },
+               "date": {
+                "const": "2026-11-06"
+               }
+              },
+              "required": [
+               "title",
+               "date"
+              ]
+             }
+            },
+            {
+             "contains": {
+              "type": "object",
+              "properties": {
+               "title": {
+                "const": "Book club"
+               },
+               "date": {
+                "const": "2026-11-10"
+               }
+              },
+              "required": [
+               "title",
+               "date"
+              ]
+             }
+            }
+           ]
+          }
+         }
+        }
+       }
+      ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 16636,
-    "outputTokens": 78,
-    "cacheReadTokens": 16119,
+    "inputTokens": 16769,
+    "outputTokens": 681,
+    "cacheReadTokens": 16252,
     "cacheWriteTokens": 515
-   },
-   "model": "claude-opus-5-5"
-  },
-  "sha256:8159f1e4b4fdb5e3287c441d7df122c70e526b354a94c82050fcd680e132f516": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_0187RUcvxnWBi2K7Vpo1B4yX",
-     "name": "submit_checks",
-     "input": {
-      "checks": [
-       {
-        "id": "r1-standup-gone",
-        "requirement": "R1",
-        "description": "The backend events list contains no event titled Team standup.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "events"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "not": {
-            "contains": {
-             "type": "object",
-             "properties": {
-              "title": {
-               "const": "Team standup"
-              }
-             },
-             "required": [
-              "title"
-             ]
-            }
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "r2-others-remain",
-        "requirement": "R2",
-        "description": "The backend events list still contains the Dentist event (Nov 6, 14:30) and the Book club event (Nov 10, 19:00).",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "events"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "allOf": [
-            {
-             "contains": {
-              "type": "object",
-              "properties": {
-               "title": {
-                "const": "Dentist"
-               },
-               "date": {
-                "const": "2026-11-06"
-               },
-               "time": {
-                "const": "14:30"
-               }
-              },
-              "required": [
-               "title",
-               "date",
-               "time"
-              ]
-             }
-            },
-            {
-             "contains": {
-              "type": "object",
-              "properties": {
-               "title": {
-                "const": "Book club"
-               },
-               "date": {
-                "const": "2026-11-10"
-               },
-               "time": {
-                "const": "19:00"
-               }
-              },
-              "required": [
-               "title",
-               "date",
-               "time"
-              ]
-             }
-            }
-           ]
-          }
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "thinking",
-     "thinking": "",
-     "signature": "CAQS4AgKEAgTGAI4AUIIdGhpbmtpbmcSDDsctKIAkIbrnAmWdxoMSh/wutBBm+8l58KOIjBplIRlnRp8q6g9wyJbocQl+TtCvvSmn9P0fROQ2H204cIYMynNVHlzp3sJf0VyR4Yq/QfbyCp/Oypi5+g6MAL4OjkGu/+ylZflOeZxCuaRDZbky+yOkYV3JRbjW8I6oQ3otWJkaEDTvflzzxc16mi3cjWjN+NqQfLXH9AsXsG43jGKcxTq7ktMlkuF0kWmAuWDrFe6zItSb2JzeaTdksm9JIQ6cSuc0W2Y+2YO1oP5b/EuVnLPWQaz2BhOrW+VwXatGcymLwGjSKtoCNyGKl6LxIYODyeHt4H4iSxnocNoSl3Vu0g+1pUCwzZ3p2cHP4h0GWW2HwvtAt76JuGjm8v/HiMBUr/Ussu3boSFCtS16wZ5USh4jzKL35FCPwAgOIiGdk3aP6p9p3e/mvRcWACyHhn6Q6upIUt8Gb04ZOwFR7QI/pHkY18U6pcWc8jQwVoVU8kqp5h0nAdvluM61QFBBo+vcA+n9xkxkuMHeMdxVU9Z/jLoar0W4HYA2Gu6YI93nrVFB2OgXra/vl1ARFT57c+frKh0gv+MLNV9yP0gw0hRGRMrb6mEOwVW8waZDcrDfkkGZM1RDKrLvm6V+dbvjBcv0xpghRAaNxyeDG6hq6frLtYe9iEi5GU6CscxzUzyYejiNwINoqN29dUimHprLPGdBMiTRTcQRD7BzyPfD41wpsiU4z50bWuHKnqZSl1FOy+CHsWIMxILtQA9LZbOtaQNl2f6wOai34tdyOIotp75Ira02XemK8wvxVO4wp6EFp4fM0tGXkujrcShxxSBMccL9bg03GNp42D3t2L9x0BuxBDZ4//cD0LD5glMw8ot7Orzj1H3NON3SiXEz9ERPJepW/QURQyvPqcy3WP9fPTGtemdp43vtauydlh1kLf6sFB0KujPyWlM/DDoQsvyJKfGkkstNMKxXF1OJZeS6oeHXwGJSaAAFNeVhFHr0KVxysviSmbuhjckfL9U2vmNZMjb9JrZl3/gXWHqjz7X6hn2wj01o4H9fpFFQhZQpx8JNAENEDk5uISG00+rTJryI27c6DKr4s9NWSjRetFbMnLh0tY9rT8wWjIKLTLbiGPImcwzWejjTRZD0iKESjF4qPnJX6uNqTE9DBzutzSYgKjc6TvwdIKJdjhOLmkmnQBF34VZNlCNRyLUgDUWPqfSL1LPDKxV7awTijhZYEI77a68iyKe4zgWnGmtx9MW/OaCvvgUGSQp86YeUp5GJGLErbOJk9IDvdKlZ9mlryN0MIBMI4N18AyzCwApLhGrQLRgDZBej3dsXLm5NqtrOD/DoD2fUKpU4GdkN4+1V+jZ77UIqrXMQRZGroNReXgV8GX8+/9YgCWpEEMs+/aIqLJm9GS4z5UN0vvS9aWdpLxsOW1rQGxDgSLjrQRg9kZpbKv7P/gb0bj+cLeQpLh5dM2pGAE="
-    },
-    {
-     "type": "tool_use",
-     "id": "toolu_0187RUcvxnWBi2K7Vpo1B4yX",
-     "name": "submit_checks",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "checks": [
-       {
-        "id": "r1-standup-gone",
-        "requirement": "R1",
-        "description": "The backend events list contains no event titled Team standup.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "events"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "not": {
-            "contains": {
-             "type": "object",
-             "properties": {
-              "title": {
-               "const": "Team standup"
-              }
-             },
-             "required": [
-              "title"
-             ]
-            }
-           }
-          }
-         }
-        }
-       },
-       {
-        "id": "r2-others-remain",
-        "requirement": "R2",
-        "description": "The backend events list still contains the Dentist event (Nov 6, 14:30) and the Book club event (Nov 10, 19:00).",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "events"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "allOf": [
-            {
-             "contains": {
-              "type": "object",
-              "properties": {
-               "title": {
-                "const": "Dentist"
-               },
-               "date": {
-                "const": "2026-11-06"
-               },
-               "time": {
-                "const": "14:30"
-               }
-              },
-              "required": [
-               "title",
-               "date",
-               "time"
-              ]
-             }
-            },
-            {
-             "contains": {
-              "type": "object",
-              "properties": {
-               "title": {
-                "const": "Book club"
-               },
-               "date": {
-                "const": "2026-11-10"
-               },
-               "time": {
-                "const": "19:00"
-               }
-              },
-              "required": [
-               "title",
-               "date",
-               "time"
-              ]
-             }
-            }
-           ]
-          }
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 17051,
-    "outputTokens": 601,
-    "cacheReadTokens": 16634,
-    "cacheWriteTokens": 415
    },
    "model": "claude-opus-5-5"
   }

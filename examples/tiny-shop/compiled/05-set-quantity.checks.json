@@ -19,9 +19,9 @@
   ],
   "checks": [
     {
-      "id": "cart-backend-blue-mug-qty-3",
+      "id": "cart-probe-blue-mug-qty-3",
       "requirement": "R1",
-      "description": "The backend cart contains the Blue Mug line with quantity 3.",
+      "description": "The backend cart contains a Blue Mug line with quantity 3.",
       "assert": {
         "kind": "value",
         "source": {
@@ -34,6 +34,10 @@
             "type": "array",
             "contains": {
               "type": "object",
+              "required": [
+                "name",
+                "qty"
+              ],
               "properties": {
                 "name": {
                   "const": "Blue Mug"
@@ -41,20 +45,16 @@
                 "qty": {
                   "const": 3
                 }
-              },
-              "required": [
-                "name",
-                "qty"
-              ]
+              }
             }
           }
         }
       }
     },
     {
-      "id": "cart-page-shows-blue-mug-qty-3",
+      "id": "cart-page-shows-qty-3",
       "requirement": "R1",
-      "description": "The cart page is open and the Blue Mug quantity field in the Cart table shows 3.",
+      "description": "The cart page is shown and the Blue Mug quantity field in the Cart table reads 3.",
       "assert": {
         "kind": "allOf",
         "of": [
@@ -65,37 +65,29 @@
             }
           },
           {
-            "kind": "value",
-            "source": {
-              "from": "node",
-              "target": {
-                "anchors": [
-                  {
-                    "role": "spinbutton",
-                    "name": "Quantity for Blue Mug"
+            "kind": "state",
+            "target": {
+              "anchors": [
+                {
+                  "role": "spinbutton",
+                  "name": "Quantity for Blue Mug"
+                },
+                {
+                  "role": "spinbutton",
+                  "name": {
+                    "contains": "Blue Mug"
                   },
-                  {
-                    "role": "spinbutton",
-                    "name": {
-                      "contains": "Blue Mug"
-                    },
-                    "within": {
-                      "role": "table",
-                      "name": "Cart"
-                    }
+                  "within": {
+                    "role": "table",
+                    "name": "Cart"
                   }
-                ]
-              },
-              "field": "value"
+                }
+              ]
             },
-            "normalize": [
-              {
-                "op": "number",
-                "locale": "en-US"
-              }
-            ],
             "expect": {
-              "equals": 3
+              "value": {
+                "regex": "^\\s*3\\s*$"
+              }
             }
           }
         ]
@@ -108,6 +100,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T06:56:19.164Z"
+    "at": "2026-11-05T07:43:47.567Z"
   }
 }

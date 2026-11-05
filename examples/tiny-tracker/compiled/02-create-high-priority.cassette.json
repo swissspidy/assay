@@ -1,14 +1,14 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T06:55:51.751Z",
+ "recordedAt": "2026-11-05T07:43:18.504Z",
  "turns": {
   "sha256:9a0bc1631511e327acec954620cd2eadc2c745673edc070f3bd4ae2f3c38cbd9": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01VEzdErtyYDbcgVvStHEgUE",
+     "id": "toolu_01WmmmvdBkCW9ZB4V9mzg8Fa",
      "name": "submit_rubric",
      "input": {
       "requirements": [
@@ -33,7 +33,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01VEzdErtyYDbcgVvStHEgUE",
+     "id": "toolu_01WmmmvdBkCW9ZB4V9mzg8Fa",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -66,17 +66,17 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:b3785783d26222a086a226dcad848c1a8aad86eefcc77a4551dca455e830e849": {
+  "sha256:88a4ef661c4a931ac0923173c7700b048e818bd706dc035e9af0db885669725c": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01RHk7NRHRfLNM2jdsvSpSTL",
+     "id": "toolu_015SjmaZz8nKXjKYvCr1HXYb",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01AGV2KkNVfo3r8VWf6TthkU",
+     "id": "toolu_01UTjthH5TSF5ebvbgCQ8MMF",
      "name": "network_log",
      "input": {}
     }
@@ -84,7 +84,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01RHk7NRHRfLNM2jdsvSpSTL",
+     "id": "toolu_015SjmaZz8nKXjKYvCr1HXYb",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -93,7 +93,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01AGV2KkNVfo3r8VWf6TthkU",
+     "id": "toolu_01UTjthH5TSF5ebvbgCQ8MMF",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -102,26 +102,26 @@
     }
    ],
    "usage": {
-    "inputTokens": 16148,
+    "inputTokens": 16281,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16144
+    "cacheWriteTokens": 16277
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:a2d790b6e8cb6a427949f252f8c81aa1d99f826c240a0c3580d99c44e021238a": {
+  "sha256:920de91800cc7fb752b9833e116fb2cc3cce837550f61257a4e0b9167cb13485": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01CQHL9FiFdai3abun8DuhsT",
+     "id": "toolu_016cFE16hwiUbY6wfkX9m4su",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "r1-issue-exists",
+        "id": "R1-issue-exists",
         "requirement": "R1",
-        "description": "The backend issue list contains an issue titled \"Add CSV export\".",
+        "description": "The backend issues list contains an issue titled exactly \"Add CSV export\".",
         "assert": {
          "kind": "value",
          "source": {
@@ -138,8 +138,7 @@
             ],
             "properties": {
              "title": {
-              "type": "string",
-              "pattern": "^\\s*Add CSV export\\s*$"
+              "const": "Add CSV export"
              }
             }
            }
@@ -148,9 +147,9 @@
         }
        },
        {
-        "id": "r2-priority-high",
+        "id": "R2-priority-high",
         "requirement": "R2",
-        "description": "The backend issue titled \"Add CSV export\" has priority high.",
+        "description": "The backend issue titled \"Add CSV export\" has priority \"high\".",
         "assert": {
          "kind": "value",
          "source": {
@@ -168,8 +167,7 @@
             ],
             "properties": {
              "title": {
-              "type": "string",
-              "pattern": "^\\s*Add CSV export\\s*$"
+              "const": "Add CSV export"
              },
              "priority": {
               "const": "high"
@@ -188,11 +186,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQShwcKEAgTGAI4AUIIdGhpbmtpbmcSDFHiDO5Rimqv0p4L+BoMVSLNbB/9popo/v/uIjAqrLDYHuTHLpjXmZD4UmwSvxofRtorE/PIeKwduFZ8xFtnmIvxo6mcxKghsEuoi3oqpAZmR6d+iEhiKMIDg+yZhdn+ZGXz42Dku4d9gDX2b8ipedFlN9Izu60w6tqxIl4nQE0ZPdDqTBDdr06pF9T/I2wo5zSV2nAjdm48KUF88pbN2mZzmfNEiu1IlUnX7x5fQEi8/E+jnBW1FgmBlOkT33bfSFJSQ4AZ36aOUfl0LeN0GL6qh6vRBSz3HyNMr5vAkPMaCJg345GGeu42KOYUET33KtNCPCIvuZiYgDXodvOa/iPOZnpjaIJvTUdLK0bvLwSNTG5DGBj8yEZGJXJ1QnYch/CNIRNFNBqS+Z+vZ+4Tz/d/tRgVhB/vJTWZKRqvdXCbLBGDhie7uovCKV+G0y9vF/B3PgbayPgq23CjYSnlPlCgHbof/GL0HwiWGIo3cXQEe2e8VRYhbdGh9tDJ6YM3Kv979GldxEnlJxlYcCC4zQDayQswWP4lIj7fxKRkSR4y62GeRz6dYO0c3bwglXc33UoEn2b/p2Z+Uqp3S7H0mBKErDbJJ/ra+gR3pmbovC0zjXQKWh+7FJyi6q2dYFoBjDz47ZCiMI4eNeHAlURCeAm8dkYXJ6g2KXjNH5BScwFqNUNVqAdaeIz4O3JkZAr6inzgdPQtA4QNyDdX3E4EGMYkk7jlfMuvtNgD98RBhi928h496hSzObYLejjAJBE8scm5CmzLCE2ZB3WTjHbSj+K1P5nKQGR+hpxST0YBgTtJaE+AejWrt3uAwBjk7ZR2QarBQ5wbU+D4xFktJu1h034tlJZDzRuehI1BMg+HANzgDlylXOfn5HqH7AsepyR7h8CdEtUsJIAxabqdoxNzCf3hodMpJ4hY5+0797sHYm7bKylw9iU/zv6dCxwoR5Mg1LEsYE7a+lxA+rbg9ln90v/7gFkVuyFdKlKEkUZ5Kv7NwF9XVcYqnzZxVplVcdc52PmAK5/Y92igC9YTve7SyiSQR8XbrJEuZPeBYtGml/JFBM1yubKKiles1EJu/BEBPpGSCSeYrCC+CW/GKOel6CpTDvwG6+GwpfHZ5oC0XWjyVbivvlFGzb3yBrlFvCd0rc3Wuno7QCWidRBsBkjcNq5OnPUYAQ=="
+     "signature": "CAQS4AYKEAgTGAI4AUIIdGhpbmtpbmcSDPGY8BLbnBuMOuwzNxoMc5dsO1eaFgZfQ9aKIjCt/FIwQ3Ngt3Ohl2hYt47nOoQhio9qT7YQSpzyiTdEbg/QkhDXbcn+VkRYNlsi8nQq/QXkq5BsUc77iveE7+rgQ3GoEp0wi5DfNmM0K9GE0cO4lVb9JftZCXgvj94O4j6x+0MDGsDVnCMs/CoMf+7uyFIRmebmj0Q3GQ11bNSvkZoEZBuiEjEo3unCjDddEAzM9iCFSpTOShBrjmYwzg9KFvfE0MT+VJ6kXJDV2+0ODk3nYti6FUkag6zhLIg9i77D367WFjFj8GH3mjSZbhAB3TXMI5ZZYhd1vJjSPQpi0Xubd1Xvbe4JX7OOQyU5HDPBtO4sJsh8zziHLv/vPjT8k5bb7ZvxcOS/DLr13MmX7fk6kDB7Jg9/PSrUiqcqffoxPT+FUjCI1uIZZan9BDuqg2ERtVHUeSlv6OAAZwv9ZG1zXH2C0OvrJD23g4oDD+CeAnB3FQ33qlO2o0euZuzGxpPxN0Oe6B/sfqsf1sfaBCL550wB0iPVrruwkH4mj3TwJCaTdzqJob5bDUdUc0Sn99YKshNGUzw0/P+Uzn3NihnvV9rmN1aeEuAYXnEfynelwGraXkN51ffTgNaRSedXvNuH89TU4FS84N7P1OrVPgeXNrzOlK8XjU9bkkHVcafw0qz5rl6JH3bm//0DtxspdCWYqql4XT4b18M9OuU4KStL962KtLZv8vVjRc7hx5bafjwHCpyauPdI9StgF84IPUka7ICQo2kKb3B9q85GevvUHdMfdAQV0PXRaFKaeMVIbviXo0jnTkMQcHW1SApcNvqpQTn5F0kJymTFLJyzIlH1tMpKjf56qdLwdm91BEqJkcVwgUKKBYFMUJO+TBRZSj3b8iArz+U5NhX7w5ZslJBf9CI05V0sZUzXJXZ2g5U6US3mZ+Ian2iB1fI2ZedGYm416IbaM3IJuuoF4ItUe2gyjzfNnaTvXxlfbUIgj4vUcMA6pKkc6FL6i/TYtpoalP6vb92HTrx1KnEC54HA2pavUZgxH/y2HeVJRrHyYCXGN58RXl3FonP1sNebXRrmdaMh/oScq8ix/Zg1irhV72BtgD8vw71zQgKOxzNeD0wYAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01CQHL9FiFdai3abun8DuhsT",
+     "id": "toolu_016cFE16hwiUbY6wfkX9m4su",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -200,9 +198,9 @@
      "input": {
       "checks": [
        {
-        "id": "r1-issue-exists",
+        "id": "R1-issue-exists",
         "requirement": "R1",
-        "description": "The backend issue list contains an issue titled \"Add CSV export\".",
+        "description": "The backend issues list contains an issue titled exactly \"Add CSV export\".",
         "assert": {
          "kind": "value",
          "source": {
@@ -219,8 +217,7 @@
             ],
             "properties": {
              "title": {
-              "type": "string",
-              "pattern": "^\\s*Add CSV export\\s*$"
+              "const": "Add CSV export"
              }
             }
            }
@@ -229,9 +226,9 @@
         }
        },
        {
-        "id": "r2-priority-high",
+        "id": "R2-priority-high",
         "requirement": "R2",
-        "description": "The backend issue titled \"Add CSV export\" has priority high.",
+        "description": "The backend issue titled \"Add CSV export\" has priority \"high\".",
         "assert": {
          "kind": "value",
          "source": {
@@ -249,8 +246,7 @@
             ],
             "properties": {
              "title": {
-              "type": "string",
-              "pattern": "^\\s*Add CSV export\\s*$"
+              "const": "Add CSV export"
              },
              "priority": {
               "const": "high"
@@ -266,9 +262,9 @@
     }
    ],
    "usage": {
-    "inputTokens": 16684,
-    "outputTokens": 482,
-    "cacheReadTokens": 16144,
+    "inputTokens": 16817,
+    "outputTokens": 426,
+    "cacheReadTokens": 16277,
     "cacheWriteTokens": 538
    },
    "model": "claude-opus-5-5"

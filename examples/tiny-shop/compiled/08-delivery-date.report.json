@@ -7,27 +7,26 @@
   ],
   "turns": {
     "rubric": 1,
-    "discovery": 3
+    "discovery": 5
   },
   "usage": {
-    "inputTokens": 54452,
-    "outputTokens": 2100,
-    "cacheReadTokens": 34707,
-    "cacheWriteTokens": 19733
+    "inputTokens": 94918,
+    "outputTokens": 3009,
+    "cacheReadTokens": 72773,
+    "cacheWriteTokens": 22129
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "the confirmation shows an estimated delivery of 5 November 2026",
       "checks": [
-        "r1-confirmation-page",
-        "r1-delivery-date-shown",
-        "r1-delivery-date-backend"
+        "r1-delivery-date",
+        "r1-confirmation-page"
       ],
       "channels": [
+        "text",
         "url",
-        "probe",
-        "text"
+        "probe"
       ],
       "trust": "structured"
     },
@@ -36,8 +35,7 @@
       "quote": "Place an order for my cart",
       "checks": [
         "r2-order-request",
-        "r2-order-items-match-cart",
-        "r2-order-qty-match-cart"
+        "r2-order-items-match-cart"
       ],
       "channels": [
         "network",
@@ -49,19 +47,16 @@
       "requirement": "R3",
       "quote": "with express shipping",
       "checks": [
-        "r3-express-backend",
-        "r3-express-request"
+        "r3-express-shipping"
       ],
       "channels": [
-        "probe",
-        "network"
+        "probe"
       ],
       "trust": "structured"
     }
   ],
   "warnings": [
-    "check r1-delivery-date-shown: reads free page text, which is the easiest evidence to spoof; prefer a11y, network or probe evidence",
-    "requirement R3: its value checks abstain when no request matches; add a \"request\" check so a missing request fails"
+    "check r1-delivery-date: reads free page text, which is the easiest evidence to spoof; prefer a11y, network or probe evidence"
   ],
   "references": [
     {

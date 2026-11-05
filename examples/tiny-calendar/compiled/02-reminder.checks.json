@@ -10,7 +10,7 @@
     {
       "id": "R1",
       "kind": "hard",
-      "text": "An event titled \"Yoga\" exists.",
+      "text": "An event named \"Yoga\" exists.",
       "source": {
         "field": "outcomes",
         "quote": "Then an event \"Yoga\" exists"
@@ -39,7 +39,7 @@
     {
       "id": "r1-yoga-exists",
       "requirement": "R1",
-      "description": "The backend events list contains an event titled \"Yoga\" on 2026-11-07 at 08:00.",
+      "description": "The backend events list contains an event titled exactly \"Yoga\" on 2026-11-07 at 08:00.",
       "assert": {
         "kind": "value",
         "source": {
@@ -64,8 +64,7 @@
                   "const": "2026-11-07"
                 },
                 "time": {
-                  "type": "string",
-                  "pattern": "^08:00(:00)?$"
+                  "const": "08:00"
                 }
               }
             }
@@ -76,7 +75,7 @@
     {
       "id": "r2-yoga-reminder",
       "requirement": "R2",
-      "description": "The Yoga event on 2026-11-07 at 08:00 has reminder set to true in the backend.",
+      "description": "The backend Yoga event on 2026-11-07 at 08:00 has reminder set to true.",
       "assert": {
         "kind": "value",
         "source": {
@@ -102,8 +101,7 @@
                   "const": "2026-11-07"
                 },
                 "time": {
-                  "type": "string",
-                  "pattern": "^08:00(:00)?$"
+                  "const": "08:00"
                 },
                 "reminder": {
                   "const": true
@@ -117,7 +115,7 @@
     {
       "id": "r3-yoga-datetime",
       "requirement": "R3",
-      "description": "The Yoga event stored in the backend is dated 2026-11-07 with time 08:00.",
+      "description": "The backend Yoga event is stored with date 2026-11-07 and time 08:00.",
       "assert": {
         "kind": "value",
         "source": {
@@ -142,8 +140,7 @@
                   "const": "2026-11-07"
                 },
                 "time": {
-                  "type": "string",
-                  "pattern": "^08:00(:00)?$"
+                  "const": "08:00"
                 }
               }
             }
@@ -158,6 +155,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T06:56:00.699Z"
+    "at": "2026-11-05T07:43:18.623Z"
   }
 }

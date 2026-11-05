@@ -10,18 +10,18 @@
     "discovery": 4
   },
   "usage": {
-    "inputTokens": 74518,
-    "outputTokens": 3722,
-    "cacheReadTokens": 53139,
-    "cacheWriteTokens": 21365
+    "inputTokens": 74870,
+    "outputTokens": 2974,
+    "cacheReadTokens": 53709,
+    "cacheWriteTokens": 21147
   },
   "coverage": [
     {
       "requirement": "R1",
-      "quote": "an order is placed",
+      "quote": "Then an order is placed",
       "checks": [
-        "R1-order-request",
-        "R1-order-placed-probe"
+        "order-placed-request",
+        "order-placed-probe"
       ],
       "channels": [
         "network",
@@ -31,9 +31,9 @@
     },
     {
       "requirement": "R2",
-      "quote": "the order ships express",
+      "quote": "Then the order ships express",
       "checks": [
-        "R2-express"
+        "order-express-probe"
       ],
       "channels": [
         "probe"
@@ -42,16 +42,15 @@
     },
     {
       "requirement": "R3",
-      "quote": "the order confirmation is shown",
+      "quote": "Then the order confirmation is shown",
       "checks": [
-        "R3-url",
-        "R3-heading",
-        "R3-order-number"
+        "confirmation-page",
+        "confirmation-shows-latest-order"
       ],
       "channels": [
         "url",
-        "probe",
-        "a11y"
+        "a11y",
+        "probe"
       ],
       "trust": "structured"
     },
@@ -59,7 +58,7 @@
       "requirement": "R4",
       "quote": "in the name of Ada Lovelace",
       "checks": [
-        "R4-name"
+        "order-name-probe"
       ],
       "channels": [
         "probe"
@@ -70,8 +69,7 @@
       "requirement": "R5",
       "quote": "Order what is in my cart",
       "checks": [
-        "R5-items-sku",
-        "R5-items-qty"
+        "order-items-match-cart"
       ],
       "channels": [
         "probe"

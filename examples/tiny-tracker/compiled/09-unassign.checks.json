@@ -19,7 +19,7 @@
   ],
   "checks": [
     {
-      "id": "issue2-unassigned-backend",
+      "id": "issue2-unassigned-probe",
       "requirement": "R1",
       "description": "The backend issues probe shows issue #2 with no assignee (null or empty).",
       "assert": {
@@ -33,24 +33,21 @@
             "type": "array",
             "contains": {
               "type": "object",
+              "required": [
+                "id",
+                "assignee"
+              ],
               "properties": {
                 "id": {
                   "const": 2
                 },
                 "assignee": {
-                  "anyOf": [
-                    {
-                      "type": "null"
-                    },
-                    {
-                      "const": ""
-                    }
+                  "enum": [
+                    null,
+                    ""
                   ]
                 }
-              },
-              "required": [
-                "id"
-              ]
+              }
             }
           }
         }
@@ -63,6 +60,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T06:56:56.003Z"
+    "at": "2026-11-05T07:44:30.092Z"
   }
 }

@@ -1,21 +1,21 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T06:57:25.855Z",
+ "recordedAt": "2026-11-05T07:44:35.843Z",
  "turns": {
   "sha256:66a05c7441ee8f58428d0776c59271753090005beca2842d97ffb4dbf1e056d0": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01CRP9vbJGahPacemSYmpgvL",
+     "id": "toolu_017StUzdkjijeFyJkqxamxmU",
      "name": "submit_rubric",
      "input": {
       "requirements": [
        {
         "id": "R1",
         "kind": "hard",
-        "text": "The Dentist event's name is \"Dentist (Dr. Lee)\".",
+        "text": "The Dentist event has been renamed to \"Dentist (Dr. Lee)\".",
         "field": "outcomes",
         "quote": "the Dentist event is called \"Dentist (Dr. Lee)\""
        }
@@ -26,7 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01CRP9vbJGahPacemSYmpgvL",
+     "id": "toolu_017StUzdkjijeFyJkqxamxmU",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -36,7 +36,7 @@
        {
         "id": "R1",
         "kind": "hard",
-        "text": "The Dentist event's name is \"Dentist (Dr. Lee)\".",
+        "text": "The Dentist event has been renamed to \"Dentist (Dr. Lee)\".",
         "field": "outcomes",
         "quote": "the Dentist event is called \"Dentist (Dr. Lee)\""
        }
@@ -46,23 +46,23 @@
    ],
    "usage": {
     "inputTokens": 1141,
-    "outputTokens": 136,
+    "outputTokens": 139,
     "cacheReadTokens": 0,
     "cacheWriteTokens": 1137
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:2835c2343ccd727733f6c22220dbd329092c4ab2bf585297b1457b0bbd2f75f6": {
+  "sha256:6165d03ea31a1c9224e01ad64161e09770b516d3f5e4e0b66b68f9bdca92b525": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_019NiESaQvmQu24ncnKBwWLJ",
+     "id": "toolu_01NC3rUae5cXfhnw6hN9WYKu",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01Mn2gQ6ZkLhDUeGVVctaynk",
+     "id": "toolu_01UX32zTvbynHFcxxHtJV51T",
      "name": "network_log",
      "input": {}
     }
@@ -70,7 +70,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_019NiESaQvmQu24ncnKBwWLJ",
+     "id": "toolu_01NC3rUae5cXfhnw6hN9WYKu",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -79,7 +79,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Mn2gQ6ZkLhDUeGVVctaynk",
+     "id": "toolu_01UX32zTvbynHFcxxHtJV51T",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -88,26 +88,26 @@
     }
    ],
    "usage": {
-    "inputTokens": 16148,
+    "inputTokens": 16284,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16144
+    "cacheWriteTokens": 16280
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:6cb047882f69ddb00a7a9eed5fad294b3493f5442d90a22eb31047728a1fef5a": {
+  "sha256:224d7f3388959eba98784f43476e09e207cb928ea175bcb417b5e1baf6bb9789": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01L5nU8swdD9SVEpeGdMb7tR",
+     "id": "toolu_015AxSwtiDNn7fvKP5DTNCgz",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "r1-dentist-renamed-probe",
+        "id": "dentist-renamed-backend",
         "requirement": "R1",
-        "description": "The backend events list contains the Dentist event (id 2) with title exactly \"Dentist (Dr. Lee)\".",
+        "description": "The backend events list holds the Dentist event (id 2) with title exactly \"Dentist (Dr. Lee)\".",
         "assert": {
          "kind": "value",
          "source": {
@@ -119,6 +119,10 @@
            "type": "array",
            "contains": {
             "type": "object",
+            "required": [
+             "id",
+             "title"
+            ],
             "properties": {
              "id": {
               "const": 2
@@ -126,11 +130,7 @@
              "title": {
               "const": "Dentist (Dr. Lee)"
              }
-            },
-            "required": [
-             "id",
-             "title"
-            ]
+            }
            }
           }
          }
@@ -144,11 +144,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS2wgKEAgTGAI4AUIIdGhpbmtpbmcSDGuYvSLDMvJIRbM3zBoMhV5f7nHy8f1XKejCIjAH06Q/kpjDFSqQb2O6E5Pk3CCQX/rm8DONDcboSX2yo1FBbm1A7KRLAoo5Drk4rmQq+Acd58L1PONodXTuuPTPgkdQqOnVUEUmygp+LkXYm7zEubN8MqSEwbzB7+okhkc/pWHwksd3CyXlFp61kpu5XiIqNZGrkg+MEbQGqi7ThoiPibV/D+3tz5butUcUOQhVfuwQ4mL9cntVjP7p3FB6++hOPxzj1rRihovd9Wy3wdiz58FcLQ31rNvLFUMm8G8i0LOWrgpQTHHTBWBk9UWfl4snF6vAsrEWCxpR+/ObgwDErQoL94qEeixMBhrY83kO/vC87QUog3/gCp1C/yKJB9Bv219//Sr4NSlH4ElXHsUXSoQ5sZ/he73LOBXw0f0HTDwVeA5eXrO1Q5+CspCynqi9aCwwvml3yW7sMDdL6OZPjejcTetcL7dSYTOGeVNVxHuCcqr6zfOzma5MubWtGdHM0L4vtSb0y8P8SBXtK+keS11m51e6n/o0lQz7Wjbi8Ry2iG1F1jrqN13bw83ntfQbs+HvrTEYsLqWtpYfDOM0goj4L4GxJw8wfBhOGziazvIm5mQ4eETHhkF+t/TCYmodzCzI+vsCp82gwUDwgEO6GoIxvQ9rvd26k0qcOHtcNltHH9MVG9ckLTdUI/pcUzGECqQq2PZn9TYaLu2+spnBfqcTXZhCR5pJVWvHMeObYyNqJ0nC4rEmqOVoyoEFNd/53Iv+w2C7aM7U3rnJ2WtMh2XUIhRu8VDH/VHi0F4v80MQz4fumYobvZMpJhHm2xzNZ+j/oAEBqpmpIR8Iz4c1nYbB5WxZ5ye4UCon6iG/YNZ3MTttwNFy7G55gxLZywGqPs0gm6MleRqE2lPvnoS0ZD0+OlY9SE7PgDsDJVtjU5cwcwkXBfmRmXFeZHuOt9RLe8x8Dq8KoRVPi6itTpC0W7XEQ7uIMSyEUfmLzMX+7gTQqhkUnW1/ouvvzpGGptg+8y57i7HMEml/EcuwKeX/km6f5cnvfLfOMVWRlg9uO5ragFHhqtjX7a1dnwCFoxUJdBtZxN5XnAcioDGYHb7cR39lm6SIu89pyhjETzPGoP0gVuriVGNypyNBDVOVDK4+24QZW7eT2Q153D2V+U3H0jgIlBPChC+X2CsZgEBAT4HhFOemt6bVJQ5swKPcZpN+XNNE7FhANbOtAX3X/C5R5lVAaHpXslGkX4BB398VmZr0Wz0tnoa/UqXzBHKjigVi7aFLhsHeux2rx+cIaXZuEUQQWi8yjCWXdpNBZG/kSBz9EL1DoEDWF+CWXrSFh6p+Ney4sS6eeTCMZNk3ZguWrAu1HEpjoNy5/LM1fSPPBJue0bRMAs71E4QGsuC98pbPVBRjY/63BlK9Lo92kcrRebbrJa86737HGCv/ajXn5b+zB4VEFE292BgB"
+     "signature": "CAQSgwgKEAgTGAI4AUIIdGhpbmtpbmcSDB00v8JadhjpoovtchoMD6JHiy4RPduCEh93IjCAXkEEqGCR7D4xkpdLLrosJ5T2TYoZwxOk8a/24/8G8Hb2+lh70N1juzLwjWgsD4QqoAdCQvyYbNGcKGjbia+OhxWhWnd/tlN0pC24ev3yp9Ct0azbVdCq4B48V9eJ9gv3PSUG0MXcIaGqDrExasq+RSIZFC5gDLHCce/7N8Q+rfU7NGPx0P2haRUx225FwWRhsy5qUQJUVLEoRQrjUPk8eB6COnYd/8Z7f34Iq/2k0Dl2VQpnOVGm3TVkSznrljavzTxIXCBPORXSvRRaM32DxXVb5E/dRgpwECk3kjuE56jX2OZY3PpqolFqIr0Q/ClVUWD97642GAHOLcrDN4wTjMyEGWxudYrqCICBSNVZ47T/SJekjfZLiPgPhSUcjjHhDzAZA/vVFYwL7G7lgre8NlfiohcR9iuS2akz1CuvCKgFuqpMgKVXZD8BWIV2Z4FuK4kqWnExidyil/ndBM3nsuGzAtj/buCl2ayui46v4k3aTIb0yQnQDO0Kt/3a6Sex4oZAtiI5C9mbfVRziC1BOrMns0aT7/oKmZ9bvCfJYRfgTfBGnDohOwtxM3cG0xiOhnsh5t27cgt/eODiOShR95EqqThA7OPEqiygYJf67ZMR+I+OhCrQvILIESKFMpINPcQ3jq+XrJUjY2BUqEN2xHYTuWyzkAsbFiguqXkKobS35lWiywHIzROyV9yGARnVQdMfGhpd4EhS5XZkQ1slJWYumjeaIxfLJ6OhafGHu4/1IUCjzLfzzY4eeBrwdjlQQRfRhyTlDVk4AYESn3PHQXGGSpZNJDx6RnDJ55gElA4YaXAlpDeatuoWpWY6WwbmcUCp7pSOpXDf/NnSRHZ9XcEWY985Dl0LRTYSo2l5y57imd4gz+JMUswui3y5HhdVfE17HUF1zb71xmJiuk4+FGq2C4D/nsADXludRZn13yuTjGv6mkWODrnzcaw/scExL71bnbHW3CKdgAFHE/egH0HYy3HK5J+dXsHZc86x9c3HgPmddbce0i/mUniIhFP8D8bkB0qHEhSSC0/YWz0YQOo8hrHHJ0eoJ2yzSx1gN2wG+x3k/sOD9TMU+Jf0Qeqx1zmoItztuNZy7HTSwxD4i8I02cponXY2qvqTniH+gH5nknFJWk7m6iOUekTToAMMnQo9ka6vG3MVk5Nzk1b+qnYaa0diMY3JLEm0apdW+RSDLwYhEAUlLuaE2CDXT6MwK0l/5lFRQqGtBYJAHKAAAtrVVsKSbdoMGTCJs2YIrBqICafyKq5zdYj6Xu+NmSJTCFsIE60xrDujGweLicLHysLFGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01L5nU8swdD9SVEpeGdMb7tR",
+     "id": "toolu_015AxSwtiDNn7fvKP5DTNCgz",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -156,9 +156,9 @@
      "input": {
       "checks": [
        {
-        "id": "r1-dentist-renamed-probe",
+        "id": "dentist-renamed-backend",
         "requirement": "R1",
-        "description": "The backend events list contains the Dentist event (id 2) with title exactly \"Dentist (Dr. Lee)\".",
+        "description": "The backend events list holds the Dentist event (id 2) with title exactly \"Dentist (Dr. Lee)\".",
         "assert": {
          "kind": "value",
          "source": {
@@ -170,6 +170,10 @@
            "type": "array",
            "contains": {
             "type": "object",
+            "required": [
+             "id",
+             "title"
+            ],
             "properties": {
              "id": {
               "const": 2
@@ -177,11 +181,7 @@
              "title": {
               "const": "Dentist (Dr. Lee)"
              }
-            },
-            "required": [
-             "id",
-             "title"
-            ]
+            }
            }
           }
          }
@@ -192,9 +192,9 @@
     }
    ],
    "usage": {
-    "inputTokens": 16707,
-    "outputTokens": 399,
-    "cacheReadTokens": 16144,
+    "inputTokens": 16843,
+    "outputTokens": 368,
+    "cacheReadTokens": 16280,
     "cacheWriteTokens": 561
    },
    "model": "claude-opus-5-5"
