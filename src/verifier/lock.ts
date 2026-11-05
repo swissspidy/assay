@@ -149,6 +149,8 @@ export function reviewSheet(cs: CheckSet): string {
       lines.push(`- **${c.id}** ${description}`, `  - tests: ${describeAssertion(c.assert)}`);
       if (c.onFail)
         lines.push(`  - on fail: ${c.onFail === 'escalate' ? 'escalate to the verifier' : 'keep the failure'}`);
+      if (c.onMissing === 'abstain')
+        lines.push('  - on missing route evidence: abstain (the run may have done it another way)');
     }
   }
   const lock = (cs as CheckSet & { locked?: Lock }).locked;

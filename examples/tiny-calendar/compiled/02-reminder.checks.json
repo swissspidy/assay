@@ -46,9 +46,9 @@
   ],
   "checks": [
     {
-      "id": "R1-yoga-exists",
+      "id": "yoga-exists",
       "requirement": "R1",
-      "description": "The backend events list contains an event titled exactly \"Yoga\".",
+      "description": "The events probe contains an event titled exactly \"Yoga\" on 2026-11-07 at 08:00.",
       "assert": {
         "kind": "value",
         "source": {
@@ -61,11 +61,19 @@
             "contains": {
               "type": "object",
               "required": [
-                "title"
+                "title",
+                "date",
+                "time"
               ],
               "properties": {
                 "title": {
                   "const": "Yoga"
+                },
+                "date": {
+                  "const": "2026-11-07"
+                },
+                "time": {
+                  "const": "08:00"
                 }
               }
             }
@@ -74,7 +82,7 @@
       }
     },
     {
-      "id": "R2-yoga-reminder",
+      "id": "yoga-reminder",
       "requirement": "R2",
       "description": "The stored Yoga event on 2026-11-07 at 08:00 has reminder set to true.",
       "assert": {
@@ -114,9 +122,9 @@
       }
     },
     {
-      "id": "R3-yoga-date",
+      "id": "yoga-date",
       "requirement": "R3",
-      "description": "The stored Yoga event is dated 2026-11-07 (selected together with its 08:00 time).",
+      "description": "The stored Yoga event is dated 2026-11-07 (at 08:00).",
       "assert": {
         "kind": "value",
         "source": {
@@ -150,7 +158,7 @@
       }
     },
     {
-      "id": "R4-yoga-time",
+      "id": "yoga-time",
       "requirement": "R4",
       "description": "The stored Yoga event on 2026-11-07 starts at 08:00.",
       "assert": {
@@ -192,6 +200,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T11:33:52.576Z"
+    "at": "2026-11-05T21:11:23.187Z"
   }
 }

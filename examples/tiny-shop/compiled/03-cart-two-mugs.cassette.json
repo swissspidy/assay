@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T11:29:12.867Z",
  "turns": {
   "sha256:cae38a6084c19f0a4be420cde405c4e0f5111201f7364d46f1ef263fa5190385": {
    "stop": "tool_use",
@@ -85,22 +84,22 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:b9d39f1c1861ca2cbcf03d06a8364908f1b7b624dd0bc0d1707b2aa51f5c7c00": {
+  "sha256:3a9d164db2fc0516d50512eb46c761f3a173f19db6f15164078255530b323b80": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01985jrF83pJnMHg8zzrenQ7",
+     "id": "toolu_0111tHNHSZ8nQDmjALYgwpBj",
      "name": "page_outline",
      "input": {}
     },
     {
-     "id": "toolu_01SeEee4D25UY3T9zr7p8BRC",
+     "id": "toolu_01RqwtvE9aZ99qfYo8DdYbMs",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01AuFhsvzdMFtppBPX2kESBV",
+     "id": "toolu_014P75zdeLgbR1aVdNoNDJEq",
      "name": "network_log",
      "input": {}
     }
@@ -108,7 +107,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01985jrF83pJnMHg8zzrenQ7",
+     "id": "toolu_0111tHNHSZ8nQDmjALYgwpBj",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -117,7 +116,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01SeEee4D25UY3T9zr7p8BRC",
+     "id": "toolu_01RqwtvE9aZ99qfYo8DdYbMs",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -126,7 +125,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01AuFhsvzdMFtppBPX2kESBV",
+     "id": "toolu_014P75zdeLgbR1aVdNoNDJEq",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -135,29 +134,276 @@
     }
    ],
    "usage": {
-    "inputTokens": 17885,
+    "inputTokens": 18894,
     "outputTokens": 72,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 17881
+    "cacheWriteTokens": 18890
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:c3330543d31a2168d152f9c6baa860a00b0d573ee3762072c622376b3aad9b56": {
+  "sha256:1196a98476d6c6360adbe976cfd68fc143c4bb662fd08625e257b753c365472c": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01U5gZTwKC69k3gnZw89GS5p",
+     "id": "toolu_01VQ43iFusGsZkGt9Z5WPwrr",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "allOf",
+       "of": [
+        {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/items"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "sku",
+             "qty"
+            ],
+            "properties": {
+             "sku": {
+              "const": "MUG-BLUE"
+             },
+             "qty": {
+              "type": "number",
+              "minimum": 1
+             }
+            }
+           }
+          }
+         }
+        },
+        {
+         "kind": "contains",
+         "scope": {
+          "anchors": [
+           {
+            "role": "table",
+            "name": "Cart"
+           },
+           {
+            "role": "table",
+            "landmark": {
+             "role": "main"
+            }
+           }
+          ]
+         },
+         "match": {
+          "role": "cell",
+          "name": {
+           "equals": "Blue Mug"
+          },
+          "column": "Product"
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "id": "toolu_017WB54RRB4Qp6xcAHp8sEud",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "allOf",
+       "of": [
+        {
+         "kind": "url",
+         "match": {
+          "path": "/cart"
+         }
+        },
+        {
+         "kind": "contains",
+         "scope": {
+          "role": "main"
+         },
+         "match": {
+          "role": "heading",
+          "name": {
+           "contains": "cart",
+           "ignoreCase": true
+          },
+          "level": 1
+         }
+        }
+       ]
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS8QcKEAgTGAI4AUIIdGhpbmtpbmcSDCWpsBXZbg7fk8qPNxoMAdkZp3DhAPBqCRyvIjDRA+JCH0cvU1hg957YFHeNMTS904Lf96QnHspfvZjwNMoFqqKqR3EKJ4TaHIiUVxAqjgcw2HzhG9R1CTZBPhXVlUejoiUijKgxTIHDn5RvhvubYYVtYE9cAyjo3qALg7FtkVGP1qqX+sb/KqwkgJ8seo1nR3NNK86iMmDF6Src+Pe+0yZzTYn4zfqIdEjrp0TTcw479XujdIKnO7tBvKEj+EB5Qtwc9XqUSURq/mqXItGVNTuDLHnxhC5bvhoz8gQgzRVeDYj0vonR0it/ER/E5lY94/XI1LkXAZjvrFU7CaNYrPqKbUkCpixQjo9Lpc8ZLwQ5M/newZRWppzpk3cwwy0HHPfx5v96f2D/xMkC2klRVnNkBKN8mET/ywu/zEj95l1OxY7t1XUWnOZN05sH3F/ntAh6jL+2r4Tx5PUOMPh2BWF0zgrU1cLTUPWA6HNSQVWcYLYIxoThk01LQh30LmuaoANOMYHY4omthnZYzogw2rvPH0P3xH1JtA1Mr+GSW/lJyozH72kvSxx8rqU0bAFbl4ZVXOkhbGh8qReSbJHj9unIGhoF2Nay/6tLRhqwFq+JdvEDxlNQbc2P0i6nfHywdAxeImbyZLkcqo3BEkRs49o/m5zbqTUdIP4WxADSN0svkx6k/jIslO8gGfKdvznkmQNe5p1ZD40edly9u5SovgoT/DswdhpMe4aZaT5dHBj1RdV+djWPyrCS4Z/nVtPt5vfpqXgPZIbqCzGeX9AMX4x1WAI4orYwsBZkIPm7GdufNJCH8ERWzbJDqoYXaruZrVyT9s/J7M+sIzNe7X+b62BueBrEg+ZaBVvyo+99SAeo27cbTzFTaaYpRWsDD+NfregakvgUGr6GzFwgjuPATERBP5xPtAK/DbfWH7KvP9AI9t4tqZ/gXGsja1Ba22/ZEnoHRZUYQe0ccZBWsaDC+ZCc+4/t642NudNHXTQIc6w3jUdOi1Pb7+j672EDuDDmLHhgQk1jRD4nD9+4HpoIkr3d36uVrgJ5sJRM3itb1Q7bjuhK4q4NBaM8g1+kdsXY1xaSYWZaoI4COoIMR4h/a7mVslD7Ppm1qYdOaUzMbVAh+kZDV4v1b/IyucaXy/8ic1/57dGjIGxRcn6Eb+waJDnOriAyT7J5lunGfBNzgzNCIhkQsQzt6KhvE8eewtf795kWaHXGg7Hg9tax5Fwss9nMQBjr4btA3YP2nPJOH6GnCnlxCZ91Wb8XKWnqFLzwcH2xojbwqsEMB9x7WMWWdNumtHtRGTtY3E6ZAalEGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01VQ43iFusGsZkGt9Z5WPwrr",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "allOf",
+       "of": [
+        {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/items"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "sku",
+             "qty"
+            ],
+            "properties": {
+             "sku": {
+              "const": "MUG-BLUE"
+             },
+             "qty": {
+              "type": "number",
+              "minimum": 1
+             }
+            }
+           }
+          }
+         }
+        },
+        {
+         "kind": "contains",
+         "scope": {
+          "anchors": [
+           {
+            "role": "table",
+            "name": "Cart"
+           },
+           {
+            "role": "table",
+            "landmark": {
+             "role": "main"
+            }
+           }
+          ]
+         },
+         "match": {
+          "role": "cell",
+          "name": {
+           "equals": "Blue Mug"
+          },
+          "column": "Product"
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_017WB54RRB4Qp6xcAHp8sEud",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "allOf",
+       "of": [
+        {
+         "kind": "url",
+         "match": {
+          "path": "/cart"
+         }
+        },
+        {
+         "kind": "contains",
+         "scope": {
+          "role": "main"
+         },
+         "match": {
+          "role": "heading",
+          "name": {
+           "contains": "cart",
+           "ignoreCase": true
+          },
+          "level": 1
+         }
+        }
+       ]
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 19973,
+    "outputTokens": 547,
+    "cacheReadTokens": 18890,
+    "cacheWriteTokens": 1081
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:79d5c22def446037fe16ea45f814bcdd7ff95c356dcd9ba1276480c1bb0310ec": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HRsG5B4ide4BEqvpYjbvWG",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "R1-blue-mug-listed",
+        "id": "R1-blue-mug",
         "requirement": "R1",
-        "description": "On the /cart page the Cart table has a row whose Product cell is Blue Mug, and the backend cart holds a Blue Mug item.",
+        "description": "The backend cart holds a Blue Mug (MUG-BLUE, qty ≥1) and the cart page (/cart) shows a Blue Mug row in its Cart table.",
         "assert": {
          "kind": "allOf",
          "of": [
+          {
+           "kind": "value",
+           "source": {
+            "from": "probe",
+            "probe": "cart",
+            "pointer": "/items"
+           },
+           "expect": {
+            "schema": {
+             "type": "array",
+             "contains": {
+              "type": "object",
+              "required": [
+               "sku",
+               "qty"
+              ],
+              "properties": {
+               "sku": {
+                "const": "MUG-BLUE"
+               },
+               "qty": {
+                "type": "number",
+                "minimum": 1
+               }
+              }
+             }
+            }
+           }
+          },
           {
            "kind": "url",
            "match": {
@@ -182,44 +428,51 @@
            },
            "match": {
             "role": "cell",
-            "name": "Blue Mug",
+            "name": {
+             "equals": "Blue Mug"
+            },
             "column": "Product"
-           }
-          },
-          {
-           "kind": "value",
-           "source": {
-            "from": "probe",
-            "probe": "cart",
-            "pointer": "/items"
-           },
-           "expect": {
-            "schema": {
-             "type": "array",
-             "contains": {
-              "type": "object",
-              "properties": {
-               "sku": {
-                "const": "MUG-BLUE"
-               }
-              },
-              "required": [
-               "sku"
-              ]
-             }
-            }
            }
           }
          ]
         }
        },
        {
-        "id": "R2-red-mug-listed",
+        "id": "R2-red-mug",
         "requirement": "R2",
-        "description": "On the /cart page the Cart table has a row whose Product cell is Red Mug, and the backend cart holds a Red Mug item.",
+        "description": "The backend cart holds a Red Mug (MUG-RED, qty ≥1) and the cart page (/cart) shows a Red Mug row in its Cart table.",
         "assert": {
          "kind": "allOf",
          "of": [
+          {
+           "kind": "value",
+           "source": {
+            "from": "probe",
+            "probe": "cart",
+            "pointer": "/items"
+           },
+           "expect": {
+            "schema": {
+             "type": "array",
+             "contains": {
+              "type": "object",
+              "required": [
+               "sku",
+               "qty"
+              ],
+              "properties": {
+               "sku": {
+                "const": "MUG-RED"
+               },
+               "qty": {
+                "type": "number",
+                "minimum": 1
+               }
+              }
+             }
+            }
+           }
+          },
           {
            "kind": "url",
            "match": {
@@ -244,32 +497,10 @@
            },
            "match": {
             "role": "cell",
-            "name": "Red Mug",
+            "name": {
+             "equals": "Red Mug"
+            },
             "column": "Product"
-           }
-          },
-          {
-           "kind": "value",
-           "source": {
-            "from": "probe",
-            "probe": "cart",
-            "pointer": "/items"
-           },
-           "expect": {
-            "schema": {
-             "type": "array",
-             "contains": {
-              "type": "object",
-              "properties": {
-               "sku": {
-                "const": "MUG-RED"
-               }
-              },
-              "required": [
-               "sku"
-              ]
-             }
-            }
            }
           }
          ]
@@ -278,7 +509,7 @@
        {
         "id": "R3-cart-shown",
         "requirement": "R3",
-        "description": "The final page is the cart page (URL path /cart) showing the 'Your cart' heading.",
+        "description": "The final page is the cart page: URL path /cart with a 'Your cart' level-1 heading.",
         "assert": {
          "kind": "allOf",
          "of": [
@@ -313,11 +544,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS1AcKEAgTGAI4AUIIdGhpbmtpbmcSDInimvS/3LPeJuDclBoM49nM9Uj0n2XRAOXlIjDVHTcb4YgKLfpcpEpX42Mr7WATIVS2t3oGq9lCKEYDVOXhWcBtuw+2S2QZ+oJ/UQYq8QYAw4x9hm9ej6b1DVnfeVQIJmyG74de5N6NkHYRpzcq90sMyRxtQ6xCum6bQvTjy1hOlewnlVOxmTNeJDQh9o44XgmPFjAWaGMysGukIA+gdGQvlNJixo/9o36XHxD8ymkXP9zEenFDvm2Nz9We93yVVg7e8Y7zxn2J+p90VobNHlyG7hDw0P/TsBSsPQD/OBtwhdMQ+HY1HREMFqiQ+Elp/HozcF4oU1PfBd5dus2l3fa6aJxH7f+eHjpGjKkhYPa0MLT7pPw8dpQFvvp8ySWIpQArsYYceaPUsWG1Xnn33IQMWM4NckuPniOUxgx9Es7dtiOA62xnib0P6XAwrt77wsqYVplc6IJ105vjbjr7OfAS73HO1e52TktT6GKNEMZ/gu2WrYAV+HDZCm8e9b5PhZGfOZL8oGzn5RXL09wYIyB38KhMy9ZYMfH3ckxLREhEZ269FIFtJb1YQegcHiDWpemAyvKhtxKeC7/fG0RzeSJyFGyBtZgJJgHPeBFp8h+6dUEeOnlF0ZN8MhWwPPt+Swjj+t01kIwXK9e2aIh3eL0wzzmWgXXeGydrF2+nwnNxpsOHildSInU3CI5l6dEmwWdrNGjFkOLshDrKWIJYqpW6kPOE0hjC9xM0wk0HGls2gf1PCNHDVlIZsJv8TnlFUtxlqU9d7TsmZnVIu1zPp02jDPGtugul9gkX9pv6j2MQPkdPb0o2An6dS2DvazFn+sdnTVEhY7c9pdbZUurFt1wH6euomNYb/TrYVVrJA9KCz30nSQnbeqeAWh21DAIcCCtFfZgB32TRPILCJaZn/+Kc+hCSiRxTKN55cuN3HRGc30kibTy68ixWoC8Sx8zTr1wz7iBlszstx+u/mRclFX+MiWIBBpRkl5QTUIeMY2IJ9IsljidoRx6lkbr9xCrVoAkmSBt9ffWjCjmTWP8XWV6ksELYkJipnTk5rWMvG2hg1uqSiqnBMbPeGefOurigOMuM7FZjNjc77B8PFfiV28JTHoSRFaqCTxkJWsApb2nM73CVCErUK+r3vQG3kTV+wZVXJuFXGUXEyTNo6XPZcmG4ofiE6F0D8472ZWp85PqQQf9r2vfjSNA9yHhOGlfN1bFDyw5zDuzoAOXsAay+Fr5uN5vuSM/RqYmfUM7tutRbCXXjNT/DMZumE1lScHHFfBgB"
+     "signature": "CAQS8wYKEAgTGAI4AUIIdGhpbmtpbmcSDNEcX9YetNWAgpVLdBoMDjALSx3ty8/H/i1JIjBMmb/ZISp+Ea7+FNkOufIrYXUKiAxkU8pLapFrOxT71/ZDrdfNu+EoYoOv0MDxCvkqkAYT11/sumDeDpZyH9dBop1q3J/QRrLNjPzLXU9u9MqEqbh6f1vsNlD8SQmDdj/gPYypfGeISafT2vlYrUd3e1j/gmTIiWc+JQdkEWDI9L80VoTwkfS1mG34helD197xlWxuBHNjFb9WWitn634Y7wPI3xHSBvrw09gvV1qE32H7Li41EqZVQ+lfRDF6YSwFXuOHvUESNGVG4f8O7uPG3aKA4AmggVwQFo1muSeVgfHgmwvBD98Q5mbEPTtdw0zydZRpGBhvYlID8PQvG2PH30FPTZuAetUTu1x4pqMbKYGjMS+2YArt9ygCSjMJAzW+sNgue5sGEhzntFaZc+IWOqatrfHWlW+/lmmBBOOK74F8hZjdX3vMe+3CkQUOeFr7nWjrbtboWIIXAPYtbixboEKMbeOqgZZMWsj2gmGuF6b7NhF+e8AfOHKQYQjd9hyywg4x0RUkMAFOYGoVF6ireK9VNuPKD7NKgAGd4Kzyi6tmxoEmNadAe3S/bJaJpySHV4r3PgsJqDQdu0tQkFKTvpxhJMOrAGHBCw9gvFA7FNgVIeWBvwov413XcvRwL3qaKtiUOF6zLFx+0TsySLlaygfo2Y/uvPLoMUFsLY6g5pnj+lYPmAqbAS5fJElLn+/4FzESF0/6IVUhQ39w9VBOc/Banve9cz15pge9ec1JkMbsr5GMZ31KSxLsie1sD/nN44tuHVQ6/zAocYtGJ8vLg4Egnne6PH7VV2nIC3Uq4Mv/oWw9avg1wA3mVJWUP9jwmIr8Bp9JQCO4KdM5gCeaUe9MEdsctau8pgY33hrPxAf20pP/A+y9+kM/FrKkBU0kwLnxQKEsA1Q9FSHVcRJ/L5SvtK1yu8SyXH9rwAuks1GfLJnkLCag/G/m/qc2RBfWmJP7fjEJm8++RqzAO8hNz88v/VQYG533pXBoEyuyFOCqCR9p4IWoS8YjM0jzQdrbEHzdsXYNjKsUxiY6FuH72//nDDNob8qA55LKmZTUvuPK9VRdTXdQ6xFUuggpiICs3swYc/cHdeE3UBbtczEPGR9sGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01U5gZTwKC69k3gnZw89GS5p",
+     "id": "toolu_01HRsG5B4ide4BEqvpYjbvWG",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -325,12 +556,41 @@
      "input": {
       "checks": [
        {
-        "id": "R1-blue-mug-listed",
+        "id": "R1-blue-mug",
         "requirement": "R1",
-        "description": "On the /cart page the Cart table has a row whose Product cell is Blue Mug, and the backend cart holds a Blue Mug item.",
+        "description": "The backend cart holds a Blue Mug (MUG-BLUE, qty ≥1) and the cart page (/cart) shows a Blue Mug row in its Cart table.",
         "assert": {
          "kind": "allOf",
          "of": [
+          {
+           "kind": "value",
+           "source": {
+            "from": "probe",
+            "probe": "cart",
+            "pointer": "/items"
+           },
+           "expect": {
+            "schema": {
+             "type": "array",
+             "contains": {
+              "type": "object",
+              "required": [
+               "sku",
+               "qty"
+              ],
+              "properties": {
+               "sku": {
+                "const": "MUG-BLUE"
+               },
+               "qty": {
+                "type": "number",
+                "minimum": 1
+               }
+              }
+             }
+            }
+           }
+          },
           {
            "kind": "url",
            "match": {
@@ -355,44 +615,51 @@
            },
            "match": {
             "role": "cell",
-            "name": "Blue Mug",
+            "name": {
+             "equals": "Blue Mug"
+            },
             "column": "Product"
-           }
-          },
-          {
-           "kind": "value",
-           "source": {
-            "from": "probe",
-            "probe": "cart",
-            "pointer": "/items"
-           },
-           "expect": {
-            "schema": {
-             "type": "array",
-             "contains": {
-              "type": "object",
-              "properties": {
-               "sku": {
-                "const": "MUG-BLUE"
-               }
-              },
-              "required": [
-               "sku"
-              ]
-             }
-            }
            }
           }
          ]
         }
        },
        {
-        "id": "R2-red-mug-listed",
+        "id": "R2-red-mug",
         "requirement": "R2",
-        "description": "On the /cart page the Cart table has a row whose Product cell is Red Mug, and the backend cart holds a Red Mug item.",
+        "description": "The backend cart holds a Red Mug (MUG-RED, qty ≥1) and the cart page (/cart) shows a Red Mug row in its Cart table.",
         "assert": {
          "kind": "allOf",
          "of": [
+          {
+           "kind": "value",
+           "source": {
+            "from": "probe",
+            "probe": "cart",
+            "pointer": "/items"
+           },
+           "expect": {
+            "schema": {
+             "type": "array",
+             "contains": {
+              "type": "object",
+              "required": [
+               "sku",
+               "qty"
+              ],
+              "properties": {
+               "sku": {
+                "const": "MUG-RED"
+               },
+               "qty": {
+                "type": "number",
+                "minimum": 1
+               }
+              }
+             }
+            }
+           }
+          },
           {
            "kind": "url",
            "match": {
@@ -417,32 +684,10 @@
            },
            "match": {
             "role": "cell",
-            "name": "Red Mug",
+            "name": {
+             "equals": "Red Mug"
+            },
             "column": "Product"
-           }
-          },
-          {
-           "kind": "value",
-           "source": {
-            "from": "probe",
-            "probe": "cart",
-            "pointer": "/items"
-           },
-           "expect": {
-            "schema": {
-             "type": "array",
-             "contains": {
-              "type": "object",
-              "properties": {
-               "sku": {
-                "const": "MUG-RED"
-               }
-              },
-              "required": [
-               "sku"
-              ]
-             }
-            }
            }
           }
          ]
@@ -451,7 +696,7 @@
        {
         "id": "R3-cart-shown",
         "requirement": "R3",
-        "description": "The final page is the cart page (URL path /cart) showing the 'Your cart' heading.",
+        "description": "The final page is the cart page: URL path /cart with a 'Your cart' level-1 heading.",
         "assert": {
          "kind": "allOf",
          "of": [
@@ -483,12 +728,13 @@
     }
    ],
    "usage": {
-    "inputTokens": 18964,
-    "outputTokens": 921,
-    "cacheReadTokens": 17881,
-    "cacheWriteTokens": 1081
+    "inputTokens": 20825,
+    "outputTokens": 920,
+    "cacheReadTokens": 19971,
+    "cacheWriteTokens": 852
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:08:12.684Z"
 }

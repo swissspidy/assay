@@ -26,8 +26,16 @@ export interface RealTask {
   skipVariants?: string[];
   /** Puts the app into the task's starting state (e.g. a filled cart), signed in, before the baseline. */
   setup?(page: Page, app: RealApp): Promise<void>;
-  /** A scripted, known-correct solution: the compiler's one reference run. */
+  /** A scripted, known-correct solution: the compiler's reference run. */
   reference(page: Page, app: RealApp): Promise<void>;
+  /**
+   * Further scripted correct solutions through another UI route (the block editor instead of
+   * Quick Edit, the public site instead of the admin), stored as `reference-<name>` and given to
+   * the compiler with the reference (ADR 0011). Never scored.
+   */
+  alternatives?: { name: string; route: string; run(page: Page, app: RealApp): Promise<void> }[];
+  /** How `reference` does the task, in a few words (shown to the compiler when there are alternatives). */
+  route?: string;
   /** Scripted near misses (wrong item, partial, ...), used where agent runs gave too few failures. */
   perturbations?: { name: string; kind: string; run(page: Page, app: RealApp): Promise<void> }[];
   /**
@@ -57,7 +65,8 @@ export interface RealApp {
 }
 
 export type RunSource =
-  | { type: 'reference' }
+  /** `route`: how a scripted reference did the task, when the task has more than one. */
+  | { type: 'reference'; route?: string }
   | { type: 'perturbed'; kind: string }
   | {
       type: 'agent';

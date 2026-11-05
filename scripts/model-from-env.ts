@@ -3,11 +3,14 @@
  * reproducible in CI without a key and a re-run does not pay twice. A missing
  * cassette is recorded live when ANTHROPIC_API_KEY is set.
  *
+ * With a key, an existing cassette is replayed and only the turns it lacks are
+ * recorded (a prompt change that touches one step re-records that step only).
  * ASSAY_MODEL_MODE=replay never calls the model; ASSAY_MODEL_MODE=record
  * re-records every cassette (needs the key), e.g. after a prompt change.
  */
 import { existsSync } from 'node:fs';
 import { anthropicModel, recordingModel, replayModel, type ModelClient } from '../src/model/index.ts';
+import { replayOrRecordModel } from '../src/model/replay.ts';
 
 export interface EnvModel {
   model: ModelClient;
@@ -29,6 +32,18 @@ export async function modelFromEnv(cassette: string): Promise<EnvModel> {
   if (record && process.env.ANTHROPIC_API_KEY) {
     const rec = recordingModel(await anthropicModel(), cassette);
     return { model: rec, mode: 'live', provenance: rec.recorded, save: () => rec.save() };
+  }
+  if (mode !== 'replay' && process.env.ANTHROPIC_API_KEY) {
+    // An existing cassette with a key: replay what it has, record only what it lacks (a changed step).
+    const m = replayOrRecordModel(cassette, () => anthropicModel());
+    return {
+      model: m,
+      get mode() {
+        return m.misses ? ('live' as const) : ('replay' as const);
+      },
+      provenance: m.recorded,
+      save: () => m.save(),
+    };
   }
   if (!existsSync(cassette)) {
     throw new Error(`No cassette at ${cassette} and no ANTHROPIC_API_KEY: set the key to compile live.`);

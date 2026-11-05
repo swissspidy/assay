@@ -144,6 +144,7 @@ export const checkSetSchema = {
         description: { type: 'string', minLength: 1 },
         assert: { $ref: '#/definitions/assertion' },
         onFail: { enum: ['escalate', 'keep'] },
+        onMissing: { enum: ['fail', 'abstain'] },
       },
     },
     locator: {
@@ -363,6 +364,7 @@ export const checkSetSchema = {
               uniqueItems: true,
               items: { type: 'string', pattern: '^/' },
             },
+            flatten: { type: 'boolean' },
           },
         },
       ],

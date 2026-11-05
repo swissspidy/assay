@@ -249,6 +249,7 @@ export async function verify(
 
   const lock = lockState(cs);
   const onFailOf = new Map(cs.checks.map((c) => [c.id, c.onFail] as const));
+  const onMissingOf = new Map(cs.checks.map((c) => [c.id, c.onMissing] as const));
   const record: OutcomeRecord = {
     schema: RECORD_SCHEMA,
     id: newRecordId(),
@@ -275,6 +276,7 @@ export async function verify(
       ...(c.reason ? { reason: c.reason } : {}),
       message: c.message,
       ...(onFailOf.get(c.check) ? { onFail: onFailOf.get(c.check) } : {}),
+      ...(onMissingOf.get(c.check) ? { onMissing: onMissingOf.get(c.check) } : {}),
     })),
     drift: checksOutcome.drift,
     ...(opts.verifier && toEscalate.length

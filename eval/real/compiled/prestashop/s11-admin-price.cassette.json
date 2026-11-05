@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T12:19:25.187Z",
  "turns": {
   "sha256:14b2c40abc366cfd058472b8f6b597ac16ef491620b517d6093feb3a6f1e9137": {
    "stop": "tool_use",
@@ -52,12 +51,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:250cda35374c53d5da55ada32add4eb196c72d42254af272d076298ebb6399a3": {
+  "sha256:b88c706d84bb82b762bcb84dc017ab0ce015eaeff3b84ab32e30ebc2355ebb73": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Ayoq4AuPX6RDWVhr1d4mDU",
+     "id": "toolu_01DX4XtRG9ZwmRynSKayK2Uz",
      "name": "probes",
      "input": {}
     }
@@ -65,7 +64,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01Ayoq4AuPX6RDWVhr1d4mDU",
+     "id": "toolu_01DX4XtRG9ZwmRynSKayK2Uz",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -74,57 +73,71 @@
     }
    ],
    "usage": {
-    "inputTokens": 16977,
+    "inputTokens": 19841,
     "outputTokens": 25,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16973
+    "cacheWriteTokens": 19837
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:da0fbd65509b9ea460e8ddcdb86db2dd60de131f0ee0b64f4723305b291a2a58": {
+  "sha256:43786e9b55433a11c5cca9585b1d501ee122b1f90e1fd936817aeb3aae370ab0": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01924T9KXs1WGRURi6w1Wi7x",
-     "name": "submit_checks",
+     "id": "toolu_017H7GBBuGfgNcLu3goQ1u3j",
+     "name": "try_assertion",
      "input": {
-      "checks": [
-       {
-        "id": "R1-catalog-price",
-        "requirement": "R1",
-        "description": "The backend catalog probe shows the product \"Brown bear cushion\" with a tax-excluded price of 21.90.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "catalog"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "properties": {
-             "name": {
-              "const": "Brown bear cushion"
-             },
-             "price": {
-              "type": "number",
-              "minimum": 21.895,
-              "maximum": 21.905
-             }
-            },
-            "required": [
-             "name",
-             "price"
-            ]
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "catalog"
+       },
+       "normalize": [
+        {
+         "op": "items",
+         "where": {
+          "properties": {
+           "id": {
+            "const": 10
            }
-          }
+          },
+          "required": [
+           "id"
+          ]
+         }
+        }
+       ],
+       "expect": {
+        "schema": {
+         "type": "array",
+         "minItems": 1,
+         "maxItems": 1,
+         "items": {
+          "type": "object",
+          "properties": {
+           "id": {
+            "const": 10
+           },
+           "name": {
+            "const": "Brown bear cushion"
+           },
+           "price": {
+            "type": "number",
+            "minimum": 21.895,
+            "maximum": 21.905
+           }
+          },
+          "required": [
+           "id",
+           "name",
+           "price"
+          ]
          }
         }
        }
-      ]
+      }
      }
     }
    ],
@@ -132,33 +145,122 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSnAgKEAgTGAI4AUIIdGhpbmtpbmcSDH7XrEeaIle75j/L2BoMLxB+AYurHlSOlkQhIjAWy6YsFevQu9yH5u1oA75mqt3aqn0wtRcwyRgfvGN8vDvM1NgEJSksdc+30kMb98gquQfrnXjGHquDkwVHjzJdQBPeMYSHQAzSFQqSxxNnNHdtI+bZT7qPExwtDVsH633AhBwdLH65ej99P2xZgZr+aO7/dRk3GR/eKSDX9JcW9buvkAbMIzq2DTvUKw1yn+FV9mLvwG9ZNMhQ+Uppda5nMEqOT/NlwodLLa5kzufbT2s8uxmGP/ALxLQJaag7gLx/U3QP1KWPeuMu1isNky2bJcoJVToR/JeQvYmTDl9C+7kiGyluNQ481ubXZw80g8gJ+eOJ8J3eVEN9+YOQ9DDQEaTxeA1V/x+AM4Sz+l6qvvdrbUPGwqnkNSl2Tsw1fvMUW2CjjS8jYuAzL9y/9IIfHvwUFcpYhhKF806lfx2JV5FC7LKLhKqAmQOO4C0U8MR5MXIsAqu749ygd6LwGH3/UnLqwRj5dG4Y/bVy4/evhyiOIVlMCqThXXDNylqn8QhcAE61EK3C4rAmeBdi0RwBdqjBiJ/6CpP4v3j/anIzePuyRgBXBg4qltAm3sOtZD5yyESa6ZdBW1dQ/HuxETtrTPRA/qZb/R4dmMGSUS6lR7ON7XCwZjdq6ts3C5LniCfc2fuZNdZnDdKIKvdyM5AJTquP+Ki2FLM36YPFGDWUtxiW2G72PS74vYhSV/s+Vvn42VK62j0u9nyKImrSFL4q8Ne6gfIZGflYMIF1dzr8KyMetPw28sEE0Tpb4HRq/u/NXlDDpRdoxjbC6A3ZTci1kouXBvwOK2vewGOzOtAdXYjpAtXQVrTxODjHicRzve5tYmGoD8eGyQi5if/M3M8JmhGmIrISGySWRyJN3hz7O0orEJOL/84GQEExeqwYO2GQV3ZRJ3pWRWU90iyKilPNZOJCX9aZ1jThkIZ1FJ+en0qek9MPj6ntQ1pYJNXLX5imZ7zHXCjm0fhmv5c1EAaWD6II/wq1OK4wgZVelx+DiVTqKBW+sL+3jib41leN5/SygYIEFtTR8WoZvFgybTLYcTfw2MIf3xPiR+D1H4O4RbsQY+LxjG5X8jXQ3YdohHJ2Nki9tVS9euOj5FGXDTaNZl88l7EjHX1EPAyMNrkdoJfK4QUGV+ldgGSXDIVFyU0zT72nQ1uw7H2w61JHj8IHe6wDdLrcLu3OS3zafSIIuCr5rOUfhpoEeHewfzkga/26QAwXr7txtQU5O/UTx2/pTKUumawIctAnz5ns2CIIG75kzHzGwVcauP5rkCbIUdXxP5E+fNBmcmUQOtWi5hqYv78zwD5T4y+VeWfxF2cmgGJMyi+dovuHGIp+fhgB"
+     "signature": "CAQS0ggKEAgTGAI4AUIIdGhpbmtpbmcSDAagKEbijI+NUcJdlRoM4KnOh0PcqKYsiBEUIjCSyOvUg0NMsHfdKwrrXBxLZKUhpvLxDcww1n00qTUUWgDBxrVIUPcCMjWiMlQoXooq7wdtZQoOTMDBbgBekD6YGGwl2uTS8IFgIgjq3UKL1rGPjgDhFbGq9RmwV7aE84W2qx1YLbTVOa3xbDFWDkKt5YdDWJwyVYkNdHa0oowoM76PeYYV9eryjMptoIUBStH3Ro9lvLjTFopdN3zPHncRD75n8UGWBGJ1y5PA+frQJbWy6uQk3jnZsRch77z4KrtIVt0s1T15/qSCkl2IIOopYkyngjQnFHJO+FmuZUgCTotRZ3tbk1lNk2FE67wE8isTuTS8ffeS/X2eQ13OMNj+qKLOoziZbsrTRmH2lQpVXJd2lpzRtXxQ2CgvnggsmmJfG/a1PFeQW3oco4nR39dt1gAUd8ClHyJ6TpT3ruk3Ucng0yHeYEq88THJSoKGnHCS++xkOfLHi8x93ghwXRBVkwqTZQILLz2QO/IXqRdHLhRb0O1J4XVGB4wOrcVTWqPSk2sXDiO2DKZlcOclvrHwqIi5gDun51LP6Lr7unyaKSyyewJJ/S14z8UPH0BzWnpCh29r8Ep054EpSiD3rsQiPU4TCQAQgxaAv98JTszyTqwZsre1hwOcCw0QMVv8PZJfKPxcLG7sXNVvv3D//YShNIf01kMn5aaKAXviCO1c+Hs5bZAiFKK4MOoKsSJr690xEnKcKftSXnhwJxeLJquj5BPYB7jvVjxlZo8OMhaMVsQNu0s9URyJFQj3otdXPRQp03k2pgFAU8ci+TJu75l7yhAdWrvQGV5ZCLyfZkTwu0bFl+/RfFoXD7JINusjR6uj+c8Gw9ZuYt1c1Yh1Vj7mBtseAhR8e7WMffkIdOL2CA79Xrd3KaUujl2LnXc7qGSC5s//IQ0TvyPh0MPSO3Gv5Gp0NN6BZH/Dy2kuF6ozPeem7nGm888zTAhEzCNvXO+jmcY7xS9nIGF2moGDdHPhKuzimNV5PlWjjLWq9zwzSU5tydjFdT3X+K42kFgSR9mPmVDRZ48Ap3w0Jxk1YshNKPIxODfYM7PTm8U/O/nXhvG+toStAp/k8mfzykGR5X/kVvvXXeavQ2N7D8qhlY9Vdbk3Jt4AsGxyZzXH9NN51fFspqI47xnSgxsKOibJIUxoQPK/XVHb8Yt0MAO1pvJ6Nap6bI32DqNMHSLYHIZoRl9bKBcY6HQ61zDGFhIQmTMckSN8EcGL3OWy0/Be5wD5AjAVEoMh+/AMWtPEnk9sVHJLb9W/D9lTNbnRkmCNrh8jxFs7glBAGvBLVm65N6QYdtadCpXRK9a7xVq6a6lppPcx8HStSVv8Qy3+4nwBXX4w0IIpuVGPiZXsVUZgkZ+V3scajyF+lQYTjSDlkrlEMYtWFLYc8emjIrw6Qp32hq6CSBgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_01924T9KXs1WGRURi6w1Wi7x",
-     "name": "submit_checks",
+     "id": "toolu_017H7GBBuGfgNcLu3goQ1u3j",
+     "name": "try_assertion",
      "caller": {
       "type": "direct"
      },
      "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "catalog"
+       },
+       "normalize": [
+        {
+         "op": "items",
+         "where": {
+          "properties": {
+           "id": {
+            "const": 10
+           }
+          },
+          "required": [
+           "id"
+          ]
+         }
+        }
+       ],
+       "expect": {
+        "schema": {
+         "type": "array",
+         "minItems": 1,
+         "maxItems": 1,
+         "items": {
+          "type": "object",
+          "properties": {
+           "id": {
+            "const": 10
+           },
+           "name": {
+            "const": "Brown bear cushion"
+           },
+           "price": {
+            "type": "number",
+            "minimum": 21.895,
+            "maximum": 21.905
+           }
+          },
+          "required": [
+           "id",
+           "name",
+           "price"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 23912,
+    "outputTokens": 403,
+    "cacheReadTokens": 19837,
+    "cacheWriteTokens": 4073
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:2993da48857e7c92a6658426e4bcd62d0af159d875a62386dd1ba998ca686315": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01WijU5YBPEZvBwd8tvcLuSg",
+     "name": "submit_checks",
+     "input": {
       "checks": [
        {
-        "id": "R1-catalog-price",
+        "id": "brown-bear-cushion-price",
         "requirement": "R1",
-        "description": "The backend catalog probe shows the product \"Brown bear cushion\" with a tax-excluded price of 21.90.",
+        "description": "In the backend catalog, product id 10 \"Brown bear cushion\" has a tax-excluded price of 21.90.",
         "assert": {
          "kind": "value",
          "source": {
           "from": "probe",
           "probe": "catalog"
          },
+         "normalize": [
+          {
+           "op": "items",
+           "where": {
+            "properties": {
+             "id": {
+              "const": 10
+             }
+            },
+            "required": [
+             "id"
+            ]
+           }
+          }
+         ],
          "expect": {
           "schema": {
            "type": "array",
-           "contains": {
+           "minItems": 1,
+           "maxItems": 1,
+           "items": {
             "type": "object",
             "properties": {
+             "id": {
+              "const": 10
+             },
              "name": {
               "const": "Brown bear cushion"
              },
@@ -169,6 +271,76 @@
              }
             },
             "required": [
+             "id",
+             "name",
+             "price"
+            ]
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01WijU5YBPEZvBwd8tvcLuSg",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "brown-bear-cushion-price",
+        "requirement": "R1",
+        "description": "In the backend catalog, product id 10 \"Brown bear cushion\" has a tax-excluded price of 21.90.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "catalog"
+         },
+         "normalize": [
+          {
+           "op": "items",
+           "where": {
+            "properties": {
+             "id": {
+              "const": 10
+             }
+            },
+            "required": [
+             "id"
+            ]
+           }
+          }
+         ],
+         "expect": {
+          "schema": {
+           "type": "array",
+           "minItems": 1,
+           "maxItems": 1,
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "const": 10
+             },
+             "name": {
+              "const": "Brown bear cushion"
+             },
+             "price": {
+              "type": "number",
+              "minimum": 21.895,
+              "maximum": 21.905
+             }
+            },
+            "required": [
+             "id",
              "name",
              "price"
             ]
@@ -182,12 +354,13 @@
     }
    ],
    "usage": {
-    "inputTokens": 21048,
-    "outputTokens": 389,
-    "cacheReadTokens": 16973,
-    "cacheWriteTokens": 4073
+    "inputTokens": 24385,
+    "outputTokens": 330,
+    "cacheReadTokens": 23910,
+    "cacheWriteTokens": 473
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:11:29.882Z"
 }

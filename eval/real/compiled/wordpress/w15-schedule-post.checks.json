@@ -27,42 +27,46 @@
   ],
   "checks": [
     {
-      "id": "r1-status-future",
+      "id": "r1-post-scheduled",
       "requirement": "R1",
-      "description": "The backend post titled \"Roadmap 2027\" has status \"future\" (scheduled), not published or draft.",
+      "description": "The backend holds post 12 \"Roadmap 2027\" with status \"future\" (scheduled), not published or still draft.",
       "assert": {
         "kind": "value",
         "source": {
           "from": "probe",
           "probe": "posts"
         },
-        "normalize": [
-          {
-            "op": "items",
-            "where": {
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
               "properties": {
+                "id": {
+                  "const": 12
+                },
                 "title": {
                   "const": "Roadmap 2027"
+                },
+                "status": {
+                  "const": "future"
                 }
               },
               "required": [
-                "title"
+                "id",
+                "title",
+                "status"
               ]
-            },
-            "pointer": "/status"
+            }
           }
-        ],
-        "expect": {
-          "equals": [
-            "future"
-          ]
         }
       }
     },
     {
-      "id": "r2-date-0905",
+      "id": "r2-scheduled-date",
       "requirement": "R2",
-      "description": "The last save of post 12 submitted the publish date 2027-01-05 09:00, or the posts list shows Roadmap 2027 scheduled for 2027/01/05 at 9:00 am.",
+      "description": "The save of post 12 (Quick Edit inline-save or block editor REST update) set its publish date to 2027-01-05 09:00.",
+      "onMissing": "abstain",
       "assert": {
         "kind": "anyOf",
         "of": [
@@ -72,19 +76,22 @@
               "from": "request",
               "match": {
                 "method": "POST",
+                "url": {
+                  "path": "/wp-admin/admin-ajax.php"
+                },
                 "requestBody": {
                   "type": "object",
                   "properties": {
+                    "action": {
+                      "const": "inline-save"
+                    },
                     "post_ID": {
                       "const": "12"
-                    },
-                    "aa": {
-                      "type": "string"
                     }
                   },
                   "required": [
-                    "post_ID",
-                    "aa"
+                    "action",
+                    "post_ID"
                   ]
                 }
               },
@@ -98,20 +105,28 @@
                     "const": "2027"
                   },
                   "mm": {
-                    "type": "string",
-                    "pattern": "^0?1$"
+                    "enum": [
+                      "01",
+                      "1"
+                    ]
                   },
                   "jj": {
-                    "type": "string",
-                    "pattern": "^0?5$"
+                    "enum": [
+                      "05",
+                      "5"
+                    ]
                   },
                   "hh": {
-                    "type": "string",
-                    "pattern": "^0?9$"
+                    "enum": [
+                      "09",
+                      "9"
+                    ]
                   },
                   "mn": {
-                    "type": "string",
-                    "pattern": "^0{1,2}$"
+                    "enum": [
+                      "00",
+                      "0"
+                    ]
                   }
                 },
                 "required": [
@@ -125,20 +140,28 @@
             }
           },
           {
-            "kind": "state",
-            "target": {
-              "role": "row",
-              "name": {
-                "contains": "“Roadmap 2027” (Edit)"
+            "kind": "value",
+            "source": {
+              "from": "response",
+              "match": {
+                "method": [
+                  "POST",
+                  "PUT",
+                  "PATCH"
+                ],
+                "url": {
+                  "path": "/wp-json/wp/v2/posts/12"
+                },
+                "status": {
+                  "gte": 200,
+                  "lt": 300
+                }
               },
-              "within": {
-                "role": "table"
-              }
+              "pick": "last",
+              "pointer": "/date"
             },
             "expect": {
-              "name": {
-                "regex": "Scheduled\\s+2027/01/05 at 9:00 am"
-              }
+              "regex": "^2027-01-05T09:00(:00)?$"
             }
           }
         ]
@@ -151,6 +174,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:22:27.731Z"
+    "at": "2026-11-05T21:00:49.073Z"
   }
 }

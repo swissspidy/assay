@@ -29,7 +29,7 @@
     {
       "id": "R1-no-poster-in-cart",
       "requirement": "R1",
-      "description": "No line in the backend cart has a product name containing 'poster' (any case).",
+      "description": "After the task, no cart line in the backend cart is a poster product.",
       "assert": {
         "kind": "value",
         "source": {
@@ -41,17 +41,16 @@
           "schema": {
             "type": "array",
             "items": {
-              "type": "object",
-              "required": [
-                "product"
-              ],
-              "properties": {
-                "product": {
-                  "type": "string",
-                  "not": {
-                    "pattern": "[Pp][Oo][Ss][Tt][Ee][Rr]"
+              "not": {
+                "properties": {
+                  "product": {
+                    "type": "string",
+                    "pattern": "[Pp]oster"
                   }
-                }
+                },
+                "required": [
+                  "product"
+                ]
               }
             }
           }
@@ -61,7 +60,7 @@
     {
       "id": "R2-others-kept",
       "requirement": "R2",
-      "description": "The cart lines after the task equal the cart lines before the task minus the poster lines (same products, attributes and quantities).",
+      "description": "The cart lines after the task equal the cart lines before the task minus the poster line(s), with same products, attributes and quantities.",
       "assert": {
         "kind": "value",
         "source": {
@@ -89,7 +88,8 @@
                   "not": {
                     "properties": {
                       "product": {
-                        "pattern": "[Pp][Oo][Ss][Tt][Ee][Rr]"
+                        "type": "string",
+                        "pattern": "[Pp]oster"
                       }
                     },
                     "required": [
@@ -110,6 +110,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T11:39:41.538Z"
+    "at": "2026-11-05T21:09:07.558Z"
   }
 }

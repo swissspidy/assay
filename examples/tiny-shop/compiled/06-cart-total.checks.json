@@ -46,7 +46,7 @@
   ],
   "checks": [
     {
-      "id": "r1-total-backend",
+      "id": "r1-probe-total",
       "requirement": "R1",
       "description": "The backend cart total is 21.50.",
       "assert": {
@@ -65,9 +65,9 @@
       }
     },
     {
-      "id": "r1-total-page",
+      "id": "r1-page-total",
       "requirement": "R1",
-      "description": "The cart page's 'Cart total' status shows $21.50.",
+      "description": "The cart page's total status shows $21.50.",
       "assert": {
         "kind": "value",
         "source": {
@@ -110,7 +110,7 @@
     {
       "id": "r2-blue-mug",
       "requirement": "R2",
-      "description": "The backend cart holds a Blue Mug line with quantity 1.",
+      "description": "The backend cart holds exactly one Blue Mug (MUG-BLUE, qty 1).",
       "assert": {
         "kind": "value",
         "source": {
@@ -135,6 +135,24 @@
                 "sku",
                 "qty"
               ]
+            },
+            "not": {
+              "contains": {
+                "type": "object",
+                "properties": {
+                  "sku": {
+                    "const": "MUG-BLUE"
+                  },
+                  "qty": {
+                    "not": {
+                      "const": 1
+                    }
+                  }
+                },
+                "required": [
+                  "sku"
+                ]
+              }
             }
           }
         }
@@ -143,7 +161,7 @@
     {
       "id": "r3-red-mug",
       "requirement": "R3",
-      "description": "The backend cart holds a Red Mug line with quantity 1.",
+      "description": "The backend cart holds exactly one Red Mug (MUG-RED, qty 1).",
       "assert": {
         "kind": "value",
         "source": {
@@ -168,36 +186,54 @@
                 "sku",
                 "qty"
               ]
+            },
+            "not": {
+              "contains": {
+                "type": "object",
+                "properties": {
+                  "sku": {
+                    "const": "MUG-RED"
+                  },
+                  "qty": {
+                    "not": {
+                      "const": 1
+                    }
+                  }
+                },
+                "required": [
+                  "sku"
+                ]
+              }
             }
           }
         }
       }
     },
     {
-      "id": "r4-cart-open",
+      "id": "r4-cart-url",
       "requirement": "R4",
-      "description": "The browser ends on the /cart page showing the 'Your cart' heading.",
+      "description": "The browser ends on the /cart page.",
       "assert": {
-        "kind": "allOf",
-        "of": [
-          {
-            "kind": "url",
-            "match": {
-              "path": "/cart"
-            }
-          },
-          {
-            "kind": "contains",
-            "scope": {
-              "role": "main"
-            },
-            "match": {
-              "role": "heading",
-              "name": "Your cart",
-              "level": 1
-            }
-          }
-        ]
+        "kind": "url",
+        "match": {
+          "path": "/cart"
+        }
+      }
+    },
+    {
+      "id": "r4-cart-heading",
+      "requirement": "R4",
+      "description": "The page shows the 'Your cart' heading in main.",
+      "assert": {
+        "kind": "contains",
+        "scope": {
+          "role": "main"
+        },
+        "match": {
+          "role": "heading",
+          "name": "Your cart",
+          "level": 1
+        }
       }
     }
   ],
@@ -207,6 +243,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T11:29:53.844Z"
+    "at": "2026-11-05T21:08:45.286Z"
   }
 }

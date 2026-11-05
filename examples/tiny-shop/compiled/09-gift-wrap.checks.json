@@ -30,7 +30,7 @@
     {
       "id": "order-placed-request",
       "requirement": "R2",
-      "description": "A POST to /api/orders succeeded, placing an order.",
+      "description": "A POST to /api/orders succeeded, creating an order from the cart.",
       "assert": {
         "kind": "request",
         "match": {
@@ -48,55 +48,37 @@
     {
       "id": "order-placed-probe",
       "requirement": "R2",
-      "description": "The backend's latest order is the one created by the checkout request and has status placed.",
+      "description": "The backend's latest order exists with status 'placed'.",
       "assert": {
-        "kind": "allOf",
-        "of": [
-          {
-            "kind": "value",
-            "source": {
-              "from": "probe",
-              "probe": "latestOrder",
-              "pointer": "/status"
-            },
-            "expect": {
-              "equals": "placed"
-            }
-          },
-          {
-            "kind": "value",
-            "source": {
-              "from": "probe",
-              "probe": "latestOrder",
-              "pointer": "/id"
-            },
-            "expect": {
-              "sameAs": {
-                "source": {
-                  "from": "response",
-                  "match": {
-                    "method": "POST",
-                    "url": {
-                      "path": "/api/orders"
-                    },
-                    "status": {
-                      "gte": 200,
-                      "lt": 300
-                    }
-                  },
-                  "pick": "last",
-                  "pointer": "/id"
-                }
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "latestOrder"
+        },
+        "expect": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "id",
+              "status"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "status": {
+                "const": "placed"
               }
             }
           }
-        ]
+        }
       }
     },
     {
       "id": "order-gift-wrapped",
       "requirement": "R1",
-      "description": "The stored latest order has gift wrap enabled.",
+      "description": "The backend's latest order is stored with giftWrap true.",
       "assert": {
         "kind": "value",
         "source": {
@@ -116,6 +98,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T11:31:12.042Z"
+    "at": "2026-11-05T21:07:42.631Z"
   }
 }

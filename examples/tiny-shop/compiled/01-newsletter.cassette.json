@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T11:28:48.140Z",
  "turns": {
   "sha256:76c199ee16bb0bf4fd43f45802e7fc25f946d098a78b9e43c8be694736b1c59d": {
    "stop": "tool_use",
@@ -66,30 +65,30 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:bf1a59c1a4233ded133790b7a2c43d4bbc3b5f5c230018b883a5a62f5f22c90e": {
+  "sha256:7a5b5db3dfb22ba537a48a149e53ca50f452d2fbddc71a4f0b79b34dac6112c0": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01422G7HeK85hKGgDidurPDR",
+     "id": "toolu_01N9RFsLyDkGNpJzyJG4vtxd",
      "name": "page_outline",
      "input": {}
     },
     {
-     "id": "toolu_01JMK31AkCK8sujGox1q1GYp",
-     "name": "network_log",
+     "id": "toolu_013gS8E81Z5tTbKwYCzuUAGu",
+     "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01TxKJPWwQWUw6zCy6MeBi7i",
-     "name": "probes",
+     "id": "toolu_012ULFXT49QDSLJWz7NLki1j",
+     "name": "network_log",
      "input": {}
     }
    ],
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01422G7HeK85hKGgDidurPDR",
+     "id": "toolu_01N9RFsLyDkGNpJzyJG4vtxd",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -98,8 +97,8 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01JMK31AkCK8sujGox1q1GYp",
-     "name": "network_log",
+     "id": "toolu_013gS8E81Z5tTbKwYCzuUAGu",
+     "name": "probes",
      "caller": {
       "type": "direct"
      },
@@ -107,8 +106,8 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01TxKJPWwQWUw6zCy6MeBi7i",
-     "name": "probes",
+     "id": "toolu_012ULFXT49QDSLJWz7NLki1j",
+     "name": "network_log",
      "caller": {
       "type": "direct"
      },
@@ -116,252 +115,159 @@
     }
    ],
    "usage": {
-    "inputTokens": 17845,
+    "inputTokens": 18854,
     "outputTokens": 72,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 17841
+    "cacheWriteTokens": 18850
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:96b24bdefe7f535f015c20c4490172966c69be231fd7af322bacc3f604667d49": {
+  "sha256:2c7d8f2e4be06296e8af28187922f5a9a332370f52e63d5dfa13a8a6e3f6282e": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01X2GsmQVzVB9m83ftm9mwD9",
-     "name": "network_entry",
+     "id": "toolu_01XExTxhudfTgThiAmNwEv2K",
+     "name": "submit_checks",
      "input": {
-      "seq": 3
+      "checks": [
+       {
+        "id": "r1-probe-newsletter",
+        "requirement": "R1",
+        "description": "The backend settings store newsletter = true.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "settings",
+          "pointer": "/newsletter"
+         },
+         "expect": {
+          "equals": true
+         }
+        }
+       },
+       {
+        "id": "r2-checkbox-checked",
+        "requirement": "R2",
+        "description": "The 'Email me the newsletter' checkbox in the Preferences form is checked.",
+        "assert": {
+         "kind": "state",
+         "target": {
+          "anchors": [
+           {
+            "role": "checkbox",
+            "name": {
+             "contains": "newsletter",
+             "ignoreCase": true
+            },
+            "within": {
+             "role": "form",
+             "name": "Preferences"
+            }
+           },
+           {
+            "role": "checkbox",
+            "name": {
+             "contains": "newsletter",
+             "ignoreCase": true
+            },
+            "landmark": {
+             "role": "form",
+             "name": "Preferences"
+            }
+           }
+          ]
+         },
+         "expect": {
+          "checked": true
+         }
+        }
+       }
+      ]
      }
     }
    ],
    "raw": [
     {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS7wUKEAgTGAI4AUIIdGhpbmtpbmcSDIXPJLMiX5KS+aD5cxoMR89b/9+tuLUQZ3b8IjA3E6opnc85XKw3DvdmlYFwT6KHIIFAmKl3nzQY4eMiVnXPH4oPtaKCMm3xTT5+Km0qjAXtt6d7BvIS5FEyi56QDVmbgXjWlcB7tlBNCFBn3OJ4NVjgCc4nXKykEo0k1N9qKlsCbGUV3aLO84cGYFuJNbC4lVLKB2O+t/porI1uHgT0eR59YfSYLbEJjUmid4OfRGwMMhB1Aey9DK7vcs0Q9cJD35j9FOBxIxIhNSsVwr5dMfRCGbTDMWDneKMO+ycNXA85zDF9osVYzmdhnR4diEkGZtNdgHTlAz9pcL8khEz3HMznki5tic/LRYV3PR6pl13E+QfPvNYa33+pM248e2lP9/KFO6AH0HWE3IFmeKNKIXnITBWCd1SGmeeJaHCjTu0qnRJOnX46y+0idZ0c3JgaAzOmBBJNHNYZuJO2yGV3ezdw1KzJFLf8YXdxbmNxtMH2qRdZY4DORGBk2q4aJtabMiFeP4fNk/beVstwrNuJgHxA/TpU8Re1mASi+50Qu1/FCo4Nxg5ocjGf0yhR0hI70v0JrU0+b9MmDiUOnMxOL4+M97iNytd41iNuov7MOr0TyTBSL09fj11cGZPDEejtmh7YWBtVby08yawRQ1tGl3Tb6iNE8y3o13Fo5KLIXDh9esOB18flQo0mvTC3Wd5dLJCHAFq23j2gPdXP4i1aIeS+97D/Tb0MDzQvf+BqJ9O6xPh1jWAru6BZ4aEn9Nkg3cRasn/fpYpAYpLX04sIneLQmTIW4vM+4L7LHMMC9/4af/Zll2uC+bi3EUJynI8jhcYthgiNvV87VIkaEpLCbuIgUNEn2cPP/CPqbg9mTPlNE7r/MAWFG4m3OpnJ+/KpIZxRXVCpb536Rbi3r6u2X9d2VsyOx+E1qL0DPgorMj8bIrFrdGrzOz1BDToCjrO032MM91ez/Mdu9QBjGAE="
+    },
+    {
      "type": "tool_use",
-     "id": "toolu_01X2GsmQVzVB9m83ftm9mwD9",
-     "name": "network_entry",
+     "id": "toolu_01XExTxhudfTgThiAmNwEv2K",
+     "name": "submit_checks",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "seq": 3
+      "checks": [
+       {
+        "id": "r1-probe-newsletter",
+        "requirement": "R1",
+        "description": "The backend settings store newsletter = true.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "settings",
+          "pointer": "/newsletter"
+         },
+         "expect": {
+          "equals": true
+         }
+        }
+       },
+       {
+        "id": "r2-checkbox-checked",
+        "requirement": "R2",
+        "description": "The 'Email me the newsletter' checkbox in the Preferences form is checked.",
+        "assert": {
+         "kind": "state",
+         "target": {
+          "anchors": [
+           {
+            "role": "checkbox",
+            "name": {
+             "contains": "newsletter",
+             "ignoreCase": true
+            },
+            "within": {
+             "role": "form",
+             "name": "Preferences"
+            }
+           },
+           {
+            "role": "checkbox",
+            "name": {
+             "contains": "newsletter",
+             "ignoreCase": true
+            },
+            "landmark": {
+             "role": "form",
+             "name": "Preferences"
+            }
+           }
+          ]
+         },
+         "expect": {
+          "checked": true
+         }
+        }
+       }
+      ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 18477,
-    "outputTokens": 49,
-    "cacheReadTokens": 17841,
+    "inputTokens": 19486,
+    "outputTokens": 382,
+    "cacheReadTokens": 18850,
     "cacheWriteTokens": 634
    },
    "model": "claude-opus-5-5"
-  },
-  "sha256:ade125f5e891aadc02ec5441b0c2d0be86bfc1a0e5507814270d191d32d9df34": {
-   "stop": "tool_use",
-   "text": "",
-   "toolCalls": [
-    {
-     "id": "toolu_019KEZYPyxdPbc2owyk32RKi",
-     "name": "submit_checks",
-     "input": {
-      "checks": [
-       {
-        "id": "r1-probe-newsletter",
-        "requirement": "R1",
-        "description": "The backend settings probe stores newsletter = true.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "settings",
-          "pointer": "/newsletter"
-         },
-         "expect": {
-          "equals": true
-         }
-        }
-       },
-       {
-        "id": "r1-put-request",
-        "requirement": "R1",
-        "description": "A successful PUT/PATCH/POST to /api/settings sent newsletter = true.",
-        "assert": {
-         "kind": "request",
-         "match": {
-          "method": [
-           "PUT",
-           "PATCH",
-           "POST"
-          ],
-          "url": {
-           "path": "/api/settings"
-          },
-          "status": {
-           "gte": 200,
-           "lt": 300
-          },
-          "requestBody": {
-           "type": "object",
-           "properties": {
-            "newsletter": {
-             "const": true
-            }
-           },
-           "required": [
-            "newsletter"
-           ]
-          }
-         }
-        }
-       },
-       {
-        "id": "r2-checkbox-checked",
-        "requirement": "R2",
-        "description": "The 'Email me the newsletter' checkbox in the Preferences form is checked.",
-        "assert": {
-         "kind": "state",
-         "target": {
-          "anchors": [
-           {
-            "role": "checkbox",
-            "name": {
-             "contains": "newsletter",
-             "ignoreCase": true
-            },
-            "within": {
-             "role": "form",
-             "name": "Preferences"
-            }
-           },
-           {
-            "role": "checkbox",
-            "name": {
-             "contains": "newsletter",
-             "ignoreCase": true
-            },
-            "landmark": {
-             "role": "form",
-             "name": "Preferences"
-            }
-           }
-          ]
-         },
-         "expect": {
-          "checked": true
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "raw": [
-    {
-     "type": "tool_use",
-     "id": "toolu_019KEZYPyxdPbc2owyk32RKi",
-     "name": "submit_checks",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "checks": [
-       {
-        "id": "r1-probe-newsletter",
-        "requirement": "R1",
-        "description": "The backend settings probe stores newsletter = true.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "settings",
-          "pointer": "/newsletter"
-         },
-         "expect": {
-          "equals": true
-         }
-        }
-       },
-       {
-        "id": "r1-put-request",
-        "requirement": "R1",
-        "description": "A successful PUT/PATCH/POST to /api/settings sent newsletter = true.",
-        "assert": {
-         "kind": "request",
-         "match": {
-          "method": [
-           "PUT",
-           "PATCH",
-           "POST"
-          ],
-          "url": {
-           "path": "/api/settings"
-          },
-          "status": {
-           "gte": 200,
-           "lt": 300
-          },
-          "requestBody": {
-           "type": "object",
-           "properties": {
-            "newsletter": {
-             "const": true
-            }
-           },
-           "required": [
-            "newsletter"
-           ]
-          }
-         }
-        }
-       },
-       {
-        "id": "r2-checkbox-checked",
-        "requirement": "R2",
-        "description": "The 'Email me the newsletter' checkbox in the Preferences form is checked.",
-        "assert": {
-         "kind": "state",
-         "target": {
-          "anchors": [
-           {
-            "role": "checkbox",
-            "name": {
-             "contains": "newsletter",
-             "ignoreCase": true
-            },
-            "within": {
-             "role": "form",
-             "name": "Preferences"
-            }
-           },
-           {
-            "role": "checkbox",
-            "name": {
-             "contains": "newsletter",
-             "ignoreCase": true
-            },
-            "landmark": {
-             "role": "form",
-             "name": "Preferences"
-            }
-           }
-          ]
-         },
-         "expect": {
-          "checked": true
-         }
-        }
-       }
-      ]
-     }
-    }
-   ],
-   "usage": {
-    "inputTokens": 18625,
-    "outputTokens": 503,
-    "cacheReadTokens": 18475,
-    "cacheWriteTokens": 148
-   },
-   "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:07:58.915Z"
 }

@@ -93,8 +93,8 @@ tolerance is offered when the evidence calls for it:
   against a tool's current spec).
 - A tolerance that no correct reference needs (both sides equal on every one) is refused.
 
-All 30 example compiles replay unchanged with this design. (The 44 real-app compile cassettes did
-not replay before this change either; the evaluation reads their committed check sets, not them.)
+All 30 example compiles and all 44 real-app compiles replay unchanged with this design, and give
+the committed check sets.
 
 ### 4. Nested JSON array mutants and the `nested-array-order` variant
 
@@ -114,12 +114,23 @@ not replay before this change either; the evaluation reads their committed check
 
 ## Consequences
 
-- Stress results (compiled + handwritten example sets, before → after): Tiny Shop handwritten
-  223/223 variants and 157/157 mutants (unchanged); compiled 231/231, 237/237 → 249/249. Tiny Tracker
-  handwritten 218/218 → 220/220, 94/94 → 104/104; compiled 218/218 → 220/220, 72/72 → 82/82. Tiny
-  Calendar unchanged (222/222, 82/82; 224/224, 96/96). Real-app compiled sets: 485/485 → 503/503
-  variants, 335/337 → 383/385 mutants, with the same two missed mutants as before (s08). No check
-  is newly over-constrained, fragile or weak.
+- Stress results, before → after (variants accepted, mutants rejected), all accepted and rejected
+  before and after:
+
+  | Check sets                | Variants          | Mutants           |
+  | ------------------------- | ----------------- | ----------------- |
+  | Tiny Shop handwritten     | 223/223           | 157/157           |
+  | Tiny Shop compiled        | 231/231           | 227/227 → 239/239 |
+  | Tiny Tracker handwritten  | 218/218 → 220/220 | 94/94 → 104/104   |
+  | Tiny Tracker compiled     | 218/218 → 220/220 | 72/72 → 82/82     |
+  | Tiny Calendar handwritten | 222/222           | 82/82             |
+  | Tiny Calendar compiled    | 222/222           | 86/86             |
+
+  The new mutants are nested labels of tracker issues and approx edges of the cart total. On the
+  real-app compiled sets (their `reference` runs), 485/485 → 503/503 variants and 364/365 → 424/425
+  mutants, with the same known weak checks (w12, s08) and the same missed mutant (s08). No check is
+  newly over-constrained, fragile or weak.
+
 - None of the committed check sets compares numbers, money or date-times across sources in a way
   their references disagree on, so none needed a tolerance and nothing was recompiled; the
   evaluation replays are unchanged.

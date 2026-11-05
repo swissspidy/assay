@@ -21,7 +21,7 @@
     {
       "id": "cart-has-blue-mug",
       "requirement": "R1",
-      "description": "The backend cart probe contains a line item with SKU MUG-BLUE (Blue Mug) and quantity at least 1.",
+      "description": "The backend cart contains a Blue Mug (SKU MUG-BLUE) line with quantity at least 1.",
       "assert": {
         "kind": "value",
         "source": {
@@ -36,11 +36,15 @@
               "type": "object",
               "required": [
                 "sku",
+                "name",
                 "qty"
               ],
               "properties": {
                 "sku": {
                   "const": "MUG-BLUE"
+                },
+                "name": {
+                  "const": "Blue Mug"
                 },
                 "qty": {
                   "type": "number",
@@ -59,6 +63,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T11:29:00.713Z"
+    "at": "2026-11-05T21:08:06.413Z"
   }
 }

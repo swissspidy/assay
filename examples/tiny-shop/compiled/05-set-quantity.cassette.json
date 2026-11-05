@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T11:29:39.162Z",
  "turns": {
   "sha256:77749a43136ba4b74a146ba091731a7a0ea359b54464907cc88a39bb9f9d834c": {
    "stop": "tool_use",
@@ -52,25 +51,30 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:fbac58f3e67c38e90283742fd197e297c6560234e7c863bb25d8ecb530277a66": {
+  "sha256:678b37fe2bb3aeb23e3d4063a8b28909a78c083dcbd365f84685ead0aeecfe2e": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01NE83XKuG46CZvjr5R7U12K",
+     "id": "toolu_01KyNsy7HMnKLwX1rNLxf1qE",
      "name": "page_outline",
      "input": {}
     },
     {
-     "id": "toolu_01Awg55s4ctkCyWbaajdvmXf",
+     "id": "toolu_01J7U5NJspAsqPpVePYJi4xe",
      "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01MiLueUEJVySRMFnhptv883",
+     "name": "network_log",
      "input": {}
     }
    ],
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01NE83XKuG46CZvjr5R7U12K",
+     "id": "toolu_01KyNsy7HMnKLwX1rNLxf1qE",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -79,8 +83,17 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Awg55s4ctkCyWbaajdvmXf",
+     "id": "toolu_01J7U5NJspAsqPpVePYJi4xe",
      "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01MiLueUEJVySRMFnhptv883",
+     "name": "network_log",
      "caller": {
       "type": "direct"
      },
@@ -88,53 +101,187 @@
     }
    ],
    "usage": {
-    "inputTokens": 17800,
-    "outputTokens": 49,
+    "inputTokens": 18809,
+    "outputTokens": 72,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 17796
+    "cacheWriteTokens": 18805
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:4a1a25c618c5662832470fb0695f95d019539eca638fee9b55ff366f8cbef6ee": {
+  "sha256:df1dc86b101ca63c3b3b373c0e36f1ffb6f423c5cbb70d5d0e176842f6f27f66": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_012JA2wnQDak5ay2z5Pd78zG",
-     "name": "network_log",
-     "input": {}
+     "id": "toolu_01QNxZQjmKU4hWRChEYEdmnU",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "cart",
+        "pointer": "/items"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "sku",
+           "qty"
+          ],
+          "properties": {
+           "sku": {
+            "const": "MUG-BLUE"
+           },
+           "qty": {
+            "const": 3
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "id": "toolu_01Abyr5F2JNzoVfRV7NPd3an",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "each",
+       "scope": {
+        "role": "table",
+        "name": "Cart"
+       },
+       "match": {
+        "role": "row",
+        "name": {
+         "contains": "Blue Mug"
+        }
+       },
+       "count": {
+        "eq": 1
+       },
+       "assert": {
+        "kind": "state",
+        "target": {
+         "role": "spinbutton",
+         "name": {
+          "contains": "Blue Mug"
+         }
+        },
+        "expect": {
+         "value": {
+          "regex": "^\\s*3\\s*$"
+         }
+        }
+       }
+      }
+     }
     }
    ],
    "raw": [
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS2QYKEAgTGAI4AUIIdGhpbmtpbmcSDE7+OSBRTSS+3lujBRoMQBaoOj3wrDpP8ulcIjBu+yj0U15FmBqjrqd2lak8fNljwqmGd1kiy77lU82h+9P8/hBMyrkEA9M/jey04xIq9gXamJgerROsStLIA+lwbVauDLQfv6xOP5xG4njPMI6VwwfJ1pQwgj04r7PFzcTpZlz4xP0tJMN5Ux6rzDqNXjD9HFmlKe0Sy3TZ4jDDJWLgChkHFuD8mFbFuoopFR2pmVh3FtNjZspRtAApD/Ybj/dcn2Yps9Nm4ueBUBt2LTELZdq0PvZoe+urf/FbjUK7pMOSB0wisyxCStHlGvZaboXjZXZRgxbLJTy8eNiINavqk0EEcvEZXRHmZb22cvbZZv5oCK6bZJEssjUNc0GG92HzrAtraRwphxW4yHPQrgei4FZASBsxFsnvZ8Fb6Gc+Ky5YyrecG0ap5N70YWkH6AkJzYtMLa/RTvKx2uh0xy7+pwbHX/e9JN7LRLUt6rsqRtIWhdYfzKMhLzNqWg0rs5BZTspnf6VNpCzgH33m73mBoIAqkZuGXzgApyNeDVUe9q5jHEv4NZV9p04HPIzcHlSN+Tt/pj5Us2gJlqkc4/xjsO+mEkwmbMUJJv5IpgU+Xf1rkencW6z7hPoblmVfFs9S2GPv7+GnOEoSg4Uxlkx6OySwc9SDRNE4jCoAyW7cZ9XgS1NNyd3GDRwIorlqRttyqwyAh5Pse1MmLs7XSd0SDnafapNWq7n9saSMXQ++bSKiK3sj6L7oLKF2DRJn5Wh0yUAwERFjgbn5G1zbfzKmpPYTXGDRryRLKhQbOdvvrSviXWzb9SYfUkZO6IRxNeJwzVC3zja9Q4nBjNGe70TTZrQz+RJ8bS4mryHjs9vYBCHnY3DeG2ZPOZNL/I4Q8ew6hb7wDqx5otAyC0t+ZmWIO6a/v+gcl7cf54VHj4jXWLFtVsNHZNR/Z4ZeospxRRRHy67tdPYLZCynTnifZbEupF5GtvuLVag27z36dWaiyU2h90Fr5ANVtesJi8Xy2ui727JHJZ/C+ajK8HyjZ7Pkdn9a8GZWEP3EpGRcJEmohtugs5zZN0erLkbakA/Wl0LayeQoFG/r/bV/bWt5Xm8Xso88JcPOQRgB"
+     "signature": "CAQS1wkKEAgTGAI4AUIIdGhpbmtpbmcSDDQ3izqeHOp5W7Yi3RoMIOJPPvUfxvsN6PGdIjBjt9mw1E+KXB96aBUEMiis540veXNiihTNXSv7QyhywcFEU3kD+m3U8KOdQVWrhOIq9AhIVOUZt90Wr81bjPJJTPBIKSgKIjyPv2PSoenp22a2NTSXGq/KjxfcAgZnIA71ij4HwDFCTtk0LLDjKps9JAx/+ZiLLpvT+VKwIVOFjA72XJFmXjwzj3waL/qmlep4oIhlRI6gdfNzQU9EBx3EyeuKEk3b5NkEyA3twUL7Qklie72W1jCNorTc7BhfbN+CRXtRoGjKopB5T/6T3lcUNsrhmpEdgb5BOO8uXNKJUlLLk7zFw2lxNgm6hOfGVEEvzLXIN+TALecl5qgPYA7ZYaMoIyXDIt80qlprfL9XBDcib7GszHhFj9cfyzVVqBoi385lu4RV40ZeIGbuQlUnA8Xy1JOv5O1DFzaW4JlFOTFnyeHu05WdESjgGnlCgv+AzxKUcIqpAd/Dcs8pNnvVJZ58qmd8xE2lisY/DL7tMIRA448DICs7cp1NCj+RUMDAfPEKZ4NFJEgh5nevZv2bPTexWc0qieU0Gr46mlHa0bgm36Es5/qLai+11EWHARbZZmfhtqdj3+gI7+w4cP19t5vUc0q9UvEJvq3n97D8AWp2Pxegjtt+VW7ApHYTSlCctie5DSh/G3ITaO9McnLT5rw0O/d1LtOIo+ey0tj1atVPBAU42uTzNO6SmiRsPImYgOK0wHH5VK0g9GyibX+yKFoIK6bnRdGTenXtM79usrxFartmJeXGXYkvF/zCdOEMnd2FlZhVQvPVJxtlYe/iZyTu4Na3R2zAHh2KJesAgw05H/8AgCdfcMuXTIS7B9MvPV0VICPyvtWhLkXA4XVu442Z9ighTNKmLePScHgHrChjUb19JINJR2XjWJqTRwzcp1gh7iG7iqdC8OysL1/x128aBc5X1+JuLKg+pGszulze5avLRUZ68rPl9sFFTG2N9srrT2l4siFvLCbUVAg91xNFz8L4rWA5yHN1MpU/GPLWi8Z8aIbiSs9b6eR4l4Pwok4SNCYFmJG5iJ9mhiTL/CHnTWcP4221EGKSXuWxItFXpIbvXiEuRxGpWx/agnmp5nMbK34BMXj2z9dQY96hoEqBowxgWUMru4MtSzPhbbpCZD9PZrCmpf/3bnDSkMktf0iXaD+8vwzf2KzRWk4Tx85zjGoMu+2tP7UvJMJGaj0LvSbawCPRBmTOEJeFhpJdJlgsCkN1z3+iPQeAgbCpspT7HNe6yZFhG+lwHBdf8xBv2DHy/DtnbvjL6OVWD+ZRT4QGykZJAkrTdaOmWtFskbPOAryzOQW5ihgctNJWDUB293ap4wsBorxTwwBCWa/Jt2OyPXm1NlzFDNewIC3qDmTnkznhVDciUvhXH0X/pl3ZJ7KibCC6FfITmegXPO22iq0qgE1XA3m0hmVR2OlAy7rxVlkR8wgqYLzKicyI7JG/MLJDyvXbI45+Ka+I3pvorRzlsffIyUUKCF/xIufG6AF7u2BGlFP85rYzyMg4kbUxXJkd/q1UQC/xvfSkgsoF6FTWtvmLUCDVQRHyNgR1XFdqgVhIELteDiieelpyz5hfB1zztAMYAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_012JA2wnQDak5ay2z5Pd78zG",
-     "name": "network_log",
+     "id": "toolu_01QNxZQjmKU4hWRChEYEdmnU",
+     "name": "try_assertion",
      "caller": {
       "type": "direct"
      },
-     "input": {}
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "cart",
+        "pointer": "/items"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "sku",
+           "qty"
+          ],
+          "properties": {
+           "sku": {
+            "const": "MUG-BLUE"
+           },
+           "qty": {
+            "const": 3
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Abyr5F2JNzoVfRV7NPd3an",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "each",
+       "scope": {
+        "role": "table",
+        "name": "Cart"
+       },
+       "match": {
+        "role": "row",
+        "name": {
+         "contains": "Blue Mug"
+        }
+       },
+       "count": {
+        "eq": 1
+       },
+       "assert": {
+        "kind": "state",
+        "target": {
+         "role": "spinbutton",
+         "name": {
+          "contains": "Blue Mug"
+         }
+        },
+        "expect": {
+         "value": {
+          "regex": "^\\s*3\\s*$"
+         }
+        }
+       }
+      }
+     }
     }
    ],
    "usage": {
-    "inputTokens": 18459,
-    "outputTokens": 106,
-    "cacheReadTokens": 17796,
-    "cacheWriteTokens": 661
+    "inputTokens": 19712,
+    "outputTokens": 552,
+    "cacheReadTokens": 18805,
+    "cacheWriteTokens": 905
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:1a7741eba968088a2e18b0e3f7794d71978b1c2bbfbf15be80c7eaa96daf46a8": {
+  "sha256:7b5e7dc92d94f25e80dbd3b99c728795c4318396c120276a0ef468dbb546c459": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01MSXdnALNiNuS6R5upzV71T",
+     "id": "toolu_017TeaQ5x4DPWRSk4cqnyXCe",
      "name": "submit_checks",
      "input": {
       "checks": [
@@ -154,6 +301,10 @@
            "type": "array",
            "contains": {
             "type": "object",
+            "required": [
+             "sku",
+             "qty"
+            ],
             "properties": {
              "sku": {
               "const": "MUG-BLUE"
@@ -161,11 +312,7 @@
              "qty": {
               "const": 3
              }
-            },
-            "required": [
-             "sku",
-             "qty"
-            ]
+            }
            }
           }
          }
@@ -174,58 +321,36 @@
        {
         "id": "cart-page-blue-mug-qty-3",
         "requirement": "R1",
-        "description": "The cart page's table shows quantity 3 in the Blue Mug row.",
+        "description": "On the cart table, the Blue Mug row's quantity field shows 3.",
         "assert": {
-         "kind": "allOf",
-         "of": [
-          {
-           "kind": "url",
-           "match": {
-            "path": "/cart"
+         "kind": "each",
+         "scope": {
+          "role": "table",
+          "name": "Cart"
+         },
+         "match": {
+          "role": "row",
+          "name": {
+           "contains": "Blue Mug"
+          }
+         },
+         "count": {
+          "eq": 1
+         },
+         "assert": {
+          "kind": "state",
+          "target": {
+           "role": "spinbutton",
+           "name": {
+            "contains": "Blue Mug"
            }
           },
-          {
-           "kind": "each",
-           "scope": {
-            "role": "table",
-            "name": "Cart"
-           },
-           "match": {
-            "role": "row",
-            "name": {
-             "contains": "Blue Mug"
-            }
-           },
-           "count": {
-            "eq": 1
-           },
-           "assert": {
-            "kind": "value",
-            "source": {
-             "from": "node",
-             "target": {
-              "role": "spinbutton",
-              "name": {
-               "contains": "Blue Mug"
-              }
-             },
-             "field": "value"
-            },
-            "normalize": [
-             {
-              "op": "number",
-              "locale": "en-US"
-             }
-            ],
-            "expect": {
-             "approx": {
-              "value": 3,
-              "abs": 0
-             }
-            }
+          "expect": {
+           "value": {
+            "regex": "^\\s*3\\s*$"
            }
           }
-         ]
+         }
         }
        }
       ]
@@ -236,11 +361,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS4QYKEAgTGAI4AUIIdGhpbmtpbmcSDB++36q9DFD45oR4WRoM5BDzEWRqi7Yn4zQiIjDFymchjJN8FvZmy+SYgywFCSf2oOvPo2TB8HEfxhLjS0Gqx0E9/GdokV+AyBUY54oq/gVpYqvBCyeyTCPuCkKw0FDa2m4lODuSE7FIihPN8/ukbk1nI8NFvf5+HKtPAx8xEc/FEvgoTA1tbhyXhIqXvrnmgLRA0lzE8kJuvpoEBF/w1KdO2InLrXFtgVYB/rxX3y6P4s/CQlTKLVRlXa0+7HC+jG6BAIhlKApP1nkGGiyR7H33D5PNgES2PEZPAS0wOabEEL+fy/9JllSSoTnfmG1SizeUza3GpftRCQ+FO4DSKFSZpV8GtR9lVeOe9qcZAdlJCyjRQWn6x0Xm2KqaCzMX+YH/RKfG9cKFa7OMCCY1p7Ust8KSlvhF4pu+zwAW27bFDC6RJAF5S7ttazTZKPr78QRcwZIJzmPR2uqS8AZohrJFACI4mjnjv0G2akVXyZSkGvqraLsoIXU3Is6Wqcb2kzIZy9lFLCArw0cB7YCjQdSwrVdbWL8XacFCNeUB5dxpd45wGRIbo5oIBJOAOrL7od361suLDRVHzsvXfah4tpSWpcI5GER01vZw2I1VQCaJCFbJWxJAVXoyge1h6QHhcErT58YPaZjIs39Csaqo0HZc/SKREb4d9BbVtgqBt5r137pIZmfhaIOxtYBrXIn4tA9KFVpO/tr4bTm3RZkstAu1hdMhMNOLC6vWty7w07WLdVbP9pZD4eCfLiNZgkHafunWWffYWjCvlbGdQOBNofcHuKOPbOGkDE7IWHMJSZRTVXJhN1e0V40eQ8bjp3TXbV8cKks7l9Z5QPiao3Yx4qpJsG2dEONl4Ud4azFewIjcGqI+XyJzb9cCfZysPxqnx6zgd2gMjCSLAUDArB73q1h4xdGnJNcVbEvwbukH4aRS0QWQT1JADCTjdJYpmXRnwZsLKFS2QPYEMNr/6afc9jKEUwMJgFV23XIXlJzlBDp5puzkH8uqUuXhX4bIg+/mVDIW5cAs1dTZ0SBgqMTKiIdhuuo3LRtC/Q2SdSnE8w2CRT6l7YB/Mmriw/CW3XwI73n4VzVbJPsZPh03+pXg7v2cfqKQ2TO9ZTbicBMfGAE="
+     "signature": "CAQSmgYKEAgTGAI4AUIIdGhpbmtpbmcSDODyD+b6tTW18KzTnhoM99BTQgn+H0wS8C70IjBuKqpRUz8kIlj1TKHZxJRB5H/+BfkfCkgv2RfWRsIrlBFLYz6MAo1WZi3SIWR1dUgqtwVAWr1VOZzVJfcMWrZVEGYAcZEjP1l4Qeby1bCsLwdOFkvZZheU26EbSm1b6Aqt/26tR//2wzz1BLd4/iXYCGGSPKOoqbZ2OGN0fb7KVrOgAg/8W+j6WKlhzgXfWS9tfuJnfhTlyuXruMWKv2Xiu/vIxTetX5aK7fcZ7v4hkpZ7cBc88wbWsxglcfjj+HTvNNM/I4UQwhFb2EZwZitF/CPdrx7i1hh9eGVNvH21Sg0lgYUlFMl5T1WvshCaOYLzI/OeBmry9aaBAu65hdhFf27oz2kTs7i/1FjslmejH7VMThxt8xZMR6E6RaryREOH8xY+sG4dfMHF/mc99S7OUNBVI43xh8IZxjX8JW4GvAn16ArysxkVCBNwv5oiyXxywV/AfaQTEh7L/la+svH7E1vZA/II6JVc3Ds5bm+Da/ivOBUlC+ZpBDI5OBcTrH2LcS+o/0nKcnmXYNxafyhAg4gWRTdfdwT62rWgV+HF/thDvbJDkUi/P+c4Je6kByl4/Z23oIORGJ8qALQmbrBbkprdpxJdQwzeQ9LMyFFt/rvyIqpt5g09E+JR2lf1AmtGZfdDl9W0HK4f/vLuDIceuDvAnuLCrRrVSp3yc8bJZb6GMabT21EpsXbrmzVGbwDD79Wuy8go6HsTv2eYa7C4mDnQylo8bW49XyDTjAACs9qdY94bw8xbbE1hbdRj1e3vIsXamBjwqkIEM2uYWIZpozuzBkUmti3//AQnyaqkUqF1uyktgsyuWkEKqXzv+aS7K7DiyZYCtYoN81fcKMp9hULUh+ATtytlaKUNuoYAAGKCKIuNqgXFryC0CvBCJQjnxbhh26RHesMEniyNCwC10cCLDXKlnGs9yqsdUrAqquJFzqjZLb2OY/DCBGr4aCtHR+fRXX7qd54efQJV95A9aDDHOok1BdF0DhgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_01MSXdnALNiNuS6R5upzV71T",
+     "id": "toolu_017TeaQ5x4DPWRSk4cqnyXCe",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -263,6 +388,10 @@
            "type": "array",
            "contains": {
             "type": "object",
+            "required": [
+             "sku",
+             "qty"
+            ],
             "properties": {
              "sku": {
               "const": "MUG-BLUE"
@@ -270,11 +399,7 @@
              "qty": {
               "const": 3
              }
-            },
-            "required": [
-             "sku",
-             "qty"
-            ]
+            }
            }
           }
          }
@@ -283,58 +408,36 @@
        {
         "id": "cart-page-blue-mug-qty-3",
         "requirement": "R1",
-        "description": "The cart page's table shows quantity 3 in the Blue Mug row.",
+        "description": "On the cart table, the Blue Mug row's quantity field shows 3.",
         "assert": {
-         "kind": "allOf",
-         "of": [
-          {
-           "kind": "url",
-           "match": {
-            "path": "/cart"
+         "kind": "each",
+         "scope": {
+          "role": "table",
+          "name": "Cart"
+         },
+         "match": {
+          "role": "row",
+          "name": {
+           "contains": "Blue Mug"
+          }
+         },
+         "count": {
+          "eq": 1
+         },
+         "assert": {
+          "kind": "state",
+          "target": {
+           "role": "spinbutton",
+           "name": {
+            "contains": "Blue Mug"
            }
           },
-          {
-           "kind": "each",
-           "scope": {
-            "role": "table",
-            "name": "Cart"
-           },
-           "match": {
-            "role": "row",
-            "name": {
-             "contains": "Blue Mug"
-            }
-           },
-           "count": {
-            "eq": 1
-           },
-           "assert": {
-            "kind": "value",
-            "source": {
-             "from": "node",
-             "target": {
-              "role": "spinbutton",
-              "name": {
-               "contains": "Blue Mug"
-              }
-             },
-             "field": "value"
-            },
-            "normalize": [
-             {
-              "op": "number",
-              "locale": "en-US"
-             }
-            ],
-            "expect": {
-             "approx": {
-              "value": 3,
-              "abs": 0
-             }
-            }
+          "expect": {
+           "value": {
+            "regex": "^\\s*3\\s*$"
            }
           }
-         ]
+         }
         }
        }
       ]
@@ -342,12 +445,13 @@
     }
    ],
    "usage": {
-    "inputTokens": 18766,
-    "outputTokens": 554,
-    "cacheReadTokens": 18457,
-    "cacheWriteTokens": 307
+    "inputTokens": 20564,
+    "outputTokens": 488,
+    "cacheReadTokens": 19710,
+    "cacheWriteTokens": 852
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:08:32.994Z"
 }

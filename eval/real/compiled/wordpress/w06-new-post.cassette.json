@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T12:14:43.004Z",
  "turns": {
   "sha256:9225dd75a7b0a97bfda3228f64d2e1f33ce470b3dc789fccbc066918c6fce716": {
    "stop": "tool_use",
@@ -94,12 +93,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:b8817fdaa96a546a2f6ffef1406ebc4a819d71e9269abed03dbc4e9d565e81ef": {
+  "sha256:ee23886917b1508f5d91706d98fe46d8d1d1fa1d00822684c8058854d977db6f": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01QhAr4gE354iQ6gDBqJNNfU",
+     "id": "toolu_01RhtwYoDXHipstncxYBjd3f",
      "name": "probes",
      "input": {}
     }
@@ -107,7 +106,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01QhAr4gE354iQ6gDBqJNNfU",
+     "id": "toolu_01RhtwYoDXHipstncxYBjd3f",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -116,91 +115,22 @@
     }
    ],
    "usage": {
-    "inputTokens": 17017,
+    "inputTokens": 19881,
     "outputTokens": 25,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 17013
+    "cacheWriteTokens": 19877
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:f4dd5a168a88009ca3b0bc076be9827868a01cb672113aeb89a75cee4c9deaa9": {
+  "sha256:0814438f3fe09017319f2ebb582417b58b82119bb776a2fe4fe35318ba8f29cf": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_017tPnfDqYMaiyV64jP8qTJy",
-     "name": "try_assertion",
+     "id": "toolu_01BLbrUn93ho2HBc8AJRo2jD",
+     "name": "network_log",
      "input": {
-      "assert": {
-       "kind": "allOf",
-       "of": [
-        {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "posts"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "properties": {
-             "title": {
-              "const": "Release 0.2 is out"
-             },
-             "status": {
-              "const": "publish"
-             },
-             "categories": {
-              "type": "array",
-              "contains": {
-               "const": "News"
-              }
-             },
-             "excerpt": {
-              "type": "string",
-              "pattern": "Assay 0\\.2 adds per-row checks"
-             }
-            },
-            "required": [
-             "title",
-             "status",
-             "categories",
-             "excerpt"
-            ]
-           }
-          }
-         }
-        },
-        {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "posts",
-          "at": "before"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "not": {
-            "contains": {
-             "type": "object",
-             "properties": {
-              "title": {
-               "const": "Release 0.2 is out"
-              }
-             },
-             "required": [
-              "title"
-             ]
-            }
-           }
-          }
-         }
-        }
-       ]
-      }
+      "method": "POST"
      }
     }
    ],
@@ -208,110 +138,74 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "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"
+     "signature": "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"
     },
     {
      "type": "tool_use",
-     "id": "toolu_017tPnfDqYMaiyV64jP8qTJy",
-     "name": "try_assertion",
+     "id": "toolu_01BLbrUn93ho2HBc8AJRo2jD",
+     "name": "network_log",
      "caller": {
       "type": "direct"
      },
      "input": {
-      "assert": {
-       "kind": "allOf",
-       "of": [
-        {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "posts"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "properties": {
-             "title": {
-              "const": "Release 0.2 is out"
-             },
-             "status": {
-              "const": "publish"
-             },
-             "categories": {
-              "type": "array",
-              "contains": {
-               "const": "News"
-              }
-             },
-             "excerpt": {
-              "type": "string",
-              "pattern": "Assay 0\\.2 adds per-row checks"
-             }
-            },
-            "required": [
-             "title",
-             "status",
-             "categories",
-             "excerpt"
-            ]
-           }
-          }
-         }
-        },
-        {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "posts",
-          "at": "before"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "not": {
-            "contains": {
-             "type": "object",
-             "properties": {
-              "title": {
-               "const": "Release 0.2 is out"
-              }
-             },
-             "required": [
-              "title"
-             ]
-            }
-           }
-          }
-         }
-        }
-       ]
-      }
+      "method": "POST"
      }
     }
    ],
    "usage": {
-    "inputTokens": 20523,
-    "outputTokens": 900,
-    "cacheReadTokens": 17013,
+    "inputTokens": 23387,
+    "outputTokens": 407,
+    "cacheReadTokens": 19877,
     "cacheWriteTokens": 3508
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:356d7db1bc5b1ce9c55b9e4643dfd35ef315f157614a6fd5b92da407e102d121": {
+  "sha256:e826b63c71781a9449a580fdcc89708783b69858d0774049babb886c0ef9993b": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01C149CDDUcFxWuY2YJZume1",
+     "id": "toolu_01PtmDpeNwsBh7KhzeyvJZM7",
+     "name": "network_entry",
+     "input": {
+      "seq": 194
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01PtmDpeNwsBh7KhzeyvJZM7",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 194
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 23949,
+    "outputTokens": 49,
+    "cacheReadTokens": 23385,
+    "cacheWriteTokens": 562
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:150bc0fbd3b8232a2a3e230e658ecdfa28858008f02d44b2f9ac9b9ccacc72d6": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_019dBGepCe1HiQTVtRZZSeT9",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "R1-post-created",
+        "id": "r1-post-created",
         "requirement": "R1",
-        "description": "A post titled \"Release 0.2 is out\" exists in the backend after the task and did not exist before it.",
+        "description": "After the task the posts probe holds a post titled exactly \"Release 0.2 is out\", and none existed before the task.",
         "assert": {
          "kind": "allOf",
          "of": [
@@ -368,7 +262,7 @@
         }
        },
        {
-        "id": "R2-post-published",
+        "id": "r2-published",
         "requirement": "R2",
         "description": "The post titled \"Release 0.2 is out\" has status publish in the backend.",
         "assert": {
@@ -400,9 +294,9 @@
         }
        },
        {
-        "id": "R3-post-news-category",
+        "id": "r3-news-category",
         "requirement": "R3",
-        "description": "The post titled \"Release 0.2 is out\" is assigned to the News category in the backend.",
+        "description": "The post titled \"Release 0.2 is out\" has the News category in the backend.",
         "assert": {
          "kind": "value",
          "source": {
@@ -435,9 +329,9 @@
         }
        },
        {
-        "id": "R4-post-body-text",
+        "id": "r4-body-text",
         "requirement": "R4",
-        "description": "The post titled \"Release 0.2 is out\" has body text containing \"Assay 0.2 adds per-row checks\" (as shown in its excerpt).",
+        "description": "The stored post titled \"Release 0.2 is out\" has body text (excerpt) containing \"Assay 0.2 adds per-row checks\".",
         "assert": {
          "kind": "value",
          "source": {
@@ -475,11 +369,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSzwYKEAgTGAI4AUIIdGhpbmtpbmcSDCZLE98+GTnNlzb1ShoMyBZ8KU751oY1LL57IjCvOYF28eTlaMmAS8jL76LWS1zsa0LXetBWROArBdpqoZ3rkwQWgMWSfDnysfcSGx4q7AVQ5O5WlXMyjf2On6xGr0WQj29jGJmc5w16F+JTMDvMprRY1JyPSTlphJsfCaf4slGDOI2iQ7GzoESxcQ0n6YmfkUPuz8R9LTNGIvQots5R22/nV0GzUEYEidopiQOZXg4hn48fF8Jd3pDMyKaawRwz+SvIANBIrOC8INVJwB8yc2rfTGiXlQQQgeDg4LkAnh1niZ6HTXxxWpvicMGCdq9q7HXYBzxppPmAkNg2yNGIRsflTqBEEk7f7HWMMaX+aVUwIJYYYauH8ng+3hgZVkIC4p4q7I1XZfyCtaC+RKTMZWD8kHtj+lUDfDDFOkY9iOg+p7gxHn+pBH+Getfv/Ze39Jp5jlkLMMSCkLUciTyERuWEFuKgMAVVqmIdttsg/JsNSScP3lKhK91Fi2p3cnxlAtgUW7k535DaRe65Ht6FN6xLAwcvyMvj3Wm2ruDfxDf35iZgnx2AoziImasnNgPEsRIYw8sVnUup6FQu+gEK0fCTbIIWFW4NA5Lf5bT5uFe9PhIX56YmaSSIHTcorDB6jq2lSRokN/3H7IT/JpiQItTNjthCXDS3KGMszjeMsnk1O/s4YvGGXGDapRIRaJB/HYUgzzdGEliWQH/HOy1X5KNB8XxyV/1bBi1TYXW/4KT/KU/8dreIBk7QfgQDOF7lRk4bQ6cxJ6+GEvJfKsLMiEVJjor/eXXa/jqbuZhOnaJJtCYnDSc56R+se9r9GvqiPfP9CF7CSej4Jqb2MH/dKG9BecfM2bDznUcjoQXjpsb3qtuCNASSkP5ir1rKEyPjJV6QT3StHrw9m66VbmcAuCIjjlXsr2e72FYJW2o5HkhOZelKsG9bmm4PFPAF+QLzKaRqwE/QLELTBYnvFYSjO3LgqfIM3PLDVKDF7lUKvzGFrP61FoZx+EzOR1lqFIRBzq3gzNN4uRLPPCt9gi4xPGgYukVU6rfFWOqX8bb+mH7VhnULmle9gHnNmLO8crHEnFrYWWuGFyRNC1jpGAE="
+     "signature": "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"
     },
     {
      "type": "tool_use",
-     "id": "toolu_01C149CDDUcFxWuY2YJZume1",
+     "id": "toolu_019dBGepCe1HiQTVtRZZSeT9",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -487,9 +381,9 @@
      "input": {
       "checks": [
        {
-        "id": "R1-post-created",
+        "id": "r1-post-created",
         "requirement": "R1",
-        "description": "A post titled \"Release 0.2 is out\" exists in the backend after the task and did not exist before it.",
+        "description": "After the task the posts probe holds a post titled exactly \"Release 0.2 is out\", and none existed before the task.",
         "assert": {
          "kind": "allOf",
          "of": [
@@ -546,7 +440,7 @@
         }
        },
        {
-        "id": "R2-post-published",
+        "id": "r2-published",
         "requirement": "R2",
         "description": "The post titled \"Release 0.2 is out\" has status publish in the backend.",
         "assert": {
@@ -578,9 +472,9 @@
         }
        },
        {
-        "id": "R3-post-news-category",
+        "id": "r3-news-category",
         "requirement": "R3",
-        "description": "The post titled \"Release 0.2 is out\" is assigned to the News category in the backend.",
+        "description": "The post titled \"Release 0.2 is out\" has the News category in the backend.",
         "assert": {
          "kind": "value",
          "source": {
@@ -613,9 +507,9 @@
         }
        },
        {
-        "id": "R4-post-body-text",
+        "id": "r4-body-text",
         "requirement": "R4",
-        "description": "The post titled \"Release 0.2 is out\" has body text containing \"Assay 0.2 adds per-row checks\" (as shown in its excerpt).",
+        "description": "The stored post titled \"Release 0.2 is out\" has body text (excerpt) containing \"Assay 0.2 adds per-row checks\".",
         "assert": {
          "kind": "value",
          "source": {
@@ -650,12 +544,13 @@
     }
    ],
    "usage": {
-    "inputTokens": 21586,
-    "outputTokens": 895,
-    "cacheReadTokens": 20521,
-    "cacheWriteTokens": 1063
+    "inputTokens": 25782,
+    "outputTokens": 1202,
+    "cacheReadTokens": 23947,
+    "cacheWriteTokens": 1833
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:06:42.654Z"
 }

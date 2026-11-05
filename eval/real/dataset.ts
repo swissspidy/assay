@@ -10,6 +10,8 @@ import type { RunFile } from './lib/types.ts';
 export const REAL_ROOT = new URL('./', import.meta.url);
 /** The run each task is compiled from; it is never scored. */
 export const TRAINING_RUN = 'reference';
+/** Further correct references through another route (`reference-<name>`, ADR 0011); never scored either. */
+export const isTrainingRun = (name: string): boolean => name === TRAINING_RUN || name.startsWith(`${TRAINING_RUN}-`);
 
 export interface StoredRun extends RunFile {
   app: string;

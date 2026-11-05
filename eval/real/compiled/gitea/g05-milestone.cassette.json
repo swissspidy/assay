@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T12:12:34.061Z",
  "turns": {
   "sha256:b5357d7b295292f6d1046320a017e20869fc024b3103f5467bb6e18bed03708d": {
    "stop": "tool_use",
@@ -66,66 +65,48 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:da239d35dbc6b2b401c2f799ecf86668fbdafb91ead122e12b95245856f328a0": {
+  "sha256:b96b0e238faa406b9eee0d7a00060d9f1e8fc76494613ce24152642a962bd8f7": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01WzHbADrjfDXJXdqCqfK6xo",
+     "id": "toolu_019U23mfKWBR2RWdBWU6CHhi",
      "name": "probes",
      "input": {}
-    },
-    {
-     "id": "toolu_016BYRbJC9qD2ZG7dQL8ePKk",
-     "name": "network_log",
-     "input": {
-      "method": "POST"
-     }
     }
    ],
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01WzHbADrjfDXJXdqCqfK6xo",
+     "id": "toolu_019U23mfKWBR2RWdBWU6CHhi",
      "name": "probes",
      "caller": {
       "type": "direct"
      },
      "input": {}
-    },
-    {
-     "type": "tool_use",
-     "id": "toolu_016BYRbJC9qD2ZG7dQL8ePKk",
-     "name": "network_log",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "method": "POST"
-     }
     }
    ],
    "usage": {
-    "inputTokens": 16946,
-    "outputTokens": 70,
+    "inputTokens": 19810,
+    "outputTokens": 25,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16942
+    "cacheWriteTokens": 19806
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:96588e584a9151389c881571ef0618859f13b772fccda4ba01471faecbe62485": {
+  "sha256:85d224cd015bdbc8e02a36d90b5b69f219495848db92e785273bc9c57a29c97a": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_017spdDwSdYHHAnWdDjtSjjT",
+     "id": "toolu_011kAivrg9WkakmxYJdFtASz",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "r1-milestone-exists",
+        "id": "R1-milestone-exists",
         "requirement": "R1",
-        "description": "The acme/webapp milestones probe contains a milestone titled exactly \"v2.0\".",
+        "description": "The acme/webapp milestones stored in the backend include one titled exactly \"v2.0\".",
         "assert": {
          "kind": "value",
          "source": {
@@ -151,9 +132,9 @@
         }
        },
        {
-        "id": "r2-milestone-due-date",
+        "id": "R2-due-date",
         "requirement": "R2",
-        "description": "The milestone titled \"v2.0\" has a due date on 2026-12-31.",
+        "description": "The stored \"v2.0\" milestone has a due date on 2026-12-31.",
         "assert": {
          "kind": "value",
          "source": {
@@ -191,11 +172,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSsQkKEAgTGAI4AUIIdGhpbmtpbmcSDMChsGu1+SinfzhOjxoM8xVJ9H0FsrTXa4ieIjC7MaSna4OS/CWkEz07WrE/8KUvKl8uYZsJPkdwdhj23CkJZyckfsYuwoXBZWIYph8qzgiE6Vn2kVSzNp3KZpZxB52BpSdivg4EotkanGKNXCfiLT46gTh+5+1OyAygAlA79Kx0csMZ907zaTYggrEyDOoPuL4RXtVmlqB1PuDJgWcEdVG//ut4wSweYQ3nXy3xQtUldpstMrquz8Or3Tm0p2X2rCz7ZNM7MiuxgXn5rnKDCs0gnaKIZ0Ta/umIxWQeuv3+QaN6dmH5a6TQpcfVzcTr/SaPdCINMcQSt98+wB1JZ+VNKGrRYQCGNdFWhnf2Fan4gzbmDo4lHowA/Nhcj+KaOlS4bh81DTxbFcSrbHlWIUsJefF5IZq2kvfqRGGziEh59Dn4VKX573++skGZdPWbxQFijmoBg5JQ6Mtq4CCSB3nwi+yznGLO19QWIzfS2wWUYr4U70h7bJsc+rqbzDAYiAs/Z8Vxq2eYIdUJXmMw8/Sf6FN2udcWnEmtfLy5ZsKlku5qIQgtOhGv37AqCfkJA7xVNkkIxsIl6t4Xmmt5J8ng4cS+MSpCSB1oH/ZvMn+MzRxaGP3IqFcChPuDtF6BbM9ypycRbpSJK6AHF14qH2dbgVlBY9UQfnDnQl6edOa8Viyx0VDU4ICzVvORbhQkVBhURPRMUmoF6f3zCqvgOGotAnah0Eo6K/djib+RLIz7lwKnPLT4by12gLgZekxF4hGUSjPnM09iOJggAOWgHQdfjrWBt3dNV25zbiCvjXhvl8LouqZeTsPrv4dJ5zhWiq3UYgYpkVhD+Miexu3JxDaPu2LR6QP73OnZjYKlsHU5gVE9Cw1by9Xx/tnIBfnLi3spFnzOQ0dfhoqmPkA/L0uRKxfPT4J302otN3KIfi+ShT2+I2cs6idcwNvTEYrI7AsiOo0nmNKsmSA4IAms3Rb1gZPR3ohO648LCmMpMeYObV7AvSfxRC1w65j5U/p9n2Y/CJ0YJNHUmikUu/Ji0XU8Ayw8f71diaePbZgnAN6lIuxYvxWXi5R4L7WNa2fJ7kAmSo0aRhCNtQapq2GzziXfNHFOOUVRb9dXxJNXmUcV/1eozik+iNz8oCwvfYA4Oc9Mvfk8QTQsS0cJdgKqxGYmi1C1y7o1iT+nf2Sih1G2RUNOrI2qdz+mEbhiOcmt3n6kSZeEEmodK44bWXYbZ9hRH8b/Z3YQA97Eq9W1c6Tla/Vg5dXVpbHSE7U8YLinNxPGCGiRrSTdrkuqdJfY97YhJtjK+eSawdt3zb1gct7PCZ38s39MiEq0Mo4vIncxssBLFWs4stVopwBzpJi09NKhNSQW7FhW4MCnlHYP1/+IBoPIkVSl39nO+8WIsKpisGfKpahUQuAXELnkbbebTpGAHJPpzfQm2eYoiFalwAj+9QOStuMIgsCOIHlHX3JUI6Evttw9HC2giEupz58Noq37LQMvRXfXbgEXmRVe9KlWSQiU4R4H6AW6I4xfAqg0A2/y5RNImT3lhp2CB1zvS3c0SU2sdmG4VdXyzXwXGAE="
+     "signature": "CAQSsAkKEAgTGAI4AUIIdGhpbmtpbmcSDM80q57GTMu2ETxyFRoMx2ZFqx8AItP7TjTVIjCdJsDWr+YbFJXPrAAmCw9qVVhd2OaHBc1TDRzzpPJmqhNt9TWVFqudXwiwcoWWweYqzQgauaKueZNbt0l/esJpYnCvllfZkJ9P/GFzazmbQMYFgaGsS8i8Tpngmk8iO5Kkds165bCUOkH6SoFXwJELBtubnkZDcpDPAFzvvWagSHebe4pUl9jExnId7tWdN95+TzgCQbZSTGSQk+j9UNtb2Ckv0BXWiIuvgYA1cY3i+j2EzrwuA9+SNLbN9nXU9CUzto3mv+KOzKrjHfUXr7C1rVDP3AyprJ+lZPwUMjVP4DrezXrZbobPgDcLO7JpkX+l1F6Q0URB/A2+JyQWiTRv4WCpKtRVH290gEGrmeNOVqOo3FqmT78CiAqA0Ntl8j0fhlJgEvbTtKl8vuHw3nFpwq/02eSblXJx2d+P7FL8IENbm5dl94y8YzLva6+H03Bn9UI2TE7793fE06P0zZ625dT8eeLxupb/sUHMUnZMWQehCeTEGm+fgsVBuqbysk6oNIdhF2weQvh01jEam03JBp2lcWy0B1je40nVM5HPVGJYvyNmKEnkZcXDzfpTpmHPiFafLinoV41NH0Dk5uSqss3aibvS6NxdOA/pLt5RdlcOstsKqRj72JMlW76rJt0HTQaEld/xdbWasLtHvAlWbPJqI0ayTS9WOXpKkuP1TTUyrc/wan2n4W4Riv6UUA+OqaDt1C25n2OyzwBePvojLObPZdJ5NWErdJEY9I4WmHHjcCLljciJlH+PF0T9MM+jbvCphATSr3djorCwF9ybQTRLrUmbBvpeDb9fVcb1OJpKJQaXbF3+jkXC0Y6T1fudtrchE2UTDQ3Y/6Vo9jawhdUneeY9PnaQXi3rZOj7xnQRS8KZEhb0dvMTbdViTHHGjZkDiaDhkA9k/gkAuwAxBkX3rx/WkX/bwfoVctamosrr63LaGrjpg7VfZRNllM4ceHLWCr8UL+ErFQAYHh8KuBTS+7FlNRslvu3F1+xlNrf6JCw1fwthzbqksb+CqhMdJRjhNM58U+ZPTWJobVW/Iyfuh9Ib40mKzeIfqeXyIB3ZP5OxcbJ0+/AbogmQ9rZpZvMRF9fscfaqelZ67HJBO1T+GBVVL2ztHFqQJSmevQl2l/xkzmVXlAltjENdcqcqJxMQgbpUIaA69pGJCYfmcQ0Kyq0QNmUZg0sLG8x3hXXBeXW0VVgcP4IUDQIoCRxrSkjVi0FJWxB0V1GzroxTfkQO6NGMF7YjIEXvc1fVYc+wkygDjNSLzGtjqHiyTMDCjEjSOUKpBoLZeTBXiSWDm4Wk1uJYV2hi2v8D9pCYUfTC0KMKGu9OKQZg1PMf/FAOyAKFx5P5ZbVOb73wy7UOvh+d39otuuYmaLarTGdQ0qZUQddfLsV96P7JBhWLWNNnWJBRw1pxT7SPeWTnVXAXxeZQ1vdBhgv+A+bqKpmsLVK+FUZq6R1M9kqSKvIC8tC1Fm8sa32pSPcGhZPj/xqll8IuAN+H13qPfC/uke2UAyMaEsC8lZaFIpMzEvFO4v8YAQ=="
     },
     {
      "type": "tool_use",
-     "id": "toolu_017spdDwSdYHHAnWdDjtSjjT",
+     "id": "toolu_011kAivrg9WkakmxYJdFtASz",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -203,9 +184,9 @@
      "input": {
       "checks": [
        {
-        "id": "r1-milestone-exists",
+        "id": "R1-milestone-exists",
         "requirement": "R1",
-        "description": "The acme/webapp milestones probe contains a milestone titled exactly \"v2.0\".",
+        "description": "The acme/webapp milestones stored in the backend include one titled exactly \"v2.0\".",
         "assert": {
          "kind": "value",
          "source": {
@@ -231,9 +212,9 @@
         }
        },
        {
-        "id": "r2-milestone-due-date",
+        "id": "R2-due-date",
         "requirement": "R2",
-        "description": "The milestone titled \"v2.0\" has a due date on 2026-12-31.",
+        "description": "The stored \"v2.0\" milestone has a due date on 2026-12-31.",
         "assert": {
          "kind": "value",
          "source": {
@@ -268,12 +249,13 @@
     }
    ],
    "usage": {
-    "inputTokens": 20388,
-    "outputTokens": 580,
-    "cacheReadTokens": 16942,
-    "cacheWriteTokens": 3444
+    "inputTokens": 23120,
+    "outputTokens": 602,
+    "cacheReadTokens": 19806,
+    "cacheWriteTokens": 3312
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:03:41.470Z"
 }

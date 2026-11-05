@@ -7,23 +7,25 @@
   ],
   "turns": {
     "rubric": 1,
-    "discovery": 4
+    "discovery": 3
   },
   "usage": {
-    "inputTokens": 89268,
-    "outputTokens": 2900,
-    "cacheReadTokens": 59135,
-    "cacheWriteTokens": 30119
+    "inputTokens": 73653,
+    "outputTokens": 2631,
+    "cacheReadTokens": 45410,
+    "cacheWriteTokens": 28231
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "Show me the open issues in acme/webapp",
       "checks": [
-        "r1-repo-issues-path"
+        "r1-repo-issues-url",
+        "r1-shows-repo-issues"
       ],
       "channels": [
-        "url"
+        "url",
+        "a11y"
       ],
       "trust": "structured"
     },
@@ -32,7 +34,7 @@
       "quote": "open issues",
       "checks": [
         "r2-state-open",
-        "r2-no-closed-rows"
+        "r2-no-closed-issues"
       ],
       "channels": [
         "url",
@@ -44,8 +46,8 @@
       "requirement": "R3",
       "quote": "labelled bug",
       "checks": [
-        "r3-label-filter-bug",
-        "r3-no-nonbug-rows"
+        "r3-label-filter",
+        "r3-no-nonbug-issues"
       ],
       "channels": [
         "url",

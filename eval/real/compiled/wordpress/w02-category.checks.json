@@ -27,37 +27,68 @@
   ],
   "checks": [
     {
-      "id": "r1-category-exists",
+      "id": "R1-category-created",
       "requirement": "R1",
-      "description": "The backend categories list contains a category named exactly \"Case Studies\".",
+      "description": "The backend categories list contains a category named exactly \"Case Studies\" that was not there before the task.",
       "assert": {
-        "kind": "value",
-        "source": {
-          "from": "probe",
-          "probe": "categories"
-        },
-        "expect": {
-          "schema": {
-            "type": "array",
-            "contains": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "const": "Case Studies"
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "categories"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "const": "Case Studies"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ]
                 }
-              },
-              "required": [
-                "name"
-              ]
+              }
+            }
+          },
+          {
+            "kind": "value",
+            "source": {
+              "from": "probe",
+              "probe": "categories",
+              "at": "before"
+            },
+            "expect": {
+              "schema": {
+                "type": "array",
+                "not": {
+                  "contains": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "const": "Case Studies"
+                      }
+                    },
+                    "required": [
+                      "name"
+                    ]
+                  }
+                }
+              }
             }
           }
-        }
+        ]
       }
     },
     {
-      "id": "r2-category-slug",
+      "id": "R2-category-slug",
       "requirement": "R2",
-      "description": "The backend holds a category named \"Case Studies\" whose slug is exactly case-studies.",
+      "description": "The stored category named \"Case Studies\" has the slug \"case-studies\".",
       "assert": {
         "kind": "value",
         "source": {
@@ -93,6 +124,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T11:38:53.507Z"
+    "at": "2026-11-05T21:05:58.268Z"
   }
 }

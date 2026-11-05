@@ -20,7 +20,7 @@
     {
       "id": "newsletter-off",
       "requirement": "R1",
-      "description": "The backend account record shows the customer's newsletter subscription is off (newsletter = 0).",
+      "description": "The backend account record shows the newsletter subscription is turned off (newsletter = 0).",
       "assert": {
         "kind": "value",
         "source": {
@@ -28,11 +28,12 @@
           "probe": "account",
           "pointer": "/newsletter"
         },
-        "normalize": [
-          "boolean"
-        ],
         "expect": {
-          "equals": false
+          "oneOf": [
+            0,
+            "0",
+            false
+          ]
         }
       }
     }
@@ -43,6 +44,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T12:18:38.336Z"
+    "at": "2026-11-05T21:10:34.159Z"
   }
 }

@@ -10,17 +10,17 @@
     "discovery": 2
   },
   "usage": {
-    "inputTokens": 38314,
-    "outputTokens": 721,
-    "cacheReadTokens": 16893,
-    "cacheWriteTokens": 21411
+    "inputTokens": 44042,
+    "outputTokens": 956,
+    "cacheReadTokens": 19757,
+    "cacheWriteTokens": 24275
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "Create a new post category named \"Case Studies\"",
       "checks": [
-        "r1-category-exists"
+        "R1-category-created"
       ],
       "channels": [
         "probe"
@@ -31,7 +31,7 @@
       "requirement": "R2",
       "quote": "with the slug case-studies",
       "checks": [
-        "r2-category-slug"
+        "R2-category-slug"
       ],
       "channels": [
         "probe"
@@ -39,7 +39,9 @@
       "trust": "structured"
     }
   ],
-  "warnings": [],
+  "warnings": [
+    "check R1-category-created.allOf[1]: reads only the state before the task, which does not depend on what the agent did; compare it with the state after (sameAs)"
+  ],
   "references": [
     {
       "name": "reference",

@@ -1,7 +1,6 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T12:23:23.336Z",
  "turns": {
   "sha256:c5ec758c0c6567fbf08429b65e264ca245adab1e5ac334326c8013868e411f1d": {
    "stop": "tool_use",
@@ -52,12 +51,12 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:5e0fb8598c8be5dd1e087ea111ca08761faf720114917b2ea13fef4d85242338": {
+  "sha256:14a375de773cde7e8ff201072c04170bf8054cae2910b0a457b22782393df11a": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_018G4mDeMEXrs3bL14m3k6UN",
+     "id": "toolu_018tjxVNsLY7kghhKHcov4Mx",
      "name": "probes",
      "input": {}
     }
@@ -65,7 +64,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_018G4mDeMEXrs3bL14m3k6UN",
+     "id": "toolu_018tjxVNsLY7kghhKHcov4Mx",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -74,19 +73,19 @@
     }
    ],
    "usage": {
-    "inputTokens": 16861,
+    "inputTokens": 19725,
     "outputTokens": 25,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16857
+    "cacheWriteTokens": 19721
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:1d4816cfb3758ee0dbc266030f91dc23da108f4ac8aee2f75dc05dbeafcc2c84": {
+  "sha256:3fd657be75708b9cd2e4026d99e2fc2d9da1713444cf30dc5bac8e5714d17e71": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01NeikWBUpFDUBMW6GdXDi5w",
+     "id": "toolu_01A95Lrv8MSwZzNkGS9NN9Yz",
      "name": "try_assertion",
      "input": {
       "assert": {
@@ -98,22 +97,39 @@
        "expect": {
         "schema": {
          "type": "array",
-         "contains": {
-          "type": "object",
-          "properties": {
-           "alias": {
-            "const": "My address"
-           },
-           "phone": {
-            "type": "string",
-            "pattern": "^\\s*\\(?305\\)?[\\s.-]*555[\\s.-]*0199\\s*$"
+         "allOf": [
+          {
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "const": "My address"
+             },
+             "phone": {
+              "const": "305-555-0199"
+             }
+            },
+            "required": [
+             "alias",
+             "phone"
+            ]
            }
           },
-          "required": [
-           "alias",
-           "phone"
-          ]
-         }
+          {
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "const": "My address"
+             }
+            },
+            "required": [
+             "alias"
+            ]
+           },
+           "maxContains": 1
+          }
+         ]
         }
        }
       }
@@ -124,11 +140,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSzgkKEAgTGAI4AUIIdGhpbmtpbmcSDMu+TFFJYIirYZO5pRoMtxeOTn7u2u0nQJonIjCPxwZLXSfUY4CPfdqLVXJGMENjXUIR7ZQPlTAyN/cDFy1yv2q50ZyuEFamhXSYJM0q6wjcYjPFRMaSDL1tkqlTnx5KJ8jx0mvvoEgu+WWz4PuTDylBRzZ+fcqMzyHgAMnE+83t2zEaxcTUywTsxX3LBscCXuJ50JFoNbz3kGWrp88T1NXOJJsnLLziEGc2or+vLR2Y64/FZXi9zbnlx56r6yZ/ChTp+HSeVcx2dIln+NbNKPnY5UUhF1Vm5HlP/A+Ytf6DBN+IkNPLHShFThhgcFqjqqIx0DLIn7Czz97D+/WjffUugBCoLLScC05iVWfeVRJXMrPoLqUUNMznrvFDcdWOYbkfg5hMlNONuH5dXNCGF+oOS+MHXyLwND8rGeCtmQsfuDG4KGB73rC/h/meBCcvpaMk0aRa2mR1IfM5VajiBZhOifYAGMBWhV1Wrt7BaxlHkrZb5DeJoJv1GXCQgHQS78phCHionXNckVQwiemYdwnyB0Sp1kL98YZEarR1cuuYAuTsL4BW710W4V/FXVkx2xmGWdlU8wGgv2+1noS/NjErb4cwhBvMSniiQFdBVxCGNiChUKcpEG2rzHbj6WWEhpbVhm/Kv5rihnNY5n1U5TQ/P8pkCTzOeTncfyetf4/QOPXFfW1fHkc9bDI8YTy7WgNw+b62iRxKQF/GxL0vIEBhbdLFSPDX8HjqriXronK2jtSvOirsb/aIlql8zY5lghBay965KwCk3PPTl+A29TYIsh10hal0iULS6FcbkCJIu8VfRvBcfz+c8eYFfdxschsqfzuDk4+f8oheTf6GgIjRIotlIIvmYK9WbtZ+f1iH1h79nr0XnotWoVg91JDkKRh7ZfzRJX59XW+u5H8ZyVzYjgQpHmS6wGUFAKEc5d68taR3Iy4eJWdSkq9Vu2TvyrE+2IP71ltOh2EKkaXs9L07/KFBEeU3tiubdaeWI2PW8HJga1idsPRC7Ui4UigppIlPK/MEdFxWdsHGf7MdRasW2i0nzq+0T2lPTH3K9/tqUZbEX2Sc3wnGZ4SndiwJxfQdY5qCjMylZzbLEeGR/uDLf3v0+gZsFm88nWZbrg5vbXMtLxQtH2pmmhiHOj82pYcNIMH/H6hiGDIXTWr4CJupO26xqQmN5lxKiBBLWsoqZbPMehzpn8AHoXINixK9GwrgtQwr6eJEUceXWNKcQ1MfrhVDURfI0qYsqH68v74vKIO29Sn1XFfOp7ks3hGKHIePvsRGD2e4/nEFIATa6UgfsTykSU6+UwpyDExGl9YAO5wuBcKEt3YQDFT+Paaw1PtPNxrQF/40lhQBB1Z5I1iKkm0eIQ9l48khLRwmHSS4g1NM40AcC/hVqGyDD3lTmr07txXYuss1NxdG3q2eE4ziT0NVt338GYWQd7gQ2cOocU8/TWrFFxuDSc4ILjit9Uj1rDGc2HUEiEcZp9fQr+CCTmuzb5oeK0J3hdn0LxqHevNVrPV9wnQ0XWhI6Ju8HDQdm8UCnc1AFyqhFbUQzpnLieJpMCYUDA8SA6yTXVz0Yc4gB6NapyJQk8JQKtUC/d1affswxUXY9esYAQ=="
+     "signature": "CAQS1RgKEAgTGAI4AUIIdGhpbmtpbmcSDEzNZAC16en/Bk5I7RoM/v4032EO3mrD37jiIjDKfoH58b/vaVp/Ca7mpGV6AAHeNzei0o4xn45I/Z9LwPcMMLNnvTDAu5snZ3xuNTUq8hdTES7H/ZGej+WOWmge4HgPVsaMoEt3jMRvwSAIOC34dY/7A+avxF85s4nAWxWFYGhPDgKz2qvEkflnRa0kyNLjMEwRk8TI7jasX50bYgCRyXofPPliGUw+wu7MvligAswPaLikxAm0i2hEL6SgFyiCS68SlFsK9MmrIWNvMiMqa37j0ySbmR42b2BuM5h1UUNKzYZtp3TqLSwF1F7+ZIUZUCH+bbZHFK+pO3euT/mJXoyCtH45MtO4CMa7dB1OhU2K+NvDPvT0XwGIqbNHZwz9Zm8afIfS48qGFOCfOPwOj++opZA9M0k+501oE1VgxCIMfli/m+XFKR7S+4FqhrZ6h1TCX9+hV+r52iif9qCzQ+x7zTe3tkm48mf2YDRXZYsAYqSlSDJuZFWfdJJOJ4iem09XWNbMDO6PmZBqZ0OAzck/PG8w1nenBn/5JIckXHnk+4g0AsJo1su3B1fwLSYs1HPw5v9b1Xl5i34s5+IkPEcTswbZXPEIhnkCovshZkzuzmd2PVofsaYozY2kzjdoQwwEhZ+A/GsTp3oatM8yL4M/8BnsEUV26RVifQIZS1wDodkyYJBlnM3ts+VQrEEGfljUA7AZTRpbsmIDuCq5Olc+dPu16ARxfuRMC4zPP46dOUNbyFb+jwTqst4VQP25w+WU/6Uko+vtn0ZfU9Wz7XHgUPflX6CQWkRs+Lhqy1xXZ90tOXwiTPvoBrWlZ4y2MLqDUwoPu7YIzwDL7ibWQUXNv9n/mUyje0qUX9fnxrOUqFOdpuHyyonIPyRRvp6ZGe/hAmaDP8QxPOVODkTXohdaDmF4HG+aNvMkdPgiwxS7Uao62nthMSikTHI22AW8nOirbL0MNnIm9Jolq7q4sRJSobjfaHJFF4Co6bNbhvwSK9jljAZVvDpeE7CAvDQdJq56DpZfLA7KT9FgNvarPwKneKCgxn1xZ5wg8Ylod2/ZLGvbrnzm6I9D1ZWGe1Fl68KyKx5NMSksPx3XFFhutoFKOtE+IuYsVxSa0K7k1953pG+OragMm9yknCjNF3/7wkn5P17LFogTeWnTM9rfthjzh/nSh9DADpkISheikIqwsCpmdxcRYawpdwYW+IzH8lAjI+n3Ud4e+xvCWGKaHU9sjORFbAYGnp2om2XK+7op/7whl1FjeZ41mBBPLvWWsjkvZPcLXkRSoJhaVToLJNhFy6ZzTme1Wa9HTsdNV4w3vSMBXzUoTHYDoTMMgsOWOxeDtASfNVc4ER/Ie7N7QLGf6cW+4bDIe/8z+cNktgBCZ6XRNkV0nHo6OOImko31rkKZJ2aEdqsIVxhLSAlK+tgTWVMIuzu/gtGjGg/OHd1F13cRGfreKUQ/dtVVWViv1dNMNTuX3SBg9y7EbcriK1KaMC+Oy+OTKgp1MST9gpYsanLncwRqtemrAYrB53pTQLdrizuEeNyjsvm3CM+OislOGCIWnHeuE0NRLzb5Df4ILV/3B0EaXyz821GQN8YI96hv3oPS9hOWdIYsJYPyYGCZ6uEz8rZWWdKxbPazyiHd+hR6LGpFaH4nLMvxbebt6V5czrifb5K3bl3DnpuYy5GdWlmHkwrMeZZConpCOTSOP7jVhUGHAgEau+aE4gjehex3Bvht4XruVUgS1XKnX0Vze1bVws4gIt4Sj+YgBmiPThXwgB/b/ghUJaM5SMA+wcWB7yy9ijUnj1UHSFL5elA/TBPNI/qLhrafbPfWMYmJ5uCGg63aQTLfnedZMStrtEXsTk950EKka2Tiq5WwnYliG0g8BacaXdhaaMvnR2op6TZCZ6XY/UfzGK7Zjj9pwixzhs6QYVdppwk8GPENxb7PDHazHLW/n5U5GQjbLM1n+pQE7ze6dhMOh2GDpBbVArwLy2tqeaO5BcniM5RTKMOyltqkTRfmxZhzSSdvR3q5lu7oLw4leID7VNa8MxaMNED+2+IstF9wKE/qdQvvPMbFre6FBpQsPcdrphtG3b1rIAQnqdH0XcJ19nWy6aT0RW1dDDlFsyWQ7ozpY1C2+ubh23Z40T3W3NXoUALE6htyQD7u0UwJGrBFw6K2PQa8PlLIyipRvSAz8FcbiwDAQWod+vTK2VJ0OTQG3wwXLpOnBZBNAXH+yqkIWpteNhijdw3Gaj8QoeYfxBDDL7u1fv7Hc4e2qAR1dIn4RQsW31BCUCJ21QRxwRdoxEJEHr1TqHapfv6AON4Kv0PDCbD2aRM2AlUjL4034nKYwDOp0fMDy2O5W9szuHLeGNhrEcgqG7V23KGAC9tx0qEqq+DnDPD3S/dYPCg9BuWhL/WbyTC1DJFJHmUM8WMy48sa/qnniS/sqlXiip/15JyPT7xEA8MlyE/PKyMaeqCDPD86ih4QP2GY/3Z6uz4P8hssQS9aJKElr2kBnQuHyVEOzCaa7KsG/D2wZAPOqRWg0Ofrx3q9JUFB7VJ+NrevfxPTr7c2TAhYCeadsS0qQluxpXlMihxJU+e6N1cjXWAPjglZm4fiNhIq+N3x3mHtPz02KGCpsrNIIXRWYZ/chBxAMZSBVHZjlMiU/40hZqpCZUCnjz0Or57qQOvruRWFrlBF2RnWbyUHEft09R+69HJhBy9/5gt5qcDXskomsp0GcQKqOmnvCLM+SVW2Kn9BDjqS5gJIg/0oXURg7C67BX15xNAH+7a15goIyr4vE2GWws1fMTIYHYR1DP7I4IqE0ezLLErpTRfObBkGOMzqSrIom4VL57WqGG/COiuOYElElCt4ZvcZCZ2BvHmtquxrtPikkFZsfSUR0pu9axFpFyevaZSx/BiafoIjeIv8I7RGdgsJYQ/X7g0QRBTWkk6bWMWevq2MSRWcVWcZq2aoy+aJYStroxnQ2zZVcECdcFPz1nsVFPGUC8JOZa6AM7U8mi/Gm+JF5zoBclf4cwsN2lnlPM/N2L/okZcI3jrEjRTxA4v0rJU3xhIuF8BIGGuj6Be51fBvA1eKg44G7EiNp7I7mM27SMlf4O3YZuP28olsJXnXboAk9pfyCyf5Lpc0t1zqYPBiIwDMHzrgN4opTWhgOUgS99BhR3kRf+hbPveP+O39nB5NSgnS/OSmTEwS4+Ok77fyiHXju9iI1tAHnYmsyt0btvCkqt9BpZ5mY6y4/OVoiREjbMlelDy2b8i0uGKN9gGXYgjL93xgRaT/I1HKgVI+UrZl6ffM+M/giiIQJkTq+oOXD2NZ6oFvgrEzypovLy74J0XeqFoOmOdDuowJx8GEB511rYSdABjZyo36ntP/DY0VxhJ6y3cRGXt7TNH+t5h8M+VG8gY+P2rUTkxYqgD9nLJTh+l+wT/c8snWsumx81VQjaFBZSVrhuKAF2KxePUcFgKHWS7rC8+JG2uFZ7Z6oalfDUjou0zDPt0gOeLofU4YxmuybAB3v0vheqmbeGeOOirnbLZosrcZlUKxr+wn3Q8g9Meu5WOo1EfAsrsxPqNO4iYt6Zf1bKS/XHCSlyicnI1HG00l/sQdORoxseexDqfktZxYvInnX6H9H49f5dpQYCHkZ5RuvvGTHzYpZlkg9r9lfWS3YnGxBz3fcalJErilep4djE9B9nFXiU7R7dgrN0tBSyz4ncU4wbkdHYBo7fswKe0FYK9hbTBMGPGTRd8I9tnj4NnZRLlByDl4KcAoacRi1lX5uSzn645jegHkjhJCsfqFoBzX84SIlN2mHjjoeQ91gyQMKQkAd1T1vo1hjTPBnFu8JeUU31FC1niT0PrzWsRN0Qe63YabNqaJXJzQ77aBCOijEmbhkaDLsNdsW75u60+OCeHPGUIHPAAcNZQ1wjpfsTZVIN2HMFMRhm61y1abVSmqLXc8uKWyZK82cY3ZUchgCgXVSw3U3QolLqQeBAmiVeYiMI+wmNswob9OD9iBC9vegXgBnUzRIyKG1cl5JRuVP9HZnK/uziRWs5xwr0yUJSLATbsLM6J/3qPOJk0Z0exTrs525WzouRZrH1DeAcUyEx5pGUudhZj1yC6U8AVWoRqaLu+5q24JfZeC/ty9NspTyaOwdjtM/tkAr6uQl8rKw33bfLDDyCH980TJ9klW7WLSgWQE9O+FmLYeGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01NeikWBUpFDUBMW6GdXDi5w",
+     "id": "toolu_01A95Lrv8MSwZzNkGS9NN9Yz",
      "name": "try_assertion",
      "caller": {
       "type": "direct"
@@ -143,22 +159,39 @@
        "expect": {
         "schema": {
          "type": "array",
-         "contains": {
-          "type": "object",
-          "properties": {
-           "alias": {
-            "const": "My address"
-           },
-           "phone": {
-            "type": "string",
-            "pattern": "^\\s*\\(?305\\)?[\\s.-]*555[\\s.-]*0199\\s*$"
+         "allOf": [
+          {
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "const": "My address"
+             },
+             "phone": {
+              "const": "305-555-0199"
+             }
+            },
+            "required": [
+             "alias",
+             "phone"
+            ]
            }
           },
-          "required": [
-           "alias",
-           "phone"
-          ]
-         }
+          {
+           "contains": {
+            "type": "object",
+            "properties": {
+             "alias": {
+              "const": "My address"
+             }
+            },
+            "required": [
+             "alias"
+            ]
+           },
+           "maxContains": 1
+          }
+         ]
         }
        }
       }
@@ -166,26 +199,26 @@
     }
    ],
    "usage": {
-    "inputTokens": 20915,
-    "outputTokens": 423,
-    "cacheReadTokens": 16857,
+    "inputTokens": 23779,
+    "outputTokens": 1032,
+    "cacheReadTokens": 19721,
     "cacheWriteTokens": 4056
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:5427a761615b039156b9c9ca20c13d08374d8a3004dd8698a58d62e522206d3b": {
+  "sha256:df3e871abbe17796680c3776c5237a89a69b2744bbfd22f7444fb912b74840a3": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01YRZ3rE4zGUV81KBzZ9b85a",
+     "id": "toolu_01EN2nJrSKFXPKF4ZGjrzgSF",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "R1-my-address-phone",
+        "id": "my-address-phone-updated",
         "requirement": "R1",
-        "description": "The backend addresses probe shows the address with alias \"My address\" has phone 305-555-0199 (tolerating only separator formatting).",
+        "description": "The stored addresses contain exactly one address with alias \"My address\", and its phone is 305-555-0199.",
         "assert": {
          "kind": "value",
          "source": {
@@ -195,22 +228,39 @@
          "expect": {
           "schema": {
            "type": "array",
-           "contains": {
-            "type": "object",
-            "properties": {
-             "alias": {
-              "const": "My address"
-             },
-             "phone": {
-              "type": "string",
-              "pattern": "^\\s*\\(?305\\)?[\\s.-]*555[\\s.-]*0199\\s*$"
+           "allOf": [
+            {
+             "contains": {
+              "type": "object",
+              "properties": {
+               "alias": {
+                "const": "My address"
+               },
+               "phone": {
+                "const": "305-555-0199"
+               }
+              },
+              "required": [
+               "alias",
+               "phone"
+              ]
              }
             },
-            "required": [
-             "alias",
-             "phone"
-            ]
-           }
+            {
+             "contains": {
+              "type": "object",
+              "properties": {
+               "alias": {
+                "const": "My address"
+               }
+              },
+              "required": [
+               "alias"
+              ]
+             },
+             "maxContains": 1
+            }
+           ]
           }
          }
         }
@@ -221,8 +271,13 @@
    ],
    "raw": [
     {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSogYKEAgTGAI4AUIIdGhpbmtpbmcSDJMlvZ2tFWMjLiqhDhoM/6kpmS+rBVN2iLVyIjDzcmUBikSCtMolVaLjzH4e4ZzaKsJlKMEqDFHr5kCExH5nFTWM+KyaYVsOv3g5WFEqvwUXYwv4e0OR6blwLoY+tTO1ZQSpiVB0BaTcwR+8KpIwz7kd/NKZbI110+hMoqcIr2R5UOa6MkoXeGimrfc/siiYGmfGC54bGXmuMqUaGYX+hUqB8Ue1sT59gUGGUkLa8v1wbxOckELOKoNErJDQ9lWC+47u8gQeGVEJFA896iPCmpMfYIY9jkiSKoVEag57yik07GvqSsIK71RJm1KwvP01T0pCA8gMTSxH88vlSBpESzVPhJ8W9VtGkUNUcxVgODOt35CzNn3mOsz4olal2R/SaHwxmOV0Kq5ZrRvSaj3loxRSiVgWrlJPIDM6sXSI5TkR/fsrIyw4US98lBivlEsl6UnngVQiwH9VAGSG3quRVYkdDsdifOm44IQ2pdpR4KNkrJRzfRfyJjdCFs2B5K23iBF/+eOCEXDf31n2f+zY3SxB9KZmgpBLskl2vui62i/wgCt5RLETxfUN8/iOqZMQsgLOBBJ23aqH4eTVNWdOeo+CbnSCWpretYK84u1SKGQpbKve2UedS4Tea75KLMZAVVy72cc4NBz1rEgibNzgQYZQEVi1Yq1SfbgNj8w3g731oN+jR3hFIC7BOt2KvJLYfE85WtWMYmV7aBBr4owEO6+Gf66CsJiI+lL83L9Y11odCoA/r0+dm2RJ8U/rJf0oYCqeBYp9WDIQe62cjbjtlrFtwthN09OgyOkbrKNH3YsPa8vvwRWIvPnaAoPkefDDKybO+KeJQxVIe6qKZlvzxpVkgNkPZjZn/jI7EezH5u9OJnNbBSb8G94nbiV/lQ0ECmWRSo1Ww7oPfQP6AJGfqHogGJH7ex9g6/cMa+aXg1pjHZrudXYE8Qn8Qs7cNqrDG41Dgtd539HRofTm8J0cTVGN4moXtMVTLSUn2uiGAdLudz08YBHNNf5cfdVNPTg9P9qE863Im2595NTINPqZGAE="
+    },
+    {
      "type": "tool_use",
-     "id": "toolu_01YRZ3rE4zGUV81KBzZ9b85a",
+     "id": "toolu_01EN2nJrSKFXPKF4ZGjrzgSF",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -230,9 +285,9 @@
      "input": {
       "checks": [
        {
-        "id": "R1-my-address-phone",
+        "id": "my-address-phone-updated",
         "requirement": "R1",
-        "description": "The backend addresses probe shows the address with alias \"My address\" has phone 305-555-0199 (tolerating only separator formatting).",
+        "description": "The stored addresses contain exactly one address with alias \"My address\", and its phone is 305-555-0199.",
         "assert": {
          "kind": "value",
          "source": {
@@ -242,22 +297,39 @@
          "expect": {
           "schema": {
            "type": "array",
-           "contains": {
-            "type": "object",
-            "properties": {
-             "alias": {
-              "const": "My address"
-             },
-             "phone": {
-              "type": "string",
-              "pattern": "^\\s*\\(?305\\)?[\\s.-]*555[\\s.-]*0199\\s*$"
+           "allOf": [
+            {
+             "contains": {
+              "type": "object",
+              "properties": {
+               "alias": {
+                "const": "My address"
+               },
+               "phone": {
+                "const": "305-555-0199"
+               }
+              },
+              "required": [
+               "alias",
+               "phone"
+              ]
              }
             },
-            "required": [
-             "alias",
-             "phone"
-            ]
-           }
+            {
+             "contains": {
+              "type": "object",
+              "properties": {
+               "alias": {
+                "const": "My address"
+               }
+              },
+              "required": [
+               "alias"
+              ]
+             },
+             "maxContains": 1
+            }
+           ]
           }
          }
         }
@@ -267,12 +339,13 @@
     }
    ],
    "usage": {
-    "inputTokens": 21418,
-    "outputTokens": 281,
-    "cacheReadTokens": 20913,
-    "cacheWriteTokens": 503
+    "inputTokens": 24896,
+    "outputTokens": 326,
+    "cacheReadTokens": 23777,
+    "cacheWriteTokens": 1117
    },
    "model": "claude-opus-5-5"
   }
- }
+ },
+ "recordedAt": "2026-11-05T21:12:10.798Z"
 }

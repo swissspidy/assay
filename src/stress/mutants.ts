@@ -830,6 +830,19 @@ function noOpMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, { 
   const now = readable(s, idx, after);
   const was = readable(s, idx, before);
   if (!now || !was || JSON.stringify(now.raw) === JSON.stringify(was.raw)) return [];
+  // What the check reads after its normalizers: a check on the part the task keeps (a post's
+  // other tags) reads the same from the correct run and the no-op, and doing nothing is then
+  // a correct outcome for it.
+  const steps = after === a.source ? a.normalize : a.expect.sameAs.normalize;
+  const read = (raw: Json) => {
+    try {
+      return JSON.stringify(toJson(applyNormalizers(fromJson(raw), steps)));
+    } catch {
+      return undefined;
+    }
+  };
+  const normalized = read(now.raw);
+  if (normalized !== undefined && normalized === read(was.raw)) return [];
   const snap = now.write(clone(was.raw));
   return snap
     ? [{ id: 'baseline:no-op', description: `${now.what} is what it was before the task`, snapshot: snap }]

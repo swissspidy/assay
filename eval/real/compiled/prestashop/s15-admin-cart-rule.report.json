@@ -10,49 +10,54 @@
     "discovery": 5
   },
   "usage": {
-    "inputTokens": 110940,
-    "outputTokens": 2140,
-    "cacheReadTokens": 85816,
-    "cacheWriteTokens": 25108
+    "inputTokens": 135101,
+    "outputTokens": 2801,
+    "cacheReadTokens": 101494,
+    "cacheWriteTokens": 33591
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "create a discount code WINTER15",
       "checks": [
-        "R1-cart-rule-created",
-        "R1-listed"
+        "r1-cart-rule-created"
       ],
       "channels": [
-        "network",
-        "a11y"
+        "network"
       ],
-      "trust": "structured"
+      "trust": "structured",
+      "routeOnly": true
     },
     {
       "requirement": "R2",
       "quote": "gives 15% off",
       "checks": [
-        "R2-15-percent"
+        "r2-15-percent"
       ],
       "channels": [
         "network"
       ],
-      "trust": "structured"
+      "trust": "structured",
+      "routeOnly": true
     },
     {
       "requirement": "R3",
       "quote": "the whole order",
       "checks": [
-        "R3-whole-order"
+        "r3-whole-order"
       ],
       "channels": [
         "network"
       ],
-      "trust": "structured"
+      "trust": "structured",
+      "routeOnly": true
     }
   ],
-  "warnings": [],
+  "warnings": [
+    "Requirement R1 has no evidence independent of the reference's route: r1-cart-rule-created read only requests or the URL of the way the reference did it, so a run that does it another way fails. The probes (cart, orders, addresses, wishlist, account, catalog) do not show it; extending one with this state would make it checkable whatever the route.",
+    "Requirement R2 has no evidence independent of the reference's route: r2-15-percent read only requests or the URL of the way the reference did it, so a run that does it another way abstains. The probes (cart, orders, addresses, wishlist, account, catalog) do not show it; extending one with this state would make it checkable whatever the route.",
+    "Requirement R3 has no evidence independent of the reference's route: r3-whole-order read only requests or the URL of the way the reference did it, so a run that does it another way abstains. The probes (cart, orders, addresses, wishlist, account, catalog) do not show it; extending one with this state would make it checkable whatever the route."
+  ],
   "references": [
     {
       "name": "reference",

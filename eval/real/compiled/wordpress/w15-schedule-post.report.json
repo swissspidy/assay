@@ -10,17 +10,17 @@
     "discovery": 5
   },
   "usage": {
-    "inputTokens": 105760,
-    "outputTokens": 2470,
-    "cacheReadTokens": 81089,
-    "cacheWriteTokens": 24655
+    "inputTokens": 125517,
+    "outputTokens": 2481,
+    "cacheReadTokens": 95302,
+    "cacheWriteTokens": 30199
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "Schedule the draft post \"Roadmap 2027\"",
       "checks": [
-        "r1-status-future"
+        "r1-post-scheduled"
       ],
       "channels": [
         "probe"
@@ -31,21 +31,26 @@
       "requirement": "R2",
       "quote": "to be published on January 5, 2027 at 9:00",
       "checks": [
-        "r2-date-0905"
+        "r2-scheduled-date"
       ],
       "channels": [
-        "network",
-        "a11y"
+        "network"
       ],
-      "trust": "semantic"
+      "trust": "structured",
+      "routeOnly": true
     }
   ],
   "warnings": [
-    "requirement R2: its value checks abstain when no request matches; add a \"request\" check so a missing request fails"
+    "Requirement R2 has no evidence independent of the reference's route: r2-scheduled-date read only requests or the URL of the way the reference did it, so a run that does it another way abstains. The probes (posts, comments, categories, settings, users) do not show it; extending one with this state would make it checkable whatever the route."
   ],
   "references": [
     {
       "name": "reference",
+      "kind": "success",
+      "verdict": "success"
+    },
+    {
+      "name": "reference-block-editor",
       "kind": "success",
       "verdict": "success"
     }
