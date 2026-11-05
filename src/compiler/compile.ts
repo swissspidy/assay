@@ -431,9 +431,9 @@ interface Verification {
 /** Validate a candidate check set and run it against every reference. */
 /**
  * Validate a candidate check set, run it against every reference and (unless
- * `stress` is false) stress-test it on the correct references: rejecting a valid
- * variant is an error (over-constrained); fragile anchors, weak checks and
- * missed mutants are warnings.
+ * `stress` is false) stress-test it on the correct references: failing or
+ * abstaining on a valid variant is an error (over-constrained or fragile); weak
+ * checks and missed mutants are warnings.
  */
 /**
  * anyOf branches that abstain on every correct reference. Such a branch was never
@@ -516,9 +516,10 @@ export function verifyCandidate(cs: CheckSet, refs: Reference[], stress = true, 
         `${o.check} is over-constrained: it rejects valid variants of a correct run (${o.variants.map(show).join('; ')}). Test only what the requirement states.`,
       );
     }
+    // Refused like over-constraint: a correct run that only looks different would escalate.
     for (const f of r.fragile) {
-      warnings.push(
-        `${f.check} abstains on valid variants (${f.variants.map(show).join('; ')}); consider more robust anchors.`,
+      errors.push(
+        `${f.check} abstains on valid variants of a correct run (${f.variants.map(show).join('; ')}). Make its anchors and normalizers accept any presentation the requirement allows.`,
       );
     }
     for (const w of r.weak)

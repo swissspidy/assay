@@ -789,6 +789,51 @@ test('compileTask rejects over-constrained checks found by stress testing, then 
   expect(checkSet!.checks).toHaveLength(2);
 });
 
+test('a check that abstains on a valid variant of a correct run is refused', () => {
+  const created = JSON.parse(
+    readFileSync(new URL('../../examples/tiny-calendar/references/01-lunch/created.json', import.meta.url), 'utf8'),
+  ).snapshot as EvidenceSnapshot;
+  const date = (regex: string): Check => ({
+    id: 'C1',
+    requirement: 'R1',
+    description: 'The event details show the date 2026-11-05.',
+    assert: {
+      kind: 'value',
+      source: {
+        from: 'node',
+        target: { role: 'definition', text: { contains: '2026' }, within: { role: 'main' } },
+        field: 'text',
+      },
+      normalize: [
+        { op: 'extract', regex, group: 1 },
+        { op: 'date', locale: 'en-US' },
+      ],
+      expect: { equals: '2026-11-05' },
+    },
+  });
+  const cs = (c: Check) => ({
+    schema: 'assay.checks/v1' as const,
+    id: 't',
+    version: '1',
+    task: { instruction: 'Add lunch on November 5, 2026.' },
+    requirements: [
+      {
+        id: 'R1',
+        kind: 'hard' as const,
+        text: 't',
+        source: { field: 'instruction' as const, quote: 'November 5, 2026' },
+      },
+    ],
+    checks: [c],
+  });
+  const refs: Reference[] = [{ name: 'created', kind: 'success', snapshot: created }];
+  // Up to the first four-digit run: an ISO date ("2026-11-05, 12:30") leaves only "2026", which no date parses.
+  const fragile = verifyCandidate(cs(date('^(.*?\\d{4})')), refs);
+  expect(fragile.errors).toEqual([expect.stringContaining('C1 abstains on valid variants of a correct run')]);
+  // Everything before the time parses in any date format.
+  expect(verifyCandidate(cs(date('^(.*?),? \\d{1,2}:\\d{2}')), refs).errors).toEqual([]);
+});
+
 test('compileTask forwards skipVariants to stress testing: an exact row count passes when extra-row is skipped', async () => {
   const task: TaskInput = {
     id: 'tiny-shop/cart-two-mugs',
