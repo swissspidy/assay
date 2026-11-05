@@ -19,7 +19,7 @@ test('multipart bodies parse into fields: repeated fields become arrays, files k
     'Content-Disposition: form-data; name="empty"; filename=""\r\nContent-Type: application/octet-stream\r\n\r\n',
     'Content-Disposition: form-data; name="a \\"quoted\\" name"\r\n\r\nline 1\r\nline 2',
   ]);
-  const { body: parsed, raw, truncated } = decodeRequestBody(body, CT, 1 << 20);
+  const { body: parsed, raw, truncated } = decodeRequestBody(body, CT, 1 << 20)!;
   expect(truncated).toBe(false);
   expect(parsed).toEqual({
     title: 'Héllo wörld',
@@ -35,25 +35,34 @@ test('multipart bodies parse into fields: repeated fields become arrays, files k
   expect(raw!.endsWith(`--${B}--\r\n`)).toBe(true);
 });
 
-test('field names cannot reach the prototype; malformed multipart stays text; the limit counts the kept text', () => {
-  const proto = decodeRequestBody(multipart(['Content-Disposition: form-data; name="__proto__"\r\n\r\nx']), CT, 1 << 20)
-    .body as Record<string, unknown>;
+test('field names cannot reach the prototype; malformed multipart is never kept; the limit counts the kept text', () => {
+  const proto = decodeRequestBody(
+    multipart(['Content-Disposition: form-data; name="__proto__"\r\n\r\nx']),
+    CT,
+    1 << 20,
+  )!.body as Record<string, unknown>;
   expect(Object.hasOwn(proto, '__proto__')).toBe(true);
   expect(({} as Record<string, unknown>).x).toBeUndefined();
 
   const broken = Buffer.from(`--${B}\r\nContent-Disposition: form-data; name="x"\r\n\r\nno end`);
   expect(parseMultipart(broken, B)).toBeUndefined();
-  expect(decodeRequestBody(broken, CT, 1 << 20)).toEqual({ body: broken.toString('utf8'), truncated: false });
+  // Kept as text, a body that does not parse could hold a file's bytes: it is not kept at all.
+  const secret = Buffer.from(
+    `--${B}\r\nContent-Disposition: form-data; name="f"; filename="a.bin"\r\n\r\nSECRET BYTES`,
+  );
+  expect(decodeRequestBody(broken, CT, 1 << 20)).toBeUndefined();
+  expect(decodeRequestBody(secret, CT, 1 << 20)).toBeUndefined();
+  expect(decodeRequestBody(secret, 'multipart/form-data', 1 << 20)).toBeUndefined(); // no boundary
 
   // A big file does not count towards the limit; text fields do.
   const withFile = multipart([
     'Content-Disposition: form-data; name="f"; filename="big.bin"\r\n\r\n' + 'x'.repeat(5000),
   ]);
-  expect(decodeRequestBody(withFile, CT, 200).body).toEqual({
+  expect(decodeRequestBody(withFile, CT, 200)!.body).toEqual({
     f: { filename: 'big.bin', type: 'application/octet-stream', size: 5000 },
   });
   const longText = multipart(['Content-Disposition: form-data; name="t"\r\n\r\n' + 'y'.repeat(500)]);
-  expect(decodeRequestBody(longText, CT, 200).truncated).toBe(true);
+  expect(decodeRequestBody(longText, CT, 200)!.truncated).toBe(true);
 });
 
 test('URL-encoded bodies keep their raw text next to the parsed fields', () => {
@@ -82,6 +91,40 @@ const titled = {
   url: { path: '/issues/new' },
   requestBody: { type: 'object', required: ['title'], properties: { title: { const: 'Héllo wörld' } } },
 };
+
+test('a cut response body leaves a request body check decided, and the reverse (older snapshots: both)', () => {
+  const entry: NetworkEntry = {
+    seq: 0,
+    method: 'POST',
+    url: 'http://app.test/issues/new',
+    resourceType: 'fetch',
+    status: 201,
+    requestHeaders: { 'content-type': CT },
+    requestBody: { title: 'Héllo wörld' },
+    responseHeaders: { 'content-type': 'application/json' },
+    responseBody: '{"big":',
+    bodyTruncated: true,
+    responseBodyTruncated: true,
+  };
+  const net = (e: NetworkEntry): EvidenceSnapshot => ({
+    schema: 'assay.snapshot/v1',
+    capturedAt: '2026-11-05T00:00:00Z',
+    page: { url: 'http://app.test/', title: '' },
+    a11y: { role: 'document' },
+    text: '',
+    network: [e],
+    storage: null,
+    probes: {},
+    meta: { capturer: 'test', redacted: [] },
+  });
+  const status = (m: object, e: NetworkEntry) => evaluate(cs(m), net(e)).checks[0]!.status;
+  const onResponse = { ...titled, responseBody: { type: 'object' } };
+  expect(status(titled, entry)).toBe('pass');
+  expect(status(onResponse, entry)).toBe('abstain');
+  const { responseBodyTruncated: _, ...old } = entry;
+  expect(status(titled, old)).toBe('abstain'); // an older snapshot: either body may be the cut one
+  expect(status({ ...titled, url: { path: '/other' } }, entry)).toBe('fail');
+});
 
 test('a multipart body that could not be read makes body checks abstain, not fail', () => {
   const entry: NetworkEntry = {
@@ -197,6 +240,38 @@ test.describe('live multipart posts', () => {
     });
   });
 
+  test("one document's superseded form report does not hide another frame's upload", async ({ page }) => {
+    await page.goto(`${app.origin}/two-forms`);
+    // The main document reports new FormData(form), then the fetch that sends it supersedes it.
+    await page.getByRole('button', { name: 'Send' }).click();
+    const frame = page.frameLocator('iframe[title="Uploader"]');
+    await frame
+      .getByLabel('Document')
+      .setInputFiles({ name: 'cv.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF') });
+    await frame.getByRole('button', { name: 'Upload' }).click();
+    await expect.poll(() => app.received.filter((r) => r.path === '/api/frame-upload').length).toBe(1);
+    const s = await captureSnapshot(page);
+    expect(s.network!.find((e) => e.url.endsWith('/api/frame-upload'))!.requestBody).toEqual({
+      doc: { filename: 'cv.pdf', type: 'application/pdf', size: 4 },
+    });
+    expect(s.network!.find((e) => e.url.endsWith('/api/main-form'))!.requestBody).toEqual({ a: '1' });
+  });
+
+  test('a Request built with a FormData body is filled from the page', async ({ page }) => {
+    await page.goto(`${app.origin}/upload`);
+    await page.evaluate(async () => {
+      const fd = new FormData();
+      fd.append('note', 'hi');
+      fd.append('f', new Blob(['12345'], { type: 'text/plain' }), 'n.txt');
+      await fetch(new Request('/api/request-object', { method: 'POST', body: fd }));
+    });
+    const s = await captureSnapshot(page);
+    expect(s.network!.find((e) => e.url.endsWith('/api/request-object'))!.requestBody).toEqual({
+      note: 'hi',
+      f: { filename: 'n.txt', type: 'text/plain', size: 5 },
+    });
+  });
+
   test('page scripts cannot fill an upload body through the tap binding', async ({ page }) => {
     await page.goto(`${app.origin}/upload`);
     await page.evaluate(async () => {
@@ -221,6 +296,30 @@ test.describe('live multipart posts', () => {
     const get = s.network!.find((e) => e.url.endsWith('/api/list'))!;
     expect(get.requestBody).toBeUndefined();
     expect(get.requestBodyUnavailable).toBeUndefined();
+  });
+
+  test('a POST with a JSON content type and no body is not marked unavailable', async ({ page }) => {
+    await page.goto(`${app.origin}/upload`);
+    await page.evaluate(() => fetch('/api/ping', { method: 'POST', headers: { 'content-type': 'application/json' } }));
+    const s = await captureSnapshot(page);
+    const post = s.network!.find((e) => e.url.endsWith('/api/ping'))!;
+    expect(post.requestBody).toBeUndefined();
+    expect(post.requestBodyUnavailable).toBeUndefined();
+  });
+
+  test('a multipart body that does not parse is marked unavailable, and its bytes are not kept', async ({ page }) => {
+    await page.goto(`${app.origin}/upload`);
+    await page.evaluate(() =>
+      fetch('/api/raw', {
+        method: 'POST',
+        headers: { 'content-type': 'multipart/form-data; boundary=zz' },
+        body: '--zz\r\nContent-Disposition: form-data; name="f"; filename="a.bin"\r\n\r\nSECRET BYTES',
+      }),
+    );
+    const s = await captureSnapshot(page);
+    const post = s.network!.find((e) => e.url.endsWith('/api/raw'))!;
+    expect(post.requestBodyUnavailable).toBe(true);
+    expect(JSON.stringify(s)).not.toContain('SECRET BYTES');
   });
 
   test('two different uploads to one URL stay unavailable rather than be paired by guess', async ({ page }) => {

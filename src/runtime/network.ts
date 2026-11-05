@@ -99,6 +99,17 @@ export function describePageMatch(m: PageMatch): string {
 export type MatchResult = 'yes' | 'no' | 'unknown';
 
 /**
+ * Whether the request or the response body of an entry was cut. Entries that say which
+ * (requestBodyTruncated, responseBodyTruncated) are read that way; in older ones
+ * bodyTruncated covers both.
+ */
+export function truncated(e: NetworkEntry, which: 'request' | 'response'): boolean {
+  if (e.requestBodyTruncated || e.responseBodyTruncated)
+    return !!(which === 'request' ? e.requestBodyTruncated : e.responseBodyTruncated);
+  return !!e.bodyTruncated;
+}
+
+/**
  * Three-valued request matching: 'unknown' when the entry could match but the
  * evidence needed to decide (a body, a status) was not captured.
  */
@@ -120,14 +131,14 @@ export function matchRequest(m: RequestMatch, e: NetworkEntry): MatchResult {
       // A body was sent but could not be read (a multipart upload the page tap did not see).
       if (!e.requestBodyUnavailable) return 'no';
       unknown = true;
-    } else if (e.bodyTruncated) unknown = true;
+    } else if (truncated(e, 'request')) unknown = true;
     else if (!compileSchema(m.requestBody)(e.requestBody)) return 'no';
   }
   if (m.responseBody !== undefined) {
     if (e.responseBody === undefined) {
       if (e.bodyUnavailable || (e.status === null && !e.failure)) unknown = true;
       else return 'no';
-    } else if (e.bodyTruncated) unknown = true;
+    } else if (truncated(e, 'response')) unknown = true;
     else if (!compileSchema(m.responseBody)(e.responseBody)) return 'no';
   }
   return unknown ? 'unknown' : 'yes';

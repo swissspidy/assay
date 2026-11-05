@@ -45,6 +45,8 @@ function assertPages(pages: unknown): void {
     const at = `pages[${i}]`;
     if (!isObject(p) || typeof p.url !== 'string' || typeof p.title !== 'string' || typeof p.text !== 'string')
       throw new Error(`snapshot ${at} is not a page (url, title, text and a11y)`);
+    if (p.unavailable !== undefined && p.unavailable !== true)
+      throw new Error(`snapshot ${at}.unavailable must be true or absent`);
     assertTree(p.a11y, `${at}.a11y`);
   });
 }

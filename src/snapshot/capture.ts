@@ -13,7 +13,7 @@ import {
 } from '../types.ts';
 import { parseAriaSnapshot } from './aria.ts';
 import { formObject, multipartBoundary, parseMultipart, type FormValue } from './body.ts';
-import { attachFrames } from './frames.ts';
+import { attachFrames, FRAME_LIMITS } from './frames.ts';
 import { randomUUID } from 'node:crypto';
 import { ASSAY_VERSION } from '../version.ts';
 
@@ -94,17 +94,19 @@ export function decodeBody(
  * A request body as recorded: JSON parsed, form bodies (URL-encoded and multipart) parsed
  * into their fields with their text kept as `raw`, anything else as text. In a multipart
  * body, files are recorded by filename, type and size; their content is never kept, and
- * does not count towards `max`. A body over `max` bytes is kept as cut text.
+ * does not count towards `max`. A body over `max` bytes is kept as cut text. A multipart body
+ * that does not parse gives undefined: kept as text it could hold a file's bytes.
  * @internal Exported for tests.
  */
 export function decodeRequestBody(
   buf: Buffer,
   contentType: string | undefined,
   max: number,
-): { body: Json; raw?: string; truncated: boolean } {
-  const boundary = multipartBoundary(contentType);
-  const multipart = boundary !== undefined ? parseMultipart(buf, boundary) : undefined;
-  if (multipart) {
+): { body: Json; raw?: string; truncated: boolean } | undefined {
+  if (isMultipart(contentType)) {
+    const boundary = multipartBoundary(contentType);
+    const multipart = boundary !== undefined ? parseMultipart(buf, boundary) : undefined;
+    if (!multipart) return undefined;
     const cut = cutUtf8(multipart.raw, max);
     if (cut !== undefined) return { body: cut, truncated: true };
     return { body: formObject(multipart.fields), raw: multipart.raw, truncated: false };
@@ -115,9 +117,18 @@ export function decodeRequestBody(
   return form ? { ...decoded, raw: text } : decoded;
 }
 
+const isMultipart = (contentType: string | undefined) => !!contentType && /^\s*multipart\//i.test(contentType);
+
 function isTextual(contentType: string | undefined): boolean {
   if (!contentType) return false;
   return /json|text\/|xml|javascript|x-www-form-urlencoded/i.test(contentType);
+}
+
+/** Marks a cut body: bodyTruncated for older readers, and which body it was (ADR 0012). */
+function markTruncated(e: NetworkEntry, which: 'request' | 'response'): void {
+  e.bodyTruncated = true;
+  if (which === 'request') e.requestBodyTruncated = true;
+  else e.responseBodyTruncated = true;
 }
 
 /** Response body observed inside the page by the init-script tap (see pageTap). */
@@ -134,14 +145,15 @@ interface TappedBody {
  * Multipart form fields the tap saw the page send (a form submission, or FormData given
  * to fetch or XHR). Browsers leave file uploads out of the request's post data, so this is
  * the only place their names, types and sizes can be read. `id` numbers a form's report;
- * `supersedes` names an earlier report of the same FormData that a fetch or XHR sent.
+ * `supersedes` names an earlier report of the same FormData that a fetch or XHR sent. Ids are
+ * unique per document (a random prefix), so frames and navigations cannot collide.
  */
 interface TappedForm {
   method: string;
   url: string;
   fields: [string, FormValue][];
-  id?: number;
-  supersedes?: number;
+  id?: string;
+  supersedes?: string;
 }
 
 type TapMessage = ({ kind?: undefined } & TappedBody) | ({ kind: 'form' } & TappedForm);
@@ -199,6 +211,8 @@ function pageTap(bindingName: string, token: string, max: number): string {
   };
   // FormData objects a form built (formdata event) -> the id of their report.
   const formIds = new WeakMap();
+  // Ids of form reports: unique per document, so one frame's cannot name another's.
+  const DOC = Math.random().toString(36).slice(2);
   let lastId = 0;
   const postForm = (method, url, fd, extra) => {
     try {
@@ -253,7 +267,7 @@ function pageTap(bindingName: string, token: string, max: number): string {
             formIds.set(fd, prev.id);
             return;
           }
-          const id = ++lastId;
+          const id = DOC + ':' + ++lastId;
           formIds.set(fd, id);
           recent.set(form, { key, id });
           later(() => { if (recent.get(form)?.id === id) recent.delete(form); }, DEDUPE_MS);
@@ -297,6 +311,12 @@ function pageTap(bindingName: string, token: string, max: number): string {
       try {
         method = (init && init.method) || (input && typeof input === 'object' && 'method' in input ? input.method : 'GET');
         if (init && init.body) sentForm(method, input && typeof input === 'object' && 'url' in input ? input.url : input, init.body);
+        // A Request built with a FormData body: its body can only be read as a copy, which
+        // must happen before fetch consumes it.
+        else if (typeof Request === 'function' && input instanceof Request && input.body && !input.bodyUsed && /^ *multipart[/]/i.test(input.headers.get('content-type') || '')) {
+          const copy = input.clone();
+          copy.formData().then((fd) => postForm(input.method, input.url, fd, {}), () => {});
+        }
       } catch {}
       const p = origFetch.apply(this, arguments);
       return p.then((res) => {
@@ -428,8 +448,8 @@ export class EvidenceRecorder {
           method,
           url,
           fields: fields.map(([k, v]) => [k, typeof v === 'string' ? v : { ...v }]),
-          ...(typeof id === 'number' ? { id } : {}),
-          ...(typeof supersedes === 'number' ? { supersedes } : {}),
+          ...(typeof id === 'string' ? { id } : {}),
+          ...(typeof supersedes === 'string' ? { supersedes } : {}),
           frame: source.frame,
         });
         return;
@@ -457,14 +477,15 @@ export class EvidenceRecorder {
       responseHeaders: {},
     };
     const post = req.postDataBuffer();
-    if (post != null) {
-      const { body, raw, truncated } = decodeRequestBody(post, headers['content-type'], this.maxBody);
-      entry.requestBody = body;
-      if (raw !== undefined) entry.requestBodyRaw = raw;
-      if (truncated) entry.bodyTruncated = true;
-    } else if (headers['content-type'] !== undefined && !['GET', 'HEAD', 'OPTIONS'].includes(entry.method)) {
-      // A body was sent but the browser does not report it (Chromium leaves out
-      // multipart bodies with files); the page tap may fill it in at settle().
+    const decoded = post != null ? decodeRequestBody(post, headers['content-type'], this.maxBody) : undefined;
+    if (decoded) {
+      entry.requestBody = decoded.body;
+      if (decoded.raw !== undefined) entry.requestBodyRaw = decoded.raw;
+      if (decoded.truncated) markTruncated(entry, 'request');
+    } else if (isMultipart(headers['content-type']) && !['GET', 'HEAD', 'OPTIONS'].includes(entry.method)) {
+      // A multipart body was sent but not reported (Chromium leaves out bodies with files)
+      // or did not parse; the page tap may fill it in at settle(). Other bodies the browser
+      // does not report are left out as before: a POST may set a content type and send none.
       entry.requestBodyUnavailable = true;
     }
     this.entries.push(entry);
@@ -496,7 +517,7 @@ export class EvidenceRecorder {
       const text = buf.toString('utf8');
       const { body, truncated } = decodeBody(text, ct, this.maxBody);
       entry.responseBody = body;
-      if (truncated) entry.bodyTruncated = true;
+      if (truncated) markTruncated(entry, 'response');
     } catch {
       /* evicted (e.g. the page navigated); the page tap usually has it */
     }
@@ -540,7 +561,7 @@ export class EvidenceRecorder {
           continue;
         const { body, truncated } = decodeBody(t.body, t.contentType, this.maxBody);
         e.responseBody = body;
-        if (truncated || t.truncated) e.bodyTruncated = true;
+        if (truncated || t.truncated) markTruncated(e, 'response');
       }
     }
     this.fillForms();
@@ -791,21 +812,28 @@ async function activePage(given: Page, recorder: EvidenceRecorder | null | undef
   return active;
 }
 
-/** Another open page: its accessibility tree (frames included) and text, or unavailable. */
-async function readOtherPage(p: Page, frames: boolean): Promise<PageView> {
+/**
+ * Another open page: its accessibility tree (frames included) and text, or unavailable when
+ * the whole read takes longer than `timeout` ms. Its title is read first and kept either
+ * way, so a `page` assertion selecting it by title finds it (and abstains as unreadable).
+ * @internal Exported for tests.
+ */
+export async function readOtherPage(p: Page, frames: boolean, timeout = PAGE_TIMEOUT): Promise<PageView> {
+  let title = '';
   const read = async (): Promise<PageView> => {
-    const a11y = parseAriaSnapshot(await p.locator('body').ariaSnapshot({ timeout: PAGE_TIMEOUT }));
+    title = await p.title();
+    const a11y = parseAriaSnapshot(await p.locator('body').ariaSnapshot({ timeout }));
     const texts: string[] = [];
-    if (frames) await attachFrames(p.mainFrame(), a11y, texts);
-    const dom = await p.evaluate(() => ({ text: document.body ? document.body.innerText : '', title: document.title }));
-    return { url: p.url(), title: dom.title, a11y, text: [dom.text, ...texts].join('\n') };
+    if (frames) await attachFrames(p.mainFrame(), a11y, texts, { ...FRAME_LIMITS, timeout });
+    const text = await p.evaluate(() => (document.body ? document.body.innerText : ''));
+    return { url: p.url(), title, a11y, text: [text, ...texts].join('\n') };
   };
   const view = await within(
     read().catch(() => undefined),
-    PAGE_TIMEOUT * 2,
+    timeout,
   );
   if (view && view !== TIMED_OUT) return view;
-  return { url: p.url(), title: '', a11y: { role: 'document' }, text: '', unavailable: true };
+  return { url: p.url(), title, a11y: { role: 'document' }, text: '', unavailable: true };
 }
 
 /**

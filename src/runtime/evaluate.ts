@@ -34,6 +34,7 @@ import {
   matchRequest,
   matchUrl,
   onUrlRoute,
+  truncated,
 } from './network.ts';
 
 /** What an assertion is evaluated against. */
@@ -220,7 +221,7 @@ function readSource(ctx: EvalCtx, src: ValueSource): Read {
       const e = pick === 'last' ? hits[hits.length - 1]! : hits[0]!;
       const body = src.from === 'request' ? e.requestBody : e.responseBody;
       const locator = `${src.from} body of #${e.seq} ${e.method} ${e.url}${src.pointer ? ' at ' + src.pointer : ''}`;
-      if (body === undefined || e.bodyTruncated)
+      if (body === undefined || truncated(e, src.from))
         return abstain('value_unavailable', `${src.from} body of #${e.seq} was not captured`, [
           ev('network', { locator }),
         ]);

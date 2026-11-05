@@ -56,7 +56,14 @@ export interface NetworkEntry {
   requestBodyUnavailable?: boolean;
   responseHeaders: Record<string, string>;
   responseBody?: Json;
+  /** A body (request or response) was cut at the size limit. */
   bodyTruncated?: boolean;
+  /**
+   * Which body was cut, set with `bodyTruncated` by capturers that tell them apart (ADR
+   * 0012). Without either, `bodyTruncated` applies to both bodies, as it always did.
+   */
+  requestBodyTruncated?: true;
+  responseBodyTruncated?: true;
   /** The response body should have been captured but could not be read. */
   bodyUnavailable?: boolean;
 }

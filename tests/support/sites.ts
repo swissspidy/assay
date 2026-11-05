@@ -88,6 +88,22 @@ document.getElementById('xhr-form').addEventListener('click', () => {
 </script></main>`,
     ),
   '/issues/new': () => html('Issue created', '<main><h1>Issue created</h1></main>'),
+  // A page that builds FormData from its own form and sends it (a report its frame supersedes),
+  // with a frame whose form uploads natively: the two documents' report ids must not collide.
+  '/two-forms': () =>
+    html(
+      'Two forms',
+      `<main><form id="f" method="post" enctype="multipart/form-data" action="/api/main-form"><input name="a" value="1"></form>
+<button id="send" type="button" onclick="fetch('/api/main-form', { method: 'POST', body: new FormData(document.getElementById('f')) })">Send</button>
+<iframe title="Uploader" src="/upload-frame"></iframe></main>`,
+    ),
+  '/upload-frame': () =>
+    html(
+      'Uploader',
+      `<form method="post" enctype="multipart/form-data" action="/api/frame-upload"><input type="file" name="doc" aria-label="Document"><button>Upload</button></form>`,
+    ),
+  '/frameset': () =>
+    `<!doctype html><html><head><title>Old frames</title></head><frameset cols="50%,50%"><frame src="/help"><frame src="/help"></frameset></html>`,
   '/popup': () =>
     html(
       'Checkout',
@@ -107,6 +123,8 @@ const otherRoutes: Record<string, Route> = {
       '<form aria-label="Card"><label>Card number <input value="4242 4242 4242 4242"></label><button type="button">Pay US$21.50</button></form>',
     ),
   '/embed': () => html('Embed', '<figure><figcaption>Embedded chart</figcaption></figure>'),
+  // The main thread never yields: nothing can be read from this page.
+  '/busy': () => html('Busy', '<p>Busy</p><script>setTimeout(() => { for (;;) {} }, 50)</script>'),
 };
 
 function serve(routes: Record<string, Route>, sites: { app: string; other: string }, received: Site['received']) {

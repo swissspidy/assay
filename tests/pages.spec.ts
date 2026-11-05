@@ -1,6 +1,7 @@
 /** Every open page of the context in the snapshot, and `page` assertions (ADR 0012). */
 import { expect } from '@playwright/test';
 import { captureSnapshot, test } from '../src/playwright/index.ts';
+import { readOtherPage } from '../src/snapshot/capture.ts';
 import {
   evaluate,
   loadSnapshot,
@@ -91,6 +92,25 @@ test('a page the test opens itself does not take over; a closed popup is gone', 
   await admin.close();
   s = await captureSnapshot(page);
   expect(s.pages).toBeUndefined();
+});
+
+test('a page that cannot be read is unavailable within the time limit, and keeps its title', async ({ context }) => {
+  const old = await context.newPage();
+  await old.goto(`${app.origin}/frameset`); // no body to snapshot
+  const busy = await context.newPage();
+  await busy.goto(`${other.origin}/busy`);
+  await busy.waitForTimeout(200); // its main thread is now stuck
+  let t = Date.now();
+  const v = await readOtherPage(old, true, 800);
+  expect(Date.now() - t).toBeLessThan(2000);
+  expect(v).toMatchObject({ url: `${app.origin}/frameset`, title: 'Old frames', text: '', unavailable: true });
+  t = Date.now();
+  expect(await readOtherPage(busy, true, 800)).toMatchObject({ unavailable: true });
+  expect(Date.now() - t).toBeLessThan(2000);
+  // Selected by its title, the unreadable page abstains as unreadable, not as missing.
+  const r = evaluate(checks([{ kind: 'page', match: { title: 'Old frames' }, assert: paid }]), snap([v])).checks[0]!;
+  expect(r.reason).toBe('evidence_unavailable');
+  await busy.close({ runBeforeUnload: false });
 });
 
 const snap = (pages: EvidenceSnapshot['pages']): EvidenceSnapshot => ({
@@ -192,6 +212,10 @@ test('the loader checks other pages; snapshots without them load unchanged', () 
   expect(loadSnapshot(JSON.stringify(s))).toEqual(s);
   expect(loadSnapshot(JSON.stringify(snap(undefined))).pages).toBeUndefined();
   expect(() => loadSnapshot({ ...s, pages: [{ url: 'x' }] })).toThrow(/pages\[0\] is not a page/);
+  expect(() => loadSnapshot({ ...s, pages: [{ ...receipt(), unavailable: 'false' }] })).toThrow(
+    /pages\[0\]\.unavailable must be true or absent/,
+  );
+  expect(loadSnapshot({ ...s, pages: [{ ...receipt(), unavailable: true }] }).pages![0]!.unavailable).toBe(true);
   expect(() => loadSnapshot({ ...s, pages: [{ ...receipt(), a11y: { children: [] } }] })).toThrow(
     /pages\[0\]\.a11y\.role/,
   );
