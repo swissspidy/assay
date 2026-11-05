@@ -1,0 +1,239 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:44:55.093Z",
+ "turns": {
+  "sha256:82ebd93491f35fde0835ee04ffb77b03545198517b6893ffa8ed2fc653e635d2": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01CgwaV9gV1XUAKqZ3q9CzRq",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01M2i7yZ1mvmd8kwdcxG5C7k",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01CgwaV9gV1XUAKqZ3q9CzRq",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01M2i7yZ1mvmd8kwdcxG5C7k",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1922,
+    "outputTokens": 70,
+    "cacheReadTokens": 1918,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:d50846027abbe21f452a2e5468d7fb05698da2c5dffd941d2916fc0115bc62ac": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01294yQG5CAoX9R1mLKXnzLV",
+     "name": "network_entry",
+     "input": {
+      "seq": 22
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSuAUKEAgTGAI4AUIIdGhpbmtpbmcSDGNuWdOoZlyxlO1LXhoMW417tgXssXGcFORDIjDpvWh+356I9NH3tV0NR3LYTwyUIdnQvdB3TfVZKX+5NxIlJaZ2KM5iln7DyirlN4Qq1QSl35YiIWTsdQz6CJBnuvWBYWG3WhDjBAxzIjKqSPKRLG8ldioa8KtajRzhgMztsWH2/1OyP+IMdV4r4WJZrI21sA5CBLGrYFYcD153oP9fJILvBxKHCPEtf7g6anrSeA4rryYw+ZY+XBIOuec0dVLHpOMp6Fob9UpoqSwqRXI3KV8Lgv6r/sBSSd7JlWr657A9Tg/AX3tV0l8mzgduwaQn03+szJ8rEhxRobgpR3CE583pIYDlKoRcrtbZNsnLSjq40FzWA4wZejic/j2mydIfUGllPrlvLhAfP3lCLxUi72QsHlhhhKJqVXCaP8hi52azzMh7eeZO1Vjndyjjsu6RSMCNZcs08fWPIbZHO+1XmsS0A2wnNDs2not4kbXjOXqJYa/+6oAXXkLfoUYDvW7Eh/o1ZJTx1lIR4ue65v/YqQWy2zxOlyYRCUa6YbuwB/RDVD5mPmtTB8x0OBcbBXCBFsOfimCI6L+r+YHzkqSCAEQ5B+xdbp+7hHqoYs+ITAOkMZY3r91GcxYZXL6zLhQvzv/xZO9huSsJEYC2edd5y9FViM0tByfj6ii4LlnE/X2JiIh6q+qTA0kjUgerpse3Au4i2rcqL87+6zccqcauQ/px7qIIQFFznZBNkgGRMCpcmUQ3BYWjiPgTkALvpB2LjM/pS0pqX7VCLPHoImEm48L3vIwUuhMIOafBVwH4xP/pczatU6ZKG6g0450muzpWsLkjHx3Cd43CxT9jmRu9FfuviyFfLZ/+c7NJplxS3R21+hVRNA6qj5ZJbn2eDlVIVYAgo5oYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01294yQG5CAoX9R1mLKXnzLV",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 22
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4058,
+    "outputTokens": 75,
+    "cacheReadTokens": 1918,
+    "cacheWriteTokens": 2138
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:785f819005376954bbc0943a11fc706e148b38a81f6c5fd81ab527014dcb77da": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LeAcw2hUZTwX3uGVEkdVue",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Create a milestone \"v2.0\" in acme/webapp",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "A POST to /acme/webapp/milestones/new with title \"v2.0\" returned 303. The milestones probe now lists an open milestone \"v2.0\"."
+       },
+       {
+        "requirement": "with the due date December 31, 2026",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The deadline sent was \"2026-12-01\", and the stored due_on is 2026-12-01T23:59:59Z, which is December 1, 2026, not December 31, 2026."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS+gYKEAgTGAI4AUIIdGhpbmtpbmcSDADvfmc0azcw6jHfNBoMJUIjS2ISQqAfQu79IjDWdDsIVqgKXsnP6d60zj/FQTwm6/LiqKFpaxb1lO0WLrDIlr5LPYWeKHP1sZOrLqIqlwapm5mW1Wc+ynCvZm6/10ax1UUBjsdRCQXNype20Zp5DAQbnjGT4QKMoEmU0fMkdB50OgHqBb8tPnNJ1FMyB1sYJf7ocdxKB8VzxMRMHWMhIDV96L9KpGdYi7gR7pU4qtSTPb04vrdtKlqVMmsKZNDYUNDyESFktlwBnxkRrEvgIGAM5B6ICVd6aPGRT4oHongbtBi+GkbIjQ+wNepY1q/c1fAHhkXKQ7WFNj7WPWMczdhpPvZL1pK2VsvK1hLoQWHEknMB7gvBO3Q72EhvSKsXtBVbsf4Gnil/xNdFJLrU7ydNDiD3l/5NX4qvLruNky3J3bUXeQedK4hKeyVS5mQ9KMOJnKc1ri368PAaI2z1466X2ZvrDzdlWQw8Ap2kObGZgEK9vfxtQE/hRlDbnUgUDrrlwQIao3vUvQKVvAJnxaPv3oP8fluctiNu7dzkl+eh2JVE2D78xw/S2ploJ29aneYE7mkOtSkyYjZtPI7quN+h08i62xsWYSVFw/g7/sqAxGkhqbajiaFIzHddm2KigtqCKm6D8N2vb/SGCmjqwJzIZEnmjF9KMKr+jZxxSA4lvhyZxDIKHg9U6FpvzuZafEDlwrKdSgvqySC7g2iDGYSKYefuJNcmJj6d8NNdc6ZkX9HLaW+Ab4diwrZ/IZiVr5VmaS7s8vn+9OID7gT+2WwqMONeyKA4kGG4uvTNKsv6OXHuF9nQTfkeHQDOeQ0PSV8/94CQiuZ1IzJHLmD4DP1w+IQ2XlOC2set4nCWzWMw4Cu5kV87hxcwX4Xl+lK1rKIxsC6th92oN24VuNiSnTE7PoDyUvazFTv8xZGNlVi6XyH6oEfJDAPTz3iLwBcdvl23lVs+dRshi+InZzYfo57W2uV0CPdOytRghNAg83/DuU1kgL6gvlRy3Js5zhYh+A7MVfwJbwZzJ57Zw6okIX5ar00bNejgEab+CEu+mK+d1ZAxtklQZcA3oXPCuhyfkU2t0mdFtRbXAi7mFLpSZruIDH/2RWLe/LPEBMjvj3PQ2J+s3icktrWaffPq84vjFl2k5shqKxgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01LeAcw2hUZTwX3uGVEkdVue",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Create a milestone \"v2.0\" in acme/webapp",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "A POST to /acme/webapp/milestones/new with title \"v2.0\" returned 303. The milestones probe now lists an open milestone \"v2.0\"."
+       },
+       {
+        "requirement": "with the due date December 31, 2026",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The deadline sent was \"2026-12-01\", and the stored due_on is 2026-12-01T23:59:59Z, which is December 1, 2026, not December 31, 2026."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4337,
+    "outputTokens": 323,
+    "cacheReadTokens": 4056,
+    "cacheWriteTokens": 279
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:de1c75a54fdba9f18b653228cc1f097e900cca931ca4443a62677c39ad04bd80": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011hse3wqiPySQhtGckmLHf8",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "A POST to /acme/webapp/milestones/new with title \"v2.0\" returned 303. The milestones probe now lists an open milestone \"v2.0\"."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The deadline sent was \"2026-12-01\", and the stored due_on is 2026-12-01T23:59:59Z, which is December 1, 2026, not December 31, 2026."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_011hse3wqiPySQhtGckmLHf8",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "A POST to /acme/webapp/milestones/new with title \"v2.0\" returned 303. The milestones probe now lists an open milestone \"v2.0\"."
+       },
+       {
+        "requirement": "R2",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The deadline sent was \"2026-12-01\", and the stored due_on is 2026-12-01T23:59:59Z, which is December 1, 2026, not December 31, 2026."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4736,
+    "outputTokens": 240,
+    "cacheReadTokens": 4335,
+    "cacheWriteTokens": 399
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

@@ -1,0 +1,164 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:25:08.593Z",
+ "turns": {
+  "sha256:3e916d0c1fd9643f9bfd9fc2e23e6d4e1aee0ce2932d3ee5d8fa51fbadd423e6": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FB3E9BBXbo1JgY61Y48b3S",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01FB3E9BBXbo1JgY61Y48b3S",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1987,
+    "outputTokens": 25,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1983
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:6c1824bee26c5ebcd3a629a3151c499b5109ef728d31c81c435aaf0be65c391a": {
+   "stop": "tool_use",
+   "text": "Status future, but no date. Check network.",
+   "toolCalls": [
+    {
+     "id": "toolu_01Nymjc8HugkGep7U8c7uLXn",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "text",
+     "text": "Status future, but no date. Check network."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Nymjc8HugkGep7U8c7uLXn",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3880,
+    "outputTokens": 61,
+    "cacheReadTokens": 1983,
+    "cacheWriteTokens": 1895
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:010b4b842c68c9b6d79c975f4e8a6ef57f32067786a67e96dea23acfa36128ab": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_012DA86EHaqfyAPLFeZxPQr2",
+     "name": "network_entry",
+     "input": {
+      "seq": 212
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_012DA86EHaqfyAPLFeZxPQr2",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 212
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4097,
+    "outputTokens": 49,
+    "cacheReadTokens": 3878,
+    "cacheWriteTokens": 217
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:cbb317e995519b16e6891400ba29d8fd4838ccd296d57dc0395bae616184a08e": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01DUFgqVgUyPuHQGcYZCRtDe",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server received a POST to /wp-json/wp/v2/posts/12 with date \"2027-01-05T09:00:00\" and status \"future\". Its response confirms date 2027-01-05T09:00:00 with status future. The posts probe also shows \"Roadmap 2027\" (id 12) as status future after the task."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS7QUKEAgTGAI4AUIIdGhpbmtpbmcSDMKSZK/tYmwQufZ96hoM5gscCCsJ5KVKsH8LIjBnfhdLWsNg4OVvhhPwzK/s8PNQymoN9HT0Lzj7q6CRvxeGAgwuGqFidkafsVgKK5oqigXFPS2BXnnCNcV9POGTb3WjFMwNmbbYFcE02bl17ZKhFoLJccrHrm6aVxGzIytlkb2vIHB6EYZreqFNmS0FO6GoLWPBdDTrFmuexut0CHqwhgbHp0Xa6bbePHdOV2phL6DaAMTOXzt5pUCCh5Iaq8PKD4vVUU6T1bEOkcpwp6db3X/Qr8eXRQ3ytaFL+HPahmxMEN6ADHWJhSZod2p40QcdwmRv+kv9fEgNgTnZuIs6frLf+gcfTBWdbMa2yDY7LfIdJho9AnUAZuU/LOAbxqUWcQJsBlpva1nCRSe1m/5n7YLDdJDE1dAtJ7U0Xe1OACuz2I4qMg7ww3SgJdZOZYdKQraNTG+wtcWgPPPQckvoKGGa9EHfxsBBjIClN6SI1aYi/LPt+VntP5WbH1HKnptS/LTMMHzLu67zjvGb3I7K6sTUzWktvHm5YUYeU0Ox2DLFXmQ57DPaw7F21AfNrkIk94iU1XbNaBxsZVfvP5qwzyi7CfhweMMt52QaC4chminHWfnKwzeyY41p3MDvimjBYw2llJb3zzTYJ9HIIvrgf3cIE3oOH9o72G97m7acdA3tki0Gx2fiFBZNjsE1nTZLXecT1UQAGactBhs2ooJ+p+UT423vxGRclysTFNiBIrDkpfF/3QfwRfZEKm5lwNFv8PEnuOFibapz+G25UZ5yyY0AQPMnPbj8omA7qTZ9FiXNugfPzMLIxzuitV4usFMmGjAw8ycp5wARfZKg985lM9ei4did0zLFTdAE23nRLDOn/KzDrTSZHrRhMoyF3mvErmsZir1/G/+u0GWvp2cXVHifssv8yTi18UAG3SJ9eQVPghfms2vR3Z36+jq21F7PIULKYkd8+0RBdBgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01DUFgqVgUyPuHQGcYZCRtDe",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server received a POST to /wp-json/wp/v2/posts/12 with date \"2027-01-05T09:00:00\" and status \"future\". Its response confirms date 2027-01-05T09:00:00 with status future. The posts probe also shows \"Roadmap 2027\" (id 12) as status future after the task."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 5890,
+    "outputTokens": 236,
+    "cacheReadTokens": 4095,
+    "cacheWriteTokens": 1793
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

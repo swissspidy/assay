@@ -1,0 +1,51 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:36:36.703Z",
+ "turns": {
+  "sha256:9ee09b6648f77a0f3676c99491cb6d2a47e80189bde9fbac72154f6a23c9bcc3": {
+   "stop": "tool_use",
+   "text": "I judged this a success. The final page is the moderation list for \"Getting started with Assay\" (post 4). It shows the WordPress notice \"1 comment approved.\" The counts for this post are now Pending (1) and Approved (2). The only comment still pending is the spam one from \"Cheap Watches\", so Dana's comment is no longer in moderation. Spam (0) and Trash (0) rule out the possibility that it was spammed or trashed instead. The likely explanation is that Dana's comment was approved and moved to the Approved count. I couldn't open the Approved list to confirm Dana's comment is there, so this rests on the counts and the notice. The sidebar still shows 3 comments in moderation, but those would be on other posts and don't affect this task. The spam comment was correctly left alone.",
+   "toolCalls": [
+    {
+     "id": "toolu_01GLFjNWrYYNPEoYURVqjXuh",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "success",
+      "reasoning": "The final page is the moderation list for \"Getting started with Assay\" (post 4) and shows the WordPress notice \"1 comment approved.\" The counts for this post are now Pending (1) and Approved (2). The only comment still pending is the spam one from \"Cheap Watches\", so Dana's comment is no longer in moderation. Spam (0) and Trash (0) rule out the possibility that it was spammed or trashed instead, so it was most likely approved and moved to the Approved count. I could not open the Approved list to confirm it directly, so this rests on the counts and the notice. The sidebar still shows 3 comments in moderation, but those would be on other posts and do not affect this task. The spam comment was correctly left alone. The task's outcome appears to be achieved."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "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"
+    },
+    {
+     "type": "text",
+     "text": "I judged this a success. The final page is the moderation list for \"Getting started with Assay\" (post 4). It shows the WordPress notice \"1 comment approved.\" The counts for this post are now Pending (1) and Approved (2). The only comment still pending is the spam one from \"Cheap Watches\", so Dana's comment is no longer in moderation. Spam (0) and Trash (0) rule out the possibility that it was spammed or trashed instead. The likely explanation is that Dana's comment was approved and moved to the Approved count. I couldn't open the Approved list to confirm Dana's comment is there, so this rests on the counts and the notice. The sidebar still shows 3 comments in moderation, but those would be on other posts and don't affect this task. The spam comment was correctly left alone."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01GLFjNWrYYNPEoYURVqjXuh",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "success",
+      "reasoning": "The final page is the moderation list for \"Getting started with Assay\" (post 4) and shows the WordPress notice \"1 comment approved.\" The counts for this post are now Pending (1) and Approved (2). The only comment still pending is the spam one from \"Cheap Watches\", so Dana's comment is no longer in moderation. Spam (0) and Trash (0) rule out the possibility that it was spammed or trashed instead, so it was most likely approved and moved to the Approved count. I could not open the Approved list to confirm it directly, so this rests on the counts and the notice. The sidebar still shows 3 comments in moderation, but those would be on other posts and do not affect this task. The spam comment was correctly left alone. The task's outcome appears to be achieved."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4263,
+    "outputTokens": 1096,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 4259
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

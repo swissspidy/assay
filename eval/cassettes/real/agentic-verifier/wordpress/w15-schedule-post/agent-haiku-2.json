@@ -1,0 +1,184 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:18:46.557Z",
+ "turns": {
+  "sha256:d9936b938b37f3e6af642080291b83ee05c8ceb21e84d51e4e4e8c18835ba918": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FjbFXnQJJiLcDCS1gfw37M",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01FjbFXnQJJiLcDCS1gfw37M",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1922,
+    "outputTokens": 25,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1918
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:2320546a63833207e3c1fe141a6385a44998928d7182640f5b372d1a292f3fbf": {
+   "stop": "tool_use",
+   "text": "Status is future; need the date. Check network.",
+   "toolCalls": [
+    {
+     "id": "toolu_01RQLYJrt1RCNSdUTfFmf1Yr",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "text",
+     "text": "Status is future; need the date. Check network."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01RQLYJrt1RCNSdUTfFmf1Yr",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3815,
+    "outputTokens": 62,
+    "cacheReadTokens": 1918,
+    "cacheWriteTokens": 1895
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:8edcfcde66a52344e9a37e2b3a378b0876b682d828ab4627ba9240c16c4ac58f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_016R7E9rYd9F8FcCQd1c3yRT",
+     "name": "network_entry",
+     "input": {
+      "seq": 212
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_016R7E9rYd9F8FcCQd1c3yRT",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 212
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4033,
+    "outputTokens": 49,
+    "cacheReadTokens": 3813,
+    "cacheWriteTokens": 218
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:2c021eb763ec76cdcef40e526538772dce80b8c6af48fa7c9668d472dcf2b308": {
+   "stop": "tool_use",
+   "text": "I confirmed post 12 was a draft before the task by its title; the \"draft\" part of R1 comes from the task wording and the cut-off baseline.",
+   "toolCalls": [
+    {
+     "id": "toolu_01Wbw2KMNo6kWcmXuvdgTqis",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "After the task, the posts probe shows post 12 \"Roadmap 2027\" with status \"future\", which means scheduled. The server's response to the REST save (POST /wp/v2/posts/12) also shows status \"future\". No other post changed to a scheduled state."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         3
+        ],
+        "reasoning": "The request sent date \"2027-01-05T09:00:00\", and the server's response confirms date and date_gmt as 2027-01-05T09:00:00 with status future. That is January 5, 2027 at 9:00."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSzwYKEAgTGAI4AUIIdGhpbmtpbmcSDIk9/OYypLq76l2/iBoM9od9TrSYTsDla3p4IjA3ipxJsjk34bH251XyMh/qS1Mx/J1G7YCLQWZIlcyMEg0au///spTe+OPYiC6b0Lcq7AUv+Sp9U2a36sBc/eBQbeyx5I5O/wRt7gDogAo1gGspBG/y1H10UphK7sqmHs+qrkKdYC6slcz+jC/VZbqERv2f2cxdjgGu8ZTnPbiCeN5PeQP+GIIDpF+nQW36S/W6HEY8Y/uu0KIZLWJV3Lw+7VYMKpLvql3aOjEBgUGq1tQQ1Tc6kLJoqxuw1ZicSDmUiZuY2M8zsOUaWOSXXPQpi7uA9crB+jJkxeiwUFjn/NFfD9KB1b40XQqQ+Fk0sBzgKnpUBvTduLfpzDec8oKvPWdwbKa9qSgC8ebtadwrAdpfeI4R+nZuYR4EzylnN3Yo6ew87dzB7nFwvhR/W3j0dX4QzBYQFlN80lmDs/ZfF3BrR0V8FumQe6ul4G/S0LHmZOo4yM+n1e+QjCtGeXAFziooW7ZfndkPWd+hrDaRseykLmGq67Vkyknyn5fgFcGm+xUJMfpCSKH9g7dhUJTwINERKPPTlIfPTdXgj+Zbxt4oFVVDXWBo5pm72xKa2QczinpyNWH4GrXpLsyL8qNBQASqGrBu9nsxdIWveBoFxcqU/m6fcrwu+fut6i1eP3A8vjULDAhuHr5xjMQ+M8baJ/ITrvCbEPFC+p/C7UjQjcF7umwcXwWz2294OZfjwc3uS1OGyM86BlHwhvmY+QNNBFX6A3gHJFSIxAEDFtd/WV5VLn4QwbswQbYKsFqRx9YWXJ3NSyoWLHkjRUOTDANkrT4BoSXfunzcs+1LVX7pvwxnK3Lu83OF/DN66yoGd5NwvKrYb47bNY+tJBz6wIjtA9zHxgUNz2gz5eUfhOxz22GAcB5HDgr/mx7husxg1MD7YYKRe0leNULvoxkALdu7OY/SJXY6wqU5C5nIRCFOH2xwn1kIWbJactduRqkRNBCKwC5hjwoVulaes5gI+0g//GHGlwCpOVSbLl9gB435har7M5QpnNCwSR7l+s8vGTeMgRoG3Be0QgrqzdbvCuaBgxqDmoNCYwSB18Fb53+NGAE="
+    },
+    {
+     "type": "text",
+     "text": "I confirmed post 12 was a draft before the task by its title; the \"draft\" part of R1 comes from the task wording and the cut-off baseline."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Wbw2KMNo6kWcmXuvdgTqis",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "After the task, the posts probe shows post 12 \"Roadmap 2027\" with status \"future\", which means scheduled. The server's response to the REST save (POST /wp/v2/posts/12) also shows status \"future\". No other post changed to a scheduled state."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         3
+        ],
+        "reasoning": "The request sent date \"2027-01-05T09:00:00\", and the server's response confirms date and date_gmt as 2027-01-05T09:00:00 with status future. That is January 5, 2027 at 9:00."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 5826,
+    "outputTokens": 398,
+    "cacheReadTokens": 4031,
+    "cacheWriteTokens": 1793
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

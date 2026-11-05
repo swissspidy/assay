@@ -1,0 +1,203 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:49:13.541Z",
+ "turns": {
+  "sha256:b5534233ea0aecda18eec93582832000d829945b99b76de48518b896a452c861": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015TUSbLELfqnQhBwcuadp2p",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01RzfzhySkUra9t9FfnokWkZ",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_015TUSbLELfqnQhBwcuadp2p",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01RzfzhySkUra9t9FfnokWkZ",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1902,
+    "outputTokens": 70,
+    "cacheReadTokens": 1898,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:f6511296ab83ca13a8cc111033f0d94fa40b2a38ee4169f785c31f6153b68314": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018H9ZRhbETL9E4LoyzhuhbC",
+     "name": "network_entry",
+     "input": {
+      "seq": 27
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS2QUKEAgTGAI4AUIIdGhpbmtpbmcSDLewgCSpnb2NiPOgihoMC7a/Gaps9VAIyMIVIjB1P/vS5MjIJCdg/kHsBwa7dWW2k42RVFkFDj836e0CSNmlIjqQ4lXVqVlJx5Mnonoq9gTpo499aQQww3DHydx8ynIbqjl9SEBOXEqbfx4G/9yGyVtvpGBFQDG5wF1eXO5g5VTEbrsvWuAebdjnXW8TIvZ8Vg93s3MxvXRpN+TPYjpNeBDm32uuGc5zR+Tp3J6BBhKKytcMVRh3XKwj58RcePzFdvMY4uwDAZby4bJnnQqWYwAULx8lNu4eZGf3dpgWe7M/NKdU476r9cQFuYbHXYJEC19ROWEXtLgcgMsQg90cDDACXm6z2E6UqL1w10c1lwbDJjb8BOztsnyvk7/M6A4S0nMABMlCN65LRYcmhBqA3muEFj++gYhXmkV9DeS+etvuEw3ZlOs1ZozztKDJfdkJhJlIRCIAKTF9h75bMOnL3KtIeMbrTgBoEnFzryOfivP6h//MYdjx4ATuaxOdVaNvhoQuTkygiT7qPWNvsiwslashf/PYtr4jG+NkxTug0oZWaAluiycPCttGSVCeKBAbjX0IFGl8yC+KityGnymn6EpvysGiPa87XJQtopGeSjTI7taQo/SbjTqdM7FT5KEXejT61AAPK5SQUihRgtlPBwmVOwPjhFcp42djekRX+6eUfmoo0fUHnPlTDtit0zrDM5nqeyOKYlSl1nOrOnjpEa4eX8MLvOQGLuT+ReAYHNCTx5zDpqUeeJgic/mBP5Lq0WP6hrQ4HOZ3onxyAb9YqizLhHs+tuhLBOw1BpD8g84ZaEJBZo56aJUHCiZ13hIfY6ZIEtiLSKJDSHCnc7XZOxMbKTlGCQ20bLyLovQJkMB3G6MbQ6VmYXjwAgw1Rm/Yx4EPrXMK1CpCQY4UoDj1/fayxslvgfW510cCVhV5Cz3eg5BnWd8YAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_018H9ZRhbETL9E4LoyzhuhbC",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 27
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4023,
+    "outputTokens": 78,
+    "cacheReadTokens": 4021,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:25a39783014af8c52d02f4e977c5e58256e2896314e903a9944eaf13442ee09c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HRYw2nM124rgMFh9n25xbg",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Change the description of my dotfiles repository to \"Shell and editor configuration\".",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent sent a POST to /alice/dotfiles/settings with action=update, repo_name=dotfiles (unchanged) and description \"Shell and editor configuration\", and the server answered 303 (obs 3). The aliceRepos probe taken after the task shows alice/dotfiles with description \"Shell and editor configuration\" (obs 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSqAYKEAgTGAI4AUIIdGhpbmtpbmcSDJCdm4gJuM2GCcItEBoMvjYPZ/c80JMe5lXaIjBBhCqBoEB9R70Ekp3UDSEPiKAAq4MPQWJheu908pyFmbBveBEozr2L9jfoPrk0RWEqxQUqkITjAHn2JNGJ2iiNSMWs6MYw0qAlGyo3uUmDEHrLpZA1t6eEj9Uwc6W6LzfOK9N911soQvr5JiUKD+6s0TGHKypM7VUAQQjeKTr3F96deKyoEXO2x8T8sTQ0zLzEHleAqC7jQcenc5gQdVHezg8XlKQALqEuM2c/VRq9HbBHqwb079689B6XK7kY8TTitddTvJw9x6rPgVNg3lUkwSQzkmAzbPCUmEos4BHuH7UT7//t7G9d2vkXUALPZPyayaYV6nOKK6xkKwhpw/UKkSpXS18a2S1EkPCSDcXd2SYCnu2kmf2bDmf1g7HFrWVDYqZn11R7I7oVlP09Y4zQXA943C0+dZjWi5WVu9egLKP+/tT5pOORnZdPlZk3nHx7JsvosmRqTv0gxrIqIltHfCobmMg0AaYQjEvQnBKeli1xzxPNDFutmFI+vtxwHYDWudPHXVa0kzuV+DlrLLP1UdbDyyx0noA0ZuYkVkey1NiYVzsKkmRK+PUZLa0wZ6DaXg9Qwr+LZA/RsalKd/9Z2z1nN7Jcuav89xtSHd51VwwwVwYXC1D5Hvey1zEFJmJUxRdF1LXbWWyRXOjpTsYyX+9QUfSBgz6eYhrekJmm1N9ui8hxGnQ6o5M+UJfPl9qmZdZSdcEAKs7K6bLys8Jc3yW1V7jYv5ap4N5SzAtRFIvIIQ2ZA9TA9CvIAupnje9bZX0BhrZwCdhmwR06+qxVp6ITjY72/vVNLPOaNuTLmYXKfO18Xv9G48htKzxtjiRuUu8Q4wepo2XLlyakxnTkeV5lMGHX6dE2NGaekecF58bIdlZt5FCld8XvtaTs18viwuh9O/UhrZUEYQcB0p0UbC/lrMfRUfJGSoDHk1sKZS+waYfQZKyE4lxAjBqEiQ18ySBNaGhGviXEIBM4W6h1Zr6uks8z8dhiRxqycNYE85xokro4J8/fGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01HRYw2nM124rgMFh9n25xbg",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Change the description of my dotfiles repository to \"Shell and editor configuration\".",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent sent a POST to /alice/dotfiles/settings with action=update, repo_name=dotfiles (unchanged) and description \"Shell and editor configuration\", and the server answered 303 (obs 3). The aliceRepos probe taken after the task shows alice/dotfiles with description \"Shell and editor configuration\" (obs 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4354,
+    "outputTokens": 264,
+    "cacheReadTokens": 4021,
+    "cacheWriteTokens": 331
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:110a3fc473a1eb04b2f469ba712f5052cd07a5b690dd0955ccab684047c7a09c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LpURL2YG9NjdQjmfQXt6UN",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent sent a POST to /alice/dotfiles/settings with action=update, repo_name=dotfiles (unchanged) and description \"Shell and editor configuration\", and the server answered 303 (obs 3). The aliceRepos probe taken after the task shows alice/dotfiles with description \"Shell and editor configuration\" (obs 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01LpURL2YG9NjdQjmfQXt6UN",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent sent a POST to /alice/dotfiles/settings with action=update, repo_name=dotfiles (unchanged) and description \"Shell and editor configuration\", and the server answered 303 (obs 3). The aliceRepos probe taken after the task shows alice/dotfiles with description \"Shell and editor configuration\" (obs 1)."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4681,
+    "outputTokens": 206,
+    "cacheReadTokens": 4352,
+    "cacheWriteTokens": 327
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

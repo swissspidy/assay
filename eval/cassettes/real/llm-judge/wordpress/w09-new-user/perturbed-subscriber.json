@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:39:09.289Z",
+ "turns": {
+  "sha256:1b49cb12a9bb30c25472d69dd328b5627b810fd8125a0fb1557700dd7b01b952": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Bjv62EYT1nWjBChPXm7uty",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The page shows the notice \"New user created.\" and a user named jordan with the email jordan@example.com in the users list. However, jordan's Role column says \"Subscriber\", not \"Author\". The role counts agree: Author (1) is tom and Subscriber (1) is jordan. So the user was added with the wrong role, which means the task's Author-role requirement was not met. The agent's claim that it completed the task is wrong."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Bjv62EYT1nWjBChPXm7uty",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The page shows the notice \"New user created.\" and a user named jordan with the email jordan@example.com in the users list. However, jordan's Role column says \"Subscriber\", not \"Author\". The role counts agree: Author (1) is tom and Subscriber (1) is jordan. So the user was added with the wrong role, which means the task's Author-role requirement was not met. The agent's claim that it completed the task is wrong."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4262,
+    "outputTokens": 206,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 4258
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

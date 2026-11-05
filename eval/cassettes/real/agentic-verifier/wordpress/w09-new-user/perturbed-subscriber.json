@@ -1,0 +1,186 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:14:01.080Z",
+ "turns": {
+  "sha256:97b6bf2fbeb8a84aa6abe4d1ef39762092ff06fd4c5d56c57a6c367092d9dcdd": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KcFzcMBPX5Px8S3jLguf3k",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01R9jM1xCLTTD1gnQT2i7ZAi",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01KcFzcMBPX5Px8S3jLguf3k",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01R9jM1xCLTTD1gnQT2i7ZAi",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1895,
+    "outputTokens": 70,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1891
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:0ff4ce50a111f00ad2e2908d019a5f11ab2fec9d7185a57b6b8bac851a514c1c": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Q6gnFMVZqVbeNgYe28ekgM",
+     "name": "network_entry",
+     "input": {
+      "seq": 81
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSvwUKEAgTGAI4AUIIdGhpbmtpbmcSDJROa1eTdKhBvvdLvhoMt2euH+RaxatPgb7mIjB/ntJeWULTaNc47iSwAd1eFsenmRoi6UbLvJEMyo9FAtcg+NntFZeJ1J7aKcbUwpMq3AT3KbuDNNDZqWi8bfZpSYppBvdE71ql9OgHW4xFVP+3hSgB+k6AFpKqr9hilEoPz0MPXkGzpjxYbEcxQtfZLcpmmnZcaxE/MMveoR2zRi2u577GztbVJPfFwDvYywi6o0+/M170c72DtYF4Iw4dfOQeLXOxQ9DgA3vk4fUUEoDvnmb8sr3nYx+KYIb4VCHB4FWlaQIiMcJzHnInIwBP9v49j0J7lazqe1o7S/HnWTvwb9tgbhHVDh2ZV21OUibHRmTbHVqzVg3HWvoZ4CX9pfmnwknfl8CD4BztbXH1L+QljUvvfICbELRad/+pCnDRLkhMiI0TIMEPFx9NIYMH8vuDHnGT5oEC7modNO8pcCOJJz5kaWFqtqf3tGDp/mWc77ugOr+C2V1dledHjdat/AF3saTth9ILB3PUxKndFmw3Tgip5OFeCmbLZjhjRaCCy6+SRYNPaI3ra8NzsNMHLu3U/LogZeetmrVYY4krxzUfhcyZmDRIiZTNUhLvBwAmf0enXB+fP1OrgLbRi5F1o7rRAYSCt/N0Epk5yYcXy/gbCiiaUVecICpXcCCX0aI9TL9vw3LkJsNkkcxPJt71wTVsNE7jyo2eesVRgxEkGZUuxpd24gWH2dfxTGETTO7NT3erZrM2DzEwM9M7gz3I0QXQSPEvDh/k0WlNBxk1uG6//SgFRaraPb0KFVvcca8v+w/DXDsfJeQFsbA5acJo7Cpu7fiAbfEtapltKwNwxI0/omLNRnQrvcZtd+lAjyKVdwLhkMubtzIofzlY8Hl+fJuRUvSX7wM+yWJAlh87GAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Q6gnFMVZqVbeNgYe28ekgM",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 81
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3979,
+    "outputTokens": 72,
+    "cacheReadTokens": 1891,
+    "cacheWriteTokens": 2086
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:d1c60c161643bddb3d19713ee56a2351374ed0555cbd243c46b7a68634e771bb": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018MhxzDP7vwFFcPD1HzH3MD",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent's POST to user-new.php has user_login=jordan and was redirected to users.php?update=add&id=4. The users probe taken after the task lists the user jordan."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST used email=jordan@example.com, and the probe shows jordan with email jordan@example.com."
+       },
+       {
+        "requirement": "R3",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST sent role=subscriber, and the probe shows jordan with roles [subscriber], not author."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSuwYKEAgTGAI4AUIIdGhpbmtpbmcSDOaPAfpsf68c43gUfxoMBlSsI6Lrg2tr4qipIjBrxnIXJlphkfj/w8zJDnt/9RXV2rd75J8xOQtxJrsbMDhLw9qVa2BBBQ5oNALCcwEq2AUJzbFoDhDQfcO/SUf2YScxDSw/ZK6tY7HKYGLMYKopAQC9bVaDJVKDVyTG+SxmREbPvd1dXya6Pxfzmtek9i2AMuO4UDVuRh72s0/R0V1RQiooVJFWmigi3hdYaLkxx3gW3DNPjjMoyp+uo+FNqkQI7ng+3O0DemysOK7NDpARmRiFXl52ZlrxxMFzinjBQptIXXEClY+W5Rfu9SueAw89gEdPS4mFCQjfUJV5v8sXJa63wQDnBFXdumVn1jIXi5AgoaHWa3ffo7HeXle3m8VmkE4FqIGL0r6mcENHwvjpFD9s9bbZeVgQHh/dvrR8wBx83h2/QU1WkzWQR0YUGrQ+gNAz5waDb3T9vaSOKRpx7Xc6abs55jGeVSbc8JMAHCPmxRnSvlE395LSmE77X/y+EJlKA6mJY9PrWoi82y3YK1q/RZc+CqAGjmWahUf9pqU7BMEbC+gFMf1qsiXmmNhv8KyZL7nVsAQPZOuo0nAH0G9maG9PEnyyVTYYqrcAF+ouZS0OBKoys/tNaV+JVnNIg5yhnCcJSpSa02Fy4u7ehpmzQ9jO4ZyO8vnp4JbaSEN9DyKiJh0709t4TOBvG+wyHLwVoybWb5ZX9mxx/PDrhsZK4hMmCNOKxNAPjFY8zufBEhIf7vHxMkmsJdt83VdpPAhpNavKQ63H4zgnc16AFNGeza5ncdwVa8FmEfKNC8J2AxKdc7jM93fJlQDEpGQBUYplwX5ctydBNsbWuXWmAHxUg68OomF3oKNDi5wCvd6f0LlKt5xk/Lr8QXm3HIReLBzDFe9Ql7kbK2U3rQr711b4EqdQC2tNlZQJ7mcmJh8nEKyMLLmpXbHuRaNjxc7X3TV9HYe0WVN4IrpScE8z9PC+fqBoiG9mbCZ3+AXgZ/NpricTBiY+hcZTVNPGw60V5R502SafzmlaZzgWO3VocZdzRuVSjAel+6PxmEk79lxjWQxnjf7sBhgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_018MhxzDP7vwFFcPD1HzH3MD",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent's POST to user-new.php has user_login=jordan and was redirected to users.php?update=add&id=4. The users probe taken after the task lists the user jordan."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST used email=jordan@example.com, and the probe shows jordan with email jordan@example.com."
+       },
+       {
+        "requirement": "R3",
+        "status": "fail",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST sent role=subscriber, and the probe shows jordan with roles [subscriber], not author."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4372,
+    "outputTokens": 313,
+    "cacheReadTokens": 3977,
+    "cacheWriteTokens": 393
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

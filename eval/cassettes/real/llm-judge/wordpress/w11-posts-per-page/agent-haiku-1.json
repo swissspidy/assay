@@ -1,0 +1,51 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:39:36.872Z",
+ "turns": {
+  "sha256:4f65475fd49872c5add2a6403f8f5f745a296040a9854907545ea378564696b8": {
+   "stop": "tool_use",
+   "text": "I judged this a **success**. The final page is WordPress's Reading Settings screen, and it shows the \"Settings saved.\" notice. The \"Blog pages show at most\" field reads 5, which matches the task. The other settings look like WordPress defaults: the homepage shows the latest posts, feeds show 10 items as full text, and search engines aren't discouraged, so nothing else seems to have been changed. One caveat: the page doesn't prove the 5 was entered before the save rather than typed in afterwards. The URL also lacks the usual `settings-updated=true` marker, though that may just be how the URL was recorded. The likeliest reading is still that the value 5 was saved.",
+   "toolCalls": [
+    {
+     "id": "toolu_01FUkrPpuYVGaS7jdFk4ce7B",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "success",
+      "reasoning": "The final page is WordPress's Reading Settings screen with the \"Settings saved.\" notice, and the \"Blog pages show at most\" field reads 5, which matches the task. The other settings look like defaults (homepage shows the latest posts, feeds show 10 items as full text, search engines not discouraged), so nothing else seems to have been changed. The page can't prove the 5 was entered before the save rather than afterwards, and the URL lacks the usual settings-updated=true marker, but the save notice together with the value of 5 most likely means the setting was saved."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "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"
+    },
+    {
+     "type": "text",
+     "text": "I judged this a **success**. The final page is WordPress's Reading Settings screen, and it shows the \"Settings saved.\" notice. The \"Blog pages show at most\" field reads 5, which matches the task. The other settings look like WordPress defaults: the homepage shows the latest posts, feeds show 10 items as full text, and search engines aren't discouraged, so nothing else seems to have been changed. One caveat: the page doesn't prove the 5 was entered before the save rather than typed in afterwards. The URL also lacks the usual `settings-updated=true` marker, though that may just be how the URL was recorded. The likeliest reading is still that the value 5 was saved."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01FUkrPpuYVGaS7jdFk4ce7B",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "success",
+      "reasoning": "The final page is WordPress's Reading Settings screen with the \"Settings saved.\" notice, and the \"Blog pages show at most\" field reads 5, which matches the task. The other settings look like defaults (homepage shows the latest posts, feeds show 10 items as full text, search engines not discouraged), so nothing else seems to have been changed. The page can't prove the 5 was entered before the save rather than afterwards, and the URL lacks the usual settings-updated=true marker, but the save notice together with the value of 5 most likely means the setting was saved."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3241,
+    "outputTokens": 749,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 3237
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

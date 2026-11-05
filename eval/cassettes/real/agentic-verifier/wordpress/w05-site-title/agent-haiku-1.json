@@ -1,0 +1,203 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:10:01.085Z",
+ "turns": {
+  "sha256:74316744afab7729d41f79369a6d66f5139b56e21a6ae1f3e873e7472fd3d03a": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01KjVeJjfDCvApJXYWWf69LK",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01EU3eDNLUBt9qNrLabz95e3",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01KjVeJjfDCvApJXYWWf69LK",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01EU3eDNLUBt9qNrLabz95e3",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1857,
+    "outputTokens": 70,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1853
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:c0b20ba9c239c2f06fcf6bc37962df8ca240dd441d34fec0df6cb3e2fae32edb": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_014n5h6pgRhbDdWBnZg4emzu",
+     "name": "network_entry",
+     "input": {
+      "seq": 106
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS9QUKEAgTGAI4AUIIdGhpbmtpbmcSDO+FlQRNqIRczDvQzRoMWKaCO6aiValE4unlIjANmKq8yuzOdJSQxt1QdbJ9zIWEtOLgEum/B+JrEP80e1UXIro6BhVKmPwEdNWixuEqkgXe2FCuNoPNYAmUqcHkE+mEh7BPyAYguvF91iyVXDbvrXo2rHWHM9+0wxC8QQ2S79UwwHCRstgBg1tWea66OHZCRuR9djB5NQlFSjHMsdfNqHIKmoMkgmiUKGfTF0wjOcBCa3CYHo4X/R/teRFnficatfifRwYBLd0N33HS+IH3XTLsC8Tqvhfe9aIRkO7+aIg7+/cQVwEhZnGTGRagKI2zo/72GyWqi9LCHaGkj+YulEPuhBpP4ngljHgv+Xxf9NlJ9VZJswk1ThNGODuoNO1k9AAtuVLkLmhshUx59sx4S/rm1ixEqoDlfIlJxTGb1PM+CRsyhB7RTtT8viJAQcXoGrRny1vOduTPzSWhURTfAfCK7fdAu4qh9aC5Um9eZP2n79Kr6IB5dsTFI4M1S60p5y/8KEawzrGJS68znZ0VmMK0iEj5qemTDUE0tYI90IzYAV7wIzDELJiHArgQlxLPfa3nDS94X+JWkNnMRWQBm3iFm0EVJBihbqE2AwF0TEE9TFIaJzuqwCYi7E25xbNkkO4RstbSYXm8Plw9QRuzK2G3zN/IjlwzqtCbhZIVlSkBPu1wUljLAS+BbKJmDp4CP0PpsopWWwn7W11FP/8oyeo9g60HBI5ghV/wJFRxk8wHk4pr/GMtfPsMYsXEBx0XG2DhY6qqSC1A6UNZLaeRpECLTwy0ZXddCNM9E0jS0Nzx6eYs7HBZblhHUrZqMZrAz/W2yicPKZjF+pThHHQo62twWIyzp68SL4596ADRwaVrTv31klYpDkVVdJEm3L5vXm6LJvBxpnVNd2CLph9NnMbp10xUFaIoB9oQ3foDiWx83xGaFe0OvpJYblq2ICSgYRT9x36tHHGoZ2dkjqzLYaweGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_014n5h6pgRhbDdWBnZg4emzu",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 106
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3932,
+    "outputTokens": 89,
+    "cacheReadTokens": 1853,
+    "cacheWriteTokens": 2077
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:97f84647e8e6dbb2be958fd74f023615e3f150da96227af6643109a934bbd5ec": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01QY4AMstptfTGNNxUQ958qe",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Change the site title to \"Assay Field Notes\".",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Post-task settings probe shows title \"Assay Field Notes\"; the network log shows a POST to options.php with blogname=\"Assay Field Notes\", redirected with settings-updated=true."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSwQoKEQgTGAI4AUIJbmFycmF0aW9uEgy1SkjzDzw2/IX/E4YaDAvNST6NobxdujqLuSIwfIQzkG06+MFqCJrt175nYL6nG9OH0Yb/3t7P+rnGbNvLKR5k91eVnAd+Tx4A8KxyKt0JSoMrF1udWaW5eCcsvGd+anS7UwgHWIrDhQRiG1PlBjLg/1DyMIDoHMNwurWXuP/b4X2TrwQUw/BmPDBPh0h1z+RmpVjWcbM77ZksNbidAKjhvfPgOsu6PFXwVxZkE8dMXiyWXnPderxFddP+LLimPbHRAgDf5mr4WufPNhvq9aBQGsQPafFm9QfFBGrZoRp7VvSPnKRh/Jd6Ii7V5QR8gjvXBOBmk3JwL5MpjmssTy/yHLLgjNb/t+c6zP2EKmewONjTWGBmNpHvyQ6nYyeAdMbK+TIUBEfKEo8QNYWwoHef8Vz1rmahV29Y1ZyPoQKypOIPAZIklFNiiy04Fo9WEaefrLQD5er+WOFVlxxuKzzmU3a4mzm9J8OpbaxRlHfKgN5WlIib3sAk0JTklVQeVaN2wAi1D8on+Qgx/Eb2m6QZ2Sp/vki0Jb2K0hoRzAP3Dz4rWPhxcpfCOIetbqn5VFltjXemuGqXKKzP8h2gw2GxcPlX5vQpJnsSDEdLyfn3rdWWyP7Hbm4XNV9J1BFToleSxzYqgAi3eNW7bKcMUBz3czBHDmJkDywFCXRVgcILAz6BHF5ab0rV0ohdtHrqwZ7zaxp6m7Rot4vtRy4aMmuNpNIZh31Vye9AvD1unFF11ZWXoT6djFvRMrxCdhCcK7Zu+JCdS9/7TQEUmy0TLJ7kHlco8dZ9jOLb6a28hC1U59sGb1zhC/rav+/r6hnq4FHbY3i2ahDntzAgPDtoLhsj658R/2Mlmvwyt3+XxhG6F1m/wwcZL1klyb/BXxBGezI2+QAfjp1k419Nr7LVN8uc65mq+w/rHaMbN2j8Gbs4L6ZPaZbXIJ9IgrKVCWRsYvBbE8hOOYMOxkRPHOPWN9AdUIj5oi44FAinD01SXGXnZJoBBBRlS5xX28abgJT34U/YrKe8TxhrpUkS+X8ZL/27RfXWBTya6MPfR5IcoMTTEgifLeflR+HLWb/K7B2CaE/DeyZDkgxwE+ioVtn+juYXg68I8lLUahfym5DD2LfjHyj2Mfs+7qpOYh37p8xMD+TThPEMQQVfZRbgkhuAj3taOikaqafGYH1L7uPT+3jxRveEwBNncMK7oV+UjSPsJJUnkPks3fL+DCgWKyTPPX4QKbM577rdnBgUlT/QFp0XZ6WITlsDDAhXEJ1ktWds8O9UT/Kh6g3XY7pZAbamv20axavU8TmwnZ5jee2uTyQ6DCv2BLD+gUcr9KRYAlccQl30Jb++lhjro2gc8YrDT7Y50fyeVvbeaKcJzevzk7EdTfk9FGn4X5J5O5QBNvsNriqwqNA719tHjAltCQFkPv5STUIlc1npgDz2oNV7cyWvEbxiB3PzJAueQBLjpTCt0neKDbUwuobhq9bNUnXZlDuNhXjrA0yOOZC6PaiR82gnWUTyIoSqu7oSIPn6Wn9HW/KjXAwTeIfeK1gpqB1KEEL8tS00bkq2/xnmA+MVYCFdg8PkQL3g0sVS+7Os95KvEN7O3PP7KV4DkeC+qsXslHCS4uuvason0NiY3tRtLVBkF8jolgn0OW1HQmRfoe+yvswovy/Kd+O1oR500bOSHP4McSGq4ibORmC7x3SsgdajlISqBn8WeRAaz7DJTLlubSyIps9Nk45A8EPRXpDHtB51j7vnhp4cSHJ8XN5FGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01QY4AMstptfTGNNxUQ958qe",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Change the site title to \"Assay Field Notes\".",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Post-task settings probe shows title \"Assay Field Notes\"; the network log shows a POST to options.php with blogname=\"Assay Field Notes\", redirected with settings-updated=true."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4429,
+    "outputTokens": 367,
+    "cacheReadTokens": 3930,
+    "cacheWriteTokens": 497
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:c14c051e148e03976b4baccde813727105fa5d1430b1f579c2f4de33056e44a9": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011DUyPYBBjBPrWDTtn1w2AQ",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Post-task settings probe shows title \"Assay Field Notes\"; the network log shows a POST to options.php with blogname=\"Assay Field Notes\", redirected with settings-updated=true."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_011DUyPYBBjBPrWDTtn1w2AQ",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "Post-task settings probe shows title \"Assay Field Notes\"; the network log shows a POST to options.php with blogname=\"Assay Field Notes\", redirected with settings-updated=true."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4850,
+    "outputTokens": 154,
+    "cacheReadTokens": 4427,
+    "cacheWriteTokens": 421
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

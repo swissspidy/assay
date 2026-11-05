@@ -1,0 +1,234 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:44:37.116Z",
+ "turns": {
+  "sha256:82ebd93491f35fde0835ee04ffb77b03545198517b6893ffa8ed2fc653e635d2": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01R9KatqXBnuWnYwPKWx4rh2",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01XGdi7cDwGnRkrhzMoqxsho",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01R9KatqXBnuWnYwPKWx4rh2",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01XGdi7cDwGnRkrhzMoqxsho",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1922,
+    "outputTokens": 70,
+    "cacheReadTokens": 1918,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:d83c5e5e59debdb17fac69718fef6fb8af8efc2f2635515c74d0f845f151c0d1": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01XGeQPHELpiC8zJP6mNDamy",
+     "name": "network_entry",
+     "input": {
+      "seq": 22
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSyQUKEAgTGAI4AUIIdGhpbmtpbmcSDPG0IqtOPdeDDZWCAxoMb02pCRVzXeNZtLl6IjCHqZazn5A00tgMXcmp3dyFi4UfbfpeogighCZO3+cqRPZpY7i3+Cq6jgis8ACjmK8q5gQiK/cvirDV1G0oK8wdVsKTGYUwU2kDUJpeKnW9FJ/KhQrE2Bb/D8rPDTVmiSKwHDOWaPbELfPjEMk70GMAOWSEu4e8RtHRVbYd09p4rubiIaZ/Ml+9DBG89AIDMiVaRakkVwuf06YfklESV8SUG7WphL8bSD0UTZWLDsH+bEvo5swwtF/f8wlp6SuTgfFNxkFcQBFkK1eBG19GAZxZIi2gPnna4/rKKLZTGExFJYmzXcDnIBlXAIoIhpIHPOMxEWrThQcOQJDY2AFt8oIQD3kfsmEQiZo4Iaa0J/mpeHaGJinOafwokQwUGjCryWrdRPxOv5nP315pzEQ3wOsofVSAJLQ8sB4tDx31OvnNvDTWWR2xQM0Sk114EZ3ViAY9SHdqR140BAM4G7fofg0CQUHlzvb2104QPdOxyMzttKg6Db/w10TlzHRyZVLwbXKAM7tl/00BuEZc/a1ekc1OeAk06WUnAxA/IJG2fIBFVGo5iR8sRCGHZqaBIfLFj9TN1VMFa5AP+pT7/B9hZ7ylHUcCfLLibdBX3sDyLnvFvowMRmvbsXLrFpmUaF6ck4MB5NIOssfM5oj7JhMIKOUn0R2HyuBDUg7HOEv0O3MuVrmnfkCEL25oFpOHr5WLyqMBEXrvvL70/owrafBQo1+o7kpXdjNGc4pB86IW2PxAJ9Y2BNacC1DpN/R0c1N0h+n3lRq42MiSrlH6z+b4Q/+2Hc/9Y6ZFtBKVdxFMOUJDDBpWyi/F4iUIFHgLZvLtrp47+eDpziog/QNwEb68QDzJnYriWsWpl4mzahw4eeSDe471T0mw+GPQGxgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01XGeQPHELpiC8zJP6mNDamy",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 22
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4058,
+    "outputTokens": 76,
+    "cacheReadTokens": 4056,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:0ec2ed8ca5ef570713cd6a3d2f14c31f5908af3d283cc135bb87deaacce55182": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01FHyyZoDLesfVeU97pHWvT4",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Create a milestone \"v2.0\" in acme/webapp",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent sent a POST to /acme/webapp/milestones/new with title v2.0, and the server answered with a 303 redirect. The milestones probe taken after the task lists an open v2.0 milestone."
+       },
+       {
+        "requirement": "with the due date December 31, 2026",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The request body has deadline 2026-12-31, and the probe shows v2.0 with due_on 2026-12-31T23:59:59Z, which is the end of December 31, 2026."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01FHyyZoDLesfVeU97pHWvT4",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Create a milestone \"v2.0\" in acme/webapp",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent sent a POST to /acme/webapp/milestones/new with title v2.0, and the server answered with a 303 redirect. The milestones probe taken after the task lists an open v2.0 milestone."
+       },
+       {
+        "requirement": "with the due date December 31, 2026",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The request body has deadline 2026-12-31, and the probe shows v2.0 with due_on 2026-12-31T23:59:59Z, which is the end of December 31, 2026."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4343,
+    "outputTokens": 272,
+    "cacheReadTokens": 4056,
+    "cacheWriteTokens": 285
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:798fe22c7266ec5e2f184a0310d8491727548fed107c7206925be0958407720b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01NA1YbGu6H3cGGJT3Fq61F7",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent sent a POST to /acme/webapp/milestones/new with title v2.0, and the server answered with a 303 redirect. The milestones probe taken after the task lists an open v2.0 milestone."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The request body has deadline 2026-12-31, and the probe shows v2.0 with due_on 2026-12-31T23:59:59Z, which is the end of December 31, 2026."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01NA1YbGu6H3cGGJT3Fq61F7",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The agent sent a POST to /acme/webapp/milestones/new with title v2.0, and the server answered with a 303 redirect. The milestones probe taken after the task lists an open v2.0 milestone."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The request body has deadline 2026-12-31, and the probe shows v2.0 with due_on 2026-12-31T23:59:59Z, which is the end of December 31, 2026."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4691,
+    "outputTokens": 251,
+    "cacheReadTokens": 4341,
+    "cacheWriteTokens": 348
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

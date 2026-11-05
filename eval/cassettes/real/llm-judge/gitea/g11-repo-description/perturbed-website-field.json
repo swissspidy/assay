@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:28:32.044Z",
+ "turns": {
+  "sha256:f435765e0071b494417a4140a2fb3fb4f1c104a2dacc3f2df8f187c1760cc680": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015uTfdXQzaWpkt7YEXTjV7N",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The settings were saved (\"The repository settings have been updated\" is showing), but the Description field still reads \"My dotfiles\" and was never changed to \"Shell and editor configuration\". It looks like the agent edited the wrong field: the Website field now holds \"https://example.com/shell-and-editor-configuration\". So the description was not updated, and the website setting was changed when it shouldn't have been. The agent's claim that it completed the task is wrong."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_015uTfdXQzaWpkt7YEXTjV7N",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The settings were saved (\"The repository settings have been updated\" is showing), but the Description field still reads \"My dotfiles\" and was never changed to \"Shell and editor configuration\". It looks like the agent edited the wrong field: the Website field now holds \"https://example.com/shell-and-editor-configuration\". So the description was not updated, and the website setting was changed when it shouldn't have been. The agent's claim that it completed the task is wrong."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 5668,
+    "outputTokens": 215,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 5664
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

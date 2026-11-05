@@ -1,0 +1,165 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:43:00.550Z",
+ "turns": {
+  "sha256:c1c8f9f175f21f59275d1d621913504a91ac5d479e0f13c383e9bd62abc0fadf": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_015v74b8aDKJeiY1gkjHTG27",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01XwBDzDi8eSY41wdyDPiaNu",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_015v74b8aDKJeiY1gkjHTG27",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01XwBDzDi8eSY41wdyDPiaNu",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1958,
+    "outputTokens": 70,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1954
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:b86a74e407fcc953922eb4d950d870e4319097814d8ed0b4239688217d595717": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01LAXLUXSG8EhpdPYdSX3WMa",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "On the acme/webapp issue about the dark mode setting not being saved, add the comment \"I can reproduce this in Firefox 128.\"",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The issue-comment probe shows a new comment by alice on issue #3, 'Dark mode toggle does not persist', with the exact body 'I can reproduce this in Firefox 128.'. The issue's comment count went from 1 before the task to 2 after it. The issue is still open, and nothing else in the probes changed. The network log has one POST to /acme/webapp/issues/3/comments, which returned 200."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS1AYKEAgTGAI4AUIIdGhpbmtpbmcSDKarLhrmVzYZPvgxTxoMYJgpYbm+MmnF93EtIjAacW6VrylQ92FjdfldCGuhXBIK061++/4l8ISBnsCPeQqFVe8ZpaGoEsa7aXroT9Uq8QVlnlCpuF28aAbvx5dz1KRvWDhtGuYJMM1C0WyuWpW5qJdHs8r3klPysXDVVZtaqR2useVDwsOPSaqDaukLLNwY6f4feyUVcghN85hUrmeSGWf6KGR8I0vEMDlnXUWw6rHhiPcmPmXVVJ1aiMQzM2IJ1liS6My4ji0aT/1GOLDqilzqqC47FcUJXBmdGiyNavZpJd2ezxg8LeLVPE4wkkLgdp4gKmmUv0HAI832/Bk92dDPDYEH9/tsGeEkKCzxY3K5uOfacGidRBXDj9VKGl7RzREFtHWV1ebeTpGBRyEbzYQ6pyI+qvkAilrzwn83ZaWGaqfX9lanz6Qr/B1OGTzFbvkv7zsJsj330ct+4ahv/Q/12as6B9APlAiCg70+6MkA4jArumIHyTP98MGy+xTMpFBta/Rf1jqzaV7FEH26FbtjbiRmjImWGvCgKqzTbMUzBC8sMqr0ap6jX3d0nu7L8VwrsS1N+Cp6M6wdNN74dvEIkDtWODj14OsnO00ld9NcGlpvut9oGt3HFN4F92rIzQWrp8njgMRhF6PJQFmv7+m9/EqypgU4+79Q3Rc9UxNKKCItz0YDguRroRuzkBuPKaBvW7nNg2zczdFtRoGFpNWvM0FrVGH3wGezrezucMn6m6eNwvsfbjLSi9McqCJIb844xQHCoiGnV+gKm6gXYUdS7NW1zKMCimHmZQjb/tQcJX7mFxPv0y0qcvCmbSFJdTGSuXgPg3DZehhWjnY8ggwyI1MqAH57TO9egsZCecxD6fBHzQRXWS5F358C4OTGDVcVNpFISv65MDcAZM7Ip3wY5q4wuKkHJ47/T6/GSMygRRtxO/HnSs6Aafo/66WpDIp9nmnW9K15y+JH6/zfOAUO+mVNXpvSoIxObWn6YZxYuVsxLVRPybp9P2EsbE+V2+O98vZbU+nQAGxFH70axVrjqROFEdTwNJoL3/HbUH5wudsXZ4mQxreWwFm7nHdslSx4q/86Fcd5LmOaoLf2rTMYAQ=="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01LAXLUXSG8EhpdPYdSX3WMa",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "On the acme/webapp issue about the dark mode setting not being saved, add the comment \"I can reproduce this in Firefox 128.\"",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The issue-comment probe shows a new comment by alice on issue #3, 'Dark mode toggle does not persist', with the exact body 'I can reproduce this in Firefox 128.'. The issue's comment count went from 1 before the task to 2 after it. The issue is still open, and nothing else in the probes changed. The network log has one POST to /acme/webapp/issues/3/comments, which returned 200."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4131,
+    "outputTokens": 340,
+    "cacheReadTokens": 1954,
+    "cacheWriteTokens": 2175
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:9a8f7552b028efc16b6199a68f455bef2107fcfba8c2e24f2598902b1c4d730d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_018JuxSSB3tX3wVxKAo659iJ",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The issue-comment probe shows a new comment by alice on issue #3, 'Dark mode toggle does not persist', with the exact body 'I can reproduce this in Firefox 128.'. The issue's comment count went from 1 before the task to 2 after it. The issue is still open, and nothing else in the probes changed. The network log has one POST to /acme/webapp/issues/3/comments, which returned 200."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_018JuxSSB3tX3wVxKAo659iJ",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "The issue-comment probe shows a new comment by alice on issue #3, 'Dark mode toggle does not persist', with the exact body 'I can reproduce this in Firefox 128.'. The issue's comment count went from 1 before the task to 2 after it. The issue is still open, and nothing else in the probes changed. The network log has one POST to /acme/webapp/issues/3/comments, which returned 200."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4552,
+    "outputTokens": 222,
+    "cacheReadTokens": 4129,
+    "cacheWriteTokens": 421
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

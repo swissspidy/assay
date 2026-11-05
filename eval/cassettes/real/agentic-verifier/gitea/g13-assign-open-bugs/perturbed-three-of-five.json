@@ -1,0 +1,96 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:51:14.424Z",
+ "turns": {
+  "sha256:7c489e1af35c49ffad02cf2738dd8ddad6097fedc5825df23bf81925c3e386ac": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01MxLgaH3oq6qxpAK3tJXpwE",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01MxLgaH3oq6qxpAK3tJXpwE",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1906,
+    "outputTokens": 25,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1902
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:72c16cb2c8a77461b4c12d24fd1c8e1889da418f1b27812626b58badb2220135": {
+   "stop": "tool_use",
+   "text": "The probe in observation 1 is enough to decide. Open bugs #10 \"Broken link in footer\" and #12 \"Crash when uploading large file\" are still unassigned.",
+   "toolCalls": [
+    {
+     "id": "toolu_01Bv8fQCLJRCwKQmP5nkzg5M",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1
+        ],
+        "reasoning": "After the task, the issues probe shows dave assigned to open bugs #1, #3 and #4. But open bugs #10 (Broken link in footer) and #12 (Crash when uploading large file) still have no assignees. So not every unassigned open bug was assigned to dave."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS1gYKEAgTGAI4AUIIdGhpbmtpbmcSDPJzf2qKvUQmmo4hTRoMyxs2FcIRvx6XOyb4IjDSq46G6/b54ppAd+1ikqQ61RCpWY+kg3T7eFcGafRDFHn5u6Z/EmDCetYe6pX3AL0q8wV5VnTh3LOB3ywGu3o7mPx+EMmEkFt59TXEA11qlgb36bVMe+i/biYgYdZHK+fzPYNYj+h0qxbv59STn4dSVmz5zXLvJO/EFTNi1yfuyYadZ0iB1rDYwFyA0uO9GUPU8jh8SAC8Cd52WYssscWb965obabLLvHQAR8arDBY490TW6IqDpHkhi9rYfcK7DuM5OhEANwr0vZ5/2lJOT/gywr+/aGSKs+zjNYdz+yJLT9b6CgDKDb12AOPBnBFHkGfOgPFyJkFffpJZK7ar/SmSO17rGGzvrqzHl+O8BtIovKg1+sjjRWnGPh/pm3JRr+bDMCqGUpsxpmxvytzyBDJxe2q6niwKuRUcqRbWi4DBREmy3SV+SrWoCCe0r6PiuB1Lhl5/W0P+G0kIKfzz57aI3RGoEcHqP7853Olrek/hynKEXFxWHTFVGVETiDHgzhaPaJxMSfV6FoeUqR0CLE+bJH0XbvnTXVmSnmxZ2FJpisfsYGLqznSGiSwgktj/4PuAqmLYEelG6rD18SPux+TI8nwxzByxEciOkJWkcRRBY9ljdze0VdE+gBipNEPLUwwkc6JVeNKo5NU7HDeXn0I1CkzmR4jI8JRu0sAutGVN+RhnthzzR691jTV2AyuwdQL1bu9/WJWwc3AzZ3uWcL6vsWn2y7b6RkKh5OTz+Nb1K8E25El8FDjjxwmcFRHM7lfFX0baSKHYKhpCDli2Ag4U/4ROwQDtmGRUekSUdHfjUhe8s04EsfUHru4847YK+H/zrqWaZ2F29fVzd5KWLnA8c/LSLvSc05McIxl7MHbu/ahnB6GPD5PvRt6Ds0XXRAPojxpmjjCi4dIZ3SPk0sZDVDnUsngEa7aXMM2l3aOZpZBrItgi0Hha/cyEpS2YtziRg9j/Eje3VpOuxe1AOKr4KPCJ7CeXWRUlCXt5VkJSq2jBV8wAk7r3IPY5r+U86rEQNNmMMZg9nRTX0IwLM2O5VaS8FYohHwcOwPykIMAHU9vVqnQmRgB"
+    },
+    {
+     "type": "text",
+     "text": "The probe in observation 1 is enough to decide. Open bugs #10 \"Broken link in footer\" and #12 \"Crash when uploading large file\" are still unassigned."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Bv8fQCLJRCwKQmP5nkzg5M",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "fail",
+        "cites": [
+         1
+        ],
+        "reasoning": "After the task, the issues probe shows dave assigned to open bugs #1, #3 and #4. But open bugs #10 (Broken link in footer) and #12 (Crash when uploading large file) still have no assignees. So not every unassigned open bug was assigned to dave."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3900,
+    "outputTokens": 311,
+    "cacheReadTokens": 1902,
+    "cacheWriteTokens": 1996
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

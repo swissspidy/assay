@@ -1,0 +1,186 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:13:46.926Z",
+ "turns": {
+  "sha256:2b64e61bee38c2a3f9f927c0bf2558379cb70cce10b717e8d74abc0959631cf2": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017rhTdYTYvGTTyqFFBqF56h",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01QGY1RR1dJKDmFbguPrKyzM",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_017rhTdYTYvGTTyqFFBqF56h",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01QGY1RR1dJKDmFbguPrKyzM",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1895,
+    "outputTokens": 70,
+    "cacheReadTokens": 1891,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:130711ba355721dfdced74a6aeb2ccb89dbbeecaf0257c8513683697662fcf88": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_011ZErSJFBTpXt3HqRZDUmpD",
+     "name": "network_entry",
+     "input": {
+      "seq": 79
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS1wUKEAgTGAI4AUIIdGhpbmtpbmcSDHbt6kA9ocEFGkV94xoM2NI+3dkGlkESMXB9IjC9MeBtL/Y46tmP7nBn3sJqbEUiouoOQA5NVx8pOiRmnYJYNMSg1cb/hnruN4DikH8q9ATmgh3N4QDMqVGaUN6MajcUJK5FJB682xY4PToon1Tnq+JDibB88ahJvqfnKauYOxNELA/6dLukWK6ivtF7oPAK6Eh0hc+HVn8D6FKfZXebQY8mM8PQPxR4V2LE2SpKs/yRtR2HXTOocdDOdJ1OoQV7+TIl29h1+MNFWmo1v0cHlocfghJS26hmds6FHQFYy3IomXosXq95j8AyyyZvW7VQGIrNk6jHaODyug8262bGhddZOQu/HMbxyCnqewVaxj+uMLou61cHjXOd0JtUrreKAkT1V9QUvyEB+T9uQH1hcgKJLWHPNJlA8IJKL4wjpOA5G3oMBfwxC4UjvFYu3sCSIs7Z2pAE1BEAxIQ+dMoggNfSctKVXkG0uwdUVREV9tkeauymbOxTZ4K561FhAz4GxVQUdkB2CmD3mUoEkBErvfeXsrEL5lp/6OK7PEDXnGaPTSSg3TpkczVrjt7J4J2Xb97EQ5nb/ovQSzqboKnFAq+5pDT3iArVBTyaeTrpk9HWybt/UKC+75Irgs3wkyZUM2qwjWkZ31aOpLf4Judc6YFZUB1rXfUYYgSuo5ymQ2jV+8m0cuuPNG0PL4keHcmPSMumcPOOqAUfQZszPkYA1u2NTyD78xWBrZDoyLuqo7vObpMGOGL/kCh2RocCJ5PISEXtXZke5at9bEV5M0y8TD3qkOBcfWcDoqcUegvGJD/cqYkhXgr2wI3wDWdr5w8IcdEhqMle3SQU3lygyTQjIHLgXlBJ7KWcJudtYN3Qcve3rkEh/MojhM8OPxnCF+oyTbltNPX0qu+v5t+wFCf0bpkrrQ6IrO9O/Os+30Yd4NfnNrTJGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_011ZErSJFBTpXt3HqRZDUmpD",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 79
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3976,
+    "outputTokens": 80,
+    "cacheReadTokens": 3974,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:3b680e70fddb9f27e505cdd25aa6a20cb028289fb021b819ef16982288a56bfd": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01W66Sb9NPzi2QeUj6wgj6Vf",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server got a createuser POST with user_login=jordan and redirected to update=add&id=4, so a new user was created. The users probe taken after the task lists jordan."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST body had email=jordan@example.com, and the users probe shows jordan with that email."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST body had role=author, and the users probe shows jordan with the roles [\"author\"]."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS7AUKEAgTGAI4AUIIdGhpbmtpbmcSDBwgef0XsO8+B2w6PxoM8kX2y/3kQB99IygiIjAmU38ih6wt3iP3eKJaaXI+8zvJ5/IhAAW9rGiHQZwGDxnNf1LKGyD8VvxMDZS1/mAqiQV+oXqrph4sgVBNYsEg2IR9Sylqf/cRqSbkrtIzbYxnT0TgC9yuUG1t6KJTSmNCL1pG1LcFXFB8XvDOUbR3Ew7PBgOqBdiVQefksbrcSZ8BfRZjqiU7jt/OZhjKa+31Iza+YMABYAUWLOTOKbTvHvjs46DADeJjybUwQMECgKkaSQfx/Fl5+cqZIx4T29u2NUNmmoTyE080Mdp947W/Vhx27sNRafG8SK6g2oCiPD98Q4BKywh5gqgdxi3SVeai0RIyNXwUHPTB4byZS5fLEZnwSMrtZM8N/nO2fWdr/3/PTcn84aVSDW/zmj9P4n+ybFVathJh5Rh5cy4gs9b0947z/XwrQJzwyPrnrGnLQuhZoY6TTaY6XZX9m2JSnjgQzMZiXjeaQnCK+J2PG3c/w0kmv5Ydp0r8xIDACq+U60Dwwa583av38rVC1SP5povI+zvYOkC6ybHDwttb7qiSVkZwQzqP7GJtQf6gKrLCJqjjuJelamHsqTo5zT9G+DIq6xCRs0sxEmWyqPUXIplpjoH3xOaMcqZ0p+OZNVeymE+buug+V2/HXfbmkEjy3Hi0OcaKeE/7TA2LpvOsIDLimZM6aT08KfI83RDTbYnVOQUsg5SNA68+7dq0mQEsxjEw5q7TFSpS+E4n7Ve+HEt1c3qLsy0sfhkBjneWv7MBRcKiVgN4s5eD1rOrfNbKoA+9gdV4cfnUceQc5uOwYTQtAtEDRnpap1GM87NNg7r7KkoVvMOgcSlIg3TiDbYUASdbfEnlsj5sO1WJXnt0W7EJDKq34ns52Glrbh/UcBZkXe+uPAbCEPT9CKqI1hObWHGLnmhEVIA9ZKKL/G/dWlubTkIXq0p6hbHlaGZJGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01W66Sb9NPzi2QeUj6wgj6Vf",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The server got a createuser POST with user_login=jordan and redirected to update=add&id=4, so a new user was created. The users probe taken after the task lists jordan."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST body had email=jordan@example.com, and the users probe shows jordan with that email."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1,
+         3
+        ],
+        "reasoning": "The POST body had role=author, and the users probe shows jordan with the roles [\"author\"]."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4394,
+    "outputTokens": 277,
+    "cacheReadTokens": 3974,
+    "cacheWriteTokens": 418
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

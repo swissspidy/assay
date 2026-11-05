@@ -1,0 +1,280 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T13:18:35.117Z",
+ "turns": {
+  "sha256:7ac9d30de40b49dac0daaa16202be88358b78f2d84e2be64f846c01a853deae0": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Qz1ZW78ZCgJY53ARXaSr5R",
+     "name": "probes",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Qz1ZW78ZCgJY53ARXaSr5R",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 1922,
+    "outputTokens": 25,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1918
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:11ff5592d397d7f74c7cb9b6103c73246f482fff77ba2d5b2b4a255bbf1c4a0c": {
+   "stop": "tool_use",
+   "text": "Status is future. Need date.",
+   "toolCalls": [
+    {
+     "id": "toolu_01VyZW3mbWvtGxmBb3mFxYiW",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    },
+    {
+     "id": "toolu_013jEQpDBgbFAwXobkE1CHLF",
+     "name": "find_nodes",
+     "input": {
+      "text": "Scheduled"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "text",
+     "text": "Status is future. Need date."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01VyZW3mbWvtGxmBb3mFxYiW",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_013jEQpDBgbFAwXobkE1CHLF",
+     "name": "find_nodes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "text": "Scheduled"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3815,
+    "outputTokens": 108,
+    "cacheReadTokens": 1918,
+    "cacheWriteTokens": 1895
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a3a927188d606a376487758bce832491dd3215bf17d9857ff53fe6853adaef02": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_012ydXZ8TBdGvoZ5a8Lqz42E",
+     "name": "network_entry",
+     "input": {
+      "seq": 214
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_012ydXZ8TBdGvoZ5a8Lqz42E",
+     "name": "network_entry",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "seq": 214
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4676,
+    "outputTokens": 49,
+    "cacheReadTokens": 3813,
+    "cacheWriteTokens": 861
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:59a5fb62ea2e39cd3a0f3a99b45c9fb48c83a10989438d998cde5c6978fd9b67": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01GVyhUmPEwCMVx2c5Xq33bH",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Schedule the draft post \"Roadmap 2027\"",
+        "status": "pass",
+        "cites": [
+         1,
+         4,
+         3
+        ],
+        "reasoning": "Post 12 'Roadmap 2027' has status 'future' (scheduled) in the after-task probe; the REST POST to /wp/v2/posts/12 with status future succeeded (200); the editor shows 'Post scheduled.'"
+       },
+       {
+        "requirement": "to be published on January 5, 2027 at 9:00",
+        "status": "pass",
+        "cites": [
+         4,
+         3
+        ],
+        "reasoning": "The server request and response show date 2027-01-05T09:00:00 for post 12, and the page confirms 'It will go live on January 5, 2027 9:00 am.'"
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQShAYKEAgTGAI4AUIIdGhpbmtpbmcSDF/3F4KGHYLA8B+ZyBoM2VN7J08DU58EgG80IjCOeX+rFeYuTFhaFid5Z3ZPp+Pw5BFKYYNdrKx1yceHb5Nqn5VT/ooMqSbiLeDuY74qoQXpuAn1yltpQvRI30FeqB9XYbSd++MaSdR8oAkyswCKp40mR32l0vp7AuP7FkdcCg8k7Q9pNaRUMmwU7znUDGG/Kc2pz4yUBM93dmFgMBVFTaSix1FSDRT2dw6sox5cWpyFSYjmW4F9QGuAti4yJcY+hzWeJHM2mksAaNShZbJgzKo0ewx8ysTcZkZdi1aYwoO8XGJC9hfIPcTvqNi2xwz9RgRYxzdMuIp6FZfbenPAWEo/X2LCIFXRLAMcQ41qnxXDf8J8RJ9r+vi2vLUIZjKAIKVhP+5lwkYd64i9dU3jy9GAd4lrai/dutNOY/LGpdvicpP/Cj4z2omxr8dI2A9LEZ7g8DbwcScgwxzSHJY0VG+hpcvmew7Q2/icigUjGNdFtMbe3joUfTgZwsaLchVQrn5Uxxp4YiUJcX9zxskSqkLi+7krAJ7/R+spYO3+JGyOZWu2RpnDx0dViQl+HlTLxmb+i1pTchDx1XQgF0PZfgsZ0iHoCdB4TsKO8yg5raMaA5ouEeJSiRVDJgzd/U5Tzf4mkKBbfbDlOxJpCj/lHXU/g1NNsyaJkkhWAG/bHAWyuxgOx/fjmY3izoRVuh7WcnZFVWmpgL37x/waErEYaDDizlY8bcUjRbwujZVR5Psd5mHJhbiVBVnW7zs3Z8FkpxfnZj+VA5FecILpt+5oAf7s6Ay7vAAY2ZSAoQVaIdmHRWQvCgrifv0HOp1Klef5zOElPIQlL4YVzIxHzHIf7V37lFW5GZPlc1HUy6WFAjNyDLz2l40QUcSAh/UkSXxtm4dLebUYXyeX+l12yCBNmr4ULS1elDmIia3y3ctV9kQGqqixjIgCQLVvlCo3+N5/Vw0k7fEr8QO8tfD8pe3dNYVbXnVRsKlJByEkOYe1ZA1KGAE="
+    },
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "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"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01GVyhUmPEwCMVx2c5Xq33bH",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "Schedule the draft post \"Roadmap 2027\"",
+        "status": "pass",
+        "cites": [
+         1,
+         4,
+         3
+        ],
+        "reasoning": "Post 12 'Roadmap 2027' has status 'future' (scheduled) in the after-task probe; the REST POST to /wp/v2/posts/12 with status future succeeded (200); the editor shows 'Post scheduled.'"
+       },
+       {
+        "requirement": "to be published on January 5, 2027 at 9:00",
+        "status": "pass",
+        "cites": [
+         4,
+         3
+        ],
+        "reasoning": "The server request and response show date 2027-01-05T09:00:00 for post 12, and the page confirms 'It will go live on January 5, 2027 9:00 am.'"
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 6469,
+    "outputTokens": 615,
+    "cacheReadTokens": 4674,
+    "cacheWriteTokens": 1793
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:78a1f46da059de5cb96b2766287421f3555ee6e894b28a4a26a2653da6e0be4b": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_017FifaD68kLzejd6g6o49ti",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         4,
+         3
+        ],
+        "reasoning": "Post 12 'Roadmap 2027' has status 'future' (scheduled) in the after-task probe; the REST POST to /wp/v2/posts/12 with status future succeeded (200); the editor shows 'Post scheduled.'"
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         4,
+         3
+        ],
+        "reasoning": "The server request and response show date 2027-01-05T09:00:00 for post 12, and the page confirms 'It will go live on January 5, 2027 9:00 am.'"
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_017FifaD68kLzejd6g6o49ti",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         4,
+         3
+        ],
+        "reasoning": "Post 12 'Roadmap 2027' has status 'future' (scheduled) in the after-task probe; the REST POST to /wp/v2/posts/12 with status future succeeded (200); the editor shows 'Post scheduled.'"
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         4,
+         3
+        ],
+        "reasoning": "The server request and response show date 2027-01-05T09:00:00 for post 12, and the page confirms 'It will go live on January 5, 2027 9:00 am.'"
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 7165,
+    "outputTokens": 262,
+    "cacheReadTokens": 6467,
+    "cacheWriteTokens": 696
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

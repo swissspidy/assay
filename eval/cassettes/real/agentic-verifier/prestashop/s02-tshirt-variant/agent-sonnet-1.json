@@ -1,0 +1,149 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:53:28.082Z",
+ "turns": {
+  "sha256:0d2aaf0fb0c2572f565505a22be61611e00d5c887a7894e6ee0e52932009730f": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01WFyEMNQQpe93QEw6igukEc",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01Md5nDRsYURf3FjzfLANYUv",
+     "name": "network_log",
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01WFyEMNQQpe93QEw6igukEc",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Md5nDRsYURf3FjzfLANYUv",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "method": "POST"
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1924,
+    "outputTokens": 70,
+    "cacheReadTokens": 1920,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:db63d756449d7f8e2ef59ca6e586fb9a57e888916ef65478136c63e69b89c611": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Aesfy45zobmESLoTZutAiX",
+     "name": "submit_verdict",
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "After the task, the cart probe shows a line for 'Hummingbird printed t-shirt' with quantity 1, and the network log shows a POST to /cart."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The cart line's attributes include 'Size - L'."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The cart line's attributes include 'Color - Black'."
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS2gUKEAgTGAI4AUIIdGhpbmtpbmcSDFos4LK64NUVtqONhBoMiPwHiMMvix02q/jEIjBLunUosUKoGPKjLdLJztEcIE+Hhw+bKShm3j5DKK7Eto4Dw8G/tNNmdL8pP+o6baYq9wT7hDf0L/al/C8Eql4zqRyWDDmQtnKVncE26OVpqNu6re0bqApO1ZTO3yHI/wflGbY7chPajSKygTMriE4gJmYZUgLUcqdWttyP9zLlzaRcZ5mSzdf4S0IDSchl+jqTTe5G3nKeDds0NWe9486OLgT3rT2WpMDSknm6YcrkAAnBWhxNroajxWFp7E6CHxSgYQ5YYBFF5zWnZwe4A4VboYuKQ/uE2twQr4wEUQHS9yklpRFH6SQXoFFd7kHW4KGHxssN7EZJr3MZmv8WhHBH7ZJc+ikQqgWU1NXvjYF3EKkML2xS3UzeB1ookhEPCLrgy3W0I2b7NrPi7uZa97gyHny+lPse9iSRzLwf+FSc3cMKfoI7/SiBkITY4hSyQY5MdW35Rd90DWNVNQ0t2kp4HfRJg/B1sQVHwsLACSuVKAUSYmhnxu+Gl+bYdF4h1Pg5RBE5sJ+j7cz8C6/aA51iK7ORLfJun75MJA0uYgM84M7KrhT24hcQ8Yhpu2e3SV2Mk1DrScti0vwLN8Xa/gV+xC/VRquJtCJClJNjpoVySuPMRfWP+qLijV4EEeCckBu96KZZxBSJ3Mmv2j1LpDaZYDgfl15Y342PjBStn+AZ7tto5KuAnMvYbljqQz9RjlwWrwPfUDbUL6EcfJnbXOkAERMYnfuSMqeEJ1kapC4oFxzXd+e7wLg1kqRkZtd1/IOu+O1ZqEKfLVyu6SnDARBmdXcEJ9eT9SEXBqHIJQvftEojuq10h1wtQFjr6u9AzCqThhJLc1VQXgn0CJBlb7DpkEQMn5KuV+3+fa4CDvBjQiwhS1s/bMd0v6dBMPzy0js1WGOdTPRK6Ra6GAE="
+    },
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS1QgKEQgTGAI4AUIJbmFycmF0aW9uEgyHpWjfVHmVFDwze8saDFo06noUl14vbbVAGSIwSc+v3thLOb2jHXe8dgVDDfTkQ+DMjip3c3S2wSW72XK7AnllXzf2qAOhcx69qHGXKvEH8Z6HzzMIOqc6Jg0C+QacyCkFFB41WsFuVFHBCRQkAMF2V0HCZ0nP0Rejp5CkcpyYO4/mBSDKeu2Yo+Zi3aQ+CSpj1TrSSm/uqV57+M0WS9k3SpvdzTsrf/OFP7/hNi4cxj8BLr+QZ3P2OH/G/efbw44N9wmoOKcJRa3bNxis+xnAYwXMMB3cpoSEL7AsT42frST0XgvVBTD5tl85DfSoTpYkw1/4g/9u5R37aSyxgAwyiu21y2891bzl7U4BvpHojSAj0ZKWh8TsoXg+rvdCllMS6rfy754gp01oshQO6G+kw3cDHgpDExM0vuhAE6PdBWj8pAMHOr3Xt1RhL0nIMQcZ8pD7C9nQcSQmrWoqSNiusCwRBxHvUkf+7efZ7Vnb0JUOIewh7CP8ScjTQJkhgtHNyPQvLRejFrI+OE8mNkJ9XLJQGbr9Qdbq6lTEZIsc1oU+VRtGYucfNMkBU9QBjPX0pIRaCldXQy1YMOViBGtMkwOm4UOCOMH+zIWAQewa2ZDlDqIYulUg7ZpJn4FJnM0l/x61exY71JiXnbytfjWh7ChzML/LdjIUOum8WewBIgR+BR3xmzWc7QdmAk1iLUtN99fpxQy740xOO2b14dUlfN4g/QhO5hlMde8zKtbdBw5WonCsxiVdD65a6EUff2UyKjQ9vTiL0tuFMwIEU52JeRWEKu1kv0JIHsBaUGCFFADDAIsl/Xc7VAglSAaRUFqRgWAuaVJ0ZBJ3vSziegI+F5/UciEZUEpLbufTdQVom/4ZREVINwDCNX2yxywJ8isrlBB1FDzrlQTMKChTn1tOYmQgt1XDT6c4G0e7eM9zzLBJ1s+N6h3ACHCAss1iL7Z9HutQVdFROH5MTf+GjG26lqJ8dxxxGR4zeeUGbPJLIhTONIxrLM1ckRqGb3Gdj3/YIdEKsDekMRqTsx67TMm08mHPt81ptNlLqynxAAEo3ZJZc29UsIP+f1S++9u3PVxmdGSQjtOU0WEhYZ41bdGQdibNwOyK2hgdGNDUsZf1Qw7NNz066WTAtuC3AzSq1SNtiz+nFbvdQh06uhcWjI9eCGou/Of1kbeF6Wfqz8azdcWma5LHxqXiBzuJdXlA5lDyOS1T+VK+8dUbBlb69iE5acq2WHHgcMQQDrnujWGZ8lTiHJ+ZfaVO1oQ5Lb0UTUuQPrr6BVxmkhzYVYuPDY/25NWDLuTIjcz5NGS/pqjGfCoEj3z7ozZd1XUeWX9aZq4s4y7tvWx4Uo/9AiTzXorUfObBkwzQYPLVHDXz2DrYJG8alTFykEDOwf1FbjL/gYlx0cMye3NPSCQg1idKht8dkHIhUre7DICBFKsFpbmBjxgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01Aesfy45zobmESLoTZutAiX",
+     "name": "submit_verdict",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdicts": [
+       {
+        "requirement": "R1",
+        "status": "pass",
+        "cites": [
+         1,
+         2
+        ],
+        "reasoning": "After the task, the cart probe shows a line for 'Hummingbird printed t-shirt' with quantity 1, and the network log shows a POST to /cart."
+       },
+       {
+        "requirement": "R2",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The cart line's attributes include 'Size - L'."
+       },
+       {
+        "requirement": "R3",
+        "status": "pass",
+        "cites": [
+         1
+        ],
+        "reasoning": "The cart line's attributes include 'Color - Black'."
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 4246,
+    "outputTokens": 402,
+    "cacheReadTokens": 4244,
+    "cacheWriteTokens": 0
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

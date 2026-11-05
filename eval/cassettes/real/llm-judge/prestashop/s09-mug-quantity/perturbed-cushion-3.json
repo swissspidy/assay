@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:33:00.261Z",
+ "turns": {
+  "sha256:b9b2f7f84730dc77a44fd4c6032b3b1248b40ea5cc6b0d275c0e6c2116470092": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Kb1TnCGfxwigwSTsgtZk5Y",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to set the mug's quantity to 3, and the final cart page shows that didn't happen. The \"Mug Today is a good day\" quantity field still reads 1, and its line total is €11.90, which is one unit. The Hummingbird cushion is the item at quantity 3 (€56.70). So either the agent changed the wrong product or the cushion was already at 3. The cart totals agree: 4 items for €68.60 (11.90 + 56.70). If the mug were at 3, there would be 6 items and the total would be €92.40. The agent said it completed the task, but the page shows otherwise."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Kb1TnCGfxwigwSTsgtZk5Y",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to set the mug's quantity to 3, and the final cart page shows that didn't happen. The \"Mug Today is a good day\" quantity field still reads 1, and its line total is €11.90, which is one unit. The Hummingbird cushion is the item at quantity 3 (€56.70). So either the agent changed the wrong product or the cushion was already at 3. The cart totals agree: 4 items for €68.60 (11.90 + 56.70). If the mug were at 3, there would be 6 items and the total would be €92.40. The agent said it completed the task, but the page shows otherwise."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 3023,
+    "outputTokens": 269,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 3019
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

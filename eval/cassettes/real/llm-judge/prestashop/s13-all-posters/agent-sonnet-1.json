@@ -1,0 +1,51 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:34:23.443Z",
+ "turns": {
+  "sha256:10b371b0394ba53be750ba7e49c3e7a6153ef786b269ff0c863a20cc6e7cb40c": {
+   "stop": "tool_use",
+   "text": "I'm judging this a success. The shop sells three framed posters, each €29.00: \"The best is yet to come' Framed poster\", \"The adventure begins Framed poster\" and \"Today is a good day Framed poster\". The Art category's related products and the \"Viewed products\" section show that the agent opened the first two, and the final page is the third. The confirmation popup says \"Today is a good day Framed poster\" (40x60cm, quantity 1) was added and that \"There are 3 items in your cart\", with a subtotal of €87.00. That is exactly 3 × €29.00, which fits one of each poster. The header also shows Cart (3). \"Pack Mug + Framed poster\" is a bundle rather than a framed poster, so leaving it out is reasonable. The only uncertainty is that I can't see the cart's line items directly, but the €87.00 total makes one of each poster the very likely contents.",
+   "toolCalls": [
+    {
+     "id": "toolu_01KhZMvxywBtSyFDFyEcEJ8y",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "success",
+      "reasoning": "The shop sells three framed posters at €29.00 each: \"The best is yet to come' Framed poster\", \"The adventure begins Framed poster\" and \"Today is a good day Framed poster\". The Art category's related products and the \"Viewed products\" section show that the agent opened the first two, and the final page is the third. The confirmation popup says \"Today is a good day Framed poster\" (40x60cm, qty 1) was added and that \"There are 3 items in your cart\", with a subtotal of €87.00 (= 3 × €29). The header also shows Cart (3). \"Pack Mug + Framed poster\" is a bundle rather than a framed poster, so leaving it out is reasonable. The only uncertainty is that the cart's line items aren't directly visible, but the €87.00 total makes one of each poster the very likely contents, so the task appears complete."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQSuQoKEAgTGAI4AUIIdGhpbmtpbmcSDAPI/cFwVJ6+FUkDMBoMOnW9Qbxbhatvke+1IjCXTQNMn9oNaLLTCIC84AiSFhWqDy9Pz9Gr0YHPj/8RFXCorP9Nq+PRtGy1SBtLxBMq1glG0kGkAC6DKgtVf6Q10Vi1CSryWOhWo33NiA9BwpKA0jaoHNrF1alYTnzNZrNuvqFRP4Q/KGpHs4w4LUS25RY9Ig+wRHxFFcWG06aFfxGjiaYv3Z3GZlhq6Co1HQBgyTjJMy4QwQXGi66PBW334eac/pjBpHsWIVkfQLvbxGcOV7yxsoW4/gr744fvLclQVouS1mrFYK/+t4W671rLEmZTc1038mpe4+xxVnG8LlMor3KzjEKmJb1I06noYWOOEgLEL5Nu8mQBFGctFzuSY0Y201f36N9ZWt3zYpD2LwkIaJ694VeAwndjeuwCHN3JXQ6Y4qOXNGu0Jn0DDE18uFKhvHn9TJ3AbBRzJ7kBGTnZq1BGGj5enS11CHFat2beCYNlAt+wYnvGquahiRzv2qti0Q1KZOlEjAsrNz/6V5xlb8mzIY8ytiAv8WMqCGRRfGkYRyWVT6FE7jDrM+gIwJpaegrydpqYq4VH9uaTNkrPMT8xAfcIfT3MzgssMywZtcKBOtRwRE7YbpeDHz7/NDIS7MsWKq66WHmGFb0N7d9RMQvNrvuU4Uu4Em9XVMp+s+GtMEzANbddNFZ7onZDD5Su0T1w2mjP6Udr9Y0flgSVXhEjUfl21qidbSUjZQ4Yx5DGGdGMitN/z+XqklPD8Gr/kNpB8n8B45o55mBEtX7SHkABRiqxnFC5piNCELU3tOziGF85gpzFbUvwRhUyX4W14eP37le0CtzX5VQVWh9SyQKlppmoaYacigFAxcfziVHCw+qNKYd8ywKjKfeTCb8QHhC02TGzo9PGQ4R8skRvVGLqQT6ln2IfSREBVVFcOktcpSZWor7qwpmUkZDxF4UCVUPm8JolIZxZEbpyp+SqRLUOrdBLPph0v0XzVzyqGmQA5G8EIPR/NeR/Di+wrM/AtjGa5jfIiQmKENqNeDCflFQk73vyufcug9xphQ5XVSHPgcu0YH1aEOZvlrlMo/HKjqPdi6WRktZJuIM6Gl2frAyz9Km4IxrwidUfndZ65TI7uu2SKxsS6Cn5vk4vV6Gg3BNpVJzv3lIfCx//+EwX4fzpLTpbUWrfYzOQOCe6ujZER2iWcFGm9RmYEVPkalAzZ18ydWAZj3Bt1+9Y3/iB/AKj+JhVLOulGBuVWoWY71JwoaIrdVrVKZV9bsc9uEBL55v6zwG6Gd1ieYOOjMiISziJIjGNl7+8yYFJ+qDrIv8faKSkRNQycAo6nqKHykDjsCWdB4QP9prH4o80ieZgrQnBJPTPczr4r5TZbc0UZbhvldnmKJalf0Y0b/XkKFovlj00buI/r1BMO/DZ0REKyUtqvO+APt9/GeNRJ40OchhPJo8LCSRxqUG175VWuycPPNddSf/bhGYnjndeE8RIaZpqwWLIXWNBHJ4z5WZ1Vmi8CV9hebBVMVnjuGWYm3vGCHYHdm0XNjua8fo3Xs+bef4TiBOEWZypbYT6r/qXSSjOkiENJHSaTTvTPr/nxU1FsxyCHcKQ4Wtyzy918YjG2ymW2ePRNgf2DsYa3H9ezh0HOqMj2jYVTziWBr1lxcf8Q2hWpM7lvw/c5nLUaARJOGQ7CADLKkzTmR667SszmeE+uHXD8gryXR0n5btye5RzPAJL4MHuQfW2md5oaYVHki5ePIBdYxgB"
+    },
+    {
+     "type": "text",
+     "text": "I'm judging this a success. The shop sells three framed posters, each €29.00: \"The best is yet to come' Framed poster\", \"The adventure begins Framed poster\" and \"Today is a good day Framed poster\". The Art category's related products and the \"Viewed products\" section show that the agent opened the first two, and the final page is the third. The confirmation popup says \"Today is a good day Framed poster\" (40x60cm, quantity 1) was added and that \"There are 3 items in your cart\", with a subtotal of €87.00. That is exactly 3 × €29.00, which fits one of each poster. The header also shows Cart (3). \"Pack Mug + Framed poster\" is a bundle rather than a framed poster, so leaving it out is reasonable. The only uncertainty is that I can't see the cart's line items directly, but the €87.00 total makes one of each poster the very likely contents."
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01KhZMvxywBtSyFDFyEcEJ8y",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "success",
+      "reasoning": "The shop sells three framed posters at €29.00 each: \"The best is yet to come' Framed poster\", \"The adventure begins Framed poster\" and \"Today is a good day Framed poster\". The Art category's related products and the \"Viewed products\" section show that the agent opened the first two, and the final page is the third. The confirmation popup says \"Today is a good day Framed poster\" (40x60cm, qty 1) was added and that \"There are 3 items in your cart\", with a subtotal of €87.00 (= 3 × €29). The header also shows Cart (3). \"Pack Mug + Framed poster\" is a bundle rather than a framed poster, so leaving it out is reasonable. The only uncertainty is that the cart's line items aren't directly visible, but the €87.00 total makes one of each poster the very likely contents, so the task appears complete."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 5113,
+    "outputTokens": 890,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 5109
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}

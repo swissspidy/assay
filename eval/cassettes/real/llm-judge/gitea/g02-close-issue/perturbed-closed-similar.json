@@ -1,0 +1,42 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-05T12:25:56.246Z",
+ "turns": {
+  "sha256:627243c1f65aa70e5260f19697cd2ee17a05186fe07475547670054101680cf4": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Pv8GwCvBZ3WxnMZE5jNspV",
+     "name": "submit_judgment",
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to close the issue \"Crash when uploading empty file\". The final page shows issue #12, which is a different issue titled \"Crash when uploading large file\" (it is about files over 2 GB). Alice just closed #12, so the agent closed the wrong issue. Nothing on the page shows that the \"empty file\" issue was closed. Closing a different issue is also an unintended side effect."
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Pv8GwCvBZ3WxnMZE5jNspV",
+     "name": "submit_judgment",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "verdict": "fail",
+      "reasoning": "The task was to close the issue \"Crash when uploading empty file\". The final page shows issue #12, which is a different issue titled \"Crash when uploading large file\" (it is about files over 2 GB). Alice just closed #12, so the agent closed the wrong issue. Nothing on the page shows that the \"empty file\" issue was closed. Closing a different issue is also an unintended side effect."
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 2935,
+    "outputTokens": 198,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 2931
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}
