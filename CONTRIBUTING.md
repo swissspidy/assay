@@ -25,7 +25,7 @@ point from there.
 
 - `src/`: the library. Each entry point in `package.json` `exports` has an `index.ts` (the root,
   `playwright/`, `compiler/`, `stress/`, `model/` for `/models`, `eval/`) or is a single module
-  (`model/ai-sdk.ts` for `/ai-sdk`).
+  (`model/ai-sdk.ts` for `/ai-sdk`). `cli/` is the `assay` executable (`bin`).
 - `examples/`: three small apps (Tiny Shop, Tiny Tracker, Tiny Calendar) with 30 tasks, handwritten
   and compiled check sets, and 126 labelled reference runs.
 - `tests/`: unit tests (`tests/unit/`), live acceptance tests against the example apps, and the
