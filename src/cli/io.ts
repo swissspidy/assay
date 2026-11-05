@@ -64,10 +64,25 @@ export interface Io {
 /** Colour only on a terminal that supports it; tty's hasColors honours NO_COLOR and FORCE_COLOR. */
 const hasColors = (s: NodeJS.WriteStream) => !!(s.isTTY && s.hasColors?.());
 
+/**
+ * A writer that stops quietly once the reader goes away (EPIPE, e.g. `assay review x | head -1`):
+ * the command still finishes and exits with its own status, without a stack trace.
+ */
+export function lineWriter(stream: NodeJS.WritableStream): (text: string) => void {
+  let closed = false;
+  stream.on('error', (e: NodeJS.ErrnoException) => {
+    if (e.code === 'EPIPE' || e.code === 'ERR_STREAM_DESTROYED') closed = true;
+    else throw e;
+  });
+  return (text) => {
+    if (!closed) stream.write(text + '\n');
+  };
+}
+
 export function processIo(): Io {
   return {
-    out: (t) => process.stdout.write(t + '\n'),
-    err: (t) => process.stderr.write(t + '\n'),
+    out: lineWriter(process.stdout),
+    err: lineWriter(process.stderr),
     color: hasColors(process.stdout),
     errColor: hasColors(process.stderr),
     env: process.env,

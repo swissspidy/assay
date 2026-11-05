@@ -4,7 +4,7 @@
  * from source (the packed, built `bin` is exercised by tests/pack).
  */
 import { test, expect } from '@playwright/test';
-import { execFile } from 'node:child_process';
+import { execFile, spawn } from 'node:child_process';
 import { mkdtempSync, readdirSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -81,4 +81,19 @@ test('capture writes a snapshot of a live page that verify can read', async ({ b
   // The checks read a probe the CLI cannot run, so the verdict is inconclusive, not a failure.
   const v = await assay(['verify', shop('tasks/02-add-blue-mug.checks.json'), join(dir, file!)]);
   expect(v.code).toBe(2);
+});
+
+test("output into a closed pipe ends quietly with the command's own status", async () => {
+  // Like `assay stress … | head -0`: the reader is gone before the command writes anything.
+  const child = spawn(
+    process.execPath,
+    [bin, 'stress', shop('tasks/07-express-order.checks.json'), '-r', shop('references/07-express-order')],
+    { cwd: root, env: { ...process.env, NO_COLOR: '', FORCE_COLOR: '' } },
+  );
+  let stderr = '';
+  child.stderr.on('data', (d) => (stderr += d));
+  child.stdout.destroy();
+  const code = await new Promise<number | null>((resolve) => child.on('close', resolve));
+  expect(stderr).toBe('');
+  expect(code).toBe(0);
 });

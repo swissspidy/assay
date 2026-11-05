@@ -8,7 +8,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { EXIT, parse, run } from '../../src/cli/main.ts';
-import { colorReport, type Io } from '../../src/cli/io.ts';
+import { colorReport, lineWriter, type Io } from '../../src/cli/io.ts';
+import { Writable } from 'node:stream';
 import { selectModel } from '../../src/cli/model.ts';
 import { loadPlaywright, outFile, writeSnapshot } from '../../src/cli/commands/capture.ts';
 import { lockCheckSet, type CheckSet } from '../../src/index.ts';
@@ -412,6 +413,26 @@ test.describe('review findings', () => {
     const fresh = join(dir, 'fresh.json');
     (await selectModel({ cassette: fresh }, { ANTHROPIC_API_KEY: 'test' })).save();
     expect(readdirSync(dir)).toEqual(['existing.json']);
+  });
+
+  test('a closed pipe stops output quietly', async () => {
+    const written: string[] = [];
+    let first = true;
+    const stream = new Writable({
+      write(chunk, _enc, cb) {
+        if (first) {
+          first = false;
+          written.push(String(chunk));
+          cb();
+        } else cb(Object.assign(new Error('write EPIPE'), { code: 'EPIPE' }));
+      },
+    });
+    const out = lineWriter(stream);
+    out('one');
+    out('two'); // the reader is gone: reported as EPIPE, swallowed
+    await new Promise((r) => setImmediate(r));
+    out('three'); // no write after the pipe closed
+    expect(written).toEqual(['one\n']);
   });
 
 });
