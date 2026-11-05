@@ -166,15 +166,19 @@ answer about the input, like an invalid set.
 
 Posts the review sheet with the diff against the base branch as a PR comment, and fails when a
 changed check set has no fresh approval by a trusted key. Everything that runs comes from the base
-branch: Assay is installed from the base checkout, and the pull request's checkout is only data,
-read by `git` and by `assay` (no `npm ci`, no scripts from the pull request). The trusted public keys
+branch. The workflow is triggered by `pull_request_target`, so its definition is read from the base
+branch and a pull request cannot edit the gate away (with `pull_request`, it runs the pull request's
+own copy of the workflow). Assay is installed from the base checkout, and the pull request's checkout
+is only data, read by `git` and by `assay` (no `npm ci`, no scripts from the pull request), which is
+what makes `pull_request_target` safe here. Make the job a required status check in the branch
+protection rules or ruleset of the base branch, so a merge waits for it. The trusted public keys
 are a repository variable, not files in the pull request, which could add its own key. The token
 that can comment is given to the one step that comments, never to a step that installs packages.
 
 ```yaml
 name: Check set review
 on:
-  pull_request:
+  pull_request_target: # the workflow comes from the base branch; never run code from the PR checkout
     paths: ['checks/**.checks.json']
 permissions:
   contents: read
@@ -219,8 +223,9 @@ jobs:
 
 The reviewer reads the comment, runs `assay approve <file> --reviewer <name> --key <pem>` locally and
 pushes; the next run passes. The gate covers every set, including those in subdirectories of
-`checks/` (`globstar`), so a repository adopting it signs its existing sets once. Pull requests from
-forks get a read-only token, so commenting needs a separate `workflow_run` job there.
+`checks/` (`globstar`), so a repository adopting it signs its existing sets once. Changes to this
+workflow file only take effect once merged into the base branch, so they go through ordinary code
+review.
 
 ## Consequences
 
