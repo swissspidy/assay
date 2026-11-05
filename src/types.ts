@@ -313,8 +313,51 @@ export interface CheckSet {
   checks: Check[];
   /** Where a compiled set came from; absent on handwritten sets. */
   compiled?: Provenance;
-  /** Set by human confirmation (lockCheckSet); the digest covers everything else in the set. */
-  locked?: { by: string; at: string; digest: string };
+  /** Set by a reviewer's approval (`approveCheckSet`, `assay approve`); the digest covers everything else in the set. */
+  locked?: Lock;
+  /** Set by a reviewer's rejection (`rejectCheckSet`, `assay reject`); the set stays a proposal. */
+  rejected?: Rejection;
+}
+
+export interface LockSignature {
+  alg: 'ed25519';
+  /** The signing key's id (see `keyId`): which trusted key to check the signature with. */
+  keyId: string;
+  /** Base64 Ed25519 signature of the lock digest. */
+  value: string;
+}
+
+/**
+ * A lock. `by`, `at` and `digest` are all a lock written before ADR 0013 has; such a
+ * lock still verifies, but cannot name what changed after it was made.
+ */
+export interface Lock {
+  /** Who approved the set. */
+  by: string;
+  /** When (ISO 8601). */
+  at: string;
+  /** Digest of the set's content together with every other lock field except the signature. */
+  digest: string;
+  /** The reviewer's note. */
+  note?: string;
+  /** Digest of the normalized check set alone (`contentDigest`). */
+  content?: string;
+  /** Digest of each part of the set, so a broken lock can name what changed. */
+  items?: Record<string, string>;
+  /** Digest of the stress report the reviewer saw (`stressDigest`). */
+  stress?: string;
+  /** The digest of the lock this approval replaced. */
+  supersedes?: string;
+  signature?: LockSignature;
+}
+
+/** A recorded rejection: the set stays a proposal and `verify` does not accept it as locked. */
+export interface Rejection {
+  by: string;
+  at: string;
+  note: string;
+  /** Digest of the content that was rejected: a revised set is a new proposal. */
+  content: string;
 }
 
 // ---------------------------------------------------------------------------

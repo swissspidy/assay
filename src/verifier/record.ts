@@ -9,6 +9,7 @@ import { randomUUID } from 'node:crypto';
 import type { AbstainReason, CheckSet, Evidence, EvidenceSnapshot, Json, Status, Verdict } from '../types.ts';
 import { checkSetDigest, sha256, snapshotDigest } from '../snapshot/digest.ts';
 import type { Observation, RequirementVerdict, VerifierResult } from './verifier.ts';
+import type { SignatureStatus } from './lock.ts';
 
 export const RECORD_SCHEMA = 'assay.record/v1' as const;
 
@@ -49,9 +50,16 @@ export interface OutcomeRecord {
     id: string;
     version: string;
     digest: string;
-    locked: { by: string; at: string } | null;
+    /** The valid lock; `signature` when it is signed (its status against the trusted keys `verify` was given). */
+    locked: {
+      by: string;
+      at: string;
+      signature?: { keyId: string; status: SignatureStatus; signer?: string };
+    } | null;
     /** A lock is present but no longer matches the content. */
     lockBroken: boolean;
+    /** Why the lock is broken (e.g. "changed after approval: check C2 changed"). */
+    lockProblems?: string[];
     file?: string;
   };
   snapshot: { digest: string; url: string; capturedAt: string; file?: string };

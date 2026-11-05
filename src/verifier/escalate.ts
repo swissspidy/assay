@@ -20,7 +20,7 @@ import {
   type RecordedRequirement,
   type WrittenRecord,
 } from './record.ts';
-import { isLocked, lockState } from './lock.ts';
+import { assertLocked, lockState, type LockRequirement } from './lock.ts';
 
 export interface EscalationPolicy {
   /**
@@ -48,8 +48,12 @@ export interface VerifyOptions {
    * as pending approval and is never used automatically.
    */
   proposer?: ModelClient;
-  /** Refuse to run an unlocked (or edited-after-locking) check set (default false). */
-  requireLocked?: boolean;
+  /**
+   * Refuse to run a check set without a valid lock (default false): `true` accepts any
+   * valid lock; `{ trustedKeys }` also requires a signature by one of those Ed25519
+   * public keys (ADR 0013). Throws `LockError`, naming what changed when a lock is broken.
+   */
+  requireLocked?: LockRequirement;
   /** Task id for the record (defaults to the check set id). */
   taskId?: string;
   maxVerifierTurns?: number;
@@ -115,8 +119,7 @@ export async function verify(
   opts: VerifyOptions = {},
 ): Promise<VerifyResult> {
   const cs = assertValidCheckSet(checkSet);
-  if (opts.requireLocked && !isLocked(cs))
-    throw new Error(`Check set ${cs.id} v${cs.version} is not locked (or was edited after locking).`);
+  assertLocked(cs, opts.requireLocked);
   const policy: Required<EscalationPolicy> = {
     on: opts.policy?.on ?? ['abstain'],
     includeSoft: opts.policy?.includeSoft ?? false,
@@ -247,7 +250,10 @@ export async function verify(
     };
   });
 
-  const lock = lockState(cs);
+  const lock = lockState(
+    cs,
+    typeof opts.requireLocked === 'object' ? { trustedKeys: opts.requireLocked.trustedKeys } : {},
+  );
   const onFailOf = new Map(cs.checks.map((c) => [c.id, c.onFail] as const));
   const record: OutcomeRecord = {
     schema: RECORD_SCHEMA,
@@ -264,6 +270,7 @@ export async function verify(
       digest: checksOutcome.checkSet.digest,
       locked: lock.locked,
       lockBroken: lock.broken,
+      ...(lock.problems.length ? { lockProblems: lock.problems } : {}),
     },
     snapshot: { ...checksOutcome.snapshot },
     verdict,
