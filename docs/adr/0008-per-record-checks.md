@@ -166,7 +166,8 @@ and was recompiled). `resolveTarget` takes an optional scope.
 - The compiled Tiny Calendar 01 now reads the date from the definition of "When"; the handwritten
   Tiny Calendar 01 and Tiny Tracker 10 sets were tightened the same way (the row of issue #1 shows
   Open and bug).
-- Stress counts grow with the new mutants and the new variant; see ADR 0005 for the dated numbers.
+- The recompile (all 30 tasks, every held-out run judged correctly) uses `each` in four sets (the When date, the Blue Mug row's quantity, the delivery date paragraph, every listed issue's status and label) and `pick` in four (order lines and cart items by SKU and quantity, a renamed event's title).
+- Stress on the compiled sets: 655/655 valid variants accepted, 399/399 mutants rejected; on the handwritten sets 663/663 and 319/319 (ADR 0005).
 - A record is found by content the page shows (a row's name, a term's text). Without a witness,
   renamed copy makes the record count zero, which fails rather than abstains, as for `contains`;
   the prompt asks for the label as witness.
