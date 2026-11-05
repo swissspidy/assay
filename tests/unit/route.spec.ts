@@ -168,6 +168,26 @@ test.describe('onMissing "abstain": route evidence', () => {
     expect(status(set([check(url)]), at('/wp-admin/post.php?post=12'))).toBe('fail');
   });
 
+  test('the route of a URL is its origin and path shape; regex, query and record ids are outcome', () => {
+    const at = (u: string) => snap([], { page: { url: `${ORIGIN}${u}`, title: '' } });
+    const regex: Assertion = { kind: 'url', match: { path: '/wp-admin/edit.php', regex: 'post_status=draft' } };
+    expect(status(set([check(regex, 'abstain')]), at('/wp-admin/edit.php?post_status=publish'))).toBe('fail');
+    expect(status(set([check(regex, 'abstain')]), at('/wp-admin/post.php?post=1'))).toBe('abstain:route_missing');
+    // A regex alone names no route: it is always decided.
+    const only: Assertion = { kind: 'url', match: { regex: 'post_status=draft' } };
+    expect(status(set([check(only, 'abstain')]), at('/wp-admin/post.php?post=1'))).toBe('fail');
+    // Another record on the same page is the route taken with the wrong record.
+    const issue: Assertion = { kind: 'url', match: { path: '/acme/webapp/issues/5' } };
+    expect(status(set([check(issue, 'abstain')]), at('/acme/webapp/issues/6'))).toBe('fail');
+    expect(status(set([check(issue, 'abstain')]), at('/acme/webapp/pulls/5'))).toBe('abstain:route_missing');
+    // The compiler does not demand onMissing for a URL leaf that is never route_missing.
+    const refs: Reference[] = [
+      { name: 'a', kind: 'success', snapshot: at('/x?post_status=draft') },
+      { name: 'b', kind: 'success', snapshot: at('/y?post_status=draft') },
+    ];
+    expect(unmarkedRouteChecks(set([check(only)]), refs)).toEqual([]);
+  });
+
   test('anyOf over two routes: the route the run took decides; with neither, it abstains', () => {
     const both = set([check({ kind: 'anyOf', of: [adminBranch, publicBranch] }, 'abstain')]);
     expect(status(both, snap([HEARTBEAT, ADMIN_REPLY]))).toBe('pass');

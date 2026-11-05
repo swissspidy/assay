@@ -23,7 +23,7 @@ import { checkSetDigest, snapshotDigest } from '../snapshot/digest.ts';
 import { AXIndex, describeLocator, readNodeField, resolveTarget, type INode } from './axindex.ts';
 import { compare, compareNumber, compareValues, describeNumberCompare, jsonPointer } from './compare.ts';
 import { NormalizeError, applyNormalizers, fromJson, toJson, type TypedValue } from './values.ts';
-import { describeRequestMatch, describeUrlMatch, matchRequest, matchUrl } from './network.ts';
+import { describeRequestMatch, describeUrlMatch, matchRequest, matchUrl, onUrlRoute } from './network.ts';
 
 /** What an assertion is evaluated against. */
 export interface EvalCtx {
@@ -439,10 +439,10 @@ export function evaluateAssertion(ctx: EvalCtx, a: Assertion): AssertionResult {
     case 'url': {
       const ok = matchUrl(a.match, ctx.snapshot.page.url);
       // A URL elsewhere is a route not taken; on the route, a wrong query parameter still fails.
-      if (!ok && ctx.routeMissing && !matchUrl({ ...a.match, query: {} }, ctx.snapshot.page.url))
+      if (!ok && ctx.routeMissing && !onUrlRoute(a.match, ctx.snapshot.page.url))
         return abstain(
           'route_missing',
-          `page URL ${ctx.snapshot.page.url} is not ${describeUrlMatch({ ...a.match, query: {} })}; ${ROUTE_HINT}`,
+          `page URL ${ctx.snapshot.page.url} is not on ${describeUrlMatch({ path: a.match.path!, ...(a.match.origin ? { origin: a.match.origin } : {}) })}; ${ROUTE_HINT}`,
           [ev('url', { value: ctx.snapshot.page.url })],
         );
       const evidence = [ev('url', { value: ctx.snapshot.page.url })];
