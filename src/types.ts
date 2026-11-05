@@ -131,6 +131,11 @@ export interface Locator {
   level?: number;
   landmark?: { role: LandmarkRole; name?: TextMatch };
   within?: Locator;
+  /**
+   * For a cell (cell, gridcell, rowheader, columnheader): the name of its column's header,
+   * the columnheader at the same position in the table's header row (ADR 0008).
+   */
+  column?: TextMatch;
 }
 
 export type Target = Locator | { anchors: Locator[] };

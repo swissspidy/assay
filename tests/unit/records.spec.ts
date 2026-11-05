@@ -435,3 +435,131 @@ test.describe('pick only for collections of different shapes', () => {
     expect(errors([])).toEqual([]);
   });
 });
+
+test.describe('review fixes', () => {
+  const set = (assert: Assertion): CheckSet => ({
+    schema: 'assay.checks/v1',
+    id: 't',
+    version: '1',
+    task: { instruction: 'Keep the cart.' },
+    requirements: [{ id: 'R1', kind: 'hard', text: 't', source: { field: 'instruction', quote: 'Keep' } }],
+    checks: [{ id: 'C1', requirement: 'R1', description: 'd', assert }],
+  });
+
+  test('an each witness that matches more than one node abstains as ambiguous', () => {
+    const r = run({
+      kind: 'each',
+      scope: issues,
+      witness: { role: 'columnheader' },
+      match: { role: 'row', name: { contains: 'Login' } },
+      assert: cell('Open'),
+    });
+    expect(r.status).toBe('abstain');
+    expect(r.reason).toBe('anchor_ambiguous');
+    expect(r.message).toContain('matches 4 nodes');
+  });
+
+  test('a cell bound to its column: a title cell named Open is not the status', () => {
+    const s = snap();
+    // Issue 2 is closed but titled "Open": its title cell reads "Open".
+    const row2 = s.a11y.children![0]!.children!.find((n) => n.role === 'table')!.children![1]!.children![1]!;
+    row2.name = '2 Open Closed feature';
+    row2.children![1] = { role: 'cell', name: 'Open', children: [{ role: 'link', name: 'Open' }] };
+    const status = (column?: string): Assertion =>
+      rowOf('Closed', {
+        kind: 'contains',
+        match: { role: 'cell', name: 'Open', ...(column ? { column } : {}) },
+      });
+    expect(run(status(), s).status).toBe('pass');
+    expect(run(status('Status'), s).status).toBe('fail');
+    expect(run(status('Title'), s).status).toBe('pass');
+    // The header row's cells, and cells outside a table, have no column to match.
+    const idx = new AXIndex(s.a11y);
+    expect(idx.find({ role: 'cell', column: 'Status' }).map((n) => n.node.name)).toEqual(['Open', 'Closed']);
+    expect(idx.find({ role: 'columnheader', column: 'Labels' }).map((n) => n.node.name)).toEqual(['Labels']);
+    expect(
+      validateCheckSet(set({ kind: 'contains', scope: issues, match: { role: 'row', column: 'Status' } })).errors,
+    ).toEqual([expect.stringContaining('column binds a cell to its column header; role row has no column')]);
+  });
+
+  test('describeAssertion says "the record" for what an each reads inside its records', () => {
+    const d = describeAssertion(
+      rowOf('Login', {
+        kind: 'allOf',
+        of: [cell('Open'), { kind: 'value', source: { from: 'text', pattern: 'bug' }, expect: { exists: true } }],
+      }),
+    );
+    expect(d).toContain(
+      'inside each: all of: the record contains at least 1 cell named "Open"; the record text matching /bug/',
+    );
+    expect(describeAssertion(cell('Open'))).toContain('the page contains');
+  });
+
+  test('pick inside an each, and a storage key named with and without its origin, are refused', () => {
+    const ref: Reference = {
+      name: 'r',
+      kind: 'success',
+      snapshot: {
+        ...snap(),
+        page: { url: 'https://shop.test/cart', title: 't' },
+        storage: {
+          cookies: [],
+          local: { 'https://shop.test': { cart: '[{"sku":"A","qty":1}]' } },
+          session: {},
+        },
+        baseline: {
+          capturedAt: '',
+          url: 'https://shop.test/cart',
+          storage: {
+            cookies: [],
+            local: { 'https://shop.test': { cart: '[{"sku":"A","qty":1}]' } },
+            session: {},
+          },
+          probes: { cart: { ok: true, value: [{ sku: 'A', qty: 1 }] } },
+          redacted: [],
+        },
+      },
+    };
+    const pick = [{ op: 'json' as const }, { op: 'items' as const, pick: ['/sku'] }];
+    const keyed = (origin?: string): Assertion => ({
+      kind: 'value',
+      source: { from: 'storage', area: 'local', key: 'cart' },
+      normalize: pick,
+      expect: {
+        sameAs: {
+          source: { from: 'storage', area: 'local', key: 'cart', at: 'before', ...(origin ? { origin } : {}) },
+          normalize: pick,
+        },
+      },
+    });
+    // Named the same way: the validator's static rule; with the page's origin spelled out: the compiler's.
+    expect(looseMatches(set(keyed()))).toHaveLength(1);
+    expect(looseMatches(set(keyed('https://shop.test')))).toEqual([]);
+    expect(pickOnSameShapes(set(keyed('https://shop.test')), [ref])).toEqual([
+      expect.stringContaining('one collection before and after the task'),
+    ]);
+    // Inside an each: record text holding a JSON array, compared with a probe of the same shape.
+    const s = ref.snapshot;
+    s.a11y = parseAriaSnapshot('- main:\n  - list:\n    - listitem: \'[{"sku":"A","qty":1}]\'');
+    const inRecord: Assertion = {
+      kind: 'each',
+      scope: { role: 'main' },
+      match: { role: 'listitem' },
+      assert: {
+        kind: 'value',
+        source: { from: 'text', pattern: '^(.*)$' },
+        normalize: [{ op: 'json' }, { op: 'items', pick: ['/sku'] }],
+        expect: {
+          sameAs: {
+            source: { from: 'probe', probe: 'cart', at: 'before' },
+            normalize: [{ op: 'items', pick: ['/sku'] }],
+          },
+        },
+      },
+    };
+    expect(evaluateAssertion({ snapshot: s, index: new AXIndex(s.a11y) }, inRecord).status).toBe('pass');
+    expect(pickOnSameShapes(set(inRecord), [ref])).toEqual([
+      expect.stringContaining('check C1.assert: items pick compares only some fields of two collections'),
+    ]);
+  });
+});

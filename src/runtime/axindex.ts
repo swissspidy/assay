@@ -3,6 +3,9 @@ import { LANDMARK_ROLES } from '../types.ts';
 import { canonical, describeTextMatch, matchText } from '../text.ts';
 
 const LANDMARKS = new Set<string>(LANDMARK_ROLES);
+/** Roles that take a column position in a row. */
+const CELLS = new Set(['cell', 'gridcell', 'rowheader', 'columnheader']);
+const TABLES = new Set(['table', 'grid', 'treegrid']);
 
 export interface INode {
   id: number;
@@ -16,6 +19,7 @@ export class AXIndex {
   readonly root: INode;
   readonly all: INode[] = [];
   private readonly textCache = new Map<INode, string>();
+  private readonly headerCache = new Map<INode, INode[]>();
 
   constructor(tree: AXNode) {
     const build = (node: AXNode, parent: INode | null): INode => {
@@ -77,6 +81,7 @@ export class AXIndex {
       }
       if (!found) return false;
     }
+    if (loc.column !== undefined && !matchText(loc.column, this.columnHeader(n)?.node.name)) return false;
     if (loc.within) {
       let found = false;
       for (let a = n.parent; a; a = a.parent) {
@@ -88,6 +93,30 @@ export class AXIndex {
       if (!found) return false;
     }
     return true;
+  }
+
+  /**
+   * The header of a cell's column: the columnheader at the cell's position among its row's
+   * cells, in the first row of the enclosing table (grid, treegrid) that has column headers.
+   * Positions are counted, since the accessibility tree has no column indices; a cell
+   * spanning several columns shifts the cells after it.
+   */
+  columnHeader(n: INode): INode | undefined {
+    const row = n.parent;
+    if (!CELLS.has(n.node.role) || row?.node.role !== 'row') return undefined;
+    let table: INode | null = row.parent;
+    while (table && !TABLES.has(table.node.role)) table = table.parent;
+    if (!table) return undefined;
+    let headers = this.headerCache.get(table);
+    if (!headers) {
+      const headerRow = this.descendants(table).find(
+        (r) => r.node.role === 'row' && r.children.some((c) => c.node.role === 'columnheader'),
+      );
+      headers = headerRow ? headerRow.children.filter((c) => CELLS.has(c.node.role)) : [];
+      this.headerCache.set(table, headers);
+    }
+    const header = headers[row.children.filter((c) => CELLS.has(c.node.role)).indexOf(n)];
+    return header?.node.role === 'columnheader' ? header : undefined;
   }
 
   find(loc: Locator, scope: INode = this.root): INode[] {
@@ -153,6 +182,7 @@ export function describeLocator(loc: Locator): string {
   if (loc.level !== undefined) s += ` (level ${loc.level})`;
   if (loc.landmark)
     s += ` in ${loc.landmark.role}${loc.landmark.name !== undefined ? ' ' + describeTextMatch(loc.landmark.name) : ''}`;
+  if (loc.column !== undefined) s += ` in column ${describeTextMatch(loc.column)}`;
   if (loc.within) s += ` within ${describeLocator(loc.within)}`;
   return s;
 }

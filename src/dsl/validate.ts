@@ -431,6 +431,13 @@ function checkLocator(l: Locator, at: string, errors: string[]): void {
   checkTextMatch(l.name, `${at} name`, errors);
   checkTextMatch(l.text, `${at} text`, errors);
   checkTextMatch(l.landmark?.name, `${at} landmark name`, errors);
+  if (l.column !== undefined) {
+    checkTextMatch(l.column, `${at} column`, errors);
+    if (!['cell', 'gridcell', 'rowheader', 'columnheader'].includes(l.role))
+      errors.push(
+        `${at}: column binds a cell to its column header; role ${l.role} has no column (use cell, gridcell, rowheader or columnheader)`,
+      );
+  }
   if (l.within) checkLocator(l.within, `${at} within`, errors);
 }
 

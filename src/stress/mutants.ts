@@ -68,6 +68,8 @@ function textMatchComparison(m: TextMatch): Comparison {
 
 /** Build a node matching `loc`, wrapped in nodes for its `within` chain and landmark. */
 function synthesize(loc: Locator): AXNode | undefined {
+  // A cell's column comes from the table's header row, which a lone node cannot carry.
+  if (loc.column !== undefined) return undefined;
   if (loc.text !== undefined && exampleFor(loc.text) === undefined) return undefined;
   if (loc.name !== undefined && exampleFor(loc.name) === undefined) return undefined;
   const name = exampleFor(loc.name);
@@ -139,8 +141,8 @@ function jsonArrayText(raw: Json, steps: Normalizer[] | undefined): Json[] | und
 }
 
 /** One item of an array removed, changed (a near miss), or a changed copy added. */
-function arrayEdits(arr: Json[]): { what: string; value: Json }[] {
-  const out: { what: string; value: Json }[] = [];
+function arrayEdits(arr: Json[]): { what: string; value: Json; pairing?: boolean }[] {
+  const out: { what: string; value: Json; pairing?: boolean }[] = [];
   arr.slice(0, 8).forEach((item, i) => {
     out.push({ what: `item ${i} removed`, value: arr.filter((_, j) => j !== i) });
     const changed = nearMiss(item);
@@ -149,9 +151,12 @@ function arrayEdits(arr: Json[]): { what: string; value: Json }[] {
   });
   const extra = arr.length ? nearMiss(arr[0]!) : undefined;
   if (extra !== undefined) out.push({ what: 'an extra item', value: [...arr, extra] });
-  out.push(...pairingSwaps(arr));
+  out.push(...pairingSwaps(arr).map((x) => ({ ...x, pairing: true })));
   return out;
 }
+
+/** Pairing swaps kept per value, after the check's own comparison filtered them. */
+const MAX_PAIRING_SWAPS = 3;
 
 const isRecord = (x: Json | undefined): x is { [key: string]: Json } =>
   !!x && typeof x === 'object' && !Array.isArray(x);
@@ -177,7 +182,6 @@ function pairingSwaps(arr: Json[]): { what: string; value: Json }[] {
     const b = arr[j] as { [key: string]: Json };
     const value = arr.map((x, n) => (n === i ? { ...a, [k]: b[k]! } : n === j ? { ...b, [k]: a[k]! } : x));
     out.push({ what: `items ${i} and ${j} swap their ${k}`, value });
-    if (out.length >= 3) break;
   }
   return out;
 }
@@ -254,7 +258,8 @@ function readable(s: EvidenceSnapshot, idx: AXIndex, src: ValueSource, rec?: INo
         if (!r.ok) return undefined;
         scopeNode = r.node;
       }
-      if (scopeNode) hay = idx.text(scopeNode);
+      // Scoped and record text is canonicalized, as the evaluator reads it (ADR 0001 §2.3).
+      if (scopeNode) hay = canonical(idx.text(scopeNode));
       const m = new RegExp(src.pattern, stripGlobal(src.flags)).exec(hay);
       const g = src.group ?? (m && m.length > 1 ? 1 : 0);
       const got = m ? (typeof g === 'number' ? m[g] : m.groups?.[g]) : undefined;
@@ -267,11 +272,14 @@ function readable(s: EvidenceSnapshot, idx: AXIndex, src: ValueSource, rec?: INo
           siblings: [],
           write(next) {
             if (typeof next !== 'string') return undefined;
-            const out = editById(s, (n, id) =>
-              scope.has(id) && (n.role === 'text' || !n.children) && n.name?.includes(got)
-                ? { ...n, name: n.name.replace(got, () => next) }
-                : undefined,
-            );
+            // A run whose raw name holds the value with other whitespace (a no-break space)
+            // is matched, and rewritten, in its canonical form.
+            const out = editById(s, (n, id) => {
+              if (!scope.has(id) || (n.role !== 'text' && n.children) || n.name === undefined) return undefined;
+              if (n.name.includes(got)) return { ...n, name: n.name.replace(got, () => next) };
+              const c = canonical(n.name);
+              return c.includes(got) ? { ...n, name: c.replace(got, () => next) } : undefined;
+            });
             if (!treeChanged(s, out)) return undefined;
             return { ...out, text: s.text.replace(got, () => next) };
           },
@@ -465,13 +473,16 @@ function valueMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, {
   const parsed = jsonArrayText(r.raw, a.normalize);
   const arr = Array.isArray(r.raw) ? r.raw : parsed;
   if (arr) {
+    let pairings = 0;
     for (const edit of arrayEdits(arr)) {
+      if (edit.pairing && pairings >= MAX_PAIRING_SWAPS) continue;
       const next: Json = parsed ? JSON.stringify(edit.value) : edit.value;
       try {
         if (compare(applyNormalizers(fromJson(next), a.normalize), a.expect).ok) continue;
       } catch {
         continue;
       }
+      if (edit.pairing) pairings++;
       add(next, edit.what);
     }
   }
@@ -816,6 +827,35 @@ function containsMutants(
         });
       }
     }
+    // Wrong column: the matched cell's content trades places with another cell of its row,
+    // so the value is still in the row, under another header.
+    if (a.match.column !== undefined) {
+      const hit = hits[0]!;
+      const header = idx.columnHeader(hit);
+      const other = hit.parent?.children.find(
+        (c) =>
+          c !== hit &&
+          idx.columnHeader(c) !== undefined &&
+          idx.columnHeader(c) !== header &&
+          JSON.stringify(c.node) !== JSON.stringify(hit.node),
+      );
+      if (other) {
+        const snap = rebuild(
+          s,
+          idx,
+          new Map([
+            [hit.id, { ...other.node, role: hit.node.role }],
+            [other.id, { ...hit.node, role: other.node.role }],
+          ]),
+        );
+        if (treeChanged(s, snap))
+          out.push({
+            id: 'contains:other-column',
+            description: `${hit.node.role} ${JSON.stringify(hit.node.name ?? '')} is in column ${JSON.stringify(idx.columnHeader(other)!.node.name ?? '')} instead`,
+            snapshot: snap,
+          });
+      }
+    }
   }
   if (upper !== undefined) {
     const extra = Math.max(1, upper + 1 - hits.length);
@@ -1033,7 +1073,7 @@ function eachMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, { 
     if (!r.ok) return [];
     scope = r.node;
   }
-  if (a.witness && idx.find(a.witness, scope).length === 0) return [];
+  if (a.witness && idx.find(a.witness, scope).length !== 1) return [];
   const count: Extract<Assertion, { kind: 'contains' }> = {
     kind: 'contains',
     ...(a.scope ? { scope: a.scope } : {}),

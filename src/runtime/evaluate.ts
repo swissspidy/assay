@@ -492,10 +492,19 @@ function evaluateEach(ctx: EvalCtx, a: Extract<Assertion, { kind: 'each' }>): As
     drift = r.drift;
   }
   const where = ctx.index.path(scope);
-  if (a.witness && ctx.index.find(a.witness, scope).length === 0)
+  // The witness is an anchor: missing or ambiguous, the check cannot tell which structure it reads.
+  const witnesses = a.witness ? ctx.index.find(a.witness, scope).length : 1;
+  if (a.witness && witnesses === 0)
     return abstain(
       'anchor_missing',
       `Witness ${describeLocator(a.witness)} not found in ${where}; its content no longer has the expected structure`,
+      [],
+      drift,
+    );
+  if (a.witness && witnesses > 1)
+    return abstain(
+      'anchor_ambiguous',
+      `Witness ${describeLocator(a.witness)} matches ${witnesses} nodes in ${where}; it must identify one`,
       [],
       drift,
     );

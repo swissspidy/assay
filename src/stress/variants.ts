@@ -20,6 +20,7 @@ import type {
 } from '../types.ts';
 import { AXIndex, readNodeField, resolveTarget, type INode } from '../runtime/axindex.ts';
 import { applyNormalizers, zoneOffset, type TypedValue } from '../runtime/values.ts';
+import { canonical, stripGlobal } from '../text.ts';
 import { clone, editById, replaceText, treeChanged } from './edit.ts';
 import { readSpan, timezoneOf } from './mutants.ts';
 
@@ -395,17 +396,53 @@ function readsOf(a: Extract<Assertion, { kind: 'value' }>): { source: ValueSourc
   return [{ source: a.source, normalize: a.normalize }, ...('sameAs' in a.expect ? [a.expect.sameAs] : [])];
 }
 
+/**
+ * The node a value source reads, and the raw value it reads there: a node source's field,
+ * or what a text source's pattern captures in the canonical text of its scope or record.
+ * Unscoped page text outside a record is free text with no node to edit.
+ */
+function readsNode(
+  idx: AXIndex,
+  source: ValueSource,
+  rec: INode | undefined,
+): { node: INode; raw: string; field: 'name' | 'value' | 'text' | 'url' | 'text-source' } | undefined {
+  if (source.from === 'node') {
+    const r = resolveTarget(idx, source.target, rec);
+    if (!r.ok) return undefined;
+    const raw = readNodeField(idx, r.node, source.field);
+    return raw === undefined ? undefined : { node: r.node, raw, field: source.field };
+  }
+  if (source.from !== 'text') return undefined;
+  let node = rec;
+  if (source.scope) {
+    const r = resolveTarget(idx, source.scope, rec);
+    if (!r.ok) return undefined;
+    node = r.node;
+  }
+  if (!node) return undefined;
+  const m = new RegExp(source.pattern, stripGlobal(source.flags)).exec(canonical(idx.text(node)));
+  const g = source.group ?? (m && m.length > 1 ? 1 : 0);
+  const raw = m ? (typeof g === 'number' ? m[g] : m.groups?.[g]) : undefined;
+  return raw ? { node, raw, field: 'text-source' } : undefined;
+}
+
+/** The first text run (or named leaf) inside `node` whose name holds `span`, if one does. */
+function textRunWith(idx: AXIndex, node: INode, span: string): INode | undefined {
+  return [node, ...idx.descendants(node)].find(
+    (n) => n.id >= 0 && (n.node.role === 'text' || !n.children.length) && n.node.name?.includes(span),
+  );
+}
+
 function formattingVariants(cs: CheckSet, s: EvidenceSnapshot, idx: AXIndex): Variant[] {
   const out: Variant[] = [];
   for (const c of cs.checks) {
     for (const { a, rec } of valueAssertions(c.assert, idx)) {
       for (const [k, { source, normalize }] of readsOf(a).entries()) {
         const locale = localeOf(normalize);
-        if (source.from !== 'node' || !locale) continue;
-        const r = resolveTarget(idx, source.target, rec);
-        if (!r.ok) continue;
-        const raw = readNodeField(idx, r.node, source.field);
-        if (raw === undefined) continue;
+        if (!locale) continue;
+        const read = readsNode(idx, source, rec);
+        if (!read) continue;
+        const { raw } = read;
         const span = readSpan(raw, normalize);
         if (!span) continue;
         let typed: TypedValue;
@@ -414,8 +451,10 @@ function formattingVariants(cs: CheckSet, s: EvidenceSnapshot, idx: AXIndex): Va
         } catch {
           continue;
         }
-        const target = r.node.id;
-        const field = source.field;
+        // A text source's value lives in some text run inside the node it reads.
+        const target = read.field === 'text-source' ? textRunWith(idx, read.node, span)?.id : read.node.id;
+        if (target === undefined) continue;
+        const field = read.field;
         for (const [i, alt] of formatsFor(typed, span, locale, timezoneOf(normalize)).entries()) {
           if (alt === span) continue;
           const next = raw.replace(span, () => alt);

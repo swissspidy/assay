@@ -164,6 +164,7 @@ export const checkSetSchema = {
           },
         },
         within: { $ref: '#/definitions/locator' },
+        column: { $ref: '#/definitions/textMatch' },
       },
     },
     target: {

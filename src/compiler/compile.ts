@@ -442,6 +442,19 @@ interface Verification {
  * abstaining on a valid variant is an error (over-constrained or fragile); weak
  * checks and missed mutants are warnings.
  */
+/** The contexts of every record an `each` finds, in each of `ctxs`. */
+function recordContexts(ctxs: EvalCtx[], a: Extract<Assertion, { kind: 'each' }>): EvalCtx[] {
+  return ctxs.flatMap((ctx) => {
+    let scope = ctx.record ?? ctx.index.root;
+    if (a.scope) {
+      const r = resolveTarget(ctx.index, a.scope, scope);
+      if (!r.ok) return [];
+      scope = r.node;
+    }
+    return ctx.index.records(a.match, scope).map((record) => ({ ...ctx, record }));
+  });
+}
+
 /**
  * anyOf branches that abstain on every correct reference. Such a branch was never
  * seen to read its evidence, and on an incorrect run it turns the check's fail
@@ -456,15 +469,7 @@ export function unreadableBranches(cs: CheckSet, refs: Reference[]): string[] {
   const walk = (check: string, a: Assertion, path: string, ctxs: EvalCtx[]) => {
     if (a.kind === 'each') {
       // Inside an each, a branch is read in every record of every correct run.
-      const inner = ctxs.flatMap((ctx) => {
-        let scope = ctx.record ?? ctx.index.root;
-        if (a.scope) {
-          const r = resolveTarget(ctx.index, a.scope, scope);
-          if (!r.ok) return [];
-          scope = r.node;
-        }
-        return ctx.index.records(a.match, scope).map((record) => ({ ...ctx, record }));
-      });
+      const inner = recordContexts(ctxs, a);
       if (inner.length) walk(check, a.assert, `${path}.assert`, inner);
       return;
     }
@@ -509,21 +514,31 @@ function shapesOf(v: Json | undefined): string[] | undefined {
 
 /**
  * sameAs comparisons through items `pick` whose two collections, in every correct
- * reference where both can be read, hold items with exactly the same fields. pick drops
- * fields, so it is for collections of different shapes; on one shape, whole items
- * compare every field. (The same collection before and after is caught statically.)
+ * reference where both can be read, hold items with exactly the same fields (also inside
+ * the records of an `each`). pick drops fields, so it is for collections of different
+ * shapes; on one shape, whole items compare every field. One collection before and after
+ * is caught statically when both sides name it the same way, and here when one side
+ * leaves a storage origin to the page.
  */
 export function pickOnSameShapes(cs: CheckSet, refs: Reference[]): string[] {
-  const ctxs = refs
+  const top: EvalCtx[] = refs
     .filter((r) => r.kind === 'success')
     .map((r) => ({ snapshot: r.snapshot, index: new AXIndex(r.snapshot.a11y) }));
   const errors: string[] = [];
-  const walk = (a: Assertion, at: string): void => {
-    if (a.kind === 'allOf' || a.kind === 'anyOf') return a.of.forEach((b, i) => walk(b, `${at}.${a.kind}[${i}]`));
+  const walk = (a: Assertion, at: string, ctxs: EvalCtx[]): void => {
+    if (a.kind === 'allOf' || a.kind === 'anyOf') return a.of.forEach((b, i) => walk(b, `${at}.${a.kind}[${i}]`, ctxs));
+    // Inside an each, both sides are read in every record (record text parsed as JSON).
+    if (a.kind === 'each') return walk(a.assert, `${at}.assert`, recordContexts(ctxs, a));
     if (a.kind !== 'value' || !('sameAs' in a.expect)) return;
     const other = a.expect.sameAs;
     if (!usesPick(a.normalize) && !usesPick(other.normalize)) return;
+    // The validator already reports one collection named the same way on both sides.
     if (sameCollection(a.source, other.source)) return;
+    // A storage key without an origin is the page's: the same key named both ways is one collection.
+    if (ctxs.some((ctx) => sameCollection(withOrigin(a.source, ctx), withOrigin(other.source, ctx)))) {
+      errors.push(pickOnSameShape(at, 'one collection before and after the task'));
+      return;
+    }
     let seen = 0;
     for (const ctx of ctxs) {
       const x = shapesOf(readValue(ctx, a.source, withoutPick(a.normalize)));
@@ -534,8 +549,18 @@ export function pickOnSameShapes(cs: CheckSet, refs: Reference[]): string[] {
     }
     if (seen) errors.push(pickOnSameShape(at, 'two collections'));
   };
-  for (const c of cs.checks) walk(c.assert, `check ${c.id}`);
+  for (const c of cs.checks) walk(c.assert, `check ${c.id}`, top);
   return errors;
+}
+
+/** A storage source with its origin resolved as the runtime resolves it (the page's when omitted). */
+function withOrigin(src: ValueSource, ctx: EvalCtx): ValueSource {
+  if (src.from !== 'storage' || src.area === 'cookie') return src;
+  try {
+    return { ...src, origin: new URL(src.origin ?? ctx.snapshot.page.url).origin };
+  } catch {
+    return src;
+  }
 }
 
 export function verifyCandidate(cs: CheckSet, refs: Reference[], stress = true, skipVariants?: string[]): Verification {

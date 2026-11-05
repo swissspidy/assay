@@ -696,3 +696,139 @@ test('items pick: two records swapping a field is a mutant that a paired compari
   // A comparison of one field cannot see the swap, so no such mutant is reported against it.
   expect(run(order({ pointer: '/sku' }), s).mutants.some((m) => m.description.includes('swap their qty'))).toBe(false);
 });
+
+test('column: a value moved into another column of its row is a mutant a column-bound cell rejects', () => {
+  const s = snap([
+    {
+      role: 'table',
+      name: 'Issues',
+      children: [
+        {
+          role: 'row',
+          name: 'Title Status',
+          children: [
+            { role: 'columnheader', name: 'Title' },
+            { role: 'columnheader', name: 'Status' },
+          ],
+        },
+        {
+          role: 'row',
+          name: 'Login button misaligned Open',
+          children: [
+            { role: 'cell', name: 'Login button misaligned' },
+            { role: 'cell', name: 'Open' },
+          ],
+        },
+      ],
+    },
+  ]);
+  const cs = one({
+    kind: 'each',
+    scope: { role: 'table', name: 'Issues' },
+    witness: { role: 'columnheader', name: 'Status' },
+    match: { role: 'row', name: { contains: 'Login button misaligned' } },
+    assert: { kind: 'contains', match: { role: 'cell', name: 'Open', column: 'Status' } },
+  });
+  const r = run(cs, s);
+  expect(r.missed, formatStressReport(r)).toEqual([]);
+  expect(r.weak, formatStressReport(r)).toEqual([]);
+  const moved = generateMutants(cs, s).find((m) => m.id === 'C1:record:contains:other-column')!;
+  expect(moved.description).toBe('cell "Open" is in column "Title" instead');
+  expect(moved.snapshot.a11y.children![0]!.children![0]!.children![1]!.name).toBe('Open Login button misaligned');
+  // Without the column, the moved value is still a cell of the row.
+  const unbound = one({
+    kind: 'each',
+    scope: { role: 'table', name: 'Issues' },
+    match: { role: 'row', name: { contains: 'Login button misaligned' } },
+    assert: { kind: 'contains', match: { role: 'cell', name: 'Open' } },
+  });
+  expect(evaluate(unbound, moved.snapshot).verdict).toBe('success');
+});
+
+test('pairing swaps are capped after the comparison filters them', () => {
+  // Three fields differ before qty does; only the qty swap violates a comparison of sku and qty.
+  const lines = [
+    { a: 1, b: 1, c: 1, sku: 'A', qty: 1 },
+    { a: 2, b: 2, c: 2, sku: 'B', qty: 2 },
+  ];
+  const s = snap([], {
+    probes: { latestOrder: { ok: true, value: { items: lines.map((x) => ({ ...x, lineTotal: 1 })) } } },
+    baseline: {
+      capturedAt: '',
+      url: 'https://shop.test/cart',
+      storage: null,
+      probes: { cart: { ok: true, value: { items: lines } } },
+      redacted: [],
+    },
+  });
+  const cs = one({
+    kind: 'value',
+    source: { from: 'probe', probe: 'latestOrder', pointer: '/items' },
+    normalize: [{ op: 'items', pick: ['/sku', '/qty'] }],
+    expect: {
+      sameAs: {
+        source: { from: 'probe', probe: 'cart', pointer: '/items', at: 'before' },
+        normalize: [{ op: 'items', pick: ['/sku', '/qty'] }],
+      },
+    },
+  });
+  const swaps = generateMutants(cs, s).filter((m) => m.description.includes(' swap their '));
+  expect(swaps.map((m) => m.description.match(/swap their (\w+)/)![1])).toEqual(expect.arrayContaining(['qty', 'sku']));
+});
+
+test('record text is read canonically: a value after a no-break space is still mutated', () => {
+  const s = snap([
+    {
+      role: 'list',
+      children: [{ role: 'listitem', children: [{ role: 'text', name: 'Blue Mug × 2' }] }],
+    },
+  ]);
+  const cs = one({
+    kind: 'each',
+    scope: { role: 'list' },
+    match: { role: 'listitem', text: { contains: 'Blue Mug' } },
+    assert: {
+      kind: 'value',
+      source: { from: 'text', pattern: '× (\\d+)' },
+      normalize: [{ op: 'number', locale: 'en-US' }],
+      expect: { equals: 2 },
+    },
+  });
+  expect(evaluate(cs, s).verdict).toBe('success');
+  const r = run(cs, s);
+  expect(r.untested, formatStressReport(r)).toEqual([]);
+  expect(r.mutants.some((m) => m.id.startsWith('C1:record:value:') && m.rejected)).toBe(true);
+});
+
+test('formatting variants reach a date read from record text', () => {
+  const s = snap([
+    {
+      role: 'region',
+      name: 'Order summary',
+      children: [
+        { role: 'paragraph', children: [{ role: 'text', name: 'Estimated delivery: Thursday, November 5, 2026' }] },
+      ],
+    },
+  ]);
+  const check = (pattern: string) =>
+    one({
+      kind: 'each',
+      scope: { role: 'region', name: 'Order summary' },
+      match: { role: 'paragraph', text: { contains: 'Estimated delivery' } },
+      assert: {
+        kind: 'value',
+        source: { from: 'text', pattern },
+        normalize: [{ op: 'date', locale: 'en-US' }],
+        expect: { equals: '2026-11-05' },
+      },
+    });
+  const loose = check('Estimated delivery: (.+)$');
+  const variants = generateVariants(loose, s).filter((v) => v.id.startsWith('format:C1:'));
+  expect(variants.map((v) => v.description)).toContain(
+    'C1\'s value shown as "2026-11-05" instead of "Thursday, November 5, 2026"',
+  );
+  expect(run(loose, s).fragile).toEqual([]);
+  // A pattern that only reads the long English format abstains on the ISO one: now caught.
+  const strict = check('Estimated delivery: (\\w+, \\w+ \\d+, \\d{4})');
+  expect(run(strict, s).fragile.map((f) => f.check)).toEqual(['C1']);
+});
