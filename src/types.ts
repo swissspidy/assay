@@ -211,6 +211,20 @@ export interface Money {
 export interface Operand {
   source: ValueSource;
   normalize?: Normalizer[];
+  /** Equal within this tolerance instead of exactly (numbers, money, dates, date-times only). */
+  tolerance?: Tolerance;
+}
+
+/**
+ * An explicit, bounded tolerance on a `sameAs` binding, read like `approx` with the other
+ * side's value as the target: |a − b| ≤ max(abs, rel × |b|). `abs` is in the value's own
+ * unit (minutes for date-times, days for dates); `rel` applies to numbers and money only.
+ * `because` says why exact equality is wrong for valid runs; reviewers read it.
+ */
+export interface Tolerance {
+  abs?: number;
+  rel?: number;
+  because: string;
 }
 
 export type Comparison =

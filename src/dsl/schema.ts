@@ -70,6 +70,9 @@ const simpleNormalizers = [
   'boolean',
 ];
 
+/** Upper bounds of a `sameAs` tolerance: relative (numbers, money), minutes (date-times), days (dates). */
+export const MAX_TOLERANCE = { rel: 0.05, minutes: 60, days: 7 } as const;
+
 export const checkSetSchema = {
   $schema: 'http://json-schema.org/draft-07/schema#',
   $id: 'https://assay.dev/schema/checks/v1.json',
@@ -364,6 +367,17 @@ export const checkSetSchema = {
         },
       ],
     },
+    tolerance: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['because'],
+      anyOf: [{ required: ['abs'] }, { required: ['rel'] }],
+      properties: {
+        abs: { type: 'number', exclusiveMinimum: 0 },
+        rel: { type: 'number', exclusiveMinimum: 0, maximum: MAX_TOLERANCE.rel },
+        because: { type: 'string', minLength: 1 },
+      },
+    },
     comparison: {
       oneOf: [
         { type: 'object', additionalProperties: false, required: ['equals'], properties: { equals: {} } },
@@ -379,6 +393,7 @@ export const checkSetSchema = {
               properties: {
                 source: { $ref: '#/definitions/valueSource' },
                 normalize: { type: 'array', items: { $ref: '#/definitions/normalizer' } },
+                tolerance: { $ref: '#/definitions/tolerance' },
               },
             },
           },

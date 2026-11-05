@@ -3,7 +3,7 @@
  * language and locks the set. A locked set carries who locked it, when, and the
  * digest of exactly what was confirmed; any later edit breaks the lock.
  */
-import type { Assertion, CheckSet, Locator, Normalizer, Target, TextMatch, ValueSource } from '../types.ts';
+import type { Assertion, CheckSet, Locator, Normalizer, Target, TextMatch, Tolerance, ValueSource } from '../types.ts';
 import { checkSetDigest } from '../snapshot/digest.ts';
 import { describeTextMatch } from '../text.ts';
 import { describeLocator } from '../runtime/axindex.ts';
@@ -84,6 +84,23 @@ const normalized = (steps: Normalizer[] | undefined) =>
     : '';
 
 /**
+ * A sameAs tolerance, in the unit the normalizers give: minutes for date-times, days for
+ * dates, the value's own unit otherwise. The reason is quoted so a reviewer can judge it.
+ */
+function tolerance(t: Tolerance | undefined, steps: Normalizer[]): string {
+  if (!t) return '';
+  const ops = new Set(steps.map((n) => (typeof n === 'string' ? n : n.op)));
+  const unit = ops.has('datetime') ? ' minutes' : ops.has('date') ? ' days' : '';
+  const parts = [
+    ...(t.abs !== undefined ? [`${t.abs}${unit}`] : []),
+    ...(t.rel !== undefined ? [`${+(t.rel * 100).toFixed(4)}% of that value`] : []),
+  ];
+  // One line: a line break in the reason could forge an entry of the review sheet.
+  const because = JSON.stringify(t.because.replace(/\s*[\r\n\u2028\u2029]+\s*/g, ' '));
+  return `, within ±${parts.join(' or ±')} (tolerance, because ${because})`;
+}
+
+/**
  * A mechanical plain-language rendering of what an assertion actually tests. `inRecord`:
  * inside an `each`, where an unscoped contains or text source reads the record.
  */
@@ -102,7 +119,7 @@ export function describeAssertion(a: Assertion, inRecord = false): string {
       return `${where(a.scope)} contains ${describeNumberCompare(a.count ?? { gte: 1 })} ${loc(a.match)}${a.witness ? ` (witness: ${loc(a.witness)} must exist)` : ''}`;
     case 'value':
       return 'sameAs' in a.expect
-        ? `${source(a.source, inRecord)}${normalized(a.normalize)}, equals ${source(a.expect.sameAs.source, inRecord)}${normalized(a.expect.sameAs.normalize)}`
+        ? `${source(a.source, inRecord)}${normalized(a.normalize)}, equals ${source(a.expect.sameAs.source, inRecord)}${normalized(a.expect.sameAs.normalize)}${tolerance(a.expect.sameAs.tolerance, [...(a.normalize ?? []), ...(a.expect.sameAs.normalize ?? [])])}`
         : `${source(a.source, inRecord)}${normalized(a.normalize)}, ${JSON.stringify(a.expect)}`;
     case 'url':
       return `the page URL matches ${describeUrlMatch(a.match)}`;

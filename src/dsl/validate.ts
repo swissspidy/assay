@@ -10,6 +10,7 @@ import type {
   RequestMatch,
   Target,
   TextMatch,
+  Tolerance,
   UrlMatch,
   ValueSource,
 } from '../types.ts';
@@ -17,7 +18,7 @@ import { canonical } from '../text.ts';
 import { canonicalJson } from '../snapshot/digest.ts';
 import { instantOf } from '../runtime/values.ts';
 import { compareNumber } from '../runtime/compare.ts';
-import { checkSetSchema } from './schema.ts';
+import { MAX_TOLERANCE, checkSetSchema } from './schema.ts';
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 const validateShape = ajv.compile(checkSetSchema);
@@ -590,6 +591,27 @@ function checkComparison(t: VType, cmp: Comparison, at: string, errors: string[]
 }
 
 /**
+ * A sameAs tolerance is bounded and only on values that have a distance: numbers and money
+ * (abs in their unit, rel at most MAX_TOLERANCE.rel), date-times (abs in minutes) and dates
+ * (abs in whole days). A value of unknown type (a raw probe field) is checked at run time.
+ */
+function checkTolerance(t: VType, tol: Tolerance, at: string, errors: string[]): void {
+  if (t === 'string' || t === 'boolean') {
+    errors.push(
+      `${at}: a tolerance applies to numbers, money, dates and date-times, but the values are ${t}s; add a number, currency, date or datetime normalizer, or drop the tolerance`,
+    );
+    return;
+  }
+  if ((t === 'date' || t === 'datetime') && tol.rel !== undefined)
+    errors.push(`${at}: rel has no meaning for a ${t}; use abs (${t === 'date' ? 'days' : 'minutes'})`);
+  if (t === 'datetime' && tol.abs !== undefined && tol.abs > MAX_TOLERANCE.minutes)
+    errors.push(`${at}: a date-time tolerance is at most ${MAX_TOLERANCE.minutes} minutes, got ${tol.abs}`);
+  if (t === 'date' && tol.abs !== undefined && (!Number.isInteger(tol.abs) || tol.abs > MAX_TOLERANCE.days))
+    errors.push(`${at}: a date tolerance is a whole number of days, at most ${MAX_TOLERANCE.days}, got ${tol.abs}`);
+  if (!canonical(tol.because)) errors.push(`${at}: the tolerance needs a reason ("because")`);
+}
+
+/**
  * `inRecord`: inside an `each`, where locators resolve within the record (a contains
  * without a scope searches the record) and only the record may be read.
  */
@@ -639,6 +661,17 @@ function walkAssertion(a: Assertion, at: string, errors: string[], warnings: str
           errors.push(`${at}: sameAs compares a ${t} with a ${ot}; normalize both sides to the same type`);
         if (side(a.source, a.normalize) === side(other.source, other.normalize))
           errors.push(`${at}: sameAs compares a value with itself`);
+        if (other.tolerance) {
+          const items = [a.normalize, other.normalize].some((n) => {
+            const last = n?.at(-1);
+            return typeof last === 'object' && last.op === 'items';
+          });
+          if (items)
+            errors.push(
+              `${at} sameAs: a tolerance applies to numbers, money, dates and date-times, not to collections (items); collections already compare in any order`,
+            );
+          else checkTolerance(t !== 'unknown' ? t : ot, other.tolerance, `${at} sameAs`, errors);
+        }
       } else checkComparison(t, a.expect, at, errors, warnings);
       if (before(a.source) && (!('sameAs' in a.expect) || before(a.expect.sameAs.source)))
         warnings.push(

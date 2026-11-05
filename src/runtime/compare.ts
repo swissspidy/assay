@@ -1,4 +1,4 @@
-import type { Comparison, Json, Money } from '../types.ts';
+import type { Comparison, Json, Money, Tolerance } from '../types.ts';
 import { compileSchema, schemaErrors } from './json.ts';
 import { canonical, stripGlobal } from '../text.ts';
 import { canonicalJson } from '../snapshot/digest.ts';
@@ -72,15 +72,56 @@ class CurrencyMismatch extends Error {
 }
 
 /**
+ * How far `v` is from `target` for `approx`: the difference and the allowed tolerance,
+ * in days for dates, minutes for date-times, the value's own unit otherwise. Throws
+ * NormalizeError('type_mismatch') when the two cannot be compared that way.
+ */
+function approxGap(v: TypedValue, target: unknown, abs = 0, rel = 0): { diff: number; tol: number; unit: string } {
+  if (v.type === 'date') {
+    if (typeof target !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(target)) throw mismatch('approx', v);
+    return { diff: daysBetween(v.value, target), tol: abs, unit: ' days' };
+  }
+  if (v.type === 'datetime') {
+    if (typeof target !== 'string' || instantOf(target) === undefined) throw mismatch('approx', v);
+    return { diff: minutesBetween(v.value, target), tol: abs, unit: ' minutes' };
+  }
+  const [a, b] = scalar(v, target, 'approx');
+  return { diff: Math.abs(a - b), tol: Math.max(abs, rel * Math.abs(b)), unit: '' };
+}
+
+/** Floating-point slack, so that a difference of exactly the tolerance is within it. */
+const EPSILON = 1e-9;
+
+/** Whether a tolerance can apply to values of this type: numbers, money, dates and date-times. */
+export const tolerable = (t: TypedValue['type']): boolean =>
+  t === 'number' || t === 'money' || t === 'date' || t === 'datetime';
+
+/**
  * Equality of two normalized values read from different sources (a `sameAs`
  * binding). Both must have the same type; otherwise NormalizeError('type_mismatch').
+ * With a `tolerance`, `a` may differ from `b` as far as `approx` with `b` as its value allows.
  */
-export function compareValues(a: TypedValue, b: TypedValue): CompareOutcome {
+export function compareValues(a: TypedValue, b: TypedValue, tolerance?: Tolerance): CompareOutcome {
   if (a.type !== b.type)
     throw new NormalizeError(
       `sameAs cannot compare a ${a.type} value (${describeValue(a)}) with a ${b.type} value (${describeValue(b)}); normalize both sides to the same type`,
       'type_mismatch',
     );
+  if (tolerance) {
+    if (!tolerable(a.type))
+      throw new NormalizeError(
+        `a sameAs tolerance applies to numbers, money, dates and date-times, not to a ${a.type} value (${describeValue(a)})`,
+        'type_mismatch',
+      );
+    if (a.type === 'money' && b.type === 'money' && a.value.currency !== b.value.currency)
+      return { ok: false, message: `${describeValue(a)} ≠ ${describeValue(b)} (currency differs)` };
+    const { diff, tol, unit } = approxGap(a, toJson(b), tolerance.abs, tolerance.rel);
+    const ok = diff <= tol + EPSILON;
+    return {
+      ok,
+      message: `${describeValue(a)} ${ok ? '≈' : '≉'} ${describeValue(b)} (Δ=${+diff.toFixed(6)}, tolerance ${+tol.toFixed(6)}${unit})`,
+    };
+  }
   // deepEqual takes the other side as JSON: money as {amount, currency}, a datetime as its ISO string.
   const ok = deepEqual(a, toJson(b));
   return { ok, message: `${describeValue(a)} ${ok ? '=' : '≠'} ${describeValue(b)}` };
@@ -117,26 +158,11 @@ export function compare(v: TypedValue, cmp: Comparison): CompareOutcome {
     }
     if ('approx' in cmp) {
       const { value: target, abs = 0, rel = 0 } = cmp.approx;
-      let diff: number;
-      let ref: number;
-      if (v.type === 'date') {
-        if (typeof target !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(target)) throw mismatch('approx', v);
-        diff = daysBetween(v.value, target);
-        ref = 0;
-      } else if (v.type === 'datetime') {
-        if (typeof target !== 'string' || instantOf(target) === undefined) throw mismatch('approx', v);
-        diff = minutesBetween(v.value, target);
-        ref = 0;
-      } else {
-        const [a, b] = scalar(v, target, 'approx');
-        diff = Math.abs(a - b);
-        ref = Math.abs(b);
-      }
-      const tol = Math.max(abs, rel * ref) + 1e-9;
-      const ok = diff <= tol;
+      const { diff, tol, unit } = approxGap(v, target, abs, rel);
+      const ok = diff <= tol + EPSILON;
       return {
         ok,
-        message: `${shown} ${ok ? '≈' : '≉'} ${JSON.stringify(target)} (Δ=${+diff.toFixed(6)}, tolerance ${Math.max(abs, rel * ref)}${v.type === 'date' ? ' days' : v.type === 'datetime' ? ' minutes' : ''})`,
+        message: `${shown} ${ok ? '≈' : '≉'} ${JSON.stringify(target)} (Δ=${+diff.toFixed(6)}, tolerance ${tol}${unit})`,
       };
     }
     if ('schema' in cmp) {
