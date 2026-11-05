@@ -11,6 +11,14 @@
   "variants": [
    {
     "reference": "created-with-bug-label",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-bug-label",
     "id": "extra-content",
     "description": "unrelated recommendations and a promotional status message on the page",
     "verdict": "success",
@@ -85,6 +93,14 @@
     "reference": "created-with-bug-label",
     "id": "url-hash",
     "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-details",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
     "verdict": "success",
     "accepted": true,
     "rejectedBy": []
@@ -197,104 +213,8 @@
    },
    {
     "reference": "created-with-bug-label",
-    "id": "R1-create-request:request:missing",
-    "check": "R1-create-request",
-    "description": "the request was never sent",
-    "advisory": false,
-    "claim": false,
-    "verdict": "fail",
-    "rejected": true,
-    "rejectedBy": "fail",
-    "targetStatus": "fail"
-   },
-   {
-    "reference": "created-with-bug-label",
-    "id": "R1-create-request:request:missing+claim",
-    "check": "R1-create-request",
-    "description": "the request was never sent, while the page announces success",
-    "advisory": false,
-    "claim": true,
-    "verdict": "fail",
-    "rejected": true,
-    "rejectedBy": "fail",
-    "targetStatus": "fail"
-   },
-   {
-    "reference": "created-with-bug-label",
-    "id": "R1-create-request:request:failed",
-    "check": "R1-create-request",
-    "description": "the request failed with HTTP 500",
-    "advisory": false,
-    "claim": false,
-    "verdict": "fail",
-    "rejected": true,
-    "rejectedBy": "fail",
-    "targetStatus": "fail"
-   },
-   {
-    "reference": "created-with-bug-label",
-    "id": "R1-create-request:request:failed+claim",
-    "check": "R1-create-request",
-    "description": "the request failed with HTTP 500, while the page announces success",
-    "advisory": false,
-    "claim": true,
-    "verdict": "fail",
-    "rejected": true,
-    "rejectedBy": "fail",
-    "targetStatus": "fail"
-   },
-   {
-    "reference": "created-with-bug-label",
-    "id": "R1-create-request:request:requestBody:schema:0",
-    "check": "R1-create-request",
-    "description": "requestBody: required title missing",
-    "advisory": false,
-    "claim": false,
-    "verdict": "fail",
-    "rejected": true,
-    "rejectedBy": "fail",
-    "targetStatus": "fail"
-   },
-   {
-    "reference": "created-with-bug-label",
-    "id": "R1-create-request:request:requestBody:schema:0+claim",
-    "check": "R1-create-request",
-    "description": "requestBody: required title missing, while the page announces success",
-    "advisory": false,
-    "claim": true,
-    "verdict": "fail",
-    "rejected": true,
-    "rejectedBy": "fail",
-    "targetStatus": "fail"
-   },
-   {
-    "reference": "created-with-bug-label",
-    "id": "R1-create-request:request:requestBody:schema:1",
-    "check": "R1-create-request",
-    "description": "requestBody: title: pinned value changed",
-    "advisory": false,
-    "claim": false,
-    "verdict": "fail",
-    "rejected": true,
-    "rejectedBy": "fail",
-    "targetStatus": "fail"
-   },
-   {
-    "reference": "created-with-bug-label",
-    "id": "R1-create-request:request:requestBody:schema:1+claim",
-    "check": "R1-create-request",
-    "description": "requestBody: title: pinned value changed, while the page announces success",
-    "advisory": false,
-    "claim": true,
-    "verdict": "fail",
-    "rejected": true,
-    "rejectedBy": "fail",
-    "targetStatus": "fail"
-   },
-   {
-    "reference": "created-with-bug-label",
-    "id": "R2-bug-label:value:0",
-    "check": "R2-bug-label",
+    "id": "R2-issue-has-bug-label:value:0",
+    "check": "R2-issue-has-bug-label",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
     "advisory": false,
     "claim": false,
@@ -305,8 +225,8 @@
    },
    {
     "reference": "created-with-bug-label",
-    "id": "R2-bug-label:value:0+claim",
-    "check": "R2-bug-label",
+    "id": "R2-issue-has-bug-label:value:0+claim",
+    "check": "R2-issue-has-bug-label",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
     "advisory": false,
     "claim": true,
@@ -321,9 +241,9 @@
     "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
     "advisory": true,
     "claim": false,
-    "verdict": "fail",
+    "verdict": "abstain",
     "rejected": true,
-    "rejectedBy": "fail"
+    "rejectedBy": "abstain"
    },
    {
     "reference": "created-with-details",
@@ -351,104 +271,8 @@
    },
    {
     "reference": "created-with-details",
-    "id": "R1-create-request:request:missing",
-    "check": "R1-create-request",
-    "description": "the request was never sent",
-    "advisory": false,
-    "claim": false,
-    "verdict": "fail",
-    "rejected": true,
-    "rejectedBy": "fail",
-    "targetStatus": "fail"
-   },
-   {
-    "reference": "created-with-details",
-    "id": "R1-create-request:request:missing+claim",
-    "check": "R1-create-request",
-    "description": "the request was never sent, while the page announces success",
-    "advisory": false,
-    "claim": true,
-    "verdict": "fail",
-    "rejected": true,
-    "rejectedBy": "fail",
-    "targetStatus": "fail"
-   },
-   {
-    "reference": "created-with-details",
-    "id": "R1-create-request:request:failed",
-    "check": "R1-create-request",
-    "description": "the request failed with HTTP 500",
-    "advisory": false,
-    "claim": false,
-    "verdict": "fail",
-    "rejected": true,
-    "rejectedBy": "fail",
-    "targetStatus": "fail"
-   },
-   {
-    "reference": "created-with-details",
-    "id": "R1-create-request:request:failed+claim",
-    "check": "R1-create-request",
-    "description": "the request failed with HTTP 500, while the page announces success",
-    "advisory": false,
-    "claim": true,
-    "verdict": "fail",
-    "rejected": true,
-    "rejectedBy": "fail",
-    "targetStatus": "fail"
-   },
-   {
-    "reference": "created-with-details",
-    "id": "R1-create-request:request:requestBody:schema:0",
-    "check": "R1-create-request",
-    "description": "requestBody: required title missing",
-    "advisory": false,
-    "claim": false,
-    "verdict": "fail",
-    "rejected": true,
-    "rejectedBy": "fail",
-    "targetStatus": "fail"
-   },
-   {
-    "reference": "created-with-details",
-    "id": "R1-create-request:request:requestBody:schema:0+claim",
-    "check": "R1-create-request",
-    "description": "requestBody: required title missing, while the page announces success",
-    "advisory": false,
-    "claim": true,
-    "verdict": "fail",
-    "rejected": true,
-    "rejectedBy": "fail",
-    "targetStatus": "fail"
-   },
-   {
-    "reference": "created-with-details",
-    "id": "R1-create-request:request:requestBody:schema:1",
-    "check": "R1-create-request",
-    "description": "requestBody: title: pinned value changed",
-    "advisory": false,
-    "claim": false,
-    "verdict": "fail",
-    "rejected": true,
-    "rejectedBy": "fail",
-    "targetStatus": "fail"
-   },
-   {
-    "reference": "created-with-details",
-    "id": "R1-create-request:request:requestBody:schema:1+claim",
-    "check": "R1-create-request",
-    "description": "requestBody: title: pinned value changed, while the page announces success",
-    "advisory": false,
-    "claim": true,
-    "verdict": "fail",
-    "rejected": true,
-    "rejectedBy": "fail",
-    "targetStatus": "fail"
-   },
-   {
-    "reference": "created-with-details",
-    "id": "R2-bug-label:value:0",
-    "check": "R2-bug-label",
+    "id": "R2-issue-has-bug-label:value:0",
+    "check": "R2-issue-has-bug-label",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison)",
     "advisory": false,
     "claim": false,
@@ -459,8 +283,8 @@
    },
    {
     "reference": "created-with-details",
-    "id": "R2-bug-label:value:0+claim",
-    "check": "R2-bug-label",
+    "id": "R2-issue-has-bug-label:value:0+claim",
+    "check": "R2-issue-has-bug-label",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (violates the comparison), while the page announces success",
     "advisory": false,
     "claim": true,
@@ -475,20 +299,20 @@
     "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
     "advisory": true,
     "claim": false,
-    "verdict": "fail",
+    "verdict": "abstain",
     "rejected": true,
-    "rejectedBy": "fail"
+    "rejectedBy": "abstain"
    }
   ],
   "rates": {
-   "variantsAccepted": 20,
-   "variantsTotal": 20,
-   "mutantsRejected": 12,
-   "mutantsRejectedByFail": 12,
+   "variantsAccepted": 22,
+   "variantsTotal": 22,
+   "mutantsRejected": 4,
+   "mutantsRejectedByFail": 4,
    "mutantsRejectedByAbstain": 0,
-   "mutantsTotal": 12,
-   "claimMutantsRejected": 12,
-   "claimMutantsTotal": 12
+   "mutantsTotal": 4,
+   "claimMutantsRejected": 4,
+   "claimMutantsTotal": 4
   },
   "overConstrained": [],
   "fragile": [],
@@ -509,6 +333,14 @@
   "variants": [
    {
     "reference": "created-high-labelled",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high-labelled",
     "id": "extra-content",
     "description": "unrelated recommendations and a promotional status message on the page",
     "verdict": "success",
@@ -583,6 +415,14 @@
     "reference": "created-high-labelled",
     "id": "url-hash",
     "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-high",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
     "verdict": "success",
     "accepted": true,
     "rejectedBy": []
@@ -787,8 +627,8 @@
    }
   ],
   "rates": {
-   "variantsAccepted": 20,
-   "variantsTotal": 20,
+   "variantsAccepted": 22,
+   "variantsTotal": 22,
    "mutantsRejected": 4,
    "mutantsRejectedByFail": 4,
    "mutantsRejectedByAbstain": 0,
@@ -815,6 +655,14 @@
   "variants": [
    {
     "reference": "closed-1",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "closed-1",
     "id": "extra-content",
     "description": "unrelated recommendations and a promotional status message on the page",
     "verdict": "success",
@@ -889,6 +737,14 @@
     "reference": "closed-1",
     "id": "url-hash",
     "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented-and-closed",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
     "verdict": "success",
     "accepted": true,
     "rejectedBy": []
@@ -1025,6 +881,54 @@
    },
    {
     "reference": "closed-1",
+    "id": "issue1-closed-probe:value:2",
+    "check": "issue1-closed-probe",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"closed\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":1,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their id)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "closed-1",
+    "id": "issue1-closed-probe:value:2+claim",
+    "check": "issue1-closed-probe",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"closed\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":1,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their id), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "closed-1",
+    "id": "issue1-closed-probe:value:3",
+    "check": "issue1-closed-probe",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their status)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "closed-1",
+    "id": "issue1-closed-probe:value:3+claim",
+    "check": "issue1-closed-probe",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their status), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "closed-1",
     "id": "claims-only",
     "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
     "advisory": true,
@@ -1083,6 +987,54 @@
    },
    {
     "reference": "commented-and-closed",
+    "id": "issue1-closed-probe:value:2",
+    "check": "issue1-closed-probe",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"closed\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[{\"author\":\"you\",\"text\":\"Fixed in the latest build\"}]},{\"id\":1,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their id)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "commented-and-closed",
+    "id": "issue1-closed-probe:value:2+claim",
+    "check": "issue1-closed-probe",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"closed\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[{\"author\":\"you\",\"text\":\"Fixed in the latest build\"}]},{\"id\":1,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their id), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "commented-and-closed",
+    "id": "issue1-closed-probe:value:3",
+    "check": "issue1-closed-probe",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[{\"author\":\"you\",\"text\":\"Fixed in the latest build\"}]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their status)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "commented-and-closed",
+    "id": "issue1-closed-probe:value:3+claim",
+    "check": "issue1-closed-probe",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[{\"author\":\"you\",\"text\":\"Fixed in the latest build\"}]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their status), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "commented-and-closed",
     "id": "claims-only",
     "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
     "advisory": true,
@@ -1093,14 +1045,14 @@
    }
   ],
   "rates": {
-   "variantsAccepted": 20,
-   "variantsTotal": 20,
-   "mutantsRejected": 4,
-   "mutantsRejectedByFail": 4,
+   "variantsAccepted": 22,
+   "variantsTotal": 22,
+   "mutantsRejected": 8,
+   "mutantsRejectedByFail": 8,
    "mutantsRejectedByAbstain": 0,
-   "mutantsTotal": 4,
-   "claimMutantsRejected": 4,
-   "claimMutantsTotal": 4
+   "mutantsTotal": 8,
+   "claimMutantsRejected": 8,
+   "claimMutantsTotal": 8
   },
   "overConstrained": [],
   "fragile": [],
@@ -1119,6 +1071,14 @@
    "reopened-from-list"
   ],
   "variants": [
+   {
+    "reference": "reopened-3",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
    {
     "reference": "reopened-3",
     "id": "extra-content",
@@ -1195,6 +1155,14 @@
     "reference": "reopened-3",
     "id": "url-hash",
     "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reopened-from-list",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
     "verdict": "success",
     "accepted": true,
     "rejectedBy": []
@@ -1283,8 +1251,8 @@
   "mutants": [
    {
     "reference": "reopened-3",
-    "id": "issue3-open:value:0",
-    "check": "issue3-open",
+    "id": "issue3-open-probe:value:0",
+    "check": "issue3-open-probe",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]}] (violates the comparison)",
     "advisory": false,
     "claim": false,
@@ -1295,8 +1263,8 @@
    },
    {
     "reference": "reopened-3",
-    "id": "issue3-open:value:0+claim",
-    "check": "issue3-open",
+    "id": "issue3-open-probe:value:0+claim",
+    "check": "issue3-open-probe",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]}] (violates the comparison), while the page announces success",
     "advisory": false,
     "claim": true,
@@ -1307,8 +1275,8 @@
    },
    {
     "reference": "reopened-3",
-    "id": "issue3-open:value:1",
-    "check": "issue3-open",
+    "id": "issue3-open-probe:value:1",
+    "check": "issue3-open-probe",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":4,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (item 2 changed)",
     "advisory": false,
     "claim": false,
@@ -1319,8 +1287,8 @@
    },
    {
     "reference": "reopened-3",
-    "id": "issue3-open:value:1+claim",
-    "check": "issue3-open",
+    "id": "issue3-open-probe:value:1+claim",
+    "check": "issue3-open-probe",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":4,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (item 2 changed), while the page announces success",
     "advisory": false,
     "claim": true,
@@ -1341,8 +1309,8 @@
    },
    {
     "reference": "reopened-from-list",
-    "id": "issue3-open:value:0",
-    "check": "issue3-open",
+    "id": "issue3-open-probe:value:0",
+    "check": "issue3-open-probe",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]}] (violates the comparison)",
     "advisory": false,
     "claim": false,
@@ -1353,8 +1321,8 @@
    },
    {
     "reference": "reopened-from-list",
-    "id": "issue3-open:value:0+claim",
-    "check": "issue3-open",
+    "id": "issue3-open-probe:value:0+claim",
+    "check": "issue3-open-probe",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]}] (violates the comparison), while the page announces success",
     "advisory": false,
     "claim": true,
@@ -1365,8 +1333,8 @@
    },
    {
     "reference": "reopened-from-list",
-    "id": "issue3-open:value:1",
-    "check": "issue3-open",
+    "id": "issue3-open-probe:value:1",
+    "check": "issue3-open-probe",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":4,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (item 2 changed)",
     "advisory": false,
     "claim": false,
@@ -1377,8 +1345,8 @@
    },
    {
     "reference": "reopened-from-list",
-    "id": "issue3-open:value:1+claim",
-    "check": "issue3-open",
+    "id": "issue3-open-probe:value:1+claim",
+    "check": "issue3-open-probe",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":4,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (item 2 changed), while the page announces success",
     "advisory": false,
     "claim": true,
@@ -1399,8 +1367,8 @@
    }
   ],
   "rates": {
-   "variantsAccepted": 20,
-   "variantsTotal": 20,
+   "variantsAccepted": 22,
+   "variantsTotal": 22,
    "mutantsRejected": 4,
    "mutantsRejectedByFail": 4,
    "mutantsRejectedByAbstain": 0,
@@ -1427,6 +1395,14 @@
   "variants": [
    {
     "reference": "assigned-bob",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-bob",
     "id": "extra-content",
     "description": "unrelated recommendations and a promotional status message on the page",
     "verdict": "success",
@@ -1501,6 +1477,14 @@
     "reference": "assigned-bob",
     "id": "url-hash",
     "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "assigned-carol-then-bob",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
     "verdict": "success",
     "accepted": true,
     "rejectedBy": []
@@ -1637,6 +1621,54 @@
    },
    {
     "reference": "assigned-bob",
+    "id": "issue1-assignee-bob:value:2",
+    "check": "issue1-assignee-bob",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":\"bob\",\"labels\":[\"bug\"],\"comments\":[]},{\"id\":1,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their id)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "assigned-bob",
+    "id": "issue1-assignee-bob:value:2+claim",
+    "check": "issue1-assignee-bob",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":\"bob\",\"labels\":[\"bug\"],\"comments\":[]},{\"id\":1,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their id), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "assigned-bob",
+    "id": "issue1-assignee-bob:value:3",
+    "check": "issue1-assignee-bob",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":\"alice\",\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"bob\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their assignee)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "assigned-bob",
+    "id": "issue1-assignee-bob:value:3+claim",
+    "check": "issue1-assignee-bob",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":\"alice\",\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"bob\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their assignee), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "assigned-bob",
     "id": "claims-only",
     "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
     "advisory": true,
@@ -1695,6 +1727,54 @@
    },
    {
     "reference": "assigned-carol-then-bob",
+    "id": "issue1-assignee-bob:value:2",
+    "check": "issue1-assignee-bob",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":\"bob\",\"labels\":[\"bug\"],\"comments\":[]},{\"id\":1,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their id)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "assigned-carol-then-bob",
+    "id": "issue1-assignee-bob:value:2+claim",
+    "check": "issue1-assignee-bob",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":\"bob\",\"labels\":[\"bug\"],\"comments\":[]},{\"id\":1,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their id), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "assigned-carol-then-bob",
+    "id": "issue1-assignee-bob:value:3",
+    "check": "issue1-assignee-bob",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":\"alice\",\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"bob\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their assignee)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "assigned-carol-then-bob",
+    "id": "issue1-assignee-bob:value:3+claim",
+    "check": "issue1-assignee-bob",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":\"alice\",\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"bob\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their assignee), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "assigned-carol-then-bob",
     "id": "claims-only",
     "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
     "advisory": true,
@@ -1705,14 +1785,14 @@
    }
   ],
   "rates": {
-   "variantsAccepted": 20,
-   "variantsTotal": 20,
-   "mutantsRejected": 4,
-   "mutantsRejectedByFail": 4,
+   "variantsAccepted": 22,
+   "variantsTotal": 22,
+   "mutantsRejected": 8,
+   "mutantsRejectedByFail": 8,
    "mutantsRejectedByAbstain": 0,
-   "mutantsTotal": 4,
-   "claimMutantsRejected": 4,
-   "claimMutantsTotal": 4
+   "mutantsTotal": 8,
+   "claimMutantsRejected": 8,
+   "claimMutantsTotal": 8
   },
   "overConstrained": [],
   "fragile": [],
@@ -1733,6 +1813,14 @@
   "variants": [
    {
     "reference": "bug-and-feature",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "bug-and-feature",
     "id": "extra-content",
     "description": "unrelated recommendations and a promotional status message on the page",
     "verdict": "success",
@@ -1807,6 +1895,14 @@
     "reference": "bug-and-feature",
     "id": "url-hash",
     "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "feature-after-correction",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
     "verdict": "success",
     "accepted": true,
     "rejectedBy": []
@@ -1991,6 +2087,54 @@
    },
    {
     "reference": "bug-and-feature",
+    "id": "r2-bug-label:value:2",
+    "check": "r2-bug-label",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\",\"feature\"],\"comments\":[]},{\"id\":1,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their id)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "bug-and-feature",
+    "id": "r2-bug-label:value:2+claim",
+    "check": "r2-bug-label",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\",\"feature\"],\"comments\":[]},{\"id\":1,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their id), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "bug-and-feature",
+    "id": "r2-bug-label:value:3",
+    "check": "r2-bug-label",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"feature\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"bug\",\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their labels)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "bug-and-feature",
+    "id": "r2-bug-label:value:3+claim",
+    "check": "r2-bug-label",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"feature\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"bug\",\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their labels), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "bug-and-feature",
     "id": "claims-only",
     "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
     "advisory": true,
@@ -2097,6 +2241,54 @@
    },
    {
     "reference": "feature-after-correction",
+    "id": "r2-bug-label:value:2",
+    "check": "r2-bug-label",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\",\"feature\"],\"comments\":[]},{\"id\":1,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their id)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "feature-after-correction",
+    "id": "r2-bug-label:value:2+claim",
+    "check": "r2-bug-label",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\",\"feature\"],\"comments\":[]},{\"id\":1,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their id), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "feature-after-correction",
+    "id": "r2-bug-label:value:3",
+    "check": "r2-bug-label",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"feature\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"bug\",\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their labels)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "feature-after-correction",
+    "id": "r2-bug-label:value:3+claim",
+    "check": "r2-bug-label",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"feature\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"bug\",\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their labels), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "feature-after-correction",
     "id": "claims-only",
     "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
     "advisory": true,
@@ -2107,14 +2299,14 @@
    }
   ],
   "rates": {
-   "variantsAccepted": 20,
-   "variantsTotal": 20,
-   "mutantsRejected": 8,
-   "mutantsRejectedByFail": 8,
+   "variantsAccepted": 22,
+   "variantsTotal": 22,
+   "mutantsRejected": 12,
+   "mutantsRejectedByFail": 12,
    "mutantsRejectedByAbstain": 0,
-   "mutantsTotal": 8,
-   "claimMutantsRejected": 8,
-   "claimMutantsTotal": 8
+   "mutantsTotal": 12,
+   "claimMutantsRejected": 12,
+   "claimMutantsTotal": 12
   },
   "overConstrained": [],
   "fragile": [],
@@ -2133,6 +2325,14 @@
    "commented"
   ],
   "variants": [
+   {
+    "reference": "commented-with-period",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
    {
     "reference": "commented-with-period",
     "id": "extra-content",
@@ -2209,6 +2409,14 @@
     "reference": "commented-with-period",
     "id": "url-hash",
     "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "commented",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
     "verdict": "success",
     "accepted": true,
     "rejectedBy": []
@@ -2345,6 +2553,54 @@
    },
    {
     "reference": "commented-with-period",
+    "id": "r1-probe-comment:value:2",
+    "check": "r1-probe-comment",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":1,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[{\"author\":\"you\",\"text\":\"Working on it.\"}]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their id)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "commented-with-period",
+    "id": "r1-probe-comment:value:2+claim",
+    "check": "r1-probe-comment",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":1,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[{\"author\":\"you\",\"text\":\"Working on it.\"}]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their id), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "commented-with-period",
+    "id": "r1-probe-comment:value:3",
+    "check": "r1-probe-comment",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[{\"author\":\"you\",\"text\":\"Working on it.\"}]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their comments)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "commented-with-period",
+    "id": "r1-probe-comment:value:3+claim",
+    "check": "r1-probe-comment",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[{\"author\":\"you\",\"text\":\"Working on it.\"}]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their comments), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "commented-with-period",
     "id": "claims-only",
     "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
     "advisory": true,
@@ -2403,6 +2659,54 @@
    },
    {
     "reference": "commented",
+    "id": "r1-probe-comment:value:2",
+    "check": "r1-probe-comment",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":1,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[{\"author\":\"you\",\"text\":\"Working on it\"}]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their id)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "commented",
+    "id": "r1-probe-comment:value:2+claim",
+    "check": "r1-probe-comment",
+    "description": "probe issues is [{\"id\":2,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":1,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[{\"author\":\"you\",\"text\":\"Working on it\"}]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their id), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "commented",
+    "id": "r1-probe-comment:value:3",
+    "check": "r1-probe-comment",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[{\"author\":\"you\",\"text\":\"Working on it\"}]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their comments)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "commented",
+    "id": "r1-probe-comment:value:3+claim",
+    "check": "r1-probe-comment",
+    "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[{\"author\":\"you\",\"text\":\"Working on it\"}]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":3,\"title\":\"Typo in docs\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (items 0 and 1 swap their comments), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "commented",
     "id": "claims-only",
     "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
     "advisory": true,
@@ -2413,14 +2717,14 @@
    }
   ],
   "rates": {
-   "variantsAccepted": 20,
-   "variantsTotal": 20,
-   "mutantsRejected": 4,
-   "mutantsRejectedByFail": 4,
+   "variantsAccepted": 22,
+   "variantsTotal": 22,
+   "mutantsRejected": 8,
+   "mutantsRejectedByFail": 8,
    "mutantsRejectedByAbstain": 0,
-   "mutantsTotal": 4,
-   "claimMutantsRejected": 4,
-   "claimMutantsTotal": 4
+   "mutantsTotal": 8,
+   "claimMutantsRejected": 8,
+   "claimMutantsTotal": 8
   },
   "overConstrained": [],
   "fragile": [],
@@ -2439,6 +2743,14 @@
    "renamed"
   ],
   "variants": [
+   {
+    "reference": "renamed-after-typo",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
    {
     "reference": "renamed-after-typo",
     "id": "extra-content",
@@ -2515,6 +2827,14 @@
     "reference": "renamed-after-typo",
     "id": "url-hash",
     "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
     "verdict": "success",
     "accepted": true,
     "rejectedBy": []
@@ -2603,8 +2923,8 @@
   "mutants": [
    {
     "reference": "renamed-after-typo",
-    "id": "issue3-title:value:0",
-    "check": "issue3-title",
+    "id": "r1-probe-title:value:0",
+    "check": "r1-probe-title",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]}] (violates the comparison)",
     "advisory": false,
     "claim": false,
@@ -2615,8 +2935,8 @@
    },
    {
     "reference": "renamed-after-typo",
-    "id": "issue3-title:value:0+claim",
-    "check": "issue3-title",
+    "id": "r1-probe-title:value:0+claim",
+    "check": "r1-probe-title",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]}] (violates the comparison), while the page announces success",
     "advisory": false,
     "claim": true,
@@ -2627,8 +2947,8 @@
    },
    {
     "reference": "renamed-after-typo",
-    "id": "issue3-title:value:1",
-    "check": "issue3-title",
+    "id": "r1-probe-title:value:1",
+    "check": "r1-probe-title",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":4,\"title\":\"Fix typo in README\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (item 2 changed)",
     "advisory": false,
     "claim": false,
@@ -2639,8 +2959,8 @@
    },
    {
     "reference": "renamed-after-typo",
-    "id": "issue3-title:value:1+claim",
-    "check": "issue3-title",
+    "id": "r1-probe-title:value:1+claim",
+    "check": "r1-probe-title",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":4,\"title\":\"Fix typo in README\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (item 2 changed), while the page announces success",
     "advisory": false,
     "claim": true,
@@ -2661,8 +2981,8 @@
    },
    {
     "reference": "renamed",
-    "id": "issue3-title:value:0",
-    "check": "issue3-title",
+    "id": "r1-probe-title:value:0",
+    "check": "r1-probe-title",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]}] (violates the comparison)",
     "advisory": false,
     "claim": false,
@@ -2673,8 +2993,8 @@
    },
    {
     "reference": "renamed",
-    "id": "issue3-title:value:0+claim",
-    "check": "issue3-title",
+    "id": "r1-probe-title:value:0+claim",
+    "check": "r1-probe-title",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]}] (violates the comparison), while the page announces success",
     "advisory": false,
     "claim": true,
@@ -2685,8 +3005,8 @@
    },
    {
     "reference": "renamed",
-    "id": "issue3-title:value:1",
-    "check": "issue3-title",
+    "id": "r1-probe-title:value:1",
+    "check": "r1-probe-title",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":4,\"title\":\"Fix typo in README\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (item 2 changed)",
     "advisory": false,
     "claim": false,
@@ -2697,8 +3017,8 @@
    },
    {
     "reference": "renamed",
-    "id": "issue3-title:value:1+claim",
-    "check": "issue3-title",
+    "id": "r1-probe-title:value:1+claim",
+    "check": "r1-probe-title",
     "description": "probe issues is [{\"id\":1,\"title\":\"Login button misaligned\",\"body\":\"On narrow screens.\",\"status\":\"open\",\"priority\":\"normal\",\"assignee\":null,\"labels\":[\"bug\"],\"comments\":[]},{\"id\":2,\"title\":\"Add dark mode\",\"body\":\"\",\"status\":\"open\",\"priority\":\"low\",\"assignee\":\"alice\",\"labels\":[\"feature\"],\"comments\":[]},{\"id\":4,\"title\":\"Fix typo in README\",\"body\":\"README says \\\"teh\\\".\",\"status\":\"closed\",\"priority\":\"low\",\"assignee\":null,\"labels\":[\"docs\"],\"comments\":[]}] (item 2 changed), while the page announces success",
     "advisory": false,
     "claim": true,
@@ -2719,8 +3039,8 @@
    }
   ],
   "rates": {
-   "variantsAccepted": 20,
-   "variantsTotal": 20,
+   "variantsAccepted": 22,
+   "variantsTotal": 22,
    "mutantsRejected": 4,
    "mutantsRejectedByFail": 4,
    "mutantsRejectedByAbstain": 0,
@@ -2747,6 +3067,14 @@
   "variants": [
    {
     "reference": "reassigned-then-unassigned",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "reassigned-then-unassigned",
     "id": "extra-content",
     "description": "unrelated recommendations and a promotional status message on the page",
     "verdict": "success",
@@ -2821,6 +3149,14 @@
     "reference": "reassigned-then-unassigned",
     "id": "url-hash",
     "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "unassigned",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
     "verdict": "success",
     "accepted": true,
     "rejectedBy": []
@@ -3025,8 +3361,8 @@
    }
   ],
   "rates": {
-   "variantsAccepted": 20,
-   "variantsTotal": 20,
+   "variantsAccepted": 22,
+   "variantsTotal": 22,
    "mutantsRejected": 4,
    "mutantsRejectedByFail": 4,
    "mutantsRejectedByAbstain": 0,
@@ -3263,9 +3599,9 @@
    },
    {
     "reference": "filtered-by-url",
-    "id": "R1-open-filter:allOf[1]:contains:extra",
+    "id": "R1-open-filter:allOf[1]:state:selected",
     "check": "R1-open-filter",
-    "description": "an item that should be absent (cell \"Closed\") is present",
+    "description": "selected is false instead of true",
     "advisory": false,
     "claim": false,
     "verdict": "fail",
@@ -3275,9 +3611,33 @@
    },
    {
     "reference": "filtered-by-url",
-    "id": "R1-open-filter:allOf[1]:contains:extra+claim",
+    "id": "R1-open-filter:allOf[1]:state:selected+claim",
     "check": "R1-open-filter",
-    "description": "an item that should be absent (cell \"Closed\") is present, while the page announces success",
+    "description": "selected is false instead of true, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "R1-open-filter:allOf[1]:state:wrong-target",
+    "check": "R1-open-filter",
+    "description": "the state is set on main › search \"Filter issues\" › combobox \"Status\" › option \"All\" instead",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "R1-open-filter:allOf[1]:state:wrong-target+claim",
+    "check": "R1-open-filter",
+    "description": "the state is set on main › search \"Filter issues\" › combobox \"Status\" › option \"All\" instead, while the page announces success",
     "advisory": false,
     "claim": true,
     "verdict": "fail",
@@ -3326,6 +3686,54 @@
     "id": "R2-bug-filter:allOf[0]:url:query:label+claim",
     "check": "R2-bug-filter",
     "description": "query parameter label differs, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "R2-bug-filter:allOf[1]:state:selected",
+    "check": "R2-bug-filter",
+    "description": "selected is false instead of true",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "R2-bug-filter:allOf[1]:state:selected+claim",
+    "check": "R2-bug-filter",
+    "description": "selected is false instead of true, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "R2-bug-filter:allOf[1]:state:wrong-target",
+    "check": "R2-bug-filter",
+    "description": "the state is set on main › search \"Filter issues\" › combobox \"Status\" › option \"All\" instead",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "R2-bug-filter:allOf[1]:state:wrong-target+claim",
+    "check": "R2-bug-filter",
+    "description": "the state is set on main › search \"Filter issues\" › combobox \"Status\" › option \"All\" instead, while the page announces success",
     "advisory": false,
     "claim": true,
     "verdict": "fail",
@@ -3392,9 +3800,9 @@
    },
    {
     "reference": "filtered",
-    "id": "R1-open-filter:allOf[1]:contains:extra",
+    "id": "R1-open-filter:allOf[1]:state:selected",
     "check": "R1-open-filter",
-    "description": "an item that should be absent (cell \"Closed\") is present",
+    "description": "selected is false instead of true",
     "advisory": false,
     "claim": false,
     "verdict": "fail",
@@ -3404,9 +3812,33 @@
    },
    {
     "reference": "filtered",
-    "id": "R1-open-filter:allOf[1]:contains:extra+claim",
+    "id": "R1-open-filter:allOf[1]:state:selected+claim",
     "check": "R1-open-filter",
-    "description": "an item that should be absent (cell \"Closed\") is present, while the page announces success",
+    "description": "selected is false instead of true, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
+    "id": "R1-open-filter:allOf[1]:state:wrong-target",
+    "check": "R1-open-filter",
+    "description": "the state is set on main › search \"Filter issues\" › combobox \"Status\" › option \"All\" instead",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
+    "id": "R1-open-filter:allOf[1]:state:wrong-target+claim",
+    "check": "R1-open-filter",
+    "description": "the state is set on main › search \"Filter issues\" › combobox \"Status\" › option \"All\" instead, while the page announces success",
     "advisory": false,
     "claim": true,
     "verdict": "fail",
@@ -3464,6 +3896,54 @@
    },
    {
     "reference": "filtered",
+    "id": "R2-bug-filter:allOf[1]:state:selected",
+    "check": "R2-bug-filter",
+    "description": "selected is false instead of true",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
+    "id": "R2-bug-filter:allOf[1]:state:selected+claim",
+    "check": "R2-bug-filter",
+    "description": "selected is false instead of true, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
+    "id": "R2-bug-filter:allOf[1]:state:wrong-target",
+    "check": "R2-bug-filter",
+    "description": "the state is set on main › search \"Filter issues\" › combobox \"Status\" › option \"All\" instead",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
+    "id": "R2-bug-filter:allOf[1]:state:wrong-target+claim",
+    "check": "R2-bug-filter",
+    "description": "the state is set on main › search \"Filter issues\" › combobox \"Status\" › option \"All\" instead, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
     "id": "claims-only",
     "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
     "advisory": true,
@@ -3475,12 +3955,12 @@
   "rates": {
    "variantsAccepted": 20,
    "variantsTotal": 20,
-   "mutantsRejected": 10,
-   "mutantsRejectedByFail": 10,
+   "mutantsRejected": 16,
+   "mutantsRejectedByFail": 16,
    "mutantsRejectedByAbstain": 0,
-   "mutantsTotal": 10,
-   "claimMutantsRejected": 10,
-   "claimMutantsTotal": 10
+   "mutantsTotal": 16,
+   "claimMutantsRejected": 16,
+   "claimMutantsTotal": 16
   },
   "overConstrained": [],
   "fragile": [],

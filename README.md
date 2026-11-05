@@ -93,14 +93,35 @@ the same check run without validation or a record, for hot loops.
 
   Assertion kinds: `state`, `contains`, `value` (read from a node, text, the URL, a request or
   response, storage or a probe, then normalized and compared with a literal, or with a second
-  source via `sameAs`), `url`, `request`, and `allOf`/`anyOf`. Normalizers parse numbers, money,
-  dates and date-times (`datetime`, compared as instants; `approx` on them is in minutes). The JSON
-  Schema is exported as `checkSetSchema`; `validateCheckSet` adds semantic checks.
+  source via `sameAs`), `url`, `request`, `each` and `allOf`/`anyOf`. Normalizers parse numbers,
+  money, dates and date-times (`datetime`, compared as instants; `approx` on them is in minutes).
+  The JSON Schema is exported as `checkSetSchema`; `validateCheckSet` adds semantic checks.
+
+- **Records.** `each` checks a value inside the record it belongs to, not anywhere on the page.
+  Every node matching `match` is a record (a row, a list item; a term with the definitions after
+  it), and `assert` must hold inside each one, with its locators resolved within the record:
+
+  ```json
+  {
+    "kind": "each",
+    "scope": { "role": "table", "name": "Issues" },
+    "match": { "role": "row", "name": { "contains": "Login button misaligned" } },
+    "assert": { "kind": "contains", "match": { "role": "cell", "name": "Open" } }
+  }
+  ```
+
+  A cell can be bound to its column header (`{"role": "cell", "name": "Open", "column": "Status"}`),
+  so another cell of the row that reads the same text does not match. The number of records is
+  outcome evidence (default at least one, else fail); a label the page
+  always shows (a term "When") belongs in `witness` too, so renamed copy abstains
+  ([ADR 0008](docs/adr/0008-per-record-checks.md)).
 
 - **Baseline.** A probe or storage source with `"at": "before"` reads the state before the task
   (`captureBaseline`); without a baseline such a check abstains. The `items` normalizer turns a JSON
-  array into an unordered collection (filtered by a JSON Schema `where`, projected by a `pointer`),
-  so "keep everything else" is the cart after `sameAs` the cart before, minus the removed item:
+  array into an unordered collection (filtered by a JSON Schema `where`, projected to one field by a
+  `pointer` or, when the two sides' items have different fields, to the fields both have, kept
+  together, by `pick: ["/sku", "/qty"]`), so
+  "keep everything else" is the cart after `sameAs` the cart before, minus the removed item:
 
   ```json
   {
@@ -247,9 +268,9 @@ that only claim success. Each task was compiled from one correct run; on the 96 
 
 | System           | Balanced accuracy | TPR   | TNR   | Cost / run | Latency (median / p95) | Model at run time |
 | ---------------- | ----------------- | ----- | ----- | ---------- | ---------------------- | ----------------- |
-| compiled checks  | 1.000             | 1.000 | 1.000 | $0         | 0.3 ms / 3.5 ms        | no                |
+| compiled checks  | 1.000             | 1.000 | 1.000 | $0         | 0.3 ms / 4.7 ms        | no                |
 | LLM judge        | 0.906             | 0.933 | 0.879 | $0.0119    | 4.3 s / 10.0 s         | yes               |
-| agentic verifier | 0.959             | 0.933 | 0.985 | $0.0273    | 8.5 s / 13.5 s         | yes               |
+| agentic verifier | 0.976             | 0.967 | 0.985 | $0.0275    | 9.6 s / 12.3 s         | yes               |
 
 The LLM judge accepted 3 of 8 adversarial pages, and all 3 runs that changed the starting cart
 wrongly; the checks and the verifier rejected all of them.
@@ -276,6 +297,7 @@ asked to remove.
 - [ADR 0005](docs/adr/0005-evaluation-and-stability.md): evaluation and stability
 - [ADR 0006](docs/adr/0006-npm-package-and-releases.md): the npm package and releases
 - [ADR 0007](docs/adr/0007-vercel-ai-sdk-adapter.md): the Vercel AI SDK adapter
+- [ADR 0008](docs/adr/0008-per-record-checks.md): per-record checks and paired item fields
 - [ADR 0009](docs/adr/0009-real-site-evaluation.md): evaluation on real web apps
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
 - Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)

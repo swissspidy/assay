@@ -1,19 +1,19 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T07:54:51.806Z",
+ "recordedAt": "2026-11-05T11:38:20.563Z",
  "turns": {
-  "sha256:59cd6f5c1369c928832d5dfc2d47eb393a104e254961234358d1d52214b124b1": {
+  "sha256:29d41d52617e08f6027037270f1437229c2f0ea50928427985f233b29404af63": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01PX1YJzYNZqwQFo9pQ1MK1U",
+     "id": "toolu_01FHpvAegg2xzw2xKutMDDtd",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_013aSmj6RMwr7o4VPJ5z6jHR",
+     "id": "toolu_01JfkJSbfWSVZFZbDmMALz9W",
      "name": "page_outline",
      "input": {}
     }
@@ -21,7 +21,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01PX1YJzYNZqwQFo9pQ1MK1U",
+     "id": "toolu_01FHpvAegg2xzw2xKutMDDtd",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -30,7 +30,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_013aSmj6RMwr7o4VPJ5z6jHR",
+     "id": "toolu_01JfkJSbfWSVZFZbDmMALz9W",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -39,19 +39,19 @@
     }
    ],
    "usage": {
-    "inputTokens": 1874,
+    "inputTokens": 1870,
     "outputTokens": 49,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 1870
+    "cacheWriteTokens": 1866
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:6da2e68894291fc0367d77d34d3d4cd8b5242345896f5ec0d0bba2e4d8926b0e": {
+  "sha256:514aa42f83c65a6069687ffc6ac809901bf48ff8feef700fba317f465e88e40e": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01HNMxxXevSh1PVVKN2FqSn8",
+     "id": "toolu_01VFM3HU25Ny517FrHfvvwdC",
      "name": "submit_verdict",
      "input": {
       "verdicts": [
@@ -62,7 +62,7 @@
          1,
          2
         ],
-        "reasoning": "The page has Status=Open and Label=bug filters applied. The table has exactly one row, #1 'Login button misaligned', with status Open. In the server data the only issue that is both open and labelled bug is #1, so the list correctly shows only open issues."
+        "reasoning": "The filters are Status=Open and Label=bug (URL status=open&label=bug), and the list has a single row, #1, with status Open. The data in observation 1 confirms it is the only open bug. The closed issue #3 is not shown."
        },
        {
         "requirement": "R2",
@@ -71,7 +71,7 @@
          1,
          2
         ],
-        "reasoning": "The only row shown, #1, is labelled bug. The other two issues (#2 feature, #3 docs) are left out, and the status reads '1 issue'."
+        "reasoning": "The only row shown is #1, labelled bug. The feature issue #2 and docs issue #3 are excluded."
        }
       ]
      }
@@ -79,13 +79,8 @@
    ],
    "raw": [
     {
-     "type": "thinking",
-     "thinking": "",
-     "signature": "CAQS5gUKEAgTGAI4AUIIdGhpbmtpbmcSDDkU0hn8FskrHlb70xoMPXq/GwSsiD4vFLBHIjBIRN/tO2KzvDZArtUEPwiY396vJNvhehjE/1XscveH6X2lsCXA1Jemggo7NB/tL1MqgwWrH1fsxNU29SDLk8IQzcwbuSjk4lZPhkyVHfXel1OdUpnLfZEsEUvPkPmIGd4TsGLXjzVDJCOacIw0+C2jky9CMlQN5ZAvf0rP8Aqdlf/EH4pLWmQ0Nl/NaKiZriQVELHrB7IesUVjnIUxUtFljRkGXY1lWKFlDfMclnGo2Z4uDvzxURwXYCDAmSpckNNFkSpsjcrkahU+SCj4LOdiJ4ZaITKu91HBm19WP1AhQ7ESxe5OObOvAfaW4h1NgIa2Kt3KVogePMFTtj/GfIdewbiWwitM2YV6srvEFAdvqCSWVU6qz6jvcHAXodkZTsc20Y0cZKfkFgIrjvdlJseREjNQHzmaujLuWoHT4UtnN/nVrGsq0dKgI7+uj8J5bpKj1Ud7MtGx78JpTMeoiheKxmE0LHxmR+Gij44vlWa6zzanBugVrcxF6m7FzaZS3lJeXpN81q3k1L2ynqWHUpRnmxldgRKIPOumismCRYTUWgelIbbZI6UbxCmpkZLPwV0BIfyDR4vKKuVt1K2s1elSfiB50xltffETl6PD1WBGSEMrWPFSFYxOi7lY4UEhv1PaZ/txHEPc3EdOn4X2iQ03QoQORpv93CEU4e1y4RNOJRCc7pb5o/K6QKQ/a6W0KlMtoq89oOFXHwEFvcphkINYLj1KkB2fdy7mm6rQ8g6MXkhExWsYgROcd4JHmZFKM2ux4234tOfuqvMRFHiBTBr61JXzLPyGtc14s8uwO74bMwcImyX7EX8vg91nce4d9dNok4iOKtfLDUT86e3XxTGcKXqeQWeGUmfM/rF4cqqe8AxFuDEz1rdhGu4+E1iM99Num8WGFrdJuUu/k7NaNyFZxk7YK+eMGAE="
-    },
-    {
      "type": "tool_use",
-     "id": "toolu_01HNMxxXevSh1PVVKN2FqSn8",
+     "id": "toolu_01VFM3HU25Ny517FrHfvvwdC",
      "name": "submit_verdict",
      "caller": {
       "type": "direct"
@@ -99,7 +94,7 @@
          1,
          2
         ],
-        "reasoning": "The page has Status=Open and Label=bug filters applied. The table has exactly one row, #1 'Login button misaligned', with status Open. In the server data the only issue that is both open and labelled bug is #1, so the list correctly shows only open issues."
+        "reasoning": "The filters are Status=Open and Label=bug (URL status=open&label=bug), and the list has a single row, #1, with status Open. The data in observation 1 confirms it is the only open bug. The closed issue #3 is not shown."
        },
        {
         "requirement": "R2",
@@ -108,16 +103,16 @@
          1,
          2
         ],
-        "reasoning": "The only row shown, #1, is labelled bug. The other two issues (#2 feature, #3 docs) are left out, and the status reads '1 issue'."
+        "reasoning": "The only row shown is #1, labelled bug. The feature issue #2 and docs issue #3 are excluded."
        }
       ]
      }
     }
    ],
    "usage": {
-    "inputTokens": 2774,
-    "outputTokens": 288,
-    "cacheReadTokens": 1870,
+    "inputTokens": 2770,
+    "outputTokens": 229,
+    "cacheReadTokens": 1866,
     "cacheWriteTokens": 902
    },
    "model": "claude-opus-5-5"

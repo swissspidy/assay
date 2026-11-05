@@ -313,6 +313,7 @@ interface Locator {
   level?: number;
   landmark?: { role: LandmarkRole; name?: TextMatch }; // some landmark ancestor
   within?: Locator; // some ancestor matches this locator
+  column?: TextMatch; // a cell's column header (ADR 0008)
 }
 type Target = Locator | { anchors: Locator[] }; // redundant anchors
 ```
@@ -354,14 +355,15 @@ explicitly.
 
 #### 2.4 Assertion kinds
 
-| kind             | anchor(s)                                                             | assertion                                                                                      |
-| ---------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `state`          | `target`                                                              | `expect` on states, `name`, `value`, `text`, `level`                                           |
-| `contains`       | `scope` (optional; default document) and optional `witness` inside it | number of `match` nodes inside scope satisfies `count` (default `{gte:1}`); `{eq:0}` = absence |
-| `value`          | the `source` (see below)                                              | normalized value satisfies `expect`                                                            |
-| `url`            | none (the page always has a URL)                                      | `page.url` matches `match`                                                                     |
-| `request`        | network channel captured                                              | number of matching entries satisfies `count` (default `{gte:1}`)                               |
-| `allOf`, `anyOf` | sub-assertions                                                        | Kleene three-valued logic                                                                      |
+| kind             | anchor(s)                                                             | assertion                                                                                                  |
+| ---------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `state`          | `target`                                                              | `expect` on states, `name`, `value`, `text`, `level`                                                       |
+| `contains`       | `scope` (optional; default document) and optional `witness` inside it | number of `match` nodes inside scope satisfies `count` (default `{gte:1}`); `{eq:0}` = absence             |
+| `value`          | the `source` (see below)                                              | normalized value satisfies `expect`                                                                        |
+| `url`            | none (the page always has a URL)                                      | `page.url` matches `match`                                                                                 |
+| `request`        | network channel captured                                              | number of matching entries satisfies `count` (default `{gte:1}`)                                           |
+| `each`           | `scope` and optional `witness`, as for `contains`                     | number of `match` records satisfies `count` (default `{gte:1}`), and `assert` holds in each one (ADR 0008) |
+| `allOf`, `anyOf` | sub-assertions                                                        | Kleene three-valued logic                                                                                  |
 
 A `witness` is a locator for a node that must exist inside the scope
 whatever the outcome, such as the cart table's "Product" column header. If
@@ -443,7 +445,7 @@ parsing depends on them. Checks never read host settings.
 | `currency {locale, currency?}`                                                    | string → money `{amount, currency}`       | Symbol or ISO code before or after the amount. An ambiguous symbol (`$`, `¥`, `kr`) resolves through `currency`. A symbol that contradicts it gives the symbol's currency, so the comparison fails. An ambiguous symbol without `currency` ⇒ `normalize_failed`                                                                                                 |
 | `date {locale, timezone?}`                                                        | string → `"YYYY-MM-DD"`                   | ISO dates, numeric dates in the locale's field order, and English or locale month names. Two-digit years, relative dates ("tomorrow") and invalid days ⇒ `normalize_failed`. An ISO datetime with an offset is converted to `timezone` (required in that case)                                                                                                  |
 | `datetime {locale, timezone?}`                                                    | string → instant `"YYYY-MM-DDTHH:MM:SSZ"` | ISO date-times and the localized forms `date` accepts with a time of day (`14:30`, `2:30 PM`, seconds optional). An offset in the value (`Z`, `+01:00`, `UTC`, `GMT+1`) decides. Without one the wall time is read in `timezone`; no timezone, a time skipped or repeated by a DST change, a zone abbreviation (`CET`, `EST`) or two times ⇒ `normalize_failed` |
-| `items {where?, pointer?}`                                                        | Json array → Json array                   | the array as an unordered collection: keeps items matching the JSON Schema `where`, maps each to the value at `pointer`, sorts by canonical JSON. Not an array ⇒ `type_mismatch`; an item without `pointer` ⇒ `normalize_failed` (see 2.6.2)                                                                                                                    |
+| `items {where?, pointer? \| pick?}`                                               | Json array → Json array                   | the array as an unordered collection: keeps items matching the JSON Schema `where`, maps each to the value at `pointer` (or to an object of the values at the `pick` pointers, keyed by pointer; ADR 0008), sorts by canonical JSON. Not an array ⇒ `type_mismatch`; an item without a projected field ⇒ `normalize_failed` (see 2.6.2)                         |
 | `json`                                                                            | string → Json                             | parse failure ⇒ `normalize_failed`                                                                                                                                                                                                                                                                                                                              |
 | `boolean`                                                                         | string → boolean                          | true/false/yes/no/on/off/1/0                                                                                                                                                                                                                                                                                                                                    |
 
@@ -489,9 +491,15 @@ appear to:
 - Two or more `sameAs` checks in one requirement that compare the same pair
   of collections through `items` with different pointers. Each sorts one
   field on its own, so the fields of different records pair up: 1×A + 2×B
-  matches 2×A + 1×B. Whole items (no pointer) compare records.
+  matches 2×A + 1×B. Whole items (no pointer), or a `pick` of every compared field, compare
+  records.
+- A definition (`dd`) located by its own content, outside an `each` whose records are terms
+  (ADR 0008): the same value under another term also matches. Absence checks are exempt.
+- An `items` `pick` in a `sameAs` between one probe value or storage key before and after the
+  task: its items have the same fields, so the fields `pick` leaves out may change (ADR 0008).
 
-The compiler refuses all three (ADR 0002).
+The compiler refuses all five (ADR 0002), and also a `pick` whose two collections hold items with
+the same fields in the references.
 
 Literals for datetimes (`equals`, `approx.value`, bounds) are ISO 8601 with an
 offset, such as `"2026-11-05T14:30:00+01:00"`, so each names one instant. A

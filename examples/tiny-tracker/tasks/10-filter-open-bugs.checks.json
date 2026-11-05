@@ -53,7 +53,7 @@
     {
       "id": "C2",
       "requirement": "R1",
-      "description": "The Issues table shows no closed issue.",
+      "description": "The Issues table shows no closed issue (no Closed in the Status column).",
       "assert": {
         "kind": "contains",
         "scope": {
@@ -76,7 +76,8 @@
         },
         "match": {
           "role": "cell",
-          "name": "Closed"
+          "name": "Closed",
+          "column": "Status"
         },
         "count": {
           "eq": 0
@@ -100,9 +101,9 @@
     {
       "id": "C4",
       "requirement": "R3",
-      "description": "The Issues table lists the open bug, issue #1.",
+      "description": "The Issues table has the row of the open bug, issue #1 \"Login button misaligned\", and that row shows Open in its Status column and bug in its Labels column.",
       "assert": {
-        "kind": "contains",
+        "kind": "each",
         "scope": {
           "anchors": [
             {
@@ -118,11 +119,40 @@
           ]
         },
         "match": {
-          "role": "link",
-          "name": "Login button misaligned"
+          "role": "row",
+          "name": {
+            "contains": "Login button misaligned"
+          }
         },
-        "count": {
-          "gte": 1
+        "assert": {
+          "kind": "allOf",
+          "of": [
+            {
+              "kind": "contains",
+              "match": {
+                "role": "link",
+                "name": "Login button misaligned"
+              }
+            },
+            {
+              "kind": "contains",
+              "match": {
+                "role": "cell",
+                "name": "Open",
+                "column": "Status"
+              }
+            },
+            {
+              "kind": "contains",
+              "match": {
+                "role": "cell",
+                "name": {
+                  "regex": "^(.+, )?bug(, .+)?$"
+                },
+                "column": "Labels"
+              }
+            }
+          ]
         }
       }
     }

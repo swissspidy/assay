@@ -128,8 +128,10 @@ function applyOne(v: TypedValue, step: Exclude<Normalizer, string>): TypedValue 
 
 /**
  * An array as an unordered collection: the items matching `where` (a JSON Schema),
- * each mapped to the value at `pointer`, sorted by canonical JSON. Two collections
- * are then equal when they hold the same items, in any order, with repeats counted.
+ * each mapped to the value at `pointer`, or to an object of the values at the `pick`
+ * pointers (keyed by pointer, so the fields of one item stay together), sorted by
+ * canonical JSON. Two collections are then equal when they hold the same items, in
+ * any order, with repeats counted.
  */
 function items(v: TypedValue, step: Extract<Normalizer, { op: 'items' }>): Json[] {
   if (v.type !== 'json' || !Array.isArray(v.value))
@@ -138,13 +140,17 @@ function items(v: TypedValue, step: Extract<Normalizer, { op: 'items' }>): Json[
       'type_mismatch',
     );
   const keep = step.where === undefined ? undefined : compileSchema(step.where);
+  const field = (item: Json, pointer: string | undefined, i: number): Json => {
+    const x = jsonPointer(item, pointer);
+    if (x === undefined) throw new NormalizeError(`items: ${pointer} not present in item ${i}`, 'normalize_failed');
+    return x;
+  };
   const out: Json[] = [];
   for (const [i, item] of v.value.entries()) {
     if (keep && !keep(item)) continue;
-    const x = jsonPointer(item, step.pointer);
-    if (x === undefined)
-      throw new NormalizeError(`items: ${step.pointer} not present in item ${i}`, 'normalize_failed');
-    out.push(x);
+    out.push(
+      step.pick ? Object.fromEntries(step.pick.map((p) => [p, field(item, p, i)])) : field(item, step.pointer, i),
+    );
   }
   return out
     .map((x) => [canonicalJson(x), x] as const)

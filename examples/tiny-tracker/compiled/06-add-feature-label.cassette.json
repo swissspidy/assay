@@ -1,14 +1,14 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T07:44:04.596Z",
+ "recordedAt": "2026-11-05T11:32:21.051Z",
  "turns": {
   "sha256:b9f2382643f6d586ff840254428d53143dd3c724d0119f8798dd6d61ea5cdb9c": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01EnqB8wqexQwHT9fbTxRX5T",
+     "id": "toolu_01HtMUTzxfSxV4zThhgjhsAT",
      "name": "submit_rubric",
      "input": {
       "requirements": [
@@ -33,7 +33,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01EnqB8wqexQwHT9fbTxRX5T",
+     "id": "toolu_01HtMUTzxfSxV4zThhgjhsAT",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -66,17 +66,17 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:c043e238e86573acc5a2f52b0fd0de1bc7ed5a957d55368614821d5d4b2fe974": {
+  "sha256:ccd1e7a08ba72db0952c30b6c5200a860c0b57ab5ef6d95b7cb61669b6363479": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01Ezj69eoA6KeXwRGNMyV3Cq",
+     "id": "toolu_018p72jLTo5XX6uUbK5K7cDS",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01HRSX7e7kjcyiS4pMdhrdn3",
+     "id": "toolu_01ByjzFFMYSRovkySRkdatpM",
      "name": "network_log",
      "input": {}
     }
@@ -84,7 +84,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01Ezj69eoA6KeXwRGNMyV3Cq",
+     "id": "toolu_018p72jLTo5XX6uUbK5K7cDS",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -93,7 +93,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01HRSX7e7kjcyiS4pMdhrdn3",
+     "id": "toolu_01ByjzFFMYSRovkySRkdatpM",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -102,93 +102,51 @@
     }
    ],
    "usage": {
-    "inputTokens": 16315,
+    "inputTokens": 17853,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16311
+    "cacheWriteTokens": 17849
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:50c30f04f30f6ec0a9e3290c92a7e2f8e281ebaf74ad22a32f303fdbc1698fc1": {
+  "sha256:8c071f3c6d082227bbc6accdc39968a252b3387ca80f2931d3c9ec4804e3b1b2": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_012Dsfqzkxk8696TjcEsAxtE",
-     "name": "submit_checks",
+     "id": "toolu_01Hr6q586ocJRhZcGa4E1uNZ",
+     "name": "try_assertion",
      "input": {
-      "checks": [
-       {
-        "id": "r1-feature-label",
-        "requirement": "R1",
-        "description": "Backend issue #1 has the 'feature' label among its labels.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "issues"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "id",
-             "labels"
-            ],
-            "properties": {
-             "id": {
-              "const": 1
-             },
-             "labels": {
-              "type": "array",
-              "contains": {
-               "const": "feature"
-              }
-             }
-            }
-           }
-          }
-         }
-        }
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
        },
-       {
-        "id": "r2-bug-label",
-        "requirement": "R2",
-        "description": "Backend issue #1 still has the 'bug' label among its labels.",
-        "assert": {
-         "kind": "value",
-         "source": {
-          "from": "probe",
-          "probe": "issues"
-         },
-         "expect": {
-          "schema": {
-           "type": "array",
-           "contains": {
-            "type": "object",
-            "required": [
-             "id",
-             "labels"
-            ],
-            "properties": {
-             "id": {
-              "const": 1
-             },
-             "labels": {
-              "type": "array",
-              "contains": {
-               "const": "bug"
-              }
-             }
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "id",
+           "labels"
+          ],
+          "properties": {
+           "id": {
+            "const": 1
+           },
+           "labels": {
+            "type": "array",
+            "contains": {
+             "const": "feature"
             }
            }
           }
          }
         }
        }
-      ]
+      }
      }
     }
    ],
@@ -196,21 +154,70 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSsgYKEAgTGAI4AUIIdGhpbmtpbmcSDAGxA5+0vZd/B6DsDRoMKn6gJfIq4/nWXjaJIjAdEzCaBCQ/JUqjUH829e1jr7964j1mv1aAGFoUsa/75X7QkVVTeSlamekJoHvz448qzwXralqwB82K7vgpAUjgqWHp5hzQOqz+8YdANpg+R0hFYNh0j3UnwtaVQ7ewwVaO0M555gIDcRJv1p16uUdErhiuV6au/oD0QwWLwSkEWfRVdeqlBi/BUqXB8dw+fHin+jfs7nzwI/puGcqyIXTn/9IvWnHnL6AxAr8MfwRuyrBYgBbMxn9oKX4azLMgQzcLZkyRg0FBu8l3D4SGLmcnMC5lMXPjI7Pn0rbiUMbmXMDHspLVzGnoFZVCKsCrBhFbCpA/wzLKJB23qbG12CGgmJZa5gbvEuRqPKYsQartXzGu0hsue690hlU6MsKD7txdPjs/JshoCNJAwnXcpU5s7qexlqw5AvlrVPxHr+dtEsSu9d5o94IU79mOFH1kwYGu3JV6f0Zdv4hPh9JyhpQmonxuJi35U5yhBSTUJiWoR3SMSeqpnj4SDYzS+pd5Amlgx1Iz+L+3RdbctJL5fynkwY44+592yss4Ge6gqcKtNv/H5LNrEY5yfWSHprs8emH0CUx4H26wihHINM33/bixe6ykec9TsaH8FdJws895Qlq+KX4FYebeU32h/FMK0J2BvIHVo8Cw+9ztuRkhLux0A3DrOCHpW9gxGieLExRhTkAxfItLAC+g7MdnFyCrxD7ttokOBRNaOSLXgiAfIRgpq7Q5/qtygnrKKnbghw+9Zny0pQRLCKBb2I5UhU6HoqhNvGuhV2XSL8bfbV6/mZyZ2XsDo8RVwQLA7lpaw6oKOolG5OnnR9vKVCT96U1KDv2Q0syO44VnXZeywtRgYCIbkKJzA8ktswCy+j7VWiz22TMkod5Y0euZCZcmIovFnic2LZqOVf7wAnYBtUdM0Zj2gyBTl+afKv648kTXZyBlDoWDUEAd6eQhRgNvi5S9Wna7PeZYiYK44cC53TnTsYpniejV/kzoNXGhU+yS3CYXb9/x0iFy5GHwA0CevKH0y2H/cBgB"
+     "signature": "CAQS5gUKEAgTGAI4AUIIdGhpbmtpbmcSDGUKQyztS8Vk/mounBoMt+pKIV59gJMPpqW2IjCNPFLjUmffdLRLh2m9gy307s26RwPCflaf8URXmLaciaXCQiHkOaMRQZ3kRZsXOj4qgwW4faX07YEJe6X/6qzvKWUV4f6MOzfmiHUvn9fAakT5I4684u+nTr4EcO6qxBAb1uZdl0lFwXpqEEFbrgkX+S1+dcpBCSggGDKNedlECFeaqD35nQuO1yRc/QrTpAoygQsnm/iDeB2+LLipk43R2h3ACK3w3CN+4zt2YRicdqFVXQ/mUkdBTTyk7DWs8qFJ6q2UGXoq+QHFftg2ijH3BIbHpXlrnpFuLtJzT4wbll7rsCQkXuIOBMNWlfCugNiCVRp61FE/O2zMOjw17NFLpal5xqUzUlnvSliWKgYWncIAbApB8vAixL3B7SjWLR1lLJQOYUlhHnZzK7TnpETrIr7agtbqHIePjRCBtMkPdWIH35M5myULQ0RGIfnjAq9rpOJppWFHH4etxgggMrfxnijfu0Z7mYe859ZguAcqt9DCOmMACF3Kxd5ZC7B8PRAXUEvwJJr2YbeB532hJl1GNbVGwsdmHG8tUK3vTpL98Kh7I1jmG9NMrjnz58hJ2OctEySPli1YxQ5UlWYONpHE8ehRcMaSTBOCSfTt9WkngBxOJiKoT6odMa6tryzw5NkHjE7ZBwhLvEKbM3n28MMkW0/jWCu3meRmo+Mjtln8snkDB/xgffcD4b5hiY4TqLjCblwt+g9kOcFApShvPUUuMLHw44xwWIlwo4gU8oV3FCJ9I8zh2kWBj5Fldiok4hBRDQJmtaE9dGh29HlQe6gw9/UDAsu2a5/w2O6owQe1EtJ/LhtGabBFsQUPSybbKfXS/kBJZSvqT+NBnECENhd4RWeQaaCgomxRizfQx+SsNwCYG6UO2o3FcnZ0JxZTT+ChsDgZI3YSvIU9afVtKEa9M40qygjJGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_012Dsfqzkxk8696TjcEsAxtE",
-     "name": "submit_checks",
+     "id": "toolu_01Hr6q586ocJRhZcGa4E1uNZ",
+     "name": "try_assertion",
      "caller": {
       "type": "direct"
      },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "issues"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "id",
+           "labels"
+          ],
+          "properties": {
+           "id": {
+            "const": 1
+           },
+           "labels": {
+            "type": "array",
+            "contains": {
+             "const": "feature"
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 18326,
+    "outputTokens": 188,
+    "cacheReadTokens": 17849,
+    "cacheWriteTokens": 475
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:39a507d0301a1e1dab10b05dbb5006273d8986f3327c9888b93f32b7940471ed": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01GkxDHWUHDjANxhZLpPJ7mw",
+     "name": "submit_checks",
      "input": {
       "checks": [
        {
         "id": "r1-feature-label",
         "requirement": "R1",
-        "description": "Backend issue #1 has the 'feature' label among its labels.",
+        "description": "In the backend, issue id 1 has the label 'feature' in its labels.",
         "assert": {
          "kind": "value",
          "source": {
@@ -245,7 +252,91 @@
        {
         "id": "r2-bug-label",
         "requirement": "R2",
-        "description": "Backend issue #1 still has the 'bug' label among its labels.",
+        "description": "In the backend, issue id 1 still has the label 'bug' in its labels.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "labels"
+            ],
+            "properties": {
+             "id": {
+              "const": 1
+             },
+             "labels": {
+              "type": "array",
+              "contains": {
+               "const": "bug"
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01GkxDHWUHDjANxhZLpPJ7mw",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "r1-feature-label",
+        "requirement": "R1",
+        "description": "In the backend, issue id 1 has the label 'feature' in its labels.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "issues"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "id",
+             "labels"
+            ],
+            "properties": {
+             "id": {
+              "const": 1
+             },
+             "labels": {
+              "type": "array",
+              "contains": {
+               "const": "feature"
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       },
+       {
+        "id": "r2-bug-label",
+        "requirement": "R2",
+        "description": "In the backend, issue id 1 still has the label 'bug' in its labels.",
         "assert": {
          "kind": "value",
          "source": {
@@ -282,10 +373,10 @@
     }
    ],
    "usage": {
-    "inputTokens": 16788,
-    "outputTokens": 423,
-    "cacheReadTokens": 16311,
-    "cacheWriteTokens": 475
+    "inputTokens": 18594,
+    "outputTokens": 393,
+    "cacheReadTokens": 18324,
+    "cacheWriteTokens": 268
    },
    "model": "claude-opus-5-5"
   }

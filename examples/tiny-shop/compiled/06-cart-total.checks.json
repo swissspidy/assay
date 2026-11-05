@@ -22,7 +22,7 @@
       "text": "One Blue Mug is in the cart.",
       "source": {
         "field": "instruction",
-        "quote": "one Blue Mug"
+        "quote": "Add one Blue Mug"
       }
     },
     {
@@ -46,9 +46,9 @@
   ],
   "checks": [
     {
-      "id": "r1-backend-total",
+      "id": "r1-total-backend",
       "requirement": "R1",
-      "description": "The backend cart probe reports a total of 21.50.",
+      "description": "The backend cart total is 21.50.",
       "assert": {
         "kind": "value",
         "source": {
@@ -65,7 +65,7 @@
       }
     },
     {
-      "id": "r1-page-total",
+      "id": "r1-total-page",
       "requirement": "R1",
       "description": "The cart page's 'Cart total' status shows $21.50.",
       "assert": {
@@ -110,7 +110,7 @@
     {
       "id": "r2-blue-mug",
       "requirement": "R2",
-      "description": "The backend cart contains a Blue Mug line with quantity 1.",
+      "description": "The backend cart holds a Blue Mug line with quantity 1.",
       "assert": {
         "kind": "value",
         "source": {
@@ -124,15 +124,15 @@
             "contains": {
               "type": "object",
               "properties": {
-                "name": {
-                  "const": "Blue Mug"
+                "sku": {
+                  "const": "MUG-BLUE"
                 },
                 "qty": {
                   "const": 1
                 }
               },
               "required": [
-                "name",
+                "sku",
                 "qty"
               ]
             }
@@ -143,7 +143,7 @@
     {
       "id": "r3-red-mug",
       "requirement": "R3",
-      "description": "The backend cart contains a Red Mug line with quantity 1.",
+      "description": "The backend cart holds a Red Mug line with quantity 1.",
       "assert": {
         "kind": "value",
         "source": {
@@ -157,15 +157,15 @@
             "contains": {
               "type": "object",
               "properties": {
-                "name": {
-                  "const": "Red Mug"
+                "sku": {
+                  "const": "MUG-RED"
                 },
                 "qty": {
                   "const": 1
                 }
               },
               "required": [
-                "name",
+                "sku",
                 "qty"
               ]
             }
@@ -174,30 +174,30 @@
       }
     },
     {
-      "id": "r4-cart-url",
+      "id": "r4-cart-open",
       "requirement": "R4",
-      "description": "The browser ends on the /cart page.",
+      "description": "The browser ends on the /cart page showing the 'Your cart' heading.",
       "assert": {
-        "kind": "url",
-        "match": {
-          "path": "/cart"
-        }
-      }
-    },
-    {
-      "id": "r4-cart-heading",
-      "requirement": "R4",
-      "description": "The page shows the 'Your cart' heading in main.",
-      "assert": {
-        "kind": "contains",
-        "scope": {
-          "role": "main"
-        },
-        "match": {
-          "role": "heading",
-          "name": "Your cart",
-          "level": 1
-        }
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "url",
+            "match": {
+              "path": "/cart"
+            }
+          },
+          {
+            "kind": "contains",
+            "scope": {
+              "role": "main"
+            },
+            "match": {
+              "role": "heading",
+              "name": "Your cart",
+              "level": 1
+            }
+          }
+        ]
       }
     }
   ],
@@ -207,6 +207,6 @@
     "modelsUsed": [
       "claude-opus-5-5"
     ],
-    "at": "2026-11-05T07:43:57.172Z"
+    "at": "2026-11-05T11:29:53.844Z"
   }
 }

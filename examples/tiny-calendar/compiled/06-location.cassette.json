@@ -1,14 +1,14 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T07:44:07.824Z",
+ "recordedAt": "2026-11-05T11:34:39.142Z",
  "turns": {
   "sha256:eacf63644527457e63499685cab63bbefc82204cbb23ce5f13902d768111aeed": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01NpJHCW2fp5WfPi4qZPooHr",
+     "id": "toolu_01PCchiAPLYz1DyjQgBMvXJY",
      "name": "submit_rubric",
      "input": {
       "requirements": [
@@ -26,7 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01NpJHCW2fp5WfPi4qZPooHr",
+     "id": "toolu_01PCchiAPLYz1DyjQgBMvXJY",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -52,17 +52,17 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:98749a4cf0dfe14a7c50e66eed562e59724b02a928fdc4043d87a559a9434094": {
+  "sha256:36faaf023290db9aac52b3b146cc02bc194b850ed81bc6a2eaa520fb1de6dc41": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_015oA8MeVqCHtAhJsST5SzMy",
+     "id": "toolu_01NivdDE1fdHXYM9tBHhw8f7",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_01XDjyYbYMmU47TXqjtHZcMM",
+     "id": "toolu_014TCNM1BejaB4nrTiapTDJV",
      "name": "network_log",
      "input": {}
     }
@@ -70,7 +70,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_015oA8MeVqCHtAhJsST5SzMy",
+     "id": "toolu_01NivdDE1fdHXYM9tBHhw8f7",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -79,7 +79,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01XDjyYbYMmU47TXqjtHZcMM",
+     "id": "toolu_014TCNM1BejaB4nrTiapTDJV",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -88,26 +88,26 @@
     }
    ],
    "usage": {
-    "inputTokens": 16208,
+    "inputTokens": 17746,
     "outputTokens": 48,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16204
+    "cacheWriteTokens": 17742
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:c10068e29a00c3bc869d8f15497d607208efae1e5a5ebbc663dff9f60ec4ccfc": {
+  "sha256:540be35aa8b487bb0c8205e2309f3350dfe51bc868e4e9b3c209dcfe32c6fbbf": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01H4jY1F6HKURsQBZk5J5WKZ",
+     "id": "toolu_01J7zN8Su6KrWPEY3cLzdVH3",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "bookclub-location-probe",
+        "id": "R1-probe-location",
         "requirement": "R1",
-        "description": "The backend events list contains the Book club event with location exactly \"City Library\".",
+        "description": "The backend event with id 3 (Book club) has location exactly \"City Library\".",
         "assert": {
          "kind": "value",
          "source": {
@@ -120,10 +120,14 @@
            "contains": {
             "type": "object",
             "required": [
+             "id",
              "title",
              "location"
             ],
             "properties": {
+             "id": {
+              "const": 3
+             },
              "title": {
               "const": "Book club"
              },
@@ -144,11 +148,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS8gcKEAgTGAI4AUIIdGhpbmtpbmcSDNkN4tO6LbHtuOyZMhoMukQqHTLtPqCMk/7qIjBNvkf518jpq27YsBrMfRS3WQhlt604om6dyiQbWPFd50QNX1kHniyvKErJFJ46xp8qjwcgLOA8Mn9HkExJMdSaCDNS8Xg5DMT05CXiktAOU3gnoFMjYRLqR4PS9vCVe6DH1G03+pyAPUZj/f0uJWgVJiXv8gAp/EpFUNWNylQNIjcBiJbWcMSUPxXZTNZPj6JicDhmOADsZr2MeeRrCSUtdFzZcaLFAI7+l7vlQ4ERof3uA9VjjzQ69JJxSRc+Zg4nKeQTcrJVbestNRoN3KnslR6CC9DDH7GtuMBiZyPPw8yDE1yQMPqg0aL5bhVMy25qNKa/wTUH7Qup3iq+ie+xXMgDpn7/XdCev65LjJc/RlGibPY6R+Ah94E7NUz3H98x2OFiC26AJHMovXP9gaBIrgKe491bsUAfQz4UZqwv4/IosXD3R8H5x6qQAoVaFNVHQ1AnnCJcn1HVuhqKNlY3usk6DM3N/DR4iFVLc9BzLAtJVF4opbvRIu4w1Wtv5a6eF70NqOQI4gyi597CtK+yNhSE/KTJzuHOYCi57vyeANlyQcrwLv3WBmLmtqI67fWLVBBHMNhmiCH+6bF7EEhZZA03Zuw1QfDenrwMUwCoR5cBvHbBlS1XXApauWkOp3Cu9DX0dJWREo7FIL3SKp2KXL+9eHngItFA5y+tP0sDA9kSdiCzpaB8+z47yEX3alC0honasPPY5M5XXIEXirqfYcMIaUSAkGcjMVfGPHicd0+QVa5JG0rgxXsZi+glt+inmbKVzfQ19An7s029VLA5a/TpMV+37jkFnXiIXSd/CIVXBOFGGnof9a0HOsC6Q0VGw7JLIR9TurXX0OCntOJ+Z06EomSrxwt83QVSN57yokeiZnsAhB1sfj89azqpuDNyUR6DmTqc4PgMOWoboUCwhItpCFZhQmmiUIbdqdL+Z0KrXirZp+eY6lHsaWMzAwDOYk7AebdXLOP9c0QQanhzegozUMYu/GOqXDjuC96tTEVh/+86ZLruC6XoJphPr1wWPaSSLTi+KrRptXdJiUSAL6hAWWmqh1EITrbMUXbYMre0gBBqt7GUfDoAHJGXKPvfaNL/+8Hx/WbNCGyF3BM4cks81e7/dWjpaukeI3JlO/a64u7VBICpis+kmd3L5rHHCubqt4A3XzuNmP+8t1ZmKFlzCIGULI6eVkCfP96aoPy2h1O6s0ADwd30MzGuv7lS6cq+WIzoNbcbxwPS5SYEKGunVnxzIH5KecR4kFKVZMc36137QgYTaxGydOYOTnsmXBgB"
+     "signature": "CAQS/QcKEAgTGAI4AUIIdGhpbmtpbmcSDOUsQ2xMF7ElLnThwBoMpWwtg6ZoKTDHjFc3IjCaHf6LqEDV7GSrPBocAKOaYj2hVgygEdKDYSuX8JRxThbfu2JdIi9zIlhAUzDLvIcqmgeaIB0LdIbyWnMHk6cKfhpHeUidv397Y1hnaaQD6nlp3HGX735eNA+K5Fifdqjo0Xvb5DxY07tuUTEwEVT8Ueu9YUzIfOyTcTFqglVmfun4Xz54K8xQJ/8W2+BHFuitWXCWmLxRC/CgDp7iGUN8tfXaoTBMvx3ENNGpFrtDdzo/1D4x2hcGgk9WZytnwZXxWcLpsM0csKP1grX57wJnZFe2C4Dppi3mQD4ljNSNE5r0m5G7u70FZbnMKDPYuqM6Nji4tOE8Cxq9TVjublgw1I4ejJoYh9bsUhI85gGYqlHo+8ktaMdiGokOrXvLF5xxQ+vW/GjFZQFYFz4BH0A8YanMJVRZ9tS7+H+kxS9mRh1+/jNC2hd4cgnc9xxp4rIo19Y8je+tYL2btRxtCToYIs5JHv6ir+uZIM3zYaMmJTvfAHulMkDqHvpq+6KZgRez60y62Lzl7eReHhJBqBhnl52iSJKhEQsb5jrUyY4dDpkS5G33y+I0lGPFQmsEhh3DFmqH1NpDU6nPESVGlu5btJ7QEzzHzfk/tUr4or/qTa7/0q1I4UJomn1j2Sh78sYHmqPFPkhQ+IiIf2Q/DbIgI6I2F7hI0Csqy0BhunB+AgvtU3VCRfA4WQ0hUOM3cS1N+oEGp3gR0hgh8pqz3rVBnW7vZpJ8eHoL/nqPa96N0hkdqW1zUo2QPzuOsZbWzadyZq3S8rU/DmpWpTcfnUBLlHNek7njP0ew0C3wO6KwT4nK5T8es1npzjKwnIbTWLVkfDD9XQ+FEqJuIz3GXzjhPWVkIJotmT+SCi1kAVRKXyvbbkSFYsrfaLSEjxOIkjU1tFJBZaLYsid6/Mg/YuAKx2s7B5gOu/wwSMDo73zev0p5xKWZanIPnkjPc0XLEUDDrIMmXShH+W7Osc2xsq3F8A1r6mr6FRdPfyOx7/j2v90VxpeprmATCEywR+MslURsVMx4I9OtTxUXrHgPGDOUjo5CsS5afZsomP04SPIA7hWgNDPCBChfihMZoBj7lpUIMVkX7Ul0xqiyoJv4Cy8yQs+S5BEjZ65kljJRrNda8vrzYTtRcQRWV6jJroGdEP0ntq7PUmPtaPoe9NmV5WaD9RtJ1V+kSHeA43xttQmokUpqAbFCt5c+Gq6CiCXaYk1LqyQbhDFyENNRyogO84LcaJI+Yq7iXo5eMLW3d2cx9fqSy8+TBMJhzmpynzG9F0NRkIqlAiQq3Vb5ErYyGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01H4jY1F6HKURsQBZk5J5WKZ",
+     "id": "toolu_01J7zN8Su6KrWPEY3cLzdVH3",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -156,9 +160,9 @@
      "input": {
       "checks": [
        {
-        "id": "bookclub-location-probe",
+        "id": "R1-probe-location",
         "requirement": "R1",
-        "description": "The backend events list contains the Book club event with location exactly \"City Library\".",
+        "description": "The backend event with id 3 (Book club) has location exactly \"City Library\".",
         "assert": {
          "kind": "value",
          "source": {
@@ -171,10 +175,14 @@
            "contains": {
             "type": "object",
             "required": [
+             "id",
              "title",
              "location"
             ],
             "properties": {
+             "id": {
+              "const": 3
+             },
              "title": {
               "const": "Book club"
              },
@@ -192,9 +200,9 @@
     }
    ],
    "usage": {
-    "inputTokens": 16754,
-    "outputTokens": 316,
-    "cacheReadTokens": 16204,
+    "inputTokens": 18292,
+    "outputTokens": 348,
+    "cacheReadTokens": 17742,
     "cacheWriteTokens": 548
    },
    "model": "claude-opus-5-5"

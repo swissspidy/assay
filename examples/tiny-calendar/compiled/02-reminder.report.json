@@ -7,20 +7,20 @@
   ],
   "turns": {
     "rubric": 1,
-    "discovery": 3
+    "discovery": 2
   },
   "usage": {
-    "inputTokens": 51834,
-    "outputTokens": 1241,
-    "cacheReadTokens": 33333,
-    "cacheWriteTokens": 18489
+    "inputTokens": 37593,
+    "outputTokens": 1448,
+    "cacheReadTokens": 17923,
+    "cacheWriteTokens": 19660
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "Then an event \"Yoga\" exists",
       "checks": [
-        "r1-yoga-exists"
+        "R1-yoga-exists"
       ],
       "channels": [
         "probe"
@@ -31,7 +31,7 @@
       "requirement": "R2",
       "quote": "Then the event has a reminder",
       "checks": [
-        "r2-yoga-reminder"
+        "R2-yoga-reminder"
       ],
       "channels": [
         "probe"
@@ -40,9 +40,20 @@
     },
     {
       "requirement": "R3",
-      "quote": "on November 7, 2026 at 08:00",
+      "quote": "on November 7, 2026",
       "checks": [
-        "r3-yoga-datetime"
+        "R3-yoga-date"
+      ],
+      "channels": [
+        "probe"
+      ],
+      "trust": "structured"
+    },
+    {
+      "requirement": "R4",
+      "quote": "at 08:00",
+      "checks": [
+        "R4-yoga-time"
       ],
       "channels": [
         "probe"

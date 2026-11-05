@@ -7,21 +7,21 @@
   ],
   "turns": {
     "rubric": 1,
-    "discovery": 4
+    "discovery": 3
   },
   "usage": {
-    "inputTokens": 74870,
-    "outputTokens": 2974,
-    "cacheReadTokens": 53709,
-    "cacheWriteTokens": 21147
+    "inputTokens": 60039,
+    "outputTokens": 2012,
+    "cacheReadTokens": 38600,
+    "cacheWriteTokens": 21427
   },
   "coverage": [
     {
       "requirement": "R1",
-      "quote": "Then an order is placed",
+      "quote": "an order is placed",
       "checks": [
-        "order-placed-request",
-        "order-placed-probe"
+        "r1-order-request",
+        "r1-order-stored"
       ],
       "channels": [
         "network",
@@ -31,9 +31,9 @@
     },
     {
       "requirement": "R2",
-      "quote": "Then the order ships express",
+      "quote": "the order ships express",
       "checks": [
-        "order-express-probe"
+        "r2-express"
       ],
       "channels": [
         "probe"
@@ -42,23 +42,25 @@
     },
     {
       "requirement": "R3",
-      "quote": "Then the order confirmation is shown",
+      "quote": "the order confirmation is shown",
       "checks": [
-        "confirmation-page",
-        "confirmation-shows-latest-order"
+        "r3-url",
+        "r3-heading",
+        "r3-order-number"
       ],
       "channels": [
         "url",
+        "probe",
         "a11y",
-        "probe"
+        "text"
       ],
       "trust": "structured"
     },
     {
       "requirement": "R4",
-      "quote": "in the name of Ada Lovelace",
+      "quote": "Order what is in my cart",
       "checks": [
-        "order-name-probe"
+        "r4-items-match-cart"
       ],
       "channels": [
         "probe"
@@ -67,9 +69,9 @@
     },
     {
       "requirement": "R5",
-      "quote": "Order what is in my cart",
+      "quote": "in the name of Ada Lovelace",
       "checks": [
-        "order-items-match-cart"
+        "r5-name"
       ],
       "channels": [
         "probe"
@@ -77,7 +79,9 @@
       "trust": "structured"
     }
   ],
-  "warnings": [],
+  "warnings": [
+    "check r3-order-number: reads free page text, which is the easiest evidence to spoof; prefer a11y, network or probe evidence"
+  ],
   "references": [
     {
       "name": "express-order",

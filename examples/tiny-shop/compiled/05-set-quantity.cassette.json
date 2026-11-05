@@ -1,21 +1,21 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T07:43:47.567Z",
+ "recordedAt": "2026-11-05T11:29:39.162Z",
  "turns": {
   "sha256:77749a43136ba4b74a146ba091731a7a0ea359b54464907cc88a39bb9f9d834c": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_014u8T6hqp1pEwL998C9D4Uo",
+     "id": "toolu_01GnUbxF6mjja5FLCvR5CD4L",
      "name": "submit_rubric",
      "input": {
       "requirements": [
        {
         "id": "R1",
         "kind": "hard",
-        "text": "The cart shows the Blue Mug with quantity 3.",
+        "text": "The cart shows a quantity of 3 for the Blue Mug.",
         "field": "outcomes",
         "quote": "the cart shows 3 Blue Mugs"
        }
@@ -26,7 +26,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_014u8T6hqp1pEwL998C9D4Uo",
+     "id": "toolu_01GnUbxF6mjja5FLCvR5CD4L",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -36,7 +36,7 @@
        {
         "id": "R1",
         "kind": "hard",
-        "text": "The cart shows the Blue Mug with quantity 3.",
+        "text": "The cart shows a quantity of 3 for the Blue Mug.",
         "field": "outcomes",
         "quote": "the cart shows 3 Blue Mugs"
        }
@@ -46,36 +46,31 @@
    ],
    "usage": {
     "inputTokens": 1122,
-    "outputTokens": 120,
+    "outputTokens": 123,
     "cacheReadTokens": 0,
     "cacheWriteTokens": 1118
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:4cff89648cff61c4a36a61c16308ef81763e4b4437ae08ccde74ced243908437": {
+  "sha256:fbac58f3e67c38e90283742fd197e297c6560234e7c863bb25d8ecb530277a66": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01YX3h1GK9HBD63rF9bx5TUF",
+     "id": "toolu_01NE83XKuG46CZvjr5R7U12K",
      "name": "page_outline",
      "input": {}
     },
     {
-     "id": "toolu_01Vj7JGoSmCEMRjptrUzM5Md",
+     "id": "toolu_01Awg55s4ctkCyWbaajdvmXf",
      "name": "probes",
-     "input": {}
-    },
-    {
-     "id": "toolu_01WCwGMvQhbt3ytXQxPXKNDf",
-     "name": "network_log",
      "input": {}
     }
    ],
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01YX3h1GK9HBD63rF9bx5TUF",
+     "id": "toolu_01NE83XKuG46CZvjr5R7U12K",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -84,16 +79,41 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_01Vj7JGoSmCEMRjptrUzM5Md",
+     "id": "toolu_01Awg55s4ctkCyWbaajdvmXf",
      "name": "probes",
      "caller": {
       "type": "direct"
      },
      "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 17800,
+    "outputTokens": 49,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 17796
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:4a1a25c618c5662832470fb0695f95d019539eca638fee9b55ff366f8cbef6ee": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_012JA2wnQDak5ay2z5Pd78zG",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS2QYKEAgTGAI4AUIIdGhpbmtpbmcSDE7+OSBRTSS+3lujBRoMQBaoOj3wrDpP8ulcIjBu+yj0U15FmBqjrqd2lak8fNljwqmGd1kiy77lU82h+9P8/hBMyrkEA9M/jey04xIq9gXamJgerROsStLIA+lwbVauDLQfv6xOP5xG4njPMI6VwwfJ1pQwgj04r7PFzcTpZlz4xP0tJMN5Ux6rzDqNXjD9HFmlKe0Sy3TZ4jDDJWLgChkHFuD8mFbFuoopFR2pmVh3FtNjZspRtAApD/Ybj/dcn2Yps9Nm4ueBUBt2LTELZdq0PvZoe+urf/FbjUK7pMOSB0wisyxCStHlGvZaboXjZXZRgxbLJTy8eNiINavqk0EEcvEZXRHmZb22cvbZZv5oCK6bZJEssjUNc0GG92HzrAtraRwphxW4yHPQrgei4FZASBsxFsnvZ8Fb6Gc+Ky5YyrecG0ap5N70YWkH6AkJzYtMLa/RTvKx2uh0xy7+pwbHX/e9JN7LRLUt6rsqRtIWhdYfzKMhLzNqWg0rs5BZTspnf6VNpCzgH33m73mBoIAqkZuGXzgApyNeDVUe9q5jHEv4NZV9p04HPIzcHlSN+Tt/pj5Us2gJlqkc4/xjsO+mEkwmbMUJJv5IpgU+Xf1rkencW6z7hPoblmVfFs9S2GPv7+GnOEoSg4Uxlkx6OySwc9SDRNE4jCoAyW7cZ9XgS1NNyd3GDRwIorlqRttyqwyAh5Pse1MmLs7XSd0SDnafapNWq7n9saSMXQ++bSKiK3sj6L7oLKF2DRJn5Wh0yUAwERFjgbn5G1zbfzKmpPYTXGDRryRLKhQbOdvvrSviXWzb9SYfUkZO6IRxNeJwzVC3zja9Q4nBjNGe70TTZrQz+RJ8bS4mryHjs9vYBCHnY3DeG2ZPOZNL/I4Q8ew6hb7wDqx5otAyC0t+ZmWIO6a/v+gcl7cf54VHj4jXWLFtVsNHZNR/Z4ZeospxRRRHy67tdPYLZCynTnifZbEupF5GtvuLVag27z36dWaiyU2h90Fr5ANVtesJi8Xy2ui727JHJZ/C+ajK8HyjZ7Pkdn9a8GZWEP3EpGRcJEmohtugs5zZN0erLkbakA/Wl0LayeQoFG/r/bV/bWt5Xm8Xso88JcPOQRgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_01WCwGMvQhbt3ytXQxPXKNDf",
+     "id": "toolu_012JA2wnQDak5ay2z5Pd78zG",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -102,26 +122,26 @@
     }
    ],
    "usage": {
-    "inputTokens": 16259,
-    "outputTokens": 72,
-    "cacheReadTokens": 0,
-    "cacheWriteTokens": 16255
+    "inputTokens": 18459,
+    "outputTokens": 106,
+    "cacheReadTokens": 17796,
+    "cacheWriteTokens": 661
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:a47cce39dc90505401b2bb14320ab0ed33d06202401cad91761efd821ddc8b94": {
+  "sha256:1a7741eba968088a2e18b0e3f7794d71978b1c2bbfbf15be80c7eaa96daf46a8": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_017Tp8KsFNYb4Ka6UjXW8Uvo",
+     "id": "toolu_01MSXdnALNiNuS6R5upzV71T",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
         "id": "cart-probe-blue-mug-qty-3",
         "requirement": "R1",
-        "description": "The backend cart contains a Blue Mug line with quantity 3.",
+        "description": "The backend cart holds the Blue Mug (MUG-BLUE) with quantity 3.",
         "assert": {
          "kind": "value",
          "source": {
@@ -134,27 +154,27 @@
            "type": "array",
            "contains": {
             "type": "object",
-            "required": [
-             "name",
-             "qty"
-            ],
             "properties": {
-             "name": {
-              "const": "Blue Mug"
+             "sku": {
+              "const": "MUG-BLUE"
              },
              "qty": {
               "const": 3
              }
-            }
+            },
+            "required": [
+             "sku",
+             "qty"
+            ]
            }
           }
          }
         }
        },
        {
-        "id": "cart-page-shows-qty-3",
+        "id": "cart-page-blue-mug-qty-3",
         "requirement": "R1",
-        "description": "The cart page is shown and the Blue Mug quantity field in the Cart table reads 3.",
+        "description": "The cart page's table shows quantity 3 in the Blue Mug row.",
         "assert": {
          "kind": "allOf",
          "of": [
@@ -165,28 +185,43 @@
            }
           },
           {
-           "kind": "state",
-           "target": {
-            "anchors": [
-             {
-              "role": "spinbutton",
-              "name": "Quantity for Blue Mug"
-             },
-             {
+           "kind": "each",
+           "scope": {
+            "role": "table",
+            "name": "Cart"
+           },
+           "match": {
+            "role": "row",
+            "name": {
+             "contains": "Blue Mug"
+            }
+           },
+           "count": {
+            "eq": 1
+           },
+           "assert": {
+            "kind": "value",
+            "source": {
+             "from": "node",
+             "target": {
               "role": "spinbutton",
               "name": {
                "contains": "Blue Mug"
-              },
-              "within": {
-               "role": "table",
-               "name": "Cart"
               }
+             },
+             "field": "value"
+            },
+            "normalize": [
+             {
+              "op": "number",
+              "locale": "en-US"
              }
-            ]
-           },
-           "expect": {
-            "value": {
-             "regex": "^\\s*3\\s*$"
+            ],
+            "expect": {
+             "approx": {
+              "value": 3,
+              "abs": 0
+             }
             }
            }
           }
@@ -201,11 +236,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQSzQgKEAgTGAI4AUIIdGhpbmtpbmcSDMEgbaPpJ+tFquwbtRoMyytkTZOWc8/Em3RGIjBsSi4QH5u8UF78Odk+vWV5vipz80J4gWNfVC7UtSDgZEYwIu+9/MhkQ5yqiUSVM14q6gdZp/LkU9TzAYRnUWsJUmR0ACkUiAdpfVUbCdNCUhoHPLMLlPn+aYPGt+mB3yecs/BGpkmyQ5BNVGzTRHerCdWxso9n/buPVQ4a+M4KHzuLfHO98SXZQUyE8DAmkFrMw8UpRA4Did0+wTcKp9hrhjgXuXeKlms2N++2Xdq2M2+ArwOBn2IYixPPzCNN2IDsA6PtKLMnrHMa9oe/fUHjkLPTrUKaptIfrfeUTiw8Ex6FATJe0DMPxA33sAGozzKUNttdn7kB9PDWGGz2yomYyCC+RIdXcYFC0i3PWTqefKNIYpXF8EUjN/yesi0etAnLhMNWmseJF296Lg61mBdGDBwMNr8Ky5q4dG0AULw19eXpTmpfByHL/PA0zsC8nMkX4zMqbE6HTlREY8FRwkyJGb1ZCHjMq1KChxxOKkCXI/O1Tv330xZt+yDcgtoZAnpsk6Hnk1Rplbcqsla5PwxO1sCUpQE197yB2OOfsRhUyskXMofcN59rCEYw/HDngj4TfFIrW7vCrNyKHV+bQE85QnZBaTPm8RrHJaEi7uVAsiWaENP/QIfngkN2gUm+YLtNDFe6HJhQQVaC9Oq907sylldkiskhZhjXYzmjbnWuqb7sVMjzTfQNW288djqjIIRsFfpcSQH8gksATSTxV7KYlOyl8ofIT0ZjXpgfzhU6bf7GUMXfVLekQni06c21MQJaz8V1slYo0Dujl4HRA8HvIiBMJZ3fvQkh7NTMJG3UAJ1fWnJzyu0lJu8Cv5jZyr7nWgnV4yq2wIL3ztqAFeQ3IRj7tFoRfKRqOxGaHmBZBSQEeTA8XDNH8O0ndG91SvFwbvJwF5gn1l89+QLuBFPMBbf127gWtxNwH1xo0YqLJeo7zYHELqZ58NcE6G8iv5dSvHmlpoKd/Pu2DycTSH+94nWp2hE6/y5kMDN2K4cieo3ddhxp9MR6uTRKz32IT3DMYLr6wFOAXXJdJoDGf1N4n0PlmwZM9C1nYbz4/dMnc8W8m4LSiNUHHsjRkS8CbdZV+GGX3jzsLW27HdzfUJUrjcsumLmL08o63cTJe2694Cy3NmTyUG0BI3QiX6TznNywXxmmLCCfabxGHUaQPewu5MQFIF5M4t6Ngtz1JD6qJ1OqsCF8orjeMps94ppxGgEcZc78yXc+KHnEL/VVFMxXnAC7Y6goZOpv+3Qo3eKuB+ux+fFpLy4v8YoHpJeUWRYyVO0fqjz5myjDPp3MEDEkDguEstah51JdcwAaDaRFehqqiZTlelCMKXsHb6mpysiNSYYF6WP8WJiKEpohdBSAWACDo7vcZaEgoaZIKWYMVpi4xzsdVowVGArCq7IYAQ=="
+     "signature": "CAQS4QYKEAgTGAI4AUIIdGhpbmtpbmcSDB++36q9DFD45oR4WRoM5BDzEWRqi7Yn4zQiIjDFymchjJN8FvZmy+SYgywFCSf2oOvPo2TB8HEfxhLjS0Gqx0E9/GdokV+AyBUY54oq/gVpYqvBCyeyTCPuCkKw0FDa2m4lODuSE7FIihPN8/ukbk1nI8NFvf5+HKtPAx8xEc/FEvgoTA1tbhyXhIqXvrnmgLRA0lzE8kJuvpoEBF/w1KdO2InLrXFtgVYB/rxX3y6P4s/CQlTKLVRlXa0+7HC+jG6BAIhlKApP1nkGGiyR7H33D5PNgES2PEZPAS0wOabEEL+fy/9JllSSoTnfmG1SizeUza3GpftRCQ+FO4DSKFSZpV8GtR9lVeOe9qcZAdlJCyjRQWn6x0Xm2KqaCzMX+YH/RKfG9cKFa7OMCCY1p7Ust8KSlvhF4pu+zwAW27bFDC6RJAF5S7ttazTZKPr78QRcwZIJzmPR2uqS8AZohrJFACI4mjnjv0G2akVXyZSkGvqraLsoIXU3Is6Wqcb2kzIZy9lFLCArw0cB7YCjQdSwrVdbWL8XacFCNeUB5dxpd45wGRIbo5oIBJOAOrL7od361suLDRVHzsvXfah4tpSWpcI5GER01vZw2I1VQCaJCFbJWxJAVXoyge1h6QHhcErT58YPaZjIs39Csaqo0HZc/SKREb4d9BbVtgqBt5r137pIZmfhaIOxtYBrXIn4tA9KFVpO/tr4bTm3RZkstAu1hdMhMNOLC6vWty7w07WLdVbP9pZD4eCfLiNZgkHafunWWffYWjCvlbGdQOBNofcHuKOPbOGkDE7IWHMJSZRTVXJhN1e0V40eQ8bjp3TXbV8cKks7l9Z5QPiao3Yx4qpJsG2dEONl4Ud4azFewIjcGqI+XyJzb9cCfZysPxqnx6zgd2gMjCSLAUDArB73q1h4xdGnJNcVbEvwbukH4aRS0QWQT1JADCTjdJYpmXRnwZsLKFS2QPYEMNr/6afc9jKEUwMJgFV23XIXlJzlBDp5puzkH8uqUuXhX4bIg+/mVDIW5cAs1dTZ0SBgqMTKiIdhuuo3LRtC/Q2SdSnE8w2CRT6l7YB/Mmriw/CW3XwI73n4VzVbJPsZPh03+pXg7v2cfqKQ2TO9ZTbicBMfGAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_017Tp8KsFNYb4Ka6UjXW8Uvo",
+     "id": "toolu_01MSXdnALNiNuS6R5upzV71T",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -215,7 +250,7 @@
        {
         "id": "cart-probe-blue-mug-qty-3",
         "requirement": "R1",
-        "description": "The backend cart contains a Blue Mug line with quantity 3.",
+        "description": "The backend cart holds the Blue Mug (MUG-BLUE) with quantity 3.",
         "assert": {
          "kind": "value",
          "source": {
@@ -228,27 +263,27 @@
            "type": "array",
            "contains": {
             "type": "object",
-            "required": [
-             "name",
-             "qty"
-            ],
             "properties": {
-             "name": {
-              "const": "Blue Mug"
+             "sku": {
+              "const": "MUG-BLUE"
              },
              "qty": {
               "const": 3
              }
-            }
+            },
+            "required": [
+             "sku",
+             "qty"
+            ]
            }
           }
          }
         }
        },
        {
-        "id": "cart-page-shows-qty-3",
+        "id": "cart-page-blue-mug-qty-3",
         "requirement": "R1",
-        "description": "The cart page is shown and the Blue Mug quantity field in the Cart table reads 3.",
+        "description": "The cart page's table shows quantity 3 in the Blue Mug row.",
         "assert": {
          "kind": "allOf",
          "of": [
@@ -259,28 +294,43 @@
            }
           },
           {
-           "kind": "state",
-           "target": {
-            "anchors": [
-             {
-              "role": "spinbutton",
-              "name": "Quantity for Blue Mug"
-             },
-             {
+           "kind": "each",
+           "scope": {
+            "role": "table",
+            "name": "Cart"
+           },
+           "match": {
+            "role": "row",
+            "name": {
+             "contains": "Blue Mug"
+            }
+           },
+           "count": {
+            "eq": 1
+           },
+           "assert": {
+            "kind": "value",
+            "source": {
+             "from": "node",
+             "target": {
               "role": "spinbutton",
               "name": {
                "contains": "Blue Mug"
-              },
-              "within": {
-               "role": "table",
-               "name": "Cart"
               }
+             },
+             "field": "value"
+            },
+            "normalize": [
+             {
+              "op": "number",
+              "locale": "en-US"
              }
-            ]
-           },
-           "expect": {
-            "value": {
-             "regex": "^\\s*3\\s*$"
+            ],
+            "expect": {
+             "approx": {
+              "value": 3,
+              "abs": 0
+             }
             }
            }
           }
@@ -292,10 +342,10 @@
     }
    ],
    "usage": {
-    "inputTokens": 17162,
-    "outputTokens": 615,
-    "cacheReadTokens": 16255,
-    "cacheWriteTokens": 905
+    "inputTokens": 18766,
+    "outputTokens": 554,
+    "cacheReadTokens": 18457,
+    "cacheWriteTokens": 307
    },
    "model": "claude-opus-5-5"
   }

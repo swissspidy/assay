@@ -10,17 +10,17 @@
     "discovery": 2
   },
   "usage": {
-    "inputTokens": 35445,
-    "outputTokens": 958,
-    "cacheReadTokens": 16952,
-    "cacheWriteTokens": 18483
+    "inputTokens": 39186,
+    "outputTokens": 1129,
+    "cacheReadTokens": 18672,
+    "cacheWriteTokens": 20504
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "the cart no longer contains a Red Mug",
       "checks": [
-        "R1-no-red-mug"
+        "r1-no-red-mug"
       ],
       "channels": [
         "probe"
@@ -31,7 +31,7 @@
       "requirement": "R2",
       "quote": "the other items stay in the cart",
       "checks": [
-        "R2-others-kept"
+        "r2-others-kept"
       ],
       "channels": [
         "probe"
@@ -39,7 +39,9 @@
       "trust": "structured"
     }
   ],
-  "warnings": [],
+  "warnings": [
+    "r2-others-kept still passes when its own evidence is broken (probe cart at /items is what it was before the task [removed-red-mug/r2-others-kept:baseline:no-op])."
+  ],
   "references": [
     {
       "name": "removed-red-mug",

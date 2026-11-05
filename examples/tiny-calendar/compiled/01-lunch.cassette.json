@@ -1,14 +1,14 @@
 {
  "schema": "assay.cassette/v1",
  "model": "anthropic:claude-opus-5-5@high",
- "recordedAt": "2026-11-05T07:43:01.844Z",
+ "recordedAt": "2026-11-05T11:33:31.569Z",
  "turns": {
   "sha256:aa281783468bfdf2156e03044578932db27264963a858c408785cce5e37f192a": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_016htHnfRzujmJpdQjFi29pM",
+     "id": "toolu_012VChoqXMM7w1HR782gBEzU",
      "name": "submit_rubric",
      "input": {
       "requirements": [
@@ -33,7 +33,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_016htHnfRzujmJpdQjFi29pM",
+     "id": "toolu_012VChoqXMM7w1HR782gBEzU",
      "name": "submit_rubric",
      "caller": {
       "type": "direct"
@@ -66,22 +66,22 @@
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:a2eb735180ac9d847cf73c302aedc6367b5f29eb3db8b0862c5bde5849fd9fdc": {
+  "sha256:26f037c915d08f97dd4fdcdc42638fbc9121b40cd6914ab87923a62c94289549": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01UymnWhru7PTcSmnpyoQyzK",
+     "id": "toolu_016RpCoFD2PaW2tdvHUVUpEm",
      "name": "probes",
      "input": {}
     },
     {
-     "id": "toolu_011fsPoT6ZcCPWXBafsrukFk",
+     "id": "toolu_01YBvMKcrHZzabkFq4uh18BN",
      "name": "page_outline",
      "input": {}
     },
     {
-     "id": "toolu_017fBBPVZPdsjTVQL6Ltatv5",
+     "id": "toolu_01QvXLS7sCnicDCkXV1GP7ET",
      "name": "network_log",
      "input": {}
     }
@@ -89,7 +89,7 @@
    "raw": [
     {
      "type": "tool_use",
-     "id": "toolu_01UymnWhru7PTcSmnpyoQyzK",
+     "id": "toolu_016RpCoFD2PaW2tdvHUVUpEm",
      "name": "probes",
      "caller": {
       "type": "direct"
@@ -98,7 +98,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_011fsPoT6ZcCPWXBafsrukFk",
+     "id": "toolu_01YBvMKcrHZzabkFq4uh18BN",
      "name": "page_outline",
      "caller": {
       "type": "direct"
@@ -107,7 +107,7 @@
     },
     {
      "type": "tool_use",
-     "id": "toolu_017fBBPVZPdsjTVQL6Ltatv5",
+     "id": "toolu_01QvXLS7sCnicDCkXV1GP7ET",
      "name": "network_log",
      "caller": {
       "type": "direct"
@@ -116,94 +116,54 @@
     }
    ],
    "usage": {
-    "inputTokens": 16345,
+    "inputTokens": 17883,
     "outputTokens": 72,
     "cacheReadTokens": 0,
-    "cacheWriteTokens": 16341
+    "cacheWriteTokens": 17879
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:c4ee879625bcd5ea248ae625cdd8faa5db71d7740c241ba1ae1aafaa4f927f3c": {
+  "sha256:188095fe002aa8c07856885c9fe44c1ce244f01369bebe8086c4632e4379e130": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01GywouFRsUEWEP7pQWXe4hy",
+     "id": "toolu_01B3QEKbJZofuQVDC2bsjKU9",
      "name": "try_assertion",
      "input": {
       "assert": {
-       "kind": "allOf",
-       "of": [
-        {
-         "kind": "url",
-         "match": {
-          "path": "/events/*"
-         }
-        },
-        {
-         "kind": "state",
-         "target": {
-          "role": "heading",
-          "level": 1,
-          "within": {
-           "role": "main"
-          }
-         },
-         "expect": {
-          "name": {
-           "equals": "Lunch with Sam"
-          }
-         }
-        },
-        {
-         "kind": "contains",
-         "scope": {
-          "role": "main"
-         },
-         "match": {
-          "role": "definition",
-          "text": {
-           "regex": "(Nov(ember)?\\.? 0?5(th)?,? 2026|0?5\\.? Nov(ember)?\\.?,? 2026|2026-11-05|11/0?5/2026|0?5/11/2026)",
-           "flags": "i"
-          }
-         }
-        }
-       ]
-      }
-     }
-    },
-    {
-     "id": "toolu_017J9SFSwKaawYW3zRTjvxRt",
-     "name": "try_assertion",
-     "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "events"
+       "kind": "each",
+       "scope": {
+        "role": "main"
        },
-       "expect": {
-        "schema": {
-         "type": "array",
-         "contains": {
-          "type": "object",
-          "required": [
-           "title",
-           "date",
-           "time"
-          ],
-          "properties": {
-           "title": {
-            "const": "Lunch with Sam"
-           },
-           "date": {
-            "const": "2026-11-05"
-           },
-           "time": {
-            "const": "12:30"
-           }
-          }
+       "witness": {
+        "role": "term",
+        "text": "When"
+       },
+       "match": {
+        "role": "term",
+        "text": "When"
+       },
+       "count": {
+        "eq": 1
+       },
+       "assert": {
+        "kind": "value",
+        "source": {
+         "from": "node",
+         "target": {
+          "role": "definition"
+         },
+         "field": "text"
+        },
+        "normalize": [
+         {
+          "op": "date",
+          "locale": "en-US"
          }
+        ],
+        "expect": {
+         "equals": "2026-11-05"
         }
        }
       }
@@ -214,93 +174,49 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "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"
+     "signature": "CAQSgwoKEAgTGAI4AUIIdGhpbmtpbmcSDLXsZA2AEP1W1DcdZhoMkfkBLrPFuMdnviDNIjBvADPyo9S09M5qoFTY5tkezGI8f30Oq5Tx8YOLJzqGROKU6Wj84GCV0Hh1gUrARv0qoAkWvBDLj1RremAqwCD2vhW0qIlrt5C1NCAAf0C0BOO7RF3HP+AK2e3MmY0ncXqR6jkijMEshKRD9/2yXgAL5D3sZBa252hil/XStN9hrR2nyjQK9H34KfEvrDXvO6+tI7N8yi/hBmXqf8SuVuYIqrWfrO9zr7x23ER9gLtIZBitnBXh6PkGy8eLjBG9ndbaZ4wxKopykWlpr5rQJaAikHnUIMPGgC4TqP7g+WZ+GD3RiESpPvv/xgnjo1wVrfY5D6OfSE1Yvd1s/Kc+qmrqu/9Kzp8F6518mwLqFna4xxyg7UJuaHZm+vBPLQUsEQ13Vd6okwCwW3I615v+60sXXAAwRjxxd6vbenXGcT4iHphbM3ZZBpZiJNTy985l+I393CGIZnHzz2wzlhQXbLXQGuCJr8rp861Q+at/+AOIh4B2jmP7cCQt729pBRRd+1EBa+BpWbq8EWTTiB8kp9zoXv123Q4mltFKjfwj3QJ69IdAn+KLWd6a3VnTgkIa3yCfzLKn8jnN09HJ1pYEGegnGP/FrPB/FR4h3kMHm14B1JoLaSkA2xn/HAyi/Kncwa8RvZ1Pk6axuJz2VHY178W5zLJKJzDamfRw5VyDFlD+ZCldObjw2mG1YL/Z0r/9MlBiZAKYs3cVD3PZIwBRfbaT5iWjvLBGF2fF+8aNOzSAEwLArv5iBpqhTVr5R5dUAnQprmpL6z3CUGfYuiNiFtI7z0Px0EAO+XbYdWHNshz6XfucL2Git0MmY5Tqqu9ke+b2s74uWiU8+n/OQIEl4bac8tC1reKtE40hSlqm9QzoMFy7AxAO+tH37kaYYnaX2qZeR3MDRSorrS8aCv3a0nsGL5Op8y47lhOTehUqx55bmBkoY3BKhML1qT1FbkgPAIrCUZX9LOFsKr5CJ1W1kyczF4SoZ9jnspKVPPD5NgBYsAYNQpa+W2BE17O+0oHGCSoPJVIuAKQ6tJnqN+lZ4+cFz3zHkJp9w67bMnhZPFY6S26Hsc4R2Qpo9xnZJNrnoUPmi3VUZemxnHksXMJ8R8j5YWqQydSi0gT5E4pNS5LT7mD9YzHcoD+KU6BDP1Y/6Yy9kBrNtnDHJV38NhRnxDwR0VsEu4njuMreyGsbyxySClu/TFLeqvnfx4v5ppT84UqleJj5Vs+Ya4qVRX9crnpBJ4LGYl2dmd+vvGQ2pAMSE+KkZImP0TwBUOvRg6T1WP0ArTWk9K8IBpMJ7E9aa+1EMUMfNKVGvzocFwUDVOAHSGO84583CFJseA3KESdeM7oMcVnF/mgMfmBCM22F9cp17LzwASaivUgl3RGJ5iXYTCJNezl4McCxhOgptlaDvyg02WY181nLAChDhaq3EF2Ik7gET2XwM0fuG8Z0y3pWVLm83ze0ZFlFebMp9lvgKVjSLUfgFAZPivGOqFGXz8AQIv6B5VVk/u0fK5P9hcqnhAOk6afMFWauoAfH3qPfJgNmkFoHhDri4TaMfQo/yZhZzJZqAcdbMIUDIy54mWRpATdI0+Nt9NlFcJUWWQj7M5hmMNfk6wwMauQ4QjNSuD8yEmQ71Sc4Z0pHIFD68ZaF17Zf9xgB"
     },
     {
      "type": "tool_use",
-     "id": "toolu_01GywouFRsUEWEP7pQWXe4hy",
+     "id": "toolu_01B3QEKbJZofuQVDC2bsjKU9",
      "name": "try_assertion",
      "caller": {
       "type": "direct"
      },
      "input": {
       "assert": {
-       "kind": "allOf",
-       "of": [
-        {
-         "kind": "url",
-         "match": {
-          "path": "/events/*"
-         }
-        },
-        {
-         "kind": "state",
-         "target": {
-          "role": "heading",
-          "level": 1,
-          "within": {
-           "role": "main"
-          }
-         },
-         "expect": {
-          "name": {
-           "equals": "Lunch with Sam"
-          }
-         }
-        },
-        {
-         "kind": "contains",
-         "scope": {
-          "role": "main"
-         },
-         "match": {
-          "role": "definition",
-          "text": {
-           "regex": "(Nov(ember)?\\.? 0?5(th)?,? 2026|0?5\\.? Nov(ember)?\\.?,? 2026|2026-11-05|11/0?5/2026|0?5/11/2026)",
-           "flags": "i"
-          }
-         }
-        }
-       ]
-      }
-     }
-    },
-    {
-     "type": "tool_use",
-     "id": "toolu_017J9SFSwKaawYW3zRTjvxRt",
-     "name": "try_assertion",
-     "caller": {
-      "type": "direct"
-     },
-     "input": {
-      "assert": {
-       "kind": "value",
-       "source": {
-        "from": "probe",
-        "probe": "events"
+       "kind": "each",
+       "scope": {
+        "role": "main"
        },
-       "expect": {
-        "schema": {
-         "type": "array",
-         "contains": {
-          "type": "object",
-          "required": [
-           "title",
-           "date",
-           "time"
-          ],
-          "properties": {
-           "title": {
-            "const": "Lunch with Sam"
-           },
-           "date": {
-            "const": "2026-11-05"
-           },
-           "time": {
-            "const": "12:30"
-           }
-          }
+       "witness": {
+        "role": "term",
+        "text": "When"
+       },
+       "match": {
+        "role": "term",
+        "text": "When"
+       },
+       "count": {
+        "eq": 1
+       },
+       "assert": {
+        "kind": "value",
+        "source": {
+         "from": "node",
+         "target": {
+          "role": "definition"
+         },
+         "field": "text"
+        },
+        "normalize": [
+         {
+          "op": "date",
+          "locale": "en-US"
          }
+        ],
+        "expect": {
+         "equals": "2026-11-05"
         }
        }
       }
@@ -308,24 +224,135 @@
     }
    ],
    "usage": {
-    "inputTokens": 17555,
-    "outputTokens": 796,
-    "cacheReadTokens": 16341,
+    "inputTokens": 19093,
+    "outputTokens": 429,
+    "cacheReadTokens": 17879,
     "cacheWriteTokens": 1212
    },
    "model": "claude-opus-5-5"
   },
-  "sha256:1f01ab7342b16628cfdb19582b794ed9fc689bf7e0c9636111642b8503528620": {
+  "sha256:779353bf6ec53c9e04756dc444d6c44e5fddffea769b5eff36f0b2066445387c": {
    "stop": "tool_use",
    "text": "",
    "toolCalls": [
     {
-     "id": "toolu_01XcbTEDXRRi98Rod58P9qPv",
+     "id": "toolu_01EZ9VgcHTVhbw5jASa66TQp",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "each",
+       "scope": {
+        "role": "main"
+       },
+       "witness": {
+        "role": "term",
+        "text": "When"
+       },
+       "match": {
+        "role": "term",
+        "text": "When"
+       },
+       "count": {
+        "eq": 1
+       },
+       "assert": {
+        "kind": "value",
+        "source": {
+         "from": "node",
+         "target": {
+          "role": "definition"
+         },
+         "field": "text"
+        },
+        "normalize": [
+         {
+          "op": "datetime",
+          "locale": "en-US",
+          "timezone": "UTC"
+         }
+        ],
+        "expect": {
+         "approx": {
+          "value": "2026-11-05T12:30:00Z",
+          "abs": 720
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01EZ9VgcHTVhbw5jASa66TQp",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "each",
+       "scope": {
+        "role": "main"
+       },
+       "witness": {
+        "role": "term",
+        "text": "When"
+       },
+       "match": {
+        "role": "term",
+        "text": "When"
+       },
+       "count": {
+        "eq": 1
+       },
+       "assert": {
+        "kind": "value",
+        "source": {
+         "from": "node",
+         "target": {
+          "role": "definition"
+         },
+         "field": "text"
+        },
+        "normalize": [
+         {
+          "op": "datetime",
+          "locale": "en-US",
+          "timezone": "UTC"
+         }
+        ],
+        "expect": {
+         "approx": {
+          "value": "2026-11-05T12:30:00Z",
+          "abs": 720
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 19624,
+    "outputTokens": 237,
+    "cacheReadTokens": 19091,
+    "cacheWriteTokens": 531
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:fa9e7aca12276fcd174c9a673c82a7dbd23663a90a0b60021faedb54657afba9": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_014VjyngMxqHtbnxsmqQGEzz",
      "name": "submit_checks",
      "input": {
       "checks": [
        {
-        "id": "R1-event-stored",
+        "id": "R1-probe-event",
         "requirement": "R1",
         "description": "The backend events list contains an event titled \"Lunch with Sam\" on 2026-11-05 at 12:30.",
         "assert": {
@@ -352,8 +379,7 @@
               "const": "2026-11-05"
              },
              "time": {
-              "type": "string",
-              "pattern": "^12:30(:00)?$"
+              "const": "12:30"
              }
             }
            }
@@ -362,9 +388,9 @@
         }
        },
        {
-        "id": "R2-event-page-date",
+        "id": "R2-event-page",
         "requirement": "R2",
-        "description": "The current page is the event page for \"Lunch with Sam\" and its details show the date November 5, 2026.",
+        "description": "The current page is an event page (/events/<id>) whose level-1 heading is \"Lunch with Sam\".",
         "assert": {
          "kind": "allOf",
          "of": [
@@ -377,32 +403,71 @@
           {
            "kind": "state",
            "target": {
-            "role": "heading",
-            "level": 1,
-            "within": {
-             "role": "main"
-            }
+            "anchors": [
+             {
+              "role": "heading",
+              "level": 1,
+              "within": {
+               "role": "main"
+              }
+             },
+             {
+              "role": "heading",
+              "name": "Lunch with Sam",
+              "level": 1
+             }
+            ]
            },
            "expect": {
             "name": {
              "equals": "Lunch with Sam"
             }
            }
-          },
-          {
-           "kind": "contains",
-           "scope": {
-            "role": "main"
-           },
-           "match": {
-            "role": "definition",
-            "text": {
-             "regex": "(Nov(ember)?\\.? 0?5(th)?,? 2026|0?5\\.? Nov(ember)?\\.?,? 2026|2026-11-05|11/0?5/2026|0?5/11/2026)",
-             "flags": "i"
-            }
-           }
           }
          ]
+        }
+       },
+       {
+        "id": "R2-when-date",
+        "requirement": "R2",
+        "description": "The \"When\" field on the event page shows a date on November 5, 2026.",
+        "assert": {
+         "kind": "each",
+         "scope": {
+          "role": "main"
+         },
+         "witness": {
+          "role": "term",
+          "text": "When"
+         },
+         "match": {
+          "role": "term",
+          "text": "When"
+         },
+         "count": {
+          "eq": 1
+         },
+         "assert": {
+          "kind": "value",
+          "source": {
+           "from": "node",
+           "target": {
+            "role": "definition"
+           },
+           "field": "text"
+          },
+          "normalize": [
+           {
+            "op": "datetime",
+            "locale": "en-US",
+            "timezone": "UTC"
+           }
+          ],
+          "expect": {
+           "gte": "2026-11-05T00:00:00Z",
+           "lt": "2026-11-06T00:00:00Z"
+          }
+         }
         }
        }
       ]
@@ -413,11 +478,11 @@
     {
      "type": "thinking",
      "thinking": "",
-     "signature": "CAQS3AYKEAgTGAI4AUIIdGhpbmtpbmcSDEQATMz8nvN8tBxMEBoMIeWlNBjzFWEra5kRIjCfTForYvAX33cvNIpeUm08jHzQmlc6Fol0CiRR3EYUiLcgcZp3gfLVtWEyt+/bdEgq+QU5d7t/jdj1X4Rdsh0ViErsFx2SsW2L53PpEUNV5j/Yx1uRW75ZZMugoLkf3J0WGsWMc5ZS5u4bCKCnE043SJOp0wD7uJvKwcr1I7B8/goY3U2RFm1nmHaEck4OPh2oqRZSch2QX89ou8wtdvITE0a0Nln8K/BI/GYn3bo7y9vG9FtOPV9YFRB7o4y3oV90mKWcczPAdr/yzSxLBCOun+EkAbCD3+vyaXfZ82YTuIxXrxkFHwbYrpLoDv8jRRE63XdOAmM351B7eSYSotUD/s9ao9KTMBZcArEOmI0plybOKPCi/Rlxr0s0zYf/cXvXABqltmThCCoe6kaInAnaf2/dVJd+qzFB1JKM28kS5tJljleRrvOKIw3ewUviCel2m/GA718VvOlY2U0VLGn7yIR+Rwu1Bhx6UiXjOxWhG3CvzsaZNeczkzxUFiPP4qcW1eKLBRqXxIo1vm9FnZ9H1X+Ag1OR4lZYB9bmC+fBGW4wuGjX00+dVtcs+m3cZ4Qp6Q3lMgko/tude/fz34u2CiU5qxyVtVshfCLWW/tqBdTqxoyE83WF+NvoiCIklcdmcuqQaVUWQ56pBkNcEeIC3gyzo5FoIFqNBeH8+42YouP8cRRF/nZXvQ9Cxvdvla6BWRMPFzNqvaDC5SNmYRotgeCxM7+1S2BjpPqXlkGDyk4NcAv7/TAfMjHq6EAZzayd2nBqEoSufuAtDwtXGIvpVqo8VDEwQinVo6yzgibgwNmoh36K4eZZSdN0WwamWefMYt+QWSgompgLKbnvHvAJOltXso80bZvTxA2pE7CQ09M9u6+zOYiYuVb4SRkYKoIe4YTYxe0s4jIQZ0L7u5iKGdp3DOgVGFirpAP/4BMnNEnR9ML06gg7vW4wchE0QpS3n+8twSvYdkqpJt5BfBxkKPCvxvPHBNZEf8A3eYyOtNnPhu/fhOXVSbGSehYvIJkNUqpRzogP9xeAat2NDgp9UDbt499l6tibDLzNc+m8XzaR8X6S/ZhmLYtzKBgB"
+     "signature": "CAQSjgoKEAgTGAI4AUIIdGhpbmtpbmcSDKDwZD2oN49OwUofdxoMxQJbp4aDvWtZKc7LIjD7k1gQOFYoSiNzHUEr71MM6Hf61kDgj/55vVMa5Gw6O5crqiie8vTPSY5TSz+fbGYqqwku4f6JCcpJlvjwPp6S0HhdYUtPPomaUuyNdkRCrIHVnqDF4ke3hB3xPQUJpKJaxe0kC0Q/GX1efQs8W3f4YmfB/uwIhf+gNPHSKy4oGFmvJxPFOzaClJX4W7hoNMTIzvWIhSrWlIenqEgEhZf65K8UhNdadCoNaGS0HLF0kLrEscpz9SMMTdioJzFDPoUAbFHn/xMlQ+AuQzve6YFxvYIvuXFDaj7v3PwHUr38rIzRh/KfjqvNrHmh06Vob28AvZtUT/Pf2cAn1ZaGEToLoM3Ch58atqSKK9j+s7+m+0fQt705qQQ3qFKhNQeYJaPHUDVNwYwcX3oc+HXOLGFMUIKoLskFycCcoOsrl8vIsfK4t1CF0pBQPih5EmAz/aOTI3/NpxlWyEbEp1Vumq/RSaHR0bn7/8S17hQQyDfKjjfi09WZvisCQM/Nw7q5n4/I6cXkvY8XuAUsiVtvC7KGdb+oM4Av97+YxsIVmecFlzwYskojSZOOEQkRmrwlUfR7vcYtNz5+I+FGYKPtIqIPWO/hS+HnujlryV8gvX3sirfaakg++7URiGL/C8xefyi092rIqZ0b9MbEmsrbdnPLMt89nVz47rt0Hr3okTFrobsr+E3ydWh9AN+Hlpx0WBMbPfXGWBFgbT7e6MdOf3VSsNf+P5TfQCK9il7V5xR6OrPNu67JmCN5vFfFfCAHV5LSbKHkIjp6pNJUCSSKTMuOAACGw4M8P9vBFiK396+kIdott3NCDVEo/jcJLAmfur2/w3ltxLB47Lpq5/pl6voTuSWPpAyjViqoyN0PE3U7ytIZVZ1a0eYx5SBO5IrJRLs8sWAVNMtkTi3ndGYPfEU3Y5FK4WualBbsAP8fH3IQi9A1pDBg4nw8MA8fnS/JrgQ685E5rIx5liGvJ14gSiZps4T5aVlHEdW4RW6VzrLx71GPS9O6STZt+3sL9K9l6wNECh7flgBqStSQDy7VePsWpLVc2x7mCq4pbGiBR7uTGgx9WCt2iTu4g4kNduM4tSzA7oV9XCMzw0qJva5tRvgu1n2r01uhnH46Y9ZNZKQUff8lK3gvf572eu1wK/AJhxcZN5pTfm1vOfr6Fc9WBY+JtU1DQCj9+Y0LFoTYTmJbaAoDoA4i+xPjD0wwz8hYz61PAQy32q2d/kJx3QbFLm0tORpd+2oSeRoPuzo3fEOA0SLtktwbsjgntFSyIbqQNxXrnQIT2xzySs9BR/jU6mMKLaZw9fFkSmTco8HlnC740CCK6l41SGcw+U0hSSikb+7zvMYyTLkY0oS9wHOA0hIeoFqDJdyJNhnwGN2YuJpP7SWQd6AJsy4///pKzbvN2Y/F81xVi3UPVIVtzH5aYInNT0qafIpCPLt+37ffHKW//Zeca7lPbweSnpSKjhAsuw3e7mez2CBGKtzhWh7B+0ca8j7+CQK+b9M+XQ2ZjoyGjaFVZn4bT/skDNkjUCSS8nY46fuUEG4OfIcW+RT7Zn7fjYbOCjofon6f7rxMzd0eRtM6IqmcxTSGKx5/p+MSWSONC2oC0+iX9fvCyl/yVI0OXzQIWbd86GZi7kmVIodOJ4kK3w7QcdiIAZ5gDZj0GAE="
     },
     {
      "type": "tool_use",
-     "id": "toolu_01XcbTEDXRRi98Rod58P9qPv",
+     "id": "toolu_014VjyngMxqHtbnxsmqQGEzz",
      "name": "submit_checks",
      "caller": {
       "type": "direct"
@@ -425,7 +490,7 @@
      "input": {
       "checks": [
        {
-        "id": "R1-event-stored",
+        "id": "R1-probe-event",
         "requirement": "R1",
         "description": "The backend events list contains an event titled \"Lunch with Sam\" on 2026-11-05 at 12:30.",
         "assert": {
@@ -452,8 +517,7 @@
               "const": "2026-11-05"
              },
              "time": {
-              "type": "string",
-              "pattern": "^12:30(:00)?$"
+              "const": "12:30"
              }
             }
            }
@@ -462,9 +526,9 @@
         }
        },
        {
-        "id": "R2-event-page-date",
+        "id": "R2-event-page",
         "requirement": "R2",
-        "description": "The current page is the event page for \"Lunch with Sam\" and its details show the date November 5, 2026.",
+        "description": "The current page is an event page (/events/<id>) whose level-1 heading is \"Lunch with Sam\".",
         "assert": {
          "kind": "allOf",
          "of": [
@@ -477,32 +541,71 @@
           {
            "kind": "state",
            "target": {
-            "role": "heading",
-            "level": 1,
-            "within": {
-             "role": "main"
-            }
+            "anchors": [
+             {
+              "role": "heading",
+              "level": 1,
+              "within": {
+               "role": "main"
+              }
+             },
+             {
+              "role": "heading",
+              "name": "Lunch with Sam",
+              "level": 1
+             }
+            ]
            },
            "expect": {
             "name": {
              "equals": "Lunch with Sam"
             }
            }
-          },
-          {
-           "kind": "contains",
-           "scope": {
-            "role": "main"
-           },
-           "match": {
-            "role": "definition",
-            "text": {
-             "regex": "(Nov(ember)?\\.? 0?5(th)?,? 2026|0?5\\.? Nov(ember)?\\.?,? 2026|2026-11-05|11/0?5/2026|0?5/11/2026)",
-             "flags": "i"
-            }
-           }
           }
          ]
+        }
+       },
+       {
+        "id": "R2-when-date",
+        "requirement": "R2",
+        "description": "The \"When\" field on the event page shows a date on November 5, 2026.",
+        "assert": {
+         "kind": "each",
+         "scope": {
+          "role": "main"
+         },
+         "witness": {
+          "role": "term",
+          "text": "When"
+         },
+         "match": {
+          "role": "term",
+          "text": "When"
+         },
+         "count": {
+          "eq": 1
+         },
+         "assert": {
+          "kind": "value",
+          "source": {
+           "from": "node",
+           "target": {
+            "role": "definition"
+           },
+           "field": "text"
+          },
+          "normalize": [
+           {
+            "op": "datetime",
+            "locale": "en-US",
+            "timezone": "UTC"
+           }
+          ],
+          "expect": {
+           "gte": "2026-11-05T00:00:00Z",
+           "lt": "2026-11-06T00:00:00Z"
+          }
+         }
         }
        }
       ]
@@ -510,10 +613,10 @@
     }
    ],
    "usage": {
-    "inputTokens": 18661,
-    "outputTokens": 626,
-    "cacheReadTokens": 17553,
-    "cacheWriteTokens": 1106
+    "inputTokens": 19954,
+    "outputTokens": 889,
+    "cacheReadTokens": 19622,
+    "cacheWriteTokens": 330
    },
    "model": "claude-opus-5-5"
   }

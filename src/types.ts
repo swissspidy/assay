@@ -131,6 +131,11 @@ export interface Locator {
   level?: number;
   landmark?: { role: LandmarkRole; name?: TextMatch };
   within?: Locator;
+  /**
+   * For a cell (cell, gridcell, rowheader, columnheader): the name of its column's header,
+   * the columnheader at the same position in the table's header row (ADR 0008).
+   */
+  column?: TextMatch;
 }
 
 export type Target = Locator | { anchors: Locator[] };
@@ -190,8 +195,12 @@ export type Normalizer =
   | { op: 'currency'; locale: string; currency?: string }
   | { op: 'date'; locale: string; timezone?: string }
   | { op: 'datetime'; locale: string; timezone?: string }
-  /** A JSON array as an unordered collection: keep items matching `where`, map each to `pointer`, sort. */
-  | { op: 'items'; where?: JsonSchema; pointer?: string };
+  /**
+   * A JSON array as an unordered collection: keep items matching `where`, map each to the
+   * value at `pointer` (or to an object of the fields at the `pick` pointers, keyed by
+   * pointer, so they stay paired), sort.
+   */
+  | { op: 'items'; where?: JsonSchema; pointer?: string; pick?: string[] };
 
 export interface Money {
   amount: number;
@@ -245,6 +254,21 @@ export type Assertion =
   | { kind: 'value'; source: ValueSource; normalize?: Normalizer[]; expect: Comparison }
   | { kind: 'url'; match: UrlMatch }
   | { kind: 'request'; match: RequestMatch; count?: NumberCompare }
+  /**
+   * Per record: every node matching `match` inside `scope` is a record (a row, a list item, an
+   * article; a term together with the definitions that follow it), and `assert` must hold
+   * inside each one. Locators and text sources in `assert` resolve within the record.
+   * `count` bounds how many records match (default `{gte: 1}`).
+   */
+  | {
+      kind: 'each';
+      scope?: Target;
+      /** Outcome-independent node that must exist inside the scope; missing → abstain. */
+      witness?: Locator;
+      match: Locator;
+      count?: NumberCompare;
+      assert: Assertion;
+    }
   | { kind: 'allOf'; of: Assertion[] }
   | { kind: 'anyOf'; of: Assertion[] };
 
