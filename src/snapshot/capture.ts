@@ -462,7 +462,7 @@ export class EvidenceRecorder {
       entry.requestBody = body;
       if (raw !== undefined) entry.requestBodyRaw = raw;
       if (truncated) entry.bodyTruncated = true;
-    } else if (headers['content-type'] !== undefined) {
+    } else if (headers['content-type'] !== undefined && !['GET', 'HEAD', 'OPTIONS'].includes(entry.method)) {
       // A body was sent but the browser does not report it (Chromium leaves out
       // multipart bodies with files); the page tap may fill it in at settle().
       entry.requestBodyUnavailable = true;

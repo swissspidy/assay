@@ -210,6 +210,15 @@ test.describe('live multipart posts', () => {
     });
   });
 
+  test('a GET with a content type but no body is not marked unavailable', async ({ page }) => {
+    await page.goto(`${app.origin}/upload`);
+    await page.evaluate(() => fetch('/api/list', { headers: { 'content-type': 'application/json' } }));
+    const s = await captureSnapshot(page);
+    const get = s.network!.find((e) => e.url.endsWith('/api/list'))!;
+    expect(get.requestBody).toBeUndefined();
+    expect(get.requestBodyUnavailable).toBeUndefined();
+  });
+
   test('two different uploads to one URL stay unavailable rather than be paired by guess', async ({ page }) => {
     await page.goto(`${app.origin}/upload`);
     await page.evaluate(async () => {
