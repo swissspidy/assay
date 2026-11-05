@@ -494,8 +494,11 @@ appear to:
   records.
 - A definition (`dd`) located by its own content, outside an `each` whose records are terms
   (ADR 0008): the same value under another term also matches. Absence checks are exempt.
+- An `items` `pick` in a `sameAs` between one probe value or storage key before and after the
+  task: its items have the same fields, so the fields `pick` leaves out may change (ADR 0008).
 
-The compiler refuses all four (ADR 0002).
+The compiler refuses all five (ADR 0002), and also a `pick` whose two collections hold items with
+the same fields in the references.
 
 Literals for datetimes (`equals`, `approx.value`, bounds) are ISO 8601 with an
 offset, such as `"2026-11-05T14:30:00+01:00"`, so each names one instant. A

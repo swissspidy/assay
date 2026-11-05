@@ -84,6 +84,20 @@ missing field cannot be read (`normalize_failed`, as for `pointer`). `pointer` a
 are rejected. Keys are the pointers, not the last segments, so `/a/id` and `/b/id` cannot collide
 and the evidence shows where each value came from.
 
+`pick` drops every field it does not name, so a change to those fields passes. It is only for two
+collections whose items have different shapes. When both sides hold items with the same fields (the
+cart before and after; order lines shaped like the cart's items), whole items compare every field,
+and `pick` would only loosen the check. The first recompile with `pick` did exactly that for "remove
+the Red Mug, but keep everything else" (a changed price passed), so it is refused there:
+
+- **Statically:** the validator warns about `pick` in a `sameAs` between one probe value or
+  storage key read before and after the task. That collection has one shape by construction, so the
+  rule is reliable; the compiler refuses it.
+- **Against the references:** the compiler also refuses `pick` when, in every correct reference
+  where both sides can be read as non-empty arrays of objects, all their items have exactly the same
+  fields. Two different sources (order lines and cart items) can only be compared by shape on data,
+  so this lives in the compiler, which has the references, not in `validateCheckSet`.
+
 ### 3. Validator
 
 - The field-by-field rule (ADR 0001 §2.6) now compares projections: two or more comparisons of
@@ -166,8 +180,8 @@ and was recompiled). `resolveTarget` takes an optional scope.
 - The compiled Tiny Calendar 01 now reads the date from the definition of "When"; the handwritten
   Tiny Calendar 01 and Tiny Tracker 10 sets were tightened the same way (the row of issue #1 shows
   Open and bug).
-- The recompile (all 30 tasks, every held-out run judged correctly) uses `each` in four sets (the When date, the Blue Mug row's quantity, the delivery date paragraph, every listed issue's status and label) and `pick` in four (order lines and cart items by SKU and quantity, a renamed event's title).
-- Stress on the compiled sets: 655/655 valid variants accepted, 399/399 mutants rejected; on the handwritten sets 663/663 and 319/319 (ADR 0005).
+- The recompile (all 30 tasks, every held-out run judged correctly) uses `each` in four sets (the When date, the Blue Mug row's quantity, the delivery date paragraph, every listed issue's status and label). The example apps' order lines carry the same fields as cart items, so after the shape rule every cart and order comparison uses whole items; `pick` remains in one set, projecting a renamed event's title without a `sameAs`.
+- Stress on the compiled sets: 655/655 valid variants accepted, 417/417 mutants rejected; on the handwritten sets 663/663 and 319/319 (ADR 0005).
 - A record is found by content the page shows (a row's name, a term's text). Without a witness,
   renamed copy makes the record count zero, which fails rather than abstains, as for `contains`;
   the prompt asks for the label as witness.

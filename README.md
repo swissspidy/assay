@@ -117,7 +117,8 @@ the same check run without validation or a record, for hot loops.
 - **Baseline.** A probe or storage source with `"at": "before"` reads the state before the task
   (`captureBaseline`); without a baseline such a check abstains. The `items` normalizer turns a JSON
   array into an unordered collection (filtered by a JSON Schema `where`, projected to one field by a
-  `pointer` or to several fields of each item, kept together, by `pick: ["/sku", "/qty"]`), so
+  `pointer` or, when the two sides' items have different fields, to the fields both have, kept
+  together, by `pick: ["/sku", "/qty"]`), so
   "keep everything else" is the cart after `sameAs` the cart before, minus the removed item:
 
   ```json
@@ -265,9 +266,9 @@ that only claim success. Each task was compiled from one correct run; on the 96 
 
 | System           | Balanced accuracy | TPR   | TNR   | Cost / run | Latency (median / p95) | Model at run time |
 | ---------------- | ----------------- | ----- | ----- | ---------- | ---------------------- | ----------------- |
-| compiled checks  | 1.000             | 1.000 | 1.000 | $0         | 0.4 ms / 5.2 ms        | no                |
+| compiled checks  | 1.000             | 1.000 | 1.000 | $0         | 0.3 ms / 7.4 ms        | no                |
 | LLM judge        | 0.906             | 0.933 | 0.879 | $0.0119    | 4.3 s / 10.0 s         | yes               |
-| agentic verifier | 0.976             | 0.967 | 0.985 | $0.0276    | 9.3 s / 18.9 s         | yes               |
+| agentic verifier | 0.976             | 0.967 | 0.985 | $0.0274    | 9.3 s / 18.9 s         | yes               |
 
 The LLM judge accepted 3 of 8 adversarial pages, and all 3 runs that changed the starting cart
 wrongly; the checks and the verifier rejected all of them.
