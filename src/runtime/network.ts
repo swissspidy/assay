@@ -1,4 +1,4 @@
-import type { NetworkEntry, RequestMatch, UrlMatch } from '../types.ts';
+import type { NetworkEntry, PageMatch, RequestMatch, UrlMatch } from '../types.ts';
 import { matchText, describeTextMatch } from '../text.ts';
 import { compareNumber, compileSchema, describeNumberCompare } from './compare.ts';
 
@@ -83,7 +83,31 @@ export function describeUrlMatch(m: UrlMatch): string {
   return parts.join(', ') || 'any URL';
 }
 
+/** Whether an open page (its URL and title) is the one a `page` assertion selects. */
+export function matchPage(m: PageMatch, page: { url: string; title: string }): boolean {
+  if (m.url && !matchUrl(m.url, page.url)) return false;
+  return m.title === undefined || matchText(m.title, page.title);
+}
+
+export function describePageMatch(m: PageMatch): string {
+  const parts: string[] = [];
+  if (m.url) parts.push(`URL ${describeUrlMatch(m.url)}`);
+  if (m.title !== undefined) parts.push(`title ${describeTextMatch(m.title)}`);
+  return parts.join(', ');
+}
+
 export type MatchResult = 'yes' | 'no' | 'unknown';
+
+/**
+ * Whether the request or the response body of an entry was cut. Entries that say which
+ * (requestBodyTruncated, responseBodyTruncated) are read that way; in older ones
+ * bodyTruncated covers both.
+ */
+export function truncated(e: NetworkEntry, which: 'request' | 'response'): boolean {
+  if (e.requestBodyTruncated || e.responseBodyTruncated)
+    return !!(which === 'request' ? e.requestBodyTruncated : e.responseBodyTruncated);
+  return !!e.bodyTruncated;
+}
 
 /**
  * Three-valued request matching: 'unknown' when the entry could match but the
@@ -103,15 +127,18 @@ export function matchRequest(m: RequestMatch, e: NetworkEntry): MatchResult {
     } else if (typeof m.status === 'number' ? e.status !== m.status : !compareNumber(e.status, m.status)) return 'no';
   }
   if (m.requestBody !== undefined) {
-    if (e.requestBody === undefined) return 'no';
-    if (e.bodyTruncated) unknown = true;
+    if (e.requestBody === undefined) {
+      // A body was sent but could not be read (a multipart upload the page tap did not see).
+      if (!e.requestBodyUnavailable) return 'no';
+      unknown = true;
+    } else if (truncated(e, 'request')) unknown = true;
     else if (!compileSchema(m.requestBody)(e.requestBody)) return 'no';
   }
   if (m.responseBody !== undefined) {
     if (e.responseBody === undefined) {
       if (e.bodyUnavailable || (e.status === null && !e.failure)) unknown = true;
       else return 'no';
-    } else if (e.bodyTruncated) unknown = true;
+    } else if (truncated(e, 'response')) unknown = true;
     else if (!compileSchema(m.responseBody)(e.responseBody)) return 'no';
   }
   return unknown ? 'unknown' : 'yes';

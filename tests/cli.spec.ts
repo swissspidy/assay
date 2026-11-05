@@ -10,6 +10,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadSnapshot } from '../src/index.ts';
+import { startSites } from './support/sites.ts';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const bin = join(root, 'src/cli/index.ts');
@@ -81,6 +82,23 @@ test('capture writes a snapshot of a live page that verify can read', async ({ b
   // The checks read a probe the CLI cannot run, so the verdict is inconclusive, not a failure.
   const v = await assay(['verify', shop('tasks/02-add-blue-mug.checks.json'), join(dir, file!)]);
   expect(v.code).toBe(2);
+});
+
+test('capture includes iframe content, same- and cross-origin (ADR 0012)', async () => {
+  const { app, other } = await startSites();
+  try {
+    const exe = test.info().project.use.launchOptions?.executablePath;
+    const r = await assay(['capture', `${app.origin}/frames`, ...(exe ? ['--executable-path', exe] : [])]);
+    expect(r.code).toBe(0);
+    const snapshot = loadSnapshot(r.stdout);
+    const json = JSON.stringify(snapshot.a11y);
+    expect(json).toContain('"name":"Editor canvas"');
+    expect(json).toContain(`"url":"${other.origin}/widget"`);
+    expect(json).toContain('"name":"Card number","value":"4242 4242 4242 4242"');
+  } finally {
+    await app.close();
+    await other.close();
+  }
 });
 
 test("output into a closed pipe ends quietly with the command's own status", async () => {

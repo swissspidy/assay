@@ -6,11 +6,14 @@ import {
   type EvidenceSnapshot,
   type Json,
   type NetworkEntry,
+  type PageView,
   type ProbeResult,
   type StorageRecord,
   type Redacted,
 } from '../types.ts';
 import { parseAriaSnapshot } from './aria.ts';
+import { formObject, multipartBoundary, parseMultipart, type FormValue } from './body.ts';
+import { attachFrames, FRAME_LIMITS } from './frames.ts';
 import { randomUUID } from 'node:crypto';
 import { ASSAY_VERSION } from '../version.ts';
 
@@ -82,23 +85,53 @@ export function decodeBody(
   if (contentType && /application\/x-www-form-urlencoded/i.test(contentType)) {
     // HTML form posts become objects (repeated fields become arrays), so checks can
     // match them with JSON Schema like JSON bodies.
-    // No prototype: field names like "constructor" or "__proto__" are plain keys.
-    const form = Object.create(null) as Record<string, Json>;
-    for (const [k, v] of new URLSearchParams(text)) {
-      const prev = Object.hasOwn(form, k) ? form[k] : undefined;
-      form[k] = prev === undefined ? v : Array.isArray(prev) ? [...prev, v] : [prev, v];
-    }
-    return { body: form, truncated: false };
+    return { body: formObject(new URLSearchParams(text)), truncated: false };
   }
   return { body: text, truncated: false };
 }
+
+/**
+ * A request body as recorded: JSON parsed, form bodies (URL-encoded and multipart) parsed
+ * into their fields with their text kept as `raw`, anything else as text. In a multipart
+ * body, files are recorded by filename, type and size; their content is never kept, and
+ * does not count towards `max`. A body over `max` bytes is kept as cut text. A multipart body
+ * that does not parse gives undefined: kept as text it could hold a file's bytes.
+ * @internal Exported for tests.
+ */
+export function decodeRequestBody(
+  buf: Buffer,
+  contentType: string | undefined,
+  max: number,
+): { body: Json; raw?: string; truncated: boolean } | undefined {
+  if (isMultipart(contentType)) {
+    const boundary = multipartBoundary(contentType);
+    const multipart = boundary !== undefined ? parseMultipart(buf, boundary) : undefined;
+    if (!multipart) return undefined;
+    const cut = cutUtf8(multipart.raw, max);
+    if (cut !== undefined) return { body: cut, truncated: true };
+    return { body: formObject(multipart.fields), raw: multipart.raw, truncated: false };
+  }
+  const text = buf.toString('utf8');
+  const decoded = decodeBody(text, contentType, max);
+  const form = !decoded.truncated && contentType && /application\/x-www-form-urlencoded/i.test(contentType);
+  return form ? { ...decoded, raw: text } : decoded;
+}
+
+const isMultipart = (contentType: string | undefined) => !!contentType && /^\s*multipart\//i.test(contentType);
 
 function isTextual(contentType: string | undefined): boolean {
   if (!contentType) return false;
   return /json|text\/|xml|javascript|x-www-form-urlencoded/i.test(contentType);
 }
 
-/** Body observed inside the page by the init-script tap (see PAGE_TAP). */
+/** Marks a cut body: bodyTruncated for older readers, and which body it was (ADR 0012). */
+function markTruncated(e: NetworkEntry, which: 'request' | 'response'): void {
+  e.bodyTruncated = true;
+  if (which === 'request') e.requestBodyTruncated = true;
+  else e.responseBodyTruncated = true;
+}
+
+/** Response body observed inside the page by the init-script tap (see pageTap). */
 interface TappedBody {
   method: string;
   url: string;
@@ -106,6 +139,39 @@ interface TappedBody {
   contentType: string;
   body: string;
   truncated: boolean;
+}
+
+/**
+ * Multipart form fields the tap saw the page send (a form submission, or FormData given
+ * to fetch or XHR). Browsers leave file uploads out of the request's post data, so this is
+ * the only place their names, types and sizes can be read. `id` numbers a form's report;
+ * `supersedes` names an earlier report of the same FormData that a fetch or XHR sent. Ids are
+ * unique per document (a random prefix), so frames and navigations cannot collide.
+ */
+interface TappedForm {
+  method: string;
+  url: string;
+  fields: [string, FormValue][];
+  id?: string;
+  supersedes?: string;
+}
+
+type TapMessage = ({ kind?: undefined } & TappedBody) | ({ kind: 'form' } & TappedForm);
+
+/** A reported form field has the shape the tap sends: a name and text, or a file's metadata. */
+function isFormField(x: unknown): x is [string, FormValue] {
+  if (!Array.isArray(x) || x.length !== 2 || typeof x[0] !== 'string') return false;
+  const v: unknown = x[1];
+  if (typeof v === 'string') return true;
+  if (!v || typeof v !== 'object') return false;
+  const f = v as Record<string, unknown>;
+  return (
+    Object.keys(f).length === 3 &&
+    typeof f.filename === 'string' &&
+    typeof f.type === 'string' &&
+    typeof f.size === 'number' &&
+    Number.isFinite(f.size)
+  );
 }
 
 /**
@@ -136,8 +202,81 @@ function pageTap(bindingName: string, token: string, max: number): string {
       send({ token: T, method: String(method).toUpperCase(), url: String(url), status, contentType: ct || '', body: text, truncated: !!wasCut || cut });
     } catch {}
   };
+  // Multipart form fields as sent; files by name, type and size only, never content.
+  const FD = window.FormData;
+  const fields = (fd) => {
+    const out = [];
+    for (const [k, v] of fd) out.push([String(k), typeof v === 'string' ? v : { filename: String(v.name || ''), type: String(v.type || 'application/octet-stream'), size: Number(v.size) || 0 }]);
+    return out;
+  };
+  // FormData objects a form built (formdata event) -> the id of their report.
+  const formIds = new WeakMap();
+  // Ids of form reports: unique per document, so one frame's cannot name another's.
+  const DOC = Math.random().toString(36).slice(2);
+  let lastId = 0;
+  const postForm = (method, url, fd, extra) => {
+    try {
+      const u = new URL(String(url), location.href);
+      u.hash = ''; // requests never carry the fragment
+      send({ token: T, kind: 'form', method: String(method || 'GET').toUpperCase(), url: u.href, fields: fields(fd), ...extra });
+    } catch {}
+  };
+  const sentForm = (method, url, body) => {
+    try {
+      if (!FD || !(body instanceof FD)) return;
+      const id = formIds.get(body);
+      postForm(method, url, body, id ? { supersedes: id } : {});
+    } catch {}
+  };
   // Captured now, so page scripts that replace timers cannot stall the tap.
   const later = window.setTimeout.bind(window);
+  if (FD) {
+    // The button that submitted each form, for its formaction/formmethod/formenctype.
+    const submitters = new WeakMap();
+    // The last report per form, for a moment: Chromium builds one submission's entry list
+    // (and fires formdata) twice, a task apart, which must not count as two submissions.
+    // A second identical submission within that moment is then reported once; the
+    // recorder sees two requests for one report and leaves both bodies unavailable.
+    const recent = new WeakMap();
+    const DEDUPE_MS = 1000;
+    window.addEventListener('submit', (e) => {
+      try {
+        const form = e.target;
+        submitters.set(form, e.submitter || null);
+        later(() => submitters.delete(form), 0);
+      } catch {}
+    }, true);
+    // A multipart form submission (or new FormData(form)): read the entries at the form
+    // itself, after the page's own formdata listeners there have added theirs.
+    window.addEventListener('formdata', (e) => {
+      try {
+        const form = e.target, fd = e.formData;
+        if (!form || form.tagName !== 'FORM' || !fd) return;
+        const s = submitters.get(form);
+        const pick = (attr, prop, own) => (s && s.hasAttribute && s.hasAttribute(attr) ? s[prop] : form[own]);
+        const method = String(pick('formmethod', 'formMethod', 'method') || 'get').toLowerCase();
+        const enc = String(pick('formenctype', 'formEnctype', 'enctype') || '').toLowerCase();
+        if (method !== 'post' || enc !== 'multipart/form-data') return;
+        const url = String(pick('formaction', 'formAction', 'action'));
+        const atForm = (ev) => {
+          if (ev.formData !== fd) return;
+          form.removeEventListener('formdata', atForm);
+          const key = url + '\\n' + JSON.stringify(fields(fd));
+          const prev = recent.get(form);
+          if (prev && prev.key === key) {
+            formIds.set(fd, prev.id);
+            return;
+          }
+          const id = DOC + ':' + ++lastId;
+          formIds.set(fd, id);
+          recent.set(form, { key, id });
+          later(() => { if (recent.get(form)?.id === id) recent.delete(form); }, DEDUPE_MS);
+          postForm('POST', url, fd, { id });
+        };
+        form.addEventListener('formdata', atForm);
+      } catch {}
+    }, true);
+  }
   const WAIT = 500;
   // Reads at most MAX bytes of a body, then stops (streams may never end).
   // Reads at most MAX bytes of a body, then stops (streams may never end). A body
@@ -168,11 +307,18 @@ function pageTap(bindingName: string, token: string, max: number): string {
     // location.href = ...) can unload before a concurrent read finishes. The bound keeps
     // streaming responses from being held up; their read continues in the background.
     window.fetch = function (input, init) {
-      const p = origFetch.apply(this, arguments);
       let method = 'GET';
       try {
         method = (init && init.method) || (input && typeof input === 'object' && 'method' in input ? input.method : 'GET');
+        if (init && init.body) sentForm(method, input && typeof input === 'object' && 'url' in input ? input.url : input, init.body);
+        // A Request built with a FormData body: its body can only be read as a copy, which
+        // must happen before fetch consumes it.
+        else if (typeof Request === 'function' && input instanceof Request && input.body && !input.bodyUsed && /^ *multipart[/]/i.test(input.headers.get('content-type') || '')) {
+          const copy = input.clone();
+          copy.formData().then((fd) => postForm(input.method, input.url, fd, {}), () => {});
+        }
       } catch {}
+      const p = origFetch.apply(this, arguments);
       return p.then((res) => {
         try {
           const ct = res.headers.get('content-type');
@@ -191,8 +337,11 @@ function pageTap(bindingName: string, token: string, max: number): string {
   const X = window.XMLHttpRequest && window.XMLHttpRequest.prototype;
   if (X) {
     const open = X.open, sendX = X.send;
-    X.open = function (method) { this.__assayMethod = method; return open.apply(this, arguments); };
-    X.send = function () {
+    X.open = function (method, url) { this.__assayMethod = method; this.__assayUrl = url; return open.apply(this, arguments); };
+    X.send = function (body) {
+      try {
+        if (body) sentForm(this.__assayMethod, this.__assayUrl, body);
+      } catch {}
       try {
         // Once per XHR object: a reused XHR must not report each response twice.
         if (!this.__assayTapped) {
@@ -227,6 +376,7 @@ export class EvidenceRecorder {
   private readonly byRequest = new Map<Request, NetworkEntry>();
   private readonly pending = new Set<Promise<void>>();
   private readonly tapped: (TappedBody & { frame: Frame | undefined })[] = [];
+  private readonly tappedForms: (TappedForm & { frame: Frame | undefined })[] = [];
   /** The frame that issued each entry's request, to group it with bodies tapped in that frame. */
   private readonly frameOf = new WeakMap<NetworkEntry, Frame>();
   private readonly frameIds = new WeakMap<Frame, number>();
@@ -245,6 +395,27 @@ export class EvidenceRecorder {
     context.on('request', (req) => this.onRequest(req));
     context.on('response', (resp) => this.track(this.onResponse(resp.request())));
     context.on('requestfailed', (req) => this.onFailed(req));
+    // Page activity: when each page last opened or navigated, to find the active one.
+    const watch = (p: Page) => {
+      this.touch(p);
+      p.on('framenavigated', (f) => {
+        if (f === p.mainFrame()) this.touch(p);
+      });
+    };
+    context.pages().forEach(watch);
+    context.on('page', watch);
+  }
+
+  private readonly activity = new WeakMap<Page, number>();
+  private ticks = 0;
+
+  private touch(p: Page): void {
+    this.activity.set(p, ++this.ticks);
+  }
+
+  /** When `page` last opened or navigated, relative to the context's other pages (undefined: not seen). */
+  lastActive(page: Page): number | undefined {
+    return this.activity.get(page);
   }
 
   /** Attach a recorder to a context (idempotent). Pages opened afterwards get the body tap. */
@@ -267,9 +438,23 @@ export class EvidenceRecorder {
 
   private async install(): Promise<void> {
     const name = `__assay_${this.token.replace(/-/g, '').slice(0, 12)}`;
-    await this.context.exposeBinding(name, (source, payload: TappedBody & { token?: string }) => {
+    await this.context.exposeBinding(name, (source, payload: TapMessage & { token?: string }) => {
       if (!payload || payload.token !== this.token) return;
-      const { token: _t, ...body } = payload;
+      if (payload.kind === 'form') {
+        const { method, url, fields, id, supersedes } = payload;
+        if (typeof method !== 'string' || typeof url !== 'string' || !Array.isArray(fields)) return;
+        if (!fields.every(isFormField)) return;
+        this.tappedForms.push({
+          method,
+          url,
+          fields: fields.map(([k, v]) => [k, typeof v === 'string' ? v : { ...v }]),
+          ...(typeof id === 'string' ? { id } : {}),
+          ...(typeof supersedes === 'string' ? { supersedes } : {}),
+          frame: source.frame,
+        });
+        return;
+      }
+      const { token: _t, kind: _k, ...body } = payload;
       this.tapped.push({ ...body, frame: source.frame });
     });
     await this.context.addInitScript({ content: pageTap(name, this.token, this.maxBody) });
@@ -291,11 +476,17 @@ export class EvidenceRecorder {
       requestHeaders: pick(headers, KEEP_REQUEST_HEADERS),
       responseHeaders: {},
     };
-    const post = req.postData();
-    if (post != null) {
-      const { body, truncated } = decodeBody(post, headers['content-type'], this.maxBody);
-      entry.requestBody = body;
-      if (truncated) entry.bodyTruncated = true;
+    const post = req.postDataBuffer();
+    const decoded = post != null ? decodeRequestBody(post, headers['content-type'], this.maxBody) : undefined;
+    if (decoded) {
+      entry.requestBody = decoded.body;
+      if (decoded.raw !== undefined) entry.requestBodyRaw = decoded.raw;
+      if (decoded.truncated) markTruncated(entry, 'request');
+    } else if (isMultipart(headers['content-type']) && !['GET', 'HEAD', 'OPTIONS'].includes(entry.method)) {
+      // A multipart body was sent but not reported (Chromium leaves out bodies with files)
+      // or did not parse; the page tap may fill it in at settle(). Other bodies the browser
+      // does not report are left out as before: a POST may set a content type and send none.
+      entry.requestBodyUnavailable = true;
     }
     this.entries.push(entry);
     this.byRequest.set(req, entry);
@@ -326,7 +517,7 @@ export class EvidenceRecorder {
       const text = buf.toString('utf8');
       const { body, truncated } = decodeBody(text, ct, this.maxBody);
       entry.responseBody = body;
-      if (truncated) entry.bodyTruncated = true;
+      if (truncated) markTruncated(entry, 'response');
     } catch {
       /* evicted (e.g. the page navigated); the page tap usually has it */
     }
@@ -370,9 +561,10 @@ export class EvidenceRecorder {
           continue;
         const { body, truncated } = decodeBody(t.body, t.contentType, this.maxBody);
         e.responseBody = body;
-        if (truncated || t.truncated) e.bodyTruncated = true;
+        if (truncated || t.truncated) markTruncated(e, 'response');
       }
     }
+    this.fillForms();
     for (const e of this.entries) {
       const ct = e.responseHeaders['content-type'];
       const expected =
@@ -382,6 +574,43 @@ export class EvidenceRecorder {
         isTextual(ct);
       if (expected && e.responseBody === undefined) e.bodyUnavailable = true;
       else delete e.bodyUnavailable;
+    }
+  }
+
+  /**
+   * Fill multipart request bodies the browser did not report from the forms the page tap
+   * saw sent, by the same rule as response bodies: the multipart requests to a method and
+   * URL from a frame pair one to one with the tapped forms (equal counts), and those forms
+   * are identical. Otherwise the body stays unavailable.
+   */
+  private fillForms(): void {
+    const superseded = new Set(this.tappedForms.flatMap((t) => (t.supersedes !== undefined ? [t.supersedes] : [])));
+    const groups = new Map<string, { entries: NetworkEntry[]; forms: string[] }>();
+    const group = (frame: Frame | undefined, method: string, url: string) => {
+      const key = `${frame ? this.frameId(frame) : '-'} ${method} ${url}`;
+      let g = groups.get(key);
+      if (!g) groups.set(key, (g = { entries: [], forms: [] }));
+      return g;
+    };
+    for (const e of this.entries) {
+      if (multipartBoundary(e.requestHeaders['content-type']) !== undefined)
+        group(this.frameOf.get(e), e.method, e.url).entries.push(e);
+    }
+    for (const t of this.tappedForms) {
+      if (t.id !== undefined && superseded.has(t.id)) continue;
+      group(t.frame, t.method, t.url).forms.push(JSON.stringify(t.fields));
+    }
+    for (const { entries, forms } of groups.values()) {
+      const [first] = forms;
+      if (first === undefined || entries.length !== forms.length || !forms.every((f) => f === first)) continue;
+      // Too large to keep: the body stays unavailable rather than cut.
+      if (Buffer.byteLength(first, 'utf8') > this.maxBody) continue;
+      const fields = JSON.parse(first) as [string, FormValue][];
+      for (const e of entries) {
+        if (!e.requestBodyUnavailable) continue;
+        e.requestBody = formObject(fields);
+        delete e.requestBodyUnavailable;
+      }
     }
   }
 
@@ -414,6 +643,17 @@ export interface CaptureOptions {
   probes?: Record<string, Probe>;
   /** Capture cookies and web storage (default true). */
   storage?: boolean;
+  /**
+   * Capture the content of iframes (same-origin and cross-origin) under their `iframe`
+   * nodes, and their text after the page's (default true; ADR 0012).
+   */
+  frames?: boolean;
+  /**
+   * Capture the browser context's other open pages (tabs, popups) as `pages`, and take the
+   * active page, `page` or a popup or tab it opened, as the snapshot's page (default
+   * true). false: `page` only, as before (ADR 0012).
+   */
+  pages?: boolean;
   /** Cookie names whose values are kept even if httpOnly or credential-like. */
   keepCookies?: string[];
   /** Web storage keys whose values are kept even if they look like credentials. */
@@ -542,14 +782,86 @@ export async function captureBaseline(page: Page, opts: BaselineOptions = {}): P
   return structuredClone(baseline);
 }
 
+/** Max ms to read one other open page; one that takes longer is recorded as unavailable. */
+const PAGE_TIMEOUT = 5000;
+
+/**
+ * The active page: of `given` and the pages it opened (popups and new tabs, and the pages
+ * those opened), the one that most recently opened or navigated, as the recorder saw it.
+ * Pages opened otherwise (`context.newPage()`, e.g. by the test itself) never take over.
+ * Without a recorder, the given page.
+ */
+async function activePage(given: Page, recorder: EvidenceRecorder | null | undefined): Promise<Page> {
+  if (!recorder) return given;
+  const open = given.context().pages();
+  const openers = await Promise.all(open.map(async (p) => [p, await p.opener().catch(() => null)] as const));
+  const family = new Set([given]);
+  for (let grew = true; grew;) {
+    grew = false;
+    for (const [p, opener] of openers) {
+      if (opener && family.has(opener) && !family.has(p)) {
+        family.add(p);
+        grew = true;
+      }
+    }
+  }
+  let active = given;
+  for (const p of family) {
+    if (!p.isClosed() && (recorder.lastActive(p) ?? -1) > (recorder.lastActive(active) ?? -1)) active = p;
+  }
+  return active;
+}
+
+/**
+ * Another open page: its accessibility tree (frames included) and text, or unavailable when
+ * the whole read takes longer than `timeout` ms. Its title is read first and kept either
+ * way, so a `page` assertion selecting it by title finds it (and abstains as unreadable).
+ * @internal Exported for tests.
+ */
+export async function readOtherPage(p: Page, frames: boolean, timeout = PAGE_TIMEOUT): Promise<PageView> {
+  let title = '';
+  const read = async (): Promise<PageView> => {
+    title = await p.title();
+    const a11y = parseAriaSnapshot(await p.locator('body').ariaSnapshot({ timeout }));
+    const texts: string[] = [];
+    if (frames) await attachFrames(p.mainFrame(), a11y, texts, { ...FRAME_LIMITS, timeout });
+    const text = await p.evaluate(() => (document.body ? document.body.innerText : ''));
+    return { url: p.url(), title, a11y, text: [text, ...texts].join('\n') };
+  };
+  const view = await within(
+    read().catch(() => undefined),
+    timeout,
+  );
+  if (view && view !== TIMED_OUT) return view;
+  return { url: p.url(), title, a11y: { role: 'document' }, text: '', unavailable: true };
+}
+
+/**
+ * Capture a snapshot of the browser context's active page: its accessibility tree (with
+ * frame content), text, URL and storage, the network log, probes and the baseline, and
+ * the other open pages (tabs, popups) as `pages` (ADR 0012). The active page is `page`, or
+ * a popup or tab it opened that was opened or navigated more recently.
+ */
 export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Promise<EvidenceSnapshot> {
   const recorder = opts.recorder === undefined ? EvidenceRecorder.for(page.context()) : opts.recorder;
   const baseline = opts.baseline === undefined ? baselines.get(page.context()) : opts.baseline;
   const redacted: string[] = [];
+  const frames = opts.frames !== false;
+  const active = opts.pages === false ? page : await activePage(page, recorder);
 
-  const ariaYaml = await page.locator('body').ariaSnapshot();
-  const dom = await readDom(page);
-  const storage = await readStorage(page, dom, opts, redacted);
+  const a11y = parseAriaSnapshot(await active.locator('body').ariaSnapshot());
+  const frameTexts: string[] = [];
+  if (frames) await attachFrames(active.mainFrame(), a11y, frameTexts);
+  const dom = await readDom(active);
+  const storage = await readStorage(active, dom, opts, redacted);
+  const others =
+    opts.pages === false
+      ? []
+      : active
+          .context()
+          .pages()
+          .filter((p) => p !== active && !p.isClosed());
+  const pages = await Promise.all(others.map((p) => readOtherPage(p, frames)));
   const probes = await runProbes(opts.probes);
 
   let network: NetworkEntry[] | null = null;
@@ -561,14 +873,17 @@ export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Pr
   return {
     schema: SNAPSHOT_SCHEMA,
     capturedAt: new Date().toISOString(),
-    page: { url: page.url(), title: dom.title },
-    a11y: parseAriaSnapshot(ariaYaml),
-    text: dom.text,
+    page: { url: active.url(), title: dom.title },
+    a11y,
+    // Frames' text follows the page's: innerText does not include it.
+    text: [dom.text, ...frameTexts].join('\n'),
     network,
     storage,
     probes,
     // Left out (not null) when there is none, so digests of snapshots without one are unchanged.
     ...(baseline ? { baseline: structuredClone(baseline) } : {}),
+    // Likewise: a snapshot of a context with one page has no `pages`.
+    ...(pages.length ? { pages } : {}),
     meta: { capturer: CAPTURER, redacted: redacted.toSorted() },
   };
 }

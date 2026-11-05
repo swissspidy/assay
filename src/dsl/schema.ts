@@ -193,6 +193,15 @@ export const checkSetSchema = {
         },
       },
     },
+    pageMatch: {
+      type: 'object',
+      additionalProperties: false,
+      minProperties: 1,
+      properties: {
+        url: { $ref: '#/definitions/urlMatch' },
+        title: { $ref: '#/definitions/textMatch' },
+      },
+    },
     jsonSchema: { type: ['object', 'boolean'] },
     requestMatch: {
       type: 'object',
@@ -508,6 +517,16 @@ export const checkSetSchema = {
             witness: { $ref: '#/definitions/locator' },
             match: { $ref: '#/definitions/locator' },
             count: { $ref: '#/definitions/numberCompare' },
+            assert: { $ref: '#/definitions/assertion' },
+          },
+        },
+        {
+          type: 'object',
+          additionalProperties: false,
+          required: ['kind', 'match', 'assert'],
+          properties: {
+            kind: { const: 'page' },
+            match: { $ref: '#/definitions/pageMatch' },
             assert: { $ref: '#/definitions/assertion' },
           },
         },

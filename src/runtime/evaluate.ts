@@ -2,6 +2,9 @@ import type {
   AbstainReason,
   Assertion,
   AssertionResult,
+  AXNode,
+  PageMatch,
+  PageView,
   CheckResult,
   Comparison,
   CheckSet,
@@ -23,7 +26,16 @@ import { checkSetDigest, snapshotDigest } from '../snapshot/digest.ts';
 import { AXIndex, describeLocator, readNodeField, resolveTarget, type INode } from './axindex.ts';
 import { compare, compareNumber, compareValues, describeNumberCompare, jsonPointer } from './compare.ts';
 import { NormalizeError, applyNormalizers, fromJson, toJson, type TypedValue } from './values.ts';
-import { describeRequestMatch, describeUrlMatch, matchRequest, matchUrl, onUrlRoute } from './network.ts';
+import {
+  describePageMatch,
+  describeRequestMatch,
+  describeUrlMatch,
+  matchPage,
+  matchRequest,
+  matchUrl,
+  onUrlRoute,
+  truncated,
+} from './network.ts';
 
 /** What an assertion is evaluated against. */
 export interface EvalCtx {
@@ -93,6 +105,16 @@ function resolve(ctx: EvalCtx, target: Target): { node: INode; drift: string[] }
   return { node: r.node, drift: r.drift };
 }
 
+/**
+ * A scope: resolved like a target, but an iframe whose frame could not be read (ADR 0012)
+ * has no content to search, so a check scoped to it abstains instead of counting nothing.
+ */
+function resolveScope(ctx: EvalCtx, target: Target): { node: INode; drift: string[] } | AssertionResult {
+  const r = resolve(ctx, target);
+  if (isResult(r) || r.node.node.role !== 'iframe' || r.node.node.props?.frame !== 'unavailable') return r;
+  return abstain('evidence_unavailable', `the frame ${ctx.index.path(r.node)} could not be read`, [], r.drift);
+}
+
 const isResult = (x: unknown): x is AssertionResult => !!x && typeof x === 'object' && 'status' in x;
 
 // ---------------------------------------------------------------------------
@@ -142,7 +164,7 @@ function readSource(ctx: EvalCtx, src: ValueSource): Read {
       if (scoped) {
         let node = ctx.record!;
         if (src.scope) {
-          const r = resolve(ctx, src.scope);
+          const r = resolveScope(ctx, src.scope);
           if (isResult(r)) return r;
           node = r.node;
           drift = r.drift;
@@ -209,7 +231,7 @@ function readSource(ctx: EvalCtx, src: ValueSource): Read {
       const e = pick === 'last' ? hits[hits.length - 1]! : hits[0]!;
       const body = src.from === 'request' ? e.requestBody : e.responseBody;
       const locator = `${src.from} body of #${e.seq} ${e.method} ${e.url}${src.pointer ? ' at ' + src.pointer : ''}`;
-      if (body === undefined || e.bodyTruncated)
+      if (body === undefined || truncated(e, src.from))
         return abstain('value_unavailable', `${src.from} body of #${e.seq} was not captured`, [
           ev('network', { locator }),
         ]);
@@ -410,7 +432,7 @@ export function evaluateAssertion(ctx: EvalCtx, a: Assertion): AssertionResult {
       let scope = ctx.record ?? ctx.index.root;
       let drift: string[] = [];
       if (a.scope) {
-        const r = resolve(ctx, a.scope);
+        const r = resolveScope(ctx, a.scope);
         if (isResult(r)) return r;
         scope = r.node;
         drift = r.drift;
@@ -484,6 +506,8 @@ export function evaluateAssertion(ctx: EvalCtx, a: Assertion): AssertionResult {
     }
     case 'each':
       return evaluateEach(ctx, a);
+    case 'page':
+      return evaluatePage(ctx, a);
     case 'allOf':
     case 'anyOf': {
       const all = a.of.map((s) => evaluateAssertion(ctx, s));
@@ -546,7 +570,7 @@ function evaluateEach(ctx: EvalCtx, a: Extract<Assertion, { kind: 'each' }>): As
   let scope = ctx.record ?? ctx.index.root;
   let drift: string[] = [];
   if (a.scope) {
-    const r = resolve(ctx, a.scope);
+    const r = resolveScope(ctx, a.scope);
     if (isResult(r)) return r;
     scope = r.node;
     drift = r.drift;
@@ -593,6 +617,55 @@ function evaluateEach(ctx: EvalCtx, a: Extract<Assertion, { kind: 'each' }>): As
     return abstain(reasons.length === 1 && reasons[0] ? reasons[0] : 'subcheck_abstained', message, evidence, allDrift);
   }
   return { status, message, evidence, drift: allDrift };
+}
+
+/** Indexes of other pages' trees, built once per tree. */
+const pageIndexes = new WeakMap<AXNode, AXIndex>();
+
+/** The open pages of a snapshot: the active page first, then the others. */
+export function openPages(s: EvidenceSnapshot): PageView[] {
+  return [{ url: s.page.url, title: s.page.title, a11y: s.a11y, text: s.text }, ...(s.pages ?? [])];
+}
+
+/**
+ * The context of the open page `match` selects: the snapshot seen as if that page were the
+ * active one (its URL, title, tree and text), with the rest (network, storage, probes)
+ * unchanged. A result instead when no page or several pages match, or the page could not be read.
+ */
+export function pageContext(ctx: EvalCtx, match: PageMatch): EvalCtx | AssertionResult {
+  const s = ctx.snapshot;
+  const views = openPages(s);
+  const hits = views.filter((v) => matchPage(match, v));
+  const what = describePageMatch(match);
+  const seen = views.map((v) => v.url);
+  // With onMissing "abstain", a page the run never opened is a route it did not take (ADR 0011).
+  if (hits.length === 0)
+    return abstain(
+      ctx.routeMissing ? 'route_missing' : 'anchor_missing',
+      `No open page matches ${what} (open: ${seen.join(', ')})`,
+      [ev('url', { value: seen })],
+    );
+  if (hits.length > 1)
+    return abstain(
+      'anchor_ambiguous',
+      `${hits.length} open pages match ${what}: ${hits.map((v) => v.url).join(', ')}`,
+      [ev('url', { value: hits.map((v) => v.url) })],
+    );
+  const v = hits[0]!;
+  if (v.unavailable) return abstain('evidence_unavailable', `the open page ${v.url} could not be read`);
+  const route = ctx.routeMissing ? { routeMissing: true } : {};
+  if (v.a11y === s.a11y) return { snapshot: s, index: ctx.index, ...route };
+  let index = pageIndexes.get(v.a11y);
+  if (!index) pageIndexes.set(v.a11y, (index = new AXIndex(v.a11y)));
+  return { snapshot: { ...s, page: { url: v.url, title: v.title }, a11y: v.a11y, text: v.text }, index, ...route };
+}
+
+/** `page`: the nested assertion reads the open page `match` selects; selecting it is an anchor. */
+function evaluatePage(ctx: EvalCtx, a: Extract<Assertion, { kind: 'page' }>): AssertionResult {
+  const sub = pageContext(ctx, a.match);
+  if (isResult(sub)) return sub;
+  const r = evaluateAssertion(sub, a.assert);
+  return { ...r, message: `on page ${sub.snapshot.page.url}: ${r.message}` };
 }
 
 // ---------------------------------------------------------------------------

@@ -31,7 +31,26 @@ export function outline(snapshot: EvidenceSnapshot, maxLines = 300): string {
     for (const c of n.children ?? []) walk(c, depth + 1);
   };
   for (const c of snapshot.a11y.children ?? []) walk(c, 0);
-  if (truncated) lines.push(`… (truncated at ${maxLines} lines; use find_nodes to search)`);
+  const activeTruncated = truncated;
+  truncated = false;
+  // Other open pages (tabs, popups) follow, each under a heading; checks read them with a
+  // `page` assertion (ADR 0012). Snapshots of one page render as before.
+  const pages = snapshot.pages ?? [];
+  let shown = 0;
+  for (const [i, p] of pages.entries()) {
+    if (lines.length >= maxLines) break;
+    lines.push(
+      `=== other open page ${i + 1}: ${p.url} — title ${JSON.stringify(p.title)}${p.unavailable ? ' (could not be read)' : ''}; read it with a page assertion ===`,
+    );
+    shown++;
+    for (const c of p.a11y.children ?? []) walk(c, 0);
+  }
+  if (activeTruncated) lines.push(`… (truncated at ${maxLines} lines; use find_nodes to search)`);
+  // find_nodes searches the active page only, so it cannot stand in for other pages' trees.
+  if (truncated || shown < pages.length)
+    lines.push(
+      `… (other open pages truncated at ${maxLines} lines: ${pages.length - shown} not shown${truncated ? ', the last one shown is cut' : ''}; find_nodes searches only the active page)`,
+    );
   return lines.join('\n');
 }
 
@@ -103,6 +122,7 @@ export function networkEntry(snapshot: EvidenceSnapshot, seq: number): string {
     `request body: ${body(e.requestBody)}`,
     `response headers: ${JSON.stringify(e.responseHeaders)}`,
     `response body: ${body(e.responseBody)}`,
+    e.requestBodyUnavailable ? 'NOTE: the request body could not be captured.' : '',
     e.bodyTruncated ? 'NOTE: a body was truncated.' : '',
     e.bodyUnavailable ? 'NOTE: the response body could not be captured.' : '',
   ]
@@ -163,5 +183,8 @@ export function probesView(snapshot: EvidenceSnapshot): string {
 }
 
 export function summary(snapshot: EvidenceSnapshot): string {
-  return `URL ${snapshot.page.url} — title ${JSON.stringify(snapshot.page.title)}; network ${snapshot.network ? `${snapshot.network.length} entries` : 'not recorded'}; storage ${snapshot.storage ? 'captured' : 'not captured'}; probes: ${Object.keys(snapshot.probes).join(', ') || 'none'}${snapshot.baseline ? `; baseline before the task: probes ${Object.keys(snapshot.baseline.probes).join(', ') || 'none'}, storage ${snapshot.baseline.storage ? 'captured' : 'not captured'}` : ''}`;
+  const pages = snapshot.pages?.length
+    ? `; other open pages (read with a page assertion): ${snapshot.pages.map((p) => `${p.url} ${JSON.stringify(p.title)}`).join(', ')}`
+    : '';
+  return `URL ${snapshot.page.url} — title ${JSON.stringify(snapshot.page.title)}${pages}; network ${snapshot.network ? `${snapshot.network.length} entries` : 'not recorded'}; storage ${snapshot.storage ? 'captured' : 'not captured'}; probes: ${Object.keys(snapshot.probes).join(', ') || 'none'}${snapshot.baseline ? `; baseline before the task: probes ${Object.keys(snapshot.baseline.probes).join(', ') || 'none'}, storage ${snapshot.baseline.storage ? 'captured' : 'not captured'}` : ''}`;
 }

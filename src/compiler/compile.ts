@@ -11,6 +11,7 @@
  */
 import type {
   Assertion,
+  AXNode,
   Check,
   CheckSet,
   EvidenceSnapshot,
@@ -41,7 +42,16 @@ import type { ModelClient } from '../model/types.ts';
 import { parseOutcomes, parseOutcomesDetailed, type Clause } from './outcomes.ts';
 import { stressTest, type FindingRef } from '../stress/stress.ts';
 import { findNodes, networkEntry, networkLog, outline, probesView, storageView, summary } from './explore.ts';
-import { DISCOVERY_ABSENCE, DISCOVERY_BASELINE, DISCOVERY_NUDGE, DISCOVERY_SYSTEM, RUBRIC_SYSTEM } from './prompts.ts';
+import {
+  DISCOVERY_ABSENCE,
+  DISCOVERY_BASELINE,
+  DISCOVERY_FORMS,
+  DISCOVERY_FRAMES,
+  DISCOVERY_NUDGE,
+  DISCOVERY_PAGES,
+  DISCOVERY_SYSTEM,
+  RUBRIC_SYSTEM,
+} from './prompts.ts';
 
 export interface TaskInput {
   id: string;
@@ -405,6 +415,8 @@ function sourceChannels(a: Assertion): Channel[] {
       return [...new Set([a.source, ...('sameAs' in a.expect ? [a.expect.sameAs.source] : [])].map(sourceChannel))];
     case 'each':
       return [...new Set(['a11y' as const, ...sourceChannels(a.assert)])];
+    case 'page':
+      return sourceChannels(a.assert);
     case 'allOf':
     case 'anyOf':
       return [...new Set(a.of.flatMap(sourceChannels))];
@@ -425,6 +437,8 @@ export function assertionTrust(a: Assertion): number {
     case 'each':
       // Records are found in the accessibility tree; what is read inside them can be weaker.
       return Math.min(TRUST_RANK.semantic, assertionTrust(a.assert));
+    case 'page':
+      return assertionTrust(a.assert);
     default:
       // A sameAs binding passes when one side is made to show what the other holds, so
       // faking the weaker side alone is enough: it counts as its weaker source.
@@ -819,15 +833,50 @@ export function verifyCandidate(cs: CheckSet, refs: Reference[], stress = true, 
   return { errors, warnings, references };
 }
 
-const CHECKS_TOOL_SCHEMA = {
+const hasFrameContent = (n: AXNode): boolean =>
+  (n.role === 'iframe' && !!n.children?.length) || (n.children ?? []).some(hasFrameContent);
+
+/**
+ * Sections for evidence beyond a single page's main frame (ADR 0012): frames, other open
+ * pages and parsed form bodies, each only when a reference holds it, so the prompt for
+ * references without them is unchanged.
+ */
+function captureSections(snapshots: EvidenceSnapshot[]): string[] {
+  const parts: string[] = [];
+  if (snapshots.some((s) => hasFrameContent(s.a11y) || s.pages?.some((p) => hasFrameContent(p.a11y))))
+    parts.push(DISCOVERY_FRAMES);
+  if (snapshots.some((s) => s.pages?.length)) parts.push(DISCOVERY_PAGES);
+  if (snapshots.some((s) => s.network?.some((e) => e.requestBodyRaw !== undefined))) parts.push(DISCOVERY_FORMS);
+  return parts;
+}
+
+/**
+ * The DSL definitions the compiler's tools take. The `page` assertion (ADR 0012) is offered
+ * only when a reference has other open pages, so the tools (and the recordings keyed on
+ * them) change only for such tasks.
+ * @internal Exported for tests.
+ */
+export function dslDefinitions(withPages: boolean) {
+  const defs = checkSetSchema.definitions;
+  if (withPages) return defs;
+  const { pageMatch: _, ...rest } = defs;
+  const oneOf = defs.assertion.oneOf.filter(
+    (a) => !('const' in a.properties.kind && a.properties.kind.const === 'page'),
+  );
+  return { ...rest, assertion: { oneOf } };
+}
+
+/** @internal Exported for tests: the submit_checks input schema. */
+export const checksToolSchema = (withPages: boolean) => ({
   type: 'object',
   additionalProperties: false,
   required: ['checks'],
   properties: { checks: { type: 'array', minItems: 1, items: { $ref: '#/definitions/check' } } },
-  definitions: checkSetSchema.definitions,
-};
+  definitions: dslDefinitions(withPages),
+});
 
-const ASSERT_TOOL_SCHEMA = {
+/** @internal Exported for tests: the try_assertion input schema. */
+export const assertToolSchema = (withPages: boolean) => ({
   type: 'object',
   additionalProperties: false,
   required: ['assert'],
@@ -835,8 +884,8 @@ const ASSERT_TOOL_SCHEMA = {
     assert: { $ref: '#/definitions/assertion' },
     onMissing: { enum: ['fail', 'abstain'], description: 'Evaluate as a check with this onMissing setting.' },
   },
-  definitions: checkSetSchema.definitions,
-};
+  definitions: dslDefinitions(withPages),
+});
 
 const show = (f: FindingRef) => `${f.description} [${f.reference}/${f.id}]`;
 
@@ -854,6 +903,7 @@ function discoveryTools(
   onAccept: (v: Verification) => void,
 ) {
   const refNames = refs.map((r) => r.name);
+  const withPages = refs.some((r) => r.snapshot.pages?.length);
   const pickRef = (name: string | undefined): Reference => refs.find((r) => r.name === name) ?? refs[0]!;
   const refProp = {
     reference: { type: 'string', enum: refNames, description: 'Reference snapshot name (default: the first one).' },
@@ -919,7 +969,7 @@ function discoveryTools(
         name: 'try_assertion',
         description:
           'Evaluate one assertion against every reference snapshot and report pass/fail/abstain with the reason.',
-        inputSchema: ASSERT_TOOL_SCHEMA,
+        inputSchema: assertToolSchema(withPages),
       },
       run(i: { assert: Assertion; onMissing?: 'fail' | 'abstain' }) {
         const lines = refs.map((r) => {
@@ -941,7 +991,7 @@ function discoveryTools(
         name: 'submit_checks',
         description:
           'Submit the complete list of checks. They are validated and run against all references; you get errors to fix, or acceptance.',
-        inputSchema: CHECKS_TOOL_SCHEMA,
+        inputSchema: checksToolSchema(withPages),
       },
       run(i: { checks: Check[] }) {
         const cs: CheckSet = {
@@ -969,14 +1019,18 @@ function discoveryTools(
 
 /**
  * The discovery prompt: the baseline section when a reference has a baseline, and the
- * absence section when none has one or a probe failed in one (ADR 0011).
+ * absence section when none has one or a probe failed in one (ADR 0011), then the frames,
+ * pages and form bodies sections where the references hold them (ADR 0012).
  */
 export function discoverySystem(refs: Reference[]): string {
   const baseline = refs.some((r) => r.snapshot.baseline);
   const absence = !baseline || refs.some((r) => Object.values(r.snapshot.baseline?.probes ?? {}).some((p) => !p.ok));
-  return [DISCOVERY_SYSTEM, ...(baseline ? [DISCOVERY_BASELINE] : []), ...(absence ? [DISCOVERY_ABSENCE] : [])].join(
-    '\n\n',
-  );
+  return [
+    DISCOVERY_SYSTEM,
+    ...(baseline ? [DISCOVERY_BASELINE] : []),
+    ...(absence ? [DISCOVERY_ABSENCE] : []),
+    ...captureSections(refs.map((r) => r.snapshot)),
+  ].join('\n\n');
 }
 
 export async function compileTask(task: TaskInput, refs: Reference[], opts: CompileOptions): Promise<CompileResult> {
