@@ -93,14 +93,32 @@ the same check run without validation or a record, for hot loops.
 
   Assertion kinds: `state`, `contains`, `value` (read from a node, text, the URL, a request or
   response, storage or a probe, then normalized and compared with a literal, or with a second
-  source via `sameAs`), `url`, `request`, and `allOf`/`anyOf`. Normalizers parse numbers, money,
-  dates and date-times (`datetime`, compared as instants; `approx` on them is in minutes). The JSON
-  Schema is exported as `checkSetSchema`; `validateCheckSet` adds semantic checks.
+  source via `sameAs`), `url`, `request`, `each` and `allOf`/`anyOf`. Normalizers parse numbers,
+  money, dates and date-times (`datetime`, compared as instants; `approx` on them is in minutes).
+  The JSON Schema is exported as `checkSetSchema`; `validateCheckSet` adds semantic checks.
+
+- **Records.** `each` checks a value inside the record it belongs to, not anywhere on the page.
+  Every node matching `match` is a record (a row, a list item; a term with the definitions after
+  it), and `assert` must hold inside each one, with its locators resolved within the record:
+
+  ```json
+  {
+    "kind": "each",
+    "scope": { "role": "table", "name": "Issues" },
+    "match": { "role": "row", "name": { "contains": "Login button misaligned" } },
+    "assert": { "kind": "contains", "match": { "role": "cell", "name": "Open" } }
+  }
+  ```
+
+  The number of records is outcome evidence (default at least one, else fail); a label the page
+  always shows (a term "When") belongs in `witness` too, so renamed copy abstains
+  ([ADR 0008](docs/adr/0008-per-record-checks.md)).
 
 - **Baseline.** A probe or storage source with `"at": "before"` reads the state before the task
   (`captureBaseline`); without a baseline such a check abstains. The `items` normalizer turns a JSON
-  array into an unordered collection (filtered by a JSON Schema `where`, projected by a `pointer`),
-  so "keep everything else" is the cart after `sameAs` the cart before, minus the removed item:
+  array into an unordered collection (filtered by a JSON Schema `where`, projected to one field by a
+  `pointer` or to several fields of each item, kept together, by `pick: ["/sku", "/qty"]`), so
+  "keep everything else" is the cart after `sameAs` the cart before, minus the removed item:
 
   ```json
   {
@@ -268,6 +286,7 @@ anchor, and catch every regression run ([stability report](stability/results/REP
 - [ADR 0005](docs/adr/0005-evaluation-and-stability.md): evaluation and stability
 - [ADR 0006](docs/adr/0006-npm-package-and-releases.md): the npm package and releases
 - [ADR 0007](docs/adr/0007-vercel-ai-sdk-adapter.md): the Vercel AI SDK adapter
+- [ADR 0008](docs/adr/0008-per-record-checks.md): per-record checks and paired item fields
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
 - Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)
 
