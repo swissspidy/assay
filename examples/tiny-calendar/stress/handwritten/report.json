@@ -11,6 +11,14 @@
   "variants": [
    {
     "reference": "created-with-location",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-location",
     "id": "extra-content",
     "description": "unrelated recommendations and a promotional status message on the page",
     "verdict": "success",
@@ -90,6 +98,38 @@
     "rejectedBy": []
    },
    {
+    "reference": "created-with-location",
+    "id": "format:C3:1",
+    "description": "C3's value shown as \"November 5, 2026\" instead of \"Thursday, November 5, 2026\"",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-location",
+    "id": "format:C3:2",
+    "description": "C3's value shown as \"Nov 5, 2026\" instead of \"Thursday, November 5, 2026\"",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-location",
+    "id": "format:C3:3",
+    "description": "C3's value shown as \"2026-11-05\" instead of \"Thursday, November 5, 2026\"",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
     "reference": "created",
     "id": "extra-content",
     "description": "unrelated recommendations and a promotional status message on the page",
@@ -165,6 +205,30 @@
     "reference": "created",
     "id": "url-hash",
     "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created",
+    "id": "format:C3:1",
+    "description": "C3's value shown as \"November 5, 2026\" instead of \"Thursday, November 5, 2026\"",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created",
+    "id": "format:C3:2",
+    "description": "C3's value shown as \"Nov 5, 2026\" instead of \"Thursday, November 5, 2026\"",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created",
+    "id": "format:C3:3",
+    "description": "C3's value shown as \"2026-11-05\" instead of \"Thursday, November 5, 2026\"",
     "verdict": "success",
     "accepted": true,
     "rejectedBy": []
@@ -245,9 +309,57 @@
    },
    {
     "reference": "created-with-location",
-    "id": "C3:value:0",
+    "id": "C2:value:1",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Lunch with Sam\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":4,\"title\":\"Team standup\",\"date\":\"2026-11-05\",\"time\":\"12:30\",\"duration\":90,\"location\":\"Noodle Bar\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their title)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C2:value:1+claim",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Lunch with Sam\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":4,\"title\":\"Team standup\",\"date\":\"2026-11-05\",\"time\":\"12:30\",\"duration\":90,\"location\":\"Noodle Bar\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their title), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C2:value:2",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-05\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":4,\"title\":\"Lunch with Sam\",\"date\":\"2026-11-04\",\"time\":\"12:30\",\"duration\":90,\"location\":\"Noodle Bar\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their date)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C2:value:2+claim",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-05\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":4,\"title\":\"Lunch with Sam\",\"date\":\"2026-11-04\",\"time\":\"12:30\",\"duration\":90,\"location\":\"Noodle Bar\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their date), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C3:records:removed",
     "check": "C3",
-    "description": "page text is \"Friday, November 6, 2026\" (violates the comparison)",
+    "description": "the matching item(s) are missing (1 removed)",
     "advisory": false,
     "claim": false,
     "verdict": "success",
@@ -257,9 +369,9 @@
    },
    {
     "reference": "created-with-location",
-    "id": "C3:value:0+claim",
+    "id": "C3:records:removed+claim",
     "check": "C3",
-    "description": "page text is \"Friday, November 6, 2026\" (violates the comparison), while the page announces success",
+    "description": "the matching item(s) are missing (1 removed), while the page announces success",
     "advisory": false,
     "claim": true,
     "verdict": "success",
@@ -269,9 +381,9 @@
    },
    {
     "reference": "created-with-location",
-    "id": "C3:value:1",
+    "id": "C3:records:extra",
     "check": "C3",
-    "description": "page text is \"Wednesday, November 4, 2026\" (violates the comparison)",
+    "description": "there are more matching items than allowed",
     "advisory": false,
     "claim": false,
     "verdict": "success",
@@ -281,15 +393,135 @@
    },
    {
     "reference": "created-with-location",
-    "id": "C3:value:1+claim",
+    "id": "C3:records:extra+claim",
     "check": "C3",
-    "description": "page text is \"Wednesday, November 4, 2026\" (violates the comparison), while the page announces success",
+    "description": "there are more matching items than allowed, while the page announces success",
     "advisory": false,
     "claim": true,
     "verdict": "success",
     "rejected": true,
     "rejectedBy": "fail",
     "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C3:record:value:0",
+    "check": "C3",
+    "description": "the text of main › definition is \"Friday, November 6, 2026, 12:30 PM\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C3:record:value:0+claim",
+    "check": "C3",
+    "description": "the text of main › definition is \"Friday, November 6, 2026, 12:30 PM\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C3:record:value:1",
+    "check": "C3",
+    "description": "the text of main › definition is \"Wednesday, November 4, 2026, 12:30 PM\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C3:record:value:1+claim",
+    "check": "C3",
+    "description": "the text of main › definition is \"Wednesday, November 4, 2026, 12:30 PM\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C3:record:swap:0",
+    "check": "C3",
+    "description": "the definition of main › term \"When\" and of main › term \"Duration\" are swapped",
+    "advisory": false,
+    "claim": false,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "abstain",
+    "targetStatus": "abstain"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C3:record:swap:0+claim",
+    "check": "C3",
+    "description": "the definition of main › term \"When\" and of main › term \"Duration\" are swapped, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "abstain",
+    "targetStatus": "abstain"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C3:record:swap:1",
+    "check": "C3",
+    "description": "the definition of main › term \"When\" and of main › term \"Location\" are swapped",
+    "advisory": false,
+    "claim": false,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "abstain",
+    "targetStatus": "abstain"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C3:record:swap:1+claim",
+    "check": "C3",
+    "description": "the definition of main › term \"When\" and of main › term \"Location\" are swapped, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "abstain",
+    "targetStatus": "abstain"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C3:record:moved",
+    "check": "C3",
+    "description": "the definition of main › term \"When\" is empty there and shown after it instead",
+    "advisory": false,
+    "claim": false,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "abstain",
+    "targetStatus": "abstain"
+   },
+   {
+    "reference": "created-with-location",
+    "id": "C3:record:moved+claim",
+    "check": "C3",
+    "description": "the definition of main › term \"When\" is empty there and shown after it instead, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "abstain",
+    "targetStatus": "abstain"
    },
    {
     "reference": "created-with-location",
@@ -423,9 +655,57 @@
    },
    {
     "reference": "created",
-    "id": "C3:value:0",
+    "id": "C2:value:1",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Lunch with Sam\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":4,\"title\":\"Team standup\",\"date\":\"2026-11-05\",\"time\":\"12:30\",\"duration\":60,\"location\":\"\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their title)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "C2:value:1+claim",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Lunch with Sam\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":4,\"title\":\"Team standup\",\"date\":\"2026-11-05\",\"time\":\"12:30\",\"duration\":60,\"location\":\"\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their title), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "C2:value:2",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-05\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":4,\"title\":\"Lunch with Sam\",\"date\":\"2026-11-04\",\"time\":\"12:30\",\"duration\":60,\"location\":\"\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their date)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "C2:value:2+claim",
+    "check": "C2",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-05\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":4,\"title\":\"Lunch with Sam\",\"date\":\"2026-11-04\",\"time\":\"12:30\",\"duration\":60,\"location\":\"\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their date), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "C3:records:removed",
     "check": "C3",
-    "description": "page text is \"Friday, November 6, 2026\" (violates the comparison)",
+    "description": "the matching item(s) are missing (1 removed)",
     "advisory": false,
     "claim": false,
     "verdict": "success",
@@ -435,9 +715,9 @@
    },
    {
     "reference": "created",
-    "id": "C3:value:0+claim",
+    "id": "C3:records:removed+claim",
     "check": "C3",
-    "description": "page text is \"Friday, November 6, 2026\" (violates the comparison), while the page announces success",
+    "description": "the matching item(s) are missing (1 removed), while the page announces success",
     "advisory": false,
     "claim": true,
     "verdict": "success",
@@ -447,9 +727,9 @@
    },
    {
     "reference": "created",
-    "id": "C3:value:1",
+    "id": "C3:records:extra",
     "check": "C3",
-    "description": "page text is \"Wednesday, November 4, 2026\" (violates the comparison)",
+    "description": "there are more matching items than allowed",
     "advisory": false,
     "claim": false,
     "verdict": "success",
@@ -459,15 +739,135 @@
    },
    {
     "reference": "created",
-    "id": "C3:value:1+claim",
+    "id": "C3:records:extra+claim",
     "check": "C3",
-    "description": "page text is \"Wednesday, November 4, 2026\" (violates the comparison), while the page announces success",
+    "description": "there are more matching items than allowed, while the page announces success",
     "advisory": false,
     "claim": true,
     "verdict": "success",
     "rejected": true,
     "rejectedBy": "fail",
     "targetStatus": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "C3:record:value:0",
+    "check": "C3",
+    "description": "the text of main › definition is \"Friday, November 6, 2026, 12:30 PM\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "C3:record:value:0+claim",
+    "check": "C3",
+    "description": "the text of main › definition is \"Friday, November 6, 2026, 12:30 PM\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "C3:record:value:1",
+    "check": "C3",
+    "description": "the text of main › definition is \"Wednesday, November 4, 2026, 12:30 PM\" (violates the comparison)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "C3:record:value:1+claim",
+    "check": "C3",
+    "description": "the text of main › definition is \"Wednesday, November 4, 2026, 12:30 PM\" (violates the comparison), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "created",
+    "id": "C3:record:swap:0",
+    "check": "C3",
+    "description": "the definition of main › term \"When\" and of main › term \"Duration\" are swapped",
+    "advisory": false,
+    "claim": false,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "abstain",
+    "targetStatus": "abstain"
+   },
+   {
+    "reference": "created",
+    "id": "C3:record:swap:0+claim",
+    "check": "C3",
+    "description": "the definition of main › term \"When\" and of main › term \"Duration\" are swapped, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "abstain",
+    "targetStatus": "abstain"
+   },
+   {
+    "reference": "created",
+    "id": "C3:record:swap:1",
+    "check": "C3",
+    "description": "the definition of main › term \"When\" and of main › term \"Location\" are swapped",
+    "advisory": false,
+    "claim": false,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "abstain",
+    "targetStatus": "abstain"
+   },
+   {
+    "reference": "created",
+    "id": "C3:record:swap:1+claim",
+    "check": "C3",
+    "description": "the definition of main › term \"When\" and of main › term \"Location\" are swapped, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "abstain",
+    "targetStatus": "abstain"
+   },
+   {
+    "reference": "created",
+    "id": "C3:record:moved",
+    "check": "C3",
+    "description": "the definition of main › term \"When\" is empty there and shown after it instead",
+    "advisory": false,
+    "claim": false,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "abstain",
+    "targetStatus": "abstain"
+   },
+   {
+    "reference": "created",
+    "id": "C3:record:moved+claim",
+    "check": "C3",
+    "description": "the definition of main › term \"When\" is empty there and shown after it instead, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "success",
+    "rejected": true,
+    "rejectedBy": "abstain",
+    "targetStatus": "abstain"
    },
    {
     "reference": "created",
@@ -529,14 +929,14 @@
    }
   ],
   "rates": {
-   "variantsAccepted": 20,
-   "variantsTotal": 20,
-   "mutantsRejected": 14,
-   "mutantsRejectedByFail": 14,
-   "mutantsRejectedByAbstain": 0,
-   "mutantsTotal": 14,
-   "claimMutantsRejected": 14,
-   "claimMutantsTotal": 14
+   "variantsAccepted": 28,
+   "variantsTotal": 28,
+   "mutantsRejected": 28,
+   "mutantsRejectedByFail": 22,
+   "mutantsRejectedByAbstain": 6,
+   "mutantsTotal": 28,
+   "claimMutantsRejected": 28,
+   "claimMutantsTotal": 28
   },
   "overConstrained": [],
   "fragile": [],
@@ -557,6 +957,14 @@
   "variants": [
    {
     "reference": "created-with-reminder-and-place",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder-and-place",
     "id": "extra-content",
     "description": "unrelated recommendations and a promotional status message on the page",
     "verdict": "success",
@@ -631,6 +1039,14 @@
     "reference": "created-with-reminder-and-place",
     "id": "url-hash",
     "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-with-reminder",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
     "verdict": "success",
     "accepted": true,
     "rejectedBy": []
@@ -883,8 +1299,8 @@
    }
   ],
   "rates": {
-   "variantsAccepted": 20,
-   "variantsTotal": 20,
+   "variantsAccepted": 22,
+   "variantsTotal": 22,
    "mutantsRejected": 6,
    "mutantsRejectedByFail": 6,
    "mutantsRejectedByAbstain": 0,
@@ -911,6 +1327,14 @@
   "variants": [
    {
     "reference": "going",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "going",
     "id": "extra-content",
     "description": "unrelated recommendations and a promotional status message on the page",
     "verdict": "success",
@@ -985,6 +1409,14 @@
     "reference": "going",
     "id": "url-hash",
     "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "maybe-then-going",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
     "verdict": "success",
     "accepted": true,
     "rejectedBy": []
@@ -1141,8 +1573,8 @@
    }
   ],
   "rates": {
-   "variantsAccepted": 20,
-   "variantsTotal": 20,
+   "variantsAccepted": 22,
+   "variantsTotal": 22,
    "mutantsRejected": 2,
    "mutantsRejectedByFail": 2,
    "mutantsRejectedByAbstain": 0,
@@ -1169,6 +1601,14 @@
   "variants": [
    {
     "reference": "moved-in-two-steps",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved-in-two-steps",
     "id": "extra-content",
     "description": "unrelated recommendations and a promotional status message on the page",
     "verdict": "success",
@@ -1243,6 +1683,14 @@
     "reference": "moved-in-two-steps",
     "id": "url-hash",
     "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "moved",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
     "verdict": "success",
     "accepted": true,
     "rejectedBy": []
@@ -1379,6 +1827,78 @@
    },
    {
     "reference": "moved-in-two-steps",
+    "id": "C1:value:2",
+    "check": "C1",
+    "description": "probe events is [{\"id\":2,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":1,\"title\":\"Dentist\",\"date\":\"2026-11-07\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their id)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "moved-in-two-steps",
+    "id": "C1:value:2+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":2,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":1,\"title\":\"Dentist\",\"date\":\"2026-11-07\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their id), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "moved-in-two-steps",
+    "id": "C1:value:3",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Dentist\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Team standup\",\"date\":\"2026-11-07\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their title)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "moved-in-two-steps",
+    "id": "C1:value:3+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Dentist\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Team standup\",\"date\":\"2026-11-07\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their title), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "moved-in-two-steps",
+    "id": "C1:value:4",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-07\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-04\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their date)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "moved-in-two-steps",
+    "id": "C1:value:4+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-07\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-04\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their date), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "moved-in-two-steps",
     "id": "claims-only",
     "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
     "advisory": true,
@@ -1437,6 +1957,78 @@
    },
    {
     "reference": "moved",
+    "id": "C1:value:2",
+    "check": "C1",
+    "description": "probe events is [{\"id\":2,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":1,\"title\":\"Dentist\",\"date\":\"2026-11-07\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their id)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "moved",
+    "id": "C1:value:2+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":2,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":1,\"title\":\"Dentist\",\"date\":\"2026-11-07\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their id), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "moved",
+    "id": "C1:value:3",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Dentist\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Team standup\",\"date\":\"2026-11-07\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their title)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "moved",
+    "id": "C1:value:3+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Dentist\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Team standup\",\"date\":\"2026-11-07\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their title), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "moved",
+    "id": "C1:value:4",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-07\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-04\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their date)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "moved",
+    "id": "C1:value:4+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Team standup\",\"date\":\"2026-11-07\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Dentist\",\"date\":\"2026-11-04\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their date), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "moved",
     "id": "claims-only",
     "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
     "advisory": true,
@@ -1447,14 +2039,14 @@
    }
   ],
   "rates": {
-   "variantsAccepted": 20,
-   "variantsTotal": 20,
-   "mutantsRejected": 4,
-   "mutantsRejectedByFail": 4,
+   "variantsAccepted": 22,
+   "variantsTotal": 22,
+   "mutantsRejected": 10,
+   "mutantsRejectedByFail": 10,
    "mutantsRejectedByAbstain": 0,
-   "mutantsTotal": 4,
-   "claimMutantsRejected": 4,
-   "claimMutantsTotal": 4
+   "mutantsTotal": 10,
+   "claimMutantsRejected": 10,
+   "claimMutantsTotal": 10
   },
   "overConstrained": [],
   "fragile": [],
@@ -1909,6 +2501,14 @@
   "variants": [
    {
     "reference": "changed-twice",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed-twice",
     "id": "extra-content",
     "description": "unrelated recommendations and a promotional status message on the page",
     "verdict": "success",
@@ -1983,6 +2583,14 @@
     "reference": "changed-twice",
     "id": "url-hash",
     "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "changed",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
     "verdict": "success",
     "accepted": true,
     "rejectedBy": []
@@ -2139,8 +2747,8 @@
    }
   ],
   "rates": {
-   "variantsAccepted": 20,
-   "variantsTotal": 20,
+   "variantsAccepted": 22,
+   "variantsTotal": 22,
    "mutantsRejected": 2,
    "mutantsRejectedByFail": 2,
    "mutantsRejectedByAbstain": 0,
@@ -2811,6 +3419,14 @@
   "variants": [
    {
     "reference": "renamed-after-typo",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed-after-typo",
     "id": "extra-content",
     "description": "unrelated recommendations and a promotional status message on the page",
     "verdict": "success",
@@ -2885,6 +3501,14 @@
     "reference": "renamed-after-typo",
     "id": "url-hash",
     "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "renamed",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
     "verdict": "success",
     "accepted": true,
     "rejectedBy": []
@@ -3021,6 +3645,54 @@
    },
    {
     "reference": "renamed-after-typo",
+    "id": "C1:value:2",
+    "check": "C1",
+    "description": "probe events is [{\"id\":2,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":1,\"title\":\"Dentist (Dr. Lee)\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their id)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "C1:value:2+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":2,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":1,\"title\":\"Dentist (Dr. Lee)\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their id), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "C1:value:3",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Dentist (Dr. Lee)\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Team standup\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their title)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed-after-typo",
+    "id": "C1:value:3+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Dentist (Dr. Lee)\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Team standup\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their title), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed-after-typo",
     "id": "claims-only",
     "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
     "advisory": true,
@@ -3079,6 +3751,54 @@
    },
    {
     "reference": "renamed",
+    "id": "C1:value:2",
+    "check": "C1",
+    "description": "probe events is [{\"id\":2,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":1,\"title\":\"Dentist (Dr. Lee)\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their id)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed",
+    "id": "C1:value:2+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":2,\"title\":\"Team standup\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":1,\"title\":\"Dentist (Dr. Lee)\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their id), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed",
+    "id": "C1:value:3",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Dentist (Dr. Lee)\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Team standup\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their title)",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed",
+    "id": "C1:value:3+claim",
+    "check": "C1",
+    "description": "probe events is [{\"id\":1,\"title\":\"Dentist (Dr. Lee)\",\"date\":\"2026-11-04\",\"time\":\"09:00\",\"duration\":30,\"location\":\"Room 1\",\"reminder\":false,\"rsvp\":\"yes\"},{\"id\":2,\"title\":\"Team standup\",\"date\":\"2026-11-06\",\"time\":\"14:30\",\"duration\":60,\"location\":\"Main Street 5\",\"reminder\":true,\"rsvp\":\"yes\"},{\"id\":3,\"title\":\"Book club\",\"date\":\"2026-11-10\",\"time\":\"19:00\",\"duration\":90,\"location\":\"Corner Cafe\",\"reminder\":false,\"rsvp\":null}] (items 0 and 1 swap their title), while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "renamed",
     "id": "claims-only",
     "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable",
     "advisory": true,
@@ -3089,14 +3809,14 @@
    }
   ],
   "rates": {
-   "variantsAccepted": 20,
-   "variantsTotal": 20,
-   "mutantsRejected": 4,
-   "mutantsRejectedByFail": 4,
+   "variantsAccepted": 22,
+   "variantsTotal": 22,
+   "mutantsRejected": 8,
+   "mutantsRejectedByFail": 8,
    "mutantsRejectedByAbstain": 0,
-   "mutantsTotal": 4,
-   "claimMutantsRejected": 4,
-   "claimMutantsTotal": 4
+   "mutantsTotal": 8,
+   "claimMutantsRejected": 8,
+   "claimMutantsTotal": 8
   },
   "overConstrained": [],
   "fragile": [],
@@ -3117,6 +3837,14 @@
   "variants": [
    {
     "reference": "created-90-with-place",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90-with-place",
     "id": "extra-content",
     "description": "unrelated recommendations and a promotional status message on the page",
     "verdict": "success",
@@ -3191,6 +3919,14 @@
     "reference": "created-90-with-place",
     "id": "url-hash",
     "description": "a fragment on the page URL",
+    "verdict": "success",
+    "accepted": true,
+    "rejectedBy": []
+   },
+   {
+    "reference": "created-90",
+    "id": "reorder-terms",
+    "description": "term groups (a term with its definitions) in reverse order",
     "verdict": "success",
     "accepted": true,
     "rejectedBy": []
@@ -3443,8 +4179,8 @@
    }
   ],
   "rates": {
-   "variantsAccepted": 20,
-   "variantsTotal": 20,
+   "variantsAccepted": 22,
+   "variantsTotal": 22,
    "mutantsRejected": 6,
    "mutantsRejectedByFail": 6,
    "mutantsRejectedByAbstain": 0,

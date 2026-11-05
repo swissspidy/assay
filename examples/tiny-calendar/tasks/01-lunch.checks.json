@@ -77,21 +77,43 @@
     {
       "id": "C3",
       "requirement": "R2",
-      "description": "The event page's details show the date 2026-11-05 (any date format).",
+      "description": "The event details pair the term \"When\" with a date of 2026-11-05 (any date format).",
       "assert": {
-        "kind": "value",
-        "source": {
-          "from": "text",
-          "pattern": "When\\s*\\n?\\s*([^\\n]+?), \\d{1,2}:\\d{2}"
+        "kind": "each",
+        "scope": {
+          "role": "main"
         },
-        "normalize": [
-          {
-            "op": "date",
-            "locale": "en-US"
+        "match": {
+          "role": "term",
+          "text": "When"
+        },
+        "count": {
+          "eq": 1
+        },
+        "assert": {
+          "kind": "value",
+          "source": {
+            "from": "node",
+            "target": {
+              "role": "definition"
+            },
+            "field": "text"
+          },
+          "normalize": [
+            {
+              "op": "replace",
+              "regex": ",? \\d{1,2}:\\d{2}( ?[AP]M)?$",
+              "flags": "i",
+              "with": ""
+            },
+            {
+              "op": "date",
+              "locale": "en-US"
+            }
+          ],
+          "expect": {
+            "equals": "2026-11-05"
           }
-        ],
-        "expect": {
-          "equals": "2026-11-05"
         }
       }
     },
