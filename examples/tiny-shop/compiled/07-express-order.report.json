@@ -10,18 +10,18 @@
     "discovery": 3
   },
   "usage": {
-    "inputTokens": 58353,
-    "outputTokens": 1808,
-    "cacheReadTokens": 37508,
-    "cacheWriteTokens": 20833
+    "inputTokens": 58843,
+    "outputTokens": 2039,
+    "cacheReadTokens": 37646,
+    "cacheWriteTokens": 21185
   },
   "coverage": [
     {
       "requirement": "R1",
       "quote": "an order is placed",
       "checks": [
-        "R1-order-request",
-        "R1-order-placed-probe"
+        "r1-order-request",
+        "r1-order-placed-probe"
       ],
       "channels": [
         "network",
@@ -33,7 +33,7 @@
       "requirement": "R2",
       "quote": "the order ships express",
       "checks": [
-        "R2-express"
+        "r2-express"
       ],
       "channels": [
         "probe"
@@ -44,12 +44,15 @@
       "requirement": "R3",
       "quote": "the order confirmation is shown",
       "checks": [
-        "R3-confirmation-url",
-        "R3-confirmation-is-latest-order"
+        "r3-url",
+        "r3-heading",
+        "r3-order-number"
       ],
       "channels": [
         "url",
-        "probe"
+        "probe",
+        "a11y",
+        "text"
       ],
       "trust": "structured"
     },
@@ -57,7 +60,7 @@
       "requirement": "R4",
       "quote": "in the name of Ada Lovelace",
       "checks": [
-        "R4-name"
+        "r4-name"
       ],
       "channels": [
         "probe"
@@ -68,7 +71,7 @@
       "requirement": "R5",
       "quote": "Order what is in my cart",
       "checks": [
-        "R5-items-match-cart"
+        "r5-items"
       ],
       "channels": [
         "probe"
@@ -76,7 +79,9 @@
       "trust": "structured"
     }
   ],
-  "warnings": [],
+  "warnings": [
+    "check r3-order-number: reads free page text, which is the easiest evidence to spoof; prefer a11y, network or probe evidence"
+  ],
   "references": [
     {
       "name": "express-order",

@@ -7,13 +7,13 @@
   ],
   "turns": {
     "rubric": 1,
-    "discovery": 6
+    "discovery": 3
   },
   "usage": {
-    "inputTokens": 128019,
-    "outputTokens": 5953,
-    "cacheReadTokens": 102697,
-    "cacheWriteTokens": 25304
+    "inputTokens": 58438,
+    "outputTokens": 1974,
+    "cacheReadTokens": 37557,
+    "cacheWriteTokens": 20869
   },
   "coverage": [
     {
@@ -33,10 +33,11 @@
       "requirement": "R2",
       "quote": "with express shipping",
       "checks": [
-        "r2-express-probe"
+        "r2-express-shipping"
       ],
       "channels": [
-        "probe"
+        "probe",
+        "network"
       ],
       "trust": "structured"
     },
@@ -44,36 +45,21 @@
       "requirement": "R3",
       "quote": "the confirmation shows an estimated delivery of 5 November 2026",
       "checks": [
-        "r3-probe-delivery",
         "r3-confirmation-page",
-        "r3-page-shows-date"
+        "r3-delivery-date-shown"
       ],
       "channels": [
-        "probe",
         "url",
+        "probe",
         "a11y",
         "text"
       ],
       "trust": "structured"
-    },
-    {
-      "requirement": "R4",
-      "quote": "show me the estimated delivery date",
-      "checks": [
-        "r4-page-date-matches-order"
-      ],
-      "channels": [
-        "a11y",
-        "text",
-        "probe"
-      ],
-      "trust": "freetext"
     }
   ],
   "warnings": [
-    "check r3-page-shows-date.assert: reads free page text, which is the easiest evidence to spoof; prefer a11y, network or probe evidence",
-    "check r4-page-date-matches-order.assert: reads free page text, which is the easiest evidence to spoof; prefer a11y, network or probe evidence",
-    "Requirement R4 is covered only by free page text, which a page can spoof."
+    "check r3-delivery-date-shown.assert: reads free page text, which is the easiest evidence to spoof; prefer a11y, network or probe evidence",
+    "requirement R2: its value checks abstain when no request matches; add a \"request\" check so a missing request fails"
   ],
   "references": [
     {
