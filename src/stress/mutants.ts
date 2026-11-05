@@ -863,6 +863,30 @@ function containsMutants(
     // ancestors. Otherwise a sample is inserted under the scope; a bare copy of a match
     // found elsewhere would lose that context, so such locators are synthesized with it.
     const first = hits[0];
+    // A cell bound to a column cannot be inserted on its own: a cell of that column in the
+    // scope takes the forbidden content instead (a listed issue shows "Closed" as its status).
+    if (!first && a.match.column !== undefined && upper === 0) {
+      const { column: _, within: __, landmark: ___, ...bare } = a.match;
+      const cell = synthesize(bare);
+      const target = idx
+        .descendants(scope)
+        .find(
+          (n) =>
+            n.node.role !== 'columnheader' &&
+            idx.columnHeader(n) &&
+            idx.matches(n, { role: n.node.role, column: a.match.column! }),
+        );
+      if (cell && target) {
+        const snap = rebuild(s, idx, new Map([[target.id, { ...cell, role: target.node.role }]]));
+        if (treeChanged(s, snap) && noneHolds(snap, [a], rec))
+          out.push({
+            id: 'contains:extra',
+            description: `a ${target.node.role} in column ${JSON.stringify(idx.columnHeader(target)!.node.name ?? '')} reads ${JSON.stringify(cell.name ?? '')}, which should be absent`,
+            snapshot: snap,
+          });
+      }
+      return out;
+    }
     const context = a.match.within !== undefined || a.match.landmark !== undefined;
     const sample =
       first?.node ?? (context ? undefined : idx.all.find((n) => idx.matches(n, a.match))?.node) ?? synthesize(a.match);

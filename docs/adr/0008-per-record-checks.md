@@ -206,7 +206,7 @@ and was recompiled). `resolveTarget` takes an optional scope.
   Tiny Calendar 01 and Tiny Tracker 10 sets were tightened the same way (the row of issue #1 shows
   Open and bug).
 - The last recompile (all 30 tasks, every held-out run judged correctly) uses `each` in two sets (the When date, the Blue Mug row's quantity) and `column` in one (the cart rows' Product cells). No set uses `pick`: the example apps' order lines carry the same fields as cart items, so every cart and order comparison uses whole items. Tiny Tracker 10 now checks the selected filter controls rather than the rows; the handwritten Tiny Tracker 10 binds its Status and Labels cells with `column`.
-- Stress on the compiled sets: 673/673 valid variants accepted, 405/405 mutants rejected; on the handwritten sets 663/663 and 331/331 (ADR 0005).
+- Stress on the compiled sets: 673/673 valid variants accepted, 405/405 mutants rejected; on the handwritten sets 663/663 and 333/333 (ADR 0005).
 - A record is found by content the page shows (a row's name, a term's text). Without a witness,
   renamed copy makes the record count zero, which fails rather than abstains, as for `contains`;
   the prompt asks for the label as witness.

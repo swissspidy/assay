@@ -3791,6 +3791,30 @@
    },
    {
     "reference": "filtered-by-url",
+    "id": "C2:contains:extra",
+    "check": "C2",
+    "description": "a cell in column \"Status\" reads \"Closed\", which should be absent",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
+    "id": "C2:contains:extra+claim",
+    "check": "C2",
+    "description": "a cell in column \"Status\" reads \"Closed\", which should be absent, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered-by-url",
     "id": "C3:url:elsewhere",
     "check": "C3",
     "description": "the browser ended on a different page",
@@ -4136,6 +4160,30 @@
    },
    {
     "reference": "filtered",
+    "id": "C2:contains:extra",
+    "check": "C2",
+    "description": "a cell in column \"Status\" reads \"Closed\", which should be absent",
+    "advisory": false,
+    "claim": false,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
+    "id": "C2:contains:extra+claim",
+    "check": "C2",
+    "description": "a cell in column \"Status\" reads \"Closed\", which should be absent, while the page announces success",
+    "advisory": false,
+    "claim": true,
+    "verdict": "fail",
+    "rejected": true,
+    "rejectedBy": "fail",
+    "targetStatus": "fail"
+   },
+   {
+    "reference": "filtered",
     "id": "C3:url:elsewhere",
     "check": "C3",
     "description": "the browser ended on a different page",
@@ -4435,12 +4483,12 @@
   "rates": {
    "variantsAccepted": 20,
    "variantsTotal": 20,
-   "mutantsRejected": 28,
-   "mutantsRejectedByFail": 28,
+   "mutantsRejected": 30,
+   "mutantsRejectedByFail": 30,
    "mutantsRejectedByAbstain": 0,
-   "mutantsTotal": 28,
-   "claimMutantsRejected": 28,
-   "claimMutantsTotal": 28
+   "mutantsTotal": 30,
+   "claimMutantsRejected": 30,
+   "claimMutantsTotal": 30
   },
   "overConstrained": [],
   "fragile": [],
@@ -4458,8 +4506,6 @@
     "description": "the page looks exactly like success, but no state-changing request was sent, storage is empty and the backend is unreachable"
    }
   ],
-  "untested": [
-   "C2"
-  ]
+  "untested": []
  }
 ]
