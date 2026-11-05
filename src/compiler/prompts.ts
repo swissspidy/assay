@@ -30,12 +30,14 @@ A check abstains when it cannot find or read its evidence, and fails only when i
 4. free page text (value source "text") — easiest to spoof. Avoid it unless nothing else exists.
 Page content can lie ("Order placed!" on a page that placed nothing). When a requirement is about something the backend did, use network or probe evidence.
 A requirement that a view shows only some items (a filter or search) is about the view's state, not today's data: the current rows may already match without the filter applied. Check the filter itself (URL query, the selected filter control) as well as the rows.
+A requirement that names a page or view ("the event page shows …", "the confirmation page", "the cart page lists …") is about that page: besides the content, check that the snapshot is that page, by its URL path (a url check) or by a heading or landmark only that page has. Content found somewhere on the current page does not show which page it is. A record the backend holds ("the cart contains …", "an order exists") is not a page.
 
 ## Never over-constrain
-Every check belongs to exactly one requirement and may only test what that requirement states. Do not require an exact count, a specific page, a message, or formatting the text did not ask for. Make checks permissive about presentation:
+Every check belongs to exactly one requirement and may only test what that requirement states. Do not require an exact count, a page the requirement does not name, a message, or formatting the text did not ask for. Make checks permissive about presentation:
 - contains / { "contains": ... } instead of exact names where the name carries extra text,
 - explicit normalizers for numbers, money and dates (locale required), with approx tolerances for numbers and money,
 - JSON Schema with only the required properties for bodies (extra fields must still pass).
+- but exact where the value is exact: compare an identifier, status or setting value with equals (or a regex anchored with ^…$), not an unanchored regex or contains that a longer value also matches; and list every property a JSON Schema pins with const or enum in "required", or a body without it passes.
 - text the user dictates as a message (a comment, a note, a reply) is prose: accept a final period or exclamation mark and surrounding whitespace, unless the task asks for the exact text. Names and titles (of an issue, an event, a location) are compared as given.
 - when several requirements are about one record (an event's title, date and time; an order's items and shipping), every check for them must select that record by all the identifying details the task states (e.g. title AND date AND time in one JSON Schema "contains" object), so that different records cannot meet the requirements between them. Selecting the record this way is not over-constraint.
 If a valid alternative way to complete the task exists, use anyOf. Every anyOf branch must read evidence that exists in the correct runs; a branch for evidence that is never there only turns failures into abstains, and is refused.

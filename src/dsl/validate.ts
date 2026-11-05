@@ -83,8 +83,103 @@ export function validateCheckSet(input: unknown): ValidationReport {
   }
   for (const r of cs.requirements)
     if (!covered.has(r.id)) warnings.push(`requirement ${r.id} has no checks (it will abstain as "uncovered")`);
+  warnings.push(...looseMatches(cs));
 
   return { ok: errors.length === 0, errors: dedupe(errors), warnings: dedupe(warnings) };
+}
+
+/**
+ * Comparisons that accept more than they appear to: an unanchored literal regex
+ * on structured evidence (/Berlin/ also matches "Europe/Berlin-Test"), and a
+ * JSON Schema property pinned with const or enum that is not required (a body
+ * without the property passes). `validateCheckSet` reports them as warnings;
+ * the compiler refuses them, since a warning on an accepted submission is never
+ * acted on. Expects a check set that passed the shape validation.
+ */
+export function looseMatches(cs: CheckSet): string[] {
+  const out: string[] = [];
+  for (const c of cs.checks) looseAssertion(c.assert, `check ${c.id}`, out);
+  return dedupe(out);
+}
+
+/** A pattern with no regex syntax other than escaped punctuation: it matches one literal string, anywhere. */
+export function isLiteralPattern(pattern: string): boolean {
+  return pattern !== '' && !/[\\^$.*+?()[\]{}|]/.test(pattern.replace(/\\[^A-Za-z0-9]/g, ''));
+}
+
+const literalRegexAdvice = (pattern: string, at: string) =>
+  `${at}: regex /${pattern}/ has no anchors, so it also matches any value that merely contains it; compare an exact value (an identifier, a setting, a status) with equals or an anchored regex (^…$), or use contains when extra text is allowed`;
+
+function looseTextMatch(m: TextMatch | null | undefined, at: string, out: string[]): void {
+  if (m && typeof m === 'object' && 'regex' in m && isLiteralPattern(m.regex))
+    out.push(literalRegexAdvice(m.regex, at));
+}
+
+function looseRequestMatch(m: RequestMatch, at: string, out: string[]): void {
+  for (const [name, v] of Object.entries(m.url?.query ?? {})) looseTextMatch(v, `${at} query ${name}`, out);
+  if (m.requestBody !== undefined) looseSchema(m.requestBody, `${at} requestBody`, '', [], out);
+  if (m.responseBody !== undefined) looseSchema(m.responseBody, `${at} responseBody`, '', [], out);
+}
+
+function looseOperand(src: ValueSource, normalize: Normalizer[] | undefined, at: string, out: string[]): void {
+  if (src.from === 'request' || src.from === 'response') looseRequestMatch(src.match, at, out);
+  for (const n of normalize ?? [])
+    if (typeof n === 'object' && n.op === 'items' && n.where !== undefined)
+      looseSchema(n.where, `${at} items where`, '', [], out);
+}
+
+function looseAssertion(a: Assertion, at: string, out: string[]): void {
+  switch (a.kind) {
+    case 'value': {
+      looseOperand(a.source, a.normalize, at, out);
+      if ('sameAs' in a.expect) looseOperand(a.expect.sameAs.source, a.expect.sameAs.normalize, `${at} sameAs`, out);
+      const structured = a.source.from !== 'node' && a.source.from !== 'text';
+      if (structured && 'regex' in a.expect && isLiteralPattern(a.expect.regex))
+        out.push(literalRegexAdvice(a.expect.regex, at));
+      if ('schema' in a.expect) looseSchema(a.expect.schema, `${at} schema`, '', [], out);
+      return;
+    }
+    case 'url':
+      for (const [name, v] of Object.entries(a.match.query ?? {})) looseTextMatch(v, `${at} query ${name}`, out);
+      return;
+    case 'request':
+      looseRequestMatch(a.match, at, out);
+      return;
+    case 'allOf':
+    case 'anyOf':
+      a.of.forEach((s, i) => looseAssertion(s, `${at}.${a.kind}[${i}]`, out));
+      return;
+    default:
+      return;
+  }
+}
+
+const isObject = (x: unknown): x is Record<string, unknown> => typeof x === 'object' && x !== null && !Array.isArray(x);
+
+/**
+ * Walks a JSON Schema through properties, items, contains and anyOf/allOf/oneOf.
+ * `inherited` holds the names a parent schema requires of the same instance (a
+ * combinator's branches describe the same object as the schema around them).
+ */
+function looseSchema(s: unknown, at: string, path: string, inherited: string[], out: string[]): void {
+  if (!isObject(s)) return;
+  const required = [...inherited, ...(Array.isArray(s.required) ? s.required.map(String) : [])];
+  if (isObject(s.properties)) {
+    for (const [name, p] of Object.entries(s.properties)) {
+      const here = `${path}/properties/${name}`;
+      if (isObject(p) && ('const' in p || 'enum' in p) && !required.includes(name))
+        out.push(
+          `${at}: JSON Schema property ${here} pins its value with ${'const' in p ? 'const' : 'enum'} but is not in "required", so a value without ${JSON.stringify(name)} passes; add it to "required"`,
+        );
+      looseSchema(p, at, here, [], out);
+    }
+  }
+  if (Array.isArray(s.items)) s.items.forEach((x, i) => looseSchema(x, at, `${path}/items/${i}`, [], out));
+  else looseSchema(s.items, at, `${path}/items`, [], out);
+  looseSchema(s.contains, at, `${path}/contains`, [], out);
+  for (const k of ['anyOf', 'allOf', 'oneOf'])
+    if (Array.isArray(s[k]))
+      (s[k] as unknown[]).forEach((x, i) => looseSchema(x, at, `${path}/${k}/${i}`, required, out));
 }
 
 /** Some value read inside `a` (nested ones and sameAs operands included) comes from a request or response. */

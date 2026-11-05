@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { AnthropicError } from '@anthropic-ai/sdk';
 import { call, lastResults, scripted } from '../support/scripted.ts';
-import { validateCheckSet, type Check, type EvidenceSnapshot } from '../../src/index.ts';
+import { validateCheckSet, type Check, type EvidenceSnapshot, type Json } from '../../src/index.ts';
 import {
   checkRubric,
   compileTask,
@@ -15,6 +15,7 @@ import {
   rubricFromClauses,
   type Reference,
   type TaskInput,
+  verifyCandidate,
 } from '../../src/compiler/index.ts';
 import { anthropicModel, recordingModel, replayModel, runAgent } from '../../src/model/index.ts';
 import { canonical } from '../../src/text.ts';
@@ -256,6 +257,54 @@ test('compileTask rejects a check set that still succeeds on an incorrect run', 
   );
   expect(checkSet).toBeUndefined();
   expect(report.status).toBe('failed');
+});
+
+test('compileTask refuses loose matches the validator only warns about, then accepts the fix', async () => {
+  const saved = (schema: Record<string, Json>): Check[] => [
+    {
+      id: 'C1',
+      requirement: 'R1',
+      description: 'The backend saved the newsletter subscription.',
+      assert: { kind: 'value', source: { from: 'probe', probe: 'settings' }, expect: { schema } },
+    },
+  ];
+  const optional = saved({ type: 'object', properties: { newsletter: { const: true } } });
+  const literal: Check[] = [
+    {
+      id: 'C1',
+      requirement: 'R1',
+      description: 'The page is the settings page.',
+      assert: { kind: 'value', source: { from: 'url', part: 'pathname' }, expect: { regex: 'settings' } },
+    },
+  ];
+  const model = scripted([
+    () => call('submit_checks', { checks: optional }),
+    (req) => {
+      expect(lastResults(req)[0]!.content).toContain(
+        'Not accepted. Fix these and resubmit all checks:\n- check C1 schema: JSON Schema property /properties/newsletter pins its value with const but is not in "required"',
+      );
+      return call('submit_checks', { checks: literal });
+    },
+    (req) => {
+      expect(lastResults(req)[0]!.content).toContain('check C1: regex /settings/ has no anchors');
+      return call('submit_checks', {
+        checks: saved({ type: 'object', properties: { newsletter: { const: true } }, required: ['newsletter'] }),
+      });
+    },
+  ]);
+  const refs: Reference[] = [{ name: 'ok', kind: 'success', snapshot: ref('01-newsletter', 'subscribed') }];
+  const { checkSet, report } = await compileTask({ id: 't', instruction: 'Subscribe me to the newsletter.' }, refs, {
+    model,
+    rubric: 'deterministic',
+  });
+  expect(report.status).toBe('compiled');
+  expect(report.turns.discovery).toBe(3);
+  expect(report.warnings.join('\n')).not.toContain('required');
+  // Users get the same findings as warnings.
+  const cs = { ...checkSet!, checks: optional };
+  expect(validateCheckSet(cs)).toMatchObject({ ok: true, warnings: [expect.stringContaining('not in "required"')] });
+  expect(verifyCandidate(cs, refs, false).errors).toEqual([expect.stringContaining('not in "required"')]);
+  expect(verifyCandidate(cs, refs, false).warnings).toEqual([]);
 });
 
 test('cassettes: a recorded compile replays identically without a model; changed inputs are detected', async () => {
