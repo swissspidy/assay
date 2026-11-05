@@ -78,7 +78,10 @@ export function replayOrRecordModel(
     },
   };
   return {
-    id: old.model,
+    // Like a replay until a turn is recorded live, so reports read the same as a plain replay.
+    get id() {
+      return misses ? old.model : `${old.model} (replay)`;
+    },
     recorded,
     get misses() {
       return misses;
