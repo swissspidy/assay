@@ -397,6 +397,17 @@ test.describe('review sheet', () => {
     trustedKeys.splice(0, 2, { name: `Team\n${signer.keyId}\u0000Signer`, key: low.publicKey });
     await expect(verify(signed, ADDED_BLUE, { requireLocked: { trustedKeys } })).rejects.toThrow(LockError);
   });
+
+  test('a key replaced in a TrustedKeySet under the same id and name is no longer trusted', async () => {
+    const signed = approveCheckSet(BLUE_MUG, { by: 'alice', at: AT, key: alice.privateKey });
+    const set = trustedKeySet([{ name: 'Alice', key: alice.publicKey }]);
+    await expect(verify(signed, ADDED_BLUE, { requireLocked: { trustedKeys: set } })).resolves.toBeDefined();
+    set.keys.set(alice.keyId, {
+      name: 'Alice',
+      key: trustedKeySet([mallory.publicKey]).keys.values().next().value!.key,
+    });
+    await expect(verify(signed, ADDED_BLUE, { requireLocked: { trustedKeys: set } })).rejects.toThrow(LockError);
+  });
 });
 
 test.describe('route and page checks (ADR 0011, 0012)', () => {

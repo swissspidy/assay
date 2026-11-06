@@ -14,7 +14,7 @@ import type {
 import { CheckSetError, validateCheckSet, type ValidationReport } from '../dsl/validate.ts';
 import { checkSetDigest } from '../snapshot/digest.ts';
 import { verifyLock, type LockCheckOptions, type LockStatus } from '../verifier/lock.ts';
-import { trustedKeySet, type TrustedKeySet } from '../verifier/sign.ts';
+import { keyId, trustedKeySet, type TrustedKeySet } from '../verifier/sign.ts';
 import { buildStore, type EvidenceStore } from '../store/store.ts';
 import { abstain, compileAssertion, kleeneAnd, type EvalCtx, type Run, type Seq } from './assertions.ts';
 import { readSetOf, unionReadSets, type ReadSet } from './readset.ts';
@@ -87,8 +87,9 @@ export class CheckPlan {
 
   /**
    * `verifyLock(checkSet, opts)`, kept per set of trusted keys (a copy each call). The trusted
-   * keys are read on every call and the memo is keyed by what they are (key ids and names), so a
-   * key removed from the caller's list is no longer trusted on the next call.
+   * keys are read on every call and the memo is keyed by what they are (the map's id, the name,
+   * and the fingerprint of the key itself), so a key removed or replaced in the caller's list is
+   * no longer trusted on the next call.
    */
   readonly lockStatus = (cs: CheckSet, opts: LockCheckOptions): LockStatus => {
     let s: LockStatus | undefined;
@@ -99,11 +100,12 @@ export class CheckPlan {
           ? (opts.trustedKeys as TrustedKeySet)
           : trustedKeySet(opts.trustedKeys as Parameters<typeof trustedKeySet>[0]);
       // JSON, not joined strings: a name can contain any separator, so two different key sets
-      // could otherwise produce the same memo key.
+      // could otherwise produce the same memo key. The fingerprint is of the key object itself,
+      // since a TrustedKeySet can hold a key under an id that is not its own.
       const key = JSON.stringify(
         [...set.keys]
-          .map(([id, k]): [string, string] => [id, k.name])
-          .toSorted(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
+          .map(([id, k]): [string, string, string] => [id, k.name, keyId(k.key)])
+          .toSorted(([a, , x], [b, , y]) => (a < b ? -1 : a > b ? 1 : x < y ? -1 : x > y ? 1 : 0)),
       );
       s = this.byKeys.get(key);
       if (!s) {
