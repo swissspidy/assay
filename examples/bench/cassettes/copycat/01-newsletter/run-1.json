@@ -1,0 +1,165 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "fixture:copycat",
+ "recordedAt": "2026-11-06T11:12:18.093Z",
+ "turns": {
+  "sha256:e9df125c40834693eb305ad21f6bc244b17b5111f6ac80510a2ac7272cab8eec": {
+   "stop": "tool_use",
+   "text": "{\"tool\":\"submit_rubric\",\"input\":{\"requirements\":[{\"id\":\"R1\",\"kind\":\"hard\",\"text\":\"The newsletter subscription is saved\",\"field\":\"outcomes\",\"quote\":\"the newsletter subscription is saved\"},{\"id\":\"R2\",\"kind\":\"hard\",\"text\":\"The newsletter checkbox is checked\",\"field\":\"outcomes\",\"quote\":\"the newsletter checkbox in the preferences is checked\"}]}}",
+   "toolCalls": [
+    {
+     "id": "json_0_0",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The newsletter subscription is saved",
+        "field": "outcomes",
+        "quote": "the newsletter subscription is saved"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
+        "text": "The newsletter checkbox is checked",
+        "field": "outcomes",
+        "quote": "the newsletter checkbox in the preferences is checked"
+       }
+      ]
+     }
+    }
+   ],
+   "raw": {
+    "mode": "json",
+    "text": "{\"tool\":\"submit_rubric\",\"input\":{\"requirements\":[{\"id\":\"R1\",\"kind\":\"hard\",\"text\":\"The newsletter subscription is saved\",\"field\":\"outcomes\",\"quote\":\"the newsletter subscription is saved\"},{\"id\":\"R2\",\"kind\":\"hard\",\"text\":\"The newsletter checkbox is checked\",\"field\":\"outcomes\",\"quote\":\"the newsletter checkbox in the preferences is checked\"}]}}",
+    "inner": [
+     {
+      "type": "text",
+      "text": "{\"tool\":\"submit_rubric\",\"input\":{\"requirements\":[{\"id\":\"R1\",\"kind\":\"hard\",\"text\":\"The newsletter subscription is saved\",\"field\":\"outcomes\",\"quote\":\"the newsletter subscription is saved\"},{\"id\":\"R2\",\"kind\":\"hard\",\"text\":\"The newsletter checkbox is checked\",\"field\":\"outcomes\",\"quote\":\"the newsletter checkbox in the preferences is checked\"}]}}"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 698,
+    "outputTokens": 86
+   },
+   "model": "fixture:copycat",
+   "mode": "json"
+  },
+  "sha256:cd413eff9b3cee11d299d68f29926e101d2963446b1c3f9c5b3d5033150305d8": {
+   "stop": "tool_use",
+   "text": "{\"tool\":\"submit_checks\",\"input\":{\"checks\":[{\"id\":\"C1\",\"requirement\":\"R1\",\"description\":\"The browser saved the settings at least once (PUT /api/settings → 200).\",\"assert\":{\"kind\":\"request\",\"match\":{\"method\":\"PUT\",\"url\":{\"path\":\"/api/settings\"},\"status\":200}}},{\"id\":\"C2\",\"requirement\":\"R1\",\"description\":\"The last saved settings response has newsletter = true.\",\"assert\":{\"kind\":\"value\",\"source\":{\"from\":\"response\",\"match\":{\"method\":\"PUT\",\"url\":{\"path\":\"/api/settings\"},\"status\":200},\"pointer\":\"/newsletter\",\"pick\":\"last\"},\"expect\":{\"equals\":true}}},{\"id\":\"C4\",\"requirement\":\"R1\",\"description\":\"The stored settings (read back from the backend) have newsletter = true.\",\"assert\":{\"kind\":\"value\",\"source\":{\"from\":\"probe\",\"probe\":\"settings\",\"pointer\":\"/newsletter\"},\"expect\":{\"equals\":true}}},{\"id\":\"C3\",\"requirement\":\"R2\",\"description\":\"The newsletter checkbox in the Preferences form is checked.\",\"assert\":{\"kind\":\"state\",\"target\":{\"anchors\":[{\"role\":\"checkbox\",\"name\":\"Email me the newsletter\"},{\"role\":\"checkbox\",\"name\":{\"contains\":\"newsletter\",\"ignoreCase\":true},\"landmark\":{\"role\":\"form\",\"name\":\"Preferences\"}}]},\"expect\":{\"checked\":true}}}]}}",
+   "toolCalls": [
+    {
+     "id": "json_0_0",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "C1",
+        "requirement": "R1",
+        "description": "The browser saved the settings at least once (PUT /api/settings → 200).",
+        "assert": {
+         "kind": "request",
+         "match": {
+          "method": "PUT",
+          "url": {
+           "path": "/api/settings"
+          },
+          "status": 200
+         }
+        }
+       },
+       {
+        "id": "C2",
+        "requirement": "R1",
+        "description": "The last saved settings response has newsletter = true.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "response",
+          "match": {
+           "method": "PUT",
+           "url": {
+            "path": "/api/settings"
+           },
+           "status": 200
+          },
+          "pointer": "/newsletter",
+          "pick": "last"
+         },
+         "expect": {
+          "equals": true
+         }
+        }
+       },
+       {
+        "id": "C4",
+        "requirement": "R1",
+        "description": "The stored settings (read back from the backend) have newsletter = true.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "settings",
+          "pointer": "/newsletter"
+         },
+         "expect": {
+          "equals": true
+         }
+        }
+       },
+       {
+        "id": "C3",
+        "requirement": "R2",
+        "description": "The newsletter checkbox in the Preferences form is checked.",
+        "assert": {
+         "kind": "state",
+         "target": {
+          "anchors": [
+           {
+            "role": "checkbox",
+            "name": "Email me the newsletter"
+           },
+           {
+            "role": "checkbox",
+            "name": {
+             "contains": "newsletter",
+             "ignoreCase": true
+            },
+            "landmark": {
+             "role": "form",
+             "name": "Preferences"
+            }
+           }
+          ]
+         },
+         "expect": {
+          "checked": true
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": {
+    "mode": "json",
+    "text": "{\"tool\":\"submit_checks\",\"input\":{\"checks\":[{\"id\":\"C1\",\"requirement\":\"R1\",\"description\":\"The browser saved the settings at least once (PUT /api/settings → 200).\",\"assert\":{\"kind\":\"request\",\"match\":{\"method\":\"PUT\",\"url\":{\"path\":\"/api/settings\"},\"status\":200}}},{\"id\":\"C2\",\"requirement\":\"R1\",\"description\":\"The last saved settings response has newsletter = true.\",\"assert\":{\"kind\":\"value\",\"source\":{\"from\":\"response\",\"match\":{\"method\":\"PUT\",\"url\":{\"path\":\"/api/settings\"},\"status\":200},\"pointer\":\"/newsletter\",\"pick\":\"last\"},\"expect\":{\"equals\":true}}},{\"id\":\"C4\",\"requirement\":\"R1\",\"description\":\"The stored settings (read back from the backend) have newsletter = true.\",\"assert\":{\"kind\":\"value\",\"source\":{\"from\":\"probe\",\"probe\":\"settings\",\"pointer\":\"/newsletter\"},\"expect\":{\"equals\":true}}},{\"id\":\"C3\",\"requirement\":\"R2\",\"description\":\"The newsletter checkbox in the Preferences form is checked.\",\"assert\":{\"kind\":\"state\",\"target\":{\"anchors\":[{\"role\":\"checkbox\",\"name\":\"Email me the newsletter\"},{\"role\":\"checkbox\",\"name\":{\"contains\":\"newsletter\",\"ignoreCase\":true},\"landmark\":{\"role\":\"form\",\"name\":\"Preferences\"}}]},\"expect\":{\"checked\":true}}}]}}",
+    "inner": [
+     {
+      "type": "text",
+      "text": "{\"tool\":\"submit_checks\",\"input\":{\"checks\":[{\"id\":\"C1\",\"requirement\":\"R1\",\"description\":\"The browser saved the settings at least once (PUT /api/settings → 200).\",\"assert\":{\"kind\":\"request\",\"match\":{\"method\":\"PUT\",\"url\":{\"path\":\"/api/settings\"},\"status\":200}}},{\"id\":\"C2\",\"requirement\":\"R1\",\"description\":\"The last saved settings response has newsletter = true.\",\"assert\":{\"kind\":\"value\",\"source\":{\"from\":\"response\",\"match\":{\"method\":\"PUT\",\"url\":{\"path\":\"/api/settings\"},\"status\":200},\"pointer\":\"/newsletter\",\"pick\":\"last\"},\"expect\":{\"equals\":true}}},{\"id\":\"C4\",\"requirement\":\"R1\",\"description\":\"The stored settings (read back from the backend) have newsletter = true.\",\"assert\":{\"kind\":\"value\",\"source\":{\"from\":\"probe\",\"probe\":\"settings\",\"pointer\":\"/newsletter\"},\"expect\":{\"equals\":true}}},{\"id\":\"C3\",\"requirement\":\"R2\",\"description\":\"The newsletter checkbox in the Preferences form is checked.\",\"assert\":{\"kind\":\"state\",\"target\":{\"anchors\":[{\"role\":\"checkbox\",\"name\":\"Email me the newsletter\"},{\"role\":\"checkbox\",\"name\":{\"contains\":\"newsletter\",\"ignoreCase\":true},\"landmark\":{\"role\":\"form\",\"name\":\"Preferences\"}}]},\"expect\":{\"checked\":true}}}]}}"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 11870,
+    "outputTokens": 287
+   },
+   "model": "fixture:copycat",
+   "mode": "json"
+  }
+ }
+}

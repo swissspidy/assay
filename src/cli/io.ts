@@ -61,6 +61,8 @@ export interface Io {
   env: Record<string, string | undefined>;
   /** Where to look for assay.config.ts and write `assay init`'s file (default: the process's directory). */
   cwd?: string;
+  /** Stops a long command early (`assay bench`); default: Ctrl-C. */
+  signal?: AbortSignal;
 }
 
 /** Colour only on a terminal that supports it; tty's hasColors honours NO_COLOR and FORCE_COLOR. */

@@ -85,6 +85,19 @@ export const PRICING: Record<string, Pricing> = {
   'claude-haiku-5-5': { input: 0.1, output: 0.5, cacheRead: 0.01, cacheWrite: 0.125 },
 };
 
+/**
+ * The price of a model id as Assay writes it (`anthropic:claude-opus-5-5@high`,
+ * `claude-opus-5-5 (replay)`, `anthropic.messages:claude-…`): the provider prefix, effort
+ * suffix and replay marker are ignored. Undefined for a model with no listed price.
+ */
+export function priceFor(modelId: string, table: Record<string, Pricing> = PRICING): Pricing | undefined {
+  const bare = modelId
+    .replace(/ \(replay\)$/, '')
+    .replace(/@[^@]*$/, '')
+    .replace(/^[\w.-]+:/, '');
+  return Object.hasOwn(table, bare) ? table[bare] : undefined;
+}
+
 export function costUsd(
   usage: { inputTokens: number; outputTokens: number; cacheReadTokens?: number; cacheWriteTokens?: number },
   price: Pricing | undefined,

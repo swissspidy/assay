@@ -81,6 +81,8 @@ export {
   ConfigError,
   CONFIG_FILES,
   type AssayConfig,
+  type BenchConfig,
+  type BenchModelInput,
   type LoadedConfig,
 } from './config/config.ts';
 export {

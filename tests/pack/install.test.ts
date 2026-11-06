@@ -233,6 +233,13 @@ test('the installed assay executable verifies, validates, reviews, stress-tests 
   );
   assert.equal(compiled.code, 0, compiled.stderr);
   assert.equal(await readFile(out, 'utf8'), await readFile(ex('compiled/02-add-blue-mug.checks.json'), 'utf8'));
+  // The fixture bench (ADR 0018) replays from the installed executable to the committed report.
+  const report = join(dir, 'bench.md');
+  const bench = await assay(dir, ['bench', '-c', join(root, 'examples/bench/assay.config.ts'), '-o', report], {
+    ASSAY_MODEL_MODE: 'replay',
+  });
+  assert.equal(bench.code, 0, bench.stderr);
+  assert.equal(await readFile(report, 'utf8'), await readFile(join(root, 'examples/bench/REPORT.md'), 'utf8'));
 });
 
 test('the installed package signs an approval and verifies it against a trusted key', async () => {
