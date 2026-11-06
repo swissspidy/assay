@@ -111,8 +111,16 @@ function approxGap(
  * their scale.
  */
 const ROUNDING_ULPS = 2;
+/** The spacing of doubles at `x`: 2^(exponent of x − 52), or the smallest subnormal for 0. */
+const ulp = (x: number): number => {
+  const a = Math.abs(x);
+  if (a === 0 || !Number.isFinite(a)) return Number.MIN_VALUE;
+  let e = Math.floor(Math.log2(a));
+  if (2 ** e > a) e -= 1; // log2 can round up just below a power of two
+  return Math.max(2 ** (e - 52), Number.MIN_VALUE);
+};
 const within = ({ diff, tol, scale }: { diff: number; tol: number; scale: number }): boolean =>
-  diff <= tol + ROUNDING_ULPS * Number.EPSILON * Math.max(scale, tol, diff);
+  diff <= tol + ROUNDING_ULPS * ulp(Math.max(scale, tol, diff));
 
 /** Whether a tolerance can apply to values of this type: numbers, money, dates and date-times. */
 export const tolerable = (t: TypedValue['type']): boolean =>

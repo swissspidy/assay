@@ -307,6 +307,9 @@ test.describe('sameAs tolerance', () => {
     expect(compareValues(n(0.1 + 0.2), n(0.3), { abs: 1e-15, because: 'x' }).ok).toBe(true);
     // Below the values' precision, at most two units in the last place of difference pass.
     expect(compareValues(n(1_000_000.000000001), n(1_000_000), { abs: 1e-12, because: 'x' }).ok).toBe(false);
+    const ulpAtMillion = 2 ** -33;
+    expect(compareValues(n(1_000_000 + 3 * ulpAtMillion), n(1_000_000), { abs: 1e-12, because: 'x' }).ok).toBe(false);
+    expect(compareValues(n(1_000_000 + 2 * ulpAtMillion), n(1_000_000), { abs: 1e-12, because: 'x' }).ok).toBe(true);
     expect(compareValues(n(1_000_000_000_000.001), n(1_000_000_000_000), { abs: 1e-6, because: 'x' }).ok).toBe(false);
   });
 
