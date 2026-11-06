@@ -79,8 +79,10 @@ test('assay checks print: JSON from a module, builder TypeScript from JSON, and 
   expect(ts.code, ts.stderr).toBe(0);
   expect(ts.stderr).toBe(`Wrote ${out}`);
   const code = readFileSync(out, 'utf8');
-  expect(code).toMatch(
-    /^import \{\n  checks,\n  matching,\n  probe,\n  req,\n\} from '.*src\/checks\/index\.ts';\n\nexport default checks\(/,
+  // Whether the import wraps depends on the length of the checkout path, so compare it with
+  // whitespace collapsed.
+  expect(code.replace(/\s+/g, ' ')).toMatch(
+    /^import \{ checks, matching, probe, req,? \} from '[^']*src\/checks\/index\.ts'; export default checks\(/,
   );
   expect(code).toContain("{ sku: 'MUG-BLUE', name: 'Blue Mug', qty: matching({ type: 'number', minimum: 1 }) },");
   const back = await assay(['checks', 'print', out]);
