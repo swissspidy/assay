@@ -97,7 +97,7 @@ Exit status: 0 compiled, 1 refused (the reason and warnings are printed), 3 usag
   },
   verify: {
     summary: 'Run a check set against a snapshot',
-    usage: 'assay verify <checks.json> <snapshot.json> [options]',
+    usage: 'assay verify <checks> <snapshot.json> [options]',
     args: [2, 2],
     options: {
       escalate: { type: 'boolean' },
@@ -126,7 +126,7 @@ Exit status: 0 success, 1 fail, 2 abstain, 3 usage, 4 error.`,
   },
   stress: {
     summary: 'Stress-test a check set against variants and mutants of correct runs',
-    usage: 'assay stress <checks.json> --reference <snapshot|dir> [options]',
+    usage: 'assay stress <checks> --reference <snapshot|dir> [options]',
     args: [1, 1],
     options: {
       reference: { type: 'string', multiple: true, short: 'r' },
@@ -147,7 +147,7 @@ Exit status: 0 no problems, 1 problems found, 3 usage, 4 error.`,
   },
   validate: {
     summary: 'Validate check sets (schema, semantics, loose matches, lock)',
-    usage: 'assay validate [checks.json...] [options]',
+    usage: 'assay validate [checks...] [options]',
     args: [0, Infinity],
     options: {
       strict: { type: 'boolean' },
@@ -169,7 +169,7 @@ Exit status: 0 valid, 1 invalid (or warnings with --strict, or not approved as r
   },
   review: {
     summary: 'Print the review sheet: every check in plain language',
-    usage: 'assay review <checks.json> [options]',
+    usage: 'assay review <checks> [options]',
     args: [1, 1],
     options: {
       diff: { type: 'string' },
@@ -194,7 +194,7 @@ Exit status: 0, 3 usage, 4 error (including an invalid check set).`,
   },
   approve: {
     summary: 'Approve a reviewed check set: lock it, signed with your key',
-    usage: 'assay approve <checks.json> --reviewer <name> [--key <private.pem>] [options]',
+    usage: 'assay approve <checks> --reviewer <name> [--key <private.pem>] [options]',
     args: [1, 1],
     options: {
       reviewer: { type: 'string' },
@@ -221,7 +221,7 @@ Exit status: 0 approved, 3 usage, 4 error (including an invalid check set or key
   },
   reject: {
     summary: 'Reject a proposed check set, with a note saying why',
-    usage: 'assay reject <checks.json> --reviewer <name> --note <text> [options]',
+    usage: 'assay reject <checks> --reviewer <name> --note <text> [options]',
     args: [1, 1],
     options: { reviewer: { type: 'string' }, note: { type: 'string' }, out: { type: 'string', short: 'o' } },
     help: `Records the rejection in the set (and removes a lock): verify --require-locked refuses it,
@@ -238,7 +238,7 @@ Exit status: 0 rejected, 3 usage, 4 error.`,
   },
   unlock: {
     summary: 'Remove the approval (or rejection): the set is a proposal again',
-    usage: 'assay unlock <checks.json> [options]',
+    usage: 'assay unlock <checks> [options]',
     args: [1, 1],
     options: { out: { type: 'string', short: 'o' } },
     help: `Options:
@@ -286,7 +286,7 @@ row per model: tasks compiled, check sets with no stress problems, balanced accu
 successes on the held-out runs, and turns, tokens, cost and model time per task. The best value
 in each column is marked with *.
 
-A task is a *.checks.json or *.task.json file ({ "id", "instruction", "outcomes",
+A task is a *.checks.json, *.checks.ts or *.task.json file ({ "id", "instruction", "outcomes",
 "references": ["<run>"] }); its runs are <references>/<task name>/*.json, labelled
 ({ "label": { "expected": "success" | "fail" }, "snapshot" }) as in examples/*/references. It
 compiles from the runs "references" names, else runs named reference or reference-*, else its
@@ -315,6 +315,58 @@ others go on. Ctrl-C prints what has finished.
 
 Exit status: 0 done, 1 a model or compile errored, 3 usage, 4 error, 130 interrupted.`,
     load: () => import('./commands/bench.ts'),
+  },
+  watch: {
+    summary: 'Re-validate and re-verify check sets and their runs as you edit them',
+    usage: 'assay watch [checks...] [options]',
+    args: [0, Infinity],
+    options: {
+      reference: { type: 'string', multiple: true, short: 'r' },
+      stress: { type: 'boolean' },
+      once: { type: 'boolean' },
+      clear: { type: 'boolean' },
+      debounce: { type: 'string' },
+    },
+    help: `Watches check sets (*.checks.json and *.checks.ts: the files or directories given, else the
+config's \`checks\`) and their runs. On every change it validates the sets that changed, verifies
+their runs again (verifyMany; no model, no lock required) and prints a table: each run's verdict,
+the label it expects, and what changed since the previous run. Ctrl-C stops it.
+
+The runs of a set named <name> (02-add-blue-mug.checks.ts → 02-add-blue-mug) are the .json files
+in <dir>/<name>/ for each run directory: --reference, else the config's \`bench.references\` and
+\`snapshots\`, and references/ next to the set's directory (as in examples/*/references).
+
+Options:
+  -r, --reference <dir>  A directory of runs, one subdirectory per set (repeatable)
+  --stress               Also stress-test a changed set against its correct runs
+  --once                 Run once, print the table and exit (0 if every labelled run is as expected)
+  --no-clear             Append each table instead of redrawing the screen (default on a terminal)
+  --debounce <ms>        Wait this long after a change before running (default 100)
+
+Exit status: 0 stopped (or --once and every labelled run as expected), 1 --once with a run not as
+expected or an invalid set, 3 usage, 4 error.`,
+    load: () => import('./commands/watch.ts'),
+  },
+  checks: {
+    summary: 'Print a check set as builder TypeScript, or a *.checks.ts module as JSON',
+    usage: 'assay checks print <checks> [--ts] [options]',
+    args: [2, 2],
+    options: {
+      ts: { type: 'boolean' },
+      import: { type: 'string' },
+      out: { type: 'string', short: 'o' },
+    },
+    help: `print <checks>: the check set as JSON (two-space, as the repository stores check sets). With
+--ts, as a TypeScript module written with the check builder (@swissspidy/assay/checks, ADR 0019)
+whose default export is deep-equal to the set: a start for moving a set to TypeScript.
+
+Options:
+  --ts               Print builder TypeScript instead of JSON
+  --import <module>  The module the builder is imported from (default: @swissspidy/assay/checks)
+  -o, --out <file>   Write to this file instead of stdout
+
+Exit status: 0, 3 usage, 4 error (including an invalid check set).`,
+    load: () => import('./commands/checks.ts'),
   },
   capture: {
     summary: 'Capture an evidence snapshot of a URL with Playwright',
@@ -373,6 +425,9 @@ Options:
   --no-color           No colour (also: NO_COLOR=1; colour is only used on a terminal)
   -c, --config <file>  The config file (default: assay.config.{ts,mts,js,mjs} in this directory).
                        Flags win over environment variables, which win over the config.
+
+A check set (<checks>) is a *.checks.json file or a TypeScript module whose default export is one,
+such as a *.checks.ts written with the check builder (@swissspidy/assay/checks).
 
 Exit status: 0 success, 1 fail or problems found, 2 abstain (inconclusive), 3 usage error, 4 other error.`;
 }

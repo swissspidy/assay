@@ -3,7 +3,8 @@ import { existsSync, globSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { validateCheckSet, type CheckSet, type ValidationReport } from '../../index.ts';
 import { lockState, type LockCheckOptions } from '../../verifier/lock.ts';
-import { CliError, EXIT, UsageError, paint, readText, type Invocation, type Io } from '../io.ts';
+import { CliError, EXIT, UsageError, paint, type Invocation, type Io } from '../io.ts';
+import { CHECK_SET_GLOBS, CheckSetFileError, loadCheckSetFile } from '../../checks/load.ts';
 import { cliConfig } from '../config.ts';
 import { trustedKeys } from '../keys.ts';
 
@@ -19,13 +20,17 @@ interface FileResult extends ValidationReport {
   notAccepted?: string;
 }
 
-function validateFile(file: string, opts: LockCheckOptions): FileResult {
+async function validateFile(file: string, opts: LockCheckOptions): Promise<FileResult> {
   let input: unknown;
   try {
-    input = JSON.parse(readText(file, 'check set'));
+    input = await loadCheckSetFile(file);
   } catch (e) {
-    if (e instanceof CliError) throw e;
-    return { file, ok: false, errors: [`not valid JSON: ${(e as Error).message}`], warnings: [] };
+    // A file that cannot be read is an error; one that does not parse or load is invalid.
+    if (!(e instanceof CheckSetFileError) || (e.code !== 'EJSON' && e.code !== 'ELOAD')) {
+      throw e instanceof CheckSetFileError ? new CliError(e.message) : e;
+    }
+    const why = e.code === 'EJSON' ? e.message.replace(/^check set .* is not valid JSON/, 'not valid JSON') : e.message;
+    return { file, ok: false, errors: [why], warnings: [] };
   }
   const report = validateCheckSet(input);
   if (!report.ok) return { file, ...report };
@@ -67,13 +72,16 @@ function describeLock(r: FileResult, color: boolean): string {
 
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`;
 
-/** The check set files the config's `checks` names: a directory (every `*.checks.json` under it) or a glob. */
+/**
+ * The check set files the config's `checks` names: a directory (every `*.checks.json` and
+ * `*.checks.ts` under it) or a glob.
+ */
 export function configuredChecks(checks: string): string[] {
   // A path that exists is literal, even when its name has glob characters (`project[abc]`).
   let files: string[];
   if (existsSync(checks)) {
     files = statSync(checks).isDirectory()
-      ? globSync('**/*.checks.json', { cwd: checks }).map((f) => join(checks, f))
+      ? CHECK_SET_GLOBS.flatMap((g) => globSync(g, { cwd: checks })).map((f) => join(checks, f))
       : [checks];
   } else files = globSync(checks);
   files = files.toSorted();
@@ -85,7 +93,7 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
   const { config } = await cliConfig(values, io);
   if (!positionals.length && !config.checks)
     throw new UsageError(
-      'missing argument: the check set files, or `checks` in assay.config.ts (usage: assay validate [checks.json...])',
+      'missing argument: the check set files, or `checks` in assay.config.ts (usage: assay validate [checks.json|checks.ts...])',
     );
   const files = positionals.length ? positionals : configuredChecks(config.checks!);
   for (const f of files) if (!existsSync(f)) throw new CliError(`check set not found: ${f}`);
@@ -99,11 +107,12 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
     throw new CliError(
       '--require-signed needs the trusted public keys: --trusted-key <file|dir>, $ASSAY_TRUSTED_KEYS or `trustedKeys` in the config',
     );
-  const results = files.map((f) => {
-    const r = validateFile(f, keys ? { trustedKeys: keys } : {});
+  const results: FileResult[] = [];
+  for (const f of files) {
+    const r = await validateFile(f, keys ? { trustedKeys: keys } : {});
     const why = r.ok && (signed || locked) ? notAccepted(r, signed) : undefined;
-    return why ? { ...r, notAccepted: why } : r;
-  });
+    results.push(why ? { ...r, notAccepted: why } : r);
+  }
   const bad = (r: FileResult) => !r.ok || !!r.notAccepted || (!!values.strict && r.warnings.length > 0);
   if (values.json) {
     io.out(JSON.stringify(results.length === 1 ? results[0] : results, null, 2));

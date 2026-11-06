@@ -279,6 +279,74 @@ Design details: [ADR 0001](docs/adr/0001-evidence-snapshot-and-check-dsl.md).
    const locked = approveCheckSet(checkSet, { by: 'reviewer@example.com', key: privateKeyPem });
    ```
 
+## Write checks in TypeScript
+
+A check set can also be a TypeScript module, written with a typed builder that returns exactly the
+`assay.checks/v1` JSON (so editors complete every assertion, source, normalizer and comparison):
+
+```ts
+// checks/add-blue-mug.checks.ts
+import { checks, like, network, node, probe, req } from '@swissspidy/assay/checks';
+
+export default checks('Add a Blue Mug to my cart.', [
+  req('R1', 'The cart has a Blue Mug', { quote: 'Add a Blue Mug' })
+    .check('The backend cart has a Blue Mug line.', probe('cart', '/items').like([{ name: 'Blue Mug' }]))
+    .check(network.post('/api/cart/items').requestBody(like({ sku: 'MUG-BLUE' })), { onMissing: 'abstain' })
+    .check(node('main').contains({ role: 'status', text: { contains: 'Blue Mug added' } })),
+]);
+```
+
+`like(shape)` turns an example into a JSON Schema (objects need their keys, arrays contain an item
+like each element); `node(...)`, `text(/re/)`, `url.part()`, `storage.local()`, `probe()` and
+`network.post(...).response('/pointer')` read values; `.normalize(...)`, `.equals()`, `.sameAs()`,
+`.approx()`, `.matches()` and the rest compare them; `contains`, `each`, `page`, `allOf` and `anyOf`
+compose. A check's description defaults to a plain-language rendering of what it tests, its id to
+`C1`, `C2`, … The result is a plain object: `verify`, `stressTest`, locks and the review sheet treat
+it like the JSON.
+
+Every command takes a `*.checks.ts` where it takes a `*.checks.json` (Node 24 runs it as it is);
+`approve`, `reject` and `unlock` write their result as JSON (`--out`). To move an existing set to
+TypeScript, `assay checks print --ts checks/x.checks.json -o checks/x.checks.ts` prints builder code
+whose default export is deep-equal to it; `assay checks print x.checks.ts` prints the JSON.
+
+## Playwright matcher
+
+```ts
+import { test, expect } from '@swissspidy/assay/playwright';
+import addBlueMug from './checks/add-blue-mug.checks.ts';
+
+test('the agent adds a Blue Mug', async ({ page }) => {
+  await runMyAgent(page, 'Add a Blue Mug to my cart.');
+  await expect(page).toHaveCompleted(addBlueMug, { probes });
+  // or a path: toHaveCompleted('checks/add-blue-mug.checks.json')
+});
+```
+
+`toHaveCompleted(task, options)` polls like a web-first assertion (`timeout` defaults to the expect
+timeout), reads the project's `assay.config.ts`, attaches the outcome and snapshot to the report,
+and with `escalate: true` sends what the checks cannot decide to the config's model once polling
+settles. `verdict: 'fail'` asserts a fail; `.not` passes on any verdict but the expected one. A
+failure prints each requirement, and under each failing check its description, what it tests,
+what it read and where that evidence is in the attached snapshot. For your own `expect`,
+`expect.extend(assayMatchers)`.
+
+## Watch mode
+
+```sh
+assay watch                      # the config's `checks`, or: assay watch checks/ other.checks.ts
+assay watch checks/ --stress     # also stress-test a set when it or its runs change
+```
+
+`assay watch` re-validates the sets that change, verifies their runs again and redraws a table:
+each run's verdict, its label, and what changed since the last round (`was SUCCESS · C1
+pass→fail`). The runs of `tasks/<name>.checks.ts` are the snapshots in `references/<name>/` beside
+`tasks/` (as in `examples/*`), and in `<dir>/<name>/` of each `--reference` directory (default: the
+config's `bench.references` and `snapshots`). Edits to modules a set imports
+are seen too. No model runs and no lock is required; `--once` prints one table and exits 1 when a
+labelled run is not as expected.
+
+Design: [ADR 0019](docs/adr/0019-typed-checks-matcher-and-watch.md).
+
 ## Review and signed locks
 
 A compiled check set is a **proposal** until a reviewer approves it, which locks it, or rejects it
@@ -356,7 +424,12 @@ assay stress checks/add-blue-mug.checks.json --reference runs/
 assay verify checks/add-blue-mug.checks.json snapshot.json --record assay-records
 assay capture http://localhost:4173/cart --out runs/
 assay bench -m anthropic:claude-opus-5-5 -m openai:gpt-5  # compare models on your tasks
+assay watch checks/ --stress                 # re-verify runs as you edit check sets
+assay checks print --ts checks/add-blue-mug.checks.json   # the set as builder TypeScript
 ```
+
+`<checks>` is a `*.checks.json` file or a `*.checks.ts` module (see
+[Write checks in TypeScript](#write-checks-in-typescript)).
 
 - **`compile <task>`**: the task is the instruction text, a text file, or a JSON file with
   `{ "id", "instruction", "outcomes", "skipVariants" }` (or a check set, whose task is recompiled).
@@ -502,6 +575,7 @@ five ([ADR 0011](docs/adr/0011-route-robust-compilation.md)).
 - [ADR 0016](docs/adr/0016-overlay-stress-and-capture-digests.md): overlay stress testing and capture-time digests
 - [ADR 0017](docs/adr/0017-config-file-and-bring-your-own-model.md): `assay.config.ts`, bring your own model, JSON mode
 - [ADR 0018](docs/adr/0018-model-bench.md): `assay bench`, comparing models on your own tasks
+- [ADR 0019](docs/adr/0019-typed-checks-matcher-and-watch.md): the check builder, `toHaveCompleted` and `assay watch`
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
 - Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)
 

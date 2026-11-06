@@ -4,11 +4,16 @@
  * Configuration: `defineConfig` and `loadConfig` for assay.config.ts, and
  * `resolveModel` for the three model forms (ADR 0017).
  *
+ * Writing checks in TypeScript: `checks`, `req`, `network`, `node`, … (ADR 0019), also
+ * available alone from `/checks`.
+ *
  * Other entry points: `/playwright` (live pages), `/compiler`, `/stress`,
  * `/models` (agent loop, cassettes, Anthropic adapter), `/ai-sdk` (Vercel AI SDK
  * adapter) and `/eval` (baselines and metrics).
  */
 export * from './types.ts';
+/** The check builder (ADR 0019); also its own entry point, `@swissspidy/assay/checks`. */
+export * from './checks/index.ts';
 export {
   verify,
   verifyMany,

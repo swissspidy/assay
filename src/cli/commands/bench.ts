@@ -16,6 +16,7 @@ import {
   CliError,
   EXIT,
   UsageError,
+  readCheckSetFile,
   readJson,
   readSnapshots,
   toSnapshot,
@@ -25,12 +26,13 @@ import {
 } from '../io.ts';
 import { chooseLive } from '../model.ts';
 import { resolveTask } from './compile.ts';
+import { CHECK_SET_GLOBS, isModuleFile } from '../../checks/load.ts';
 
 /** Exit status of a bench stopped with Ctrl-C (128 + SIGINT), after printing what finished. */
 export const EXIT_INTERRUPTED = 130;
 
 const str = (x: unknown) => (typeof x === 'string' ? x : undefined);
-const TASK_FILE = /\.(checks|task)\.json$/;
+const TASK_FILE = /\.(checks\.(json|ts)|task\.json)$/;
 const taskName = (file: string) =>
   basename(file)
     .replace(TASK_FILE, '')
@@ -44,12 +46,12 @@ function positiveInt(v: string | undefined, flag: string): number | undefined {
   return n;
 }
 
-/** Task files: every `*.checks.json` and `*.task.json` under a directory, a file, or a glob. */
+/** Task files: every `*.checks.json`, `*.checks.ts` and `*.task.json` under a directory, a file, or a glob. */
 export function taskFiles(spec: string): string[] {
   let files: string[];
   if (existsSync(spec)) {
     files = statSync(spec).isDirectory()
-      ? ['**/*.checks.json', '**/*.task.json'].flatMap((g) => globSync(g, { cwd: spec })).map((f) => join(spec, f))
+      ? [...CHECK_SET_GLOBS, '**/*.task.json'].flatMap((g) => globSync(g, { cwd: spec })).map((f) => join(spec, f))
       : [spec];
   } else files = globSync(spec);
   return [...new Set(files)].toSorted();
@@ -118,15 +120,15 @@ const picks = (p: string, name: string, file: string, shown: string, cwd: string
  * `base` is what file paths in the report are relative to (the config's directory), so a report
  * reads the same from anywhere; `cwd` is what a `--task` path is relative to.
  */
-export function findTasks(
+export async function findTasks(
   spec: string,
   referencesDir: string,
   filters: string[],
   base: string,
   cwd: string = base,
-): Found {
+): Promise<Found> {
   const files = taskFiles(spec);
-  if (!files.length) throw new CliError(`no task files (*.checks.json, *.task.json) at ${spec}`);
+  if (!files.length) throw new CliError(`no task files (*.checks.json, *.checks.ts, *.task.json) at ${spec}`);
   const tasks: BenchTask[] = [];
   const skipped: string[] = [];
   const seen = new Map<string, string>();
@@ -141,7 +143,10 @@ export function findTasks(
       skipped.push(`${name}: no runs at ${relative(base, dir) || dir}`);
       continue;
     }
-    const json = readJson(file, 'task') as Record<string, unknown>;
+    const json = (isModuleFile(file) ? await readCheckSetFile(file, 'task') : readJson(file, 'task')) as Record<
+      string,
+      unknown
+    >;
     const named = Array.isArray(json?.references)
       ? (json.references as unknown[]).filter((x): x is string => typeof x === 'string')
       : undefined;
@@ -155,7 +160,7 @@ export function findTasks(
       skipped.push(`${name}: no correct run to compile from`);
       continue;
     }
-    tasks.push({ name, file: shown, task: resolveTask(file, {}), ...split });
+    tasks.push({ name, file: shown, task: await resolveTask(file, {}), ...split });
   }
   tasks.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
   return { tasks, skipped };
@@ -297,7 +302,7 @@ export async function run({ values }: Invocation, io: Io): Promise<number> {
     cassettesFlag !== undefined ? resolve(cwd, cassettesFlag) : (bench.cassettes ?? join(base, 'assay-bench'));
 
   const models = benchModels(values, io.env, loaded, cwd);
-  const { tasks, skipped } = findTasks(
+  const { tasks, skipped } = await findTasks(
     tasksSpec,
     referencesDir,
     (values.task as string[] | undefined) ?? [],

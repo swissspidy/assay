@@ -7,7 +7,7 @@ import {
   UsageError,
   list,
   paint,
-  readJson,
+  readCheckSetFile,
   readSnapshots,
   toSnapshot,
   type Invocation,
@@ -35,7 +35,7 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
   if (!paths.length) throw new UsageError('missing --reference <snapshot|dir> (a correct run)');
   let cs: CheckSet;
   try {
-    cs = assertValidCheckSet(readJson(file, 'check set'));
+    cs = assertValidCheckSet(await readCheckSetFile(file));
   } catch (e) {
     if (e instanceof CheckSetError) throw new CliError(`${file}: ${e.message}`);
     throw e;

@@ -32,9 +32,9 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
   const format = (values.format as string | undefined) ?? 'markdown';
   if (!(FORMATS as readonly string[]).includes(format))
     throw new UsageError(`--format must be one of ${FORMATS.join(', ')}`);
-  const cs = readCheckSet(file);
+  const cs = await readCheckSet(file);
   const previous: CheckSet | undefined =
-    typeof values.diff === 'string' ? readCheckSet(values.diff, 'previous check set') : undefined;
+    typeof values.diff === 'string' ? await readCheckSet(values.diff, 'previous check set') : undefined;
   const stress = typeof values.stress === 'string' ? readStress(values.stress) : undefined;
   const keys = trustedKeys(values, io.env, (await cliConfig(values, io)).config);
   const opts = keys ? { trustedKeys: keys } : {};

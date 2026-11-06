@@ -3,7 +3,7 @@ import { existsSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } 
 import { basename, dirname, join } from 'node:path';
 import { CheckSetError, assertValidCheckSet, type CheckSet } from '../index.ts';
 import { pemBlocks, privateKeyOf, trustedKeySet, type TrustedKeySet } from '../verifier/sign.ts';
-import { CliError, readJson, readText, type Io, type Values } from './io.ts';
+import { CliError, readCheckSetFile, readText, type Io, type Values } from './io.ts';
 import { readTrustedKeys, type AssayConfig } from '../config/config.ts';
 import { fromConfig } from './config.ts';
 
@@ -63,9 +63,10 @@ export function trustedKeys(values: Values, env: Io['env'], config: AssayConfig 
 }
 
 /** Read and validate a check set; an invalid one is an error (exit 4). */
-export function readCheckSet(file: string, what = 'check set'): CheckSet {
+export async function readCheckSet(file: string, what = 'check set'): Promise<CheckSet> {
+  const input = await readCheckSetFile(file, what);
   try {
-    return assertValidCheckSet(readJson(file, what));
+    return assertValidCheckSet(input);
   } catch (e) {
     if (e instanceof CheckSetError) throw new CliError(`${file}: ${e.message}`);
     throw e;

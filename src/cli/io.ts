@@ -7,6 +7,7 @@ import { basename, join } from 'node:path';
 import { styleText } from 'node:util';
 import type { EvidenceSnapshot } from '../types.ts';
 import { loadSnapshot } from '../snapshot/load.ts';
+import { CheckSetFileError, loadCheckSetFile } from '../checks/load.ts';
 
 /** The exit-code contract (ADR 0010). */
 export const EXIT = {
@@ -61,8 +62,10 @@ export interface Io {
   env: Record<string, string | undefined>;
   /** Where to look for assay.config.ts and write `assay init`'s file (default: the process's directory). */
   cwd?: string;
-  /** Stops a long command early (`assay bench`); default: Ctrl-C. */
+  /** Stops a long command early (`assay bench`, `assay watch`); default: Ctrl-C. */
   signal?: AbortSignal;
+  /** stdout is a terminal: `assay watch` redraws the screen instead of appending. */
+  tty?: boolean;
 }
 
 /** Colour only on a terminal that supports it; tty's hasColors honours NO_COLOR and FORCE_COLOR. */
@@ -90,6 +93,7 @@ export function processIo(): Io {
     color: hasColors(process.stdout),
     errColor: hasColors(process.stderr),
     env: process.env,
+    tty: !!process.stdout.isTTY,
   };
 }
 
@@ -124,6 +128,19 @@ export function readText(path: string, what: string): string {
     throw new CliError(
       code === 'ENOENT' ? `${what} not found: ${path}` : `cannot read ${what} ${path}: ${(e as Error).message}`,
     );
+  }
+}
+
+/**
+ * A check set file, `*.checks.json` or a module such as `*.checks.ts` (ADR 0019), not yet
+ * validated. A file that is missing, unreadable or does not load is an error (exit 4).
+ */
+export async function readCheckSetFile(path: string, what = 'check set'): Promise<unknown> {
+  try {
+    return await loadCheckSetFile(path);
+  } catch (e) {
+    if (!(e instanceof CheckSetFileError)) throw e;
+    throw new CliError(what === 'check set' ? e.message : e.message.replace('check set', what));
   }
 }
 

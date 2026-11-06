@@ -73,7 +73,9 @@ test('the installed library verifies a check set, and every entry point loads', 
     `import { readFileSync } from 'node:fs';
 import * as rootEntry from '${name}';
 import { evaluate, validateCheckSet, verify } from '${name}';
-import { captureBaseline, captureSnapshot, expectOutcome, test, verifyPage } from '${name}/playwright';
+import { assayMatchers, captureBaseline, captureSnapshot, expect, expectOutcome, test, verifyPage } from '${name}/playwright';
+import { checks as checkSet, like, network, node, probe, req } from '${name}/checks';
+import * as builderFromRoot from '${name}';
 import { compileTask } from '${name}/compiler';
 import { stressTest } from '${name}/stress';
 import { anthropicModel, replayModel, runAgent } from '${name}/models';
@@ -95,12 +97,19 @@ const model = aiSdkModel(new MockLanguageModelV4({
   },
 }));
 const turn = await model.turn({ system: 's', messages: [{ role: 'user', text: 'x' }], tools: [] });
+const built = checkSet('Add a Blue Mug to my cart.', [
+  req('R1', 'The cart has a Blue Mug', { quote: 'Add a Blue Mug' })
+    .check(probe('cart', '/items').like([{ name: 'Blue Mug' }]))
+    .check(network.post('/api/cart/items').requestBody(like({ sku: 'MUG-BLUE' })), { onMissing: 'abstain' })
+    .check(node('main').contains({ role: 'status' })),
+]);
 console.log(JSON.stringify({
   valid: report.ok,
   correct: await verdict(${JSON.stringify(correct)}),
   wrong: await verdict(${JSON.stringify(wrong)}),
   evaluate: evaluate(checks, load(${JSON.stringify(correct)}).snapshot).verdict,
-  playwright: [captureBaseline, captureSnapshot, expectOutcome, test, verifyPage].every((f) => typeof f === 'function'),
+  playwright: [captureBaseline, captureSnapshot, expectOutcome, test, verifyPage, expect, assayMatchers.toHaveCompleted].every((f) => typeof f === 'function'),
+  builder: [validateCheckSet(built).ok, (await verify(built, load(${JSON.stringify(correct)}).snapshot)).outcome.verdict, builderFromRoot.checks === checkSet],
   entries: [compileTask, stressTest, anthropicModel, replayModel, runAgent, metrics].every((f) => typeof f === 'function'),
   aiSdk: [model.id, turn.stop, turn.text],
   rootLeaks: ['captureBaseline', 'captureSnapshot', 'EvidenceRecorder'].filter((k) => k in rootEntry),
@@ -114,6 +123,7 @@ console.log(JSON.stringify({
     wrong: 'fail',
     evaluate: 'success',
     playwright: true,
+    builder: [true, 'success', true],
     entries: true,
     aiSdk: ['mock:m', 'end_turn', 'hi'],
     rootLeaks: [],
@@ -242,6 +252,45 @@ test('the installed assay executable verifies, validates, reviews, stress-tests 
   assert.equal(await readFile(report, 'utf8'), await readFile(join(root, 'examples/bench/REPORT.md'), 'utf8'));
 });
 
+test('the installed executable takes a *.checks.ts written with @swissspidy/assay/checks, and prints one', async () => {
+  const ex = (p: string) => join(root, 'examples/tiny-shop', p);
+  const work = await mkdtemp(join(dir, 'ts-'));
+  await mkdir(join(work, 'tasks'));
+  const file = join(work, 'tasks/02-add-blue-mug.checks.ts');
+  await writeFile(
+    file,
+    `import { checks, like, network, probe, req } from '${name}/checks';
+
+export default checks({ id: 'blue', instruction: 'Add a Blue Mug to my cart.' }, [
+  req('R1', 'The cart has a Blue Mug', { quote: 'Add a Blue Mug' })
+    .check('The backend cart has a Blue Mug.', probe('cart', '/items').like([{ name: 'Blue Mug' }]))
+    .check(network.post('/api/cart/items').requestBody(like({ sku: 'MUG-BLUE' })), { onMissing: 'abstain' }),
+]);
+`,
+  );
+  const correct = ex('references/02-add-blue-mug/added-blue-mug.json');
+  assert.equal((await assay(dir, ['validate', file])).code, 0);
+  const ok = await assay(dir, ['verify', file, correct]);
+  assert.equal(ok.code, 0, ok.stderr);
+  assert.match(ok.stdout, /^Verdict: SUCCESS {2}\(blue v1/);
+  assert.equal((await assay(dir, ['verify', file, ex('references/02-add-blue-mug/added-red-mug.json')])).code, 1);
+  const watched = await assay(dir, ['watch', join(work, 'tasks'), '--once', '-r', ex('references')]);
+  assert.equal(watched.code, 0, watched.stdout + watched.stderr);
+  assert.match(watched.stdout, /✔ added-blue-mug +SUCCESS +expected success/);
+
+  // JSON → TypeScript (importing the installed package) → JSON gives the same set.
+  const printed = join(work, 'tasks/printed.checks.ts');
+  const print = await assay(dir, ['checks', 'print', '--ts', ex('compiled/09-gift-wrap.checks.json'), '-o', printed]);
+  assert.equal(print.code, 0, print.stderr);
+  assert.match(await readFile(printed, 'utf8'), new RegExp(`from '${name}/checks';`));
+  const back = await assay(dir, ['checks', 'print', printed]);
+  assert.equal(back.code, 0, back.stderr);
+  assert.deepEqual(
+    JSON.parse(back.stdout),
+    JSON.parse(await readFile(ex('compiled/09-gift-wrap.checks.json'), 'utf8')),
+  );
+});
+
 test('the installed package signs an approval and verifies it against a trusted key', async () => {
   const ex = (p: string) => join(root, 'examples/tiny-shop', p);
   const work = await mkdtemp(join(dir, 'review-'));
@@ -367,6 +416,22 @@ test('the installed type declarations typecheck a consumer', async () => {
     join(dir, 'consumer.ts'),
     `import { approveCheckSet, defineConfig, evaluate, verify, type Baseline, type CheckSet, type EvidenceSnapshot, type ModelClient, type Outcome } from '${name}';
 import type { BaselineOptions, ExpectOutcomeOptions } from '${name}/playwright';
+import { expect as assayExpect, type CompletedOptions } from '${name}/playwright';
+import { checks, network, node, norm, probe, req, text, type CheckSetSpec } from '${name}/checks';
+import type { Page } from '@playwright/test';
+export const spec: CheckSetSpec = { instruction: 'Pay.', outcomes: 'Then the order is paid' };
+export const built: CheckSet = checks(spec, [
+  req('R1', 'The order is paid', { quote: 'the order is paid', kind: 'hard' })
+    .check(probe('order', '/status').equals('paid'))
+    .check('Total shown', text(/Total: (.+)/, { group: 1 }).normalize('trim', norm.currency('en-US')).sameAs(probe('order', '/total')))
+    .check(node('button', 'Pay').disabled(), { onFail: 'keep' })
+    .check(network.post('/api/pay').status({ gte: 200, lt: 300 }).count(1)),
+]);
+const completed: CompletedOptions = { timeout: 1000, verdict: 'fail', escalate: false };
+export const done = async (page: Page) => {
+  await assayExpect(page).toHaveCompleted(built, completed);
+  await assayExpect(page).not.toHaveCompleted('checks/pay.checks.ts');
+};
 import type { CompileOptions } from '${name}/compiler';
 import type { StressReport } from '${name}/stress';
 import type { Metrics } from '${name}/eval';

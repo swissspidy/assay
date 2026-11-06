@@ -1,19 +1,17 @@
 import { test as base, type Page } from '@playwright/test';
-import type { CheckSet, EvidenceSnapshot, Outcome, Verdict } from '../types.ts';
-import {
-  EvidenceRecorder,
-  captureBaseline,
-  captureSnapshot,
-  type CaptureOptions,
-  type RecorderOptions,
-} from '../snapshot/capture.ts';
+import type { CheckSet, EvidenceSnapshot, Outcome } from '../types.ts';
+import { EvidenceRecorder, captureBaseline, captureSnapshot, type RecorderOptions } from '../snapshot/capture.ts';
 import { assertValidCheckSet } from '../dsl/validate.ts';
-import { evaluate } from '../runtime/evaluate.ts';
 import { formatOutcome } from '../report.ts';
-import { applyConfig, configOf, verify, type VerifyOptions, type VerifyResult } from '../verifier/escalate.ts';
-import { cachedUntilRejected, loadConfig, type AssayConfig } from '../config/config.ts';
-import type { OutcomeRecord } from '../verifier/record.ts';
+import { verify, type VerifyResult } from '../verifier/escalate.ts';
 import { assertLocked } from '../verifier/lock.ts';
+import {
+  attachOutcome,
+  pollOutcome,
+  withProjectConfig,
+  type ExpectOutcomeOptions,
+  type VerifyPageOptions,
+} from './live.ts';
 
 /**
  * Playwright `test` with an auto fixture that records the network log of every
@@ -32,27 +30,6 @@ export const test = base.extend<{ evidence: EvidenceRecorder; evidenceOptions: R
 });
 
 /**
- * Capture and verification options for a live page. The verifier gets read-only live access to it.
- * `config`: the project's assay.config.* is read by default (once per process); pass a config
- * object or path instead, or `false` for none (ADR 0017).
- */
-export interface VerifyPageOptions extends CaptureOptions, Omit<VerifyOptions, 'page' | 'probes'> {}
-
-/** The project's config, loaded once per process; a failed load is retried on the next call. */
-const projectConfig = cachedUntilRejected(async (): Promise<AssayConfig> => (await loadConfig()).config);
-
-/**
- * The options with the config applied. These helpers are app-level entry points: unlike
- * `verify`, they read the project's assay.config.* from the current directory by default,
- * once per process.
- */
-async function withProjectConfig<T extends VerifyPageOptions>(opts: T): Promise<T> {
-  if (opts.config === false) return opts;
-  const config = opts.config === undefined ? await projectConfig() : await configOf(opts.config);
-  return applyConfig(opts, config) as T;
-}
-
-/**
  * Capture a snapshot of the page and `verify` it: run the checks, escalate what
  * they cannot decide to `verifier` (if given), and build the outcome record.
  */
@@ -67,17 +44,6 @@ export async function verifyPage(
   assertLocked(cs, opts.requireLocked);
   const snapshot = await captureSnapshot(page, opts);
   return verify(cs, snapshot, { ...opts, page });
-}
-
-export interface ExpectOutcomeOptions extends VerifyPageOptions {
-  /** Verdict the test expects (default "success"). */
-  verdict?: Verdict;
-  /** Poll until the expected verdict is reached or this many ms elapse (default 5000). 0 = single evaluation. */
-  timeout?: number;
-  /** Poll interval in ms (default 250). */
-  interval?: number;
-  /** Attach the snapshot and outcome (and record) to the Playwright report (default true). */
-  attach?: boolean;
 }
 
 export class OutcomeError extends Error {
@@ -107,54 +73,8 @@ export async function expectOutcome(
   const opts = await withProjectConfig(options);
   assertLocked(cs, opts.requireLocked);
   const want = opts.verdict ?? 'success';
-  const timeout = opts.timeout ?? 5000;
-  const interval = opts.interval ?? 250;
-  const deadline = Date.now() + timeout;
-
-  let snapshot: EvidenceSnapshot;
-  let outcome: Outcome;
-  for (;;) {
-    snapshot = await captureSnapshot(page, opts);
-    outcome = evaluate(cs, snapshot);
-    if (outcome.verdict === want || Date.now() + interval > deadline) break;
-    await page.waitForTimeout(interval);
-  }
-
-  // Escalation only after polling settled: the checks had every chance to decide.
-  let record: OutcomeRecord | undefined;
-  if (opts.verifier || opts.recordDir) {
-    const res = await verify(cs, snapshot, {
-      ...opts,
-      page,
-      // The checks already reached the expected verdict: nothing to escalate.
-      // `escalate: false` too, so escalation asked for by `escalate: true` does not look for a model.
-      ...(opts.verifier && outcome.verdict !== want ? {} : { verifier: undefined, escalate: false }),
-    });
-    outcome = res.outcome;
-    record = res.record;
-  }
-
-  if (opts.attach !== false) {
-    try {
-      const info = base.info();
-      await info.attach(`assay-outcome-${cs.id.replace(/[^\w.-]+/g, '_')}.json`, {
-        body: JSON.stringify(outcome, null, 2),
-        contentType: 'application/json',
-      });
-      await info.attach(`assay-snapshot-${cs.id.replace(/[^\w.-]+/g, '_')}.json`, {
-        body: JSON.stringify(snapshot),
-        contentType: 'application/json',
-      });
-      if (record) {
-        await info.attach(`assay-record-${cs.id.replace(/[^\w.-]+/g, '_')}.json`, {
-          body: JSON.stringify(record, null, 2),
-          contentType: 'application/json',
-        });
-      }
-    } catch {
-      /* not running inside a Playwright test */
-    }
-  }
+  const { outcome, snapshot, record } = await pollOutcome(page, cs, opts, (v) => v === want);
+  if (opts.attach !== false) await attachOutcome(cs, outcome, snapshot, record);
 
   if (outcome.verdict !== want) {
     throw new OutcomeError(
@@ -166,5 +86,7 @@ export async function expectOutcome(
   return outcome;
 }
 
+export type { ExpectOutcomeOptions, Polled, VerifyPageOptions } from './live.ts';
+export { assayMatchers, expect, formatCompletion, type CompletedOptions, type TaskInput } from './matchers.ts';
 export { EvidenceRecorder, captureBaseline, captureSnapshot };
 export type { BaselineOptions, CaptureOptions, Probe, RecorderOptions } from '../snapshot/capture.ts';
