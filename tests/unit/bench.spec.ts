@@ -5,7 +5,7 @@
  * adapter.
  */
 import { test, expect } from '@playwright/test';
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -36,7 +36,7 @@ async function assay(argv: string[], env: Record<string, string | undefined> = {
     color: false,
     errColor: false,
     env,
-    cwd: root,
+    cwd: extra.cwd ?? root,
     ...(extra.signal ? { signal: extra.signal } : {}),
   };
   const code = await run(argv, io);
@@ -44,6 +44,25 @@ async function assay(argv: string[], env: Record<string, string | undefined> = {
 }
 
 const REPLAY = { ASSAY_MODEL_MODE: 'replay' };
+
+/**
+ * A task in `dir/<sub>tasks/two-mugs.task.json` with runs in `dir/<sub>references/two-mugs/`: it
+ * compiles from `both-mugs`, and its one held-out run is another task's page, which the checks
+ * abstain on.
+ */
+function abstainingTask(dir: string, sub = '') {
+  const shop = (p: string) => join(root, 'examples/tiny-shop', p);
+  const task = JSON.parse(readFileSync(shop('tasks/03-cart-two-mugs.checks.json'), 'utf8'));
+  mkdirSync(join(dir, sub, 'tasks'), { recursive: true });
+  writeFileSync(
+    join(dir, sub, 'tasks/two-mugs.task.json'),
+    JSON.stringify({ ...task.task, id: 'tiny-shop/03-cart-two-mugs', references: ['both-mugs'] }),
+  );
+  const runs = join(dir, sub, 'references/two-mugs');
+  cpSync(shop('references/03-cart-two-mugs/both-mugs.json'), join(runs, 'both-mugs.json'));
+  // Another task's page: the checks find nothing to read and abstain.
+  cpSync(shop('references/01-newsletter/never-subscribed.json'), join(runs, 'elsewhere.json'));
+}
 
 test.describe('the fixture bench', () => {
   test('replays offline and reproduces the committed report byte for byte', async () => {
@@ -102,6 +121,31 @@ test.describe('the fixture bench', () => {
     expect(none.stderr).toContain('no task matches --task nothing');
   });
 
+  test('--task also takes the task file by absolute or working-directory path', async () => {
+    const names = async (t: string, cwd = root) =>
+      (
+        JSON.parse((await assay(['bench', '-c', CONFIG, '-t', t, '--json'], REPLAY, { cwd })).stdout) as BenchResult
+      ).tasks.map((x) => x.name);
+    expect(await names(join(BENCH, 'tasks/02-add-blue-mug.task.json'))).toEqual(['02-add-blue-mug']);
+    expect(await names('examples/bench/tasks/02-add-blue-mug.task.json')).toEqual(['02-add-blue-mug']);
+    expect(await names('examples/bench/tasks/01-*.task.json')).toEqual(['01-newsletter']);
+    expect(await names(join(BENCH, 'tasks/*.task.json'))).toEqual(['01-newsletter', '02-add-blue-mug']);
+    // From the config's directory, the config-relative path (as reports show it) still matches.
+    expect(await names('tasks/01-newsletter.task.json', BENCH)).toEqual(['01-newsletter']);
+  });
+
+  test('runs default to the references directory next to the tasks of a glob or file `bench.tasks`', async () => {
+    const dir = tmp();
+    abstainingTask(dir, 'suite');
+    for (const tasks of ['suite/tasks/*.task.json', 'suite/tasks/two-mugs.task.json', 'suite/tasks']) {
+      const config = join(dir, `c${Math.random().toString(36).slice(2)}.mjs`);
+      writeFileSync(config, `export default { bench: { tasks: ${JSON.stringify(tasks)}, cassettes: 'c' } };`);
+      const r = await assay(['bench', '-c', config, '-m', COPYCAT, '--json']);
+      expect(r.code, `${tasks}: ${r.stderr}`).toBe(0);
+      expect((JSON.parse(r.stdout) as BenchResult).tasks.map((t) => t.name)).toEqual(['two-mugs']);
+    }
+  });
+
   test('--escalate adds a column; checks that never abstain escalate nothing', async () => {
     const r = await assay(['bench', '-c', CONFIG, '--escalate'], REPLAY);
     expect(r.code).toBe(0);
@@ -111,17 +155,7 @@ test.describe('the fixture bench', () => {
 
   test('--escalate sends a held-out run the checks abstain on to the same model', async () => {
     const dir = tmp();
-    const shop = (p: string) => join(root, 'examples/tiny-shop', p);
-    const task = JSON.parse(readFileSync(shop('tasks/03-cart-two-mugs.checks.json'), 'utf8'));
-    mkdirSync(join(dir, 'tasks'));
-    writeFileSync(
-      join(dir, 'tasks/two-mugs.task.json'),
-      JSON.stringify({ ...task.task, id: 'tiny-shop/03-cart-two-mugs', references: ['both-mugs'] }),
-    );
-    const runs = join(dir, 'references/two-mugs');
-    cpSync(shop('references/03-cart-two-mugs/both-mugs.json'), join(runs, 'both-mugs.json'));
-    // Another task's page: the checks find nothing to read and abstain.
-    cpSync(shop('references/01-newsletter/never-subscribed.json'), join(runs, 'elsewhere.json'));
+    abstainingTask(dir);
     const argv = ['bench', '--tasks', join(dir, 'tasks'), '-m', COPYCAT, '--cassettes', join(dir, 'c'), '--json'];
     const json = JSON.parse((await assay([...argv, '--escalate'])).stdout) as BenchResult;
     const job = json.models[0]!.jobs[0]!;
@@ -165,6 +199,33 @@ test.describe('errors and interruption', () => {
     expect(job.reason).toMatch(/^stale cassette: /);
   });
 
+  test('an escalation the cassette has no turns for fails the job', async () => {
+    const dir = tmp();
+    abstainingTask(dir);
+    const argv = ['bench', '--tasks', join(dir, 'tasks'), '-m', COPYCAT, '--cassettes', join(dir, 'c'), '--json'];
+    // Recorded without --escalate: replaying with it needs verifier turns that were never recorded.
+    expect((await assay([...argv, '--record'])).code).toBe(0);
+    const r = await assay([...argv, '--escalate'], REPLAY);
+    expect(r.code).toBe(1);
+    const job = (JSON.parse(r.stdout) as BenchResult).models[0]!.jobs[0]!;
+    expect(job).toMatchObject({ status: 'error', source: 'replay' });
+    expect(job.reason).toMatch(/^stale cassette: escalating elsewhere: /);
+  });
+
+  test('a malformed timing file fails its job; the other jobs are still reported', async () => {
+    const dir = tmp();
+    cpSync(join(BENCH, 'cassettes'), dir, { recursive: true });
+    writeFileSync(join(dir, 'copycat/01-newsletter/run-1.timing.json'), '{ "wallMs": ');
+    const r = await assay(['bench', '-c', CONFIG, '--cassettes', dir, '--json'], REPLAY);
+    expect(r.code).toBe(1);
+    const json = JSON.parse(r.stdout) as BenchResult;
+    expect(json.models[0]!.jobs.map((j) => j.status)).toEqual(['compiled', 'compiled']);
+    const [bad, good] = json.models[1]!.jobs;
+    expect(bad).toMatchObject({ task: '01-newsletter', status: 'error', source: 'replay' });
+    expect(bad!.reason).toContain('run-1.timing.json');
+    expect(good).toMatchObject({ task: '02-add-blue-mug', status: 'compiled', wallMs: 435 });
+  });
+
   test('Ctrl-C prints what finished and exits 130', async () => {
     const ac = new AbortController();
     const r = await assay(['bench', '-c', CONFIG, '--concurrency', '1'], REPLAY, {
@@ -201,6 +262,20 @@ test.describe('recording', () => {
     expect((await assay(['bench', '-c', CONFIG, '--record'], { ASSAY_MODEL_MODE: 'replay' })).stderr).toContain(
       '--record and ASSAY_MODEL_MODE=replay contradict',
     );
+  });
+
+  test('a time measured in only some runs says so', async () => {
+    const dir = tmp();
+    const argv = ['bench', '-c', CONFIG, '-m', COPYCAT, '--cassettes', dir, '--runs', '2'];
+    expect((await assay([...argv, '--record'])).code).toBe(0);
+    rmSync(join(dir, 'copycat/01-newsletter/run-2.timing.json'));
+    const r = await assay(argv, REPLAY);
+    expect(r.code).toBe(0);
+    const row = r.stdout.split('\n').find((l) => l.startsWith(COPYCAT))!;
+    expect(row).toMatch(/\d+ ms \(1\/2 runs\)$/);
+    expect(r.stdout).toContain(`! Time: measured in 1 of 2 runs for ${COPYCAT}; no timing for 01-newsletter · run 2.`);
+    const json = JSON.parse((await assay([...argv, '--json'], REPLAY)).stdout) as BenchResult;
+    expect(json.models[0]!.summary).toMatchObject({ repeats: 2, wallMs: { n: 1 }, turns: { n: 2 } });
   });
 
   test('without --record a live run leaves no cassette', async () => {
@@ -266,6 +341,17 @@ test.describe('pieces', () => {
       '`bench.runs` must be a positive integer',
     );
     await expect(loadConfig({ path: write('{ bench: { models: [] } }') })).rejects.toThrow('`bench.models` must be');
+    // A named model's options are checked like `modelOptions`.
+    const named = (options: string) =>
+      write(`{ bench: { models: [{ name: 'x', model: 'openai:gpt-5', options: ${options} }] } }`);
+    await expect(loadConfig({ path: named('{ maxOutputToken: 5 }') })).rejects.toThrow(
+      'unknown option `bench.models[0].options.maxOutputToken`',
+    );
+    await expect(loadConfig({ path: named("{ mode: 'xml' }") })).rejects.toThrow(
+      '`bench.models[0].options.mode` must be "auto", "tools" or "json"',
+    );
+    await expect(loadConfig({ path: named("'json'") })).rejects.toThrow('`bench.models[0].options` must be an object');
+    await expect(loadConfig({ path: named("{ mode: 'json', maxOutputTokens: 5 }") })).resolves.toBeTruthy();
     const { config } = await loadConfig({ path: write("{ bench: { tasks: 'tasks', cassettes: 'c' } }") });
     expect(config.bench).toEqual({ tasks: join(dir, 'tasks'), cassettes: join(dir, 'c') });
   });

@@ -4,9 +4,9 @@
  * JSON or a Markdown report.
  */
 import { existsSync, globSync, mkdirSync, statSync, writeFileSync } from 'node:fs';
-import { basename, dirname, extname, join, matchesGlob, relative, resolve } from 'node:path';
+import { basename, dirname, extname, isAbsolute, join, matchesGlob, relative, resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import type { BenchModelInput, LoadedConfig } from '../../config/config.ts';
+import { escapeGlob, type BenchModelInput, type LoadedConfig } from '../../config/config.ts';
 import { describeModel, resolveModel, type ModelInput, type ModelOptions } from '../../model/resolve.ts';
 import type { ModelClient } from '../../model/types.ts';
 import { benchJson, formatBench, formatBenchMarkdown } from '../bench/format.ts';
@@ -90,8 +90,41 @@ interface Found {
   skipped: string[];
 }
 
-/** `base` is what file paths in the report are relative to (the config's directory), so a report reads the same from anywhere. */
-export function findTasks(spec: string, referencesDir: string, filters: string[], base: string): Found {
+/**
+ * The directory a task spec's files are under: the directory itself, a file's directory, or a
+ * glob's leading literal directories (a config glob escapes its own directory as `[*]` etc.).
+ */
+export function tasksDir(spec: string): string {
+  if (existsSync(spec)) return statSync(spec).isDirectory() ? spec : dirname(spec);
+  const literal = /^(?:[^*?[\]{}]|\[[*?[\]{}]\])*$/;
+  const parts = spec.split(/[\\/]/);
+  const fixed: string[] = [];
+  for (const part of parts.slice(0, -1)) {
+    if (!literal.test(part)) break;
+    fixed.push(part.replace(/\[([*?[\]{}])\]/g, '$1'));
+  }
+  return fixed.join(sep) || (isAbsolute(spec) ? sep : '.');
+}
+
+/** Does a `--task` filter (a name, a glob, or a path absolute or relative to `cwd`) pick this task file? */
+const picks = (p: string, name: string, file: string, shown: string, cwd: string) =>
+  p === name ||
+  matchesGlob(name, p) ||
+  matchesGlob(shown, p) ||
+  resolve(cwd, p) === resolve(file) ||
+  matchesGlob(resolve(file), isAbsolute(p) ? p : `${escapeGlob(resolve(cwd))}/${p}`);
+
+/**
+ * `base` is what file paths in the report are relative to (the config's directory), so a report
+ * reads the same from anywhere; `cwd` is what a `--task` path is relative to.
+ */
+export function findTasks(
+  spec: string,
+  referencesDir: string,
+  filters: string[],
+  base: string,
+  cwd: string = base,
+): Found {
   const files = taskFiles(spec);
   if (!files.length) throw new CliError(`no task files (*.checks.json, *.task.json) at ${spec}`);
   const tasks: BenchTask[] = [];
@@ -100,7 +133,7 @@ export function findTasks(spec: string, referencesDir: string, filters: string[]
   for (const file of files) {
     const name = taskName(file);
     const shown = relative(base, file) || file;
-    if (filters.length && !filters.some((p) => p === name || matchesGlob(name, p) || matchesGlob(shown, p))) continue;
+    if (filters.length && !filters.some((p) => picks(p, name, file, shown, cwd))) continue;
     if (seen.has(name)) throw new CliError(`two task files are named "${name}": ${seen.get(name)} and ${shown}`);
     seen.set(name, shown);
     const dir = join(referencesDir, name);
@@ -234,6 +267,7 @@ function sigint(): { signal: AbortSignal; dispose(): void } {
   return { signal: ac.signal, dispose: () => process.off('SIGINT', stop) };
 }
 
+/** `assay bench`: run the comparison and print it; exit 1 when a job errored, 130 when stopped. */
 export async function run({ values }: Invocation, io: Io): Promise<number> {
   const cwd = io.cwd ?? process.cwd();
   const loaded = await cliConfig(values, io);
@@ -249,10 +283,7 @@ export async function run({ values }: Invocation, io: Io): Promise<number> {
   const referencesDir =
     refsFlag !== undefined
       ? resolve(cwd, refsFlag)
-      : (bench.references ??
-        (existsSync(tasksSpec) && statSync(tasksSpec).isDirectory()
-          ? join(dirname(tasksSpec), 'references')
-          : join(base, 'references')));
+      : (bench.references ?? join(dirname(resolve(base, tasksDir(tasksSpec))), 'references'));
   const runs = positiveInt(str(values.runs), '--runs') ?? bench.runs ?? 1;
   const concurrency = positiveInt(str(values.concurrency), '--concurrency') ?? bench.concurrency ?? 2;
   const envMode = io.env.ASSAY_MODEL_MODE || undefined;
@@ -266,7 +297,13 @@ export async function run({ values }: Invocation, io: Io): Promise<number> {
     cassettesFlag !== undefined ? resolve(cwd, cassettesFlag) : (bench.cassettes ?? join(base, 'assay-bench'));
 
   const models = benchModels(values, io.env, loaded, cwd);
-  const { tasks, skipped } = findTasks(tasksSpec, referencesDir, (values.task as string[] | undefined) ?? [], base);
+  const { tasks, skipped } = findTasks(
+    tasksSpec,
+    referencesDir,
+    (values.task as string[] | undefined) ?? [],
+    base,
+    cwd,
+  );
   for (const s of skipped) io.err(`skipped ${s}`);
   if (!tasks.length) {
     throw new CliError(

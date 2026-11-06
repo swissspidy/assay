@@ -416,7 +416,7 @@ anthropic:claude-opus-5-5  tools      100%       100%     1.000             0%  
 
 A task is a `*.checks.json` or `*.task.json` file (`bench.tasks`, default `checks`) with its
 labelled runs in `references/<task>/`. Each task compiles from the runs its file names
-(`"references": [...]`), else runs named `reference*`, else its first correct run; the other runs
+(`"references": [...]`), else runs named `reference` or `reference-*`, else its first correct run; the other runs
 score the checks (balanced accuracy, and false successes: wrong runs judged success). Per task:
 turns, tokens, cost (`—` without a listed price) and time; `*` marks the best per column.
 `--runs N` repeats (mean ± sd), `--task <glob>` filters, `--escalate` also tries the model as the

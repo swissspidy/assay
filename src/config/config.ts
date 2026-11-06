@@ -134,16 +134,7 @@ export function normalizeConfig(raw: unknown, dir: string, where = 'assay config
     const glob = k === 'checks' && GLOB.test(c[k]) && !existsSync(resolve(dir, c[k]));
     c[k] = glob && !isAbsolute(c[k]) ? `${escapeGlob(resolve(dir))}/${c[k]}` : resolve(dir, c[k]);
   }
-  if (c.modelOptions !== undefined) {
-    if (!isObject(c.modelOptions)) throw bad('modelOptions', 'an object');
-    for (const k of Object.keys(c.modelOptions)) {
-      if (!MODEL_OPTION_KEYS.has(k))
-        throw new ConfigError(`${where}: unknown option \`modelOptions.${k}\` (${[...MODEL_OPTION_KEYS].join(', ')})`);
-    }
-    const mode = c.modelOptions.mode;
-    if (mode !== undefined && (typeof mode !== 'string' || !['auto', 'tools', 'json'].includes(mode)))
-      throw bad('modelOptions.mode', '"auto", "tools" or "json"');
-  }
+  if (c.modelOptions !== undefined) checkModelOptions(c.modelOptions, 'modelOptions', where);
   if (c.escalate !== undefined && typeof c.escalate !== 'boolean') {
     if (!isObject(c.escalate)) throw bad('escalate', 'true, false or { on, includeSoft }');
     for (const k of Object.keys(c.escalate)) {
@@ -176,6 +167,18 @@ export function normalizeConfig(raw: unknown, dir: string, where = 'assay config
   return c;
 }
 
+/** Model options (`modelOptions`, a named bench model's `options`): known keys, and a valid mode. */
+function checkModelOptions(opts: unknown, key: string, where: string): void {
+  if (!isObject(opts)) throw new ConfigError(`${where}: \`${key}\` must be an object`);
+  for (const k of Object.keys(opts)) {
+    if (!MODEL_OPTION_KEYS.has(k))
+      throw new ConfigError(`${where}: unknown option \`${key}.${k}\` (${[...MODEL_OPTION_KEYS].join(', ')})`);
+  }
+  const mode = opts.mode;
+  if (mode !== undefined && (typeof mode !== 'string' || !['auto', 'tools', 'json'].includes(mode)))
+    throw new ConfigError(`${where}: \`${key}.mode\` must be "auto", "tools" or "json"`);
+}
+
 function normalizeBench(raw: unknown, dir: string, where: string): BenchConfig {
   const bad = (key: string, want: string) => new ConfigError(`${where}: \`bench.${key}\` must be ${want}`);
   if (!isObject(raw)) throw new ConfigError(`${where}: \`bench\` must be an object`);
@@ -186,9 +189,10 @@ function normalizeBench(raw: unknown, dir: string, where: string): BenchConfig {
   const b = { ...raw } as BenchConfig & Record<string, unknown>;
   if (b.models !== undefined) {
     if (!Array.isArray(b.models) || !b.models.length) throw bad('models', 'a non-empty array of models');
-    for (const m of b.models) {
+    for (const [i, m] of b.models.entries()) {
       const named = isObject(m) && 'name' in m && 'model' in m && !('turn' in m);
       if (named && (typeof m.name !== 'string' || !m.name)) throw bad('models', 'models with a string `name`');
+      if (named && m.options !== undefined) checkModelOptions(m.options, `bench.models[${i}].options`, where);
       if (m === null || (typeof m !== 'string' && typeof m !== 'object' && typeof m !== 'function'))
         throw bad('models', 'an array of models: "provider:model", a module path, an AI SDK model or an adapter');
     }

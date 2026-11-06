@@ -115,6 +115,8 @@ export interface Stat {
 }
 
 export interface ModelSummary {
+  /** Repeats with a finished job; a stat with a smaller `n` was measured in only some of them. */
+  repeats: number;
   /** Share of tasks compiled. */
   compiled: Stat;
   /** Share of compiled check sets with no stress problems. */
@@ -156,38 +158,50 @@ export interface BenchResult {
   interrupted?: { finished: number; total: number };
 }
 
+/** Where the cassette of one (model, task, repeat) job lives: `<dir>/<slug>/<task>/run-<n>.json`. */
 export const cassetteFile = (dir: string, slug: string, task: string, run: number) =>
   join(dir, slug, task, `run-${run}.json`);
 const timingFile = (cassette: string) => cassette.replace(/\.json$/, '.timing.json');
 
+/** The recorded wall time of a cassette; null without a timing file. Throws on a malformed one. */
 function readTiming(cassette: string): number | null {
   const f = timingFile(cassette);
   if (!existsSync(f)) return null;
-  const j = JSON.parse(readFileSync(f, 'utf8')) as { wallMs?: unknown };
-  return typeof j.wallMs === 'number' ? j.wallMs : null;
+  let j: { wallMs?: unknown };
+  try {
+    j = JSON.parse(readFileSync(f, 'utf8')) as { wallMs?: unknown };
+  } catch (e) {
+    throw new Error(`malformed timing file ${f}: ${errorText(e)}`, { cause: e });
+  }
+  return typeof j?.wallMs === 'number' ? j.wallMs : null;
 }
 
 const errorText = (e: unknown) => (e instanceof Error ? e.message : String(e));
 const emptyUsage = () => ({ inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheWriteTokens: 0 });
 
+/** A job that produced no result: `e` is why (a missing cassette turn reads as a stale cassette). */
+function failedJob(m: BenchModel, t: BenchTask, run: number, e: unknown, source?: JobSource): JobResult {
+  const msg = errorText(e);
+  return {
+    model: m.label,
+    task: t.name,
+    run,
+    status: 'error',
+    reason: msg.includes(NO_RECORDING) ? `stale cassette: ${msg}` : msg,
+    ...(source ? { source } : {}),
+    modes: [],
+    turns: 0,
+    usage: emptyUsage(),
+    costUsd: null,
+    wallMs: null,
+    heldOut: [],
+  };
+}
+
 /** One model, one task, one repeat. Never throws: an error is the job's result. */
 async function runJob(o: BenchOptions, m: BenchModel, t: BenchTask, run: number): Promise<JobResult> {
   const base = { model: m.label, task: t.name, run };
-  const failed = (e: unknown, source?: JobSource): JobResult => {
-    const msg = errorText(e);
-    return {
-      ...base,
-      status: 'error',
-      reason: msg.includes(NO_RECORDING) ? `stale cassette: ${msg}` : msg,
-      ...(source ? { source } : {}),
-      modes: [],
-      turns: 0,
-      usage: emptyUsage(),
-      costUsd: null,
-      wallMs: null,
-      heldOut: [],
-    };
-  };
+  const failed = (e: unknown, source?: JobSource) => failedJob(m, t, run, e, source);
   const file = cassetteFile(o.cassettes, m.slug, t.name, run);
   let client: ModelClient;
   let source: JobSource;
@@ -269,8 +283,10 @@ async function runJob(o: BenchOptions, m: BenchModel, t: BenchTask, run: number)
           turns += v.turns;
           for (const mode of v.modes) modes.add(mode);
         }
+        // A verifier that failed (an API error, a cassette without the turn) decided nothing: the
+        // job has no trustworthy result, and must not pass as an abstention.
         const err = res.record.escalation?.error;
-        if (err !== undefined) warnings.push(`escalating ${r.name}: ${err}`);
+        if (err !== undefined) return failed(`escalating ${r.name}: ${err}`, source);
       }
       heldOut.push({
         run: r.name,
@@ -311,6 +327,12 @@ async function runJob(o: BenchOptions, m: BenchModel, t: BenchTask, run: number)
     };
   }
 
+  let wallMs: number | null;
+  try {
+    wallMs = source === 'replay' ? readTiming(file) : Math.round(ms);
+  } catch (e) {
+    return failed(e, source);
+  }
   const modelId = recordedAs?.model ?? client.id;
   const price = priceFor(modelId) ?? (report.modelsUsed[0] ? priceFor(report.modelsUsed[0]) : undefined);
   return {
@@ -323,13 +345,14 @@ async function runJob(o: BenchOptions, m: BenchModel, t: BenchTask, run: number)
     turns,
     usage,
     costUsd: price ? costUsd(usage, price) : null,
-    wallMs: source === 'replay' ? readTiming(file) : Math.round(ms),
+    wallMs,
     ...(stress ? { stress } : {}),
     heldOut,
     ...(warnings.length ? { warnings } : {}),
   };
 }
 
+/** Mean and sample standard deviation of the finite values; `n` counts them. */
 export function stat(values: number[]): Stat {
   const xs = values.filter(Number.isFinite);
   if (!xs.length) return { mean: NaN, sd: NaN, n: 0 };
@@ -363,12 +386,18 @@ function repeatValues(jobs: JobResult[]) {
   };
 }
 
+/**
+ * A model's summary: each value per repeat, then mean ± sd over the repeats. A value a repeat
+ * could not measure (a job without timing) leaves that repeat out of its stat, so `n` below
+ * `repeats` marks a partial aggregate.
+ */
 export function summarize(jobs: JobResult[], runs: number): ModelSummary {
   const per = Array.from({ length: runs }, (_, i) => jobs.filter((j) => j.run === i + 1))
     .filter((js) => js.length)
     .map(repeatValues);
   const of = (k: keyof ReturnType<typeof repeatValues>) => stat(per.map((p) => p[k]));
   return {
+    repeats: per.length,
     compiled: of('compiled'),
     stressClean: of('stressClean'),
     balancedAccuracy: of('balancedAccuracy'),
@@ -384,6 +413,7 @@ export function summarize(jobs: JobResult[], runs: number): ModelSummary {
 
 const sorted = <T extends string>(xs: Iterable<T>) => [...new Set(xs)].toSorted();
 
+/** One model's row: its jobs, what ran them, and their summary (none when every job errored). */
 export function modelResult(m: BenchModel, jobs: JobResult[], runs: number): ModelResult {
   const errors = jobs.filter((j) => j.status === 'error');
   const error =
@@ -416,7 +446,10 @@ export async function runBench(o: BenchOptions): Promise<BenchResult> {
     while (!o.signal?.aborted && next < jobs.length) {
       const i = next++;
       const j = jobs[i]!;
-      const r = await runJob(o, o.models[j.m]!, o.tasks[j.t]!, j.run);
+      const m = o.models[j.m]!;
+      const t = o.tasks[j.t]!;
+      // runJob reports its errors as results; this only guards the other jobs against a bug.
+      const r = await runJob(o, m, t, j.run).catch((e: unknown) => failedJob(m, t, j.run, e));
       if (o.signal?.aborted) return; // finished after the stop: not part of what was reported
       results[i] = r;
       finished++;

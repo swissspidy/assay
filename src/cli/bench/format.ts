@@ -19,8 +19,11 @@ interface Column {
 
 const pct = (x: number) => `${Math.round(x * 100)}%`;
 const fixed = (d: number) => (x: number) => x.toFixed(d);
+/** A token count: as is below 1000, else in thousands (`49.0k`). */
 export const tokens = (x: number) => (x < 1000 ? String(Math.round(x)) : `${(x / 1000).toFixed(1)}k`);
+/** Dollars: four decimals below $1, else two. */
 export const usd = (x: number) => `$${x < 1 ? x.toFixed(4) : x.toFixed(2)}`;
+/** A duration in ms, s or min, whichever reads best. */
 export const duration = (ms: number) =>
   ms < 1000 ? `${Math.round(ms)} ms` : ms < 120_000 ? `${(ms / 1000).toFixed(1)} s` : `${(ms / 60_000).toFixed(1)} min`;
 
@@ -56,7 +59,9 @@ function grid(r: BenchResult): { head: string[]; rows: Cell[][] } {
     cols.map((c) => {
       const s = c.get(m.summary);
       if (m.error || !Number.isFinite(s.mean)) return '—';
-      return s.n > 1 ? `${c.fmt(s.mean)} ±${c.spread(s.sd)}` : c.fmt(s.mean);
+      const shown = s.n > 1 ? `${c.fmt(s.mean)} ±${c.spread(s.sd)}` : c.fmt(s.mean);
+      // Measured in only some repeats: say so rather than pass a partial mean off as the whole.
+      return s.n < m.summary.repeats ? `${shown} (${s.n}/${m.summary.repeats} runs)` : shown;
     });
   const texts = r.models.map(cellsOf);
   const best = cols.map((c, ci) => {
@@ -120,6 +125,15 @@ function notes(r: BenchResult): string[] {
   const noTime = r.models.filter((m) => !m.error && !Number.isFinite(m.summary.wallMs.mean));
   if (noTime.length)
     out.push(`Time —: not recorded for ${noTime.map((m) => m.label).join(', ')} (replayed without timings).`);
+  for (const m of r.models) {
+    const { wallMs, repeats } = m.summary;
+    if (m.error || !Number.isFinite(wallMs.mean) || wallMs.n >= repeats) continue;
+    const missing = m.jobs
+      .filter((j) => j.status !== 'error' && j.wallMs === null)
+      .map((j) => `${j.task} · run ${j.run}`);
+    if (missing.length)
+      out.push(`Time: measured in ${wallMs.n} of ${repeats} runs for ${m.label}; no timing for ${missing.join(', ')}.`);
+  }
   return out;
 }
 

@@ -4,8 +4,9 @@
  * tiny-shop task it proposes the handwritten requirements and checks of examples/tiny-shop/tasks.
  * Token counts are estimates (a quarter of the characters), so it has no price.
  *
- * Re-record its cassettes with: node src/cli/index.ts bench -c examples/bench/assay.config.ts
- *   -m ./models/copycat.ts --record   (from the repository root; the path is the config's)
+ * Re-record its cassettes from examples/bench (a `-m` path is relative to the working directory,
+ * and this keeps the label the config gives it):
+ *   cd examples/bench && node ../../src/cli/index.ts bench -m ./models/copycat.ts --record
  */
 import { readdirSync, readFileSync } from 'node:fs';
 import type { CheckSet, ModelClient, ModelRequest, ModelTurn } from '../../../src/index.ts';
