@@ -1,0 +1,103 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "fixture:copycat",
+ "recordedAt": "2026-11-06T11:12:18.094Z",
+ "turns": {
+  "sha256:b379de33ad96d5be4a6778f04422a68ccf3807830ab58cd36761a7a430e62ccb": {
+   "stop": "tool_use",
+   "text": "{\"tool\":\"submit_rubric\",\"input\":{\"requirements\":[{\"id\":\"R1\",\"kind\":\"hard\",\"text\":\"The cart contains a Blue Mug\",\"field\":\"outcomes\",\"quote\":\"the cart contains a Blue Mug\"}]}}",
+   "toolCalls": [
+    {
+     "id": "json_0_0",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The cart contains a Blue Mug",
+        "field": "outcomes",
+        "quote": "the cart contains a Blue Mug"
+       }
+      ]
+     }
+    }
+   ],
+   "raw": {
+    "mode": "json",
+    "text": "{\"tool\":\"submit_rubric\",\"input\":{\"requirements\":[{\"id\":\"R1\",\"kind\":\"hard\",\"text\":\"The cart contains a Blue Mug\",\"field\":\"outcomes\",\"quote\":\"the cart contains a Blue Mug\"}]}}",
+    "inner": [
+     {
+      "type": "text",
+      "text": "{\"tool\":\"submit_rubric\",\"input\":{\"requirements\":[{\"id\":\"R1\",\"kind\":\"hard\",\"text\":\"The cart contains a Blue Mug\",\"field\":\"outcomes\",\"quote\":\"the cart contains a Blue Mug\"}]}}"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 661,
+    "outputTokens": 44
+   },
+   "model": "fixture:copycat",
+   "mode": "json"
+  },
+  "sha256:a90bcf3c7d508f659e885ce972839220fa005116053cbb107a433ddae870f6b1": {
+   "stop": "tool_use",
+   "text": "{\"tool\":\"submit_checks\",\"input\":{\"checks\":[{\"id\":\"C1\",\"requirement\":\"R1\",\"description\":\"The backend cart (probe 'cart') has a line item named Blue Mug.\",\"assert\":{\"kind\":\"value\",\"source\":{\"from\":\"probe\",\"probe\":\"cart\",\"pointer\":\"/items\"},\"expect\":{\"schema\":{\"type\":\"array\",\"contains\":{\"type\":\"object\",\"required\":[\"name\"],\"properties\":{\"name\":{\"const\":\"Blue Mug\"}}}}}}}]}}",
+   "toolCalls": [
+    {
+     "id": "json_0_0",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "C1",
+        "requirement": "R1",
+        "description": "The backend cart (probe 'cart') has a line item named Blue Mug.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/items"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "name"
+            ],
+            "properties": {
+             "name": {
+              "const": "Blue Mug"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": {
+    "mode": "json",
+    "text": "{\"tool\":\"submit_checks\",\"input\":{\"checks\":[{\"id\":\"C1\",\"requirement\":\"R1\",\"description\":\"The backend cart (probe 'cart') has a line item named Blue Mug.\",\"assert\":{\"kind\":\"value\",\"source\":{\"from\":\"probe\",\"probe\":\"cart\",\"pointer\":\"/items\"},\"expect\":{\"schema\":{\"type\":\"array\",\"contains\":{\"type\":\"object\",\"required\":[\"name\"],\"properties\":{\"name\":{\"const\":\"Blue Mug\"}}}}}}}]}}",
+    "inner": [
+     {
+      "type": "text",
+      "text": "{\"tool\":\"submit_checks\",\"input\":{\"checks\":[{\"id\":\"C1\",\"requirement\":\"R1\",\"description\":\"The backend cart (probe 'cart') has a line item named Blue Mug.\",\"assert\":{\"kind\":\"value\",\"source\":{\"from\":\"probe\",\"probe\":\"cart\",\"pointer\":\"/items\"},\"expect\":{\"schema\":{\"type\":\"array\",\"contains\":{\"type\":\"object\",\"required\":[\"name\"],\"properties\":{\"name\":{\"const\":\"Blue Mug\"}}}}}}}]}}"
+     }
+    ]
+   },
+   "usage": {
+    "inputTokens": 11816,
+    "outputTokens": 93
+   },
+   "model": "fixture:copycat",
+   "mode": "json"
+  }
+ }
+}

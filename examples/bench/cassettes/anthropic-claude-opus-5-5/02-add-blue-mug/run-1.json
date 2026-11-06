@@ -1,0 +1,312 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "turns": {
+  "sha256:0972fa2660bef3be784c242519965bafc75027065fa16f3abed21e3b5e9d1030": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01Nb5bBzR2fm2kjPgt4sfU2S",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The cart contains a Blue Mug.",
+        "field": "outcomes",
+        "quote": "the cart contains a Blue Mug"
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01Nb5bBzR2fm2kjPgt4sfU2S",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The cart contains a Blue Mug.",
+        "field": "outcomes",
+        "quote": "the cart contains a Blue Mug"
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1108,
+    "outputTokens": 111,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1104
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:41503428da9af07415244aa70dc0d07b43f134bdd4e1a4f34219092bc0175494": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01UFnnAq3MwNfDSQUswvdpwv",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01LpEwhmL56yPk65RT4marAt",
+     "name": "network_log",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01UFnnAq3MwNfDSQUswvdpwv",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01LpEwhmL56yPk65RT4marAt",
+     "name": "network_log",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 18796,
+    "outputTokens": 48,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 18792
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:a41c756b29ea49ee2e7a9bd1019c55b970bc4848f9b2e4748a02f20c58480217": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01YAKCt6a137vGLVX9D6PR26",
+     "name": "try_assertion",
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "cart",
+        "pointer": "/items"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "sku",
+           "name",
+           "qty"
+          ],
+          "properties": {
+           "sku": {
+            "const": "MUG-BLUE"
+           },
+           "name": {
+            "const": "Blue Mug"
+           },
+           "qty": {
+            "type": "number",
+            "minimum": 1
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQS2AYKEAgTGAI4AUIIdGhpbmtpbmcSDC5QhXAhdotqbbAxcRoMYQUCfyK3zL1A+VYqIjBFX09sVQBmi2U32JHellp4D3KJBVjz+CDORjLnzPX63h/vt1A4yBsO8Tt8dbRs0DEq9QXJuO23IbQe6nES6pBK0CI23HiByZN4AHHGvQ/xPO+8iwLulXPUYr+HBlP2ElArsPzf1nu7MiAo68fGN+pIgiT/aXEM97awVqc2MruVHsZ6nprew8oE4PnSR5Zyndyz7bDFEYU8ydWDDBLObxHGBxU7JENfWrBDHBQsIv6U+qz//Xy/iznKvZoYT/Lm7wwoc/d+etSY6+tq6TA/fK7OU2T2m4I5YdIWjgFuAwyjIP2KpeitBfuRMVhDXh2w97UDFECDaTXBAzmA1wAIHZ4BlEUZw/sakSw2JZPGgOvAI7LmOzWh/UnZX+u4HIb37eKTMqyJ2YZtz3C+t0qh+THKkRH3KhGoGgplwZdWqwmfusG8qThIr/91RQWSYY6p2EZnKsinp3IoZVSOBA9JGhEcDw4Zx675QI/MIyDjBERDFeF+TKD1RCH9LK/a//G75PYqzp9f5cdCjcih1gObMACVnnycLigNnchK3Qjsx3tUjFruipgpSKyOZYr6bCy3y5x7B372hIJ9mikl7K7cM8G6dnj6DaQMn5zRQbKQC5K0CBUbqubZpjJ8o1gPyE0+r0kV6qtYMLmVIQrOi9yyjliqwVdYpzAWiYAKSQQzQvlSZiErJW7vT36VeQjaDVR1Q4vGZcQ65ST9h/1jCf9sauk3t3Gxlsm66UpcT7oCB9oQ4PAzs4B6nApEEpzyJQii+9tyPalt+KMFaJ3NuovANdDGw/1HDUjIsXgqstQ7mXPGh0LXdxMjsotvQcJiaactz/57+6lACRQm0+Fxz3qerARWYfher2GZbrvVWqf/7AiVrBTabprE7j3qT2EiHjz6aY8crldyUvlIgT7oQoe4oShtk4YWw2Vj//pDzbOJJvTsvKOGeuSKntSPWelmn5lkvqBubC+2XGh3EEDT4dcgs98TqzBddIhwydws988ragUc1FKrzTduyyUAx2T3t0DIvQyQuzwi8s41aIm4xksIOMHPMvdyAA+e8p+E8JzzQK9AtE3Vt8+Jvy4YGAE="
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01YAKCt6a137vGLVX9D6PR26",
+     "name": "try_assertion",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "assert": {
+       "kind": "value",
+       "source": {
+        "from": "probe",
+        "probe": "cart",
+        "pointer": "/items"
+       },
+       "expect": {
+        "schema": {
+         "type": "array",
+         "contains": {
+          "type": "object",
+          "required": [
+           "sku",
+           "name",
+           "qty"
+          ],
+          "properties": {
+           "sku": {
+            "const": "MUG-BLUE"
+           },
+           "name": {
+            "const": "Blue Mug"
+           },
+           "qty": {
+            "type": "number",
+            "minimum": 1
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 19098,
+    "outputTokens": 263,
+    "cacheReadTokens": 18792,
+    "cacheWriteTokens": 304
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:9b5b9b7905228654e8165ce6c34fd2ae4907098be461c7b30e0643e725a2f8bf": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_0185rqCPGefGUn1gZUe36LHq",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "cart-has-blue-mug",
+        "requirement": "R1",
+        "description": "The backend cart contains a Blue Mug (SKU MUG-BLUE) line with quantity at least 1.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/items"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "sku",
+             "name",
+             "qty"
+            ],
+            "properties": {
+             "sku": {
+              "const": "MUG-BLUE"
+             },
+             "name": {
+              "const": "Blue Mug"
+             },
+             "qty": {
+              "type": "number",
+              "minimum": 1
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_0185rqCPGefGUn1gZUe36LHq",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "cart-has-blue-mug",
+        "requirement": "R1",
+        "description": "The backend cart contains a Blue Mug (SKU MUG-BLUE) line with quantity at least 1.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/items"
+         },
+         "expect": {
+          "schema": {
+           "type": "array",
+           "contains": {
+            "type": "object",
+            "required": [
+             "sku",
+             "name",
+             "qty"
+            ],
+            "properties": {
+             "sku": {
+              "const": "MUG-BLUE"
+             },
+             "name": {
+              "const": "Blue Mug"
+             },
+             "qty": {
+              "type": "number",
+              "minimum": 1
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 19442,
+    "outputTokens": 270,
+    "cacheReadTokens": 19096,
+    "cacheWriteTokens": 344
+   },
+   "model": "claude-opus-5-5"
+  }
+ },
+ "recordedAt": "2026-11-05T21:08:06.413Z"
+}

@@ -355,6 +355,7 @@ assay approve checks/add-blue-mug.checks.json --reviewer alice --key alice.pem
 assay stress checks/add-blue-mug.checks.json --reference runs/
 assay verify checks/add-blue-mug.checks.json snapshot.json --record assay-records
 assay capture http://localhost:4173/cart --out runs/
+assay bench -m anthropic:claude-opus-5-5 -m openai:gpt-5  # compare models on your tasks
 ```
 
 - **`compile <task>`**: the task is the instruction text, a text file, or a JSON file with
@@ -397,6 +398,33 @@ and `verify --escalate`, override the config's `model`:
 | `ASSAY_MODEL_MODE`             | `replay`: never call a model (needs `--cassette`); `record`: re-record the cassette                                                                                               |
 
 Design: [ADR 0010](docs/adr/0010-command-line-tool.md).
+
+## Choosing a model
+
+`assay bench` compiles your tasks with each model and compares the check sets they write:
+
+```sh
+assay bench -m anthropic:claude-opus-5-5 -m openai:gpt-5 -m ./my-adapter.ts --out bench.md
+```
+
+```
+Model                      Mode   Compiled  Stress ok  Bal. acc  False success  Turns  Tokens in  Tokens out     Cost    Time
+─────────────────────────  ─────  ────────  ─────────  ────────  ─────────────  ─────  ─────────  ──────────  ───────  ──────
+anthropic:claude-opus-5-5  tools      100%       100%     1.000             0%    3.5      49.0k         662  $0.1219       —
+./models/copycat.ts        json       100%       100%     1.000             0%   2.0*     12.5k*        255*        —  432 ms
+```
+
+A task is a `*.checks.json` or `*.task.json` file (`bench.tasks`, default `checks`) with its
+labelled runs in `references/<task>/`. Each task compiles from the runs its file names
+(`"references": [...]`), else runs named `reference` or `reference-*`, else its first correct run; the other runs
+score the checks (balanced accuracy, and false successes: wrong runs judged success). Per task:
+turns, tokens, cost (`—` without a listed price) and time; `*` marks the best per column.
+`--runs N` repeats (mean ± sd), `--task <glob>` filters, `--escalate` also tries the model as the
+verifier, `--json` prints every job. A model that errors shows it in its row; Ctrl-C prints what
+finished. `--record` writes cassettes per model under `assay-bench/`, which later runs replay
+(`ASSAY_MODEL_MODE=replay` in CI never calls a model). Models default to `bench.models`, then
+`model`. A replayable example: `examples/bench`
+([ADR 0018](docs/adr/0018-model-bench.md)).
 
 ## Model providers
 
@@ -473,6 +501,7 @@ five ([ADR 0011](docs/adr/0011-route-robust-compilation.md)).
 - [ADR 0015](docs/adr/0015-evidence-store-and-compiled-checks.md): the evidence store, compiled check plans and `verifyMany`
 - [ADR 0016](docs/adr/0016-overlay-stress-and-capture-digests.md): overlay stress testing and capture-time digests
 - [ADR 0017](docs/adr/0017-config-file-and-bring-your-own-model.md): `assay.config.ts`, bring your own model, JSON mode
+- [ADR 0018](docs/adr/0018-model-bench.md): `assay bench`, comparing models on your own tasks
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
 - Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)
 

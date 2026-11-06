@@ -48,7 +48,7 @@ async function cli<T>(p: Promise<T>): Promise<T> {
 }
 
 /** The live model, by precedence: flags, environment, config, then the Anthropic default with a key. */
-async function chooseLive(
+export async function chooseLive(
   values: Values,
   env: Record<string, string | undefined>,
   loaded: LoadedConfig,

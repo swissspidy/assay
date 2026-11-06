@@ -264,6 +264,58 @@ Options:
 Exit status: 0, 3 usage, 4 error.`,
     load: () => import('./commands/keygen.ts'),
   },
+  bench: {
+    summary: 'Compare models on your tasks: compile rate, check quality, tokens, cost, time',
+    usage: 'assay bench [--model <model>...] [options]',
+    args: [0, 0],
+    options: {
+      model: { type: 'string', multiple: true, short: 'm' },
+      task: { type: 'string', multiple: true, short: 't' },
+      tasks: { type: 'string' },
+      references: { type: 'string' },
+      runs: { type: 'string' },
+      concurrency: { type: 'string' },
+      record: { type: 'boolean' },
+      cassettes: { type: 'string' },
+      escalate: { type: 'boolean' },
+      out: { type: 'string', short: 'o' },
+    },
+    help: `Compiles each task with each model, as \`assay compile\` would, from the task's reference
+runs, then stress-tests the check set and scores it on the task's other labelled runs. Prints one
+row per model: tasks compiled, check sets with no stress problems, balanced accuracy and false
+successes on the held-out runs, and turns, tokens, cost and model time per task. The best value
+in each column is marked with *.
+
+A task is a *.checks.json or *.task.json file ({ "id", "instruction", "outcomes",
+"references": ["<run>"] }); its runs are <references>/<task name>/*.json, labelled
+({ "label": { "expected": "success" | "fail" }, "snapshot" }) as in examples/*/references. It
+compiles from the runs "references" names, else runs named reference or reference-*, else its
+first correct run; the other labelled runs are held out.
+
+Options:
+  -m, --model <model>      A model to compare (repeatable): "provider:model" (e.g. openai:gpt-5),
+                           or a module whose default export is a model or an adapter
+                           (./my-adapter.ts). Default: \`bench.models\`, else the config's model
+  -t, --task <glob>        Only these tasks, by name or file path (repeatable)
+  --tasks <dir|glob>       The task files. Default: \`bench.tasks\`, else \`checks\`
+  --references <dir>       One directory of runs per task. Default: \`bench.references\`, else
+                           references/ next to the tasks directory
+  --runs <n>               Compile each task n times per model: mean and standard deviation (default 1)
+  --concurrency <n>        Compiles at once (default 2)
+  --record                 Record every model's turns to cassettes (re-records existing ones)
+  --cassettes <dir>        Cassette directory, one subdirectory per model. Default:
+                           \`bench.cassettes\`, else assay-bench/. An existing cassette is replayed;
+                           ASSAY_MODEL_MODE=replay never calls a model (CI)
+  --escalate               Send held-out runs the checks abstain on to the same model as verifier
+  -o, --out <file>         Also write a Markdown report
+  --json                   Print the full result (every job) as JSON
+
+A model that fails (missing package, API error, stale cassette) shows its error in its row; the
+others go on. Ctrl-C prints what has finished.
+
+Exit status: 0 done, 1 a model or compile errored, 3 usage, 4 error, 130 interrupted.`,
+    load: () => import('./commands/bench.ts'),
+  },
   capture: {
     summary: 'Capture an evidence snapshot of a URL with Playwright',
     usage: 'assay capture <url> [options]',

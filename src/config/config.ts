@@ -48,6 +48,37 @@ export interface AssayConfig {
     /** Re-run rejected mutants with a success claim added to the page (default true). */
     successClaims?: boolean;
   };
+  /** Defaults for `assay bench`: comparing models on this project's tasks (ADR 0018). */
+  bench?: BenchConfig;
+}
+
+/**
+ * A model to compare in `assay bench`: any `model` form (a `'provider:model'` string, an AI
+ * SDK model, an adapter), a path to a module whose default export is one (`'./my-adapter.ts'`),
+ * or `{ name, model, options }` to name it and set its options.
+ */
+export type BenchModelInput = ModelInput | { name: string; model: ModelInput; options?: ModelOptions };
+
+export interface BenchConfig {
+  /** The models to compare, in this order (default: `model`). */
+  models?: BenchModelInput[];
+  /**
+   * The task files: a directory (every `*.checks.json` and `*.task.json` under it) or a glob.
+   * Default: `checks`.
+   */
+  tasks?: string;
+  /**
+   * A directory with one subdirectory of runs per task, named like the task file
+   * (`references/add-blue-mug/*.json` for `add-blue-mug.checks.json`). Default: `references`
+   * next to the tasks directory.
+   */
+  references?: string;
+  /** Where `assay bench --record` writes cassettes and replays read them (default: `assay-bench`). */
+  cassettes?: string;
+  /** Repeats per model and task (default 1). */
+  runs?: number;
+  /** Compiles running at once (default 2). */
+  concurrency?: number;
 }
 
 /** Type the config file: `export default defineConfig({ model: 'anthropic:claude-opus-5-5' })`. */
@@ -75,9 +106,11 @@ const KEYS = new Set<string>([
   'requireLocked',
   'trustedKeys',
   'stress',
+  'bench',
 ]);
 const MODEL_OPTION_KEYS = new Set(['mode', 'id', 'providerOptions', 'maxOutputTokens', 'maxRetries']);
 const STRESS_KEYS = new Set(['skipVariants', 'successClaims']);
+const BENCH_KEYS = new Set(['models', 'tasks', 'references', 'cassettes', 'runs', 'concurrency']);
 
 const GLOB = /[*?[\]{}]/;
 /** A path as a glob that matches only itself: each glob character in a one-character class. */
@@ -101,16 +134,7 @@ export function normalizeConfig(raw: unknown, dir: string, where = 'assay config
     const glob = k === 'checks' && GLOB.test(c[k]) && !existsSync(resolve(dir, c[k]));
     c[k] = glob && !isAbsolute(c[k]) ? `${escapeGlob(resolve(dir))}/${c[k]}` : resolve(dir, c[k]);
   }
-  if (c.modelOptions !== undefined) {
-    if (!isObject(c.modelOptions)) throw bad('modelOptions', 'an object');
-    for (const k of Object.keys(c.modelOptions)) {
-      if (!MODEL_OPTION_KEYS.has(k))
-        throw new ConfigError(`${where}: unknown option \`modelOptions.${k}\` (${[...MODEL_OPTION_KEYS].join(', ')})`);
-    }
-    const mode = c.modelOptions.mode;
-    if (mode !== undefined && (typeof mode !== 'string' || !['auto', 'tools', 'json'].includes(mode)))
-      throw bad('modelOptions.mode', '"auto", "tools" or "json"');
-  }
+  if (c.modelOptions !== undefined) checkModelOptions(c.modelOptions, 'modelOptions', where);
   if (c.escalate !== undefined && typeof c.escalate !== 'boolean') {
     if (!isObject(c.escalate)) throw bad('escalate', 'true, false or { on, includeSoft }');
     for (const k of Object.keys(c.escalate)) {
@@ -139,7 +163,50 @@ export function normalizeConfig(raw: unknown, dir: string, where = 'assay config
         throw new ConfigError(`${where}: unknown option \`stress.${k}\` (${[...STRESS_KEYS].join(', ')})`);
     }
   }
+  if (c.bench !== undefined) c.bench = normalizeBench(c.bench, dir, where);
   return c;
+}
+
+/** Model options (`modelOptions`, a named bench model's `options`): known keys, and a valid mode. */
+function checkModelOptions(opts: unknown, key: string, where: string): void {
+  if (!isObject(opts)) throw new ConfigError(`${where}: \`${key}\` must be an object`);
+  for (const k of Object.keys(opts)) {
+    if (!MODEL_OPTION_KEYS.has(k))
+      throw new ConfigError(`${where}: unknown option \`${key}.${k}\` (${[...MODEL_OPTION_KEYS].join(', ')})`);
+  }
+  const mode = opts.mode;
+  if (mode !== undefined && (typeof mode !== 'string' || !['auto', 'tools', 'json'].includes(mode)))
+    throw new ConfigError(`${where}: \`${key}.mode\` must be "auto", "tools" or "json"`);
+}
+
+function normalizeBench(raw: unknown, dir: string, where: string): BenchConfig {
+  const bad = (key: string, want: string) => new ConfigError(`${where}: \`bench.${key}\` must be ${want}`);
+  if (!isObject(raw)) throw new ConfigError(`${where}: \`bench\` must be an object`);
+  for (const k of Object.keys(raw)) {
+    if (!BENCH_KEYS.has(k))
+      throw new ConfigError(`${where}: unknown option \`bench.${k}\` (${[...BENCH_KEYS].join(', ')})`);
+  }
+  const b = { ...raw } as BenchConfig & Record<string, unknown>;
+  if (b.models !== undefined) {
+    if (!Array.isArray(b.models) || !b.models.length) throw bad('models', 'a non-empty array of models');
+    for (const [i, m] of b.models.entries()) {
+      const named = isObject(m) && 'name' in m && 'model' in m && !('turn' in m);
+      if (named && (typeof m.name !== 'string' || !m.name)) throw bad('models', 'models with a string `name`');
+      if (named && m.options !== undefined) checkModelOptions(m.options, `bench.models[${i}].options`, where);
+      if (m === null || (typeof m !== 'string' && typeof m !== 'object' && typeof m !== 'function'))
+        throw bad('models', 'an array of models: "provider:model", a module path, an AI SDK model or an adapter');
+    }
+  }
+  for (const k of ['tasks', 'references', 'cassettes'] as const) {
+    if (b[k] === undefined) continue;
+    if (typeof b[k] !== 'string' || !b[k]) throw bad(k, 'a path');
+    const glob = k === 'tasks' && GLOB.test(b[k]) && !existsSync(resolve(dir, b[k]));
+    b[k] = glob && !isAbsolute(b[k]) ? `${escapeGlob(resolve(dir))}/${b[k]}` : resolve(dir, b[k]);
+  }
+  for (const k of ['runs', 'concurrency'] as const) {
+    if (b[k] !== undefined && (!Number.isInteger(b[k]) || (b[k] as number) < 1)) throw bad(k, 'a positive integer');
+  }
+  return b;
 }
 
 /** The config file in `cwd`, if there is one. */
