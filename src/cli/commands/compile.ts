@@ -8,6 +8,7 @@ import {
   UsageError,
   list,
   paint,
+  readCheckSetFile,
   readJson,
   readSnapshots,
   readText,
@@ -16,10 +17,11 @@ import {
   type Io,
 } from '../io.ts';
 import { selectModel } from '../model.ts';
+import { isModuleFile } from '../../checks/load.ts';
 import { cliConfig } from '../config.ts';
 
 const isFile = (p: string) => existsSync(p) && statSync(p).isFile();
-const LOOKS_LIKE_PATH = /\.(json|md|txt|feature)$/i;
+const LOOKS_LIKE_PATH = /\.(json|md|txt|feature|ts|mts|js|mjs)$/i;
 /** A single word ending in a file extension: a file name, not task text, so a missing one is an error. */
 const looksLikePath = (s: string) => LOOKS_LIKE_PATH.test(s) && !/\s/.test(s);
 const str = (x: unknown) => (typeof x === 'string' ? x : undefined);
@@ -28,11 +30,16 @@ const str = (x: unknown) => (typeof x === 'string' ? x : undefined);
  * The task: inline instruction text, a text file holding it, or a JSON file with a
  * task (`{ id, instruction, outcomes, skipVariants }`) or a check set (its `task`).
  */
-export function resolveTask(arg: string, values: Invocation['values']): TaskInput {
+export async function resolveTask(arg: string, values: Invocation['values']): Promise<TaskInput> {
   let task: Partial<TaskInput> = {};
   if (isFile(arg)) {
-    if (extname(arg).toLowerCase() === '.json') {
-      const j = readJson(arg, 'task') as Record<string, unknown>;
+    const ext = extname(arg).toLowerCase();
+    if (ext === '.json' || isModuleFile(arg)) {
+      // A module (`*.checks.ts`, ADR 0019) is read like the JSON it exports.
+      const j = (ext === '.json' ? readJson(arg, 'task') : await readCheckSetFile(arg, 'task')) as Record<
+        string,
+        unknown
+      >;
       const t = (j && typeof j.task === 'object' ? j.task : j) as Record<string, unknown>;
       if (!t || typeof t.instruction !== 'string') {
         throw new CliError(`${arg} has no instruction: expected { "instruction", "outcomes"? } or a check set`);
@@ -41,7 +48,7 @@ export function resolveTask(arg: string, values: Invocation['values']): TaskInpu
         ? (t.skipVariants as unknown[]).filter((x) => typeof x === 'string')
         : [];
       task = {
-        id: str(j.id) ?? str(t.id) ?? basename(arg, '.json').replace(/\.checks$/, ''),
+        id: str(j.id) ?? str(t.id) ?? basename(arg, extname(arg)).replace(/\.checks$/, ''),
         instruction: t.instruction.trim(),
         ...(typeof t.outcomes === 'string' ? { outcomes: t.outcomes } : {}),
         ...(skip.length ? { skipVariants: skip } : {}),
@@ -114,7 +121,7 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
   if (rubric !== undefined && rubric !== 'model' && rubric !== 'deterministic') {
     throw new UsageError(`--rubric must be "model" or "deterministic", got ${JSON.stringify(rubric)}`);
   }
-  const task = resolveTask(positionals[0]!, values);
+  const task = await resolveTask(positionals[0]!, values);
   const refs = references(values);
   const model = await selectModel(values, io.env, await cliConfig(values, io), 'compile');
   if (values.verbose) io.err(`Compiling ${task.id} with ${model.model.id} (${model.mode})`);

@@ -4,7 +4,7 @@
  * Configuration: `defineConfig` and `loadConfig` for assay.config.ts, and
  * `resolveModel` for the three model forms (ADR 0017).
  *
- * Other entry points: `/playwright` (live pages), `/compiler`, `/stress`,
+ * Other entry points: `/checks` (the check builder, ADR 0019), `/playwright` (live pages), `/compiler`, `/stress`,
  * `/models` (agent loop, cassettes, Anthropic adapter), `/ai-sdk` (Vercel AI SDK
  * adapter) and `/eval` (baselines and metrics).
  */

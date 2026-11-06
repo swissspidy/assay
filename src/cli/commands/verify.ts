@@ -15,7 +15,7 @@ import {
   CliError,
   EXIT,
   colorReport,
-  readJson,
+  readCheckSetFile,
   readSnapshotFile,
   toSnapshot,
   type Invocation,
@@ -46,7 +46,7 @@ export const exitCodeFor = (verdict: Verdict): number =>
 
 export async function run({ values, positionals }: Invocation, io: Io): Promise<number> {
   const [checksPath, snapshotPath] = positionals as [string, string];
-  const checks = readJson(checksPath, 'check set');
+  const checks = await readCheckSetFile(checksPath);
   const snapshot = toSnapshot(readSnapshotFile(snapshotPath));
   const loaded = await cliConfig(values, io);
   const { config } = loaded;

@@ -5,6 +5,7 @@
 import { approveCheckSet, rejectCheckSet, unlockCheckSet, type CheckSet } from '../../index.ts';
 import { CliError, EXIT, UsageError, paint, readJson, type Invocation, type Io } from '../io.ts';
 import { readCheckSet, signingKey, writeCheckSet } from '../keys.ts';
+import { isModuleFile } from '../../checks/load.ts';
 
 function reviewer(values: Invocation['values'], env: Io['env']): string {
   const by = (values.reviewer as string | undefined) ?? env.ASSAY_REVIEWER;
@@ -15,7 +16,12 @@ function reviewer(values: Invocation['values'], env: Io['env']): string {
 export async function run({ command, values, positionals }: Invocation, io: Io): Promise<number> {
   const [file] = positionals as [string];
   const out = (values.out as string | undefined) ?? file;
-  const cs = readCheckSet(file);
+  // A module (`*.checks.ts`) is source code: the decision is written as JSON beside it, never over it.
+  if (isModuleFile(out))
+    throw new UsageError(
+      `${out} is a module; ${command} writes the check set as JSON: add --out <file.checks.json> (assay checks print shows the JSON)`,
+    );
+  const cs = await readCheckSet(file);
   const note = values.note as string | undefined;
   const ok = paint(io.color, 'green', '✔');
   let result: CheckSet;
