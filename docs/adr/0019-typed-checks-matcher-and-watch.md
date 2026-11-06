@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-11-06
-- Scope: `@swissspidy/assay/checks` (also re-exported from the root), `*.checks.ts` in the CLI,
+- Scope: `@swissspidy/assay/checks` (its own entry point only), `*.checks.ts` in the CLI,
   `assay checks print`, `expect(page).toHaveCompleted()` in `@swissspidy/assay/playwright`,
   `assay watch`
 - Builds on: [ADR 0001](0001-evidence-snapshot-and-check-dsl.md), [ADR 0010](0010-command-line-tool.md),
@@ -56,7 +56,8 @@ Rules that keep it honest:
   be equal (`const`); `matching(schema)` puts a schema inside a shape. It produces ordinary JSON
   Schema, so the stored set is unchanged in kind.
 - The builder is its own entry point (no Playwright, no model code; it imports the review
-  sheet's `describeAssertion` for default descriptions), and the root re-exports it.
+  sheet's `describeAssertion` for default descriptions). The root does not re-export it, so its
+  generic names (`text`, `node`, `value`, `page`, …) stay out of the root API.
 
 ### Modules as check sets, and `assay checks print`
 

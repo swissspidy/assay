@@ -75,7 +75,6 @@ import * as rootEntry from '${name}';
 import { evaluate, validateCheckSet, verify } from '${name}';
 import { assayMatchers, captureBaseline, captureSnapshot, expect, expectOutcome, test, verifyPage } from '${name}/playwright';
 import { checks as checkSet, like, network, node, probe, req } from '${name}/checks';
-import * as builderFromRoot from '${name}';
 import { compileTask } from '${name}/compiler';
 import { stressTest } from '${name}/stress';
 import { anthropicModel, replayModel, runAgent } from '${name}/models';
@@ -109,7 +108,7 @@ console.log(JSON.stringify({
   wrong: await verdict(${JSON.stringify(wrong)}),
   evaluate: evaluate(checks, load(${JSON.stringify(correct)}).snapshot).verdict,
   playwright: [captureBaseline, captureSnapshot, expectOutcome, test, verifyPage, expect, assayMatchers.toHaveCompleted].every((f) => typeof f === 'function'),
-  builder: [validateCheckSet(built).ok, (await verify(built, load(${JSON.stringify(correct)}).snapshot)).outcome.verdict, builderFromRoot.checks === checkSet],
+  builder: [validateCheckSet(built).ok, (await verify(built, load(${JSON.stringify(correct)}).snapshot)).outcome.verdict, ['checks', 'req', 'node', 'text', 'value', 'page', 'like', 'printCheckSet', 'loadCheckSetFile'].filter((k) => k in rootEntry)],
   entries: [compileTask, stressTest, anthropicModel, replayModel, runAgent, metrics].every((f) => typeof f === 'function'),
   aiSdk: [model.id, turn.stop, turn.text],
   rootLeaks: ['captureBaseline', 'captureSnapshot', 'EvidenceRecorder'].filter((k) => k in rootEntry),
@@ -123,7 +122,7 @@ console.log(JSON.stringify({
     wrong: 'fail',
     evaluate: 'success',
     playwright: true,
-    builder: [true, 'success', true],
+    builder: [true, 'success', []],
     entries: true,
     aiSdk: ['mock:m', 'end_turn', 'hi'],
     rootLeaks: [],
