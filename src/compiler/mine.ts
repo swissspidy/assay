@@ -141,7 +141,9 @@ const PRESENT = new Set(
  * names them, never by a URL, request path, field or storage key that happens to spell them.
  */
 const ELEMENT = 'checkbox button heading link tab field form menu switch dialog'.split(' ');
-const isElement = (w: string) => ELEMENT.some((e) => sameWord(e, w));
+/** Singular and plural only ("buttons", "checkboxes", "switches"): "linked" or "switched" is no element. */
+const ELEMENT_FORMS = new Set(ELEMENT.flatMap((e) => [e, `${e}s`, `${e}es`]));
+const isElement = (w: string) => ELEMENT_FORMS.has(w);
 
 const NUMBER_WORDS: Record<string, number> = {
   zero: 0,
@@ -221,8 +223,11 @@ export interface Binding {
   text: string;
 }
 
-/** Conditions for binding values: like `CLAUSE`, but a comma before a number ("May 5, 2026") does not part them. */
-const BIND_CLAUSE = /;|,(?!\s*\d)|\b(?:and|but|while|whereas)\b/i;
+/**
+ * Conditions for binding values: like `CLAUSE` ("2 adults, 2 children" is two), except at the
+ * comma before a date's year ("May 5, 2026" stays one date).
+ */
+const BIND_CLAUSE = /;|,(?!\s*\d{4}\b)|\b(?:and|but|while|whereas)\b/i;
 /** Words between a field and its value ("the price is now set to 2"). */
 const COPULA = new Set('is are was were be been being now set to equals equal becomes become of'.split(' '));
 
@@ -245,21 +250,38 @@ function bindingsOf(text: string): Binding[] {
     const w = tokens(part);
     if (!w.length) continue;
     const cq = new Quote(part);
+    // Every occurrence of a stated value binds on its own. Dates and times claim their tokens
+    // first, then decimals ("21.50" is two tokens), then whole numbers.
     const stated: { i: number; j: number; fact: string; shown: string }[] = [];
-    for (const n of cq.numbers) {
-      const i = w.findIndex((t) => t === String(Math.trunc(n)) || NUMBER_WORDS[t] === n);
-      if (i >= 0) stated.push({ i, j: i + (Number.isInteger(n) ? 1 : 2), fact: `#num:${n}`, shown: String(n) });
-    }
+    const used = new Set<number>();
+    const claim = (...at: number[]) => at.forEach((k) => k >= 0 && used.add(k));
     for (const d of cq.dates) {
       const month = MONTHS[Number(d.slice(5, 7)) - 1]!;
-      const i = w.includes(month) ? w.indexOf(month) : w.indexOf(d.slice(0, 4));
-      if (i >= 0) stated.push({ i, j: -1, fact: `#date:${d}`, shown: d });
+      const year = w.indexOf(d.slice(0, 4));
+      const i = w.includes(month) ? w.indexOf(month) : year;
+      if (i < 0) continue;
+      claim(i, i + 1, i + 2, year);
+      stated.push({ i, j: -1, fact: `#date:${d}`, shown: d });
     }
     for (const t of cq.times) {
       const [hh, mm] = t.split(':');
-      const i = w.findIndex((x, k) => /^\d+$/.test(x) && Number(x) === Number(hh) && w[k + 1] === mm);
-      if (i >= 0) stated.push({ i, j: -1, fact: `#time:${t}`, shown: t });
+      w.forEach((x, k) => {
+        if (used.has(k) || !/^\d+$/.test(x) || Number(x) !== Number(hh) || w[k + 1] !== mm) return;
+        claim(k, k + 1);
+        stated.push({ i: k, j: -1, fact: `#time:${t}`, shown: t });
+      });
     }
+    for (const n of [...cq.numbers].toSorted((a, b) => Number(Number.isInteger(a)) - Number(Number.isInteger(b)))) {
+      const whole = Number.isInteger(n);
+      w.forEach((x, k) => {
+        if (used.has(k)) return;
+        const hit = whole ? x === String(n) || NUMBER_WORDS[x] === n : Number(`${x}.${w[k + 1] ?? ''}`) === n;
+        if (!hit) return;
+        claim(k, whole ? k : k + 1);
+        stated.push({ i: k, j: k + (whole ? 1 : 2), fact: `#num:${n}`, shown: String(n) });
+      });
+    }
+    stated.sort((a, b) => a.i - b.i);
     if (!stated.length) {
       const content = w.filter((t) => fieldWord(t));
       const bare = content.length === 1 && w.every((t) => t === content[0] || STOP.has(t));

@@ -113,11 +113,14 @@ A survivor is **decisive** only when all of these hold:
    `quantityPrice: {quantity: 2, discount: 2}` does not settle "the quantity is 2 and the price is
    2", `cartTotal: 21.5` does not settle "the cart total is $21.50" (`cart.total` does), and a value
    next to a name rather than a field ("one Red Mug") stays open. A value with no field next to it
-   ("on November 7, 2026", "at 08:00") binds nothing and only has to be compared. Other fields the
+   ("on November 7, 2026", "at 08:00") binds nothing and only has to be compared. Every occurrence
+   binds on its own: "2 adults, 2 children" needs an `adults` and a `children` value of 2 (a list's
+   commas part it, a date's "May 5, 2026" comma does not). Other fields the
    quote coordinates ("X, Y and Z") likewise each need a compared value of their own, named by its
    key path or value: one scalar never settles them. Words about which page is open
    ("page", "screen") are accounted for only by tree or URL evidence. Words about what it presents
-   ("shows", "visible") and kinds of element ("button", "checkbox", "heading") are accounted for
+   ("shows", "visible") and kinds of element ("button", "checkboxes", "heading"; the noun, singular
+   or plural, not a verb that shares its stem such as "linked" or "switched") are accounted for
    only by tree evidence (its role, name and state), never by a URL, request path or field name that
    spells them: `/checkout-button-visible` does not settle "the Checkout button is visible". Inside
    quotation marks they are part of a name or value ("Yes, see the docs.") and are accounted for

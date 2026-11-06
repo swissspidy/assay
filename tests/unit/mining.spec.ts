@@ -613,6 +613,43 @@ test.describe('what settles a requirement', () => {
     expect(each.requirements[0]!.decisive.length).toBeGreaterThan(0);
   });
 
+  test('every stated value binds its own field, also in a list', () => {
+    const quote = '2 adults, 2 children';
+    // Two 2s, but neither is a number of children: "children" is only the probe's name.
+    const wrong = mineOne(quote, [
+      { name: 'ref', kind: 'success', snapshot: snap({ children: { adults: 2, infants: 2 } }) },
+    ]);
+    expect(wrong.requirements[0]!.decisive).toEqual([]);
+    const right = mineOne(quote, [
+      { name: 'ref', kind: 'success', snapshot: snap({ guests: { adults: 2, children: 2 } }) },
+    ]);
+    expect(right.requirements[0]!.decisive.length).toBeGreaterThan(0);
+    // A date's comma does not part a list: "May 5, 2026" stays one date with no field.
+    expect(new Quote('an event on May 5, 2026 at 12:30').bindings).toEqual([]);
+    expect(new Quote('2 adults, 2 children').bindings.map((b) => b.text)).toEqual(['2 adults', '2 children']);
+  });
+
+  test('element nouns are the nouns, singular or plural, not verbs that share a stem', () => {
+    // "linked" and "switched" are states of a record, not a link or a switch on the page.
+    for (const [quote, probe] of [
+      ['the account is linked', { account: { linked: true } }],
+      ['the plan is switched', { plan: { switched: true } }],
+    ] as const) {
+      const m = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: snap(probe) }]);
+      expect(m.requirements[0]!.decisive.length, quote).toBeGreaterThan(0);
+    }
+    // Plural element nouns still need the tree.
+    for (const [quote, word, probe] of [
+      ['the save buttons are enabled', 'buttons', { saveButtons: { enabled: true } }],
+      ['the consent checkboxes are enabled', 'checkboxes', { consentCheckboxes: { enabled: true } }],
+      ['the notification switches are enabled', 'switches', { notificationSwitches: { enabled: true } }],
+    ] as const) {
+      const m = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: snap(probe) }]);
+      expect(m.requirements[0]!.decisive, quote).toEqual([]);
+      expect(m.candidates.find((c) => c.family === 'probe')!.unexplained, quote).toContain(word);
+    }
+  });
+
   test('a stated value is bound to its field: a probe name does not stand in for it', () => {
     const quote = 'the quantity is 2 and the price is 2';
     // Two values of 2, but the price is not one of them: "price" is only in the probe's name.
