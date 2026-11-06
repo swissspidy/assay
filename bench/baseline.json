@@ -1,0 +1,357 @@
+{
+  "schema": "assay.bench/v1",
+  "note": "Absolute times depend on the machine; compare `normalized` (median / calibration median) across machines.",
+  "recordedAt": "2026-11-06T06:14:28.073Z",
+  "env": {
+    "node": "v22.23.4",
+    "platform": "linux-x64",
+    "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+    "cpus": 4
+  },
+  "options": {
+    "iterations": 7,
+    "warmup": 1,
+    "gc": true
+  },
+  "calibration": {
+    "medianMs": 45.827,
+    "samples": 30
+  },
+  "results": [
+    {
+      "name": "load",
+      "kind": "time",
+      "description": "read, gunzip and JSON.parse every stored run (real-app runs and example references)",
+      "items": 354,
+      "item": "run",
+      "iterations": 7,
+      "warmup": 1,
+      "samplesMs": [
+        246.801,
+        214.418,
+        227.705,
+        260.83,
+        248.727,
+        213.896,
+        218.627
+      ],
+      "medianMs": 227.705,
+      "p95Ms": 260.83,
+      "minMs": 213.896,
+      "opsPerSec": 1554.6,
+      "perItemUs": 643.2,
+      "extra": {
+        "readMedianMs": 7.576,
+        "gunzipMedianMs": 49.664,
+        "parseMedianMs": 170.241,
+        "bytesOnDisk": 4695073,
+        "bytesDecompressed": 23791914
+      },
+      "normalized": 4.9688
+    },
+    {
+      "name": "verify",
+      "kind": "time",
+      "description": "verify() for every (compiled check set, run) pair; each call gets its own parsed check set",
+      "items": 354,
+      "item": "pair",
+      "iterations": 7,
+      "warmup": 1,
+      "samplesMs": [
+        1114.582,
+        1071.009,
+        980.787,
+        1050.723,
+        1097.04,
+        1032.037,
+        996.725
+      ],
+      "medianMs": 1050.723,
+      "p95Ms": 1114.582,
+      "minMs": 980.787,
+      "opsPerSec": 336.9,
+      "perItemUs": 2968.1,
+      "extra": {
+        "realPairs": 228,
+        "examplePairs": 126,
+        "checkSets": 74
+      },
+      "normalized": 22.9282
+    },
+    {
+      "name": "verify-batch",
+      "kind": "time",
+      "description": "the verify workload grouped per check set: one parsed check set judges all its runs",
+      "items": 354,
+      "item": "pair",
+      "iterations": 7,
+      "warmup": 1,
+      "samplesMs": [
+        479.986,
+        590.951,
+        504.747,
+        489.397,
+        526.348,
+        610.885,
+        520.443
+      ],
+      "medianMs": 520.443,
+      "p95Ms": 610.885,
+      "minMs": 479.986,
+      "opsPerSec": 680.2,
+      "perItemUs": 1470.2,
+      "extra": {
+        "checkSets": 74
+      },
+      "normalized": 11.3568
+    },
+    {
+      "name": "stress",
+      "kind": "time",
+      "description": "stressTest() on every compiled check set over its correct reference runs",
+      "items": 74,
+      "item": "check set",
+      "iterations": 7,
+      "warmup": 1,
+      "samplesMs": [
+        640.185,
+        641.121,
+        683.879,
+        657.371,
+        664.055,
+        764.677,
+        666.691
+      ],
+      "medianMs": 664.055,
+      "p95Ms": 764.677,
+      "minMs": 640.185,
+      "opsPerSec": 111.4,
+      "perItemUs": 8973.7,
+      "extra": {
+        "realSets": 44,
+        "exampleSets": 30,
+        "variants": 1256,
+        "mutants": 873
+      },
+      "normalized": 14.4906
+    },
+    {
+      "name": "compile-replay",
+      "kind": "time",
+      "description": "compileTask() replayed from cassettes (no API key) for 10 fixed tasks",
+      "items": 10,
+      "item": "compile",
+      "iterations": 7,
+      "warmup": 1,
+      "samplesMs": [
+        1027.896,
+        1034.597,
+        1101.186,
+        1145.965,
+        1089.41,
+        1120.278,
+        1107.255
+      ],
+      "medianMs": 1101.186,
+      "p95Ms": 1145.965,
+      "minMs": 1027.896,
+      "opsPerSec": 9.1,
+      "perItemUs": 110118.6,
+      "extra": {
+        "reproduced": 10,
+        "turnsPerCompile": 4.4,
+        "inputTokensPerCompile": 74652,
+        "outputTokensPerCompile": 1544,
+        "costUsdPerCompile": 0.1607,
+        "tasks": [
+          {
+            "task": "tiny-shop/02-add-blue-mug",
+            "status": "compiled",
+            "reproduced": true,
+            "turns": 4,
+            "inputTokens": 58444,
+            "outputTokens": 692,
+            "cacheReadTokens": 37888,
+            "cacheWriteTokens": 20544,
+            "costUsd": 0.1242
+          },
+          {
+            "task": "tiny-shop/07-express-order",
+            "status": "compiled",
+            "reproduced": true,
+            "turns": 4,
+            "inputTokens": 63961,
+            "outputTokens": 1954,
+            "cacheReadTokens": 41218,
+            "cacheWriteTokens": 22731,
+            "costUsd": 0.161
+          },
+          {
+            "task": "tiny-tracker/01-create-bug",
+            "status": "compiled",
+            "reproduced": true,
+            "turns": 5,
+            "inputTokens": 79457,
+            "outputTokens": 1182,
+            "cacheReadTokens": 58149,
+            "cacheWriteTokens": 21294,
+            "costUsd": 0.1418
+          },
+          {
+            "task": "tiny-tracker/07-comment",
+            "status": "compiled",
+            "reproduced": true,
+            "turns": 4,
+            "inputTokens": 58773,
+            "outputTokens": 695,
+            "cacheReadTokens": 38052,
+            "cacheWriteTokens": 20709,
+            "costUsd": 0.1251
+          },
+          {
+            "task": "tiny-calendar/04-move-dentist",
+            "status": "compiled",
+            "reproduced": true,
+            "turns": 4,
+            "inputTokens": 58922,
+            "outputTokens": 657,
+            "cacheReadTokens": 38122,
+            "cacheWriteTokens": 20788,
+            "costUsd": 0.1248
+          },
+          {
+            "task": "gitea/g01-create-issue",
+            "status": "compiled",
+            "reproduced": true,
+            "turns": 5,
+            "inputTokens": 92152,
+            "outputTokens": 1924,
+            "cacheReadTokens": 66657,
+            "cacheWriteTokens": 25481,
+            "costUsd": 0.1793
+          },
+          {
+            "task": "gitea/g02-close-issue",
+            "status": "compiled",
+            "reproduced": true,
+            "turns": 4,
+            "inputTokens": 68070,
+            "outputTokens": 723,
+            "cacheReadTokens": 43273,
+            "cacheWriteTokens": 24785,
+            "costUsd": 0.1471
+          },
+          {
+            "task": "wordpress/w06-new-post",
+            "status": "compiled",
+            "reproduced": true,
+            "turns": 5,
+            "inputTokens": 94086,
+            "outputTokens": 1982,
+            "cacheReadTokens": 67209,
+            "cacheWriteTokens": 26863,
+            "costUsd": 0.1875
+          },
+          {
+            "task": "prestashop/s04-checkout",
+            "status": "compiled",
+            "reproduced": true,
+            "turns": 6,
+            "inputTokens": 127975,
+            "outputTokens": 5139,
+            "cacheReadTokens": 96937,
+            "cacheWriteTokens": 31022,
+            "costUsd": 0.2773
+          },
+          {
+            "task": "prestashop/s10-voucher",
+            "status": "compiled",
+            "reproduced": true,
+            "turns": 3,
+            "inputTokens": 44676,
+            "outputTokens": 496,
+            "cacheReadTokens": 19721,
+            "cacheWriteTokens": 24945,
+            "costUsd": 0.1386
+          }
+        ]
+      },
+      "normalized": 24.0294
+    },
+    {
+      "name": "snapshot-size",
+      "kind": "size",
+      "description": "JSON bytes per snapshot section across the real-app runs (absent sections not counted)",
+      "items": 228,
+      "item": "snapshot",
+      "sections": {
+        "(total)": {
+          "present": 228,
+          "medianBytes": 53237,
+          "p95Bytes": 214293,
+          "maxBytes": 922285
+        },
+        "network": {
+          "present": 228,
+          "medianBytes": 26486,
+          "p95Bytes": 198422,
+          "maxBytes": 902092
+        },
+        "a11y": {
+          "present": 228,
+          "medianBytes": 7364.5,
+          "p95Bytes": 30690,
+          "maxBytes": 32811
+        },
+        "baseline": {
+          "present": 228,
+          "medianBytes": 3831,
+          "p95Bytes": 4190,
+          "maxBytes": 4190
+        },
+        "probes": {
+          "present": 228,
+          "medianBytes": 3012,
+          "p95Bytes": 3477,
+          "maxBytes": 3569
+        },
+        "text": {
+          "present": 228,
+          "medianBytes": 1180,
+          "p95Bytes": 3445,
+          "maxBytes": 7280
+        },
+        "storage": {
+          "present": 228,
+          "medianBytes": 413,
+          "p95Bytes": 901,
+          "maxBytes": 1260
+        },
+        "page": {
+          "present": 228,
+          "medianBytes": 127,
+          "p95Bytes": 185,
+          "maxBytes": 201
+        },
+        "meta": {
+          "present": 228,
+          "medianBytes": 111,
+          "p95Bytes": 205,
+          "maxBytes": 205
+        },
+        "capturedAt": {
+          "present": 228,
+          "medianBytes": 26,
+          "p95Bytes": 26,
+          "maxBytes": 26
+        },
+        "schema": {
+          "present": 228,
+          "medianBytes": 19,
+          "p95Bytes": 19,
+          "maxBytes": 19
+        }
+      }
+    }
+  ]
+}

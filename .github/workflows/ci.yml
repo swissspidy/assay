@@ -94,6 +94,55 @@ jobs:
             test-results/
           retention-days: 7
 
+  bench:
+    name: Benchmark
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # The commit to compare with: the pull request's base, or the previous tip on a push to main.
+      BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check out the base commit
+        id: base
+        if: env.BASE_SHA != '' && env.BASE_SHA != '0000000000000000000000000000000000000000'
+        continue-on-error: true
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.BASE_SHA }}
+          path: .bench-base
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # The base's library resolves its dependencies from ./node_modules unless its lockfile differs.
+      - name: Install the base's dependencies
+        if: steps.base.outcome == 'success'
+        run: cmp -s package-lock.json .bench-base/package-lock.json || (cd .bench-base && npm ci)
+      # This branch's bench script against the base's library and data, on the same runner, so
+      # the comparison does not depend on how fast the runner is. A base it cannot run is skipped.
+      - name: Bench the base
+        if: steps.base.outcome == 'success'
+        continue-on-error: true
+        run: node --expose-gc scripts/bench.ts --root .bench-base --json ci-results/bench-base.json
+      - name: Bench this commit
+        run: node --expose-gc scripts/bench.ts --json ci-results/bench.json
+      # Fails when a workload's median is over 1.5x the base's (or, without a base, 2x the
+      # committed baseline after normalizing for machine speed).
+      - name: Compare
+        run: node scripts/bench-compare.ts ci-results/bench.json --base ci-results/bench-base.json --baseline bench/baseline.json --summary "$GITHUB_STEP_SUMMARY"
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: bench
+          path: ci-results/bench*.json
+          retention-days: 30
+
   stability:
     name: Stability (simulated releases) and evaluation
     runs-on: ubuntu-latest

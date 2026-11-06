@@ -17,7 +17,8 @@ npm run shop         # run the Tiny Shop demo app on :4173
 ```
 
 CI (`.github/workflows/ci.yml`) runs format, lint, typecheck and build, then the full test suite on
-Node 24 and the latest Node release, the stability run and the evaluation (replayed), and
+Node 24 and the latest Node release, the stability run and the evaluation (replayed), the
+[benchmarks](#benchmarks), and
 `npm run test:pack`, which packs the package, installs it into an empty project and uses every entry
 point from there.
 
@@ -55,6 +56,41 @@ recorded when `ANTHROPIC_API_KEY` is set. `ASSAY_MODEL_MODE=replay` never calls 
 request and the model id, so any change to a prompt, a tool, the model or the Anthropic adapter's
 request makes the replays fail: re-record them, and re-run the Model baselines workflow (run by
 hand), which measures the model rows live with fresh recordings.
+
+## Benchmarks
+
+`npm run bench` times fixed workloads over the committed data. No model, app or browser runs.
+
+| Workload         | What it times                                                                                                                                                                                     |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `load`           | Reading, gunzipping and parsing every stored run (the real-app runs and the example references).                                                                                                  |
+| `verify`         | `verify()` for every (compiled check set, run) pair. Each call gets its own freshly parsed check set.                                                                                             |
+| `verify-batch`   | The same pairs grouped per check set, with one check set object judging all its runs.                                                                                                             |
+| `stress`         | `stressTest()` on every compiled check set over its correct references.                                                                                                                           |
+| `compile-replay` | `compileTask()` on 5 example and 5 real tasks, replayed from their cassettes. Also reports model turns, tokens and cost per compile, and whether each compile reproduces the committed check set. |
+| `snapshot-size`  | JSON bytes per snapshot section across the real-app runs (median, p95, max). Not timed.                                                                                                           |
+
+```sh
+npm run bench                                   # all workloads, 1 warmup + 7 timed passes each
+npm run bench -- --filter verify,stress --iterations 15
+npm run bench -- --json results.json            # machine-readable (--json alone prints it to stdout)
+node scripts/bench-compare.ts results.json --baseline bench/baseline.json
+```
+
+Each workload reports the median and p95 time of one pass, items per second and the median cost per
+item. Inputs are parsed again, untimed, before every pass, so a cache keyed on object identity never
+lasts from one pass to the next. `normalized` is the median divided by the median of a small
+calibration loop (sorted-key JSON, SHA-256 and `JSON.parse` over a fixed synthetic tree, independent
+of the library). It cancels much of a machine's speed, so it is the number to compare across machines.
+Absolute times are only comparable on one machine.
+
+The `bench` job in CI benches the pull request's base commit (its library and data, with this
+branch's script, via `--root`) and then the pull request, both on the same runner. The job fails when
+a workload's median is more than 1.5× the base's. If the base can't be benched, the job falls back to
+the committed [`bench/baseline.json`](bench/baseline.json): it compares normalized times and fails
+above 2×. The job summary shows both comparisons, the replayed compile's model usage and the snapshot
+sizes. After an intended speed change, re-record the baseline with
+`npm run bench -- --json bench/baseline.json`.
 
 ## Changesets
 
