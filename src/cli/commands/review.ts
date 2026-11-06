@@ -16,6 +16,7 @@ import { lockState, stressDigest, stressReportProblem } from '../../verifier/loc
 import { checkSettings } from '../../verifier/diff.ts';
 import { CliError, EXIT, UsageError, readJson, type Invocation, type Io } from '../io.ts';
 import { readCheckSet, trustedKeys } from '../keys.ts';
+import { cliConfig } from '../config.ts';
 
 const FORMATS = ['markdown', 'github', 'html'] as const;
 
@@ -35,7 +36,7 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
   const previous: CheckSet | undefined =
     typeof values.diff === 'string' ? readCheckSet(values.diff, 'previous check set') : undefined;
   const stress = typeof values.stress === 'string' ? readStress(values.stress) : undefined;
-  const keys = trustedKeys(values, io.env);
+  const keys = trustedKeys(values, io.env, (await cliConfig(values, io)).config);
   const opts = keys ? { trustedKeys: keys } : {};
 
   if (!values.json) {

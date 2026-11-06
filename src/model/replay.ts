@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { canonicalJson, sha256 } from '../snapshot/digest.ts';
-import type { ModelClient, ModelRequest, ModelTurn } from './types.ts';
+import type { ModelClient, ModelMode, ModelRequest, ModelTurn } from './types.ts';
 import { ModelError } from './types.ts';
 
 /**
@@ -18,9 +18,34 @@ export interface Cassette {
   turns: Record<string, ModelTurn>;
 }
 
-/** Digest of a request for a given model id (changing the model or its effort invalidates replays). */
-export function requestKey(req: ModelRequest, model: string): string {
-  return sha256(canonicalJson({ model, request: req }));
+/**
+ * Digest of a request for a given model id and mode (changing the model, its effort or how
+ * it is driven invalidates replays). The `tools` key leaves the mode out, so it is the key
+ * every cassette recorded before modes existed already uses (ADR 0017).
+ */
+export function requestKey(req: ModelRequest, model: string, mode: ModelMode = 'tools'): string {
+  return sha256(canonicalJson(mode === 'tools' ? { model, request: req } : { model, mode, request: req }));
+}
+
+const MODES: readonly ModelMode[] = ['tools', 'json'];
+
+/** The recorded turn for a request: under the given mode's key, or under any mode's. */
+function lookup(
+  c: Cassette,
+  req: ModelRequest,
+  mode: ModelMode | undefined,
+): { key: string; turn: ModelTurn } | undefined {
+  for (const m of mode ? [mode] : MODES) {
+    const key = requestKey(req, c.model, m);
+    const turn = c.turns[key];
+    if (turn) return { key, turn };
+  }
+  return undefined;
+}
+
+export interface ReplayOptions {
+  /** Only replay turns recorded in this mode (default: either). */
+  mode?: ModelMode;
 }
 
 function load(path: string): Cassette | null {
@@ -39,14 +64,14 @@ export const NO_RECORDING = 'has no recording for this request';
 /** Provenance time for cassettes recorded before `recordedAt` was kept: fixed, so replays stay identical. */
 export const UNRECORDED_AT = '1970-01-01T00:00:00.000Z';
 
-export function replayModel(path: string): ReplayModel {
+export function replayModel(path: string, opts: ReplayOptions = {}): ReplayModel {
   const cassette = load(path);
   if (!cassette) throw new ModelError(`No cassette at ${path}. Set ANTHROPIC_API_KEY to record one.`);
   return {
     id: `${cassette.model} (replay)`,
     recorded: { model: cassette.model, at: cassette.recordedAt ?? UNRECORDED_AT },
     async turn(req) {
-      const hit = cassette.turns[requestKey(req, cassette.model)];
+      const hit = lookup(cassette, req, opts.mode)?.turn;
       if (!hit) {
         throw new ModelError(
           `Cassette ${path} ${NO_RECORDING}; the prompt, tools or inputs changed. Re-record with ANTHROPIC_API_KEY set.`,
@@ -90,11 +115,10 @@ export function replayOrRecordModel(
       return misses;
     },
     async turn(req) {
-      const key = requestKey(req, old.model);
-      const hit = old.turns[key];
-      if (hit) {
-        fresh.turns[key] = hit;
-        return structuredClone(hit);
+      const found = lookup(old, req, undefined);
+      if (found) {
+        fresh.turns[found.key] = found.turn;
+        return structuredClone(found.turn);
       }
       // Every failure to fill the gap reads as a stale cassette (NO_RECORDING), never as a model outcome.
       const stale = (why: string) =>
@@ -113,7 +137,7 @@ export function replayOrRecordModel(
       }
       misses++;
       fresh.recordedAt ??= new Date().toISOString();
-      fresh.turns[key] = out;
+      fresh.turns[requestKey(req, old.model, out.mode)] = out;
       mkdirSync(dirname(path), { recursive: true });
       writeFileSync(`${path}.partial`, JSON.stringify(fresh, null, 1) + '\n');
       return out;
@@ -148,9 +172,8 @@ export function recordingModel(inner: ModelClient, path: string): ReplayModel & 
     id: inner.id,
     recorded: { model: cassette.model, at: cassette.recordedAt! },
     async turn(req) {
-      const key = requestKey(req, inner.id);
       const out = await inner.turn(req);
-      cassette.turns[key] = out;
+      cassette.turns[requestKey(req, inner.id, out.mode)] = out;
       write(partial);
       return out;
     },

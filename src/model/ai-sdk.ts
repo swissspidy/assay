@@ -17,8 +17,18 @@ import {
   type ModelMessage as SdkMessage,
   type ToolSet,
 } from 'ai';
-import type { ModelClient, ModelMessage, ModelRequest, ModelTurn, StopReason, ToolCall, ToolSpec } from './types.ts';
+import type {
+  ModelClient,
+  ModelMessage,
+  ModelMode,
+  ModelRequest,
+  ModelTurn,
+  StopReason,
+  ToolCall,
+  ToolSpec,
+} from './types.ts';
 import { ModelError } from './types.ts';
+import { jsonModeModel } from './json-mode.ts';
 
 type ProviderOptions = NonNullable<Parameters<typeof generateText>[0]['providerOptions']>;
 
@@ -35,6 +45,13 @@ export interface AiSdkOptions {
   maxOutputTokens?: number;
   /** Retries on transient API errors (the AI SDK's default is 2). */
   maxRetries?: number;
+  /**
+   * How to drive the model (ADR 0017): `tools` (native tool calling), `json` (JSON-mode
+   * prompting with schema validation and one repair retry, for models without tool
+   * calling) or `auto` (default): native tools until the provider reports that the
+   * model does not support them, then JSON mode for the rest of the client's life.
+   */
+  mode?: ModelMode | 'auto';
 }
 
 const STOP: Record<FinishReason, StopReason> = {
@@ -113,49 +130,110 @@ function defaultId(model: LanguageModel): string {
   return typeof model === 'string' ? model : `${model.provider}:${model.modelId}`;
 }
 
+const TOOLS_UNSUPPORTED =
+  /(does ?n[o']t|do not|cannot) support (tools|tool[ -]?(use|calls?|calling)|function[ -]?calling)|(tools?|tool[ -]?(use|calls?|calling)|function[ -]?calling) (is |are )?(not|un)supported/i;
+
+/** Whether an error says the model has no tool calling (the AI SDK's own error, or the provider's message). */
+export function toolsUnsupportedError(e: unknown): boolean {
+  for (let x = e, depth = 0; x && depth < 5; x = (x as { cause?: unknown }).cause, depth++) {
+    const o = x as { name?: unknown; functionality?: unknown; message?: unknown; responseBody?: unknown };
+    if (o.name === 'AI_UnsupportedFunctionalityError' && /tool|function/i.test(String(o.functionality ?? '')))
+      return true;
+    if (TOOLS_UNSUPPORTED.test(`${String(o.message ?? '')} ${String(o.responseBody ?? '')}`)) return true;
+  }
+  return false;
+}
+
+/** Whether the call's warnings say the tools were ignored (the model answered as if it had none). */
+export function toolsUnsupportedWarning(warnings: readonly unknown[] | undefined): boolean {
+  return (warnings ?? []).some((w) => {
+    const o = (w ?? {}) as { type?: unknown; feature?: unknown; setting?: unknown };
+    if (o.type === 'unsupported-tool') return true;
+    if (o.type === 'unsupported' || o.type === 'unsupported-setting')
+      return /^(tools?|tool[-_ ]?choice)$/i.test(String(o.feature ?? o.setting ?? ''));
+    return false;
+  });
+}
+
 /**
- * Wrap an AI SDK language model (`anthropic('…')`, `openai('…')`, a gateway id, …)
- * as an Assay `ModelClient`.
+ * Wrap an AI SDK language model (`anthropic('…')`, `openai('…')`, `ollama('…')`, a gateway
+ * id, …) as an Assay `ModelClient`. Models without tool calling are driven in JSON mode
+ * (see `AiSdkOptions.mode`).
  */
 export function aiSdkModel(model: LanguageModel, opts: AiSdkOptions = {}): ModelClient {
   const fallbackModelId = typeof model === 'string' ? model : model.modelId;
+  const id = opts.id ?? defaultId(model);
+  const mode = opts.mode ?? 'auto';
+  /** One `generateText` call; with no tools, plain text generation (what JSON mode uses). */
+  const call = async (req: ModelRequest): Promise<{ turn: ModelTurn; ignoredTools: boolean }> => {
+    let res: Awaited<ReturnType<typeof generateText>>;
+    try {
+      res = await generateText({
+        model,
+        instructions: req.system,
+        messages: toAiSdkMessages(req.messages),
+        ...(req.tools.length ? { tools: toolSet(req.tools) } : {}),
+        ...(opts.providerOptions ? { providerOptions: opts.providerOptions } : {}),
+        ...(opts.maxOutputTokens !== undefined ? { maxOutputTokens: opts.maxOutputTokens } : {}),
+        ...(opts.maxRetries !== undefined ? { maxRetries: opts.maxRetries } : {}),
+      });
+    } catch (e) {
+      throw new ModelError(`AI SDK error: ${e instanceof Error ? e.message : String(e)}`, { cause: e });
+    }
+    // Invalid calls (unparseable input, unknown tool) are passed on as they are: the
+    // agent loop answers them with an error result the model can act on.
+    const toolCalls: ToolCall[] = res.toolCalls.map((c) => ({ id: c.toolCallId, name: c.toolName, input: c.input }));
+    const u = res.usage;
+    const cacheRead = u.inputTokenDetails?.cacheReadTokens;
+    const cacheWrite = u.inputTokenDetails?.cacheWriteTokens;
+    const turn: ModelTurn = {
+      stop: STOP[res.finishReason] ?? 'other',
+      text: res.text,
+      toolCalls,
+      // Only the assistant message: tool results come from the agent loop.
+      raw: res.response.messages.filter(isAssistant),
+      usage: {
+        inputTokens: u.inputTokens ?? 0,
+        outputTokens: u.outputTokens ?? 0,
+        ...(cacheRead !== undefined ? { cacheReadTokens: cacheRead } : {}),
+        ...(cacheWrite !== undefined ? { cacheWriteTokens: cacheWrite } : {}),
+      },
+      model: res.response.modelId || fallbackModelId,
+      mode: 'tools',
+    };
+    return { turn, ignoredTools: req.tools.length > 0 && toolsUnsupportedWarning(res.warnings) };
+  };
+  const json = jsonModeModel({ id, turn: async (req) => (await call(req)).turn });
+  let fellBack = mode === 'json';
   return {
-    id: opts.id ?? defaultId(model),
+    id,
+    ...(mode === 'json' ? { capabilities: { tools: false } } : {}),
     async turn(req: ModelRequest): Promise<ModelTurn> {
-      let res: Awaited<ReturnType<typeof generateText>>;
+      if (fellBack) return json.turn(req);
+      let out: Awaited<ReturnType<typeof call>>;
       try {
-        res = await generateText({
-          model,
-          instructions: req.system,
-          messages: toAiSdkMessages(req.messages),
-          tools: toolSet(req.tools),
-          ...(opts.providerOptions ? { providerOptions: opts.providerOptions } : {}),
-          ...(opts.maxOutputTokens !== undefined ? { maxOutputTokens: opts.maxOutputTokens } : {}),
-          ...(opts.maxRetries !== undefined ? { maxRetries: opts.maxRetries } : {}),
-        });
+        out = await call(req);
       } catch (e) {
-        throw new ModelError(`AI SDK error: ${e instanceof Error ? e.message : String(e)}`, { cause: e });
+        if (mode === 'auto' && req.tools.length && toolsUnsupportedError(e)) {
+          fellBack = true;
+          return json.turn(req);
+        }
+        throw e;
       }
-      // Invalid calls (unparseable input, unknown tool) are passed on as they are: the
-      // agent loop answers them with an error result the model can act on.
-      const toolCalls: ToolCall[] = res.toolCalls.map((c) => ({ id: c.toolCallId, name: c.toolName, input: c.input }));
-      const u = res.usage;
-      const cacheRead = u.inputTokenDetails?.cacheReadTokens;
-      const cacheWrite = u.inputTokenDetails?.cacheWriteTokens;
-      return {
-        stop: STOP[res.finishReason] ?? 'other',
-        text: res.text,
-        toolCalls,
-        // Only the assistant message: tool results come from the agent loop.
-        raw: res.response.messages.filter(isAssistant),
-        usage: {
-          inputTokens: u.inputTokens ?? 0,
-          outputTokens: u.outputTokens ?? 0,
-          ...(cacheRead !== undefined ? { cacheReadTokens: cacheRead } : {}),
-          ...(cacheWrite !== undefined ? { cacheWriteTokens: cacheWrite } : {}),
-        },
-        model: res.response.modelId || fallbackModelId,
-      };
+      if (mode === 'auto' && out.ignoredTools) {
+        // The provider dropped the tools and the model answered without them: ask again in JSON mode.
+        fellBack = true;
+        const turn = await json.turn(req);
+        return {
+          ...turn,
+          usage: {
+            ...turn.usage,
+            inputTokens: turn.usage.inputTokens + out.turn.usage.inputTokens,
+            outputTokens: turn.usage.outputTokens + out.turn.usage.outputTokens,
+          },
+        };
+      }
+      return out.turn;
     },
   };
 }

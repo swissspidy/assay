@@ -62,6 +62,10 @@ The second does not fit. Assay's loop does work the SDK's loop would hide or ski
   (server-side refusal fallbacks, eager input streaming, retries of tool input that streamed as
   invalid JSON), and changing it would change every recorded request.
 
+(Amended by [ADR 0017](0017-config-file-and-bring-your-own-model.md): `aiSdkModel` takes a
+`mode`, `auto` by default, and drives models without tool calling in JSON mode; its turns are
+marked `mode: "tools"` or `"json"`.)
+
 ## Consequences
 
 - The compiler and the verifier run on any provider the AI SDK supports, with the same loop,

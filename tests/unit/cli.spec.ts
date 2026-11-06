@@ -296,7 +296,10 @@ test.describe('compile', () => {
     expect((await assay(['compile', 'Do it.', '-r', ADDED_BLUE, '--rubric', 'x'])).code).toBe(3);
     const noKey = await assay(['compile', 'Do it.', '-r', ADDED_BLUE]);
     expect(noKey.code).toBe(4);
-    expect(noKey.stderr).toContain('set ANTHROPIC_API_KEY, or pass --cassette');
+    expect(noKey.stderr).toContain('assay compile needs a model. Set `model` in assay.config.ts');
+    expect(noKey.stderr).toContain(
+      'set ANTHROPIC_API_KEY (Claude through @anthropic-ai/sdk), or replay a recording with --cassette <file>',
+    );
   });
 
   test('model selection follows ASSAY_MODEL_MODE and the provider', async () => {

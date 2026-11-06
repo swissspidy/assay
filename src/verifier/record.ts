@@ -82,6 +82,8 @@ export interface OutcomeRecord {
     requirements: string[];
     model: string;
     modelsUsed: string[];
+    /** How the model was driven, when a turn was not native tool calling (ADR 0017); absent: `tools`. */
+    modes?: VerifierResult['modes'];
     status: VerifierResult['status'] | 'error';
     error?: string;
     /** The verifier's verdicts, including its reasoning (notes, not evidence). */

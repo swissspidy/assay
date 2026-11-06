@@ -3,6 +3,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import type { BrowserType } from '@playwright/test';
 import { CliError, EXIT, UsageError, type Invocation, type Io } from '../io.ts';
+import { cliConfig } from '../config.ts';
 
 /** The part of Playwright that capture uses. */
 interface PlaywrightTest {
@@ -91,7 +92,7 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
   }
 
   const json = JSON.stringify(snapshot, null, 2) + '\n';
-  const out = values.out as string | undefined;
+  const out = (values.out as string | undefined) ?? (await cliConfig(values, io)).config.snapshots;
   if (!out) {
     io.out(json.trimEnd());
     return EXIT.ok;

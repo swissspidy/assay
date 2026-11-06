@@ -15,7 +15,7 @@ import type { EvidenceSnapshot, Json, Requirement } from '../types.ts';
 import { parseAriaSnapshot } from '../snapshot/aria.ts';
 import { findNodes, networkEntry, networkLog, outline, probesView, storageView, summary } from '../compiler/explore.ts';
 import { runAgent, type AgentTool, type AgentRun } from '../model/agent.ts';
-import type { ModelClient } from '../model/types.ts';
+import type { ModelClient, ModelMode } from '../model/types.ts';
 import type { Probe } from '../snapshot/capture.ts';
 import { VERIFIER_SYSTEM } from './prompts.ts';
 
@@ -59,6 +59,8 @@ export interface VerifierResult {
   usage: AgentRun<unknown>['usage'];
   turns: number;
   models: string[];
+  /** How the model was driven over the run's turns (ADR 0017). */
+  modes: ModelMode[];
 }
 
 const clip = (s: string, n = 4000) => (s.length > n ? s.slice(0, n - 1) + '…' : s);
@@ -363,6 +365,7 @@ export async function runVerifier(model: ModelClient, input: VerifierInput, maxT
       usage: run.usage,
       turns: run.turns,
       models: run.models,
+      modes: run.modes,
     };
   } finally {
     await live?.close();
