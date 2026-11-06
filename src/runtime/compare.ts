@@ -100,14 +100,17 @@ function approxGap(
 }
 
 /**
- * Whether `diff` is within `tol`, inclusive. The floating-point slack is a few units in the
- * last place of the largest number involved (the compared values, for numbers and money; the
- * difference and the tolerance): enough to absorb the rounding of the subtraction, so a
- * difference of exactly the tolerance passes at any scale, and far too small to widen a
- * tolerance (1e-6 on values near 1e6 stays 1e-6). Dates and date-times are differences of
- * whole milliseconds, so only the difference and tolerance set their scale.
+ * Whether `diff` is within `tol`, inclusive. The floating-point slack is two units in the last
+ * place of the largest number involved (the compared values, for numbers and money; the
+ * difference and the tolerance): each value parsed from decimal text is off by at most half a
+ * unit, and the subtraction rounds once more. So a difference of exactly the tolerance passes
+ * at any scale, and nothing larger does. A tolerance finer than the values' own precision
+ * (1e-12 on values near 1e6, where doubles are 1.2e-10 apart) cannot be told apart from
+ * exact equality plus that rounding; it accepts at most two units of difference. Dates and
+ * date-times are differences of whole milliseconds, so only the difference and tolerance set
+ * their scale.
  */
-const ROUNDING_ULPS = 8;
+const ROUNDING_ULPS = 2;
 const within = ({ diff, tol, scale }: { diff: number; tol: number; scale: number }): boolean =>
   diff <= tol + ROUNDING_ULPS * Number.EPSILON * Math.max(scale, tol, diff);
 
