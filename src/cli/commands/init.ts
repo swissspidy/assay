@@ -45,6 +45,9 @@ export default defineConfig({
   // Stress test defaults: variants that do not apply to your tasks.
   // stress: { skipVariants: [] },
 
+  // Mine checks from the reference runs first and ask the model only for what is left open.
+  // compile: { discovery: 'mine-first' },
+
   // Models to compare with \`assay bench\` (default: \`model\`); tasks' runs in references/<task>/.
   // bench: { models: ['anthropic:claude-opus-5-5', 'openai:gpt-5', './my-adapter.ts'] },
 });

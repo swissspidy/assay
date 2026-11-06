@@ -55,6 +55,14 @@ import { parseOutcomes, parseOutcomesDetailed, type Clause } from './outcomes.ts
 import { stressTest, type FindingRef } from '../stress/stress.ts';
 import { findNodes, networkEntry, networkLog, outline, probesView, storageView, summary } from './explore.ts';
 import {
+  mineCandidates,
+  Quote,
+  selectMined,
+  type CandidateResult,
+  type DiscoveryStrategy,
+  type MineResult,
+} from './mine.ts';
+import {
   DISCOVERY_ABSENCE,
   DISCOVERY_BASELINE,
   DISCOVERY_FORMS,
@@ -119,6 +127,15 @@ export interface CompileOptions {
   maxTurns?: number;
   log?: (msg: string) => void;
   /**
+   * How checks are found (ADR 0020). "model" (default): the discovery agent writes them.
+   * "mine-first": candidate checks are mined from the references without a model; when they
+   * cover every requirement and pass the acceptance gate, no discovery turn runs, else the
+   * agent is started on the open requirements only, seeded with the mined survivors.
+   * "mine-only": mining alone; the compile fails, per requirement, where it cannot cover one.
+   * With `rubric: "deterministic"` (or `requirements`) it needs no model at all.
+   */
+  discovery?: DiscoveryStrategy;
+  /**
    * Provenance written to the compiled set (`compiled`). `model` defaults to the
    * model client's id and `at` to now; a replayed compile passes the recording's.
    */
@@ -143,6 +160,33 @@ export interface RequirementCoverage {
   routeOnly?: true;
 }
 
+/** What mining did (ADR 0020); present when `discovery` is "mine-first" or "mine-only". */
+export interface MiningReport {
+  strategy: Exclude<DiscoveryStrategy, 'model'>;
+  /**
+   * What produced the accepted checks: mining alone, mining and the model, the model alone
+   * (mining covered nothing), or nothing (the compile failed).
+   */
+  discovery: 'mined' | 'mined+model' | 'model' | 'none';
+  candidates: number;
+  survivors: number;
+  /** Stress variants every candidate was evaluated on. */
+  variants: number;
+  /** Wall time of mining (generation, batch evaluation, ranking and the acceptance gate), in ms. */
+  ms: number;
+  requirements: {
+    requirement: string;
+    quote: string;
+    candidates: number;
+    survivors: number;
+    status: 'covered' | 'open';
+    /** The mined check that covers it. */
+    check?: string;
+    /** Why it is open. */
+    reason?: string;
+  }[];
+}
+
 export interface CompileReport {
   task: string;
   status: 'compiled' | 'failed';
@@ -159,6 +203,8 @@ export interface CompileReport {
   coverage: RequirementCoverage[];
   warnings: string[];
   references: { name: string; kind: Reference['kind']; verdict: string }[];
+  /** Mining (ADR 0020), when the compile was asked to mine first or only. */
+  mining?: MiningReport;
 }
 
 export interface CompileResult {
@@ -1025,11 +1071,25 @@ const obj = (props: Record<string, unknown>, required: string[] = []) => ({
   required,
 });
 
+/** Mined checks already accepted for some requirements, and survivors offered to the agent (ADR 0020). */
+interface Seed {
+  checks: Check[];
+  candidates: CandidateResult[];
+}
+
+const seedView = (c: CandidateResult) => ({
+  requirement: c.requirement,
+  family: c.family,
+  rejects: [...c.negativesRejected, ...(c.baseline === 'fail' ? ['the baseline'] : [])],
+  check: { id: c.id, requirement: c.requirement, description: c.description, assert: c.assert },
+});
+
 function discoveryTools(
   task: TaskInput,
   requirements: Requirement[],
   refs: Reference[],
   onAccept: (v: Verification) => void,
+  seed?: Seed,
 ) {
   const refNames = refs.map((r) => r.name);
   const withPages = refs.some((r) => r.snapshot.pages?.length);
@@ -1131,7 +1191,8 @@ function discoveryTools(
           version: '1',
           task: { instruction: task.instruction, ...(task.outcomes !== undefined ? { outcomes: task.outcomes } : {}) },
           requirements,
-          checks: i.checks,
+          // Mined checks are part of every submission and pass the same gate (ADR 0020).
+          checks: seed ? [...seed.checks, ...i.checks] : i.checks,
         };
         const v = verifyCandidate(cs, refs, true, task.skipVariants);
         if (v.errors.length) {
@@ -1159,6 +1220,19 @@ function discoveryTools(
       },
     },
   ];
+  if (seed)
+    tools.splice(tools.length - 2, 0, {
+      spec: {
+        name: 'mined_candidates',
+        description:
+          'Candidate checks mined from the references without a model: each passes on every correct reference and its valid variants, but did not settle its requirement alone. Optionally filter by requirement. Use, adapt or ignore them.',
+        inputSchema: obj({ requirement: { type: 'string' } }),
+      },
+      run: (i: { requirement?: string }) => {
+        const xs = seed.candidates.filter((c) => !i.requirement || c.requirement === i.requirement);
+        return { content: xs.length ? JSON.stringify(xs.map(seedView), null, 1) : 'No mined candidates.' };
+      },
+    });
   return tools;
 }
 
@@ -1179,15 +1253,11 @@ export function discoverySystem(refs: Reference[]): string {
 }
 
 /** The model input for a compile, not yet resolved: the given one, else the config's (ADR 0017). */
-async function compileModel(opts: CompileOptions): Promise<{ input: ModelInput; options: ModelOptions }> {
+async function compileModel(
+  opts: CompileOptions,
+  config: AssayConfig,
+): Promise<{ input: ModelInput; options: ModelOptions }> {
   if (opts.model !== undefined) return { input: opts.model, options: opts.modelOptions ?? {} };
-  // Only a config passed in: compileTask never reads assay.config.* by itself (ADR 0017).
-  const config =
-    opts.config === undefined || opts.config === false
-      ? {}
-      : typeof opts.config === 'object'
-        ? normalizeConfig(opts.config, process.cwd(), 'config')
-        : (await loadConfig({ path: opts.config })).config;
   if (config.model === undefined) throw noModelError('compileTask', 'pass `model`, or a `config` that sets one');
   return { input: config.model, options: { ...config.modelOptions, ...opts.modelOptions } };
 }
@@ -1204,9 +1274,21 @@ export async function compileTask(
       throw new Error(`Duplicate reference name ${JSON.stringify(r.name)}; reference names must be unique.`);
     seen.add(r.name);
   }
+  // Only a config passed in: compileTask never reads assay.config.* by itself (ADR 0017).
+  const config =
+    opts.config === undefined || opts.config === false
+      ? {}
+      : typeof opts.config === 'object'
+        ? normalizeConfig(opts.config, process.cwd(), 'config')
+        : (await loadConfig({ path: opts.config })).config;
+  const strategy: DiscoveryStrategy = opts.discovery ?? config.compile?.discovery ?? 'model';
+  if (strategy !== 'model' && strategy !== 'mine-first' && strategy !== 'mine-only')
+    throw new Error(`discovery must be "model", "mine-first" or "mine-only", got ${JSON.stringify(strategy)}`);
+  // Mining alone with a rubric that needs no model runs no model at all (ADR 0020).
+  const modelFree = strategy === 'mine-only' && (!!opts.requirements || opts.rubric === 'deterministic');
   // The model is resolved only once the inputs are known to be usable: a bad reference set is
   // reported as such even when the model could not be loaded.
-  const { input, options } = await compileModel(opts);
+  const { input, options } = modelFree ? { input: undefined, options: {} } : await compileModel(opts, config);
   const log = opts.log ?? (() => {});
   const usage = { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheWriteTokens: 0 };
   const models = new Set<string>();
@@ -1214,7 +1296,7 @@ export async function compileTask(
   const report: CompileReport = {
     task: task.id,
     status: 'failed',
-    model: describeModel(input, options),
+    model: input === undefined ? 'none' : describeModel(input, options),
     modelsUsed: [],
     turns: { rubric: 0, discovery: 0 },
     usage,
@@ -1246,8 +1328,15 @@ export async function compileTask(
       report: { ...report, reason: 'Expected outcomes were given, but no outcome clause could be read from them.' },
     };
   }
-  const model = await resolveModel(input, options);
-  report.model = model.id;
+  const model = input === undefined ? undefined : await resolveModel(input, options);
+  if (model) report.model = model.id;
+  const provenance = (discovery?: 'mined' | 'mined+model'): CheckSet['compiled'] => ({
+    compiler: ASSAY_VERSION,
+    model: opts.provenance?.model ?? model?.id ?? 'none',
+    modelsUsed: [...models],
+    at: opts.provenance?.at ?? new Date().toISOString(),
+    ...(discovery ? { discovery } : {}),
+  });
 
   // 1. Rubric
   let requirements: Requirement[];
@@ -1259,22 +1348,56 @@ export async function compileTask(
     requirements = rubricFromClauses(task);
   } else {
     log(`${task.id}: rubric`);
-    const r = await modelRubric(task, model, 6);
+    const r = await modelRubric(task, model!, 6);
     add(r.run);
     report.turns.rubric = r.run.turns;
     if (!r.requirements) return { report: { ...report, reason: `Rubric step ended with ${r.run.status}.` } };
     requirements = r.requirements;
   }
 
-  // 2+3. Discovery agent with validating submission
+  // 2. Mining (ADR 0020): candidate checks from the references, without a model.
+  let seed: Seed | undefined;
+  let open = requirements.map((r) => r.id);
+  let minedProblems: string[] = [];
+  if (strategy !== 'model') {
+    log(`${task.id}: mining (${requirements.length} requirements, ${refs.length} references)`);
+    const m = mineAndGate(task, requirements, refs, strategy);
+    report.mining = m.report;
+    if (m.accepted) {
+      const checkSet: CheckSet = { ...m.accepted.checkSet, compiled: provenance('mined') };
+      m.report.discovery = 'mined';
+      return {
+        checkSet,
+        report: {
+          ...report,
+          status: 'compiled',
+          coverage: coverage(checkSet),
+          warnings: [...outcomeWarnings, ...m.accepted.verification.warnings],
+          references: m.accepted.verification.references,
+        },
+      };
+    }
+    if (strategy === 'mine-only') return { report: { ...report, reason: mineOnlyReason(m) } };
+    seed = { checks: m.checks, candidates: m.seeds };
+    open = m.report.requirements.filter((r) => r.status === 'open').map((r) => r.requirement);
+    minedProblems = m.problems;
+    // Every requirement covered, yet the set still passes an incorrect run: any requirement may need more.
+    if (!open.length) open = requirements.map((r) => r.id);
+  }
+
+  // 3. Discovery agent with validating submission
   log(`${task.id}: discovery (${requirements.length} requirements, ${refs.length} references)`);
   let accepted: Verification | undefined;
-  const tools = discoveryTools(task, requirements, refs, (v) => (accepted = v));
+  const tools = discoveryTools(task, requirements, refs, (v) => (accepted = v), seed);
+  const openSet = new Set(open);
+  // With mined checks, the agent is given only the requirements they leave open.
+  const listed = seed ? requirements.filter((r) => openSet.has(r.id)) : requirements;
   const prompt = [
     `Task id: ${task.id}`,
     `Instruction:\n<instruction>\n${task.instruction}\n</instruction>`,
     task.outcomes ? `Expected outcomes:\n<outcomes>\n${task.outcomes}\n</outcomes>` : '',
-    `Requirements (each check must name one; a requirement means exactly what its quote says, the summary is only a label):\n${requirements.map((r) => `- ${r.id} [${r.kind}] ${JSON.stringify(r.source.quote)} (summary: ${r.text})`).join('\n')}`,
+    `${seed ? 'Open requirements' : 'Requirements'} (each check must name one; a requirement means exactly what its quote says, the summary is only a label):\n${listed.map((r) => `- ${r.id} [${r.kind}] ${JSON.stringify(r.source.quote)} (summary: ${r.text})`).join('\n')}`,
+    seed ? seedPrompt(seed, requirements, openSet, minedProblems) : '',
     `Reference snapshots:\n${refs.map((r) => `- ${r.name} (${r.kind === 'success' ? 'correct run' : 'incorrect run'}${r.note ? `, ${r.note}` : ''}): ${summary(r.snapshot)}`).join('\n')}`,
     opts.trajectory
       ? `Agent trajectory of the first correct run. Context only — it tells you where to look; it is never evidence and checks must not rely on it:\n<trajectory>\n${opts.trajectory}\n</trajectory>`
@@ -1283,7 +1406,7 @@ export async function compileTask(
     .filter(Boolean)
     .join('\n\n');
   const run = await runAgent<CheckSet>({
-    model,
+    model: model!,
     system: discoverySystem(refs),
     prompt,
     tools,
@@ -1292,16 +1415,13 @@ export async function compileTask(
   });
   add(run);
   report.turns.discovery = run.turns;
+  if (report.mining)
+    report.mining.discovery = !run.result || !accepted ? 'none' : seed?.checks.length ? 'mined+model' : 'model';
   if (!run.result || !accepted) return { report: { ...report, reason: `Discovery ended with ${run.status}.` } };
 
   const checkSet: CheckSet = {
     ...run.result,
-    compiled: {
-      compiler: ASSAY_VERSION,
-      model: opts.provenance?.model ?? model.id,
-      modelsUsed: [...models],
-      at: opts.provenance?.at ?? new Date().toISOString(),
-    },
+    compiled: provenance(seed?.checks.length ? 'mined+model' : undefined),
   };
   return {
     checkSet,
@@ -1313,4 +1433,174 @@ export async function compileTask(
       references: (accepted as Verification).references,
     },
   };
+}
+
+/** Why a mine-only compile failed, one line per open requirement. */
+function mineOnlyReason(m: Mined): string {
+  const lines = m.report.requirements
+    .filter((r) => r.status === 'open')
+    .map((r) => `${r.requirement} ${JSON.stringify(r.quote)}: ${r.reason}`);
+  const problems = m.problems.map((p) => `the mined set: ${p}`);
+  return `Mining did not cover every requirement:\n- ${[...lines, ...problems].join('\n- ')}`;
+}
+
+/** The part of the first discovery message that hands over what mining found (ADR 0020). */
+function seedPrompt(seed: Seed, requirements: Requirement[], open: ReadonlySet<string>, problems: string[]): string {
+  const parts: string[] = [];
+  if (seed.checks.length) {
+    const covered = requirements.filter((r) => seed.checks.some((c) => c.requirement === r.id));
+    const lines = covered.map(
+      (r) =>
+        `- ${r.id} ${JSON.stringify(r.source.quote)}: ${seed.checks
+          .filter((c) => c.requirement === r.id)
+          .map((c) => `${c.id} ${JSON.stringify(c.assert)}`)
+          .join('; ')}`,
+    );
+    parts.push(
+      `Requirements already covered by mined checks. They passed the acceptance gate and are part of every submission: submit only your own checks, with other ids.\n${lines.join('\n')}`,
+    );
+  }
+  if (problems.length) parts.push(`Left to fix with the mined checks in place:\n- ${problems.join('\n- ')}`);
+  const byReq = requirements
+    .filter((r) => open.has(r.id))
+    .map((r) => {
+      const xs = seed.candidates.filter((c) => c.requirement === r.id).slice(0, 3);
+      return xs.length ? `- ${r.id}: ${xs.map((c) => `${c.id} (${c.family}): ${c.description}`).join(' | ')}` : '';
+    })
+    .filter(Boolean);
+  if (byReq.length)
+    parts.push(
+      `Mined candidates for the open requirements. Each passes on every correct reference and its valid variants, but none settles its requirement alone; mined_candidates shows their JSON:\n${byReq.join('\n')}`,
+    );
+  return parts.join('\n\n');
+}
+
+interface Mined {
+  /** Every requirement covered and the whole set accepted by the gate: no model needed. */
+  accepted?: { checkSet: CheckSet; verification: Verification };
+  /** Mined checks of the covered requirements, which passed the gate on their own. */
+  checks: Check[];
+  /** Ranked survivors of the requirements left open, for the agent. */
+  seeds: CandidateResult[];
+  /** Gate errors that no mined check was blamed for (e.g. an incorrect run still judged a success). */
+  problems: string[];
+  report: MiningReport;
+}
+
+const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const asCheck = (c: CandidateResult): Check => ({
+  id: c.id,
+  requirement: c.requirement,
+  description: c.description,
+  assert: c.assert,
+});
+
+/** Whether a gate message names this check id (ids are words joined by hyphens). */
+const names = (msg: string, id: string) => new RegExp(`(?<![\\w-])${escapeRegExp(id)}(?![\\w-])`).test(msg);
+
+/**
+ * Mine candidates, pick the best decisive one per requirement and put the picks through the
+ * acceptance gate `submit_checks` uses (`verifyCandidate`, stress included). A pick a gate error
+ * names is dropped and the next one tried, a few rounds at most. The gate never weakens: the
+ * whole set is gated with every reference; a partial set (some requirements open) is gated with
+ * the correct references only, since an incorrect run may fail only on an open requirement, and
+ * the merged set is gated again in full when the agent submits.
+ */
+function mineAndGate(
+  task: TaskInput,
+  requirements: Requirement[],
+  refs: Reference[],
+  strategy: Exclude<DiscoveryStrategy, 'model'>,
+): Mined {
+  const t0 = performance.now();
+  const mined: MineResult = mineCandidates({ task, requirements, refs });
+  const exclude = new Set<string>();
+  const gateErrors = new Map<string, string>();
+  const ok = refs.filter((r) => r.kind === 'success');
+  const setOf = (reqs: Requirement[], checks: Check[]): CheckSet => ({
+    schema: CHECKS_SCHEMA,
+    id: task.id,
+    version: '1',
+    task: { instruction: task.instruction, ...(task.outcomes !== undefined ? { outcomes: task.outcomes } : {}) },
+    requirements: reqs,
+    checks,
+  });
+  let result: Pick<Mined, 'accepted' | 'checks' | 'problems'> = { checks: [], problems: [] };
+  for (let round = 0; round < 4; round++) {
+    const sel = selectMined(mined, requirements, refs, exclude);
+    if (!sel.picks.length) break;
+    const checks = sel.picks.map(asCheck);
+    const whole = sel.open.length === 0;
+    const cs = setOf(whole ? requirements : requirements.filter((r) => !sel.open.includes(r.id)), checks);
+    const v = verifyCandidate(cs, whole ? refs : ok, true, task.skipVariants);
+    if (!v.errors.length) {
+      result = whole ? { accepted: { checkSet: cs, verification: v }, checks, problems: [] } : { checks, problems: [] };
+      break;
+    }
+    const blamed = sel.picks.filter((p) => v.errors.some((e) => names(e, p.id)));
+    if (!blamed.length) {
+      // Nothing to drop: a whole set that still passes an incorrect run. The picks stay when they
+      // pass on their own, and what is left goes to the model.
+      if (whole && !verifyCandidate(cs, ok, true, task.skipVariants).errors.length)
+        result = { checks, problems: v.errors };
+      break;
+    }
+    for (const p of blamed) {
+      exclude.add(p.id);
+      gateErrors.set(
+        p.requirement,
+        v.errors.find((e) => names(e, p.id))!,
+      );
+    }
+  }
+  const coveredBy = new Map(result.checks.map((c) => [c.requirement, c.id] as const));
+  const report: MiningReport = {
+    strategy,
+    discovery: 'none',
+    candidates: mined.candidates.length,
+    survivors: mined.candidates.filter((c) => c.survives).length,
+    variants: mined.variants,
+    ms: 0,
+    requirements: mined.requirements.map((r) => {
+      const check = coveredBy.get(r.requirement);
+      const base = { requirement: r.requirement, quote: r.quote, candidates: r.candidates, survivors: r.survivors };
+      if (check && !result.problems.length) return { ...base, status: 'covered' as const, check };
+      return { ...base, status: 'open' as const, reason: openReason(r, mined, gateErrors.get(r.requirement), result) };
+    }),
+  };
+  report.ms = Math.round((performance.now() - t0) * 10) / 10;
+  return {
+    ...result,
+    seeds: mined.candidates.filter((c) => c.survives && !coveredBy.has(c.requirement) && !exclude.has(c.id)),
+    report,
+  };
+}
+
+function openReason(
+  r: MineResult['requirements'][number],
+  mined: MineResult,
+  gate: string | undefined,
+  result: Pick<Mined, 'checks' | 'problems'>,
+): string {
+  if (result.problems.length && result.checks.some((c) => c.requirement === r.requirement))
+    return 'its mined check passed, but the mined set as a whole still judges an incorrect reference a success';
+  if (gate) return `the acceptance gate refused its mined checks (${gate})`;
+  if (!r.candidates) return 'no candidate: the references hold no evidence to compare with a value its quote names';
+  if (!r.survivors) {
+    const first = mined.candidates.find((c) => c.requirement === r.requirement && c.rejected);
+    return `${r.candidates} candidate(s), none passed on every correct reference and valid variant${first ? ` (${first.id} ${first.rejected})` : ''}`;
+  }
+  if (r.decisive.length) return 'its mined checks were not accepted together with the others';
+  const n = `${r.survivors} candidate(s) survived, but none settles it`;
+  const q = new Quote(r.quote);
+  if (q.adds)
+    return `${n}: "add" also keeps what the collection held before (ADR 0011), a comparison mining does not build`;
+  if (q.quantified)
+    return `${n}: the quote speaks of all, only, the others or no longer, which a mined check does not express`;
+  // The survivor that comes closest: fewest words left unaccounted for, then rank.
+  const best = r.seeds.reduce((a, b) => (b.unexplained.length < a.unexplained.length ? b : a));
+  if (best.unexplained.length)
+    return `${n}: the best (${best.id}, ${best.family}) does not account for ${best.unexplained.map((w) => JSON.stringify(w)).join(', ')}`;
+  if (best.baseline === 'pass') return `${n}: the baseline already passes the best (${best.id})`;
+  return `${n}: the best (${best.id}, ${best.family}) only shows that something is present or that a request was sent, and no incorrect reference fails it`;
 }

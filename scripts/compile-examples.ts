@@ -9,6 +9,7 @@
  * Writes examples/<app>/compiled/<task>.{checks,report,cassette}.json and SUMMARY.md.
  */
 import { mkdirSync, readdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { evaluate, type CheckSet, type EvidenceSnapshot } from '../src/index.ts';
 import { compileTask } from '../src/compiler/index.ts';
 import { APPS } from '../examples/apps.ts';
@@ -66,7 +67,7 @@ for (const app of APPS) {
       const found = runs.find((r) => r.name === firstOk.name);
       if (!found) throw new Error(`reference run "${firstOk.name}" not found`);
       reference = found;
-      const env = await modelFromEnv(new URL(`${def.id}.cassette.json`, out).pathname);
+      const env = await modelFromEnv(fileURLToPath(new URL(`${def.id}.cassette.json`, out)));
       result = await compileTask(task, [{ name: reference.name, kind: 'success', snapshot: reference.snapshot }], {
         model: env.model,
         provenance: env.provenance,

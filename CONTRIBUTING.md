@@ -50,6 +50,10 @@ point from there.
 | `npm run real:compile`     | Compiles the real-app tasks from their reference runs (`eval/real/compiled/`, `eval/results/real/COMPILE.md`).                                                                 |
 | `npm run real:collect`     | Starts a real app in Docker (`forge`, `cms` or `shop`) and records labelled runs; `-- shop --check-oracles` self-tests the oracles. Needs Docker; agent runs need the key.     |
 
+`node scripts/mine.ts` measures the mining-first compiler on the same data without a model: tasks
+and requirements mining covers, held-out accuracy of the mined sets and the discovery turns and
+tokens `--mine-first` saves (ADR 0020).
+
 Model steps replay the committed cassettes, so these run without an API key. A missing cassette is
 recorded when `ANTHROPIC_API_KEY` is set. `ASSAY_MODEL_MODE=replay` never calls a model;
 `ASSAY_MODEL_MODE=record` re-records every cassette. Cassettes are keyed by a digest of the full
@@ -68,6 +72,7 @@ hand), which measures the model rows live with fresh recordings.
 | `verify-batch`   | The same pairs grouped per check set, with one check set object judging all its runs.                                                                                                             |
 | `stress`         | `stressTest()` on every compiled check set over its correct references.                                                                                                                           |
 | `compile-replay` | `compileTask()` on 5 example and 5 real tasks, replayed from their cassettes. Also reports model turns, tokens and cost per compile, and whether each compile reproduces the committed check set. |
+| `mine`           | `compileTask()` with `discovery: "mine-only"` and the deterministic rubric on every example and real task: mining and its acceptance gate, no model. Also reports requirements covered.           |
 | `snapshot-size`  | JSON bytes per snapshot section across the real-app runs (median, p95, max). Not timed.                                                                                                           |
 
 ```sh

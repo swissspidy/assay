@@ -1,7 +1,13 @@
 /** `assay compile <task> --reference <snapshot|dir>`: compile a check set with a model. */
 import { existsSync, mkdirSync, statSync, writeFileSync } from 'node:fs';
 import { basename, dirname, extname } from 'node:path';
-import { compileTask, type CompileReport, type Reference, type TaskInput } from '../../compiler/index.ts';
+import {
+  compileTask,
+  type CompileReport,
+  type DiscoveryStrategy,
+  type Reference,
+  type TaskInput,
+} from '../../compiler/index.ts';
 import {
   CliError,
   EXIT,
@@ -18,7 +24,7 @@ import {
 } from '../io.ts';
 import { selectModel } from '../model.ts';
 import { isModuleFile } from '../../checks/load.ts';
-import { cliConfig } from '../config.ts';
+import { cliConfig, fromConfig } from '../config.ts';
 
 const isFile = (p: string) => existsSync(p) && statSync(p).isFile();
 const LOOKS_LIKE_PATH = /\.(json|md|txt|feature|ts|mts|js|mjs)$/i;
@@ -93,7 +99,9 @@ function references(values: Invocation['values']): Reference[] {
 
 function summary(report: CompileReport, write: (line: string) => void, color: boolean): void {
   if (report.status === 'compiled') {
-    write(`${paint(color, 'green', '✔')} Compiled ${report.task} with ${report.model}`);
+    const how = report.mining?.discovery === 'mined' ? ' by mining alone' : '';
+    const by = report.model === 'none' ? ' (no model)' : ` with ${report.model}`;
+    write(`${paint(color, 'green', '✔')} Compiled ${report.task}${how}${by}`);
     for (const c of report.coverage) {
       write(
         `    ${c.requirement} "${c.quote}": ${c.checks.join(', ') || 'no checks'} (${c.channels.join('+') || 'no evidence'}${c.trust ? `, trust ${c.trust}` : ''})`,
@@ -104,6 +112,20 @@ function summary(report: CompileReport, write: (line: string) => void, color: bo
   }
   if (report.references.length) {
     write(`References: ${report.references.map((r) => `${r.name} (${r.kind}): ${r.verdict}`).join(', ')}`);
+  }
+  const m = report.mining;
+  if (m) {
+    const covered = m.requirements.filter((r) => r.status === 'covered').length;
+    write(
+      paint(
+        color,
+        'dim',
+        `Mining: ${covered}/${m.requirements.length} requirements covered, ${m.survivors}/${m.candidates} candidates survived ${m.variants} variants, ${m.ms} ms.`,
+      ),
+    );
+    if (report.status === 'compiled')
+      for (const r of m.requirements.filter((x) => x.status === 'open'))
+        write(`    ${r.requirement} (model): ${r.reason}`);
   }
   for (const w of report.warnings) write(`    ${paint(color, 'yellow', 'warning:')} ${w}`);
   const u = report.usage;
@@ -121,19 +143,32 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
   if (rubric !== undefined && rubric !== 'model' && rubric !== 'deterministic') {
     throw new UsageError(`--rubric must be "model" or "deterministic", got ${JSON.stringify(rubric)}`);
   }
+  if (values['mine-first'] && values['mine-only'])
+    throw new UsageError('--mine-first and --mine-only exclude each other');
   const task = await resolveTask(positionals[0]!, values);
   const refs = references(values);
-  const model = await selectModel(values, io.env, await cliConfig(values, io), 'compile');
-  if (values.verbose) io.err(`Compiling ${task.id} with ${model.model.id} (${model.mode})`);
+  const loaded = await cliConfig(values, io);
+  const discovery: DiscoveryStrategy = values['mine-only']
+    ? 'mine-only'
+    : values['mine-first']
+      ? 'mine-first'
+      : (fromConfig(() => loaded.config.compile?.discovery) ?? 'model');
+  // Mining alone with the deterministic rubric needs no model (ADR 0020).
+  const model =
+    discovery === 'mine-only' && rubric === 'deterministic'
+      ? undefined
+      : await selectModel(values, io.env, loaded, 'compile');
+  if (values.verbose) io.err(`Compiling ${task.id} with ${model ? `${model.model.id} (${model.mode})` : 'no model'}`);
 
   const { checkSet, report } = await compileTask(task, refs, {
-    model: model.model,
+    ...(model ? { model: model.model } : {}),
     config: false,
-    ...(model.provenance ? { provenance: model.provenance } : {}),
+    ...(model?.provenance ? { provenance: model.provenance } : {}),
     ...(rubric ? { rubric } : {}),
+    ...(discovery !== 'model' ? { discovery } : {}),
     ...(values.verbose ? { log: (m: string) => io.err(m) } : {}),
   });
-  model.save();
+  model?.save();
 
   const out = str(values.out);
   if (checkSet && out) {

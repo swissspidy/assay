@@ -50,6 +50,15 @@ export interface AssayConfig {
   };
   /** Defaults for `assay bench`: comparing models on this project's tasks (ADR 0018). */
   bench?: BenchConfig;
+  /** Defaults for `assay compile`. */
+  compile?: {
+    /**
+     * How checks are found (ADR 0020): `'model'` (the default) asks the discovery agent;
+     * `'mine-first'` mines candidate checks from the references and asks the model only for
+     * what mining leaves open; `'mine-only'` never asks for checks.
+     */
+    discovery?: 'model' | 'mine-first' | 'mine-only';
+  };
 }
 
 /**
@@ -107,6 +116,7 @@ const KEYS = new Set<string>([
   'trustedKeys',
   'stress',
   'bench',
+  'compile',
 ]);
 const MODEL_OPTION_KEYS = new Set(['mode', 'id', 'providerOptions', 'maxOutputTokens', 'maxRetries']);
 const STRESS_KEYS = new Set(['skipVariants', 'successClaims']);
@@ -164,6 +174,15 @@ export function normalizeConfig(raw: unknown, dir: string, where = 'assay config
     }
   }
   if (c.bench !== undefined) c.bench = normalizeBench(c.bench, dir, where);
+  if (c.compile !== undefined) {
+    if (!isObject(c.compile)) throw bad('compile', 'an object');
+    for (const k of Object.keys(c.compile)) {
+      if (k !== 'discovery') throw new ConfigError(`${where}: unknown option \`compile.${k}\` (discovery)`);
+    }
+    const d = (c.compile as Record<string, unknown>).discovery;
+    if (d !== undefined && d !== 'model' && d !== 'mine-first' && d !== 'mine-only')
+      throw bad('compile.discovery', '"model", "mine-first" or "mine-only"');
+  }
   return c;
 }
 
