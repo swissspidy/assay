@@ -1,0 +1,240 @@
+/**
+ * A `ModelClient` over a Vercel AI SDK language model, so the compiler and the
+ * agentic verifier can run on any provider the AI SDK supports. This module only
+ * names the AI SDK's types: the functions it calls (`generateText`, `jsonSchema`)
+ * are passed in, so they can come from the user's project (`resolveModel`) or from
+ * a static import (`@swissspidy/assay/ai-sdk`).
+ *
+ * Each `turn` is one `generateText` step. The tools are declared without
+ * `execute`, so the SDK returns the model's tool calls instead of running them,
+ * and Assay's own loop (`runAgent`) keeps control: it validates every input,
+ * runs the read-only tools, enforces citations and records cassettes keyed on
+ * the provider-neutral request.
+ */
+import type {
+  AssistantModelMessage,
+  FinishReason,
+  LanguageModel,
+  ModelMessage as SdkMessage,
+  ToolSet,
+  generateText,
+  jsonSchema,
+} from 'ai';
+import type {
+  ModelClient,
+  ModelMessage,
+  ModelMode,
+  ModelRequest,
+  ModelTurn,
+  StopReason,
+  ToolCall,
+  ToolSpec,
+} from './types.ts';
+import { ModelError } from './types.ts';
+import { addUsage, jsonModeModel, markJsonMode } from './json-mode.ts';
+
+type ProviderOptions = NonNullable<Parameters<typeof generateText>[0]['providerOptions']>;
+
+/** The two AI SDK functions the adapter calls. */
+export interface AiFunctions {
+  generateText: typeof generateText;
+  jsonSchema: typeof jsonSchema;
+}
+
+export interface AiSdkOptions {
+  /**
+   * Identifier recorded in outcome records and cassettes. Defaults to
+   * `<provider>:<modelId>` (or the model string for a gateway model id). Give it
+   * when the provider options change what the model does, so a cassette recorded
+   * with one setting is not replayed for another.
+   */
+  id?: string;
+  /** Passed to `generateText` unchanged, e.g. `{ anthropic: { thinking: { type: 'adaptive' } } }`. */
+  providerOptions?: ProviderOptions;
+  maxOutputTokens?: number;
+  /** Retries on transient API errors (the AI SDK's default is 2). */
+  maxRetries?: number;
+  /**
+   * How to drive the model (ADR 0017): `tools` (native tool calling), `json` (JSON-mode
+   * prompting with schema validation and one repair retry, for models without tool
+   * calling) or `auto` (default): native tools until the provider reports that the
+   * model does not support them, then JSON mode for the rest of the client's life.
+   */
+  mode?: ModelMode | 'auto';
+}
+
+const STOP: Record<FinishReason, StopReason> = {
+  'tool-calls': 'tool_use',
+  stop: 'end_turn',
+  length: 'max_tokens',
+  'content-filter': 'refusal',
+  error: 'other',
+  other: 'other',
+};
+
+const isAssistant = (m: unknown): m is AssistantModelMessage =>
+  !!m && typeof m === 'object' && (m as { role?: unknown }).role === 'assistant';
+
+/**
+ * Assay's messages as AI SDK messages. An assistant turn is sent back as the
+ * SDK's own response messages (kept in `raw`), so reasoning and provider
+ * metadata survive; tool results become a `tool` message.
+ */
+export function toAiSdkMessages(messages: ModelMessage[]): SdkMessage[] {
+  const toolNames = new Map<string, string>();
+  const out: SdkMessage[] = [];
+  for (const m of messages) {
+    if (m.role === 'assistant') {
+      for (const c of m.toolCalls) toolNames.set(c.id, c.name);
+      const raw = Array.isArray(m.raw) ? m.raw.filter(isAssistant) : [];
+      if (raw.length) out.push(...raw);
+      else {
+        out.push({
+          role: 'assistant',
+          content: [
+            ...(m.text ? [{ type: 'text' as const, text: m.text }] : []),
+            ...m.toolCalls.map((c) => ({
+              type: 'tool-call' as const,
+              toolCallId: c.id,
+              toolName: c.name,
+              input: c.input,
+            })),
+          ],
+        });
+      }
+      continue;
+    }
+    if (m.toolResults?.length) {
+      out.push({
+        role: 'tool',
+        content: m.toolResults.map((r) => ({
+          type: 'tool-result' as const,
+          toolCallId: r.toolCallId,
+          toolName: toolNames.get(r.toolCallId) ?? 'unknown',
+          output: r.isError
+            ? { type: 'error-text' as const, value: r.content }
+            : { type: 'text' as const, value: r.content },
+        })),
+      });
+    }
+    if (m.text) out.push({ role: 'user', content: m.text });
+  }
+  return out;
+}
+
+function toolSet(jsonSchema: AiFunctions['jsonSchema'], tools: ToolSpec[]): ToolSet {
+  const set: ToolSet = {};
+  for (const t of tools) {
+    // No `execute`: the SDK returns the call and the agent loop runs (and validates) it.
+    set[t.name] = {
+      description: t.description,
+      inputSchema: jsonSchema(t.inputSchema as Parameters<typeof jsonSchema>[0]),
+      ...(t.strict ? { strict: true } : {}),
+    };
+  }
+  return set;
+}
+
+function defaultId(model: LanguageModel): string {
+  return typeof model === 'string' ? model : `${model.provider}:${model.modelId}`;
+}
+
+const TOOLS_UNSUPPORTED =
+  /(does ?n[o']t|do not|cannot) support (tools|tool[ -]?(use|calls?|calling)|function[ -]?calling)|(tools?|tool[ -]?(use|calls?|calling)|function[ -]?calling) (is |are )?(not ?|un)supported/i;
+
+/** Whether an error says the model has no tool calling (the AI SDK's own error, or the provider's message). */
+export function toolsUnsupportedError(e: unknown): boolean {
+  for (let x = e, depth = 0; x && depth < 5; x = (x as { cause?: unknown }).cause, depth++) {
+    const o = x as { name?: unknown; functionality?: unknown; message?: unknown; responseBody?: unknown };
+    if (o.name === 'AI_UnsupportedFunctionalityError' && /tool|function/i.test(String(o.functionality ?? '')))
+      return true;
+    if (TOOLS_UNSUPPORTED.test(`${String(o.message ?? '')} ${String(o.responseBody ?? '')}`)) return true;
+  }
+  return false;
+}
+
+/** Whether the call's warnings say the tools were ignored (the model answered as if it had none). */
+export function toolsUnsupportedWarning(warnings: readonly unknown[] | undefined): boolean {
+  return (warnings ?? []).some((w) => {
+    const o = (w ?? {}) as { type?: unknown; feature?: unknown; setting?: unknown };
+    if (o.type === 'unsupported-tool') return true;
+    if (o.type === 'unsupported' || o.type === 'unsupported-setting')
+      return /^(tools?|tool[-_ ]?choice)$/i.test(String(o.feature ?? o.setting ?? ''));
+    return false;
+  });
+}
+
+/** `aiSdkModel` with the AI SDK functions given (the `ai` package the caller loaded). */
+export function createAiSdkModel(ai: AiFunctions, model: LanguageModel, opts: AiSdkOptions = {}): ModelClient {
+  const { generateText } = ai;
+  const fallbackModelId = typeof model === 'string' ? model : model.modelId;
+  const id = opts.id ?? defaultId(model);
+  const mode = opts.mode ?? 'auto';
+  /** One `generateText` call; with no tools, plain text generation (what JSON mode uses). */
+  const call = async (req: ModelRequest): Promise<{ turn: ModelTurn; ignoredTools: boolean }> => {
+    let res: Awaited<ReturnType<typeof generateText>>;
+    try {
+      res = await generateText({
+        model,
+        instructions: req.system,
+        messages: toAiSdkMessages(req.messages),
+        ...(req.tools.length ? { tools: toolSet(ai.jsonSchema, req.tools) } : {}),
+        ...(opts.providerOptions ? { providerOptions: opts.providerOptions } : {}),
+        ...(opts.maxOutputTokens !== undefined ? { maxOutputTokens: opts.maxOutputTokens } : {}),
+        ...(opts.maxRetries !== undefined ? { maxRetries: opts.maxRetries } : {}),
+      });
+    } catch (e) {
+      throw new ModelError(`AI SDK error: ${e instanceof Error ? e.message : String(e)}`, { cause: e });
+    }
+    // Invalid calls (unparseable input, unknown tool) are passed on as they are: the
+    // agent loop answers them with an error result the model can act on.
+    const toolCalls: ToolCall[] = res.toolCalls.map((c) => ({ id: c.toolCallId, name: c.toolName, input: c.input }));
+    const u = res.usage;
+    const cacheRead = u.inputTokenDetails?.cacheReadTokens;
+    const cacheWrite = u.inputTokenDetails?.cacheWriteTokens;
+    const turn: ModelTurn = {
+      stop: STOP[res.finishReason] ?? 'other',
+      text: res.text,
+      toolCalls,
+      // Only the assistant message: tool results come from the agent loop.
+      raw: res.response.messages.filter(isAssistant),
+      usage: {
+        inputTokens: u.inputTokens ?? 0,
+        outputTokens: u.outputTokens ?? 0,
+        ...(cacheRead !== undefined ? { cacheReadTokens: cacheRead } : {}),
+        ...(cacheWrite !== undefined ? { cacheWriteTokens: cacheWrite } : {}),
+      },
+      model: res.response.modelId || fallbackModelId,
+      mode: 'tools',
+    };
+    return { turn, ignoredTools: req.tools.length > 0 && toolsUnsupportedWarning(res.warnings) };
+  };
+  const json = jsonModeModel({ id, turn: async (req) => (await call(req)).turn });
+  let fellBack = mode === 'json';
+  return markJsonMode({
+    id,
+    async turn(req: ModelRequest): Promise<ModelTurn> {
+      if (fellBack) return json.turn(req);
+      let out: Awaited<ReturnType<typeof call>>;
+      try {
+        out = await call(req);
+      } catch (e) {
+        if (mode === 'auto' && req.tools.length && toolsUnsupportedError(e)) {
+          fellBack = true;
+          return json.turn(req);
+        }
+        throw e;
+      }
+      if (mode === 'auto' && out.ignoredTools) {
+        // The provider dropped the tools and the model answered without them: ask again in JSON mode.
+        fellBack = true;
+        const turn = await json.turn(req);
+        return {
+          ...turn,
+          usage: addUsage(turn.usage, out.turn.usage),
+        };
+      }
+      return out.turn;
+    },
+  });
+}

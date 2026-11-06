@@ -445,3 +445,42 @@ test('verifyPage: requireLocked is checked before capturing or running probes', 
   expect(probed).toBe(1);
   expect(res.snapshot.probes?.cart).toBeDefined();
 });
+
+test('verifyPage and expectOutcome apply a config (ADR 0017); config: false turns it off', async ({ page }) => {
+  await openCart(page);
+  let probed = 0;
+  const probes = { cart: async () => ++probed };
+  // The config's requireLocked is enforced before capturing, like the option.
+  await expect(verifyPage(page, TWO_MUGS, { probes, config: { requireLocked: true } })).rejects.toThrow('not locked');
+  expect(probed).toBe(0);
+  expect((await verifyPage(page, TWO_MUGS, { probes, config: false })).checkSet.id).toBe(TWO_MUGS.id);
+  // The config's recordDir makes expectOutcome write a record.
+  const dir = mkdtempSync(join(tmpdir(), 'assay-config-records-'));
+  await expectOutcome(page, TWO_MUGS, {
+    probes,
+    verdict: 'fail',
+    timeout: 0,
+    attach: false,
+    config: { recordDir: dir },
+  });
+  expect(readdirSync(join(dir, 'records'))).toHaveLength(1);
+});
+
+test('expectOutcome: escalate: true with a config model, expected verdict reached, records without a model', async ({
+  page,
+}) => {
+  await openCart(page);
+  const dir = mkdtempSync(join(tmpdir(), 'assay-escalate-reached-'));
+  const never = () => {
+    throw new Error('the model must not be loaded');
+  };
+  const outcome = await expectOutcome(page, TWO_MUGS, {
+    verdict: 'fail',
+    timeout: 0,
+    attach: false,
+    escalate: true,
+    config: { model: never, recordDir: dir },
+  });
+  expect(outcome.verdict).toBe('fail');
+  expect(readdirSync(join(dir, 'records'))).toHaveLength(1);
+});

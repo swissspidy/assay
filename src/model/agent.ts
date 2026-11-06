@@ -1,5 +1,6 @@
 import { Ajv, type ValidateFunction } from 'ajv';
-import type { ModelClient, ModelMessage, ModelTurn, ToolCall, ToolResult, ToolSpec } from './types.ts';
+import type { ModelClient, ModelMessage, ModelMode, ModelTurn, ToolCall, ToolResult, ToolSpec } from './types.ts';
+import { withToolCalling } from './json-mode.ts';
 
 export interface ToolOutcome<R> {
   content: string;
@@ -33,6 +34,8 @@ export interface AgentRun<R> {
   usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number; cacheWriteTokens: number };
   transcript: ModelMessage[];
   models: string[];
+  /** How the model was driven, over all turns (`tools` for a turn that does not say). */
+  modes: ModelMode[];
 }
 
 const ajv = new Ajv({ strict: false, allErrors: true });
@@ -43,6 +46,8 @@ const ajv = new Ajv({ strict: false, allErrors: true });
  * current specs and validates against them.
  */
 export async function runAgent<R>(opts: AgentOptions<R>): Promise<AgentRun<R>> {
+  // An adapter without tool calling is driven in JSON mode (ADR 0017).
+  const model = withToolCalling(opts.model);
   const byName = new Map(opts.tools.map((t) => [t.spec.name, t] as const));
   const compiled = new WeakMap<object, ValidateFunction>();
   const validators = {
@@ -59,6 +64,7 @@ export async function runAgent<R>(opts: AgentOptions<R>): Promise<AgentRun<R>> {
   const messages: ModelMessage[] = [{ role: 'user', text: opts.prompt }];
   const usage = { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheWriteTokens: 0 };
   const models = new Set<string>();
+  const modes = new Set<ModelMode>();
   const maxTurns = opts.maxTurns ?? 40;
   let nudges = opts.maxNudges ?? 2;
   const finish = (status: AgentRun<R>['status'], turns: number, result?: R): AgentRun<R> => ({
@@ -68,15 +74,17 @@ export async function runAgent<R>(opts: AgentOptions<R>): Promise<AgentRun<R>> {
     usage,
     transcript: messages,
     models: [...models],
+    modes: [...modes],
   });
 
   for (let i = 0; i < maxTurns; i++) {
-    const turn = await opts.model.turn({ system: opts.system, messages, tools: opts.tools.map((t) => t.spec) });
+    const turn = await model.turn({ system: opts.system, messages, tools: opts.tools.map((t) => t.spec) });
     usage.inputTokens += turn.usage.inputTokens;
     usage.outputTokens += turn.usage.outputTokens;
     usage.cacheReadTokens += turn.usage.cacheReadTokens ?? 0;
     usage.cacheWriteTokens += turn.usage.cacheWriteTokens ?? 0;
     models.add(turn.model);
+    modes.add(turn.mode ?? 'tools');
     opts.onTurn?.(turn, i);
     // Check the stop reason before running any tool.
     if (turn.stop === 'refusal') return finish('refusal', i + 1);

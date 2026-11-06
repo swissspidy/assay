@@ -6,7 +6,7 @@
 import { after, before, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
-import { access, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { access, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -303,6 +303,26 @@ test('without the optional peers, the executable runs and names what a live mode
   const ai = await assay(bare, ['compile', 'Add it.', '-r', ref, '--provider', 'ai-sdk', '--model', 'a/b']);
   assert.equal(ai.code, 4);
   assert.match(ai.stderr, /requires the optional dependency `ai`/);
+  const none = await assay(bare, ['compile', 'Add it.', '-r', ref]);
+  assert.equal(none.code, 4);
+  assert.match(none.stderr, /assay compile needs a model\. Set `model` in assay\.config\.ts/);
+
+  // assay init writes a TypeScript config that Node loads as it is; commands that need no model run.
+  const init = await assay(bare, ['init']);
+  assert.equal(init.code, 0, init.stderr);
+  await mkdir(join(bare, 'checks'));
+  await writeFile(join(bare, 'checks/blue.checks.json'), await readFile(ex('tasks/02-add-blue-mug.checks.json')));
+  const validated = await assay(bare, ['validate']);
+  assert.equal(validated.code, 0, validated.stderr);
+  assert.match(validated.stdout, /blue\.checks\.json: valid/);
+  assert.equal((await assay(bare, ['verify', ex('tasks/02-add-blue-mug.checks.json'), ref])).code, 0);
+  // The configured "anthropic:…" model names the packages it needs.
+  const configured = await assay(bare, ['compile', 'Add it.', '-r', ref]);
+  assert.equal(configured.code, 4);
+  assert.match(
+    configured.stderr,
+    /needs the Vercel AI SDK and its provider package @ai-sdk\/anthropic: npm i -D ai @ai-sdk\/anthropic/,
+  );
 });
 
 test('the capturer id names the installed version', async () => {
@@ -338,7 +358,7 @@ test('the installed type declarations typecheck a consumer', async () => {
   await writeFile(join(dir, 'tsconfig.json'), tsconfig('consumer.ts', false));
   await writeFile(
     join(dir, 'consumer.ts'),
-    `import { approveCheckSet, evaluate, verify, type Baseline, type CheckSet, type EvidenceSnapshot, type ModelClient, type Outcome } from '${name}';
+    `import { approveCheckSet, defineConfig, evaluate, verify, type Baseline, type CheckSet, type EvidenceSnapshot, type ModelClient, type Outcome } from '${name}';
 import type { BaselineOptions, ExpectOutcomeOptions } from '${name}/playwright';
 import type { CompileOptions } from '${name}/compiler';
 import type { StressReport } from '${name}/stress';
@@ -352,16 +372,31 @@ export const signedBy = (cs: CheckSet, key: string): string | undefined =>
   approveCheckSet(cs, { by: 'me', key }).locked.signature?.keyId;
 export const before = (b: Baseline, o: BaselineOptions): [string, boolean] => [b.url, o.storage ?? true];
 export type Used = [CompileOptions['rubric'], StressReport['rates']['variantsAccepted'], Metrics['balancedAccuracy']];
+export const configs = [
+  defineConfig({ model: 'anthropic:claude-opus-5-5', checks: 'checks', requireLocked: 'signed', trustedKeys: ['keys/'] }),
+  defineConfig({
+    model: {
+      id: 'mine',
+      capabilities: { tools: false },
+      async turn(request) {
+        return { stop: 'end_turn', text: request.system, toolCalls: [], raw: [], usage: { inputTokens: 0, outputTokens: 0 }, model: 'mine' };
+      },
+    },
+    modelOptions: { mode: 'json' },
+    stress: { skipVariants: ['reorder'] },
+  }),
+];
 `,
   );
   // The AI SDK's own declarations need skipLibCheck (they name @types/json-schema, which it does not install).
   await writeFile(join(dir, 'tsconfig.ai.json'), tsconfig('consumer-ai.ts', true));
   await writeFile(
     join(dir, 'consumer-ai.ts'),
-    `import type { ModelClient } from '${name}';
+    `import { defineConfig, type ModelClient } from '${name}';
 import { aiSdkModel } from '${name}/ai-sdk';
 import type { LanguageModel } from 'ai';
 export const verifierFor = (m: LanguageModel): ModelClient => aiSdkModel(m, { id: 'mine', maxOutputTokens: 4096 });
+export const configFor = (m: Exclude<LanguageModel, string>) => defineConfig({ model: m, escalate: true });
 `,
   );
   // Playwright's own declarations need Node's types, as in any Playwright project.

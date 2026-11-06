@@ -76,6 +76,10 @@ unsigned lock, and a consumer that needs a signature demands it with `--require-
 
 ### Model selection
 
+(Amended by [ADR 0017](0017-config-file-and-bring-your-own-model.md): `model` in
+`assay.config.ts` and `--model provider:model` are the general forms; flags win over these
+variables, which win over the config. What follows still holds for a bare model id.)
+
 Consistent with the library and the scripts (`scripts/model-from-env.ts`):
 
 - `--provider` / `ASSAY_PROVIDER`: `anthropic` (default) uses `anthropicModel` from `/models`;

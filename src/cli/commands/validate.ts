@@ -1,8 +1,10 @@
 /** `assay validate <checks.json...>`: schema, semantic checks, loose-match warnings and the lock state. */
-import { existsSync } from 'node:fs';
+import { existsSync, globSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 import { validateCheckSet, type CheckSet, type ValidationReport } from '../../index.ts';
 import { lockState, type LockCheckOptions } from '../../verifier/lock.ts';
-import { CliError, EXIT, paint, readText, type Invocation, type Io } from '../io.ts';
+import { CliError, EXIT, UsageError, paint, readText, type Invocation, type Io } from '../io.ts';
+import { cliConfig } from '../config.ts';
 import { trustedKeys } from '../keys.ts';
 
 type LockInfo = NonNullable<ReturnType<typeof lockState>['locked']>;
@@ -65,17 +67,41 @@ function describeLock(r: FileResult, color: boolean): string {
 
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`;
 
+/** The check set files the config's `checks` names: a directory (every `*.checks.json` under it) or a glob. */
+export function configuredChecks(checks: string): string[] {
+  // A path that exists is literal, even when its name has glob characters (`project[abc]`).
+  let files: string[];
+  if (existsSync(checks)) {
+    files = statSync(checks).isDirectory()
+      ? globSync('**/*.checks.json', { cwd: checks }).map((f) => join(checks, f))
+      : [checks];
+  } else files = globSync(checks);
+  files = files.toSorted();
+  if (!files.length) throw new CliError(`no check sets match \`checks\` in the config: ${checks}`);
+  return files;
+}
+
 export async function run({ values, positionals }: Invocation, io: Io): Promise<number> {
-  for (const f of positionals) if (!existsSync(f)) throw new CliError(`check set not found: ${f}`);
-  const keys = trustedKeys(values, io.env);
-  const signed = !!values['require-signed'];
+  const { config } = await cliConfig(values, io);
+  if (!positionals.length && !config.checks)
+    throw new UsageError(
+      'missing argument: the check set files, or `checks` in assay.config.ts (usage: assay validate [checks.json...])',
+    );
+  const files = positionals.length ? positionals : configuredChecks(config.checks!);
+  for (const f of files) if (!existsSync(f)) throw new CliError(`check set not found: ${f}`);
+  const keys = trustedKeys(values, io.env, config);
+  // Flags win over the config: --no-require-locked turns off the config's requireLocked.
+  const signed =
+    (values['require-signed'] as boolean | undefined) ??
+    (values['require-locked'] === false ? false : config.requireLocked === 'signed');
+  const locked = (values['require-locked'] as boolean | undefined) ?? !!config.requireLocked;
   if (signed && !keys)
     throw new CliError(
-      '--require-signed needs the trusted public keys: --trusted-key <file|dir> or $ASSAY_TRUSTED_KEYS',
+      '--require-signed needs the trusted public keys: --trusted-key <file|dir>, $ASSAY_TRUSTED_KEYS or `trustedKeys` in the config',
     );
-  const results = positionals.map((f) => {
+  const results = files.map((f) => {
     const r = validateFile(f, keys ? { trustedKeys: keys } : {});
-    const why = r.ok && (signed || values['require-locked']) ? notAccepted(r, signed) : undefined;
+    const why = r.ok && (signed || locked) ? notAccepted(r, signed) : undefined;
     return why ? { ...r, notAccepted: why } : r;
   });
   const bad = (r: FileResult) => !r.ok || !!r.notAccepted || (!!values.strict && r.warnings.length > 0);

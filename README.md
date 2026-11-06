@@ -15,9 +15,40 @@ to an agentic verifier.
 npm install -D @swissspidy/assay @playwright/test
 ```
 
-Requires Node.js 24 or later. Models are only needed to compile checks and to escalate; for those,
-also install [`@anthropic-ai/sdk`](#model-providers) or the [Vercel AI SDK](#model-providers).
-Releases: [CHANGELOG.md](CHANGELOG.md).
+Requires Node.js 24 or later. Models are only needed to compile checks and to escalate; any model
+works ([Configure a model](#configure-a-model)). Releases: [CHANGELOG.md](CHANGELOG.md).
+
+## Configure a model
+
+`npx assay init` writes `assay.config.ts`. `model` takes any of three forms:
+
+```ts
+import { defineConfig } from '@swissspidy/assay';
+import { openai } from '@ai-sdk/openai';
+
+export default defineConfig({
+  model: 'anthropic:claude-opus-5-5', // 1. "provider:model" (npm i -D ai @ai-sdk/anthropic)
+  // model: openai('gpt-5'),         // 2. any Vercel AI SDK model
+  // model: { id: 'my-llm', async turn(request) { /* … */ } }, // 3. your own adapter, no AI SDK
+  checks: 'checks', // assay validate with no files checks these
+  recordDir: 'assay-records',
+});
+```
+
+Strings name the provider's AI SDK package (`openai:…` → `@ai-sdk/openai`, `ollama:…` →
+`ollama-ai-provider-v2`, `google`, `mistral`, `groq`, `bedrock`, …); a missing one is reported by
+name. Models without tool calling are driven in JSON mode: the tools go into the prompt, each reply
+is validated against the tool's schema with one repair retry, and records and reports say
+`modes: ["json"]`. AI SDK models fall back by themselves when the provider reports no tool support;
+an adapter declares `capabilities: { tools: false }`; `modelOptions: { mode: 'json' }` forces it.
+
+The CLI (`--config <file>` for another) and the Playwright helpers `expectOutcome` and `verifyPage`
+(once per process; `config: false` for none) read the config from the current directory. Core
+library calls stay pure: `compileTask`, `verify` and `verifyMany` use a config only when passed
+one (`config: (await loadConfig()).config` or a path). Commands that need no model never load it.
+Precedence: **flags, then environment variables (`ASSAY_MODEL`, …), then the config, then
+defaults**; in code, explicit options win over the config
+([ADR 0017](docs/adr/0017-config-file-and-bring-your-own-model.md)).
 
 ## Quick start
 
@@ -203,12 +234,11 @@ Design details: [ADR 0001](docs/adr/0001-evidence-snapshot-and-check-dsl.md).
 
    ```ts
    import { compileTask } from '@swissspidy/assay/compiler';
-   import { anthropicModel } from '@swissspidy/assay/models';
 
    const { checkSet, report } = await compileTask(
      { id: 'shop/express-order', instruction, outcomes }, // outcomes: Gherkin "Then" steps, a Markdown list or plain lines
      [{ name: 'reference', kind: 'success', snapshot }],
-     { model: await anthropicModel() },
+     { model: 'anthropic:claude-opus-5-5' }, // or { config: 'assay.config.ts' }
    );
    ```
 
@@ -281,10 +311,9 @@ example GitHub workflow that posts the review sheet on pull requests:
 
 ```ts
 import { verify } from '@swissspidy/assay';
-import { anthropicModel } from '@swissspidy/assay/models';
 
 const { outcome, record, written } = await verify(locked, snapshot, {
-  verifier: await anthropicModel(), // decides only what the checks abstained on
+  verifier: 'anthropic:claude-opus-5-5', // decides only what the checks abstained on
   requireLocked: true,
   agentReport: 'I placed the order.', // recorded as agent-claimed, never evidence
   recordDir: 'assay-records',
@@ -317,6 +346,7 @@ await expectOutcome(page, locked, { verifier, recordDir: 'assay-records' });
 The package installs an `assay` executable (`npx assay <command> --help` for every option):
 
 ```sh
+assay init                                   # assay.config.ts: the model and project defaults
 assay compile "Add a Blue Mug to my cart." --outcomes "Then the cart contains a Blue Mug" \
   --reference runs/added-blue-mug.json --out checks/add-blue-mug.checks.json
 assay validate checks/*.checks.json          # schema, semantic errors, loose-match warnings, lock
@@ -356,21 +386,23 @@ as in `examples/*/references` (`compile` treats it as a negative, `stress` skips
 | 4           | other error (unreadable or invalid input, missing dependency or key, a model) |
 
 Output is for people by default and JSON with `--json`; colour only on a terminal (`NO_COLOR`,
-`--no-color`). Models, for `compile` and `verify --escalate`:
+`--no-color`). Every command reads `assay.config.ts` (or `--config <file>`). Models, for `compile`
+and `verify --escalate`, override the config's `model`:
 
-| Option / variable              | Effect                                                                                                                                                                   |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `--provider`, `ASSAY_PROVIDER` | `anthropic` (default; `@anthropic-ai/sdk`, `ANTHROPIC_API_KEY`) or `ai-sdk` (`ai`; the model id goes to the AI SDK's default provider, the AI Gateway unless configured) |
-| `--model`, `ASSAY_MODEL`       | Model id (Anthropic default `claude-opus-5-5`)                                                                                                                           |
-| `--cassette <file>`            | Replay the cassette if it exists, else record the live run to it                                                                                                         |
-| `ASSAY_MODEL_MODE`             | `replay`: never call a model (needs `--cassette`); `record`: re-record the cassette                                                                                      |
+| Option / variable              | Effect                                                                                                                                                                            |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--model`, `ASSAY_MODEL`       | `provider:model` (as in the config), or a model id for `--provider`. Without any model setting, `claude-opus-5-5` when `ANTHROPIC_API_KEY` is set                                 |
+| `--provider`, `ASSAY_PROVIDER` | For a bare id: `anthropic` (default; `@anthropic-ai/sdk`, `ANTHROPIC_API_KEY`) or `ai-sdk` (`ai`; the id goes to the AI SDK's default provider, the AI Gateway unless configured) |
+| `--cassette <file>`            | Replay the cassette if it exists, else record the live run to it                                                                                                                  |
+| `ASSAY_MODEL_MODE`             | `replay`: never call a model (needs `--cassette`); `record`: re-record the cassette                                                                                               |
 
 Design: [ADR 0010](docs/adr/0010-command-line-tool.md).
 
 ## Model providers
 
-Any object with an `id` and a `turn(request)` method is a `ModelClient`. Two adapters come with the
-package:
+Any object with an `id` and a `turn(request)` method is a `ModelClient`; `resolveModel` turns any of
+the [three config forms](#configure-a-model) into one, and `jsonModeModel` drives one without tool
+calling. Two adapters come with the package:
 
 - **Anthropic** (`@swissspidy/assay/models`, needs `@anthropic-ai/sdk`): `await anthropicModel()`
   streams requests with an explicit effort, prompt caching and server-side refusal fallbacks. It is
@@ -389,7 +421,7 @@ package:
   ```
 
 **Cassettes** make model steps reproducible. `recordingModel(model, path)` records every turn under
-a digest of the full request; `replayModel(path)` replays them without a key and fails loudly if a
+a digest of the full request, the model id and the mode (native tools or JSON); `replayModel(path)` replays them without a key and fails loudly if a
 request changed. Both are in `@swissspidy/assay/models`. The repository's scripts replay what a
 cassette has and, with a key, record only the turns it lacks.
 
@@ -440,6 +472,7 @@ five ([ADR 0011](docs/adr/0011-route-robust-compilation.md)).
 - [ADR 0014](docs/adr/0014-sameas-tolerance-and-nested-mutants.md): `sameAs` tolerance and nested JSON array mutants
 - [ADR 0015](docs/adr/0015-evidence-store-and-compiled-checks.md): the evidence store, compiled check plans and `verifyMany`
 - [ADR 0016](docs/adr/0016-overlay-stress-and-capture-digests.md): overlay stress testing and capture-time digests
+- [ADR 0017](docs/adr/0017-config-file-and-bring-your-own-model.md): `assay.config.ts`, bring your own model, JSON mode
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
 - Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)
 

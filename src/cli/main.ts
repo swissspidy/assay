@@ -28,11 +28,13 @@ const MODEL_OPTIONS: ParseArgsOptionsConfig = {
   cassette: { type: 'string' },
 };
 
-const MODEL_HELP = `Model:
-  --model <id>          Model id (default: $ASSAY_MODEL, else claude-opus-5-5 with the Anthropic provider)
-  --provider <name>     anthropic (default; needs @anthropic-ai/sdk and ANTHROPIC_API_KEY) or
-                        ai-sdk (needs \`ai\`; the model id goes to the AI SDK's default provider,
-                        e.g. "anthropic/claude-opus-5-5" through the AI Gateway). Default: $ASSAY_PROVIDER
+const MODEL_HELP = `Model (flags win over $ASSAY_PROVIDER / $ASSAY_MODEL, which win over \`model\` in assay.config.ts):
+  --model <id>          "provider:model" (e.g. openai:gpt-5, ollama:llama3.1; needs \`ai\` and the
+                        provider's AI SDK package), or a model id for --provider. Default: $ASSAY_MODEL,
+                        else the config's model, else claude-opus-5-5 when ANTHROPIC_API_KEY is set
+  --provider <name>     For a bare --model id: anthropic (default; needs @anthropic-ai/sdk and
+                        ANTHROPIC_API_KEY) or ai-sdk (needs \`ai\`; the id goes to the AI SDK's default
+                        provider, e.g. "anthropic/claude-opus-5-5" through the AI Gateway). Default: $ASSAY_PROVIDER
   --cassette <file>     Replay model turns from this cassette if it exists, else record them to it.
                         ASSAY_MODEL_MODE=replay never calls a model; ASSAY_MODEL_MODE=record re-records.`;
 
@@ -42,6 +44,22 @@ const TRUSTED_KEY_HELP = `  --trusted-key <path>   An Ed25519 public key (PEM) w
                          of .pem files (repeatable). Also: $ASSAY_TRUSTED_KEYS (PEM text)`;
 
 export const COMMANDS: Record<string, CommandDef> = {
+  init: {
+    summary: 'Create assay.config.ts: the model and the project defaults',
+    usage: 'assay init [options]',
+    args: [0, 0],
+    options: { force: { type: 'boolean' } },
+    help: `Writes assay.config.ts in the current directory with sensible defaults and, in comments,
+the three ways to name a model: a "provider:model" string, any Vercel AI SDK model, or your
+own adapter. Asks nothing.
+
+Options:
+  --force   Replace an existing assay.config.ts
+  --json    Print { file } as JSON
+
+Exit status: 0 created, 3 usage, 4 error (including a config file that already exists).`,
+    load: () => import('./commands/init.ts'),
+  },
   compile: {
     summary: 'Compile a check set from a task and reference snapshots',
     usage: 'assay compile <task> --reference <snapshot|dir> [options]',
@@ -129,15 +147,17 @@ Exit status: 0 no problems, 1 problems found, 3 usage, 4 error.`,
   },
   validate: {
     summary: 'Validate check sets (schema, semantics, loose matches, lock)',
-    usage: 'assay validate <checks.json...> [options]',
-    args: [1, Infinity],
+    usage: 'assay validate [checks.json...] [options]',
+    args: [0, Infinity],
     options: {
       strict: { type: 'boolean' },
       'require-locked': { type: 'boolean' },
       'require-signed': { type: 'boolean' },
       ...TRUSTED_KEY_OPTION,
     },
-    help: `Options:
+    help: `Without files, validates every check set the config's \`checks\` names.
+
+Options:
   --strict               Treat warnings as problems (exit 1)
   --require-locked       Treat a set that is not approved, or was edited after approval, as a problem
   --require-signed       Also treat an approval not signed by a trusted key as a problem
@@ -276,6 +296,7 @@ const COMMON: ParseArgsOptionsConfig = {
   help: { type: 'boolean', short: 'h' },
   json: { type: 'boolean' },
   color: { type: 'boolean' },
+  config: { type: 'string', short: 'c' },
 };
 
 export function version(): string {
@@ -294,10 +315,12 @@ ${Object.entries(COMMANDS)
   .join('\n')}
 
 Options:
-  -h, --help     Show help (also: assay <command> --help)
-  -v, --version  Show the version
-  --json         Machine-readable output
-  --no-color     No colour (also: NO_COLOR=1; colour is only used on a terminal)
+  -h, --help           Show help (also: assay <command> --help)
+  -v, --version        Show the version
+  --json               Machine-readable output
+  --no-color           No colour (also: NO_COLOR=1; colour is only used on a terminal)
+  -c, --config <file>  The config file (default: assay.config.{ts,mts,js,mjs} in this directory).
+                       Flags win over environment variables, which win over the config.
 
 Exit status: 0 success, 1 fail or problems found, 2 abstain (inconclusive), 3 usage error, 4 other error.`;
 }

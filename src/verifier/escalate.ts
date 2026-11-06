@@ -10,6 +10,17 @@ import { compileChecks, runPlan, runPlanMany, type CheckPlan } from '../plan/pla
 import { buildStore } from '../store/store.ts';
 import { checkSetDigest } from '../snapshot/digest.ts';
 import type { ModelClient } from '../model/types.ts';
+import {
+  bindModelOptions,
+  describeModel,
+  isBoundModel,
+  isModelClient,
+  noModelError,
+  resolveModel,
+  type ModelInput,
+  type ModelOptions,
+} from '../model/resolve.ts';
+import { loadConfig, normalizeConfig, readTrustedKeys, type AssayConfig } from '../config/config.ts';
 import type { Probe } from '../snapshot/capture.ts';
 import { compileTask } from '../compiler/compile.ts';
 import { citedEvidence, runVerifier, type VerifierResult } from './verifier.ts';
@@ -34,8 +45,26 @@ export interface EscalationPolicy {
 }
 
 export interface VerifyOptions {
-  /** Model for the agentic verifier. Without it, nothing escalates and no model runs. */
-  verifier?: ModelClient;
+  /**
+   * Model for the agentic verifier: a `ModelClient`, an AI SDK model, an adapter or a
+   * `'provider:model'` string (ADR 0017). Without it (and without `escalate` in the
+   * config), nothing escalates and no model runs. It is resolved only when a requirement
+   * escalates.
+   */
+  verifier?: ModelInput;
+  /**
+   * Escalate with the config's `model` (default: the config's `escalate`, else false).
+   * `false` turns off escalation the config asks for; an explicit `verifier` always escalates.
+   */
+  escalate?: boolean;
+  /** How to drive and name `verifier` and `proposer` (default: the config's `modelOptions`). */
+  modelOptions?: ModelOptions;
+  /**
+   * A config to fill in what is not given (`recordDir`, `requireLocked`, `trustedKeys`,
+   * escalation): an object or a file path. Default: none; `verify` never reads
+   * assay.config.* by itself (the CLI and the Playwright helpers do). Explicit options win.
+   */
+  config?: AssayConfig | string | false;
   policy?: EscalationPolicy;
   /** Live read-only access for the verifier (an isolated context with a copy of the session). */
   page?: Page;
@@ -48,7 +77,7 @@ export interface VerifyOptions {
    * requirements) from this snapshot with this model. The proposal is recorded
    * as pending approval and is never used automatically.
    */
-  proposer?: ModelClient;
+  proposer?: ModelInput;
   /**
    * Refuse to run a check set without a valid lock (default false): `true` accepts any
    * valid lock; `{ trustedKeys }` also requires a signature by one of those Ed25519
@@ -122,12 +151,97 @@ export type EscalationSelection = 'policy' | 'onFail' | 'kept';
 export async function verify(
   checkSet: CheckSet | unknown,
   snapshot: EvidenceSnapshot,
-  opts: VerifyOptions = {},
+  options: VerifyOptions = {},
 ): Promise<VerifyResult> {
+  const [opts, models] = await withConfig(options);
   const [plan, cs] = prepare(checkSet, opts);
   const t0 = performance.now();
   const checksOutcome = runPlan(plan, buildStore(snapshot));
-  return finish(plan, cs, snapshot, checksOutcome, performance.now() - t0, opts);
+  return finish(plan, cs, snapshot, checksOutcome, performance.now() - t0, opts, models);
+}
+
+/** A model resolved on first use, once: a run that escalates nothing never loads it. */
+interface LazyModel {
+  label: string;
+  get(): Promise<ModelClient>;
+}
+
+function lazyModel(input: ModelInput, opts: ModelOptions): LazyModel {
+  let p: Promise<ModelClient> | undefined;
+  return { label: describeModel(input, opts), get: () => (p ??= resolveModel(input, opts)) };
+}
+
+interface Models {
+  verifier?: LazyModel;
+  proposer?: LazyModel;
+}
+
+/** Trusted keys read from files, by the list of entries (a hot loop passes the same list every time). */
+const keysOf = new Map<string, ReturnType<typeof readTrustedKeys>>();
+
+/**
+ * The config an option names: an object (checked once per object) or a file path. Nothing,
+ * or `false`, is no config: library calls never read assay.config.* by themselves (ADR 0017).
+ */
+export async function configOf(config: AssayConfig | string | false | undefined): Promise<AssayConfig> {
+  if (config === undefined || config === false) return {};
+  if (typeof config === 'string') return (await loadConfig({ path: config })).config;
+  // Checked on every call (it is cheap), so a caller that edits its config object sees the edit.
+  return normalizeConfig(config, process.cwd(), 'config');
+}
+
+/**
+ * The options with a config's defaults filled in (explicit options win): `recordDir`,
+ * `requireLocked`, `trustedKeys`, the escalation policy, and the config's `model` as the
+ * verifier when it escalates. The result carries `config: false`, so it is not applied again.
+ */
+export function applyConfig(opts: VerifyOptions, config: AssayConfig): VerifyOptions {
+  const out: VerifyOptions = { ...opts, config: false };
+  if (out.recordDir === undefined && config.recordDir !== undefined) out.recordDir = config.recordDir;
+  if (config.trustedKeys?.length) {
+    const entries = JSON.stringify(config.trustedKeys);
+    let keys = keysOf.get(entries);
+    if (!keys) keysOf.set(entries, (keys = readTrustedKeys(config.trustedKeys)));
+    out.trustedKeys ??= keys;
+    if (out.requireLocked === undefined && config.requireLocked === 'signed') out.requireLocked = { trustedKeys: keys };
+  }
+  if (out.requireLocked === undefined && config.requireLocked === true) out.requireLocked = true;
+  if (out.policy === undefined && typeof config.escalate === 'object') out.policy = config.escalate;
+  if (out.verifier === undefined && (out.escalate ?? (config.escalate !== undefined && config.escalate !== false))) {
+    if (config.model === undefined)
+      throw noModelError('verify with escalation', 'pass `verifier`, or turn escalation off');
+    // The config's model takes all of the config's options (explicit fields win).
+    out.verifier = bindModelOptions(config.model, { ...config.modelOptions, ...opts.modelOptions });
+  } else if (config.modelOptions) out.verifier = explicitWithConfig(out.verifier, config, opts);
+  if (config.modelOptions) out.proposer = explicitWithConfig(out.proposer, config, opts);
+  return out;
+}
+
+/**
+ * An explicit model with the config's options applied per model: a string, an AI SDK model or a
+ * function takes them (explicit fields win) except `id`, which names the config's own model; a
+ * ModelClient is already configured and is used as it is (forcing JSON mode on a replaying client
+ * would miss its tools-mode recordings).
+ */
+function explicitWithConfig(
+  m: ModelInput | undefined,
+  config: AssayConfig,
+  opts: VerifyOptions,
+): ModelInput | undefined {
+  if (m === undefined || isModelClient(m) || isBoundModel(m)) return m;
+  const { id: _id, ...shared } = config.modelOptions ?? {};
+  return bindModelOptions(m, { ...shared, ...opts.modelOptions });
+}
+
+/** The options with the given config applied, and the models to use (resolved on first use). */
+async function withConfig(opts: VerifyOptions): Promise<[VerifyOptions, Models]> {
+  const out = applyConfig(opts, await configOf(opts.config));
+  const models: Models = {};
+  // A model bound to its options (from the config) takes no others.
+  const options = (m: ModelInput) => (isBoundModel(m) ? {} : (out.modelOptions ?? {}));
+  if (out.verifier !== undefined) models.verifier = lazyModel(out.verifier, options(out.verifier));
+  if (out.proposer !== undefined) models.proposer = lazyModel(out.proposer, options(out.proposer));
+  return [out, models];
 }
 
 /**
@@ -138,16 +252,17 @@ export async function verify(
 export async function verifyMany(
   checkSet: CheckSet | unknown,
   snapshots: readonly EvidenceSnapshot[],
-  opts: VerifyOptions = {},
+  options: VerifyOptions = {},
 ): Promise<VerifyResult[]> {
   // Mapping `verify` over no snapshots never validates the set, so neither does this.
   if (snapshots.length === 0) return [];
+  const [opts, models] = await withConfig(options);
   const [plan, cs] = prepare(checkSet, opts);
   const timings = new Float64Array(snapshots.length);
   const outcomes = runPlanMany(plan, snapshots.map(buildStore), {}, timings);
   const results: VerifyResult[] = [];
   for (const [i, snapshot] of snapshots.entries())
-    results.push(await finish(plan, cs, snapshot, outcomes[i]!, timings[i]!, opts));
+    results.push(await finish(plan, cs, snapshot, outcomes[i]!, timings[i]!, opts, models));
   return results;
 }
 
@@ -170,6 +285,7 @@ async function finish(
   checksOutcome: Outcome,
   checksMs: number,
   opts: VerifyOptions,
+  models: Models,
 ): Promise<VerifyResult> {
   const policy: Required<EscalationPolicy> = {
     on: opts.policy?.on ?? ['abstain'],
@@ -188,7 +304,8 @@ async function finish(
   let verifier: VerifierResult | undefined;
   let verifierError: string | undefined;
   let escalationMs: number | undefined;
-  if (opts.verifier && toEscalate.length) {
+  let verifierId = models.verifier?.label;
+  if (models.verifier && toEscalate.length) {
     const hints: Record<string, string> = {};
     for (const r of toEscalate) {
       hints[r.id] = checksOutcome.checks
@@ -198,8 +315,10 @@ async function finish(
     }
     const t1 = performance.now();
     try {
+      const client = await models.verifier.get();
+      verifierId = client.id;
       verifier = await runVerifier(
-        opts.verifier,
+        client,
         {
           task: cs.task,
           requirements: toEscalate,
@@ -250,7 +369,7 @@ async function finish(
       r.status === 'pass' &&
       checksStatus.get(r.requirement) === 'abstain',
   );
-  if (opts.proposer && verdict === 'success' && rescued.length) {
+  if (models.proposer && verdict === 'success' && rescued.length) {
     const t2 = performance.now();
     try {
       const res = await compileTask(
@@ -260,7 +379,7 @@ async function finish(
           ...(cs.task.outcomes !== undefined ? { outcomes: cs.task.outcomes } : {}),
         },
         [{ name: 'escalated-run', kind: 'success', snapshot }],
-        { model: opts.proposer, requirements: cs.requirements },
+        { model: await models.proposer.get(), requirements: cs.requirements, config: false },
       );
       if (res.checkSet) {
         const draft = { ...res.checkSet, version: `${cs.version}+proposal` };
@@ -279,7 +398,7 @@ async function finish(
     const checks = checksOutcome.checks.filter(
       (c) => c.requirement === req.id && (r.status === 'abstain' || c.status === r.status),
     );
-    const sel = opts.verifier ? selection.get(req.id) : undefined;
+    const sel = models.verifier ? selection.get(req.id) : undefined;
     return {
       id: req.id,
       kind: req.kind,
@@ -332,13 +451,15 @@ async function finish(
       ...(onMissingOf.get(c.check) ? { onMissing: onMissingOf.get(c.check) } : {}),
     })),
     drift: checksOutcome.drift,
-    ...(opts.verifier && toEscalate.length
+    ...(models.verifier && toEscalate.length
       ? {
           escalation: {
             policy,
             requirements: toEscalate.map((r) => r.id),
-            model: opts.verifier.id,
+            model: verifierId!,
             modelsUsed: verifier?.models ?? [],
+            // How the model was driven, when not only native tool calling (ADR 0017).
+            ...(verifier?.modes.some((m) => m !== 'tools') ? { modes: verifier.modes } : {}),
             status: verifierError !== undefined ? 'error' : verifier!.status,
             ...(verifierError !== undefined ? { error: verifierError } : {}),
             verdicts: verifier?.verdicts ?? [],

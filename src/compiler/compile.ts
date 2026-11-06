@@ -48,7 +48,9 @@ import { AXIndex, resolveTarget } from '../runtime/axindex.ts';
 import { canonical } from '../text.ts';
 import { ASSAY_VERSION } from '../version.ts';
 import { runAgent, type AgentTool, type AgentRun } from '../model/agent.ts';
-import type { ModelClient } from '../model/types.ts';
+import type { ModelClient, ModelMode } from '../model/types.ts';
+import { describeModel, noModelError, resolveModel, type ModelInput, type ModelOptions } from '../model/resolve.ts';
+import { loadConfig, normalizeConfig, type AssayConfig } from '../config/config.ts';
 import { parseOutcomes, parseOutcomesDetailed, type Clause } from './outcomes.ts';
 import { stressTest, type FindingRef } from '../stress/stress.ts';
 import { findNodes, networkEntry, networkLog, outline, probesView, storageView, summary } from './explore.ts';
@@ -89,7 +91,19 @@ export interface Reference {
 }
 
 export interface CompileOptions {
-  model: ModelClient;
+  /**
+   * The model: a `ModelClient`, an AI SDK model, an adapter or a `'provider:model'` string
+   * (ADR 0017). Default: `model` from assay.config.ts.
+   */
+  model?: ModelInput;
+  /** How to drive and name the model (merged over the config's `modelOptions` when the model comes from it). */
+  modelOptions?: ModelOptions;
+  /**
+   * A config to take the model from when `model` is not given: an object or a file path
+   * (`loadConfig()` finds the project's). Default: none; compileTask never reads
+   * assay.config.* by itself.
+   */
+  config?: AssayConfig | string | false;
   /** "model" (default) asks the model for the rubric; "deterministic" makes one hard requirement per outcome clause. */
   rubric?: 'model' | 'deterministic';
   /**
@@ -135,6 +149,11 @@ export interface CompileReport {
   reason?: string;
   model: string;
   modelsUsed: string[];
+  /**
+   * How the model was driven, when a turn was not native tool calling (ADR 0017): absent
+   * means every turn used the provider's tools.
+   */
+  modes?: ModelMode[];
   turns: { rubric: number; discovery: number };
   usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number; cacheWriteTokens: number };
   coverage: RequirementCoverage[];
@@ -1159,7 +1178,25 @@ export function discoverySystem(refs: Reference[]): string {
   ].join('\n\n');
 }
 
-export async function compileTask(task: TaskInput, refs: Reference[], opts: CompileOptions): Promise<CompileResult> {
+/** The model input for a compile, not yet resolved: the given one, else the config's (ADR 0017). */
+async function compileModel(opts: CompileOptions): Promise<{ input: ModelInput; options: ModelOptions }> {
+  if (opts.model !== undefined) return { input: opts.model, options: opts.modelOptions ?? {} };
+  // Only a config passed in: compileTask never reads assay.config.* by itself (ADR 0017).
+  const config =
+    opts.config === undefined || opts.config === false
+      ? {}
+      : typeof opts.config === 'object'
+        ? normalizeConfig(opts.config, process.cwd(), 'config')
+        : (await loadConfig({ path: opts.config })).config;
+  if (config.model === undefined) throw noModelError('compileTask', 'pass `model`, or a `config` that sets one');
+  return { input: config.model, options: { ...config.modelOptions, ...opts.modelOptions } };
+}
+
+export async function compileTask(
+  task: TaskInput,
+  refs: Reference[],
+  opts: CompileOptions = {},
+): Promise<CompileResult> {
   // Tools select references by name (an enum in their schemas), so names must be unique.
   const seen = new Set<string>();
   for (const r of refs) {
@@ -1167,13 +1204,17 @@ export async function compileTask(task: TaskInput, refs: Reference[], opts: Comp
       throw new Error(`Duplicate reference name ${JSON.stringify(r.name)}; reference names must be unique.`);
     seen.add(r.name);
   }
+  // The model is resolved only once the inputs are known to be usable: a bad reference set is
+  // reported as such even when the model could not be loaded.
+  const { input, options } = await compileModel(opts);
   const log = opts.log ?? (() => {});
   const usage = { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheWriteTokens: 0 };
   const models = new Set<string>();
+  const modes = new Set<ModelMode>();
   const report: CompileReport = {
     task: task.id,
     status: 'failed',
-    model: opts.model.id,
+    model: describeModel(input, options),
     modelsUsed: [],
     turns: { rubric: 0, discovery: 0 },
     usage,
@@ -1188,6 +1229,9 @@ export async function compileTask(task: TaskInput, refs: Reference[], opts: Comp
     usage.cacheWriteTokens += run.usage.cacheWriteTokens;
     run.models.forEach((m) => models.add(m));
     report.modelsUsed = [...models];
+    run.modes.forEach((m) => modes.add(m));
+    // Only when a turn was not native tool calling, so earlier reports stay as they were.
+    if ([...modes].some((m) => m !== 'tools')) report.modes = [...modes];
   };
   const ignored = parseOutcomesDetailed(task.outcomes).ignored;
   const outcomeWarnings = ignored.length
@@ -1202,6 +1246,8 @@ export async function compileTask(task: TaskInput, refs: Reference[], opts: Comp
       report: { ...report, reason: 'Expected outcomes were given, but no outcome clause could be read from them.' },
     };
   }
+  const model = await resolveModel(input, options);
+  report.model = model.id;
 
   // 1. Rubric
   let requirements: Requirement[];
@@ -1213,7 +1259,7 @@ export async function compileTask(task: TaskInput, refs: Reference[], opts: Comp
     requirements = rubricFromClauses(task);
   } else {
     log(`${task.id}: rubric`);
-    const r = await modelRubric(task, opts.model, 6);
+    const r = await modelRubric(task, model, 6);
     add(r.run);
     report.turns.rubric = r.run.turns;
     if (!r.requirements) return { report: { ...report, reason: `Rubric step ended with ${r.run.status}.` } };
@@ -1237,7 +1283,7 @@ export async function compileTask(task: TaskInput, refs: Reference[], opts: Comp
     .filter(Boolean)
     .join('\n\n');
   const run = await runAgent<CheckSet>({
-    model: opts.model,
+    model,
     system: discoverySystem(refs),
     prompt,
     tools,
@@ -1252,7 +1298,7 @@ export async function compileTask(task: TaskInput, refs: Reference[], opts: Comp
     ...run.result,
     compiled: {
       compiler: ASSAY_VERSION,
-      model: opts.provenance?.model ?? opts.model.id,
+      model: opts.provenance?.model ?? model.id,
       modelsUsed: [...models],
       at: opts.provenance?.at ?? new Date().toISOString(),
     },

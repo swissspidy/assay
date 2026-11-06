@@ -1,6 +1,9 @@
 /**
  * `@swissspidy/assay`: verify task outcomes with compiled checks.
  *
+ * Configuration: `defineConfig` and `loadConfig` for assay.config.ts, and
+ * `resolveModel` for the three model forms (ADR 0017).
+ *
  * Other entry points: `/playwright` (live pages), `/compiler`, `/stress`,
  * `/models` (agent loop, cassettes, Anthropic adapter), `/ai-sdk` (Vercel AI SDK
  * adapter) and `/eval` (baselines and metrics).
@@ -71,3 +74,19 @@ export {
   type Observation,
 } from './verifier/verifier.ts';
 export * from './model/types.ts';
+export {
+  defineConfig,
+  loadConfig,
+  findConfig,
+  ConfigError,
+  CONFIG_FILES,
+  type AssayConfig,
+  type LoadedConfig,
+} from './config/config.ts';
+export {
+  resolveModel,
+  PROVIDERS,
+  type ModelInput,
+  type ModelOptions,
+  type LanguageModelLike,
+} from './model/resolve.ts';

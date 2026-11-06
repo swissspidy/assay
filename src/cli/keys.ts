@@ -4,6 +4,8 @@ import { basename, dirname, join } from 'node:path';
 import { CheckSetError, assertValidCheckSet, type CheckSet } from '../index.ts';
 import { pemBlocks, privateKeyOf, trustedKeySet, type TrustedKeySet } from '../verifier/sign.ts';
 import { CliError, readJson, readText, type Io, type Values } from './io.ts';
+import { readTrustedKeys, type AssayConfig } from '../config/config.ts';
+import { fromConfig } from './config.ts';
 
 /** The private key from `--key <file>`, else `$ASSAY_SIGNING_KEY` (PEM text); undefined for an unsigned lock. */
 export function signingKey(values: Values, env: Io['env']): string | undefined {
@@ -24,11 +26,14 @@ const keyName = (file: string) => basename(file).replace(/(\.pub)?\.pem$/, '');
 
 /**
  * Trusted public keys from `--trusted-key` (a PEM file, which may hold several keys, or a
- * directory of `.pem` files; repeatable) and `$ASSAY_TRUSTED_KEYS` (PEM text). A key is
- * reported by its file name. Undefined when there are none.
+ * directory of `.pem` files; repeatable) and `$ASSAY_TRUSTED_KEYS` (PEM text); without
+ * either, the config's `trustedKeys`. A key is reported by its file name. Undefined when
+ * there are none.
  */
-export function trustedKeys(values: Values, env: Io['env']): TrustedKeySet | undefined {
+export function trustedKeys(values: Values, env: Io['env'], config: AssayConfig = {}): TrustedKeySet | undefined {
   const keys: { name?: string; key: string }[] = [];
+  if (!(values['trusted-key'] as string[] | undefined)?.length && !env.ASSAY_TRUSTED_KEYS && config.trustedKeys?.length)
+    keys.push(...fromConfig(() => readTrustedKeys(config.trustedKeys!)));
   for (const path of (values['trusted-key'] as string[] | undefined) ?? []) {
     if (!existsSync(path)) throw new CliError(`trusted key not found: ${path}`);
     const files = statSync(path).isDirectory()

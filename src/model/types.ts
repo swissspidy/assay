@@ -46,6 +46,14 @@ export interface ModelRequest {
 
 export type StopReason = 'end_turn' | 'tool_use' | 'max_tokens' | 'refusal' | 'other';
 
+/**
+ * How a turn drove the model: `tools` is the provider's native tool calling; `json` is
+ * JSON-mode prompting for models without it (the tools are described in the system
+ * prompt, the reply is parsed as a tool call and validated against the tool's schema,
+ * with one repair retry). See ADR 0017.
+ */
+export type ModelMode = 'tools' | 'json';
+
 export interface ModelTurn {
   stop: StopReason;
   text: string;
@@ -59,12 +67,25 @@ export interface ModelTurn {
   usage: { inputTokens: number; outputTokens: number; cacheReadTokens?: number; cacheWriteTokens?: number };
   /** The model that actually produced the turn (may differ after a server-side fallback). */
   model: string;
+  /** How the model was driven for this turn; absent means `tools` (every turn recorded before ADR 0017). */
+  mode?: ModelMode;
+}
+
+/** What a model can do, as an adapter declares it. */
+export interface ModelCapabilities {
+  /**
+   * Native tool calling. `false` makes Assay drive the adapter in JSON mode: its requests
+   * then carry no tools, and only text and earlier replies (ADR 0017). Default true.
+   */
+  tools?: boolean;
 }
 
 export interface ModelClient {
   /** Stable identifier recorded in outcome records, e.g. "anthropic:claude-opus-5-5". */
   readonly id: string;
   turn(request: ModelRequest): Promise<ModelTurn>;
+  /** What the model supports; omitted means native tool calling. */
+  readonly capabilities?: ModelCapabilities;
 }
 
 export class ModelError extends Error {

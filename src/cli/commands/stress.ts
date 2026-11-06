@@ -13,6 +13,7 @@ import {
   type Invocation,
   type Io,
 } from '../io.ts';
+import { cliConfig } from '../config.ts';
 
 /** The findings that make the command fail: everything but advisories and untested checks. */
 export function problems(r: StressReport): string[] {
@@ -47,9 +48,13 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
   if (dup) throw new CliError(`two references are named "${dup.name}"`);
   if (!refs.length) throw new CliError('no correct reference run (runs labelled "fail" are skipped)');
 
+  // Flags win over the config's `stress` defaults.
+  const defaults = (await cliConfig(values, io)).config.stress ?? {};
+  const skip = values['skip-variants'] as string | undefined;
+  const claims = (values.claims as boolean | undefined) ?? defaults.successClaims;
   const report = stressTest(cs, refs, {
-    skipVariants: list(values['skip-variants'] as string | undefined),
-    ...(values.claims === false ? { successClaims: false } : {}),
+    skipVariants: skip !== undefined ? list(skip) : (defaults.skipVariants ?? []),
+    ...(claims === false ? { successClaims: false } : {}),
   });
   const found = problems(report);
   if (values.json) {

@@ -16,6 +16,7 @@ import {
   type Io,
 } from '../io.ts';
 import { selectModel } from '../model.ts';
+import { cliConfig } from '../config.ts';
 
 const isFile = (p: string) => existsSync(p) && statSync(p).isFile();
 const LOOKS_LIKE_PATH = /\.(json|md|txt|feature)$/i;
@@ -115,11 +116,12 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
   }
   const task = resolveTask(positionals[0]!, values);
   const refs = references(values);
-  const model = await selectModel(values, io.env);
+  const model = await selectModel(values, io.env, await cliConfig(values, io), 'compile');
   if (values.verbose) io.err(`Compiling ${task.id} with ${model.model.id} (${model.mode})`);
 
   const { checkSet, report } = await compileTask(task, refs, {
     model: model.model,
+    config: false,
     ...(model.provenance ? { provenance: model.provenance } : {}),
     ...(rubric ? { rubric } : {}),
     ...(values.verbose ? { log: (m: string) => io.err(m) } : {}),
