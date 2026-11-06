@@ -15,9 +15,10 @@ import { CheckSetError, validateCheckSet, type ValidationReport } from '../dsl/v
 import { checkSetDigest } from '../snapshot/digest.ts';
 import { verifyLock, type LockCheckOptions, type LockStatus } from '../verifier/lock.ts';
 import { keyId, trustedKeySet, type TrustedKeySet } from '../verifier/sign.ts';
-import { buildStore, type EvidenceStore } from '../store/store.ts';
+import { buildStore, changedKeys, type EvidenceStore } from '../store/store.ts';
+import { regularTree } from '../store/ax.ts';
 import { abstain, compileAssertion, kleeneAnd, type EvalCtx, type Run, type Seq } from './assertions.ts';
-import { readSetOf, unionReadSets, type ReadSet } from './readset.ts';
+import { readKeys, readsChanged, readSetOf, unionReadSets, type ReadKey, type ReadSet } from './readset.ts';
 import { once } from '../runtime/once.ts';
 
 /** One check of a plan. */
@@ -27,6 +28,11 @@ export interface PlannedCheck {
   readonly run: () => Run;
   /** What the check can read (see `ReadSet`). */
   readonly readSet: ReadSet;
+  /**
+   * The parts of a snapshot the check's result depends on (`readKeys`); null when that
+   * cannot be told (an unknown kind, or a check too malformed to describe): all of it.
+   */
+  readonly reads: ReadonlySet<ReadKey> | null;
 }
 
 export class CheckPlan {
@@ -47,11 +53,21 @@ export class CheckPlan {
     this.checksOf = once(() =>
       checkSet.checks.map((check) => {
         const readSet = once(() => readSetOf(check.assert));
+        const reads = once(() => {
+          try {
+            return readKeys(readSet());
+          } catch {
+            return null;
+          }
+        });
         return {
           check,
           run: once(() => compileAssertion(check.assert)),
           get readSet() {
             return readSet();
+          },
+          get reads() {
+            return reads();
           },
         };
       }),
@@ -143,6 +159,26 @@ function contexts(store: EvidenceStore): [EvalCtx, EvalCtx] {
   return [ctx, { ...ctx, routeMissing: true }];
 }
 
+/** `contexts`, with the tree indexed when a check first reads it. */
+function lazyContexts(store: EvidenceStore): [EvalCtx, EvalCtx] {
+  const snapshot = store.snapshot;
+  return [
+    {
+      snapshot,
+      get index() {
+        return store.ax;
+      },
+    },
+    {
+      snapshot,
+      routeMissing: true,
+      get index() {
+        return store.ax;
+      },
+    },
+  ];
+}
+
 function checkResult(c: PlannedCheck, [ctx, routed]: [EvalCtx, EvalCtx]): CheckResult {
   const check = c.check;
   let r: AssertionResult;
@@ -195,6 +231,63 @@ export function runPlan(plan: CheckPlan, store: EvidenceStore, opts: EvaluateOpt
   const ctxs = contexts(store);
   const checks = plan.checks.map((c) => checkResult(c, ctxs));
   return outcomeOf(plan, store, checks, opts);
+}
+
+/**
+ * A plan run on one store whose check results are computed on demand, each once (ADR 0016).
+ *
+ * With a `base` run, the store is an overlay on the base's: its snapshot was made from the
+ * base's by replacing some parts and sharing the others by identity, as the stress test's
+ * variants and mutants are. A check that reads none of the replaced parts (`readKeys`,
+ * `changedKeys`) takes the base's result for it; only the others run here. Every result
+ * equals what `runPlan(plan, store)` gives for that check, and `outcome()` equals its outcome.
+ */
+export class PlanRun {
+  readonly plan: CheckPlan;
+  readonly store: EvidenceStore;
+  private readonly base?: PlanRun;
+  /** What the store replaced of the base's snapshot; null: compare nothing, run every check. */
+  private readonly changed: ReadonlySet<string> | null;
+  private readonly ctxs: [EvalCtx, EvalCtx];
+  private readonly results: (CheckResult | undefined)[];
+
+  constructor(plan: CheckPlan, store: EvidenceStore, base?: PlanRun) {
+    this.plan = plan;
+    this.store = store;
+    this.changed = base && base.plan === plan ? changedKeys(base.store.snapshot, store.snapshot) : null;
+    if (this.changed) this.base = base;
+    // runPlan indexes the tree before any check runs, so a tree that cannot be indexed throws
+    // there. An overlay whose tree is the base's, or regular (which always indexes), indexes
+    // it when a check first reads it: a mutant whose checks read other evidence never does.
+    const lazy = !!this.changed && (!this.changed.has('a11y') || regularTree(store.snapshot.a11y));
+    this.ctxs = lazy ? lazyContexts(store) : contexts(store);
+    this.results = Array.from({ length: plan.checks.length });
+  }
+
+  /** The result of the plan's check `i`. */
+  check(i: number): CheckResult {
+    let r = this.results[i];
+    if (!r) {
+      const c = this.plan.checks[i]!;
+      const reads = c.reads;
+      r =
+        this.base && reads !== null && !readsChanged(reads, this.changed!)
+          ? this.base.check(i)
+          : checkResult(c, this.ctxs);
+      this.results[i] = r;
+    }
+    return r;
+  }
+
+  /** The outcome: `runPlan(plan, store, opts)`. */
+  outcome(opts: EvaluateOptions = {}): Outcome {
+    return outcomeOf(
+      this.plan,
+      this.store,
+      this.plan.checks.map((_, i) => this.check(i)),
+      opts,
+    );
+  }
 }
 
 /**

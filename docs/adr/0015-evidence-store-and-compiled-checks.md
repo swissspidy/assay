@@ -167,12 +167,14 @@ time spent on that run's checks.
 
 ### 5. Out of scope, for later PRs
 
-- **Overlay (delta) stress.** A variant or mutant becomes an overlay on its reference's store: the
-  edited rows and sections, with everything else shared. Only the checks whose read-sets the edit
-  touches are re-evaluated. Today every variant is a `structuredClone` of the whole snapshot with
-  its own store.
+- **Overlay (delta) stress.** Done in [ADR 0016](0016-overlay-stress-and-capture-digests.md): a
+  variant or mutant shares every part of its reference it does not change (sections, subtrees,
+  entries and bodies, by identity), and only the checks whose read keys an edit touches run again.
+  An overlay at the level of the tree's rows (an index that copies the base's rows for shared
+  subtrees) is still open. ADR 0016 also takes the snapshot digest at capture time.
 - **Scoped capture.** Capture only the union of a check set's read-sets (no full network log or
-  tree when the checks read three requests and a probe).
+  tree when the checks read three requests and a probe). Still open; see ADR 0016 for why it needs
+  its own opt-in format.
 - **Binary on-disk format.** A store serialized as one file:
   - a header, then the string table (UTF-8, offsets), then each column as a little-endian typed
     array, aligned;

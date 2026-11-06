@@ -24,7 +24,7 @@ import { AXIndex, readNodeField, resolveTarget, type INode } from '../runtime/ax
 import { applyNormalizers, describeValue, zoneOffset, type TypedValue } from '../runtime/values.ts';
 import { compareValues } from '../runtime/compare.ts';
 import { canonical, stripGlobal } from '../text.ts';
-import { clone, editById, replaceText, treeChanged } from './edit.ts';
+import { clone, editById, replaceText, sameJson, treeChanged } from './edit.ts';
 import { PRECISIONS, fromScalar, readSpan, readTyped, rewriteValue, scalarOf, snapTo, timezoneOf } from './mutants.ts';
 
 export interface Variant {
@@ -254,8 +254,50 @@ function addFields(v: Json): Json {
   if (v && typeof v === 'object' && !Array.isArray(v)) {
     return isRecordLike(v) ? v : { ...v, _links: { self: '/x' }, requestId: 'r-123' };
   }
-  if (Array.isArray(v)) return v.map(addFields);
+  if (Array.isArray(v)) return mapItems(v, addFields);
   return v;
+}
+
+/**
+ * The JSON-transforming variants below return their input wherever they change nothing
+ * (ADR 0016): the variant shares those parts with the reference, and comparing it with
+ * the reference (`sameJson`) skips them.
+ */
+
+/** `v.map(fn)`, or `v` itself when `fn` returns every item unchanged. */
+function mapItems(v: Json[], fn: (x: Json) => Json): Json[] {
+  let out: Json[] | undefined;
+  for (let i = 0; i < v.length; i++) {
+    if (!(i in v)) return v.map(fn); // a sparse array: as map does
+    const x = v[i]!;
+    const y = fn(x);
+    if (y !== x && !out) out = v.slice(0, i);
+    if (out) out.push(y);
+  }
+  return out ?? v;
+}
+
+/** `Object.fromEntries(Object.entries(v).map(([k, x]) => [k, fn(x)]))`, or `v` itself when nothing changed. */
+function mapFields(v: { [key: string]: Json }, fn: (x: Json) => Json): Json {
+  const keys = Object.keys(v);
+  let out: { [key: string]: Json } | undefined;
+  for (let i = 0; i < keys.length; i++) {
+    const x = v[keys[i]!]!;
+    const y = fn(x);
+    if (y !== x && !out) {
+      out = {};
+      for (let j = 0; j < i; j++) put(out, keys[j]!, v[keys[j]!]!);
+    }
+    if (out) put(out, keys[i]!, y);
+  }
+  return out ?? v;
+}
+
+/** `o[k] = x` as a data property, as Object.fromEntries defines it (also for `__proto__`). */
+function put(o: { [key: string]: Json }, k: string, x: Json): void {
+  if (k === '__proto__')
+    Object.defineProperty(o, k, { value: x, writable: true, enumerable: true, configurable: true });
+  else o[k] = x;
 }
 
 const isObj = (v: Json | undefined): v is Json => v !== undefined && v !== null && typeof v === 'object';
@@ -264,7 +306,7 @@ function mapBodies(s: EvidenceSnapshot, fn: (v: Json) => Json): EvidenceSnapshot
   let changed = false;
   const apply = (v: Json) => {
     const out = fn(v);
-    if (JSON.stringify(out) !== JSON.stringify(v)) changed = true;
+    if (!changed && !sameJson(out, v)) changed = true;
     return out;
   };
   const network = s.network?.map((e) => ({
@@ -287,17 +329,24 @@ function mapBodies(s: EvidenceSnapshot, fn: (v: Json) => Json): EvidenceSnapshot
 
 const reverseArrays = (v: Json): Json =>
   Array.isArray(v)
-    ? v.map(reverseArrays).toReversed()
+    ? v.length < 2
+      ? mapItems(v, reverseArrays)
+      : v.map(reverseArrays).toReversed()
     : v && typeof v === 'object'
-      ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, reverseArrays(x)]))
+      ? mapFields(v, reverseArrays)
       : v;
+
+const reverseInArray = (x: Json) => reverseNested(x, true);
+const reverseOutside = (x: Json) => reverseNested(x, false);
 
 /** Arrays inside an array's items (each line's options, each record's tags) reversed; the outer arrays keep their order. */
 const reverseNested = (v: Json, inArray = false): Json =>
   Array.isArray(v)
-    ? ((xs: Json[]) => (inArray ? xs.toReversed() : xs))(v.map((x) => reverseNested(x, true)))
+    ? inArray && v.length >= 2
+      ? v.map(reverseInArray).toReversed()
+      : mapItems(v, reverseInArray)
     : v && typeof v === 'object'
-      ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, reverseNested(x, inArray)]))
+      ? mapFields(v, inArray ? reverseInArray : reverseOutside)
       : v;
 
 /**
@@ -313,7 +362,8 @@ function nestedArrayOrder(s: EvidenceSnapshot): EvidenceSnapshot | null {
     ? { ...out.baseline, storage: mapStorageJson(out.baseline.storage, reverseNested) }
     : undefined;
   const next = { ...out, storage, ...(baseline ? { baseline } : {}) };
-  return JSON.stringify(next) === JSON.stringify(s) ? null : next;
+  // As JSON.stringify(next) === JSON.stringify(s), comparing only what was rebuilt.
+  return sameJson(next, s) ? null : next;
 }
 
 /** Local and session storage with `fn` applied to every value that is JSON text of an object or array. */
@@ -365,7 +415,7 @@ function networkNoise(s: EvidenceSnapshot): EvidenceSnapshot | null {
   for (const e of s.network
     .filter((x) => x.method === 'GET' && x.resourceType === 'fetch' && x.status === 200)
     .slice(0, 3)) {
-    extra.push({ ...clone(e), seq: seq++ });
+    extra.push({ ...e, seq: seq++ });
   }
   return { ...s, network: [...s.network, ...extra] };
 }
@@ -378,7 +428,7 @@ function retry(s: EvidenceSnapshot): EvidenceSnapshot | null {
   let changed = false;
   for (const e of s.network) {
     if (e.method !== 'GET' && e.status !== null && e.status < 400) {
-      out.push({ ...clone(e), seq: seq++, status: 503, responseBody: { error: 'Service Unavailable' } });
+      out.push({ ...e, seq: seq++, status: 503, responseBody: { error: 'Service Unavailable' } });
       changed = true;
     }
     out.push({ ...e, seq: seq++ });
@@ -596,11 +646,15 @@ function formattingVariants(cs: CheckSet, s: EvidenceSnapshot, idx: AXIndex): Va
         for (const [i, alt] of formatsFor(typed, span, locale, timezoneOf(normalize)).entries()) {
           if (alt === span) continue;
           const next = raw.replace(span, () => alt);
-          const snap = editById(s, (n, id) => {
-            if (id !== target) return undefined;
-            if (field === 'value' || field === 'url') return { ...n, [field]: next };
-            return replaceText(n, span, alt) ?? undefined;
-          });
+          const snap = editById(
+            s,
+            (n, id) => {
+              if (id !== target) return undefined;
+              if (field === 'value' || field === 'url') return { ...n, [field]: next };
+              return replaceText(n, span, alt) ?? undefined;
+            },
+            [target],
+          );
           if (!treeChanged(s, snap)) continue; // the value spans several text runs: no faithful edit
           // Several value assertions (or records of an each) can read the same check's values.
           let id = `format:${c.id}:${k ? 'sameAs:' : ''}${i}`;
@@ -732,7 +786,7 @@ export function generateVariants(cs: CheckSet, s: EvidenceSnapshot): Variant[] {
     ...generic
       .filter((g): g is [string, string, EvidenceSnapshot] => g[2] !== null)
       .map(([id, description, snapshot]) => ({ id, description, snapshot })),
-    ...formattingVariants(cs, s, new AXIndex(s.a11y)),
-    ...toleranceVariants(cs, s, new AXIndex(s.a11y)),
+    ...formattingVariants(cs, s, AXIndex.of(s.a11y)),
+    ...toleranceVariants(cs, s, AXIndex.of(s.a11y)),
   ];
 }

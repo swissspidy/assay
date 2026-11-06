@@ -4,7 +4,8 @@
  * rejection rates, over-constrained, fragile and weak checks.
  */
 import type { CheckSet, EvidenceSnapshot, Outcome, Status } from '../types.ts';
-import { evaluate } from '../runtime/evaluate.ts';
+import { compileChecks, PlanRun } from '../plan/plan.ts';
+import { buildStore } from '../store/store.ts';
 import { generateVariants } from './variants.ts';
 import { generateMutants, withSuccessClaim, type Mutant } from './mutants.ts';
 
@@ -110,14 +111,30 @@ const finding = (c: Outcome['checks'][number]): CheckFinding => ({
   message: c.message,
 });
 
-export function stressTest(cs: CheckSet, refs: StressReference[], opts: StressOptions = {}): StressReport {
-  const skip = new Set(opts.skipVariants ?? []);
+export function stressTest(cs: CheckSet, refs: StressReference[], options: StressOptions = {}): StressReport {
+  const skip = new Set(options.skipVariants ?? []);
   const variants: VariantResult[] = [];
   const mutants: MutantResult[] = [];
-  const run = (s: EvidenceSnapshot) => evaluate(cs, s, { digests: false });
+  const plan = compileChecks(cs);
+  const opts = { digests: false };
+  // Checks of hard requirements: one of them failing makes the verdict fail.
+  const hard = new Set(cs.requirements.filter((r) => r.kind === 'hard').map((r) => r.id));
+  // A check the read-sets cannot describe runs on every mutant, as it always did (it may throw).
+  const describable = plan.checks.every((c) => c.reads !== null);
+  /** Whether a check of a hard requirement fails, trying the mutant's target check `t` first. */
+  const failsHard = (run: PlanRun, t: number): boolean => {
+    const fails = (i: number) => run.check(i).status === 'fail' && hard.has(plan.checks[i]!.check.requirement);
+    if (t >= 0 && fails(t)) return true;
+    for (let i = 0; i < plan.checks.length; i++) if (i !== t && fails(i)) return true;
+    return false;
+  };
 
   for (const reference of refs) {
-    const base = run(reference.snapshot);
+    // Variants and mutants are overlays on their reference: they replace a few parts of its
+    // snapshot and share the rest, so only the checks that read a replaced part run again
+    // (ADR 0016). A success claim is an overlay on its mutant.
+    const refRun = new PlanRun(plan, buildStore(reference.snapshot));
+    const base = refRun.outcome(opts);
     const baseStatus = new Map(base.checks.map((c) => [c.check, c.status] as const));
     if (base.verdict !== 'success') {
       // A correct run the checks reject is the strongest over-constraint evidence;
@@ -134,7 +151,7 @@ export function stressTest(cs: CheckSet, refs: StressReference[], opts: StressOp
     }
     for (const v of generateVariants(cs, reference.snapshot)) {
       if (skip.has(v.id.split(':')[0]!)) continue;
-      const o = run(v.snapshot);
+      const o = new PlanRun(plan, buildStore(v.snapshot), refRun).outcome(opts);
       const worse = o.checks.filter((c) => RANK[c.status] < RANK[baseStatus.get(c.check) ?? 'pass']);
       variants.push({
         reference: reference.name,
@@ -146,33 +163,48 @@ export function stressTest(cs: CheckSet, refs: StressReference[], opts: StressOp
       });
     }
 
-    const judge = (m: Mutant, claim: boolean): MutantResult => {
-      const o = run(m.snapshot);
-      const target = m.check ? o.checks.find((c) => c.check === m.check) : undefined;
-      const reqStatus = target ? o.requirements.find((r) => r.requirement === target.requirement)?.status : undefined;
-      const rejected = o.verdict !== 'success' || (reqStatus !== undefined && reqStatus !== 'pass');
-      const by = !rejected
-        ? undefined
-        : o.verdict === 'fail' || reqStatus === 'fail'
-          ? ('fail' as const)
-          : ('abstain' as const);
-      return {
+    const judge = (m: Mutant, claim: boolean, over: PlanRun): { result: MutantResult; run: PlanRun } => {
+      const run = new PlanRun(plan, buildStore(m.snapshot), over);
+      const t = m.check ? plan.checks.findIndex((c) => c.check.id === m.check) : -1;
+      let verdict: Outcome['verdict'];
+      let target: Outcome['checks'][number] | undefined;
+      let rejected: boolean;
+      let by: 'fail' | 'abstain' | undefined;
+      if (describable && failsHard(run, t)) {
+        // A failing check of a hard requirement decides: the verdict is fail whatever the
+        // other checks say, so they need not run (the full outcome would say the same).
+        verdict = 'fail';
+        target = t >= 0 ? run.check(t) : undefined;
+        rejected = true;
+        by = 'fail';
+      } else {
+        const o = run.outcome(opts);
+        verdict = o.verdict;
+        const found = m.check ? o.checks.find((c) => c.check === m.check) : undefined;
+        target = found;
+        const reqStatus = found ? o.requirements.find((r) => r.requirement === found.requirement)?.status : undefined;
+        rejected = o.verdict !== 'success' || (reqStatus !== undefined && reqStatus !== 'pass');
+        by = !rejected ? undefined : o.verdict === 'fail' || reqStatus === 'fail' ? 'fail' : 'abstain';
+      }
+      const result: MutantResult = {
         reference: reference.name,
         id: m.id,
         ...(m.check ? { check: m.check } : {}),
         description: m.description,
         advisory: !!m.advisory,
         claim,
-        verdict: o.verdict,
+        verdict,
         rejected,
         ...(by ? { rejectedBy: by } : {}),
         ...(target ? { targetStatus: target.status } : {}),
       };
+      return { result, run };
     };
     for (const m of generateMutants(cs, reference.snapshot)) {
-      const r = judge(m, false);
+      const { result: r, run } = judge(m, false, refRun);
       mutants.push(r);
-      if (opts.successClaims !== false && !m.advisory && r.rejected) mutants.push(judge(withSuccessClaim(m), true));
+      if (options.successClaims !== false && !m.advisory && r.rejected)
+        mutants.push(judge(withSuccessClaim(m), true, run).result);
     }
   }
 
