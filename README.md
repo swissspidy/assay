@@ -254,8 +254,12 @@ Design details: [ADR 0001](docs/adr/0001-evidence-snapshot-and-check-dsl.md).
    variants, and puts the best through the same acceptance gate. Requirements mining settles need
    no discovery turn; the agent is asked only for the rest, with the mined candidates as hints.
    `discovery: 'mine-only'` never asks for checks, and with `rubric: 'deterministic'` runs no model
-   at all; it fails with a reason per requirement it cannot cover. Mining is conservative: a quote
-   about the page, "all", "only", "no longer" or "add" stays with the model
+   at all; it fails with a reason per requirement it cannot cover. Mining is conservative: a mined
+   check settles a requirement only when its evidence accounts for every word of the quote. A
+   quote about the page is settled by page evidence that does (a checked "Newsletter" checkbox for
+   "the newsletter checkbox is checked"), not by a URL or a stored value; "all", "only", "no
+   longer" or "add", a request whose only answer was a redirect, and wording no single piece of evidence
+   accounts for ("the cart page lists …") stay with the model
    ([ADR 0020](docs/adr/0020-mining-first-compiler.md)).
 
    Correct references that did the task in different ways (give each a `note`, e.g.

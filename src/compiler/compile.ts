@@ -1602,5 +1602,5 @@ function openReason(
   if (best.unexplained.length)
     return `${n}: the best (${best.id}, ${best.family}) does not account for ${best.unexplained.map((w) => JSON.stringify(w)).join(', ')}`;
   if (best.baseline === 'pass') return `${n}: the baseline already passes the best (${best.id})`;
-  return `${n}: the best (${best.id}, ${best.family}) only shows that something is present, and no incorrect reference fails it`;
+  return `${n}: the best (${best.id}, ${best.family}) only shows that something is present or that a request was sent, and no incorrect reference fails it`;
 }

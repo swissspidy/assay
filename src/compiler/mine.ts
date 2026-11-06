@@ -128,11 +128,15 @@ const QUANT = new Set(
 /** Verbs that add to a collection, which keeps what it held (ADR 0011). */
 const ADDS = new Set('add adds added adding put puts append appends insert inserts'.split(' '));
 
-/** Words about what the page presents: accounted for by evidence read from the page (tree or URL). */
+/** Words about which page is open: accounted for by evidence read from the page (tree or URL). */
+const PAGE = new Set('page pages screen view'.split(' '));
+
+/**
+ * Words about what the page presents: accounted for by the tree only. Words naming a kind of
+ * element ("button", "checkbox", "heading") are in neither set: the evidence's role names them.
+ */
 const PRESENT = new Set(
-  'page pages show shows shown showing list lists listed display displays displayed visible see seen screen view checkbox button heading link tab field form menu'.split(
-    ' ',
-  ),
+  'show shows shown showing list lists listed display displays displayed visible see seen'.split(' '),
 );
 
 const NUMBER_WORDS: Record<string, number> = {
@@ -190,6 +194,21 @@ export function stem(word: string): string {
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
+/** Words that negate what follows ("not", "no longer", "un…", "remove", "off"). */
+const NEGATION = /\b(?:not|never|neither|nor|no longer|without|remove[sd]?|delete[sd]?|off)\b|n['’]t\b/i;
+const negates = (text: string, words: string[]) =>
+  NEGATION.test(text) || words.some((w) => /^un[a-z]{3,}/.test(w) && !/^(?:under|until|unit|unique|universal)/.test(w));
+
+/** Where a quote's conditions part ("…, but …", "… and …", "…; …"): each negates on its own. */
+const CLAUSE = /[,;]|\b(?:and|but|while|whereas)\b/i;
+
+/** One condition of a quote: its words, and whether it negates. */
+interface Clause {
+  text: string;
+  words: string[];
+  negated: boolean;
+}
+
 /** What a requirement's quote names: its words, their stems, numbers, dates and times. */
 export class Quote {
   readonly text: string;
@@ -202,34 +221,84 @@ export class Quote {
   readonly dates: Set<string>;
   /** Times the quote spells out, as HH:MM. */
   readonly times: Set<string>;
-  /** The quote negates something ("not", "no longer", "un…", "remove"): booleans and states flip. */
+  /** The quote negates something ("not", "no longer", "un…", "remove"); see `clauses` for which condition. */
   readonly negated: boolean;
+  /** The quote's conditions, each with its own negation: booleans and states flip per condition. */
+  readonly clauses: Clause[];
+  /** How often the quote states each number, identifier, date and time (as `facts` writes them). */
+  private readonly factCounts: Map<string, number>;
 
   constructor(quote: string) {
     this.text = canonical(quote);
     this.words = tokens(quote);
     this.wordSet = new Set(this.words);
+    this.factCounts = new Map();
+    const count = (fact: string) => this.factCounts.set(fact, (this.factCounts.get(fact) ?? 0) + 1);
     this.numbers = new Set();
-    for (const w of this.words) if (w in NUMBER_WORDS) this.numbers.add(NUMBER_WORDS[w]!);
-    this.ids = new Set([...this.text.matchAll(/#(\d+)\b/g)].map((m) => Number(m[1])));
+    for (const w of this.words)
+      if (w in NUMBER_WORDS) {
+        this.numbers.add(NUMBER_WORDS[w]!);
+        count(`#num:${NUMBER_WORDS[w]!}`);
+      }
+    this.ids = new Set();
+    for (const m of this.text.matchAll(/#(\d+)\b/g)) {
+      this.ids.add(Number(m[1]));
+      count(`#num:${Number(m[1])}`);
+    }
     this.dates = new Set();
+    const date = (d: string) => (this.dates.add(d), count(`#date:${d}`));
     const lower = this.text.toLowerCase();
     const month = `(${MONTHS.join('|')})`;
     for (const m of lower.matchAll(new RegExp(`\\b${month}\\s+(\\d{1,2})(?:st|nd|rd|th)?,?\\s+(\\d{4})\\b`, 'g')))
-      this.dates.add(`${m[3]}-${pad(MONTHS.indexOf(m[1]!) + 1)}-${pad(Number(m[2]))}`);
+      date(`${m[3]}-${pad(MONTHS.indexOf(m[1]!) + 1)}-${pad(Number(m[2]))}`);
     for (const m of lower.matchAll(new RegExp(`\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+${month},?\\s+(\\d{4})\\b`, 'g')))
-      this.dates.add(`${m[3]}-${pad(MONTHS.indexOf(m[2]!) + 1)}-${pad(Number(m[1]))}`);
-    for (const m of lower.matchAll(/\b(\d{4})-(\d{2})-(\d{2})\b/g)) this.dates.add(`${m[1]}-${m[2]}-${m[3]}`);
-    this.times = new Set([...lower.matchAll(/\b(\d{1,2}):(\d{2})\b/g)].map((m) => `${pad(Number(m[1]))}:${m[2]}`));
+      date(`${m[3]}-${pad(MONTHS.indexOf(m[2]!) + 1)}-${pad(Number(m[1]))}`);
+    for (const m of lower.matchAll(/\b(\d{4})-(\d{2})-(\d{2})\b/g)) date(`${m[1]}-${m[2]}-${m[3]}`);
+    this.times = new Set();
+    for (const m of lower.matchAll(/\b(\d{1,2}):(\d{2})\b/g)) {
+      const t = `${pad(Number(m[1]))}:${m[2]}`;
+      this.times.add(t);
+      count(`#time:${t}`);
+    }
     // Numbers outside identifiers (#n), dates and times: a quantity, a price, a count.
     const plain = lower
       .replace(new RegExp(`\\b${month}\\s+\\d{1,2}(?:st|nd|rd|th)?,?\\s+\\d{4}\\b`, 'g'), ' ')
       .replace(new RegExp(`\\b\\d{1,2}(?:st|nd|rd|th)?\\s+${month},?\\s+\\d{4}\\b`, 'g'), ' ')
       .replace(/\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}:\d{2}\b|#\d+/g, ' ');
-    for (const m of plain.matchAll(/(?<![\p{L}\d.])(\d+(?:\.\d+)?)(?![\p{L}\d])/gu)) this.numbers.add(Number(m[1]));
-    this.negated =
-      /\b(?:not|never|no longer|without|remove[sd]?|delete[sd]?|off)\b|n['’]t\b/i.test(this.text) ||
-      this.words.some((w) => /^un[a-z]{3,}/.test(w) && !/^(?:under|until|unit|unique|universal)/.test(w));
+    for (const m of plain.matchAll(/(?<![\p{L}\d.])(\d+(?:\.\d+)?)(?![\p{L}\d])/gu)) {
+      this.numbers.add(Number(m[1]));
+      count(`#num:${Number(m[1])}`);
+    }
+    this.negated = negates(this.text, this.words);
+    this.clauses = this.text
+      .split(CLAUSE)
+      .map((text) => ({ text, words: tokens(text) }))
+      .filter((c) => c.words.length)
+      .map((c) => ({ ...c, negated: negates(c.text, c.words) }));
+  }
+
+  /** How many times the quote states a fact (`#num:2`, `#date:…`, `#time:…`). */
+  factCount(fact: string): number {
+    return this.factCounts.get(fact) ?? 0;
+  }
+
+  /**
+   * Whether the quote affirms (true) or negates (false) the condition on a field with these
+   * words, decided by the conditions that name most of them ("notifications are not enabled
+   * and the newsletter is enabled": `newsletterEnabled` is affirmed); undefined when no
+   * condition names one, or the ones that do disagree.
+   */
+  polarity(words: string[]): boolean | undefined {
+    const named = words.filter((w) => this.namesWord(w));
+    if (!named.length) return undefined;
+    const hits = this.clauses.map((c) => ({
+      c,
+      n: named.filter((w) => c.words.some((x) => !STOP.has(x) && sameWord(x, w.toLowerCase()))).length,
+    }));
+    const most = Math.max(...hits.map((h) => h.n));
+    if (most === 0) return undefined;
+    const polarities = new Set(hits.filter((h) => h.n === most).map((h) => !h.c.negated));
+    return polarities.size === 1 ? [...polarities][0] : undefined;
   }
 
   /** The quote contains `words` as a contiguous run of its words (each the same word or an inflection). */
@@ -412,12 +481,14 @@ interface NamedLeaf {
 const esc = (k: string) => k.replace(/~/g, '~0').replace(/\//g, '~1');
 const isObj = (v: Json | undefined): v is { [k: string]: Json } => !!v && typeof v === 'object' && !Array.isArray(v);
 
-/** Whether the quote names the scalar `v` stored under field `key` (booleans: the field name is a quoted word). */
+/**
+ * Whether the quote names the scalar `v` stored under field `key` (booleans: the field name
+ * is a quoted word, and `v` is what the condition naming it says: false when it negates).
+ */
 function namedScalar(q: Quote, key: string | undefined, v: Json): boolean {
   if (typeof v === 'string') return v.length <= 200 && q.namesString(v);
   if (typeof v === 'number') return Number.isFinite(v) && q.namesNumber(v, !!key && ID_KEY.test(key));
-  if (typeof v === 'boolean')
-    return !!key && keyWords(key).some((w) => q.namesWord(w)) && v === !q.negated && !ID_KEY.test(key);
+  if (typeof v === 'boolean') return !!key && !ID_KEY.test(key) && q.polarity(keyWords(key)) === v;
   return false;
 }
 
@@ -516,13 +587,25 @@ const CONTROLS = new Set([
 const MUTATING = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 const ID_SEGMENT = /^(?:\d+|[0-9a-f]{8,}|[0-9a-f-]{32,36}|[A-Z0-9]{8,})$/;
 
-/** State words of a quote, as a control's expected state (flipped by a negation). */
-function statedState(q: Quote, role: string): StateExpect | undefined {
-  const has = (...w: string[]) => w.some((x) => q.words.includes(x));
-  const neg = q.negated;
+/**
+ * "on" or "off" as a switch's state: after "turn", "switched" or "toggled", or ending the
+ * condition ("the switch is on"). Not a place ("visible on the Settings page", "the Newsletter
+ * switch on the Settings page").
+ */
+const ON_OFF = /\b(?:turn(?:s|ed|ing)?|switched|toggled)\s+(on|off)\b|\b(on|off)\s*[.!?)]*\s*$/i;
+/** A negation other than "off" itself ("not off" is on). */
+const NOT = /\b(?:not|never|neither|nor|no longer)\b|n['’]t\b/i;
+
+/** State words of one condition of a quote, as a control's expected state (flipped by its negation). */
+function statedState(c: Clause, role: string): StateExpect | undefined {
+  const has = (...w: string[]) => w.some((x) => c.words.includes(x));
+  const neg = c.negated;
   if (has('unchecked', 'unticked')) return { checked: false };
   if (has('checked', 'ticked')) return { checked: !neg };
-  if (role === 'switch' && has('on')) return { checked: !neg };
+  if (role === 'switch') {
+    const m = ON_OFF.exec(c.text);
+    if (m) return { checked: (m[1] ?? m[2])!.toLowerCase() === 'on' ? !NOT.test(c.text) : NOT.test(c.text) };
+  }
   if (has('selected', 'chosen')) return { selected: !neg };
   if (has('pressed')) return { pressed: !neg };
   if (has('disabled')) return { disabled: !neg };
@@ -706,11 +789,24 @@ function pathPattern(pathname: string, keep: (seg: string) => boolean): string {
 
 const segmentNamed = (q: Quote, seg: string) => tokens(seg).some((w) => q.namesWord(w)) || q.namesString(seg);
 
+/**
+ * Request candidates: a mutating request that succeeded, by method, origin and path pattern, in
+ * every correct reference, alone or with a body shape. The origin is where the request went: a
+ * request with the same path and body to another host is not the same request.
+ *
+ * A request body shows what the browser asked for, not what happened: a POST the server answers
+ * with a redirect to its login page sends the same body. So a request-body candidate states the
+ * outcome only when every reference saw a 2xx answer (and the candidate requires one); after a
+ * redirect it settles nothing unless an incorrect reference fails it. A response body is the
+ * server's own answer, and states the outcome either way.
+ */
 function networkCandidates(q: Quote, refs: Ref[], push: (c: Omit<Candidate, 'id' | 'requirement'>) => void): void {
   if (refs.some((r) => !r.snapshot.network)) return;
-  // Mutating requests that succeeded, by method and path pattern, in every correct reference.
   const groups = refs.map((r) => {
-    const m = new Map<string, { method: string; path: string; bodies: Json[]; responses: Json[] }>();
+    const m = new Map<
+      string,
+      { method: string; origin: string; path: string; ok2xx: boolean; bodies: Json[]; responses: Json[] }
+    >();
     for (const e of r.snapshot.network!) {
       if (!MUTATING.has(e.method) || e.status === null || e.status < 200 || e.status >= 400) continue;
       let u: URL;
@@ -719,9 +815,13 @@ function networkCandidates(q: Quote, refs: Ref[], push: (c: Omit<Candidate, 'id'
       } catch {
         continue;
       }
+      if (u.origin === 'null') continue;
       const path = pathPattern(u.pathname, () => true);
-      const key = `${e.method} ${path}`;
-      const g = m.get(key) ?? m.set(key, { method: e.method, path, bodies: [], responses: [] }).get(key)!;
+      const key = `${e.method} ${u.origin}${path}`;
+      const g =
+        m.get(key) ??
+        m.set(key, { method: e.method, origin: u.origin, path, ok2xx: true, bodies: [], responses: [] }).get(key)!;
+      if (e.status >= 300) g.ok2xx = false;
       if (e.requestBody !== undefined && !e.requestBodyTruncated && !e.bodyTruncated) g.bodies.push(e.requestBody);
       if (e.responseBody !== undefined && !e.responseBodyTruncated && !e.bodyTruncated)
         g.responses.push(e.responseBody);
@@ -730,7 +830,12 @@ function networkCandidates(q: Quote, refs: Ref[], push: (c: Omit<Candidate, 'id'
   });
   for (const [key, g] of [...groups[0]!].toSorted(([a], [b]) => (a < b ? -1 : 1))) {
     if (!groups.every((m) => m.has(key))) continue;
-    const match = { method: g.method, url: { path: g.path }, status: { gte: 200, lt: 400 } };
+    const ok2xx = groups.every((m) => m.get(key)!.ok2xx);
+    const match = {
+      method: g.method,
+      url: { origin: g.origin, path: g.path },
+      status: { gte: 200, lt: ok2xx ? 300 : 400 },
+    };
     const named = g.path.split('/').some((s) => s !== '*' && s !== '' && segmentNamed(q, s));
     if (named) push({ family: 'network', assert: { kind: 'request', match }, stated: false, description: '' });
     // Bodies: a like-shape of the named fields, the same in every reference (one body each).
@@ -751,7 +856,8 @@ function networkCandidates(q: Quote, refs: Ref[], push: (c: Omit<Candidate, 'id'
       }
       if (!schema) continue;
       const assert: Assertion = { kind: 'request', match: { ...match, [which]: schema } };
-      push({ family: 'network', assert, stated: identified(assert), description: '' });
+      const outcome = which === 'responseBody' || ok2xx;
+      push({ family: 'network', assert, stated: outcome && identified(assert), description: '' });
     }
   }
 }
@@ -792,13 +898,28 @@ function a11yCandidates(q: Quote, refs: Ref[], push: (c: Omit<Candidate, 'id' | 
     if (s.count === refs.length) push({ family: 'a11y', assert: s.a, stated: s.stated, description: '' });
 }
 
+/**
+ * The state the quote gives the control named `name`: from the conditions that name it, all of
+ * them agreeing ("the newsletter box is checked and the ads box is not checked"); else none.
+ */
+function controlState(q: Quote, role: string, name: string): StateExpect | undefined {
+  const nameWords = tokens(name).filter((w) => !STOP.has(w));
+  const states = new Map<string, StateExpect>();
+  for (const c of q.clauses) {
+    if (!c.words.some((w) => !STOP.has(w) && nameWords.some((x) => sameWord(x, w)))) continue;
+    const s = statedState(c, role);
+    if (s) states.set(canon(s), s);
+  }
+  return states.size === 1 ? [...states.values()][0] : undefined;
+}
+
 function nodeCandidates(q: Quote, index: AXIndex, n: INode): { a: Assertion; stated: boolean }[] {
   const role = n.node.role;
   const out: { a: Assertion; stated: boolean }[] = [];
   const name = typeof n.node.name === 'string' ? canonical(n.node.name) : '';
   if (CONTROLS.has(role) && name) {
     const run = q.runIn(name);
-    const state = statedState(q, role);
+    const state = run ? controlState(q, role, name) : undefined;
     if (run && state) {
       const exact = run.toLowerCase() === name.toLowerCase();
       out.push({
@@ -836,6 +957,11 @@ function nodeCandidates(q: Quote, index: AXIndex, n: INode): { a: Assertion; sta
  * Typed candidate assertions for each requirement, from the correct references only, in the
  * trust order (probes, storage, network, URL, accessibility tree). Every value a candidate
  * compares is named by the requirement's quote.
+ *
+ * At most `limit` per requirement and family. When a family has more, the ones that leave
+ * fewest of the quote's words unaccounted for are kept (then those that state a value, then
+ * the first found), so twelve probes that merely hold a quoted word cannot crowd out a later
+ * one that accounts for the whole quote. The kept ones stay in the order they were found.
  */
 export function generateCandidates(
   requirements: Requirement[],
@@ -848,25 +974,34 @@ export function generateCandidates(
   for (const r of requirements) {
     const q = new Quote(r.source.quote);
     const seen = new Set<string>();
-    const counts = new Map<CandidateFamily, number>();
+    const found: Omit<Candidate, 'id' | 'requirement'>[] = [];
     const push = (c: Omit<Candidate, 'id' | 'requirement'>) => {
       const k = canon(c.assert);
-      const n = counts.get(c.family) ?? 0;
-      if (seen.has(k) || n >= limit) return;
+      if (seen.has(k)) return;
       seen.add(k);
-      counts.set(c.family, n + 1);
-      out.push({
-        ...c,
-        id: `${r.id}-mined-${seen.size}`,
-        requirement: r.id,
-        description: `Mined: ${describeAssertion(c.assert)}.`,
-      });
+      found.push(c);
     };
     probeCandidates(q, ok, push);
     storageCandidates(q, ok, push);
     networkCandidates(q, ok, push);
     urlCandidates(q, ok, push);
     a11yCandidates(q, ok, push);
+    const keep = new Set<number>();
+    for (const family of Object.keys(FAMILY_TIER) as CandidateFamily[]) {
+      const mine = found.flatMap((c, i) => (c.family === family ? [{ i, gap: unaccounted(q, c).length, c }] : []));
+      const best = mine.toSorted((a, b) => a.gap - b.gap || Number(b.c.stated) - Number(a.c.stated) || a.i - b.i);
+      for (const x of best.slice(0, limit)) keep.add(x.i);
+    }
+    let n = 0;
+    found.forEach((c, i) => {
+      if (!keep.has(i)) return;
+      out.push({
+        ...c,
+        id: `${r.id}-mined-${++n}`,
+        requirement: r.id,
+        description: `Mined: ${describeAssertion(c.assert)}.`,
+      });
+    });
   }
   return out;
 }
@@ -985,21 +1120,28 @@ export function evidenceWords(a: Assertion): string[] {
   return out.map((w) => w.toLowerCase()).filter(Boolean);
 }
 
-/** The content words of the quote a candidate does not account for (words about the page need page evidence). */
-function unaccounted(q: Quote, c: Candidate): string[] {
+/**
+ * The content words of the quote a candidate does not account for. Words about which page is
+ * open ("page", "screen") need page evidence (the tree or the URL); words about what it presents
+ * ("shows", "visible") need the tree. A word naming a kind of element ("button", "checkbox") is
+ * not in either set: like any other word, the candidate's evidence (its role) must name it, so a
+ * URL never accounts for a button.
+ */
+function unaccounted(q: Quote, c: Pick<Candidate, 'family' | 'assert'>): string[] {
   const ev = evidenceWords(c.assert);
-  const onPage = c.family === 'a11y' || c.family === 'url';
   const out: string[] = [];
   for (const w of q.content) {
-    if (PRESENT.has(w) && onPage) continue;
+    if (PAGE.has(w) && (c.family === 'a11y' || c.family === 'url')) continue;
+    if (PRESENT.has(w) && c.family === 'a11y') continue;
     // A word the quote uses twice ("the Dentist event is called Dentist (Dr. Lee)") names two
     // things; the evidence must account for each use, or one of them is left unchecked.
     const need = q.words.filter((x) => x === w).length;
     const have = ev.filter((e) => sameWord(e, w)).length;
     if (have === 0 || (need > 1 && have < need)) out.push(w);
   }
-  // Numbers, identifiers, dates and times the quote states must be among the values compared.
-  for (const f of q.facts) if (!ev.includes(f)) out.push(f.slice(f.indexOf(':') + 1));
+  // Numbers, identifiers, dates and times the quote states must be among the values compared,
+  // once per time the quote states them: "the quantity is 2 and the price is 2" needs two values.
+  for (const f of q.facts) if (ev.filter((e) => e === f).length < q.factCount(f)) out.push(f.slice(f.indexOf(':') + 1));
   return out;
 }
 

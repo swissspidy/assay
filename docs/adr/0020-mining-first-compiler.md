@@ -40,13 +40,13 @@ The CLI takes `--mine-first` / `--mine-only`, the config `compile: { discovery }
 
 Per requirement, from the correct references only, in ADR 0001's trust order:
 
-| Family  | Candidate                                                                                                        |
-| ------- | ---------------------------------------------------------------------------------------------------------------- |
-| probe   | `equals` on a single named leaf, else a like-shape schema of the value (`type`/`required`/`const`/`contains`)    |
-| storage | local/session values (`json`-normalized shapes), cookies                                                         |
-| network | a succeeded `POST`/`PUT`/`PATCH`/`DELETE` by method and path (ids as `*`), with a request or response body shape |
-| url     | the page's path with the segments the quote names literal, the rest `*`                                          |
-| a11y    | headings, landmarks, dialogs, status/alert/row/list item/article text, and control states                        |
+| Family  | Candidate                                                                                                                |
+| ------- | ------------------------------------------------------------------------------------------------------------------------ |
+| probe   | `equals` on a single named leaf, else a like-shape schema of the value (`type`/`required`/`const`/`contains`)            |
+| storage | local/session values (`json`-normalized shapes), cookies                                                                 |
+| network | a succeeded `POST`/`PUT`/`PATCH`/`DELETE` by method, origin and path (ids as `*`), with a request or response body shape |
+| url     | the page's path with the segments the quote names literal, the rest `*`                                                  |
+| a11y    | headings, landmarks, dialogs, status/alert/row/list item/article text, and control states                                |
 
 **What a quote names.** A value is pinned only when the quote states it:
 
@@ -57,8 +57,14 @@ Per requirement, from the correct references only, in ADR 0001's trust order:
   field that identifies a record (`id`, `number`, `…Id`) only as `#n`;
 - an ISO date or date-time whose date (and time) the quote spells (`November 5, 2026 at 12:30`);
 - a boolean only under a field whose name is a quoted word (`newsletter: true` for "the newsletter
-  subscription"), `false` when the quote negates;
-- a control state only for a state word in the quote (`checked`, `selected`, `pressed`, …).
+  subscription"), `false` when the condition that names it negates. Negation belongs to its
+  condition (the quote split at commas, semicolons, "and", "but", "while"): "notifications are not
+  enabled and the newsletter is enabled" pins `notificationsEnabled: false` and
+  `newsletterEnabled: true`. The conditions naming most of the field's words decide; when they
+  disagree, nothing is pinned;
+- a control state only for a state word in a condition that names the control (`checked`,
+  `selected`, `pressed`, …). A switch is on or off only when the word is its state ("is on",
+  "turned off", "not off"), not a place ("visible on the Settings page").
 
 Prose fields (`text`, `body`, `comment`, …) of two or more words match as an anchored pattern
 allowing closing punctuation (`^\s*Working on it[.!]?\s*$`): a trailing period is not a different
@@ -68,6 +74,11 @@ comment. Where evidence is read (probe, pointer, request method and path, role) 
 that has the most (records the task added or changed, by the baseline, first). A record without a
 field that names it (`id`, `title`, `name`, a prose field) matches any such record (`{labels
 contains "bug"}`), so it never settles a requirement.
+
+**At most twelve per family.** Each requirement keeps at most twelve candidates per family. When a
+family has more, the ones leaving fewest quote words unaccounted for (section 3) are kept, then
+the ones that state a value, then the first found: twelve probes that merely hold "express" do not
+crowd out a later `orderShips` probe that accounts for "the order ships express".
 
 ### 2. Batch evaluation (`mineCandidates`)
 
@@ -91,16 +102,24 @@ A survivor is **decisive** only when all of these hold:
 1. **It accounts for the quote.** Every content word of the quote (filler, generic outcome verbs
    such as "is saved" or "exists", and quantifiers removed) is among the candidate's evidence words
    (the probe and field names, path segments, roles, the compared values and state words), and
-   every number, `#n`, date and time the quote states is among its compared values. Words about the
-   page ("shows", "page", "checkbox") are accounted for only by tree or URL evidence. A word the
-   quote uses twice must be accounted for twice ("the Dentist event is called "Dentist (Dr. Lee)"").
+   every number, `#n`, date and time the quote states is among its compared values, once for each
+   time the quote states it ("the quantity is 2 and the price is 2" needs two compared values, not
+   one scalar). Words about which page is open ("page", "screen") are accounted for only by tree or
+   URL evidence, words about what it presents ("shows", "visible") only by the tree, and a kind of
+   element ("button", "checkbox", "heading") only by a candidate whose role names it: a URL check
+   never settles "the Checkout button is visible". A word the quote uses twice must be accounted for twice ("the Dentist event is called "Dentist (Dr. Lee)"").
 2. **The quote is expressible.** Quotes with "only", "every", "all", "other", "no longer", "keep",
    … speak of a set or an absence, and "add"/"put" also keeps what the collection held (ADR 0011);
    mining builds neither comparison. Words inside quotation marks are names, not quantifiers.
 3. **It is evidence of the outcome.** It rejects an incorrect reference, or it compares a value the
    quote names (a stated candidate, with its records identified) and the baseline did not already
    pass it. A request, a URL or a node that is merely present settles nothing without an incorrect
-   reference that lacks it.
+   reference that lacks it. A request body is what the browser asked for, not what happened: a POST
+   the server answers with a redirect to its login page sends the same body. So a request-body
+   candidate states the outcome only when every reference saw a 2xx answer, and it then requires
+   one; after a redirect, it settles nothing without an incorrect reference that fails it. A
+   response body is the server's own answer. Every request candidate names the origin the
+   references sent it to, so the same path and body sent to another host do not pass.
 
 `selectMined` takes the best decisive candidate per requirement, then, for each incorrect reference
 the picks would still judge a success, the best survivor that rejects it.
@@ -145,24 +164,25 @@ judged on the task's held-out labelled runs.
 
 | Dataset  | Rubric        | Tasks | Compiled mine-only | Requirements covered | Held-out as labelled | False successes | Mining ms (median / max) |
 | -------- | ------------- | ----: | -----------------: | -------------------: | -------------------: | --------------: | -----------------------: |
-| examples | deterministic |    30 |                 13 |                21/44 |                39/40 |               0 |               6.0 / 43.3 |
-| examples | model         |    30 |                 11 |                27/57 |                35/35 |               0 |               2.7 / 21.4 |
-| real     | deterministic |    44 |                  0 |                 0/44 |                    – |               – |               6.8 / 22.1 |
-| real     | model         |    44 |                  1 |                10/84 |                  4/4 |               0 |               7.7 / 37.3 |
+| examples | deterministic |    30 |                 11 |                19/44 |                32/33 |               0 |               5.8 / 47.1 |
+| examples | model         |    30 |                  9 |                25/57 |                28/28 |               0 |               2.8 / 14.4 |
+| real     | deterministic |    44 |                  0 |                 0/44 |                    – |               – |               6.8 / 26.2 |
+| real     | model         |    44 |                  0 |                 6/84 |                    – |               – |               5.3 / 27.8 |
 
 The one held-out miss is an abstain, not a false success: on `09-gift-wrap/spoofed-confirmation`
 no order exists, so the probe the mined check reads fails and the check abstains where the model's
 set fails. The maximum times are the first task of a process (cold JIT). The new `mine` workload of
 `scripts/bench.ts` (all 74 tasks, deterministic rubric, mine-only, acceptance gate with its stress
-test included) takes 293 ms per pass, **4.0 ms per task** (median of 7 passes; calibration 41.7 ms
+test included) takes 314 ms per pass, **4.2 ms per task** (median of 7 passes; calibration 43.7 ms
 on the same machine). It is new, so the CI comparison reports it as such until `bench/baseline.json`
 is re-recorded.
 
-**Model savings, from the cassettes.** With the recorded model rubric, 12 of the 74 tasks are
-covered by mining (11 example tasks, `prestashop/s11-admin-price`). Under `mine-first` they run the
-rubric turn only: 35 of the 224 discovery turns (16%), 684 k of 4.86 M input tokens (14%) and 7.2 k
-of 86 k output tokens (8%) of the committed compiles are not spent. For the 14 tasks mining covers
-in part (19 of their 46 requirements) the agent still runs, on fewer requirements and seeded; what
+**Model savings, from the cassettes.** With the recorded model rubric, 9 of the 74 tasks are
+covered by mining (all of them example tasks). Under `mine-first` they run the rubric turn only: 26
+of the 224 discovery turns (12%), 500 k of 4.86 M input tokens (10%) and 4.8 k of 86 k output
+tokens (6%) of the committed compiles are not spent (the rubric run's turns, as recorded in each
+cassette, are left out of these). For the 14 tasks mining covers in part (18 of their 46
+requirements) the agent still runs, on fewer requirements and seeded; what
 that saves needs live runs (its requests differ from the cassettes), so it is not claimed here.
 The default strategy is unchanged: the `compile-replay` workload reproduces all 10 committed check
 sets, and every committed compile replays byte for byte.
@@ -171,7 +191,7 @@ sets, and every committed compile replays byte for byte.
 deterministic rubric is one requirement quoting the whole instruction ("Close the issue "Crash when
 uploading empty file" in acme/webapp."), and its content words ("acme", "webapp", "repository",
 "back office", the imperative verb) are context no single value accounts for. The model's rubric
-splits instructions into parts, which helps a little (10/84). The 171 open requirements over both
+splits instructions into parts, which helps a little (6/84). The 179 open requirements over both
 datasets and rubrics, by reason:
 
 | Reason                                                                                                                                                                                                | Open |
@@ -179,18 +199,21 @@ datasets and rubrics, by reason:
 | a content word no survivor accounts for: repository and shop context, page wording ("the cart page lists"), synonyms the miner does not know ("preference" for `settings`, "going" for `rsvp: "yes"`) |  111 |
 | "add" also keeps the collection (ADR 0011)                                                                                                                                                            |   21 |
 | a quantifier ("every open bug", "only open issues", "keep everything else")                                                                                                                           |   16 |
-| only presence (a request, URL or node), and no incorrect reference to show it discriminates                                                                                                           |    9 |
+| only presence (a request, URL or node) or a request answered with a redirect, and no incorrect reference to show it discriminates                                                                     |   16 |
 | no candidate: no evidence holds a value the quote names                                                                                                                                               |    7 |
-| the baseline already passes the best survivor                                                                                                                                                         |    7 |
+| the baseline already passes the best survivor                                                                                                                                                         |    8 |
 
-Each is a requirement mining declines rather than half-checks: across the 25 mined sets and their
-79 held-out runs, mining produced no false success.
+Each is a requirement mining declines rather than half-checks: across the 20 mined sets and their
+61 held-out runs, mining produced no false success. The request rules (a 2xx answer, the origin)
+cost the most coverage: `tiny-tracker/01-create-bug` and `02-create-high-priority` create their
+issue with a form POST the server answers with a redirect, so "the new issue has the bug label" and
+"its priority is high" now go to the model, as do the Gitea milestone and PrestaShop price forms.
 
 ## Consequences
 
-- Compiling is cheaper and deterministic where the evidence is plain: a quarter of the requirements
-  of the example tasks and 12 whole tasks need no discovery model; `mine-only` with the
-  deterministic rubric compiles 13 example tasks with no model at all, in milliseconds.
+- Compiling is cheaper and deterministic where the evidence is plain: a fifth of the requirements
+  of the model rubrics (31 of 141) and 9 whole tasks need no discovery model; `mine-only` with the
+  deterministic rubric compiles 11 example tasks with no model at all, in milliseconds.
 - Mining is deliberately conservative, so on instruction-only tasks it mostly hands requirements to
   the model, seeded. A wrong mined check would be worse than a model turn; the gate, the
   "accounts for the quote" rule and held-out runs are what keep it honest.

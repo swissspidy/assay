@@ -124,8 +124,9 @@ const inflects = (a: string, b: string) => {
 /** Whether the quote states this literal: each of its words in the quote, a number it spells, or a date it spells. */
 function quoteStates(quote: string, v: Json): boolean {
   const qw = words(quote);
+  // Whole numbers only: "$21.50" states 21.5, "10" does not state 1.
   if (typeof v === 'number')
-    return qw.includes(String(v)) || qw.includes(NUMBER_WORDS[v] ?? '') || quote.includes(String(v));
+    return (quote.match(/\d+(?:\.\d+)?/g) ?? []).map(Number).includes(v) || qw.includes(NUMBER_WORDS[v] ?? '');
   if (typeof v !== 'string') return true; // booleans: the field name must be quoted (checked by the miner's tests below)
   const iso = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/.exec(v);
   if (iso) {
@@ -185,6 +186,14 @@ function pinnedLiterals(a: Assertion): Json[] {
 }
 
 test.describe('no unstated conditions', () => {
+  test('the independent quote check matches whole numbers only', () => {
+    expect(quoteStates('the value is 10', 1)).toBe(false);
+    expect(quoteStates('the value is 10', 10)).toBe(true);
+    expect(quoteStates('the cart total is $21.50', 21.5)).toBe(true);
+    expect(quoteStates('the cart total is $21.50', 1.5)).toBe(false);
+    expect(quoteStates('two Blue Mugs', 2)).toBe(true);
+  });
+
   test('a candidate compares evidence only with values the quote names', () => {
     // The record holds more than the quote says: only "express" may be pinned.
     const refs: Reference[] = [
@@ -361,6 +370,197 @@ test('a candidate that fails on a correct reference or a valid variant does not 
   expect(probe.survives).toBe(true);
   expect(probe.unexplained).toEqual(['shows']);
   expect(probe.decisive).toBe(false);
+});
+
+// ---------------------------------------------------------------------------
+// What settles a requirement, and what stays with the model
+// ---------------------------------------------------------------------------
+
+/** Mine one requirement over the given references. */
+const mineOne = (quote: string, refs: Reference[]) =>
+  mineCandidates({
+    task: { id: 't', instruction: 'Do it.', outcomes: `Then ${quote}` },
+    requirements: [req('R1', quote)],
+    refs,
+  });
+
+/** A snapshot whose tree holds one control (a checkbox or switch) with the given checked state. */
+const withControl = (role: string, name: string, checked: boolean): EvidenceSnapshot =>
+  snap(
+    {},
+    {
+      a11y: {
+        role: 'document',
+        children: [{ role: 'main', children: [{ role, name, states: { checked } }] }],
+      },
+    },
+  );
+
+/** A snapshot with one network request. */
+const withRequest = (status: number, body: Json, url = 'http://shop.test/settings'): EvidenceSnapshot =>
+  snap(
+    {},
+    {
+      network: [
+        {
+          seq: 1,
+          method: 'POST',
+          url,
+          resourceType: 'fetch',
+          status,
+          requestHeaders: {},
+          requestBody: body,
+          responseHeaders: {},
+        },
+      ],
+    },
+  );
+
+test.describe('what settles a requirement', () => {
+  test('negation belongs to its own condition, not to the whole quote', () => {
+    const settings = { notificationsEnabled: false, newsletterEnabled: true };
+    const m = mineOne('notifications are not enabled and the newsletter is enabled', [
+      { name: 'ref', kind: 'success', snapshot: snap({ settings }) },
+    ]);
+    const [r] = m.requirements;
+    expect(r!.decisive.map((c) => c.assert)).toContainEqual({
+      kind: 'value',
+      source: { from: 'probe', probe: 'settings' },
+      expect: {
+        schema: {
+          type: 'object',
+          required: ['notificationsEnabled', 'newsletterEnabled'],
+          properties: { notificationsEnabled: { const: false }, newsletterEnabled: { const: true } },
+        },
+      },
+    });
+    // A field the quote both affirms and negates is not pinned at all.
+    const both = generateCandidates(
+      [req('R1', 'the newsletter is enabled, but the newsletter popup is not enabled')],
+      [{ name: 'ref', kind: 'success', snapshot: snap({ settings: { newsletterEnabled: true } }) }],
+    );
+    expect(both.flatMap((c) => pinnedLiterals(c.assert))).not.toContain(true);
+  });
+
+  test('a switch that is off is a state the quote names', () => {
+    const cands = generateCandidates(
+      [req('R1', 'the Newsletter switch is off')],
+      [{ name: 'ref', kind: 'success', snapshot: withControl('switch', 'Newsletter', false) }],
+    );
+    expect(cands.map((c) => c.assert)).toContainEqual({
+      kind: 'state',
+      target: { role: 'switch', name: { equals: 'Newsletter', ignoreCase: true } },
+      expect: { checked: false },
+    });
+    const on = generateCandidates(
+      [req('R1', 'the Newsletter switch is not off')],
+      [{ name: 'ref', kind: 'success', snapshot: withControl('switch', 'Newsletter', true) }],
+    );
+    expect(on.map((c) => c.assert)).toContainEqual(expect.objectContaining({ expect: { checked: true } }));
+  });
+
+  test('a locative "on" is not a switch state', () => {
+    const cands = generateCandidates(
+      [req('R1', 'the Settings switch is visible on the Settings page')],
+      [{ name: 'ref', kind: 'success', snapshot: withControl('switch', 'Settings', true) }],
+    );
+    expect(cands.filter((c) => c.assert.kind === 'state')).toEqual([]);
+    const noun = generateCandidates(
+      [req('R1', 'the Newsletter switch on the Settings page is visible')],
+      [{ name: 'ref', kind: 'success', snapshot: withControl('switch', 'Newsletter', true) }],
+    );
+    expect(noun.filter((c) => c.assert.kind === 'state')).toEqual([]);
+    // "turned on" and a trailing "on" are states.
+    for (const quote of ['the Newsletter switch is turned on', 'the Newsletter switch is on']) {
+      const c = generateCandidates(
+        [req('R1', quote)],
+        [{ name: 'ref', kind: 'success', snapshot: withControl('switch', 'Newsletter', true) }],
+      );
+      expect(c.map((x) => x.assert)).toContainEqual(expect.objectContaining({ expect: { checked: true } }));
+    }
+  });
+
+  test('a request alone does not settle a state change: a redirect may be to the login page', () => {
+    const quote = 'the newsletter is enabled';
+    const body = { newsletterEnabled: true };
+    const redirected = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: withRequest(302, body) }]);
+    const sent = redirected.candidates.filter((c) => c.assert.kind === 'request' && c.assert.match.requestBody);
+    expect(sent.length).toBeGreaterThan(0);
+    expect(sent.every((c) => c.survives && !c.decisive)).toBe(true);
+    expect(redirected.requirements[0]!.decisive).toEqual([]);
+    // A success status is outcome evidence: the request is then decisive, on its origin only.
+    const ok = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: withRequest(200, body) }]);
+    expect(ok.requirements[0]!.decisive[0]!.assert).toEqual({
+      kind: 'request',
+      match: {
+        method: 'POST',
+        url: { origin: 'http://shop.test', path: '/settings' },
+        status: { gte: 200, lt: 300 },
+        requestBody: {
+          type: 'object',
+          required: ['newsletterEnabled'],
+          properties: { newsletterEnabled: { const: true } },
+        },
+      },
+    });
+  });
+
+  test('a request check names where the request went', async () => {
+    const quote = 'the newsletter is enabled';
+    const body = { newsletterEnabled: true };
+    const m = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: withRequest(200, body) }]);
+    const { evaluate } = await import('../../src/index.ts');
+    const best = m.requirements[0]!.decisive[0]!;
+    const cs: CheckSet = {
+      schema: CHECKS_SCHEMA,
+      id: 't',
+      version: '1',
+      task: { instruction: 'Do it.', outcomes: `Then ${quote}` },
+      requirements: [req('R1', quote)],
+      checks: [{ id: best.id, requirement: 'R1', description: best.description, assert: best.assert }],
+    };
+    expect(evaluate(cs, withRequest(200, body)).verdict).toBe('success');
+    expect(evaluate(cs, withRequest(200, body, 'http://elsewhere.test/settings')).verdict).not.toBe('success');
+  });
+
+  test('the per-family limit keeps the candidates that account for the quote', () => {
+    // Twelve probes that hold "express" but say nothing of an order come first by name.
+    const probes: Record<string, Json> = {};
+    for (let i = 1; i <= 12; i++) probes[`a${String(i).padStart(2, '0')}`] = { note: 'express' };
+    probes.zOrderShips = 'express';
+    const m = mineOne('the order ships express', [{ name: 'ref', kind: 'success', snapshot: snap(probes) }]);
+    expect(m.candidates.filter((c) => c.family === 'probe')).toHaveLength(12);
+    expect(m.requirements[0]!.decisive[0]!.assert).toEqual({
+      kind: 'value',
+      source: { from: 'probe', probe: 'zOrderShips' },
+      expect: { equals: 'express' },
+    });
+  });
+
+  test('a URL does not account for an element the quote names', () => {
+    const at = (path: string) => snap({}, { page: { url: `http://shop.test${path}`, title: 'Shop' } });
+    const m = mineOne('the Checkout button is visible', [
+      { name: 'ref', kind: 'success', snapshot: at('/checkout') },
+      { name: 'cart', kind: 'negative', snapshot: at('/cart') },
+    ]);
+    const url = m.candidates.find((c) => c.family === 'url')!;
+    expect(url.assert).toEqual({ kind: 'url', match: { path: '/checkout' } });
+    expect(url.negativesRejected).toEqual(['cart']);
+    expect(url.unexplained).toContain('button');
+    expect(m.requirements[0]!.decisive).toEqual([]);
+  });
+
+  test('one scalar does not settle a quote that states a value twice', () => {
+    const quote = 'the quantity is 2 and the price is 2';
+    const one = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: snap({ quantityPrice: 2 }) }]);
+    expect(one.candidates.find((c) => c.family === 'probe')!.unexplained).toEqual(['2']);
+    expect(one.requirements[0]!.decisive).toEqual([]);
+    // Each value in its own field: both are compared, and that settles it.
+    const each = mineOne(quote, [
+      { name: 'ref', kind: 'success', snapshot: snap({ line: { quantity: 2, price: 2 } }) },
+    ]);
+    expect(each.requirements[0]!.decisive.length).toBeGreaterThan(0);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -606,6 +806,24 @@ test.describe('assay compile', () => {
       'assay compile needs a model',
     );
   });
+});
+
+test('scripts/mine.ts: the savings leave out every turn of the rubric run', async () => {
+  const { discoveryUsage } = await import('../../scripts/mine.ts');
+  const usage = (inputTokens: number, outputTokens: number) => ({ inputTokens, outputTokens });
+  // The rubric run: a turn without a tool call (nudged), then submit_rubric; then discovery.
+  const cassette = {
+    turns: {
+      a: { toolCalls: [], usage: usage(100, 10) },
+      b: { toolCalls: [{ name: 'submit_rubric' }], usage: usage(200, 20) },
+      c: { toolCalls: [{ name: 'probes' }], usage: usage(1000, 30) },
+      d: { toolCalls: [{ name: 'submit_checks' }], usage: usage(2000, 40) },
+    },
+  };
+  const report = { turns: { rubric: 2, discovery: 2 }, usage: usage(3300, 100) };
+  expect(discoveryUsage(report, cassette)).toEqual({ turns: 2, inputTokens: 3000, outputTokens: 70 });
+  // A cassette that does not match its report's rubric turns is not measured.
+  expect(discoveryUsage({ ...report, turns: { rubric: 3, discovery: 1 } }, cassette)).toBeUndefined();
 });
 
 test('the compiled provenance accepts discovery, and nothing else new', () => {
