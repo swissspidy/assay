@@ -384,6 +384,19 @@ test.describe('review sheet', () => {
       'untrusted',
     );
   });
+
+  test('a key name that spells out another key does not keep that key trusted', async () => {
+    // The memo once joined "id\0name" pairs with newlines; this name rebuilt the two-key string.
+    const [low, signer] = alice.keyId < mallory.keyId ? [alice, mallory] : [mallory, alice];
+    const signed = approveCheckSet(BLUE_MUG, { by: 'signer', at: AT, key: signer.privateKey });
+    const trustedKeys = [
+      { name: 'Team', key: low.publicKey },
+      { name: 'Signer', key: signer.publicKey },
+    ];
+    await expect(verify(signed, ADDED_BLUE, { requireLocked: { trustedKeys } })).resolves.toBeDefined();
+    trustedKeys.splice(0, 2, { name: `Team\n${signer.keyId}\u0000Signer`, key: low.publicKey });
+    await expect(verify(signed, ADDED_BLUE, { requireLocked: { trustedKeys } })).rejects.toThrow(LockError);
+  });
 });
 
 test.describe('route and page checks (ADR 0011, 0012)', () => {

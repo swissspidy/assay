@@ -98,10 +98,13 @@ export class CheckPlan {
         'keys' in opts.trustedKeys && opts.trustedKeys.keys instanceof Map
           ? (opts.trustedKeys as TrustedKeySet)
           : trustedKeySet(opts.trustedKeys as Parameters<typeof trustedKeySet>[0]);
-      const key = [...set.keys]
-        .map(([id, k]) => `${id}\u0000${k.name}`)
-        .toSorted()
-        .join('\n');
+      // JSON, not joined strings: a name can contain any separator, so two different key sets
+      // could otherwise produce the same memo key.
+      const key = JSON.stringify(
+        [...set.keys]
+          .map(([id, k]): [string, string] => [id, k.name])
+          .toSorted(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
+      );
       s = this.byKeys.get(key);
       if (!s) {
         s = verifyLock(cs, { trustedKeys: set });
