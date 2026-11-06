@@ -143,9 +143,24 @@ export const isLanguageModel = (x: unknown): x is LanguageModelLike =>
   typeof (x as LanguageModelLike).doGenerate === 'function' &&
   typeof (x as LanguageModelLike).modelId === 'string';
 
+const BOUND = Symbol.for('assay.boundModel');
+
+/**
+ * A model input with its options fixed: resolving it applies exactly `options`, and no
+ * options given later. Used to apply a config's options per model (ADR 0017).
+ */
+export function bindModelOptions(input: ModelInput, options: ModelOptions): ModelInput {
+  const bound = () => resolveModel(input, options);
+  return Object.defineProperty(bound, BOUND, { value: describeModel(input, options) });
+}
+
+/** Whether a model input already carries its options (`bindModelOptions`). */
+export const isBoundModel = (input: unknown): boolean => typeof input === 'function' && BOUND in input;
+
 /** A short description of a model input, for records and messages, without resolving it. */
 export function describeModel(input: ModelInput | undefined, opts: ModelOptions = {}): string {
   if (opts.id) return opts.id;
+  if (typeof input === 'function' && BOUND in input) return (input as unknown as Record<symbol, string>)[BOUND]!;
   if (typeof input === 'string') return input;
   if (isModelClient(input)) return input.id;
   if (isLanguageModel(input)) return `${input.provider}:${input.modelId}`;
@@ -227,7 +242,7 @@ export async function resolveModel(
   opts: ModelOptions & { cwd?: string } = {},
 ): Promise<ModelClient> {
   const cwd = opts.cwd ?? process.cwd();
-  if (typeof input === 'function') return resolveModel(await input(), opts);
+  if (typeof input === 'function') return resolveModel(await input(), isBoundModel(input) ? {} : opts);
   if (typeof input === 'string') return fromString(input.trim(), opts, cwd);
   if (isModelClient(input)) {
     if (typeof input.id !== 'string' || !input.id) throw new ModelError('a model adapter needs a string `id`');

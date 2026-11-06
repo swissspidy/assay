@@ -28,6 +28,7 @@ import { selectModel } from '../../src/cli/model.ts';
 import { outFile } from '../../src/cli/commands/capture.ts';
 import { configuredChecks } from '../../src/cli/commands/validate.ts';
 import { run as runCli } from '../../src/cli/main.ts';
+import { applyConfig } from '../../src/verifier/escalate.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const shop = (p: string) => join(root, 'examples/tiny-shop', p);
@@ -292,4 +293,49 @@ export const generateText = async () => ({ finishReason: 'stop', text: 'from the
   const m = await resolveModel('anthropic:claude-x', { cwd: dir });
   const t = await m.turn({ system: 's', messages: [{ role: 'user', text: 'hi' }], tools: [] });
   expect(t.text).toBe('from the project ai');
+});
+
+test('config model options apply per model: an explicit client verifier gets none while an AI SDK proposer gets them', async () => {
+  const { unwrapNodes } = await import('../../src/stress/index.ts');
+  const snapshot = unwrapNodes(decided(), { role: 'table' });
+  const verdicts = {
+    verdicts: ['R1', 'R2'].map((requirement) => ({ requirement, status: 'pass', cites: [1], reasoning: 'cited' })),
+  };
+  // An explicit client (as a replayModel would be) that answers with native tool calls.
+  const verifierTools: number[] = [];
+  const verifier: ModelClient = {
+    id: 'replayed',
+    async turn(req) {
+      verifierTools.push(req.tools.length);
+      return {
+        ...turnOf(''),
+        stop: 'tool_use',
+        toolCalls: [
+          req.messages.length === 1
+            ? { id: 'a', name: 'find_nodes', input: { text: 'Mug' } }
+            : { id: 'b', name: 'submit_verdict', input: verdicts },
+        ],
+      };
+    },
+  };
+  const proposerTools: unknown[] = [];
+  const proposer = sdk(
+    Array.from({ length: 12 }, () => (opts: CallOptions) => (proposerTools.push(opts.tools), text('no'))),
+  );
+  const res = await verify(TWO_MUGS, snapshot, { verifier, proposer, config: { modelOptions: { mode: 'json' } } });
+  expect(res.outcome.verdict).toBe('success');
+  expect(verifierTools.every((n) => n > 0)).toBe(true); // the client got its tool requests, not JSON mode
+  expect(proposerTools.length).toBeGreaterThan(0);
+  expect(proposerTools.every((t) => t === undefined)).toBe(true); // the AI SDK proposer was driven in JSON mode
+});
+
+test("config model options apply per model: the config's id names the config model, not an explicit proposer", async () => {
+  const configModel: ModelClient = { id: 'cfg', turn: async () => turnOf('') };
+  const out = applyConfig(
+    { escalate: true, proposer: sdk([]) },
+    { model: configModel, modelOptions: { id: 'config-id' } },
+  );
+  // As verify resolves them.
+  expect((await resolveModel(out.verifier!, out.modelOptions ?? {})).id).toBe('config-id');
+  expect((await resolveModel(out.proposer!, out.modelOptions ?? {})).id).toBe('mock:small');
 });

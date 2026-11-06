@@ -11,7 +11,9 @@ import { buildStore } from '../store/store.ts';
 import { checkSetDigest } from '../snapshot/digest.ts';
 import type { ModelClient } from '../model/types.ts';
 import {
+  bindModelOptions,
   describeModel,
+  isBoundModel,
   isModelClient,
   noModelError,
   resolveModel,
@@ -208,26 +210,37 @@ export function applyConfig(opts: VerifyOptions, config: AssayConfig): VerifyOpt
   if (out.verifier === undefined && (out.escalate ?? (config.escalate !== undefined && config.escalate !== false))) {
     if (config.model === undefined)
       throw noModelError('verify with escalation', 'pass `verifier`, or turn escalation off');
-    out.verifier = config.model;
-    out.modelOptions = { ...config.modelOptions, ...opts.modelOptions };
-  } else if (config.modelOptions && (needsOptions(out.verifier) || needsOptions(out.proposer))) {
-    // An explicit model given as a string, an AI SDK model or a function still takes the config's
-    // options (explicit fields win), except `id`, which names the config's own model. A ModelClient
-    // is already configured, and is used as it is.
-    const { id: _id, ...shared } = config.modelOptions;
-    out.modelOptions = { ...shared, ...opts.modelOptions };
-  }
+    // The config's model takes all of the config's options (explicit fields win).
+    out.verifier = bindModelOptions(config.model, { ...config.modelOptions, ...opts.modelOptions });
+  } else if (config.modelOptions) out.verifier = explicitWithConfig(out.verifier, config, opts);
+  if (config.modelOptions) out.proposer = explicitWithConfig(out.proposer, config, opts);
   return out;
 }
 
-const needsOptions = (m: ModelInput | undefined) => m !== undefined && !isModelClient(m);
+/**
+ * An explicit model with the config's options applied per model: a string, an AI SDK model or a
+ * function takes them (explicit fields win) except `id`, which names the config's own model; a
+ * ModelClient is already configured and is used as it is (forcing JSON mode on a replaying client
+ * would miss its tools-mode recordings).
+ */
+function explicitWithConfig(
+  m: ModelInput | undefined,
+  config: AssayConfig,
+  opts: VerifyOptions,
+): ModelInput | undefined {
+  if (m === undefined || isModelClient(m) || isBoundModel(m)) return m;
+  const { id: _id, ...shared } = config.modelOptions ?? {};
+  return bindModelOptions(m, { ...shared, ...opts.modelOptions });
+}
 
 /** The options with the given config applied, and the models to use (resolved on first use). */
 async function withConfig(opts: VerifyOptions): Promise<[VerifyOptions, Models]> {
   const out = applyConfig(opts, await configOf(opts.config));
   const models: Models = {};
-  if (out.verifier !== undefined) models.verifier = lazyModel(out.verifier, out.modelOptions ?? {});
-  if (out.proposer !== undefined) models.proposer = lazyModel(out.proposer, out.modelOptions ?? {});
+  // A model bound to its options (from the config) takes no others.
+  const options = (m: ModelInput) => (isBoundModel(m) ? {} : (out.modelOptions ?? {}));
+  if (out.verifier !== undefined) models.verifier = lazyModel(out.verifier, options(out.verifier));
+  if (out.proposer !== undefined) models.proposer = lazyModel(out.proposer, options(out.proposer));
   return [out, models];
 }
 
