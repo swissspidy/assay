@@ -140,6 +140,8 @@ export async function verifyMany(
   snapshots: readonly EvidenceSnapshot[],
   opts: VerifyOptions = {},
 ): Promise<VerifyResult[]> {
+  // Mapping `verify` over no snapshots never validates the set, so neither does this.
+  if (snapshots.length === 0) return [];
   const [plan, cs] = prepare(checkSet, opts);
   const timings = new Float64Array(snapshots.length);
   const outcomes = runPlanMany(plan, snapshots.map(buildStore), {}, timings);

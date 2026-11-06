@@ -44,6 +44,9 @@ type VType = 'string' | 'number' | 'money' | 'date' | 'datetime' | 'boolean' | '
 export function validateCheckSet(input: unknown): ValidationReport {
   const errors: string[] = [];
   const warnings: string[] = [];
+  // A check set built in code can contain itself; JSON cannot, and every walk below would overflow.
+  const cycle = cycleAt(input);
+  if (cycle !== undefined) return { ok: false, errors: [`${cycle} contains itself (a cycle)`], warnings };
   if (!validateShape(input)) {
     for (const e of validateShape.errors ?? [])
       errors.push(
@@ -454,6 +457,19 @@ export function assertValidCheckSet(input: unknown): CheckSet {
   const report = validateCheckSet(input);
   if (!report.ok) throw new CheckSetError(report);
   return input as CheckSet;
+}
+
+/** The JSON Pointer of the first value that contains itself, or undefined when there is none. */
+function cycleAt(v: unknown, at = '', path = new Set<object>()): string | undefined {
+  if (!v || typeof v !== 'object') return undefined;
+  if (path.has(v)) return at || '/';
+  path.add(v);
+  for (const [k, x] of Object.entries(v)) {
+    const c = cycleAt(x, `${at}/${k}`, path);
+    if (c !== undefined) return c;
+  }
+  path.delete(v);
+  return undefined;
 }
 
 function dedupe(xs: string[]): string[] {

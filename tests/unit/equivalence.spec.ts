@@ -64,7 +64,10 @@ test('verifyMany returns the golden outcome and record for every case, and what 
     expect(many.map(normalize)).toEqual(one.map(normalize));
     expect(JSON.stringify(many.map(normalize))).toBe(JSON.stringify(one.map(normalize)));
   }
+  // No snapshots: what mapping verify gives, without validating (or lock-checking) the set.
   expect(await verifyMany(cases.verify[0]!.checkSet, [])).toEqual([]);
+  expect(await verifyMany({ not: 'a check set' }, [], { requireLocked: true })).toEqual([]);
+  await expect(verifyMany({ not: 'a check set' }, [cases.verify[0]!.snapshot])).rejects.toThrow(/check set/i);
 });
 
 test('stressTest returns the golden report for every committed check set', () => {

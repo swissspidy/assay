@@ -368,6 +368,22 @@ test.describe('review sheet', () => {
     expect(res.outcome.verdict).toBe('success');
     expect(res.record.checkSet.locked?.signature).toEqual({ keyId: alice.keyId, status: 'trusted', signer: 'Alice' });
   });
+
+  test('a key removed from the trusted list is not trusted on the next verify of the same objects', async () => {
+    const signed = approveCheckSet(BLUE_MUG, { by: 'alice', at: AT, key: alice.privateKey });
+    const trustedKeys = [{ name: 'Alice', key: alice.publicKey }];
+    const first = await verify(signed, ADDED_BLUE, { trustedKeys });
+    expect(first.record.checkSet.locked?.signature?.status).toBe('trusted');
+    await expect(verify(signed, ADDED_BLUE, { requireLocked: { trustedKeys } })).resolves.toBeDefined();
+    trustedKeys.splice(0, 1, { name: 'Mallory', key: mallory.publicKey }); // the same array, Alice revoked
+    const second = await verify(signed, ADDED_BLUE, { trustedKeys });
+    expect(second.record.checkSet.locked?.signature?.status).toBe('untrusted');
+    await expect(verify(signed, ADDED_BLUE, { requireLocked: { trustedKeys } })).rejects.toThrow(LockError);
+    trustedKeys.length = 0;
+    expect((await verify(signed, ADDED_BLUE, { trustedKeys })).record.checkSet.locked?.signature?.status).toBe(
+      'untrusted',
+    );
+  });
 });
 
 test.describe('route and page checks (ADR 0011, 0012)', () => {

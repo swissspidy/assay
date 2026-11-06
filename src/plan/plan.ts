@@ -14,6 +14,7 @@ import type {
 import { CheckSetError, validateCheckSet, type ValidationReport } from '../dsl/validate.ts';
 import { checkSetDigest } from '../snapshot/digest.ts';
 import { verifyLock, type LockCheckOptions, type LockStatus } from '../verifier/lock.ts';
+import { trustedKeySet, type TrustedKeySet } from '../verifier/sign.ts';
 import { buildStore, type EvidenceStore } from '../store/store.ts';
 import { abstain, compileAssertion, kleeneAnd, type EvalCtx, type Run, type Seq } from './assertions.ts';
 import { readSetOf, unionReadSets, type ReadSet } from './readset.ts';
@@ -36,7 +37,8 @@ export class CheckPlan {
   private readonly checksOf: () => PlannedCheck[];
   private readonly readSetValue: () => ReadSet;
   private noKeys?: LockStatus;
-  private readonly byKeys = new WeakMap<object, LockStatus>();
+  /** By the content of the trusted key set (ids and names), never by the caller's object, which can change. */
+  private readonly byKeys = new Map<string, LockStatus>();
 
   constructor(checkSet: CheckSet) {
     this.checkSet = checkSet;
@@ -83,14 +85,29 @@ export class CheckPlan {
     return this.readSetValue();
   }
 
-  /** `verifyLock(checkSet, opts)`, kept per set of trusted keys (a copy each call). */
+  /**
+   * `verifyLock(checkSet, opts)`, kept per set of trusted keys (a copy each call). The trusted
+   * keys are read on every call and the memo is keyed by what they are (key ids and names), so a
+   * key removed from the caller's list is no longer trusted on the next call.
+   */
   readonly lockStatus = (cs: CheckSet, opts: LockCheckOptions): LockStatus => {
-    const keys = opts.trustedKeys;
-    let s = keys === undefined ? this.noKeys : this.byKeys.get(keys);
-    if (!s) {
-      s = verifyLock(cs, opts);
-      if (keys === undefined) this.noKeys = s;
-      else this.byKeys.set(keys, s);
+    let s: LockStatus | undefined;
+    if (opts.trustedKeys === undefined) s = this.noKeys ??= verifyLock(cs, opts);
+    else {
+      const set: TrustedKeySet =
+        'keys' in opts.trustedKeys && opts.trustedKeys.keys instanceof Map
+          ? (opts.trustedKeys as TrustedKeySet)
+          : trustedKeySet(opts.trustedKeys as Parameters<typeof trustedKeySet>[0]);
+      const key = [...set.keys]
+        .map(([id, k]) => `${id}\u0000${k.name}`)
+        .toSorted()
+        .join('\n');
+      s = this.byKeys.get(key);
+      if (!s) {
+        s = verifyLock(cs, { trustedKeys: set });
+        if (this.byKeys.size >= 64) this.byKeys.clear();
+        this.byKeys.set(key, s);
+      }
     }
     return { ...s, changes: [...s.changes], problems: [...s.problems] };
   };
@@ -199,7 +216,13 @@ export function runPlanMany(
       results[i]!.push(checkResult(c, ctxs[i]!));
       if (timings) timings[i]! += performance.now() - t0;
     }
-  return stores.map((s, i) => outcomeOf(plan, s, results[i]!, opts));
+  // Building the outcome (the snapshot digest, on a fresh store) is timed too, as in `runPlan`.
+  return stores.map((s, i) => {
+    const t0 = timings ? performance.now() : 0;
+    const o = outcomeOf(plan, s, results[i]!, opts);
+    if (timings) timings[i]! += performance.now() - t0;
+    return o;
+  });
 }
 
 /** Evaluate a check set on a snapshot (no validation, no escalation), through its plan and the snapshot's store. */

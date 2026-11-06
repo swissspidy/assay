@@ -219,4 +219,4 @@ time spent on that run's checks.
 - Snapshots and check sets must not be edited after they have been verified. This is documented
   on `buildStore` and `compileChecks`. The stress generators and the compiler always edit copies.
 - Memory: a store holds its indexes for as long as the snapshot lives. Parsed URLs, regexes and
-  compiled schemas are cached process-wide, bounded.
+  compiled schemas are cached process-wide, each cache bounded (cleared when full).

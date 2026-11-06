@@ -21,7 +21,12 @@ test('the tree is stored in pre-order: parents before children, subtrees as id r
     expect(n.id).toBe(i);
     expect(t.parent[i]).toBe(n.parent ? n.parent.id : -1);
     expect(t.depth[i]).toBe(n.parent ? t.depth[n.parent.id]! + 1 : 0);
-    expect(index.all.slice(i + 1, t.end[i]).map((d) => d.id)).toEqual(index.descendants(n).map((d) => d.id));
+    // The subtree range, against descendants found by walking parent links (not the ranges themselves).
+    const below = index.all.filter((d) => {
+      for (let a = d.parent; a; a = a.parent) if (a === n) return true;
+      return false;
+    });
+    expect(index.all.slice(i + 1, t.end[i]).map((d) => d.id)).toEqual(below.map((d) => d.id));
   }
   for (const role of new Set(index.all.map((n) => n.node.role)))
     expect([...t.withRole(role)]).toEqual(index.all.filter((n) => n.node.role === role).map((n) => n.id));
@@ -109,4 +114,14 @@ test('read-sets name what each kind of check reads', () => {
   });
   expect(c2).toMatchObject({ a11y: true, text: false, roles: ['row', 'table'] }); // text inside a record is the record's
   expect(c3).toMatchObject({ pages: true, url: true, a11y: false });
+});
+
+test('a check set that contains itself is reported invalid, not a stack overflow', () => {
+  const schema: Record<string, unknown> = { type: 'object' };
+  schema.properties = { self: schema };
+  const cs = structuredClone(checks('tasks/07-express-order.checks.json'));
+  cs.checks[0]!.assert = { kind: 'request', match: { responseBody: schema as never } };
+  const report = compileChecks(cs).report;
+  expect(report.ok).toBe(false);
+  expect(report.errors).toEqual(['/checks/0/assert/match/responseBody/properties/self contains itself (a cycle)']);
 });
