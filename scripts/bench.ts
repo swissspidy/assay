@@ -98,6 +98,8 @@ function count(name: string, v: string, min: number): number {
 }
 
 const opts = parseArgs(process.argv.slice(2));
+if (!Number.isSafeInteger(opts.warmup + opts.iterations))
+  throw new Error(`--warmup plus --iterations must be a safe integer, got ${opts.warmup} + ${opts.iterations}`);
 /** Data (runs, check sets, cassettes, task definitions) always comes from this checkout. */
 const ROOT = new URL('..', import.meta.url);
 const at = (path: string) => new URL(path, ROOT);
