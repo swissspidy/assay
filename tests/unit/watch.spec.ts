@@ -4,13 +4,14 @@
  * clean stop. No browser, no model.
  */
 import { test, expect } from '@playwright/test';
-import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, statSync, utimesSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { run } from '../../src/cli/main.ts';
 import type { Io } from '../../src/cli/io.ts';
-import { renderTable } from '../../src/cli/commands/watch.ts';
+import { RunCache, isScratch, renderTable } from '../../src/cli/commands/watch.ts';
+import { checkSetName } from '../../src/checks/load.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const shop = (p: string) => join(root, 'examples/tiny-shop', p);
@@ -192,6 +193,7 @@ test('the table: verdict, label and what changed since the previous round', () =
     checkSet: { id: 't', version: '1', requirements: 1, checks: 4 },
     runs,
     runDirs: ['/p/references/t'],
+    deps: [],
   });
   const before = set([runOf('ok', 'success', { C1: 'pass', C2: 'pass', C3: 'pass', C4: 'pass' }, 'success')]);
   const after = set([
@@ -214,4 +216,224 @@ test('the table: verdict, label and what changed since the previous round', () =
     '',
     '0/1 labelled runs as expected · 1 not · 1 run changed',
   ]);
+});
+
+// ---------------------------------------------------------------------------
+// Review fixes (PR #31)
+
+/** A temporary ESM project with the Blue Mug runs under references/<name>/. */
+function project(name = 'blue', runs = ['added-blue-mug', 'added-red-mug']): string {
+  const dir = mkdtempSync(join(tmpdir(), 'assay-watch-'));
+  writeFileSync(join(dir, 'package.json'), JSON.stringify({ type: 'module' }));
+  mkdirSync(join(dir, `references/${name}`), { recursive: true });
+  for (const r of runs)
+    copyFileSync(shop(`references/02-add-blue-mug/${r}.json`), join(dir, `references/${name}/${r}.json`));
+  return dir;
+}
+
+/** A module set reading the product name from `from` (a module path relative to the set). */
+const productSet = (from: string, id = 'blue') => `import { checks, probe, req } from ${JSON.stringify(BUILDER)};
+import { product } from ${JSON.stringify(from)};
+
+export default checks({ id: ${JSON.stringify(id)}, instruction: 'Add a Blue Mug to my cart.' }, [
+  req('R1', 'The cart has the mug', { quote: 'Add a Blue Mug' }).check(probe('cart', '/items').like([{ name: product }])),
+]);
+`;
+
+/** Start `assay watch` in `dir`: the screens it printed, a way to wait for one, and to stop it. */
+function startWatch(dir: string, args: string[]) {
+  const ac = new AbortController();
+  const c = io({ cwd: dir, signal: ac.signal });
+  const done = run(['watch', '--debounce', '50', '--no-clear', ...args], c);
+  const screens = () =>
+    c.stdout
+      .join('\n')
+      .split(/\n(?=assay watch · )/)
+      .filter((s) => s.startsWith('assay watch'));
+  /** Wait for a screen after the first `after` that matches; returns how many screens there are then. */
+  const waitFor = async (pattern: RegExp, after = 0) => {
+    await expect
+      .poll(
+        () =>
+          screens()
+            .slice(after)
+            .find((s) => pattern.test(s)) ?? `${c.stdout.join('\n')}\n${c.stderr.join('\n')}`,
+        { timeout: 15_000 },
+      )
+      .toMatch(pattern);
+    return screens().length;
+  };
+  const settle = () => new Promise((r) => setTimeout(r, 300));
+  const stop = async () => {
+    ac.abort();
+    return done;
+  };
+  return { c, screens, waitFor, settle, stop };
+}
+
+test('live: imported modules outside the set directory, and sets importing other sets, are re-verified', async () => {
+  test.setTimeout(60_000);
+  const dir = project();
+  mkdirSync(join(dir, 'checks'));
+  mkdirSync(join(dir, 'helpers'));
+  writeFileSync(join(dir, 'helpers/product.ts'), `export const product = 'Blue Mug';\n`);
+  writeFileSync(join(dir, 'checks/blue.checks.ts'), productSet('../helpers/product.ts'));
+  // A set that imports another discovered set's module.
+  mkdirSync(join(dir, 'references/variant'));
+  copyFileSync(join(dir, 'references/blue/added-blue-mug.json'), join(dir, 'references/variant/added-blue-mug.json'));
+  writeFileSync(join(dir, 'checks/base.checks.ts'), `export const product = 'Blue Mug';\nexport default {};\n`);
+  writeFileSync(join(dir, 'checks/variant.checks.ts'), productSet('./base.checks.ts', 'variant'));
+  const w = startWatch(dir, ['checks']);
+  let n = await w.waitFor(/checks\/blue\.checks\.ts {2}blue v1[^\n]*\n {4}✔ added-blue-mug +SUCCESS/);
+  await w.settle();
+
+  writeFileSync(join(dir, 'helpers/product.ts'), `export const product = 'Red Mug';\n`);
+  n = await w.waitFor(/changed: helpers\/product\.ts[\s\S]*✘ added-blue-mug +FAIL +expected success +was SUCCESS/, n);
+  await w.settle();
+
+  writeFileSync(join(dir, 'checks/base.checks.ts'), `export const product = 'Red Mug';\nexport default {};\n`);
+  await w.waitFor(
+    /checks\/variant\.checks\.ts {2}variant v1[^\n]*\n {4}✘ added-blue-mug +FAIL +expected success +was SUCCESS/,
+    n,
+  );
+  expect(await w.stop()).toBe(0);
+});
+
+test('live: a glob root, a run directory that does not exist yet, hidden runs and an edit that keeps the mtime', async () => {
+  test.setTimeout(60_000);
+  const dir = project('a', []);
+  mkdirSync(join(dir, 'sets/a'), { recursive: true });
+  const json = readFileSync(shop('tasks/02-add-blue-mug.checks.json'), 'utf8');
+  writeFileSync(join(dir, 'sets/a/a.checks.json'), json);
+  // Runs live in runs/, which does not exist yet.
+  writeFileSync(join(dir, 'assay.config.ts'), "export default { snapshots: 'runs' };\n");
+  const w = startWatch(dir, [join(dir, 'sets/*/*.checks.json')]);
+  let n = await w.waitFor(/sets\/a\/a\.checks\.json/);
+  await w.settle();
+
+  // A set in a new directory that matches the glob is found.
+  mkdirSync(join(dir, 'sets/b'));
+  writeFileSync(join(dir, 'sets/b/b.checks.json'), json);
+  n = await w.waitFor(/sets\/b\/b\.checks\.json/, n);
+  await w.settle();
+
+  // runs/b does not exist yet: creating it with a run (a hidden one) re-verifies b.
+  mkdirSync(join(dir, 'runs/b'), { recursive: true });
+  copyFileSync(shop('references/02-add-blue-mug/added-blue-mug.json'), join(dir, 'runs/b/.blue.json'));
+  n = await w.waitFor(/✔ \.blue +SUCCESS +expected success/, n);
+  await w.settle();
+
+  // The run changes but keeps its modification time: its content is read again.
+  const file = join(dir, 'runs/b/.blue.json');
+  const { mtime } = statSync(file);
+  const relabelled = JSON.parse(readFileSync(file, 'utf8'));
+  relabelled.label.expected = 'fail';
+  writeFileSync(file, JSON.stringify(relabelled));
+  utimesSync(file, mtime, mtime);
+  await w.waitFor(/✘ \.blue +SUCCESS +expected fail/, n);
+  expect(await w.stop()).toBe(0);
+});
+
+test('live: an edit made while the first round runs is not lost', async () => {
+  test.setTimeout(60_000);
+  const dir = project();
+  mkdirSync(join(dir, 'checks'));
+  writeFileSync(join(dir, 'checks/product.ts'), `export const product = 'Blue Mug';\n`);
+  // The set takes a while to load, after it has imported product.ts.
+  writeFileSync(
+    join(dir, 'checks/blue.checks.ts'),
+    productSet('./product.ts').replace(
+      'export default',
+      'await new Promise((r) => setTimeout(r, 1500));\nexport default',
+    ),
+  );
+  const w = startWatch(dir, ['checks']);
+  await new Promise((r) => setTimeout(r, 700));
+  writeFileSync(join(dir, 'checks/product.ts'), `export const product = 'Red Mug';\n`);
+  const n = await w.waitFor(/✔ added-blue-mug +SUCCESS/);
+  await w.waitFor(/✘ added-blue-mug +FAIL +expected success +was SUCCESS/, n);
+  expect(await w.stop()).toBe(0);
+});
+
+test('--json prints one JSON object per round; --once --json exits as --once does', async () => {
+  const c = io({ cwd: root });
+  expect(await run(['watch', shop('tasks/02-add-blue-mug.checks.json'), '--once', '--json'], c)).toBe(0);
+  expect(c.stdout).toHaveLength(1);
+  const round = JSON.parse(c.stdout[0]!);
+  expect(round).toMatchObject({ changed: [], sets: [{ name: '02-add-blue-mug', ok: true, errors: [] }] });
+  const runs = round.sets[0].runs as { name: string; verdict: string; asExpected: boolean }[];
+  expect(runs.map((r) => [r.name, r.verdict, r.asExpected])).toEqual([
+    ['added-blue-and-red-mug', 'success', true],
+    ['added-blue-mug', 'success', true],
+    ['added-red-mug', 'fail', true],
+  ]);
+});
+
+test('set names drop every check set extension: a .checks.mjs set finds references/<name>', async () => {
+  const dir = project('blue');
+  mkdirSync(join(dir, 'tasks'));
+  writeFileSync(
+    join(dir, 'tasks/blue.checks.mjs'),
+    productSet('./unused.mjs').replace(/^import \{ product \}.*$/m, "const product = 'Blue Mug';"),
+  );
+  expect(checkSetName('a/b/blue.checks.mts')).toBe('blue');
+  expect(checkSetName('blue.checks.js')).toBe('blue');
+  const c = io({ cwd: dir });
+  expect(await run(['watch', join(dir, 'tasks/blue.checks.mjs'), '--once'], c)).toBe(0);
+  expect(c.stdout.join('\n')).toMatch(/✔ added-blue-mug +SUCCESS +expected success/);
+});
+
+test('scratch files, the run cache and duplicate run names', () => {
+  const scratch = [
+    'a/.#x.ts',
+    'a/x.ts~',
+    'a/.x.ts.swp',
+    'a/4913',
+    '.git/index',
+    'node_modules/x/y.js',
+    'a/.y.json.1.tmp',
+  ];
+  expect(scratch.filter((p) => !isScratch(p))).toEqual([]);
+  expect(['a/.data/product.ts', 'refs/b/.baseline.json', 'checks/x.checks.ts'].filter(isScratch)).toEqual([]);
+
+  const dir = project('blue');
+  const cache = new RunCache();
+  const a = join(dir, 'references/blue/added-blue-mug.json');
+  const b = join(dir, 'references/blue/added-red-mug.json');
+  const first = cache.read(a);
+  expect(cache.read(a)).toBe(first);
+  cache.read(b);
+  cache.prune(new Set([a]));
+  expect(cache.files).toEqual([a]);
+
+  const runOf = (file: string, name = 'reference') => ({
+    name,
+    file,
+    verdict: 'success' as const,
+    checks: {},
+    expected: 'success' as const,
+  });
+  const table = renderTable(
+    [
+      {
+        file: '/p/tasks/t.checks.ts',
+        name: 't',
+        errors: [],
+        warnings: [],
+        checkSet: { id: 't', version: '1', requirements: 1, checks: 1 },
+        runs: [
+          runOf('/p/references/t/reference.json'),
+          runOf('/p/runs/t/reference.json'),
+          runOf('/p/runs/t/other.json', 'other'),
+        ],
+        runDirs: [],
+        deps: [],
+      },
+    ],
+    new Map(),
+    { color: false, cwd: '/p', first: true, changed: [], now: new Date(2026, 10, 6, 9, 5, 7) },
+  );
+  expect(table).toContain('    ✔ references/t/reference.json  SUCCESS  expected success');
+  expect(table).toContain('    ✔ runs/t/reference.json        SUCCESS  expected success');
+  expect(table).toContain('    ✔ other                        SUCCESS  expected success');
 });

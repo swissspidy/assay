@@ -343,7 +343,7 @@ pass→fail`). The runs of `tasks/<name>.checks.ts` are the snapshots in `refere
 `tasks/` (as in `examples/*`), and in `<dir>/<name>/` of each `--reference` directory (default: the
 config's `bench.references` and `snapshots`). Edits to modules a set imports
 are seen too. No model runs and no lock is required; `--once` prints one table and exits 1 when a
-labelled run is not as expected.
+labelled run is not as expected, and `--json` prints each round as a line of JSON.
 
 Design: [ADR 0019](docs/adr/0019-typed-checks-matcher-and-watch.md).
 

@@ -276,6 +276,15 @@ test('every assertion kind, source, normalizer and comparison', () => {
   expect(price.equals(1).toJSON().normalize).toStrictEqual(['trim', { op: 'currency', locale: 'en-US' }]);
 });
 
+test("explicit regex flags win over a RegExp literal's own", () => {
+  expect(text(/added/, { flags: 'i' }).source).toStrictEqual({ from: 'text', pattern: 'added', flags: 'i' });
+  expect(text(/added/i).source).toStrictEqual({ from: 'text', pattern: 'added', flags: 'i' });
+  expect(probe('p').matches(/a/i, '').toJSON().expect).toStrictEqual({ regex: 'a', flags: '' });
+  expect(norm.extract(/(\d+)/, { flags: 'i' })).toStrictEqual({ op: 'extract', regex: '(\\d+)', flags: 'i' });
+  expect(norm.replace(/,/g, '', 'gi')).toStrictEqual({ op: 'replace', regex: ',', flags: 'gi', with: '' });
+  expect(re(/x/m, 'i')).toStrictEqual({ regex: 'x', flags: 'i' });
+});
+
 test('like: objects need their keys, arrays contain an item like each element, the rest is equal', () => {
   expect(like('x')).toStrictEqual({ const: 'x' });
   expect(like(null)).toStrictEqual({ const: null });
@@ -390,7 +399,10 @@ test.describe('printing builder code', () => {
     const { stdout } = await promisify(execFile)(join(root, 'node_modules/.bin/tsrs'), [
       '-p',
       join(dir, 'tsconfig.json'),
-    ]).catch((e: { stdout: string }) => ({ stdout: e.stdout }));
+    ]).catch((e: { stdout: string; stderr: string }) => {
+      // A failing typecheck fails the test, with tsrs's output.
+      throw new Error(`tsrs failed:\n${e.stdout}${e.stderr}`);
+    });
     expect(stdout).toBe('');
   });
 

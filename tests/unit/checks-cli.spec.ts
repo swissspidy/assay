@@ -11,9 +11,9 @@ import { fileURLToPath } from 'node:url';
 import { run } from '../../src/cli/main.ts';
 import type { Io } from '../../src/cli/io.ts';
 import { resolveTask } from '../../src/cli/commands/compile.ts';
-import { taskFiles } from '../../src/cli/commands/bench.ts';
+import { findTasks, taskFiles } from '../../src/cli/commands/bench.ts';
 import { configuredChecks } from '../../src/cli/commands/validate.ts';
-import { loadCheckSetFile } from '../../src/checks/load.ts';
+import { loadCheckSetFile, loadCheckSetFileWithDeps } from '../../src/checks/load.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const shop = (p: string) => join(root, 'examples/tiny-shop', p);
@@ -168,4 +168,98 @@ test('config discovery, compile and bench find *.checks.ts tasks', async () => {
     instruction: 'Open the cart.',
     outcomes: 'Then the cart is shown',
   });
+});
+
+// ---------------------------------------------------------------------------
+// Review fixes (PR #31)
+
+const blueSet = (id: string) =>
+  `import { checks, req, url } from ${JSON.stringify(BUILDER)};\nexport default checks({ id: '${id}', instruction: 'Open the cart.' }, [req('R1', 'Open the cart').check(url('/cart'))]);\n`;
+
+test('an edited module set is loaded again in the same process', async () => {
+  const dir = project();
+  const file = join(dir, 'x.checks.ts');
+  writeFileSync(file, blueSet('first'));
+  expect(await loadCheckSetFile(file)).toMatchObject({ id: 'first' });
+  writeFileSync(file, blueSet('second'));
+  expect(await loadCheckSetFile(file)).toMatchObject({ id: 'second' });
+});
+
+test('a factory that rejects, or a value that does not serialize, is a load error', async () => {
+  const dir = project();
+  writeFileSync(join(dir, 'rejects.checks.ts'), "export default async () => { throw new Error('no catalogue'); };\n");
+  writeFileSync(
+    join(dir, 'cycle.checks.ts'),
+    'const a: Record<string, unknown> = {};\na.self = a;\nexport default a;\n',
+  );
+  for (const [name, why] of [
+    ['rejects', 'no catalogue'],
+    ['cycle', 'circular'],
+  ] as const) {
+    const file = join(dir, `${name}.checks.ts`);
+    await expect(loadCheckSetFile(file)).rejects.toMatchObject({
+      code: 'ELOAD',
+      message: expect.stringContaining(why),
+    });
+  }
+  const r = await assay(['validate', join(dir, 'rejects.checks.ts'), join(dir, 'cycle.checks.ts')], dir);
+  expect(r.code).toBe(1);
+  expect(r.stdout).toContain('rejects.checks.ts: no catalogue');
+  expect(r.stdout).toMatch(/cycle\.checks\.ts: .*circular/);
+});
+
+test('a fresh load ignores what the module prints, ends despite its timers, and stops when aborted', async () => {
+  test.setTimeout(30_000);
+  const dir = project();
+  const noisy = join(dir, 'noisy.checks.ts');
+  writeFileSync(noisy, `console.log('{ not json');\nsetInterval(() => {}, 1000);\n${blueSet('noisy')}`);
+  const t0 = Date.now();
+  expect(await loadCheckSetFile(noisy, { fresh: true })).toMatchObject({ id: 'noisy' });
+  expect(Date.now() - t0).toBeLessThan(10_000);
+
+  const hangs = join(dir, 'hangs.checks.ts');
+  writeFileSync(hangs, 'setInterval(() => {}, 1000);\nawait new Promise(() => {});\nexport default {};\n');
+  const ac = new AbortController();
+  setTimeout(() => ac.abort(), 300);
+  await expect(loadCheckSetFile(hangs, { fresh: true, signal: ac.signal })).rejects.toMatchObject({ code: 'EABORT' });
+
+  // A fresh load reports the local modules it imported.
+  writeFileSync(join(dir, 'helper.ts'), "export const id = 'helped';\n");
+  writeFileSync(join(dir, 'uses.checks.ts'), "import { id } from './helper.ts';\nexport default { id };\n");
+  const loaded = await loadCheckSetFileWithDeps(join(dir, 'uses.checks.ts'), { fresh: true });
+  expect(loaded.value).toEqual({ id: 'helped' });
+  expect(loaded.deps).toEqual(expect.arrayContaining([join(dir, 'uses.checks.ts'), join(dir, 'helper.ts')]));
+  expect(loaded.deps.some((d) => d.includes('node_modules'))).toBe(false);
+});
+
+test('reject and unlock also refuse to rewrite a module, and write JSON with --out', async () => {
+  const dir = project();
+  const file = join(dir, 'blue.checks.ts');
+  writeFileSync(file, readFileSync(TS, 'utf8').replace("'../../src/checks/index.ts'", JSON.stringify(BUILDER)));
+  const source = readFileSync(file, 'utf8');
+  for (const args of [
+    ['reject', file, '--reviewer', 'bob', '--note', 'too loose'],
+    ['unlock', file],
+  ]) {
+    const refused = await assay(args, dir);
+    expect(refused.code, args[0]).toBe(3);
+    expect(refused.stderr).toContain(`blue.checks.ts is a module; ${args[0]} writes the check set as JSON: add --out`);
+    expect(readFileSync(file, 'utf8')).toBe(source);
+    const out = join(dir, `${args[0]}.checks.json`);
+    const written = await assay([...args, '--out', out], dir);
+    expect(written.code, written.stderr).toBe(0);
+    expect(JSON.parse(readFileSync(out, 'utf8'))).toMatchObject({ id: 'tiny-shop/add-blue-mug-ts' });
+  }
+  expect(JSON.parse(readFileSync(join(dir, 'reject.checks.json'), 'utf8')).rejected).toMatchObject({ by: 'bob' });
+});
+
+test('bench names a .checks.mts task like any other', async () => {
+  const dir = project();
+  mkdirSync(join(dir, 'tasks'));
+  mkdirSync(join(dir, 'references/blue'), { recursive: true });
+  writeFileSync(join(dir, 'references/blue/reference.json'), readFileSync(ADDED_BLUE));
+  writeFileSync(join(dir, 'tasks/blue.checks.mts'), blueSet('blue'));
+  const found = await findTasks(join(dir, 'tasks/blue.checks.mts'), join(dir, 'references'), [], dir);
+  expect(found.skipped).toEqual([]);
+  expect(found.tasks.map((t) => t.name)).toEqual(['blue']);
 });

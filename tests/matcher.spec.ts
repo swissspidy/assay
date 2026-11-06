@@ -115,10 +115,60 @@ test('escalate: what the checks cannot decide goes to the config model once poll
   ]);
   await expect(page).toHaveCompleted(unanchored, { timeout: 0, escalate: true, config: { model } });
   pwExpect(model.requests.length).toBe(2);
-  // Without a model, escalation says what it needs.
+  // Without a model, escalation says what it needs, with an empty config and with none.
   pwExpect(await failure(expect(page).toHaveCompleted(unanchored, { timeout: 0, escalate: true, config: {} }))).toMatch(
     /needs a model/,
   );
+  pwExpect(
+    await failure(
+      expect(page).toHaveCompleted(unanchored, {
+        timeout: 0,
+        escalate: true,
+        config: false,
+        recordDir: test.info().outputPath('records'),
+      }),
+    ),
+  ).toMatch(/needs a model/);
+});
+
+test('escalation runs once, after several polls, never while polling', async ({ page }) => {
+  await addToCart(page, 'Blue Mug');
+  const unanchored = checks({ id: 'cart-table', instruction: 'Add a Blue Mug to my cart.' }, [
+    req('R1', 'The cart lists a Blue Mug', { quote: 'Add a Blue Mug' }).check(
+      node('table', 'Cart').contains({ role: 'row', name: { contains: 'Blue Mug' } }),
+    ),
+  ]);
+  const model = scripted([
+    () => call('page_outline', {}),
+    () => call('submit_verdict', { verdicts: [{ requirement: 'R1', status: 'pass', cites: [1], reasoning: 'added' }] }),
+  ]);
+  const calledAt: number[] = [];
+  const t0 = Date.now();
+  const verifier = {
+    id: model.id,
+    turn: async (r: Parameters<typeof model.turn>[0]) => {
+      // Every turn comes after polling ended.
+      calledAt.push(Date.now() - t0);
+      return model.turn(r);
+    },
+  };
+  await expect(page).toHaveCompleted(unanchored, {
+    timeout: 800,
+    interval: 100,
+    escalate: true,
+    config: { model: verifier },
+  });
+  pwExpect(model.requests.length).toBe(2); // one verifier session (two turns), not one per poll
+  pwExpect(Math.min(...calledAt)).toBeGreaterThanOrEqual(800);
+});
+
+test('the last poll is at the deadline, even when the interval is longer than the time left', async ({ page }) => {
+  await page.goto('/');
+  await ready(page);
+  const done = expect(page).toHaveCompleted(blueMug, { probes: shopProbes(page), timeout: 1500, interval: 5000 });
+  await page.waitForTimeout(500);
+  await addToCart(page, 'Blue Mug');
+  await done;
 });
 
 test('a check set that does not load or is invalid is an error, not a verdict', async ({ page }) => {

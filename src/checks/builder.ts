@@ -76,7 +76,11 @@ export type Bound = number | string | Money;
 
 /** A regular expression as the DSL stores it. */
 function regexOf(r: RegExp | string, flags?: string): { regex: string; flags?: string } {
-  if (r instanceof RegExp) return { regex: r.source, ...(r.flags ? { flags: r.flags } : {}) };
+  // Explicit flags win over a RegExp's own (`''` too); otherwise the RegExp's flags are kept.
+  if (r instanceof RegExp) {
+    const f = flags ?? r.flags;
+    return { regex: r.source, ...(flags !== undefined || f ? { flags: f } : {}) };
+  }
   return { regex: r, ...(flags !== undefined ? { flags } : {}) };
 }
 

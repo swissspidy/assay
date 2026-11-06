@@ -62,7 +62,13 @@ Rules that keep it honest:
 ### Modules as check sets, and `assay checks print`
 
 A check set file is `*.checks.json` or a module (`.ts`, `.mts`, `.js`, `.mjs`) whose default export
-is a set, or a function returning one. `loadCheckSetFile` loads both; TypeScript runs through
+is a set, or a function returning one (a factory that rejects, or a value that does not
+serialize, is a load error). `loadCheckSetFile` loads both: a module is imported under a URL
+that names the version of its contents, so an edited set file is imported again in the same
+process (the modules it imports are not). With `fresh`, it runs in a child Node process that
+writes the set, and the local files it imported, to a file of its own (what the module prints
+cannot corrupt it) and exits right after, whatever timers the module left; an abort signal stops
+it; TypeScript runs through
 Node 24's type stripping, so a module uses erasable syntax only. Every command that takes a check
 set takes a module: `verify`, `validate` (including the config's `checks` directory, now
 `**/*.checks.{json,ts}`), `review` (and `--diff`), `stress`, `compile` (its task), `bench` (task
@@ -99,21 +105,29 @@ the same attachments. Differences:
 ### `assay watch`
 
 Watches check sets (positional files, directories or globs, else the config's `checks`) with
-`fs.watch` (recursive), debounced (`--debounce`, 100 ms). The runs of a set named `<name>` are the
+`fs.watch`, debounced (`--debounce`, 100 ms): the directories and the literal root of each glob
+recursively, the directory of every local module a set imports, and the run roots (or, until one
+exists, its closest existing parent). Watching starts before the first round, so an edit made
+while it runs makes another one. A lost watch is reported and set up again. The runs of a set named `<name>` are the
 `.json` files in `<root>/<name>/` for each run root: `--reference`, else the config's
 `bench.references` and `snapshots`, plus `references/` beside the set's directory (the layout of
 `examples/*` and `assay bench`). On a change:
 
-- a set file → that set; a file under a set's run directory → that set; anything else (a helper
-  module, shared data) → every module set; new sets are added, deleted ones dropped;
+- a set file, or a module a set imported (another set's module included) → that set; a file
+  under a set's run directory, or one created on the way to it → that set; a module set that
+  did not load is tried again on any change; new sets are added, deleted ones dropped; editor
+  scratch files, `.git` and `node_modules` are ignored, other hidden files are not;
 - each affected set is loaded (a module in a fresh Node process, so edits to modules it imports
-  are seen), validated, and its runs verified with `verifyMany` (no model, no lock, no config
-  escalation); snapshots are cached per file version, so their evidence stores are reused;
+  are seen, and those modules are known), validated, and its runs verified with `verifyMany`
+  (no model, no lock, no config escalation); snapshots are cached per version of a run file's
+  contents, so their evidence stores are reused, and dropped once the run is gone;
 - `--stress` stress-tests the set against its correct runs, as `assay stress` counts problems;
 - the table is redrawn (on a terminal; `--no-clear` appends): per set its state, per run its
-  verdict, its label and what changed since the previous round (`was SUCCESS · C1 pass→fail`).
+  verdict, its label and what changed since the previous round (`was SUCCESS · C1 pass→fail`);
+  runs with the same name in two run roots show their paths. With `--json`, each round is one
+  JSON object on a line instead.
 
-Ctrl-C closes the watchers and exits 0. `--once` prints one table and exits 1 when a set is invalid
+Ctrl-C stops the round in progress (and its child processes), closes the watchers and exits 0. `--once` prints one table and exits 1 when a set is invalid
 or a labelled run is not as expected, which makes it a one-line CI check for a task directory. It is
 dependency-free.
 

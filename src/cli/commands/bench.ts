@@ -32,7 +32,7 @@ import { CHECK_SET_GLOBS, isModuleFile } from '../../checks/load.ts';
 export const EXIT_INTERRUPTED = 130;
 
 const str = (x: unknown) => (typeof x === 'string' ? x : undefined);
-const TASK_FILE = /\.(checks\.(json|ts)|task\.json)$/;
+const TASK_FILE = /\.(checks\.(json|ts|mts|js|mjs)|task\.json)$/i;
 const taskName = (file: string) =>
   basename(file)
     .replace(TASK_FILE, '')

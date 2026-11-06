@@ -342,6 +342,7 @@ Options:
   --once                 Run once, print the table and exit (0 if every labelled run is as expected)
   --no-clear             Append each table instead of redrawing the screen (default on a terminal)
   --debounce <ms>        Wait this long after a change before running (default 100)
+  --json                 Print each round as one JSON object per line instead of the table
 
 Exit status: 0 stopped (or --once and every labelled run as expected), 1 --once with a run not as
 expected or an invalid set, 3 usage, 4 error.`,

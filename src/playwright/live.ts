@@ -37,7 +37,8 @@ const projectConfig = cachedUntilRejected(async (): Promise<AssayConfig> => (awa
  * once per process.
  */
 export async function withProjectConfig<T extends VerifyPageOptions>(opts: T): Promise<T> {
-  if (opts.config === false) return opts;
+  // No config file, but the options are still checked (escalate: true needs a model).
+  if (opts.config === false) return applyConfig(opts, {}) as T;
   const config = opts.config === undefined ? await projectConfig() : await configOf(opts.config);
   return applyConfig(opts, config) as T;
 }
@@ -76,8 +77,10 @@ export async function pollOutcome(
     snapshot = await captureSnapshot(page, opts);
     outcome = evaluate(cs, snapshot);
     polls++;
-    if (settled(outcome.verdict) || Date.now() + interval > deadline) break;
-    await page.waitForTimeout(interval);
+    const left = deadline - Date.now();
+    if (settled(outcome.verdict) || left <= 0) break;
+    // The last wait is cut to the time left, so the final snapshot is taken at the deadline.
+    await page.waitForTimeout(Math.min(interval, left));
   }
 
   // Escalation only after polling settled: the checks had every chance to decide.
