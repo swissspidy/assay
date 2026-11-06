@@ -104,10 +104,15 @@ A survivor is **decisive** only when all of these hold:
    (the probe and field names, path segments, roles, the compared values and state words), and
    every number, `#n`, date and time the quote states is among its compared values, once for each
    time the quote states it ("the quantity is 2 and the price is 2" needs two compared values, not
-   one scalar). Words about which page is open ("page", "screen") are accounted for only by tree or
-   URL evidence, words about what it presents ("shows", "visible") only by the tree, and a kind of
-   element ("button", "checkbox", "heading") only by a candidate whose role names it: a URL check
-   never settles "the Checkout button is visible". A word the quote uses twice must be accounted for twice ("the Dentist event is called "Dentist (Dr. Lee)"").
+   one scalar). Fields the quote coordinates ("the quantity and price are 2", "X, Y and Z") each
+   need a compared value of their own, a leaf whose field name or value names that word: one
+   scalar never settles them, whatever its name (`quantityPrice`). Words about which page is open
+   ("page", "screen") are accounted for only by tree or URL evidence. Words about what it presents
+   ("shows", "visible") and kinds of element ("button", "checkbox", "heading") are accounted for
+   only by tree evidence (its role, name and state), never by a URL, request path or field name that
+   spells them: `/checkout-button-visible` does not settle "the Checkout button is visible". Inside
+   quotation marks they are part of a name or value ("Yes, see the docs.") and are accounted for
+   like any other word. A word the quote uses twice must be accounted for twice ("the Dentist event is called "Dentist (Dr. Lee)"").
 2. **The quote is expressible.** Quotes with "only", "every", "all", "other", "no longer", "keep",
    … speak of a set or an absence, and "add"/"put" also keeps what the collection held (ADR 0011);
    mining builds neither comparison. Words inside quotation marks are names, not quantifiers.
@@ -115,10 +120,14 @@ A survivor is **decisive** only when all of these hold:
    quote names (a stated candidate, with its records identified) and the baseline did not already
    pass it. A request, a URL or a node that is merely present settles nothing without an incorrect
    reference that lacks it. A request body is what the browser asked for, not what happened: a POST
-   the server answers with a redirect to its login page sends the same body. So a request-body
-   candidate states the outcome only when every reference saw a 2xx answer, and it then requires
-   one; after a redirect, it settles nothing without an incorrect reference that fails it. A
-   response body is the server's own answer. Every request candidate names the origin the
+   the server answers with a redirect to its login page, or with a 200 login page or validation
+   error, sends the same body. So a request-body candidate states the outcome only with the
+   server's answer as evidence: every reference saw a 2xx answer that is a JSON object, with fields
+   beyond status fields ("ok", "error", "message", …) that all of them share. The candidate then
+   requires a 2xx answer of that shape (`responseBody: {type: "object", required: [...]}`), which
+   an HTML page (captured as text) or a bare status object never is. Otherwise it settles nothing
+   without an incorrect reference that fails it. A response body that holds the quoted values is
+   the server's own answer, and states the outcome. Every request candidate names the origin the
    references sent it to, so the same path and body sent to another host do not pass.
 
 `selectMined` takes the best decisive candidate per requirement, then, for each incorrect reference
@@ -204,7 +213,7 @@ datasets and rubrics, by reason:
 | the baseline already passes the best survivor                                                                                                                                                         |    8 |
 
 Each is a requirement mining declines rather than half-checks: across the 20 mined sets and their
-61 held-out runs, mining produced no false success. The request rules (a 2xx answer, the origin)
+61 held-out runs, mining produced no false success. The request rules (the server's answer, the origin)
 cost the most coverage: `tiny-tracker/01-create-bug` and `02-create-high-priority` create their
 issue with a form POST the server answers with a redirect, so "the new issue has the bug label" and
 "its priority is high" now go to the model, as do the Gitea milestone and PrestaShop price forms.

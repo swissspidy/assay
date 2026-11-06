@@ -396,8 +396,13 @@ const withControl = (role: string, name: string, checked: boolean): EvidenceSnap
     },
   );
 
-/** A snapshot with one network request. */
-const withRequest = (status: number, body: Json, url = 'http://shop.test/settings'): EvidenceSnapshot =>
+/** A snapshot with one network request (and its response body, when given). */
+const withRequest = (
+  status: number,
+  body: Json,
+  url = 'http://shop.test/settings',
+  response?: Json,
+): EvidenceSnapshot =>
   snap(
     {},
     {
@@ -411,10 +416,25 @@ const withRequest = (status: number, body: Json, url = 'http://shop.test/setting
           requestHeaders: {},
           requestBody: body,
           responseHeaders: {},
+          ...(response !== undefined ? { responseBody: response } : {}),
         },
       ],
     },
   );
+
+/** The server's JSON answer to a saved setting, and a login page served with 200 instead. */
+const SAVED: Json = { id: 7, updatedAt: '2026-11-06T10:00:00Z' };
+const LOGIN: Json = '<!doctype html><title>Log in</title><form action="/login" method="post"></form>';
+
+/** A check set of one mined candidate. */
+const checkSetOf = (quote: string, c: CandidateResult): CheckSet => ({
+  schema: CHECKS_SCHEMA,
+  id: 't',
+  version: '1',
+  task: { instruction: 'Do it.', outcomes: `Then ${quote}` },
+  requirements: [req('R1', quote)],
+  checks: [{ id: c.id, requirement: 'R1', description: c.description, assert: c.assert }],
+});
 
 test.describe('what settles a requirement', () => {
   test('negation belongs to its own condition, not to the whole quote', () => {
@@ -488,8 +508,9 @@ test.describe('what settles a requirement', () => {
     expect(sent.length).toBeGreaterThan(0);
     expect(sent.every((c) => c.survives && !c.decisive)).toBe(true);
     expect(redirected.requirements[0]!.decisive).toEqual([]);
-    // A success status is outcome evidence: the request is then decisive, on its origin only.
-    const ok = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: withRequest(200, body) }]);
+    // A success status with the server's JSON answer is outcome evidence: the request is then
+    // decisive, on its origin only, and requires that answer's shape.
+    const ok = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: withRequest(200, body, undefined, SAVED) }]);
     expect(ok.requirements[0]!.decisive[0]!.assert).toEqual({
       kind: 'request',
       match: {
@@ -501,26 +522,37 @@ test.describe('what settles a requirement', () => {
           required: ['newsletterEnabled'],
           properties: { newsletterEnabled: { const: true } },
         },
+        responseBody: { type: 'object', required: ['id', 'updatedAt'] },
       },
     });
+  });
+
+  test('a 2xx answer alone does not settle a state change: it may be a login page', async () => {
+    const quote = 'the newsletter is enabled';
+    const body = { newsletterEnabled: true };
+    // An HTML answer, JSON with only status fields, or no answer says nothing of the outcome.
+    for (const response of [LOGIN, { ok: true }, undefined]) {
+      const m = mineOne(quote, [
+        { name: 'ref', kind: 'success', snapshot: withRequest(200, body, undefined, response) },
+      ]);
+      expect(m.requirements[0]!.decisive, JSON.stringify(response)).toEqual([]);
+    }
+    // With the server's JSON answer, a 200 login page for the same request does not pass.
+    const m = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: withRequest(200, body, undefined, SAVED) }]);
+    const cs = checkSetOf(quote, m.requirements[0]!.decisive[0]!);
+    const { evaluate } = await import('../../src/index.ts');
+    expect(evaluate(cs, withRequest(200, body, undefined, SAVED)).verdict).toBe('success');
+    expect(evaluate(cs, withRequest(200, body, undefined, LOGIN)).verdict).not.toBe('success');
   });
 
   test('a request check names where the request went', async () => {
     const quote = 'the newsletter is enabled';
     const body = { newsletterEnabled: true };
-    const m = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: withRequest(200, body) }]);
+    const m = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: withRequest(200, body, undefined, SAVED) }]);
     const { evaluate } = await import('../../src/index.ts');
-    const best = m.requirements[0]!.decisive[0]!;
-    const cs: CheckSet = {
-      schema: CHECKS_SCHEMA,
-      id: 't',
-      version: '1',
-      task: { instruction: 'Do it.', outcomes: `Then ${quote}` },
-      requirements: [req('R1', quote)],
-      checks: [{ id: best.id, requirement: 'R1', description: best.description, assert: best.assert }],
-    };
-    expect(evaluate(cs, withRequest(200, body)).verdict).toBe('success');
-    expect(evaluate(cs, withRequest(200, body, 'http://elsewhere.test/settings')).verdict).not.toBe('success');
+    const cs = checkSetOf(quote, m.requirements[0]!.decisive[0]!);
+    expect(evaluate(cs, withRequest(200, body, undefined, SAVED)).verdict).toBe('success');
+    expect(evaluate(cs, withRequest(200, body, 'http://elsewhere.test/settings', SAVED)).verdict).not.toBe('success');
   });
 
   test('the per-family limit keeps the candidates that account for the quote', () => {
@@ -550,6 +582,19 @@ test.describe('what settles a requirement', () => {
     expect(m.requirements[0]!.decisive).toEqual([]);
   });
 
+  test('URL words never account for an element or for what the page presents', () => {
+    const at = (path: string) => snap({}, { page: { url: `http://shop.test${path}`, title: 'Shop' } });
+    const m = mineOne('the Checkout button is visible', [
+      { name: 'ref', kind: 'success', snapshot: at('/checkout-button-visible') },
+      { name: 'cart', kind: 'negative', snapshot: at('/cart') },
+    ]);
+    const url = m.candidates.find((c) => c.family === 'url')!;
+    expect(url.assert).toEqual({ kind: 'url', match: { path: '/checkout-button-visible' } });
+    expect(url.negativesRejected).toEqual(['cart']);
+    expect(url.unexplained).toEqual(expect.arrayContaining(['button', 'visible']));
+    expect(m.requirements[0]!.decisive).toEqual([]);
+  });
+
   test('one scalar does not settle a quote that states a value twice', () => {
     const quote = 'the quantity is 2 and the price is 2';
     const one = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: snap({ quantityPrice: 2 }) }]);
@@ -560,6 +605,23 @@ test.describe('what settles a requirement', () => {
       { name: 'ref', kind: 'success', snapshot: snap({ line: { quantity: 2, price: 2 } }) },
     ]);
     expect(each.requirements[0]!.decisive.length).toBeGreaterThan(0);
+  });
+
+  test('one scalar does not settle fields the quote coordinates over one value', () => {
+    for (const quote of ['the quantity and price are 2', 'the quantity and the price are 2']) {
+      const one = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: snap({ quantityPrice: 2 }) }]);
+      expect(one.requirements[0]!.decisive, quote).toEqual([]);
+      // A record with a field for each: both are compared, and that settles it.
+      const each = mineOne(quote, [
+        { name: 'ref', kind: 'success', snapshot: snap({ line: { quantity: 2, price: 2 } }) },
+      ]);
+      expect(each.requirements[0]!.decisive.length, quote).toBeGreaterThan(0);
+    }
+    // A single field still settles a single condition.
+    const single = mineOne('the order ships express', [
+      { name: 'ref', kind: 'success', snapshot: snap({ latestOrder: { shipping: 'express' } }) },
+    ]);
+    expect(single.requirements[0]!.decisive.length).toBeGreaterThan(0);
   });
 });
 
