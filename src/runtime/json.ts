@@ -20,14 +20,20 @@ export function schemaAjv(opts: Options = {}): Ajv2019 {
   return a;
 }
 const schemaCache = new Map<string, ValidateFunction>();
+/** The same, by schema object: check sets are not edited once they run (ADR 0015). */
+const schemaObjects = new WeakMap<object, ValidateFunction>();
 
 export function compileSchema(schema: JsonSchema): ValidateFunction {
+  const isObject = !!schema && typeof schema === 'object';
+  let fn = isObject ? schemaObjects.get(schema) : undefined;
+  if (fn) return fn;
   const key = canonicalJson(schema);
-  let fn = schemaCache.get(key);
+  fn = schemaCache.get(key);
   if (!fn) {
     fn = ajv.compile(schema as object | boolean);
     schemaCache.set(key, fn);
   }
+  if (isObject) schemaObjects.set(schema, fn);
   return fn;
 }
 

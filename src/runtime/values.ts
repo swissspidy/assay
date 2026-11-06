@@ -2,6 +2,7 @@ import type { Json, Money, Normalizer } from '../types.ts';
 import { canonical, stripGlobal } from '../text.ts';
 import { canonicalJson } from '../snapshot/digest.ts';
 import { compileSchema, jsonPointer } from './json.ts';
+import { regExp } from './once.ts';
 
 /** A typed value flowing through the normalizer pipeline. */
 export type TypedValue =
@@ -55,9 +56,22 @@ export function normalizerName(n: Normalizer): string {
 }
 
 export function applyNormalizers(input: TypedValue, steps: Normalizer[] | undefined): TypedValue {
+  return applySteps(input, resolveNormalizers(steps));
+}
+
+/** A normalizer step with its options: a bare name becomes `{ op: name }`. */
+export type NormalizerStep = Exclude<Normalizer, string>;
+
+/** A normalizer chain resolved once (ADR 0015), to run with `applySteps`. */
+export function resolveNormalizers(steps: Normalizer[] | undefined): NormalizerStep[] {
+  const out: NormalizerStep[] = [];
+  for (const step of steps ?? []) out.push(typeof step === 'string' ? ({ op: step } as NormalizerStep) : step);
+  return out;
+}
+
+export function applySteps(input: TypedValue, steps: readonly NormalizerStep[]): TypedValue {
   let v = input;
-  for (const step of steps ?? [])
-    v = applyOne(v, typeof step === 'string' ? ({ op: step } as Exclude<Normalizer, string>) : step);
+  for (const step of steps) v = applyOne(v, step);
   return v;
 }
 
@@ -77,7 +91,7 @@ function applyOne(v: TypedValue, step: Exclude<Normalizer, string>): TypedValue 
       return { type: 'string', value: asString(v, step.op).normalize('NFD').replace(/\p{M}/gu, '').normalize('NFC') };
     case 'extract': {
       const s = asString(v, step.op);
-      const m = new RegExp(step.regex, stripGlobal(step.flags)).exec(s);
+      const m = regExp(step.regex, stripGlobal(step.flags)).exec(s);
       if (!m)
         throw new NormalizeError(`extract: /${step.regex}/ does not match ${JSON.stringify(s)}`, 'normalize_failed');
       const g = step.group ?? (m.length > 1 ? 1 : 0);
@@ -88,7 +102,7 @@ function applyOne(v: TypedValue, step: Exclude<Normalizer, string>): TypedValue 
     }
     case 'replace': {
       const flags = step.flags ?? 'g';
-      return { type: 'string', value: asString(v, step.op).replace(new RegExp(step.regex, flags), step.with) };
+      return { type: 'string', value: asString(v, step.op).replace(regExp(step.regex, flags), step.with) };
     }
     case 'json': {
       const s = asString(v, step.op);
@@ -229,10 +243,10 @@ export function parseLocaleNumber(raw: string, locale: string): number {
   const G = `(?:${group.map(escapeRe).join('|')})`;
   const D = escapeRe(decimal);
   const grouped = twoDigitGroups ? `\\d{1,2}(?:${G}\\d{2})*${G}\\d{3}` : `\\d{1,3}(?:${G}\\d{3})+`;
-  const re = new RegExp(`^(?:(${grouped})|(\\d+))?(?:${D}(\\d+))?$`, 'u');
+  const re = regExp(`^(?:(${grouped})|(\\d+))?(?:${D}(\\d+))?$`, 'u');
   const m = re.exec(s);
   if (!m || (!m[1] && !m[2] && !m[3])) throw fail();
-  const intPart = (m[1] ?? m[2] ?? '0').replace(new RegExp(G, 'gu'), '');
+  const intPart = (m[1] ?? m[2] ?? '0').replace(regExp(G, 'gu'), '');
   const n = Number(`${intPart}.${m[3] ?? '0'}`);
   if (!Number.isFinite(n)) throw fail();
   return negative ? -n : n;
