@@ -16,6 +16,7 @@ import { formObject, multipartBoundary, parseMultipart, type FormValue } from '.
 import { attachFrames, FRAME_LIMITS } from './frames.ts';
 import { randomUUID } from 'node:crypto';
 import { ASSAY_VERSION } from '../version.ts';
+import { sealDigest } from './digest.ts';
 
 /** Names the capturing package and its version. */
 export const CAPTURER = ASSAY_VERSION;
@@ -663,6 +664,13 @@ export interface CaptureOptions {
    * captured in the page's browser context, if any; null leaves it out.
    */
   baseline?: Baseline | null;
+  /**
+   * Take the snapshot's digest at capture time (default true; ADR 0016), so that `verify`
+   * of this snapshot object does not compute it again. The snapshot is then frozen, so the
+   * evidence cannot change after its digest was taken: to edit it, edit a copy
+   * (`structuredClone`), or pass false. Its content and its file are unchanged.
+   */
+  digest?: boolean;
 }
 
 export type BaselineOptions = Pick<CaptureOptions, 'probes' | 'storage' | 'keepCookies' | 'keepStorage'>;
@@ -870,7 +878,7 @@ export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Pr
     network = recorder.log();
   }
 
-  return {
+  const snapshot: EvidenceSnapshot = {
     schema: SNAPSHOT_SCHEMA,
     capturedAt: new Date().toISOString(),
     page: { url: active.url(), title: dom.title },
@@ -886,4 +894,9 @@ export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Pr
     ...(pages.length ? { pages } : {}),
     meta: { capturer: CAPTURER, redacted: redacted.toSorted() },
   };
+  // The digest the record needs, taken now rather than on the verify path; kept beside the
+  // snapshot object (not in it), so the snapshot and its file are what they always were. The
+  // snapshot is frozen with it, so the digest stays the digest of its evidence.
+  if (opts.digest !== false) sealDigest(snapshot);
+  return snapshot;
 }

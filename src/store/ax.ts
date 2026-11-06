@@ -19,8 +19,7 @@ export class AXTable {
   readonly size: number;
   /** Interned roles (ids fixed once the table is built). */
   readonly roles = new Interner();
-  /** Interned canonical names (added to as names are first read). */
-  readonly names = new Interner();
+  private namesValue?: Interner;
   /** The node objects, by id (pre-order position). */
   readonly nodes: AXNode[] = [];
   /** Interned role of each node. */
@@ -37,50 +36,45 @@ export class AXTable {
   private roleIds?: Int32Array;
   private roleStart?: Int32Array;
   /** Ids of the nodes of each role by canonical name, ascending; built per role on first lookup. */
-  private readonly byRoleName = new Map<number, Map<number, Int32Array> | null>();
+  private byRoleNameValue?: Map<number, Map<number, Int32Array> | null>;
+
+  /** Interned canonical names (added to as names are first read). */
+  get names(): Interner {
+    return (this.namesValue ??= new Interner());
+  }
+
+  private get byRoleName(): Map<number, Map<number, Int32Array> | null> {
+    return (this.byRoleNameValue ??= new Map());
+  }
 
   constructor(tree: AXNode) {
     const nodes = this.nodes;
     const roles = this.roles;
-    let cap = 256;
-    let role = new Uint32Array(cap);
-    let parent = new Int32Array(cap);
-    let depth = new Uint32Array(cap);
-    let end = new Int32Array(cap);
-    const grow = () => {
-      cap *= 2;
-      const r = new Uint32Array(cap);
-      r.set(role);
-      role = r;
-      const p = new Int32Array(cap);
-      p.set(parent);
-      parent = p;
-      const d = new Uint32Array(cap);
-      d.set(depth);
-      depth = d;
-      const e = new Int32Array(cap);
-      e.set(end);
-      end = e;
-    };
+    // Collected in plain arrays, then copied into one buffer of exactly the tree's size.
+    const roleOf: number[] = [];
+    const parentOf: number[] = [];
+    const depthOf: number[] = [];
+    const endOf: number[] = [];
     // Pre-order, recursive like the index before it: `children` is read first, so a malformed
     // tree throws the same error at the same node.
     const visit = (node: AXNode, p: number, d: number): void => {
       const kids = node.children;
       const id = nodes.length;
-      if (id === cap) grow();
       nodes.push(node);
-      role[id] = roles.intern(node.role);
-      parent[id] = p;
-      depth[id] = d;
+      roleOf.push(roles.intern(node.role));
+      parentOf.push(p);
+      depthOf.push(d);
+      endOf.push(0);
       if (kids) for (const c of kids) visit(c, id, d + 1);
-      end[id] = nodes.length;
+      endOf[id] = nodes.length;
     };
     visit(tree, -1, 0);
     const n = (this.size = nodes.length);
-    this.role = role.subarray(0, n);
-    this.parent = parent.subarray(0, n);
-    this.depth = depth.subarray(0, n);
-    this.end = end.subarray(0, n);
+    const buffer = new ArrayBuffer(n * 16);
+    (this.role = new Uint32Array(buffer, 0, n)).set(roleOf);
+    (this.parent = new Int32Array(buffer, n * 4, n)).set(parentOf);
+    (this.depth = new Uint32Array(buffer, n * 8, n)).set(depthOf);
+    (this.end = new Int32Array(buffer, n * 12, n)).set(endOf);
   }
 
   /** The interned canonical name of node `id`: NONE without a name, INVALID for a name that is not a string. */
@@ -163,6 +157,39 @@ export class AXTable {
 }
 
 const EMPTY = new Int32Array(0);
+
+const regularNodes = new WeakSet<AXNode>();
+
+/**
+ * Whether a node inherits nothing (its prototype is Object.prototype or null), so the node
+ * reads the same as `{ ...node }`, its copy.
+ */
+export function plainNode(node: AXNode): boolean {
+  const p = Object.getPrototypeOf(node) as unknown;
+  return p === Object.prototype || p === null;
+}
+
+/**
+ * Whether every node of the tree is an object whose `children`, when it has the field, is its
+ * own non-empty list without holes (ADR 0016). Such a tree indexes without error, and an edit
+ * that leaves a node alone leaves it as it is. Remembered per node, so an edited tree is
+ * checked along its new nodes only.
+ */
+export function regularTree(node: AXNode): boolean {
+  if (!node || typeof node !== 'object') return false;
+  if (regularNodes.has(node)) return true;
+  if (!plainNode(node)) return false;
+  if (Object.hasOwn(node, 'children')) {
+    const kids = node.children;
+    if (!Array.isArray(kids) || kids.length === 0) return false;
+    for (let i = 0; i < kids.length; i++) if (!(i in kids) || !regularTree(kids[i]!)) return false;
+  } else if (node.children !== undefined) {
+    // An inherited list: the index reads it, but a copy of the node ({ ...node }) loses it.
+    return false;
+  }
+  regularNodes.add(node);
+  return true;
+}
 
 /** The first index of sorted `xs` whose value is ≥ `x`. */
 function lowerBound(xs: Int32Array, x: number): number {

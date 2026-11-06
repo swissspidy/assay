@@ -33,8 +33,8 @@ export class AXIndex {
   private readonly canonicalTexts: (string | undefined)[];
   private readonly paths: (string | undefined)[];
   /** Derived text of nodes outside the tree (term groups, made anew on each read). */
-  private readonly textCache = new WeakMap<INode, string>();
-  private readonly headerCache = new Map<INode, INode[]>();
+  private textCache?: WeakMap<INode, string>;
+  private headerCache?: Map<INode, INode[]>;
 
   constructor(tree: AXNode) {
     const table = (this.table = new AXTable(tree));
@@ -66,7 +66,7 @@ export class AXIndex {
   /** Derived visible text: text runs and leaf names of the subtree, space-joined. */
   text(n: INode): string {
     const own = this.owns(n);
-    const cached = own ? this.texts[n.id] : this.textCache.get(n);
+    const cached = own ? this.texts[n.id] : this.textCache?.get(n);
     if (cached !== undefined) return cached;
     let t: string;
     if (n.node.role === 'text') t = n.node.name ?? '';
@@ -77,7 +77,7 @@ export class AXIndex {
         .join(' ');
     else t = n.node.name ?? '';
     if (own) this.texts[n.id] = t;
-    else this.textCache.set(n, t);
+    else (this.textCache ??= new WeakMap()).set(n, t);
     return t;
   }
 
@@ -125,13 +125,13 @@ export class AXIndex {
     let table: INode | null = row.parent;
     while (table && !TABLES.has(table.node.role)) table = table.parent;
     if (!table) return undefined;
-    let headers = this.headerCache.get(table);
+    let headers = this.headerCache?.get(table);
     if (!headers) {
       const headerRow = this.descendants(table).find(
         (r) => r.node.role === 'row' && r.children.some((c) => c.node.role === 'columnheader'),
       );
       headers = headerRow ? headerRow.children.filter((c) => CELLS.has(c.node.role)) : [];
-      this.headerCache.set(table, headers);
+      (this.headerCache ??= new Map()).set(table, headers);
     }
     const header = headers[row.children.filter((c) => CELLS.has(c.node.role)).indexOf(n)];
     return header?.node.role === 'columnheader' ? header : undefined;

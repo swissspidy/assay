@@ -83,7 +83,8 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
     const page = await context.newPage();
     const response = await page.goto(url.href, { waitUntil: waitUntil as (typeof WAIT_UNTIL)[number] });
     if (wait) await page.waitForTimeout(wait);
-    snapshot = await captureSnapshot(page, values.storage === false ? { storage: false } : {});
+    // Written to a file and never verified here: no digest to take at capture time.
+    snapshot = await captureSnapshot(page, { digest: false, ...(values.storage === false ? { storage: false } : {}) });
     if (response && !response.ok()) io.err(`warning: ${url.href} answered ${response.status()}`);
   } finally {
     await browser.close();

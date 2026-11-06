@@ -25,6 +25,7 @@ import type {
   ValueSource,
 } from '../types.ts';
 import { AXIndex, readNodeField, resolveTarget, type INode } from '../runtime/axindex.ts';
+import { regularTree } from '../store/ax.ts';
 import { matchPage, matchRequest } from '../runtime/network.ts';
 import { compare, compareNumber, compareValues, jsonPointer, tolerable } from '../runtime/compare.ts';
 import { evaluateAssertion, openPages } from '../runtime/evaluate.ts';
@@ -37,7 +38,7 @@ import {
   type TypedValue,
 } from '../runtime/values.ts';
 import { canonical, stripGlobal } from '../text.ts';
-import { clone, editById, nearMiss, replaceText, setPointer, treeChanged } from './edit.ts';
+import { clone, editById, nearMiss, replaceText, treeChanged, withPointer } from './edit.ts';
 import { exampleOf, schemaViolations } from './schema.ts';
 import { renderLike, violations } from './violate.ts';
 
@@ -213,8 +214,8 @@ function nestedArrayEdits(root: Json): { what: string; value: Json }[] {
     });
     edits.push(...pairingSwaps(arr).map((x) => ({ ...x, value: x.value as Json[] })));
     for (const e of edits) {
-      const value = clone(root);
-      if (setPointer(value, pointer, e.value)) out.push({ what: `at ${pointer}: ${e.what}`, value });
+      const edited = withPointer(root, pointer, e.value);
+      if (edited) out.push({ what: `at ${pointer}: ${e.what}`, value: edited.doc });
     }
   }
   // Interleaved, so the cap on kept edits spreads over every nested array.
@@ -296,18 +297,22 @@ function readable(s: EvidenceSnapshot, idx: AXIndex, src: ValueSource, rec?: INo
           .filter((x): x is string => x !== undefined && x !== raw),
         write(next) {
           if (typeof next !== 'string') return undefined;
-          const out = editById(s, (n, nid) => {
-            if (nid !== id) return undefined;
-            if (field === 'url' || field === 'value') return { ...n, [field]: next };
-            if (field === 'name' && !n.children) return { ...n, name: next };
-            return (
-              replaceText(n, raw, next) ?? {
-                ...n,
-                ...(field === 'name' ? { name: next } : {}),
-                children: [{ role: 'text', name: next }],
-              }
-            );
-          });
+          const out = editById(
+            s,
+            (n, nid) => {
+              if (nid !== id) return undefined;
+              if (field === 'url' || field === 'value') return { ...n, [field]: next };
+              if (field === 'name' && !n.children) return { ...n, name: next };
+              return (
+                replaceText(n, raw, next) ?? {
+                  ...n,
+                  ...(field === 'name' ? { name: next } : {}),
+                  children: [{ role: 'text', name: next }],
+                }
+              );
+            },
+            [id],
+          );
           return treeChanged(s, out) ? out : undefined;
         },
       };
@@ -338,12 +343,16 @@ function readable(s: EvidenceSnapshot, idx: AXIndex, src: ValueSource, rec?: INo
             if (typeof next !== 'string') return undefined;
             // A run whose raw name holds the value with other whitespace (a no-break space)
             // is matched, and rewritten, in its canonical form.
-            const out = editById(s, (n, id) => {
-              if (!scope.has(id) || (n.role !== 'text' && n.children) || n.name === undefined) return undefined;
-              if (n.name.includes(got)) return { ...n, name: n.name.replace(got, () => next) };
-              const c = canonical(n.name);
-              return c.includes(got) ? { ...n, name: c.replace(got, () => next) } : undefined;
-            });
+            const out = editById(
+              s,
+              (n, id) => {
+                if (!scope.has(id) || (n.role !== 'text' && n.children) || n.name === undefined) return undefined;
+                if (n.name.includes(got)) return { ...n, name: n.name.replace(got, () => next) };
+                const c = canonical(n.name);
+                return c.includes(got) ? { ...n, name: c.replace(got, () => next) } : undefined;
+              },
+              scope,
+            );
             if (!treeChanged(s, out)) return undefined;
             return { ...out, text: s.text.replace(got, () => next) };
           },
@@ -442,10 +451,17 @@ function readable(s: EvidenceSnapshot, idx: AXIndex, src: ValueSource, rec?: INo
         what: `${src.from} body${pointer ? ` at ${pointer}` : ''} of #${target.seq}`,
         siblings: pointer ? siblingValues(body, pointer) : [],
         write(next) {
-          const network = clone(s.network!);
-          const e = network.find((x) => x.seq === target.seq)!;
-          if (pointer === '') e[which] = next;
-          else if (!setPointer(e[which]!, pointer, next)) return undefined;
+          // Only the edited entry and the objects on the pointer's path are copied.
+          const i = s.network!.findIndex((x) => x.seq === target.seq);
+          const e = s.network![i]!;
+          let value: Json = next;
+          if (pointer !== '') {
+            const edited = withPointer(e[which]!, pointer, next);
+            if (!edited) return undefined;
+            value = edited.doc;
+          }
+          const network = s.network!.slice();
+          network[i] = { ...e, [which]: value };
           return { ...s, network };
         },
       };
@@ -465,8 +481,9 @@ function readable(s: EvidenceSnapshot, idx: AXIndex, src: ValueSource, rec?: INo
         write(next) {
           let value: Json = next;
           if (pointer !== '') {
-            value = clone(p.value);
-            if (!setPointer(value, pointer, next)) return undefined;
+            const edited = withPointer(p.value, pointer, next);
+            if (!edited) return undefined;
+            value = edited.doc;
           }
           const edited = { ...probes, [src.probe]: { ok: true as const, value } };
           return before ? { ...s, baseline: { ...s.baseline!, probes: edited } } : { ...s, probes: edited };
@@ -1008,7 +1025,9 @@ function stateMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, {
     out.push({
       id: `state:${k}`,
       description: `${k} is ${to} instead of ${String(want)}`,
-      snapshot: editById(s, (n, id) => (id === target.id ? { ...n, states: { ...n.states, [k]: to } } : undefined)),
+      snapshot: editById(s, (n, id) => (id === target.id ? { ...n, states: { ...n.states, [k]: to } } : undefined), [
+        target.id,
+      ]),
     });
   }
   // Wrong item: the state is set on a different node of the same role instead.
@@ -1018,12 +1037,15 @@ function stateMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, {
     out.push({
       id: 'state:wrong-target',
       description: `the state is set on ${idx.path(other)} instead`,
-      snapshot: editById(s, (n, id) =>
-        id === target.id
-          ? { ...n, states: { ...n.states, ...flipped } }
-          : id === other.id
-            ? { ...n, states: { ...n.states, ...wanted } }
-            : undefined,
+      snapshot: editById(
+        s,
+        (n, id) =>
+          id === target.id
+            ? { ...n, states: { ...n.states, ...flipped } }
+            : id === other.id
+              ? { ...n, states: { ...n.states, ...wanted } }
+              : undefined,
+        [target.id, other.id],
       ),
     });
   }
@@ -1035,12 +1057,16 @@ function stateMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, {
     for (const { value } of violations({ type: 'string', value: cur }, textMatchComparison(m))) {
       if (value.type !== 'string') continue;
       const next = value.value;
-      const snap = editById(s, (n, id) => {
-        if (id !== target.id) return undefined;
-        if (k === 'value') return { ...n, value: next };
-        if (k === 'name') return { ...n, name: next };
-        return { ...n, children: [{ role: 'text', name: next }] };
-      });
+      const snap = editById(
+        s,
+        (n, id) => {
+          if (id !== target.id) return undefined;
+          if (k === 'value') return { ...n, value: next };
+          if (k === 'name') return { ...n, name: next };
+          return { ...n, children: [{ role: 'text', name: next }] };
+        },
+        [target.id],
+      );
       if (treeChanged(s, snap)) {
         out.push({ id: `state:${k}`, description: `${k} is ${JSON.stringify(next)}`, snapshot: snap });
         break;
@@ -1051,7 +1077,9 @@ function stateMutants(s: EvidenceSnapshot, idx: AXIndex, a: Extract<Assertion, {
     out.push({
       id: 'state:level',
       description: 'heading level changed',
-      snapshot: editById(s, (n, id) => (id === target.id ? { ...n, level: (a.expect.level! % 6) + 1 } : undefined)),
+      snapshot: editById(s, (n, id) => (id === target.id ? { ...n, level: (a.expect.level! % 6) + 1 } : undefined), [
+        target.id,
+      ]),
     });
   }
   return out;
@@ -1078,21 +1106,21 @@ function containsMutants(
     out.push({
       id: 'contains:removed',
       description: `the matching item(s) are missing (${hits.length} removed)`,
-      snapshot: editById(s, (n, id) => (ids.has(id) ? null : undefined)),
+      snapshot: editById(s, (n, id) => (ids.has(id) ? null : undefined), ids),
     });
     if (hits.length > 1 || lower > 1) {
       const last = hits.at(-1)!.id;
       out.push({
         id: 'contains:one-fewer',
         description: 'one matching item is missing (partial completion)',
-        snapshot: editById(s, (n, id) => (id === last ? null : undefined)),
+        snapshot: editById(s, (n, id) => (id === last ? null : undefined), [last]),
       });
     }
     // Wrong item: the matching item is replaced by a sibling of the same role that does not match.
     const sib = idx.descendants(scope).find((n) => n.node.role === a.match.role && !ids.has(n.id) && n.node.name);
     if (sib) {
       const first = hits[0]!.id;
-      const swapped = editById(s, (n, id) => (id === first ? clone(sib.node) : undefined));
+      const swapped = editById(s, (n, id) => (id === first ? clone(sib.node) : undefined), [first]);
       if (treeChanged(s, swapped)) {
         out.push({
           id: 'contains:wrong-item',
@@ -1168,9 +1196,11 @@ function containsMutants(
       const copies = () => Array.from({ length: extra }, () => clone(sample));
       const scopeId = scope.id;
       const snap = first
-        ? editById(s, (n, id) => (id === first.id ? [n, ...copies()] : undefined))
-        : editById(s, (n, id) =>
-            id === scopeId ? { ...n, children: [...(n.children ?? []), ...copies()] } : undefined,
+        ? editById(s, (n, id) => (id === first.id ? [n, ...copies()] : undefined), [first.id])
+        : editById(
+            s,
+            (n, id) => (id === scopeId ? { ...n, children: [...(n.children ?? []), ...copies()] } : undefined),
+            [scopeId],
           );
       if (treeChanged(s, snap) && noneHolds(snap, [a], rec)) {
         out.push({
@@ -1212,21 +1242,25 @@ function rebuild(
   const touched = new Set<number>();
   for (const id of [...replace.keys(), ...insertAfter.keys()])
     for (let a = idx.all[id]?.parent; a; a = a.parent) touched.add(a.id);
-  return editById(s, (n, id) => {
-    const r = replace.get(id);
-    let node = r ? clone(r) : n;
-    const orig = idx.all[id]?.node;
-    if (!r && touched.has(id) && orig?.name !== undefined && orig.children?.length) {
-      if (canonical(orig.name) === canonical(textOf(orig))) {
-        const { name: _, ...rest } = n;
-        const t = canonical(textOf(n));
-        node = t ? { ...rest, name: t } : rest;
+  return editById(
+    s,
+    (n, id) => {
+      const r = replace.get(id);
+      let node = r ? clone(r) : n;
+      const orig = idx.all[id]?.node;
+      if (!r && touched.has(id) && orig?.name !== undefined && orig.children?.length) {
+        if (canonical(orig.name) === canonical(textOf(orig))) {
+          const { name: _, ...rest } = n;
+          const t = canonical(textOf(n));
+          node = t ? { ...rest, name: t } : rest;
+        }
       }
-    }
-    const extra = insertAfter.get(id);
-    if (extra) return [node, ...extra.map((x) => clone(x))];
-    return node === n ? undefined : node;
-  });
+      const extra = insertAfter.get(id);
+      if (extra) return [node, ...extra.map((x) => clone(x))];
+      return node === n ? undefined : node;
+    },
+    [...replace.keys(), ...insertAfter.keys(), ...touched],
+  );
 }
 
 /** Child indices from the root to `n`. */
@@ -1239,7 +1273,7 @@ function indexPath(n: INode): number[] {
 /** Whether the record at `rec`'s place in the edited snapshot still matches the each's locator. */
 function keepsIdentity(snap: EvidenceSnapshot, rec: INode, match: Locator): boolean {
   const anchor = rec.id < 0 ? rec.children[0]! : rec;
-  const idx = new AXIndex(snap.a11y);
+  const idx = AXIndex.of(snap.a11y);
   let n: INode | undefined = idx.root;
   for (const i of indexPath(anchor)) n = n?.children[i];
   return !!n && idx.matches(n, match);
@@ -1401,7 +1435,7 @@ function recordIn(idx: AXIndex, rec: INode | undefined): INode | undefined {
 
 /** No assertion in `subs` passes on `s` (inside the record `rec` of the snapshot `s` was edited from). */
 function noneHolds(s: EvidenceSnapshot, subs: Assertion[], rec?: INode): boolean {
-  const index = new AXIndex(s.a11y);
+  const index = AXIndex.of(s.a11y);
   const record = recordIn(index, rec);
   if (rec && !record) return true;
   const ctx = { snapshot: s, index, ...(record ? { record } : {}) };
@@ -1469,7 +1503,7 @@ function assertionMutants(s: EvidenceSnapshot, idx: AXIndex, a: Assertion, rec?:
       const parts: string[] = [];
       for (const [i, sub] of a.of.entries()) {
         if (noneHolds(snap, [sub], rec)) continue;
-        const index = new AXIndex(snap.a11y);
+        const index = AXIndex.of(snap.a11y);
         const here = recordIn(index, rec);
         if (rec && !here) return [];
         const next = assertionMutants(snap, index, sub, here).find((m) =>
@@ -1512,7 +1546,7 @@ function pageMutants(s: EvidenceSnapshot, a: Extract<Assertion, { kind: 'page' }
   if (hits.length !== 1) return [];
   const i = hits[0]!;
   const view = viewOf(s, i);
-  const index = new AXIndex(view.a11y);
+  const index = AXIndex.of(view.a11y);
   // The selected page's own frames can fail to load too.
   const out: M[] = [...assertionMutants(view, index, a.assert), ...frameMutants(view, index, a.assert)].map((m) => ({
     ...m,
@@ -1581,12 +1615,16 @@ function frameMutants(s: EvidenceSnapshot, idx: AXIndex, a: Assertion): M[] {
       const at = text.lastIndexOf(t);
       if (at >= 0) text = text.slice(0, at) + text.slice(at + t.length);
     }
-    const snap = editById({ ...s, text }, (n, id) => {
-      if (id !== f.id) return undefined;
-      const { children: _, ...empty } = n;
-      return { ...empty, props: { ...n.props, frame: 'unavailable' } };
-    });
-    const snapIdx = new AXIndex(snap.a11y);
+    const snap = editById(
+      { ...s, text },
+      (n, id) => {
+        if (id !== f.id) return undefined;
+        const { children: _, ...empty } = n;
+        return { ...empty, props: { ...n.props, frame: 'unavailable' } };
+      },
+      [f.id],
+    );
+    const snapIdx = AXIndex.of(snap.a11y);
     const reads = (x: Assertion): boolean => {
       if (x.kind === 'anyOf') return x.of.every(reads);
       if (x.kind === 'allOf') return x.of.some(reads);
@@ -1626,14 +1664,28 @@ const CLAIM_TEXT = 'Success! Your request has been completed.';
 
 /** Adds a success claim to a mutant; it must not turn a rejection into success. */
 export function withSuccessClaim(m: Mutant): Mutant {
-  const claim: AXNode = { role: 'status', children: [{ role: 'text', name: CLAIM_TEXT }] };
+  const claim = (): AXNode => ({ role: 'status', children: [{ role: 'text', name: CLAIM_TEXT }] });
   let placed = false;
-  let snap = editById(m.snapshot, (n) => {
-    if (n.role !== 'main' || placed) return undefined;
-    placed = true;
-    return { ...n, children: [clone(claim), ...(n.children ?? [])] };
-  });
-  if (!placed) snap = { ...snap, a11y: { ...snap.a11y, children: [clone(claim), ...(snap.a11y.children ?? [])] } };
+  // The first main the walk finishes (post-order): the one whose subtree ends first, the
+  // innermost of nested ones ending together. Found through the index only in a regular tree
+  // (one with holes or odd `children` lists may not index); any other is walked whole.
+  let only: number[] | undefined;
+  if (regularTree(m.snapshot.a11y)) {
+    const t = AXIndex.of(m.snapshot.a11y).table;
+    let main = -1;
+    for (const id of t.withRole('main')) if (main < 0 || t.end[id]! <= t.end[main]!) main = id;
+    only = main < 0 ? [] : [main];
+  }
+  let snap = editById(
+    m.snapshot,
+    (n) => {
+      if (n.role !== 'main' || placed) return undefined;
+      placed = true;
+      return { ...n, children: [claim(), ...(n.children ?? [])] };
+    },
+    only,
+  );
+  if (!placed) snap = { ...snap, a11y: { ...snap.a11y, children: [claim(), ...(snap.a11y.children ?? [])] } };
   return {
     ...m,
     id: `${m.id}+claim`,
@@ -1643,7 +1695,7 @@ export function withSuccessClaim(m: Mutant): Mutant {
 }
 
 export function generateMutants(cs: CheckSet, s: EvidenceSnapshot): Mutant[] {
-  const idx = new AXIndex(s.a11y);
+  const idx = AXIndex.of(s.a11y);
   const out: Mutant[] = [];
   for (const c of cs.checks) {
     for (const m of [...assertionMutants(s, idx, c.assert), ...frameMutants(s, idx, c.assert)])
