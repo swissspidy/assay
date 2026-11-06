@@ -627,23 +627,22 @@ function formattingVariants(cs: CheckSet, s: EvidenceSnapshot, idx: AXIndex): Va
  */
 function toleranceVariants(cs: CheckSet, s: EvidenceSnapshot, idx: AXIndex): Variant[] {
   const out: Variant[] = [];
-  // A side another check also reads is left alone: that check holds the value to its own terms.
-  const readers = new Map<string, Set<string>>();
-  const sourcesOf = (a: Assertion): ValueSource[] =>
-    a.kind === 'value'
-      ? readsOf(a).map((r) => r.source)
-      : a.kind === 'allOf' || a.kind === 'anyOf'
-        ? a.of.flatMap(sourcesOf)
-        : a.kind === 'each'
-          ? sourcesOf(a.assert)
-          : [];
-  for (const c of cs.checks)
-    for (const src of sourcesOf(c.assert)) {
-      const k = JSON.stringify(src);
-      readers.set(k, new Set([...(readers.get(k) ?? []), c.id]));
-    }
-  const sharedWithOther = (src: ValueSource, check: string) =>
-    [...(readers.get(JSON.stringify(src)) ?? [])].some((x) => x !== check);
+  // A side that another assertion also reads (in another check, or a sibling in the same
+  // allOf/anyOf/each/page) is left alone: that assertion holds the value to its own terms.
+  const readers = new Map<string, Set<Assertion>>();
+  const collect = (a: Assertion): void => {
+    if (a.kind === 'value')
+      for (const r of readsOf(a)) {
+        const k = JSON.stringify(r.source);
+        readers.set(k, new Set([...(readers.get(k) ?? []), a]));
+      }
+    const parts = a as { assert?: Assertion; of?: Assertion[] };
+    if (parts.assert) collect(parts.assert);
+    for (const b of parts.of ?? []) collect(b);
+  };
+  for (const c of cs.checks) collect(c.assert);
+  const sharedWithOther = (src: ValueSource, self: Assertion) =>
+    [...(readers.get(JSON.stringify(src)) ?? [])].some((x) => x !== self);
   for (const c of cs.checks) {
     let records = 0;
     for (const { a, rec } of valueAssertions(c.assert, idx)) {
@@ -659,7 +658,7 @@ function toleranceVariants(cs: CheckSet, s: EvidenceSnapshot, idx: AXIndex): Var
         { k: 1, src: other.source, steps: other.normalize, cur: right, base: left },
       ];
       for (const { k, src, steps, cur, base } of sides) {
-        if (sharedWithOther(src, c.id)) continue;
+        if (sharedWithOther(src, a)) continue;
         const b = scalarOf(base);
         if (b === undefined) continue;
         const width = Math.max(tol.abs ?? 0, (tol.rel ?? 0) * Math.abs(b));

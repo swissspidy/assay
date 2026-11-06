@@ -460,16 +460,16 @@ that the agent failed, and an LLM judge or human should look at it.
 
 Each comparison object has exactly one operator:
 
-| operator                      | applies to                    | semantics                                                                                                                                                      |
-| ----------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `equals`                      | any                           | deep equality; strings are canonicalized as in 2.3                                                                                                             |
-| `oneOf`                       | any                           | equals one of the listed values                                                                                                                                |
-| `contains`, `regex`           | string                        | on canonical text                                                                                                                                              |
-| `approx {value, abs?, rel?}`  | number, money, date, datetime | `\|a-b\| <= max(abs, rel·\|b\|)`. For money the currency must also be equal. For dates `abs` is in days, for datetimes in minutes (`rel` is an error for both) |
-| `gt` / `gte` / `lt` / `lte`   | number, money, date, datetime | ranges can combine bounds in one object                                                                                                                        |
-| `sameAs {source, normalize?}` | any                           | equals a value read from a second source and normalized by its own pipeline (see 2.6.1)                                                                        |
-| `schema`                      | Json                          | validates against a JSON Schema                                                                                                                                |
-| `exists`                      | any                           | the value was read and normalized and is not the empty string                                                                                                  |
+| operator                                  | applies to                    | semantics                                                                                                                                                            |
+| ----------------------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `equals`                                  | any                           | deep equality; strings are canonicalized as in 2.3                                                                                                                   |
+| `oneOf`                                   | any                           | equals one of the listed values                                                                                                                                      |
+| `contains`, `regex`                       | string                        | on canonical text                                                                                                                                                    |
+| `approx {value, abs?, rel?}`              | number, money, date, datetime | `\|a-b\| <= max(abs, rel·\|b\|)`. For money the currency must also be equal. For dates `abs` is in days, for datetimes in minutes (`rel` is an error for both)       |
+| `gt` / `gte` / `lt` / `lte`               | number, money, date, datetime | ranges can combine bounds in one object                                                                                                                              |
+| `sameAs {source, normalize?, tolerance?}` | any                           | equals a value read from a second source and normalized by its own pipeline (see 2.6.1); with `tolerance` (number, money, date, datetime) within it, as for `approx` |
+| `schema`                                  | Json                          | validates against a JSON Schema                                                                                                                                      |
+| `exists`                                  | any                           | the value was read and normalized and is not the empty string                                                                                                        |
 
 If the value's type doesn't match the operator (for example `approx` on an
 un-normalized string), the check abstains with `type_mismatch`. The
@@ -535,7 +535,8 @@ shows `A1000`, the probe says `A1001`.
 - Each side is read and normalized on its own (`sameAs.normalize` applies to
   the second source only), then compared for equality: strings after
   canonicalization (2.3), numbers exactly, money by amount and currency, dates
-  by day, datetimes by instant, JSON structurally.
+  by day, datetimes by instant, JSON structurally. Equality is exact only when
+  no tolerance is given (below).
 - Either side unreadable (missing anchor, no matching request, missing
   pointer, parse failure) ⇒ abstain, with the second side's message prefixed
   "the value to compare with could not be read". Both read and different ⇒
@@ -566,8 +567,10 @@ ranks a binding by its weaker source: page text bound to a probe is
 `freetext`. Pair it with a check on the stronger source when the requirement
 is about the backend state itself.
 
-Equality is the only operator. Tolerances across sources (a page that shows
-minutes and a probe with seconds) are left out until a task needs them.
+Equality is the only operator. It is exact unless the binding gives an
+explicit `tolerance` for a difference correct runs show across sources (a page
+that shows minutes and a probe with seconds, a total rounded to the cent); see
+ADR 0014.
 
 ##### 2.6.2 Comparing with the state before the task
 

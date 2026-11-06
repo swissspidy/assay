@@ -295,6 +295,71 @@ test.describe('sameAs tolerance', () => {
     expect(toleranceHints(cs(), [{ name: 'far', kind: 'success', snapshot: total('$25.00') }])).toEqual([]);
   });
 
+  test('review fixes: scale-aware slack keeps the edge inclusive without swamping a tiny tolerance', () => {
+    const n = (value: number) => ({ type: 'number' as const, value });
+    expect(compareValues(n(0), n(1e-9), { abs: 1e-12, because: 'x' }).ok).toBe(false);
+    expect(compareValues(n(1e-12), n(0), { abs: 1e-12, because: 'x' }).ok).toBe(true);
+    expect(compareValues(n(1_000_000.01), n(1_000_000), { abs: 0.01, because: 'x' }).ok).toBe(true);
+    expect(compareValues(n(1_000_000.02), n(1_000_000), { abs: 0.01, because: 'x' }).ok).toBe(false);
+  });
+
+  test('review fixes: bindings inside a page assertion are read on that page', () => {
+    const s = total('$21.50');
+    const onPage: Assertion = { kind: 'page', match: { url: { path: '/orders/A1001' } }, assert: totalCheck() };
+    expect(toleranceHints(one(onPage), [{ name: 'ok', kind: 'success', snapshot: s }])).toEqual([
+      'check C1.assert: on correct run "ok" the two sides differ by 0.005 (21.5 USD vs 21.495 USD).',
+    ]);
+  });
+
+  test('review fixes: a tolerance branch with mismatched types does not throw', () => {
+    const text: Assertion = {
+      kind: 'value',
+      source: { from: 'node', target: { role: 'status', name: 'Order total' }, field: 'text' },
+      expect: {
+        sameAs: { source: { from: 'probe', probe: 'latestOrder', pointer: '/total' }, tolerance: cents },
+      },
+    };
+    const cs = one({ kind: 'anyOf', of: [text, totalCheck(cents)] });
+    expect(() =>
+      verifyCandidate(cs, [{ name: 'ok', kind: 'success', snapshot: total('$21.50') }], false),
+    ).not.toThrow();
+  });
+
+  test('review fixes: no tolerance variant edits a source another assertion pins', () => {
+    const pinned: Assertion = {
+      kind: 'value',
+      source: { from: 'node', target: { role: 'status', name: 'Order total' }, field: 'text' },
+      normalize: [{ op: 'currency', locale: 'en-US', currency: 'USD' }],
+      expect: { equals: { amount: 21.5, currency: 'USD' } },
+    };
+    const pageSide = (cs: CheckSet) =>
+      generateVariants(cs, total('$21.50')).filter((v) => v.id.startsWith('tolerance:') && !v.id.includes('sameAs'));
+    expect(pageSide(one(totalCheck(cents)))).toHaveLength(1);
+    // A sibling in the same check.
+    expect(pageSide(one({ kind: 'allOf', of: [pinned, totalCheck(cents)] }))).toEqual([]);
+    // Another check, wrapped in a page assertion.
+    const wrapped = one(totalCheck(cents));
+    wrapped.checks.push({
+      id: 'C2',
+      requirement: 'R1',
+      description: 'd',
+      assert: { kind: 'page', match: { url: { path: '/orders/A1001' } }, assert: pinned },
+    });
+    expect(pageSide(wrapped)).toEqual([]);
+  });
+
+  test('review fixes: a tiny rel keeps its precision; the diff decides on raw values', () => {
+    expect(describeAssertion(totalCheck({ rel: 1e-8, because: 'x' }))).toContain('±0.000001% of that value');
+    // 0.03 × 100 is 3.0000000000000004 in floating point; it reads as 3%.
+    expect(describeAssertion(totalCheck({ rel: 0.03, because: 'x' }))).toContain('±3% of that value');
+    // Two reasons that render the same (a line break is shown as a space) are still a change.
+    const d = diffCheckSets(
+      one(totalCheck({ abs: 0.01, because: 'a b' })),
+      one(totalCheck({ abs: 0.01, because: 'a\nb' })),
+    );
+    expect(d.checks.changed[0]!.fields).toContain('tolerance');
+  });
+
   test('stress: an over-wide tolerance shows up as weak', () => {
     const cs = one(totalCheck({ abs: 1000, because: 'too lenient' }));
     const r = stressTest(cs, [{ name: 'ref', snapshot: total('$21.50') }]);

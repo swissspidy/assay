@@ -107,6 +107,23 @@ test.describe('nested JSON arrays', () => {
     expect(JSON.parse(stored).items[0].options).toEqual(['engraving']);
   });
 
+  test('mutants: JSON text read through a leading trim gets the same nested edits', () => {
+    const cart = ` ${JSON.stringify({ items: lines })}\n`;
+    const trimmed: Assertion = {
+      kind: 'value',
+      source: { from: 'storage', area: 'local', key: 'cart' },
+      normalize: ['trim', 'json'],
+      expect: { equals: { items: lines } },
+    };
+    const m = generateMutants(one(trimmed), snap(lines, lines, { cart })).find((x) =>
+      x.description.includes('at /items/0/options: item 0 removed'),
+    );
+    expect(m).toBeDefined();
+    expect(JSON.parse(m!.snapshot.storage!.local['https://shop.test']!.cart as string).items[0].options).toEqual([
+      'engraving',
+    ]);
+  });
+
   test('variant: nested arrays reversed, outer order kept, before and after the task and in storage', () => {
     const cart = JSON.stringify({ items: lines });
     const v = generateVariants(one(ordered), snap(lines, lines, { cart })).find((x) => x.id === 'nested-array-order')!;

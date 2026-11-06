@@ -426,7 +426,7 @@ export function describeTolerance(t: Tolerance, steps: Normalizer[]): string {
   const unit = ops.has('datetime') ? ' minutes' : ops.has('date') ? ' days' : '';
   const parts = [
     ...(t.abs !== undefined ? [`${t.abs}${unit}`] : []),
-    ...(t.rel !== undefined ? [`${+(t.rel * 100).toFixed(4)}% of that value`] : []),
+    ...(t.rel !== undefined ? [`${Number((t.rel * 100).toPrecision(12))}% of that value`] : []),
   ];
   // One line: a line break in the reason could forge an entry of the review sheet.
   const because = JSON.stringify(t.because.replace(/\s*[\r\n\u2028\u2029]+\s*/g, ' '));
@@ -436,15 +436,24 @@ export function describeTolerance(t: Tolerance, steps: Normalizer[]): string {
 const tolerance = (t: Tolerance | undefined, steps: Normalizer[]): string =>
   t ? `, ${describeTolerance(t, steps)}` : '';
 
-/** Every sameAs tolerance in an assertion (nested ones included), as the review sheet states it. */
-export function tolerancesOf(a: Assertion): string[] {
+/** Every sameAs tolerance in an assertion (nested ones included), with the normalizers of both sides. */
+export function tolerancesIn(a: Assertion): { tolerance: Tolerance; steps: Normalizer[] }[] {
   if (a.kind === 'value')
     return 'sameAs' in a.expect && a.expect.sameAs.tolerance
-      ? [describeTolerance(a.expect.sameAs.tolerance, [...(a.normalize ?? []), ...(a.expect.sameAs.normalize ?? [])])]
+      ? [
+          {
+            tolerance: a.expect.sameAs.tolerance,
+            steps: [...(a.normalize ?? []), ...(a.expect.sameAs.normalize ?? [])],
+          },
+        ]
       : [];
   const parts = a as { assert?: Assertion; of?: Assertion[] };
-  return [...(parts.assert ? tolerancesOf(parts.assert) : []), ...(parts.of ?? []).flatMap(tolerancesOf)];
+  return [...(parts.assert ? tolerancesIn(parts.assert) : []), ...(parts.of ?? []).flatMap(tolerancesIn)];
 }
+
+/** Every sameAs tolerance in an assertion, as the review sheet states it. */
+export const tolerancesOf = (a: Assertion): string[] =>
+  tolerancesIn(a).map((t) => describeTolerance(t.tolerance, t.steps));
 
 /**
  * A mechanical plain-language rendering of what an assertion actually tests. `inRecord`:

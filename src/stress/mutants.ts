@@ -137,9 +137,12 @@ export function readSpan(raw: string, steps: Normalizer[] | undefined): string |
   return span && raw.includes(span) ? span : undefined;
 }
 
+const isTrim = (n: Normalizer) => n === 'trim' || (typeof n === 'object' && n.op === 'trim');
+
 /** The array or object in a raw string that the pipeline parses first ("json"), if it is one. */
 function jsonText(raw: Json, steps: Normalizer[] | undefined): Json | undefined {
-  const first = steps?.[0];
+  // Leading "trim" steps only cut whitespace around the JSON text; the edit is written back without it.
+  const first = steps?.find((n) => !isTrim(n));
   if (typeof raw !== 'string' || !(first === 'json' || (typeof first === 'object' && first.op === 'json')))
     return undefined;
   try {

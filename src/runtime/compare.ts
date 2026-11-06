@@ -76,21 +76,38 @@ class CurrencyMismatch extends Error {
  * in days for dates, minutes for date-times, the value's own unit otherwise. Throws
  * NormalizeError('type_mismatch') when the two cannot be compared that way.
  */
-function approxGap(v: TypedValue, target: unknown, abs = 0, rel = 0): { diff: number; tol: number; unit: string } {
+function approxGap(
+  v: TypedValue,
+  target: unknown,
+  abs = 0,
+  rel = 0,
+): { diff: number; tol: number; unit: string; scale: number } {
   if (v.type === 'date') {
     if (typeof target !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(target)) throw mismatch('approx', v);
-    return { diff: daysBetween(v.value, target), tol: abs, unit: ' days' };
+    return { diff: daysBetween(v.value, target), tol: abs, unit: ' days', scale: 0 };
   }
   if (v.type === 'datetime') {
     if (typeof target !== 'string' || instantOf(target) === undefined) throw mismatch('approx', v);
-    return { diff: minutesBetween(v.value, target), tol: abs, unit: ' minutes' };
+    return { diff: minutesBetween(v.value, target), tol: abs, unit: ' minutes', scale: 0 };
   }
   const [a, b] = scalar(v, target, 'approx');
-  return { diff: Math.abs(a - b), tol: Math.max(abs, rel * Math.abs(b)), unit: '' };
+  return {
+    diff: Math.abs(a - b),
+    tol: Math.max(abs, rel * Math.abs(b)),
+    unit: '',
+    scale: Math.max(Math.abs(a), Math.abs(b)),
+  };
 }
 
-/** Floating-point slack, so that a difference of exactly the tolerance is within it. */
-const EPSILON = 1e-9;
+/**
+ * Whether `diff` is within `tol`, inclusive. The floating-point slack is relative to the
+ * numbers involved (the compared values, for numbers and money; the difference and the
+ * tolerance), so a difference of exactly the tolerance passes at any scale and a tiny
+ * tolerance is not swamped by a fixed slack. Dates and date-times are differences of
+ * whole milliseconds, so only the difference and tolerance set their scale.
+ */
+const within = ({ diff, tol, scale }: { diff: number; tol: number; scale: number }): boolean =>
+  diff <= tol + 1e-9 * Math.max(scale, tol, diff);
 
 /** Whether a tolerance can apply to values of this type: numbers, money, dates and date-times. */
 export const tolerable = (t: TypedValue['type']): boolean =>
@@ -115,8 +132,9 @@ export function compareValues(a: TypedValue, b: TypedValue, tolerance?: Toleranc
       );
     if (a.type === 'money' && b.type === 'money' && a.value.currency !== b.value.currency)
       return { ok: false, message: `${describeValue(a)} ≠ ${describeValue(b)} (currency differs)` };
-    const { diff, tol, unit } = approxGap(a, toJson(b), tolerance.abs, tolerance.rel);
-    const ok = diff <= tol + EPSILON;
+    const gap = approxGap(a, toJson(b), tolerance.abs, tolerance.rel);
+    const { diff, tol, unit } = gap;
+    const ok = within(gap);
     return {
       ok,
       message: `${describeValue(a)} ${ok ? '≈' : '≉'} ${describeValue(b)} (Δ=${+diff.toFixed(6)}, tolerance ${+tol.toFixed(6)}${unit})`,
@@ -158,8 +176,9 @@ export function compare(v: TypedValue, cmp: Comparison): CompareOutcome {
     }
     if ('approx' in cmp) {
       const { value: target, abs = 0, rel = 0 } = cmp.approx;
-      const { diff, tol, unit } = approxGap(v, target, abs, rel);
-      const ok = diff <= tol + EPSILON;
+      const gap = approxGap(v, target, abs, rel);
+      const { diff, tol, unit } = gap;
+      const ok = within(gap);
       return {
         ok,
         message: `${shown} ${ok ? '≈' : '≉'} ${JSON.stringify(target)} (Δ=${+diff.toFixed(6)}, tolerance ${tol}${unit})`,

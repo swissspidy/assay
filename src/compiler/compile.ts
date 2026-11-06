@@ -33,7 +33,14 @@ import {
   usesPick,
   validateCheckSet,
 } from '../dsl/validate.ts';
-import { bindingSides, evaluate, evaluateAssertion, readValue, type EvalCtx } from '../runtime/evaluate.ts';
+import {
+  bindingSides,
+  evaluate,
+  evaluateAssertion,
+  pageContext,
+  readValue,
+  type EvalCtx,
+} from '../runtime/evaluate.ts';
 import { compareValues, tolerable } from '../runtime/compare.ts';
 import { describeValue, type TypedValue } from '../runtime/values.ts';
 import { scalarOf } from '../stress/mutants.ts';
@@ -780,7 +787,11 @@ function bindings(
 ) {
   if (a.kind === 'allOf' || a.kind === 'anyOf') a.of.forEach((b, i) => bindings(b, `${at}.${a.kind}[${i}]`, ctxs, out));
   else if (a.kind === 'each') bindings(a.assert, `${at}.assert`, recordContexts(ctxs, a), out);
-  else if (a.kind === 'value' && 'sameAs' in a.expect) out.push({ a, at, ctxs });
+  else if (a.kind === 'page') {
+    // Read on the open page the assertion selects (where it selects exactly one).
+    const pages = ctxs.map((ctx) => pageContext(ctx, a.match)).filter((c): c is EvalCtx => !('status' in c));
+    bindings(a.assert, `${at}.assert`, pages, out);
+  } else if (a.kind === 'value' && 'sameAs' in a.expect) out.push({ a, at, ctxs });
   return out;
 }
 
@@ -822,6 +833,10 @@ export function toleranceHints(cs: CheckSet, refs: Reference[]): string[] {
   return [...new Set(out)];
 }
 
+/** Two read sides are exactly equal; sides of different types never are (the check abstains there), and never throw. */
+const exactlyEqual = ({ left, right }: { left: TypedValue; right: TypedValue }) =>
+  left.type === right.type && compareValues(left, right).ok;
+
 /** A tolerance must be needed: some correct reference shows the two sides differ. */
 export function unneededTolerances(cs: CheckSet, refs: Reference[]): string[] {
   const top: EvalCtx[] = refs
@@ -832,7 +847,7 @@ export function unneededTolerances(cs: CheckSet, refs: Reference[]): string[] {
     for (const { a, at, ctxs } of bindings(c.assert, `check ${c.id}`, top)) {
       if (!('sameAs' in a.expect) || !a.expect.sameAs.tolerance) continue;
       const read = ctxs.map((ctx) => bindingSides(ctx, a)).filter((x) => x !== undefined);
-      if (read.length && read.every(({ left, right }) => compareValues(left, right).ok))
+      if (read.length && read.every(exactlyEqual))
         errors.push(
           `${at}: its tolerance is not needed: the two sides are equal on every correct run. Remove it; a tolerance is only for a difference the references show.`,
         );
