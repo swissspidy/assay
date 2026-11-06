@@ -96,11 +96,12 @@ export interface CompileOptions {
    * (ADR 0017). Default: `model` from assay.config.ts.
    */
   model?: ModelInput;
-  /** How to drive and name the model (default: `modelOptions` from the config, when the model is). */
+  /** How to drive and name the model (merged over the config's `modelOptions` when the model comes from it). */
   modelOptions?: ModelOptions;
   /**
-   * The config to fill in what is not given: an object, a file path, or `false` for none.
-   * Default: assay.config.{ts,mts,js,mjs} in the current directory, if there is one.
+   * A config to take the model from when `model` is not given: an object or a file path
+   * (`loadConfig()` finds the project's). Default: none; compileTask never reads
+   * assay.config.* by itself.
    */
   config?: AssayConfig | string | false;
   /** "model" (default) asks the model for the rubric; "deterministic" makes one hard requirement per outcome clause. */
@@ -1180,13 +1181,14 @@ export function discoverySystem(refs: Reference[]): string {
 /** The model for a compile: the given one, else the config's (ADR 0017). */
 async function compileModel(opts: CompileOptions): Promise<ModelClient> {
   if (opts.model !== undefined) return resolveModel(opts.model, opts.modelOptions ?? {});
+  // Only a config passed in: compileTask never reads assay.config.* by itself (ADR 0017).
   const config =
-    opts.config === false
+    opts.config === undefined || opts.config === false
       ? {}
       : typeof opts.config === 'object'
         ? normalizeConfig(opts.config, process.cwd(), 'config')
-        : (await loadConfig(typeof opts.config === 'string' ? { path: opts.config } : {})).config;
-  if (config.model === undefined) throw noModelError('compileTask');
+        : (await loadConfig({ path: opts.config })).config;
+  if (config.model === undefined) throw noModelError('compileTask', 'pass `model`, or a `config` that sets one');
   return resolveModel(config.model, { ...config.modelOptions, ...opts.modelOptions });
 }
 

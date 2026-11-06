@@ -64,8 +64,8 @@ export default defineConfig({
 
 ### Precedence
 
-For every setting: **flags > environment variables > config file > built-in defaults**. In the
-library, explicit options win over the config file. Concretely:
+For every setting: **flags > environment variables > config file > built-in defaults**. In code,
+explicit options win over a config. Concretely:
 
 | Setting        | Flag                                                 | Environment                     | Config                  | Default                                                        |
 | -------------- | ---------------------------------------------------- | ------------------------------- | ----------------------- | -------------------------------------------------------------- |
@@ -87,20 +87,33 @@ string keeps the config's `mode`).
 model id keeps its old meaning (`--provider`, default `anthropic`), so `ASSAY_MODEL=claude-…`
 selects what it did before.
 
-In the library:
+### Who reads the config
+
+**Core library functions never read `assay.config.*` by themselves.** `compileTask`, `verify` and
+`verifyMany` stay pure and reproducible: the same arguments give the same result wherever the
+process runs. They use a config only when passed one, as `config: AssayConfig | string` (an
+object or a file path; `loadConfig()` finds the project's); the default is no config.
 
 - `compileTask(task, refs, opts?)`: `opts.model` (any of the three forms) wins; without it the
-  config's `model` and `modelOptions`; without either it throws, naming the three forms.
-- `verify` / `verifyMany` (and so `expectOutcome` / `verifyPage`): `recordDir`, `requireLocked`,
-  `trustedKeys`, `policy` and escalation come from the config where the options do not set them.
-  `escalate: false` turns off escalation the config asks for; an explicit `verifier` always
-  escalates.
-- `opts.config` is the config to use: an object, a file path, or `false` for none. The CLI resolves
-  the config itself (with the flags) and passes `config: false`, so nothing is applied twice.
-- `stressTest` stays synchronous and pure; its options are explicit
-  (`stressTest(cs, refs, (await loadConfig()).config.stress)`). Reading a file from a synchronous
-  function would mean loading a TypeScript module synchronously, which this does not attempt. The
-  `assay stress` command applies the config.
+  given config's `model` and `modelOptions`; without either it throws, naming the three forms.
+- `verify` / `verifyMany`: `recordDir`, `requireLocked`, `trustedKeys`, `policy` and escalation
+  come from the given config where the options do not set them. `escalate: false` turns off
+  escalation the config asks for; an explicit `verifier` always escalates.
+- `stressTest` is synchronous and takes its options explicitly
+  (`stressTest(cs, refs, (await loadConfig()).config.stress)`).
+
+**App-level entry points read it by default:**
+
+- the CLI, from `--config <file>` or the current directory (it merges the flags itself and passes
+  the result on with `config: false`, so nothing is applied twice);
+- the Playwright helpers `verifyPage` and `expectOutcome`, from the current directory, loaded once
+  per process and cached. A `config` option passes another (object or path); `config: false`
+  turns it off. The config's `requireLocked` is enforced before capturing, like the option.
+
+A test suite is an application: it has a project directory and wants the project's defaults (a
+record directory, required locks, escalation) without repeating them in every call. A library
+call deep in someone else's code should not change behaviour because of a file in whatever
+directory the process started in.
 
 ### Three model forms
 
@@ -202,7 +215,8 @@ refuses to replace an existing config unless `--force`, and prints what to insta
 ## Consequences
 
 - A project names its model once, in any of three forms, with no code; every command and the
-  library pick it up, and commands that need no model never load it.
+  Playwright helpers pick it up, library calls take it when passed, and commands that need no
+  model never load it.
 - Models without tool calling (small local models) can compile and escalate. How well they do is
   not measured: the evaluation (ADR 0005, ADR 0009) used `anthropicModel` with native tools only.
   JSON mode costs more tokens (the schemas sit in the system prompt, and a repair is a second call)
@@ -210,9 +224,9 @@ refuses to replace an existing config unless `--force`, and prints what to insta
 - Detection depends on how providers report missing tool support; a provider that silently drops
   the tools without a warning reads as a model that chose not to call one, and the loop nudges and
   eventually gives up. `modelOptions.mode: 'json'` is the remedy.
-- `verify` now reads `assay.config.*` from the current directory on its first call (cached
-  afterwards; `config: false` skips it). With no config nothing changes, so verdicts, records and
-  the equivalence golden are unchanged.
+- `verify`, `verifyMany` and `compileTask` behave exactly as before unless given a config, so
+  verdicts, records and the equivalence golden are unchanged. `verifyPage` and `expectOutcome`
+  read the project's config once per process; with no config file nothing changes.
 - No committed cassette, check set or report changes: replays of the example and real-app compiles
   reproduce them byte for byte.
 - A cassette recorded through the string form has the string as its model id; one recorded with

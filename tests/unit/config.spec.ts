@@ -15,6 +15,7 @@ import {
   loadConfig,
   resolveModel,
   verify,
+  verifyMany,
   type CheckSet,
   type EvidenceSnapshot,
   type ModelClient,
@@ -414,12 +415,29 @@ export default defineConfig({ model: 'anthropic:claude-opus-5-5', checks: 'check
       'success',
     );
     await expect(verify(TWO_MUGS, decided, { config: { escalate: true } })).rejects.toThrow(
-      'verify (escalate in the config) needs a model',
+      'verify with escalation needs a model',
     );
     await expect(verify(TWO_MUGS, decided, { config: { requireLocked: true } })).rejects.toThrow('not locked');
     expect(
       (await verify(TWO_MUGS, decided, { requireLocked: false, config: { requireLocked: true } })).outcome.verdict,
     ).toBe('success');
+  });
+
+  test('library calls never read assay.config.* from the current directory by themselves', async () => {
+    const dir = configDir(`export default { requireLocked: true, model: () => { throw new Error('read'); } };`);
+    const cwd = process.cwd();
+    process.chdir(dir);
+    try {
+      // The project's config would refuse the unlocked set; without `config` it is not read.
+      const decided = ref('03-cart-two-mugs', 'both-mugs');
+      expect((await verify(TWO_MUGS, decided)).outcome.verdict).toBe('success');
+      expect(await verifyMany(TWO_MUGS, [decided])).toHaveLength(1);
+      await expect(compileTask({ id: 't', instruction: 'x' }, [])).rejects.toThrow('compileTask needs a model');
+      // Passed as a path, it applies.
+      await expect(verify(TWO_MUGS, decided, { config: 'assay.config.ts' })).rejects.toThrow('not locked');
+    } finally {
+      process.chdir(cwd);
+    }
   });
 
   test('compileTask takes the model from the config and reproduces the committed check set', async () => {

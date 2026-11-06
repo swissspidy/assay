@@ -51,9 +51,9 @@ export interface VerifyOptions {
   /** How to drive and name `verifier` and `proposer` (default: the config's `modelOptions`). */
   modelOptions?: ModelOptions;
   /**
-   * The config to fill in what is not given (`recordDir`, `requireLocked`, `trustedKeys`,
-   * escalation): an object, a file path, or `false` for none. Default: assay.config.{ts,mts,js,mjs}
-   * in the current directory, if there is one. Explicit options win.
+   * A config to fill in what is not given (`recordDir`, `requireLocked`, `trustedKeys`,
+   * escalation): an object or a file path. Default: none; `verify` never reads
+   * assay.config.* by itself (the CLI and the Playwright helpers do). Explicit options win.
    */
   config?: AssayConfig | string | false;
   policy?: EscalationPolicy;
@@ -171,15 +171,25 @@ const keysOf = new WeakMap<AssayConfig, ReturnType<typeof readTrustedKeys>>();
 /** A config object passed in, checked once (a hot loop passes the same object every time). */
 const given = new WeakMap<AssayConfig, AssayConfig>();
 
-/** The options with the config's defaults filled in (explicit options win), and the models to use. */
-async function withConfig(opts: VerifyOptions): Promise<[VerifyOptions, Models]> {
-  let config: AssayConfig;
-  if (opts.config === false) config = {};
-  else if (typeof opts.config === 'object') {
-    config = given.get(opts.config) ?? normalizeConfig(opts.config, process.cwd(), 'config');
-    given.set(opts.config, config);
-  } else config = (await loadConfig(typeof opts.config === 'string' ? { path: opts.config } : {})).config;
-  const out: VerifyOptions = { ...opts };
+/**
+ * The config an option names: an object (checked once per object) or a file path. Nothing,
+ * or `false`, is no config: library calls never read assay.config.* by themselves (ADR 0017).
+ */
+export async function configOf(config: AssayConfig | string | false | undefined): Promise<AssayConfig> {
+  if (config === undefined || config === false) return {};
+  if (typeof config === 'string') return (await loadConfig({ path: config })).config;
+  let c = given.get(config);
+  if (!c) given.set(config, (c = normalizeConfig(config, process.cwd(), 'config')));
+  return c;
+}
+
+/**
+ * The options with a config's defaults filled in (explicit options win): `recordDir`,
+ * `requireLocked`, `trustedKeys`, the escalation policy, and the config's `model` as the
+ * verifier when it escalates. The result carries `config: false`, so it is not applied again.
+ */
+export function applyConfig(opts: VerifyOptions, config: AssayConfig): VerifyOptions {
+  const out: VerifyOptions = { ...opts, config: false };
   if (out.recordDir === undefined && config.recordDir !== undefined) out.recordDir = config.recordDir;
   if (config.trustedKeys?.length) {
     let keys = keysOf.get(config);
@@ -189,15 +199,21 @@ async function withConfig(opts: VerifyOptions): Promise<[VerifyOptions, Models]>
   }
   if (out.requireLocked === undefined && config.requireLocked === true) out.requireLocked = true;
   if (out.policy === undefined && typeof config.escalate === 'object') out.policy = config.escalate;
-  const modelOptions = { ...config.modelOptions, ...opts.modelOptions };
-  const models: Models = {};
-  if (out.verifier !== undefined) models.verifier = lazyModel(out.verifier, opts.modelOptions ?? {});
-  else if (out.escalate ?? (config.escalate !== undefined && config.escalate !== false)) {
+  if (out.verifier === undefined && (out.escalate ?? (config.escalate !== undefined && config.escalate !== false))) {
     if (config.model === undefined)
-      throw noModelError('verify (escalate in the config)', 'pass `verifier`, or `escalate: false`');
-    models.verifier = lazyModel(config.model, modelOptions);
+      throw noModelError('verify with escalation', 'pass `verifier`, or turn escalation off');
+    out.verifier = config.model;
+    out.modelOptions = { ...config.modelOptions, ...opts.modelOptions };
   }
-  if (out.proposer !== undefined) models.proposer = lazyModel(out.proposer, opts.modelOptions ?? {});
+  return out;
+}
+
+/** The options with the given config applied, and the models to use (resolved on first use). */
+async function withConfig(opts: VerifyOptions): Promise<[VerifyOptions, Models]> {
+  const out = applyConfig(opts, await configOf(opts.config));
+  const models: Models = {};
+  if (out.verifier !== undefined) models.verifier = lazyModel(out.verifier, out.modelOptions ?? {});
+  if (out.proposer !== undefined) models.proposer = lazyModel(out.proposer, out.modelOptions ?? {});
   return [out, models];
 }
 

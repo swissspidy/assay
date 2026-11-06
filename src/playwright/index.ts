@@ -10,7 +10,8 @@ import {
 import { assertValidCheckSet } from '../dsl/validate.ts';
 import { evaluate } from '../runtime/evaluate.ts';
 import { formatOutcome } from '../report.ts';
-import { verify, type VerifyOptions, type VerifyResult } from '../verifier/escalate.ts';
+import { applyConfig, configOf, verify, type VerifyOptions, type VerifyResult } from '../verifier/escalate.ts';
+import { loadConfig, type AssayConfig } from '../config/config.ts';
 import type { OutcomeRecord } from '../verifier/record.ts';
 import { assertLocked } from '../verifier/lock.ts';
 
@@ -30,8 +31,28 @@ export const test = base.extend<{ evidence: EvidenceRecorder; evidenceOptions: R
   ],
 });
 
-/** Capture and verification options for a live page. The verifier gets read-only live access to it. */
+/**
+ * Capture and verification options for a live page. The verifier gets read-only live access to it.
+ * `config`: the project's assay.config.* is read by default (once per process); pass a config
+ * object or path instead, or `false` for none (ADR 0017).
+ */
 export interface VerifyPageOptions extends CaptureOptions, Omit<VerifyOptions, 'page' | 'probes'> {}
+
+let projectConfig: Promise<AssayConfig> | undefined;
+
+/**
+ * The options with the config applied. These helpers are app-level entry points: unlike
+ * `verify`, they read the project's assay.config.* from the current directory by default,
+ * once per process.
+ */
+async function withProjectConfig<T extends VerifyPageOptions>(opts: T): Promise<T> {
+  if (opts.config === false) return opts;
+  const config =
+    opts.config === undefined
+      ? await (projectConfig ??= loadConfig().then((l) => l.config))
+      : await configOf(opts.config);
+  return applyConfig(opts, config) as T;
+}
 
 /**
  * Capture a snapshot of the page and `verify` it: run the checks, escalate what
@@ -40,9 +61,10 @@ export interface VerifyPageOptions extends CaptureOptions, Omit<VerifyOptions, '
 export async function verifyPage(
   page: Page,
   checks: CheckSet | unknown,
-  opts: VerifyPageOptions = {},
+  options: VerifyPageOptions = {},
 ): Promise<VerifyResult> {
   const cs = assertValidCheckSet(checks);
+  const opts = await withProjectConfig(options);
   // Before capturing: an unlocked set must not run probes or touch the page.
   assertLocked(cs, opts.requireLocked);
   const snapshot = await captureSnapshot(page, opts);
@@ -81,9 +103,10 @@ export class OutcomeError extends Error {
 export async function expectOutcome(
   page: Page,
   checks: CheckSet | unknown,
-  opts: ExpectOutcomeOptions = {},
+  options: ExpectOutcomeOptions = {},
 ): Promise<Outcome> {
   const cs = assertValidCheckSet(checks);
+  const opts = await withProjectConfig(options);
   assertLocked(cs, opts.requireLocked);
   const want = opts.verdict ?? 'success';
   const timeout = opts.timeout ?? 5000;

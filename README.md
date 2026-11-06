@@ -42,11 +42,13 @@ is validated against the tool's schema with one repair retry, and records and re
 `modes: ["json"]`. AI SDK models fall back by themselves when the provider reports no tool support;
 an adapter declares `capabilities: { tools: false }`; `modelOptions: { mode: 'json' }` forces it.
 
-The CLI and the library (`compileTask`, `verify`, `expectOutcome`) read the config from the current
-directory (`--config <file>` / `config` option for another, `config: false` for none). Commands
-that need no model never load it. Precedence: **flags, then environment variables
-(`ASSAY_MODEL`, …), then the config, then defaults**; in code, explicit options win over the
-config ([ADR 0017](docs/adr/0017-config-file-and-bring-your-own-model.md)).
+The CLI (`--config <file>` for another) and the Playwright helpers `expectOutcome` and `verifyPage`
+(once per process; `config: false` for none) read the config from the current directory. Core
+library calls stay pure: `compileTask`, `verify` and `verifyMany` use a config only when passed
+one (`config: (await loadConfig()).config` or a path). Commands that need no model never load it.
+Precedence: **flags, then environment variables (`ASSAY_MODEL`, …), then the config, then
+defaults**; in code, explicit options win over the config
+([ADR 0017](docs/adr/0017-config-file-and-bring-your-own-model.md)).
 
 ## Quick start
 
@@ -236,7 +238,7 @@ Design details: [ADR 0001](docs/adr/0001-evidence-snapshot-and-check-dsl.md).
    const { checkSet, report } = await compileTask(
      { id: 'shop/express-order', instruction, outcomes }, // outcomes: Gherkin "Then" steps, a Markdown list or plain lines
      [{ name: 'reference', kind: 'success', snapshot }],
-     { model: 'anthropic:claude-opus-5-5' }, // or leave it out to use assay.config.ts
+     { model: 'anthropic:claude-opus-5-5' }, // or { config: 'assay.config.ts' }
    );
    ```
 
@@ -311,7 +313,7 @@ example GitHub workflow that posts the review sheet on pull requests:
 import { verify } from '@swissspidy/assay';
 
 const { outcome, record, written } = await verify(locked, snapshot, {
-  verifier: 'anthropic:claude-opus-5-5', // decides only what the checks abstained on (or escalate: true in the config)
+  verifier: 'anthropic:claude-opus-5-5', // decides only what the checks abstained on
   requireLocked: true,
   agentReport: 'I placed the order.', // recorded as agent-claimed, never evidence
   recordDir: 'assay-records',
