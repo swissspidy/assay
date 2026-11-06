@@ -315,11 +315,18 @@ export class LockError extends Error {
   }
 }
 
+/** How a lock is checked: `verifyLock`, or a check plan's memo of it (ADR 0015). */
+export type LockVerifier = (cs: CheckSet, opts: LockCheckOptions) => LockStatus;
+
 /** Throw a `LockError` unless the set meets `requireLocked`. */
-export function assertLocked(cs: CheckSet, requireLocked: LockRequirement | undefined): LockStatus | undefined {
+export function assertLocked(
+  cs: CheckSet,
+  requireLocked: LockRequirement | undefined,
+  verify: LockVerifier = verifyLock,
+): LockStatus | undefined {
   if (!requireLocked) return undefined;
   const signed = typeof requireLocked === 'object';
-  const status = verifyLock(cs, signed ? { trustedKeys: keySet(requireLocked.trustedKeys) } : {});
+  const status = verify(cs, signed ? { trustedKeys: requireLocked.trustedKeys } : {});
   const name = `Check set ${cs.id} v${cs.version}`;
   if (status.state === 'none') {
     const rejected = (cs as Reviewed).rejected;
@@ -346,12 +353,13 @@ export function assertLocked(cs: CheckSet, requireLocked: LockRequirement | unde
 export function lockState(
   cs: CheckSet,
   opts: LockCheckOptions = {},
+  verify: LockVerifier = verifyLock,
 ): {
   locked: { by: string; at: string; signature?: { keyId: string; status: SignatureStatus; signer?: string } } | null;
   broken: boolean;
   problems: string[];
 } {
-  const s = verifyLock(cs, opts);
+  const s = verify(cs, opts);
   if (s.state !== 'valid') return { locked: null, broken: s.state === 'broken', problems: s.problems };
   const l = s.lock!;
   return {

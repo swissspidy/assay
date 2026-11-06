@@ -5,8 +5,9 @@
  */
 import type { Page } from '@playwright/test';
 import type { CheckSet, EvidenceSnapshot, Outcome, Requirement, RequirementResult, Verdict } from '../types.ts';
-import { evaluate, kleeneAnd } from '../runtime/evaluate.ts';
-import { assertValidCheckSet } from '../dsl/validate.ts';
+import { kleeneAnd } from '../plan/assertions.ts';
+import { compileChecks, runPlan, type CheckPlan } from '../plan/plan.ts';
+import { buildStore } from '../store/store.ts';
 import { checkSetDigest } from '../snapshot/digest.ts';
 import type { ModelClient } from '../model/types.ts';
 import type { Probe } from '../snapshot/capture.ts';
@@ -123,15 +124,36 @@ export async function verify(
   snapshot: EvidenceSnapshot,
   opts: VerifyOptions = {},
 ): Promise<VerifyResult> {
-  const cs = assertValidCheckSet(checkSet);
-  assertLocked(cs, opts.requireLocked);
+  const [plan, cs] = prepare(checkSet, opts);
+  const t0 = performance.now();
+  const checksOutcome = runPlan(plan, buildStore(snapshot));
+  return finish(plan, cs, snapshot, checksOutcome, performance.now() - t0, opts);
+}
+
+/**
+ * The check set's plan (validation, digest, prepared checks) and the set itself, validated and
+ * its lock checked. Plans and stores are built once per object and reused (ADR 0015).
+ */
+function prepare(checkSet: CheckSet | unknown, opts: VerifyOptions): [CheckPlan, CheckSet] {
+  const plan = compileChecks(checkSet);
+  const cs = plan.assertValid();
+  assertLocked(cs, opts.requireLocked, plan.lockStatus);
+  return [plan, cs];
+}
+
+/** Escalate what the checks could not decide, merge, propose, and build the record. */
+async function finish(
+  plan: CheckPlan,
+  cs: CheckSet,
+  snapshot: EvidenceSnapshot,
+  checksOutcome: Outcome,
+  checksMs: number,
+  opts: VerifyOptions,
+): Promise<VerifyResult> {
   const policy: Required<EscalationPolicy> = {
     on: opts.policy?.on ?? ['abstain'],
     includeSoft: opts.policy?.includeSoft ?? false,
   };
-  const t0 = performance.now();
-  const checksOutcome = evaluate(cs, snapshot);
-  const checksMs = performance.now() - t0;
   const checksStatus = new Map(checksOutcome.requirements.map((r) => [r.requirement, r.status] as const));
 
   const selection = new Map(
@@ -256,7 +278,7 @@ export async function verify(
   });
 
   const trustedKeys = typeof opts.requireLocked === 'object' ? opts.requireLocked.trustedKeys : opts.trustedKeys;
-  const lock = lockState(cs, trustedKeys ? { trustedKeys } : {});
+  const lock = lockState(cs, trustedKeys ? { trustedKeys } : {}, plan.lockStatus);
   const onFailOf = new Map(cs.checks.map((c) => [c.id, c.onFail] as const));
   const onMissingOf = new Map(cs.checks.map((c) => [c.id, c.onMissing] as const));
   const record: OutcomeRecord = {
