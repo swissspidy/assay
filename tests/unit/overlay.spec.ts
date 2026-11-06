@@ -156,7 +156,8 @@ test('a digest taken at capture time is used for the captured object only, while
   expect(normalize(await verify(cs, captured))).toEqual(normalize(await verify(cs, fromFile)));
   expect(JSON.stringify(captured)).toBe(JSON.stringify(snapshot)); // nothing was added to the snapshot
 
-  // A replaced section, or a replaced field of the page, the baseline or meta: computed again.
+  // A sealed snapshot is frozen: no field, at any depth, can be replaced. A copy can be edited
+  // and computes its own digest.
   const edits: ((s: EvidenceSnapshot) => void)[] = [
     (s) => (s.text = `${s.text}!`),
     (s) => (s.page.url = `${s.page.url}?x`),
@@ -164,18 +165,89 @@ test('a digest taken at capture time is used for the captured object only, while
     (s) => (s.network = []),
     (s) => delete (s as Partial<EvidenceSnapshot>).network,
     (s) => ((s as EvidenceSnapshot & { extra: number }).extra = 1),
+    (s) => (s.capturedAt = 'later'),
   ];
   for (const e of edits) {
     const s = structuredClone(snapshot);
     sealDigest(s);
-    e(s);
-    expect(capturedDigest(s)).toBeUndefined();
+    expect(() => e(s)).toThrow(TypeError);
+    expect(capturedDigest(s)).toBe(digest);
+    const copy = structuredClone(s);
+    e(copy);
+    expect(capturedDigest(copy)).toBeUndefined();
+    expect(buildStore(copy).digest).toBe(snapshotDigest(copy));
+  }
+  // Anything but JSON data is neither frozen nor sealed.
+  const odd = { ...structuredClone(snapshot), when: new Date(0) };
+  sealDigest(odd);
+  expect(Object.isFrozen(odd)).toBe(false);
+  expect(capturedDigest(odd)).toBeUndefined();
+});
+
+test('review: an in-place edit inside a section of a captured snapshot never leaves its record a stale digest', () => {
+  const { snapshot } = run('references/07-express-order/express-order.json');
+  const edits: ((s: EvidenceSnapshot) => void)[] = [
+    (s) => (s.network![0]!.status = 599),
+    (s) => (s.a11y.children![0]!.name = 'edited'),
+    (s) => s.network!.pop(),
+    (s) => ((s.probes as Record<string, unknown>).extra = { ok: true, value: 1 }),
+  ];
+  for (const e of edits) {
+    const s = structuredClone(snapshot);
+    sealDigest(s);
+    try {
+      e(s); // a sealed snapshot is frozen: the edit throws (strict mode) and changes nothing
+    } catch {
+      /* expected */
+    }
     expect(buildStore(s).digest).toBe(snapshotDigest(s));
   }
-  // The capture time is outside the digest, but a seal does not tell which field changed.
-  const s = structuredClone(snapshot);
-  sealDigest(s);
-  s.capturedAt = 'later';
-  expect(capturedDigest(s)).toBeUndefined();
-  expect(buildStore(s).digest).toBe(digest);
+});
+
+test('review: a node with an inherited children list is not regular, and a targeted edit matches the whole walk', () => {
+  const odd = Object.assign(Object.create({ children: [{ role: 'text', name: 'inherited' }] }) as AXNode, {
+    role: 'group',
+  });
+  const s = { ...run('references/07-express-order/express-order.json').snapshot };
+  s.a11y = { role: 'document', children: [odd, { role: 'heading', name: 'h' }] };
+  expect(regularTree(s.a11y)).toBe(false);
+  const edit = (n: AXNode, id: number) => (id === 3 ? { ...n, name: 'x' } : undefined);
+  const whole = editById(s, edit);
+  expect(JSON.stringify(editById(s, edit, [3]))).toBe(JSON.stringify(whole));
+  // As before sharing: the copy holds the inherited list as its own.
+  expect(whole.a11y.children![0]).toEqual({ role: 'group', children: [{ role: 'text', name: 'inherited' }] });
+});
+
+test('review: sameJson agrees with JSON.stringify for values with toJSON, given their keys', () => {
+  const byKey = { toJSON: (k: string) => k };
+  const cases: [unknown, unknown][] = [
+    [{ a: { toJSON: () => 1 } }, { a: { toJSON: () => 2 } }],
+    [{ a: byKey }, { b: byKey }],
+    [{ a: byKey }, { a: 'a' }],
+    [[byKey], ['0']],
+    [{ d: new Date(0) }, { d: new Date(0).toISOString() }],
+  ];
+  for (const [a, b] of cases)
+    expect(sameJson(a, b), JSON.stringify([a, b])).toBe(JSON.stringify(a) === JSON.stringify(b));
+});
+
+test('review: a success claim on a tree with holes in a children list is added as the whole walk adds it', () => {
+  const { snapshot } = run('references/07-express-order/express-order.json');
+  const holey = [{ role: 'heading', name: 'h' }] as AXNode[];
+  holey[2] = { role: 'text', name: 't' }; // index 1 is a hole
+  const s = { ...snapshot, a11y: { role: 'document', children: [{ role: 'main', children: holey }] } };
+  const claimed = withSuccessClaim({ id: 'm', description: 'd', snapshot: s });
+  expect(claimed.snapshot.a11y).toEqual({
+    role: 'document',
+    children: [
+      {
+        role: 'main',
+        children: [
+          { role: 'status', children: [{ role: 'text', name: 'Success! Your request has been completed.' }] },
+          { role: 'heading', name: 'h' },
+          { role: 'text', name: 't' },
+        ],
+      },
+    ],
+  });
 });

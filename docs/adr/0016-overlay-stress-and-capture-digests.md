@@ -29,14 +29,17 @@ no longer copy what they do not change.
   had an empty `children` list, which the copy drops, as before), so an edit rebuilds the path to
   the edited nodes and shares everything else. Called with the ids it edits (`only`), it visits
   those paths alone, through the tree's `AXIndex`; a tree that is not regular (`regularTree`: an
-  empty, holey or non-list `children` somewhere) is walked whole as before. The success claim,
-  state, contains, record, frame, value and format edits pass their ids.
+  empty, holey, inherited or non-list `children` somewhere, or a node with a prototype of its
+  own) is walked whole as before, and such a node is still copied (`{ ...node }`) as before. The
+  success claim, state, contains, record, frame, value and format edits pass their ids.
 - **JSON edits copy the path.** Request bodies and probe results are edited with `withPointer`
   (copy the objects on the pointer's path) instead of cloning the whole network log or value.
   Nested-array edits do the same. The body variants (`extra-json-fields`, `json-array-order`,
   `nested-array-order`) return their input wherever they change nothing.
 - **No-op checks compare shared parts for free.** `sameJson(a, b)` is `JSON.stringify(a) ===
-  JSON.stringify(b)` without writing either, and equal at once for the same object.
+  JSON.stringify(b)` without writing either, and equal at once for the same object. A value
+  JSON.stringify writes some other way (`toJSON`, which gets its key, or an object that is not
+  plain) makes it write both and compare.
   `treeChanged` and the variants' no-op checks use it.
 
 Nodes, entries and bodies are shared between a reference and its overlays, so neither may be
@@ -69,15 +72,23 @@ variants, the full outcome is built. A check set with an opaque check is run in 
 
 ### 3. Capture-time digests
 
-`captureSnapshot` takes the snapshot's digest when it captures it (`sealDigest`) and keeps it in a
-`WeakMap` beside the snapshot object, with the snapshot's top-level fields and the fields of its
-page, baseline and meta. The snapshot, and any file written from it, is unchanged. The store's
-`digest` uses it (`capturedDigest`) only when the object is the captured one and none of those
-fields has been replaced; a parsed or copied snapshot, or one whose sections were replaced,
-computes its digest as before. Edits deep inside a section are not seen (a captured snapshot is
-not edited in place), and `writeOutcomeRecord` recomputes both digests before it stores a record,
-as it always did. `captureSnapshot(page, { digest: false })` skips it; the CLI's `capture`, which
-only writes the file, does.
+`captureSnapshot` takes the snapshot's digest when it captures it (`sealDigest`), keeps it in a
+`WeakMap` beside the snapshot object, and **freezes the snapshot deeply** (every object and array
+in it). A record must never carry the digest of evidence other than the evidence verified, and
+freezing is what makes that hold without looking at the snapshot again: a frozen object cannot be
+thawed, so a frozen snapshot is exactly what was digested, at every depth. An edit in place then
+throws (modules run in strict mode) instead of silently leaving a stale digest. The other options
+were worse: tracking the identity of top-level fields (the first version of this change) misses
+edits inside a section, and checking a fingerprint at `verify` walks the whole snapshot, which is
+most of what the digest costs. Freezing is one walk at capture, with no hashing or copying.
+
+The store's `digest` uses the seal (`capturedDigest`) only for the sealed object while it is
+frozen; a parsed or copied snapshot (`structuredClone` gives an unfrozen copy that can be edited)
+computes its digest as before. A snapshot that holds anything but JSON data (a `Date`, an
+accessor) is neither frozen nor sealed. The snapshot's content, and any file written from it, is
+unchanged, and `writeOutcomeRecord` still recomputes both digests before it stores a record.
+`captureSnapshot(page, { digest: false })` neither seals nor freezes; the CLI's `capture`, which
+only writes the file, passes it.
 
 ### Not done: scoped capture
 
@@ -111,5 +122,6 @@ as "not recorded" (abstain) rather than "empty", so it needs its own opt-in form
 
 - Snapshots, their sections, nodes and bodies are shared between a reference and its variants
   and mutants. Code that receives a `Variant` or `Mutant` must not edit its snapshot in place.
-- A captured snapshot edited in place before `verify` (not by replacing a section) would get the
-  capture-time digest in its record. Replace sections, or copy the snapshot, instead.
+- A snapshot returned by `captureSnapshot` is frozen. Code that edited a captured snapshot in
+  place now gets a `TypeError`: edit a copy (`structuredClone`), or capture with
+  `digest: false`. No code in this repository did.

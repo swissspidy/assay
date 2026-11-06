@@ -161,18 +161,31 @@ const EMPTY = new Int32Array(0);
 const regularNodes = new WeakSet<AXNode>();
 
 /**
- * Whether every node of the tree is an object whose `children`, when it has the field, is a
- * non-empty list without holes (ADR 0016). Such a tree indexes without error, and an edit
+ * Whether a node inherits nothing (its prototype is Object.prototype or null), so the node
+ * reads the same as `{ ...node }`, its copy.
+ */
+export function plainNode(node: AXNode): boolean {
+  const p = Object.getPrototypeOf(node) as unknown;
+  return p === Object.prototype || p === null;
+}
+
+/**
+ * Whether every node of the tree is an object whose `children`, when it has the field, is its
+ * own non-empty list without holes (ADR 0016). Such a tree indexes without error, and an edit
  * that leaves a node alone leaves it as it is. Remembered per node, so an edited tree is
  * checked along its new nodes only.
  */
 export function regularTree(node: AXNode): boolean {
   if (!node || typeof node !== 'object') return false;
   if (regularNodes.has(node)) return true;
+  if (!plainNode(node)) return false;
   if (Object.hasOwn(node, 'children')) {
     const kids = node.children;
     if (!Array.isArray(kids) || kids.length === 0) return false;
     for (let i = 0; i < kids.length; i++) if (!(i in kids) || !regularTree(kids[i]!)) return false;
+  } else if (node.children !== undefined) {
+    // An inherited list: the index reads it, but a copy of the node ({ ...node }) loses it.
+    return false;
   }
   regularNodes.add(node);
   return true;

@@ -251,6 +251,7 @@ export class PlanRun {
   private readonly ctxs: [EvalCtx, EvalCtx];
   private readonly results: (CheckResult | undefined)[];
 
+  /** A run of `plan` on `store`; with `base`, an overlay on that run (the same plan). */
   constructor(plan: CheckPlan, store: EvidenceStore, base?: PlanRun) {
     this.plan = plan;
     this.store = store;

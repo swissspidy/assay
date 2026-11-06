@@ -666,7 +666,9 @@ export interface CaptureOptions {
   baseline?: Baseline | null;
   /**
    * Take the snapshot's digest at capture time (default true; ADR 0016), so that `verify`
-   * of this snapshot object does not compute it again. The snapshot itself is unchanged.
+   * of this snapshot object does not compute it again. The snapshot is then frozen, so the
+   * evidence cannot change after its digest was taken: to edit it, edit a copy
+   * (`structuredClone`), or pass false. Its content and its file are unchanged.
    */
   digest?: boolean;
 }
@@ -893,7 +895,8 @@ export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Pr
     meta: { capturer: CAPTURER, redacted: redacted.toSorted() },
   };
   // The digest the record needs, taken now rather than on the verify path; kept beside the
-  // snapshot object (not in it), so the snapshot and its file are what they always were.
+  // snapshot object (not in it), so the snapshot and its file are what they always were. The
+  // snapshot is frozen with it, so the digest stays the digest of its evidence.
   if (opts.digest !== false) sealDigest(snapshot);
   return snapshot;
 }

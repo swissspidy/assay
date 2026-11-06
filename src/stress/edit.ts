@@ -2,7 +2,7 @@
 import type { AXNode, EvidenceSnapshot, Json } from '../types.ts';
 import { formatInstant } from '../runtime/values.ts';
 import { AXIndex, type INode } from '../runtime/axindex.ts';
-import { regularTree } from '../store/ax.ts';
+import { plainNode, regularTree } from '../store/ax.ts';
 
 export const clone = <T>(x: T): T => structuredClone(x);
 
@@ -37,7 +37,8 @@ export function editById(
       let same: boolean;
       if (Array.isArray(kids)) {
         children = [];
-        same = kids.length > 0;
+        // An inherited list is copied into the node, as `{ ...node }` and the new list always did.
+        same = kids.length > 0 && Object.hasOwn(node, 'children');
         for (let i = 0; i < kids.length; i++) {
           if (!(i in kids)) continue; // a hole, as flatMap skips it
           const k = kids[i]!;
@@ -61,6 +62,8 @@ export function editById(
         else delete copy.children;
       }
     }
+    // A node with a prototype of its own is copied as before: the copy keeps own fields only.
+    if (copy === node && !plainNode(node)) copy = { ...node };
     const r = fn(copy, myId);
     if (r === undefined) out.push(copy);
     else if (r === null) return;
@@ -135,31 +138,80 @@ const plain = (x: unknown): x is Record<string, unknown> => {
   const p = Object.getPrototypeOf(x) as unknown;
   return p === Object.prototype || p === null || p === Array.prototype;
 };
+/** An object JSON.stringify writes field by field: plain, and no `toJSON` (which may depend on its key). */
+const literal = (x: unknown): x is Record<string, unknown> =>
+  plain(x) && typeof (x as { toJSON?: unknown }).toJSON !== 'function';
 /** What JSON.stringify writes for a value in an array: undefined, functions and symbols as null. */
 const inArray = (x: unknown) => (x === undefined || typeof x === 'function' || typeof x === 'symbol' ? null : x);
 /** Does JSON.stringify keep this property? */
 const kept = (x: unknown) => x !== undefined && typeof x !== 'function' && typeof x !== 'symbol';
 
+/** An object value JSON.stringify does not write field by field. */
+const opaque = (v: unknown) => v !== null && typeof v === 'object' && !literal(v);
+
+/** `structural` could not tell: a value JSON.stringify writes some other way (toJSON, a Date, a Map). */
+const UNSURE = 2;
+
+/**
+ * 1 when `a` and `b`, found under the same key, serialize the same; 0 when not; UNSURE when
+ * that depends on how JSON.stringify writes an object that is not a literal.
+ */
+function structural(a: unknown, b: unknown): 0 | 1 | typeof UNSURE {
+  // The same value under the same key: the same JSON, toJSON(key) included.
+  if (a === b) return 1;
+  const ao = a !== null && typeof a === 'object';
+  const bo = b !== null && typeof b === 'object';
+  if ((ao && !literal(a)) || (bo && !literal(b))) return UNSURE;
+  if (!ao || !bo) return ao || bo ? 0 : JSON.stringify(a) === JSON.stringify(b) ? 1 : 0;
+  if (Array.isArray(a) !== Array.isArray(b)) return 0;
+  if (Array.isArray(a)) {
+    const y = b as unknown as unknown[];
+    if (a.length !== y.length) return 0;
+    for (let i = 0; i < a.length; i++) {
+      const r = structural(inArray(a[i]), inArray(y[i]));
+      if (r !== 1) return r;
+    }
+    return 1;
+  }
+  const x = a as Record<string, unknown>;
+  const z = b as Record<string, unknown>;
+  // Which fields are written can depend on a non-literal value (a toJSON giving undefined).
+  const ka = Object.keys(x);
+  const kb = Object.keys(z);
+  if (ka.some((k) => opaque(x[k])) || kb.some((k) => opaque(z[k]))) return UNSURE;
+  return sameFields(
+    x,
+    z,
+    ka.filter((k) => kept(x[k])),
+    kb.filter((k) => kept(z[k])),
+  );
+}
+
+/** The kept fields `ka` of `x` and `kb` of `z`, in order, compared as `structural` compares values. */
+function sameFields(
+  x: Record<string, unknown>,
+  z: Record<string, unknown>,
+  ka: string[],
+  kb: string[],
+): 0 | 1 | typeof UNSURE {
+  if (ka.length !== kb.length) return 0;
+  for (let i = 0; i < ka.length; i++) {
+    if (ka[i] !== kb[i]) return 0;
+    const r = structural(x[ka[i]!], z[kb[i]!]);
+    if (r !== 1) return r;
+  }
+  return 1;
+}
+
 /**
  * `JSON.stringify(a) === JSON.stringify(b)`, without writing either: shared subtrees (the
  * same object) are equal without a look inside, which is what makes comparing an edited
- * tree or body with its original cheap.
+ * tree or body with its original cheap. Values JSON.stringify writes some other way (with
+ * `toJSON`, or not plain objects) are compared by writing both.
  */
 export function sameJson(a: unknown, b: unknown): boolean {
-  if (a === b) return true;
-  if (!plain(a) || !plain(b)) return JSON.stringify(a) === JSON.stringify(b);
-  if (Array.isArray(a) !== Array.isArray(b)) return false;
-  if (Array.isArray(a)) {
-    const y = b as unknown as unknown[];
-    if (a.length !== y.length) return false;
-    for (let i = 0; i < a.length; i++) if (!sameJson(inArray(a[i]), inArray(y[i]))) return false;
-    return true;
-  }
-  const ka = Object.keys(a).filter((k) => kept(a[k]));
-  const kb = Object.keys(b).filter((k) => kept(b[k]));
-  if (ka.length !== kb.length) return false;
-  for (let i = 0; i < ka.length; i++) if (ka[i] !== kb[i] || !sameJson(a[ka[i]!], b[kb[i]!])) return false;
-  return true;
+  const r = structural(a, b);
+  return r === UNSURE ? JSON.stringify(a) === JSON.stringify(b) : r === 1;
 }
 
 const replaceOnce = (s: string, from: string, to: string) => s.replace(from, () => to);

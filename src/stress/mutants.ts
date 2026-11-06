@@ -25,6 +25,7 @@ import type {
   ValueSource,
 } from '../types.ts';
 import { AXIndex, readNodeField, resolveTarget, type INode } from '../runtime/axindex.ts';
+import { regularTree } from '../store/ax.ts';
 import { matchPage, matchRequest } from '../runtime/network.ts';
 import { compare, compareNumber, compareValues, jsonPointer, tolerable } from '../runtime/compare.ts';
 import { evaluateAssertion, openPages } from '../runtime/evaluate.ts';
@@ -1666,10 +1667,15 @@ export function withSuccessClaim(m: Mutant): Mutant {
   const claim = (): AXNode => ({ role: 'status', children: [{ role: 'text', name: CLAIM_TEXT }] });
   let placed = false;
   // The first main the walk finishes (post-order): the one whose subtree ends first, the
-  // innermost of nested ones ending together.
-  const t = AXIndex.of(m.snapshot.a11y).table;
-  let main = -1;
-  for (const id of t.withRole('main')) if (main < 0 || t.end[id]! <= t.end[main]!) main = id;
+  // innermost of nested ones ending together. Found through the index only in a regular tree
+  // (one with holes or odd `children` lists may not index); any other is walked whole.
+  let only: number[] | undefined;
+  if (regularTree(m.snapshot.a11y)) {
+    const t = AXIndex.of(m.snapshot.a11y).table;
+    let main = -1;
+    for (const id of t.withRole('main')) if (main < 0 || t.end[id]! <= t.end[main]!) main = id;
+    only = main < 0 ? [] : [main];
+  }
   let snap = editById(
     m.snapshot,
     (n) => {
@@ -1677,7 +1683,7 @@ export function withSuccessClaim(m: Mutant): Mutant {
       placed = true;
       return { ...n, children: [claim(), ...(n.children ?? [])] };
     },
-    main < 0 ? [] : [main],
+    only,
   );
   if (!placed) snap = { ...snap, a11y: { ...snap.a11y, children: [claim(), ...(snap.a11y.children ?? [])] } };
   return {
