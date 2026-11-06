@@ -8,7 +8,21 @@ export {
   coverage,
   assertionTrust,
 } from './compile.ts';
+export {
+  generateCandidates,
+  mineCandidates,
+  rankCandidates,
+  selectMined,
+  Quote,
+  type Candidate,
+  type CandidateFamily,
+  type CandidateResult,
+  type DiscoveryStrategy,
+  type MineResult,
+  type MinedRequirement,
+} from './mine.ts';
 export type {
+  MiningReport,
   TaskInput,
   Reference,
   CompileOptions,

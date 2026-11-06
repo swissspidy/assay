@@ -247,6 +247,17 @@ Design details: [ADR 0001](docs/adr/0001-evidence-snapshot-and-check-dsl.md).
    correct reference, does not succeed on any negative one, and accepts the stress test's valid
    variants ([ADR 0002](docs/adr/0002-compiler.md)).
 
+   With `discovery: 'mine-first'` (`assay compile --mine-first`, or `compile.discovery` in the
+   config), the compiler first mines candidate checks from the references without a model: values
+   in probes, storage, request and response bodies, the URL and the page that the requirement's
+   quote names. It evaluates them all in one batch over the references, the baseline and the stress
+   variants, and puts the best through the same acceptance gate. Requirements mining settles need
+   no discovery turn; the agent is asked only for the rest, with the mined candidates as hints.
+   `discovery: 'mine-only'` never asks for checks, and with `rubric: 'deterministic'` runs no model
+   at all; it fails with a reason per requirement it cannot cover. Mining is conservative: a quote
+   about the page, "all", "only", "no longer" or "add" stays with the model
+   ([ADR 0020](docs/adr/0020-mining-first-compiler.md)).
+
    Correct references that did the task in different ways (give each a `note`, e.g.
    `"through the block editor"`) make the checks route-robust: route evidence one of them lacks
    must be marked `onMissing: "abstain"`. The report flags requirements whose only evidence is
@@ -434,7 +445,9 @@ assay checks print --ts checks/add-blue-mug.checks.json   # the set as builder T
 - **`compile <task>`**: the task is the instruction text, a text file, or a JSON file with
   `{ "id", "instruction", "outcomes", "skipVariants" }` (or a check set, whose task is recompiled).
   `--reference` (repeatable) is a snapshot file or a directory of them; `--negative` adds incorrect
-  runs. A refused compile prints its reason and warnings.
+  runs. A refused compile prints its reason and warnings. `--mine-first` mines checks from the
+  references before asking the model; `--mine-only` never asks it for checks (with
+  `--rubric deterministic`, no model is needed).
 - **`verify <checks> <snapshot>`** prints each requirement and check with its evidence.
   `--escalate` sends abstained requirements to the agentic verifier, `--record <dir>` writes the
   outcome record, `--require-locked` refuses a set that is not approved, `--require-signed` one
@@ -576,6 +589,7 @@ five ([ADR 0011](docs/adr/0011-route-robust-compilation.md)).
 - [ADR 0017](docs/adr/0017-config-file-and-bring-your-own-model.md): `assay.config.ts`, bring your own model, JSON mode
 - [ADR 0018](docs/adr/0018-model-bench.md): `assay bench`, comparing models on your own tasks
 - [ADR 0019](docs/adr/0019-typed-checks-matcher-and-watch.md): the check builder, `toHaveCompleted` and `assay watch`
+- [ADR 0020](docs/adr/0020-mining-first-compiler.md): the mining-first compiler
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
 - Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)
 

@@ -6,7 +6,7 @@
  *   node --expose-gc scripts/bench.ts [--filter load,verify] [--iterations N] [--warmup N]
  *                                     [--json [file]] [--lib <checkout>]
  *
- * Workloads: load, verify, verify-batch, stress, compile-replay, snapshot-size. Each timed
+ * Workloads: load, verify, verify-batch, stress, compile-replay, mine, snapshot-size. Each timed
  * workload runs `--warmup` untimed and `--iterations` timed passes over the same work and
  * reports the median and p95 pass time, items per second and the cost per item. Inputs are
  * parsed afresh (untimed) before every pass, so a cache keyed on object identity cannot
@@ -40,7 +40,7 @@ import type * as RealApps from '../eval/real/apps.ts';
 
 // --- Options -----------------------------------------------------------------------
 
-const WORKLOADS = ['load', 'verify', 'verify-batch', 'stress', 'compile-replay', 'snapshot-size'] as const;
+const WORKLOADS = ['load', 'verify', 'verify-batch', 'stress', 'compile-replay', 'mine', 'snapshot-size'] as const;
 type WorkloadName = (typeof WORKLOADS)[number];
 
 /** The fixed compile subset: five example tasks and five real ones (small to large cassettes). */
@@ -630,6 +630,91 @@ async function benchCompileReplay(): Promise<Timed> {
   );
 }
 
+/**
+ * Mining (ADR 0020) for every example and real-app task: `compileTask` with
+ * `discovery: "mine-only"` and the deterministic rubric, so no model runs. Generation, batch
+ * evaluation over the references and their stress variants, ranking and the acceptance gate.
+ */
+async function benchMine(): Promise<Timed> {
+  const compiler = await loadLib<typeof Compiler>('src/compiler/index.ts');
+  if (!('mineCandidates' in compiler)) throw new Error('this library has no mining compiler');
+  const examples = (await load<typeof ExampleApps>('examples/apps.ts')).APPS;
+  const { compileReference } = await load<typeof Scenario>('examples/lib/scenario.ts');
+  const realApps = (await load<typeof RealApps>('eval/real/apps.ts')).APPS;
+  const jobs: { task: Compiler.TaskInput; refs: { name: string; text: string }[] }[] = [];
+  const texts = new Map(allRunTexts().map((r) => [`${r.set}/${r.name}`, r.text]));
+  for (const app of examples)
+    for (const def of app.tasks) {
+      const hand = JSON.parse(readFileSync(new URL(`tasks/${def.id}.checks.json`, app.dir), 'utf8')) as Assay.CheckSet;
+      const ref = compileReference(def).name;
+      const text = texts.get(`examples:${app.name}/${def.id}/${ref}`);
+      if (!text) continue;
+      jobs.push({
+        task: {
+          id: `${app.name}/${def.id}`,
+          instruction: hand.task.instruction,
+          ...(hand.task.outcomes !== undefined ? { outcomes: hand.task.outcomes } : {}),
+          ...(def.skipVariants ? { skipVariants: def.skipVariants } : {}),
+        },
+        refs: [{ name: ref, text }],
+      });
+    }
+  for (const app of realApps)
+    for (const t of app.tasks) {
+      const refs = [...texts.entries()]
+        .filter(([k]) => k.startsWith(`real:${app.name}/${t.id}/`) && isReference(k.split('/').at(-1)!))
+        .map(([k, text]) => ({ name: k.split('/').at(-1)!, text }))
+        .toSorted((a, b) => (a.name === 'reference' ? -1 : b.name === 'reference' ? 1 : a.name < b.name ? -1 : 1));
+      if (!refs.length) continue;
+      jobs.push({
+        task: {
+          id: `${app.name}/${t.id}`,
+          instruction: t.instruction,
+          ...(t.skipVariants?.length ? { skipVariants: t.skipVariants } : {}),
+        },
+        refs,
+      });
+    }
+  let compiled = 0;
+  let covered = 0;
+  let requirements = 0;
+  let candidates = 0;
+  return timed(
+    'mine',
+    `compileTask() with discovery "mine-only" and the deterministic rubric (no model) for ${jobs.length} tasks`,
+    'task',
+    async () => {
+      const prepared = jobs.map((j) => ({
+        task: j.task,
+        refs: j.refs.map((r) => ({
+          name: r.name,
+          kind: 'success' as const,
+          snapshot: (JSON.parse(r.text) as RunJson).snapshot,
+        })),
+      }));
+      return {
+        items: prepared.length,
+        run: async () => {
+          compiled = covered = requirements = candidates = 0;
+          for (const j of prepared) {
+            const { checkSet, report } = await compiler.compileTask(j.task, j.refs, {
+              discovery: 'mine-only',
+              rubric: 'deterministic',
+            });
+            if (checkSet) compiled++;
+            const m = report.mining;
+            if (!m) throw new Error(`${j.task.id}: ${report.reason}`);
+            candidates += m.candidates;
+            requirements += m.requirements.length;
+            covered += m.requirements.filter((r) => r.status === 'covered').length;
+          }
+        },
+      };
+    },
+    () => ({ tasks: jobs.length, compiled, requirements, covered, candidates }),
+  );
+}
+
 function benchSnapshotSize(): Sized {
   const runs = allRunTexts().filter((r) => r.set.startsWith('real:'));
   const sizes = new Map<string, number[]>();
@@ -676,6 +761,7 @@ const runners: Record<WorkloadName, () => Promise<Timed | Sized> | Sized> = {
   'verify-batch': benchVerifyBatch,
   stress: benchStress,
   'compile-replay': benchCompileReplay,
+  mine: benchMine,
   'snapshot-size': benchSnapshotSize,
 };
 if (!gc) console.warn('(run with node --expose-gc for steadier numbers: npm run bench does)');

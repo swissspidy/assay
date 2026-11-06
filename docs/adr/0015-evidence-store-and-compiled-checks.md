@@ -188,7 +188,7 @@ time spent on that run's checks.
   of that falls out of this change. JSON snapshots remain the format of record.
 
 - **Mining-first compiler.** A compiler that runs candidate checks as plans over many stores before
-  asking a model.
+  asking a model. Done in [ADR 0020](0020-mining-first-compiler.md).
 
 ## Consequences
 

@@ -72,6 +72,8 @@ Exit status: 0 created, 3 usage, 4 error (including a config file that already e
       outcomes: { type: 'string' },
       rubric: { type: 'string' },
       'skip-variants': { type: 'string' },
+      'mine-first': { type: 'boolean' },
+      'mine-only': { type: 'boolean' },
       verbose: { type: 'boolean' },
       ...MODEL_OPTIONS,
     },
@@ -87,6 +89,10 @@ Options:
   --outcomes <text|file>   Expected outcomes: Gherkin "Then" steps, a Markdown list or plain lines
   --rubric <kind>          model (default) or deterministic (one hard requirement per outcome)
   --skip-variants <ids>    Comma-separated stress variants that do not apply to this task
+  --mine-first             Mine candidate checks from the references first; ask the model only
+                           for the requirements mining leaves open (config: compile.discovery)
+  --mine-only              Mine only, never ask the model for checks; with --rubric deterministic
+                           no model is needed. Fails with the requirements mining cannot cover
   --verbose                Print the compiler's progress to stderr
   --json                   Print the compile report (and the check set, without --out) as JSON
 

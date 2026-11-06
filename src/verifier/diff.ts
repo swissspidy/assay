@@ -181,7 +181,7 @@ function fieldsChanged(a: object, b: object, names: Record<string, string>): str
 
 const prov = (cs: CheckSet) =>
   cs.compiled
-    ? `${cs.compiled.compiler} with ${cs.compiled.model} (served by ${cs.compiled.modelsUsed.join(', ') || 'none'}) at ${cs.compiled.at}`
+    ? `${cs.compiled.compiler} with ${cs.compiled.model} (served by ${cs.compiled.modelsUsed.join(', ') || 'none'}${cs.compiled.discovery ? `, checks ${cs.compiled.discovery}` : ''}) at ${cs.compiled.at}`
     : undefined;
 const sameContent = (c: { id: string }) => canonicalJson({ ...c, id: '' });
 

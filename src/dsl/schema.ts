@@ -101,6 +101,7 @@ export const checkSetSchema = {
         model: { type: 'string', minLength: 1 },
         modelsUsed: { type: 'array', items: { type: 'string', minLength: 1 } },
         at: { type: 'string', minLength: 1 },
+        discovery: { enum: ['mined', 'mined+model'] },
       },
     },
     locked: {

@@ -385,6 +385,12 @@ export interface Provenance {
   modelsUsed: string[];
   /** When the model was run (ISO 8601). A replayed compile keeps the recording's time. */
   at: string;
+  /**
+   * Where the checks came from (ADR 0020): "mined" from the references without a discovery
+   * model, or "mined+model" (mined checks, and the agent's for the requirements left open).
+   * Absent: the discovery agent wrote them all.
+   */
+  discovery?: 'mined' | 'mined+model';
 }
 
 export interface CheckSet {
