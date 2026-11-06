@@ -59,8 +59,9 @@ async function chooseLive(
   const { config } = loaded;
   const mode = config.modelOptions?.mode;
   if (provider !== undefined || id !== undefined) {
-    // "openai:gpt-5" is the config's string form; a bare id keeps its old meaning.
-    if (provider === undefined && id !== undefined && parseModelString(id))
+    // "openai:gpt-5" is the config's string form and names its own provider, so only an
+    // explicit --provider flag (not $ASSAY_PROVIDER) overrides it; a bare id keeps its old meaning.
+    if (values.provider === undefined && id !== undefined && parseModelString(id))
       return cli(resolveModel(id, mode ? { mode } : {}));
     return liveModel(providerOf(values, env), id, env);
   }

@@ -11,7 +11,7 @@ import { assertValidCheckSet } from '../dsl/validate.ts';
 import { evaluate } from '../runtime/evaluate.ts';
 import { formatOutcome } from '../report.ts';
 import { applyConfig, configOf, verify, type VerifyOptions, type VerifyResult } from '../verifier/escalate.ts';
-import { loadConfig, type AssayConfig } from '../config/config.ts';
+import { cachedUntilRejected, loadConfig, type AssayConfig } from '../config/config.ts';
 import type { OutcomeRecord } from '../verifier/record.ts';
 import { assertLocked } from '../verifier/lock.ts';
 
@@ -38,7 +38,8 @@ export const test = base.extend<{ evidence: EvidenceRecorder; evidenceOptions: R
  */
 export interface VerifyPageOptions extends CaptureOptions, Omit<VerifyOptions, 'page' | 'probes'> {}
 
-let projectConfig: Promise<AssayConfig> | undefined;
+/** The project's config, loaded once per process; a failed load is retried on the next call. */
+const projectConfig = cachedUntilRejected(async (): Promise<AssayConfig> => (await loadConfig()).config);
 
 /**
  * The options with the config applied. These helpers are app-level entry points: unlike
@@ -47,10 +48,7 @@ let projectConfig: Promise<AssayConfig> | undefined;
  */
 async function withProjectConfig<T extends VerifyPageOptions>(opts: T): Promise<T> {
   if (opts.config === false) return opts;
-  const config =
-    opts.config === undefined
-      ? await (projectConfig ??= loadConfig().then((l) => l.config))
-      : await configOf(opts.config);
+  const config = opts.config === undefined ? await projectConfig() : await configOf(opts.config);
   return applyConfig(opts, config) as T;
 }
 
@@ -129,7 +127,8 @@ export async function expectOutcome(
       ...opts,
       page,
       // The checks already reached the expected verdict: nothing to escalate.
-      ...(opts.verifier && outcome.verdict !== want ? {} : { verifier: undefined }),
+      // `escalate: false` too, so escalation asked for by `escalate: true` does not look for a model.
+      ...(opts.verifier && outcome.verdict !== want ? {} : { verifier: undefined, escalate: false }),
     });
     outcome = res.outcome;
     record = res.record;

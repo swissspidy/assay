@@ -6,7 +6,7 @@
  * config file.
  */
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, isAbsolute, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import type { ModelInput, ModelOptions } from '../model/resolve.ts';
 import { pemBlocks } from '../verifier/sign.ts';
@@ -79,6 +79,10 @@ const KEYS = new Set<string>([
 const MODEL_OPTION_KEYS = new Set(['mode', 'id', 'providerOptions', 'maxOutputTokens', 'maxRetries']);
 const STRESS_KEYS = new Set(['skipVariants', 'successClaims']);
 
+const GLOB = /[*?[\]{}]/;
+/** A path as a glob that matches only itself: each glob character in a one-character class. */
+export const escapeGlob = (path: string) => path.replace(/[*?[\]{}]/g, (ch) => `[${ch}]`);
+
 const isObject = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x);
 const isPem = (s: string) => s.includes('-----BEGIN');
 
@@ -93,7 +97,9 @@ export function normalizeConfig(raw: unknown, dir: string, where = 'assay config
   for (const k of ['checks', 'snapshots', 'recordDir'] as const) {
     if (c[k] === undefined) continue;
     if (typeof c[k] !== 'string' || !c[k]) throw bad(k, 'a path');
-    c[k] = resolve(dir, c[k]);
+    // A relative glob keeps the config's directory literal, even with glob characters in its name.
+    const glob = k === 'checks' && GLOB.test(c[k]) && !existsSync(resolve(dir, c[k]));
+    c[k] = glob && !isAbsolute(c[k]) ? `${escapeGlob(resolve(dir))}/${c[k]}` : resolve(dir, c[k]);
   }
   if (c.modelOptions !== undefined) {
     if (!isObject(c.modelOptions)) throw bad('modelOptions', 'an object');
@@ -105,8 +111,18 @@ export function normalizeConfig(raw: unknown, dir: string, where = 'assay config
     if (mode !== undefined && (typeof mode !== 'string' || !['auto', 'tools', 'json'].includes(mode)))
       throw bad('modelOptions.mode', '"auto", "tools" or "json"');
   }
-  if (c.escalate !== undefined && typeof c.escalate !== 'boolean' && !isObject(c.escalate))
-    throw bad('escalate', 'true, false or { on, includeSoft }');
+  if (c.escalate !== undefined && typeof c.escalate !== 'boolean') {
+    if (!isObject(c.escalate)) throw bad('escalate', 'true, false or { on, includeSoft }');
+    for (const k of Object.keys(c.escalate)) {
+      if (k !== 'on' && k !== 'includeSoft')
+        throw new ConfigError(`${where}: unknown option \`escalate.${k}\` (on, includeSoft)`);
+    }
+    const { on, includeSoft } = c.escalate as Record<string, unknown>;
+    if (on !== undefined && (!Array.isArray(on) || on.some((x) => x !== 'abstain' && x !== 'fail')))
+      throw bad('escalate.on', 'an array of "abstain" and "fail"');
+    if (includeSoft !== undefined && typeof includeSoft !== 'boolean')
+      throw bad('escalate.includeSoft', 'true or false');
+  }
   if (c.requireLocked !== undefined && typeof c.requireLocked !== 'boolean' && c.requireLocked !== 'signed')
     throw bad('requireLocked', 'true, false or "signed"');
   if (c.trustedKeys !== undefined) {
@@ -197,4 +213,22 @@ export function readTrustedKeys(entries: readonly string[]): { name?: string; ke
     }
   }
   return keys;
+}
+
+/**
+ * A loader that runs once and is then cached, unless it fails: a rejected load is forgotten,
+ * so the next call tries again (a config fixed meanwhile, a flaky async config function).
+ */
+export function cachedUntilRejected<T>(load: () => Promise<T>): () => Promise<T> {
+  let cached: Promise<T> | undefined;
+  return () => {
+    if (!cached) {
+      const p = load();
+      cached = p;
+      p.catch(() => {
+        if (cached === p) cached = undefined;
+      });
+    }
+    return cached;
+  };
 }

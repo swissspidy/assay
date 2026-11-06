@@ -465,3 +465,22 @@ test('verifyPage and expectOutcome apply a config (ADR 0017); config: false turn
   });
   expect(readdirSync(join(dir, 'records'))).toHaveLength(1);
 });
+
+test('expectOutcome: escalate: true with a config model, expected verdict reached, records without a model', async ({
+  page,
+}) => {
+  await openCart(page);
+  const dir = mkdtempSync(join(tmpdir(), 'assay-escalate-reached-'));
+  const never = () => {
+    throw new Error('the model must not be loaded');
+  };
+  const outcome = await expectOutcome(page, TWO_MUGS, {
+    verdict: 'fail',
+    timeout: 0,
+    attach: false,
+    escalate: true,
+    config: { model: never, recordDir: dir },
+  });
+  expect(outcome.verdict).toBe('fail');
+  expect(readdirSync(join(dir, 'records'))).toHaveLength(1);
+});

@@ -3,6 +3,7 @@ import { dirname } from 'node:path';
 import { canonicalJson, sha256 } from '../snapshot/digest.ts';
 import type { ModelClient, ModelMode, ModelRequest, ModelTurn } from './types.ts';
 import { ModelError } from './types.ts';
+import { withToolCalling } from './json-mode.ts';
 
 /**
  * Cassettes make model-driven steps reproducible: a live run records every
@@ -124,7 +125,7 @@ export function replayOrRecordModel(
       const stale = (why: string) =>
         new ModelError(`Cassette ${path} ${NO_RECORDING}, and it could not be recorded: ${why}`);
       try {
-        inner ??= await live();
+        inner ??= withToolCalling(await live());
       } catch (e) {
         throw stale(e instanceof Error ? e.message : String(e));
       }
@@ -156,7 +157,10 @@ export function replayOrRecordModel(
  * crash keeps what was already paid for without replacing a complete cassette);
  * `save()` moves it into place.
  */
-export function recordingModel(inner: ModelClient, path: string): ReplayModel & { save(): void } {
+export function recordingModel(client: ModelClient, path: string): ReplayModel & { save(): void } {
+  // Recorded at the tool-request boundary: an adapter without tool calling is wrapped in JSON
+  // mode first, so its turns are recorded (and replayed) as JSON-mode turns (ADR 0017).
+  const inner = withToolCalling(client);
   const cassette: Cassette = {
     schema: 'assay.cassette/v1',
     model: inner.id,

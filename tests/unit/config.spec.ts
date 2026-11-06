@@ -26,6 +26,7 @@ import {
 import { compileTask } from '../../src/compiler/index.ts';
 import { aiSdkModel } from '../../src/model/ai-sdk.ts';
 import {
+  isJsonModeModel,
   jsonModeModel,
   parseJsonReply,
   recordingModel,
@@ -331,8 +332,8 @@ test.describe('model forms', () => {
   test('an adapter is used as it is, or in JSON mode when it has no tools; an AI SDK model is wrapped', async () => {
     const adapter: ModelClient = { id: 'mine', turn: async () => turnOf('') };
     expect(await resolveModel(adapter)).toBe(adapter);
-    expect((await resolveModel(adapter, { mode: 'json' })).capabilities).toEqual({ tools: false });
-    expect((await resolveModel(textAdapter([]))).capabilities).toEqual({ tools: false });
+    expect(isJsonModeModel(await resolveModel(adapter, { mode: 'json' }))).toBe(true);
+    expect(isJsonModeModel(await resolveModel(textAdapter([])))).toBe(true);
     expect((await resolveModel(adapter, { id: 'renamed' })).id).toBe('renamed');
     expect((await resolveModel(sdk([]))).id).toBe('mock:small-model');
     // An AI SDK model object is a valid `model` for the config's types.

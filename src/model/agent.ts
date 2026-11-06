@@ -1,5 +1,6 @@
 import { Ajv, type ValidateFunction } from 'ajv';
 import type { ModelClient, ModelMessage, ModelMode, ModelTurn, ToolCall, ToolResult, ToolSpec } from './types.ts';
+import { withToolCalling } from './json-mode.ts';
 
 export interface ToolOutcome<R> {
   content: string;
@@ -45,6 +46,8 @@ const ajv = new Ajv({ strict: false, allErrors: true });
  * current specs and validates against them.
  */
 export async function runAgent<R>(opts: AgentOptions<R>): Promise<AgentRun<R>> {
+  // An adapter without tool calling is driven in JSON mode (ADR 0017).
+  const model = withToolCalling(opts.model);
   const byName = new Map(opts.tools.map((t) => [t.spec.name, t] as const));
   const compiled = new WeakMap<object, ValidateFunction>();
   const validators = {
@@ -75,7 +78,7 @@ export async function runAgent<R>(opts: AgentOptions<R>): Promise<AgentRun<R>> {
   });
 
   for (let i = 0; i < maxTurns; i++) {
-    const turn = await opts.model.turn({ system: opts.system, messages, tools: opts.tools.map((t) => t.spec) });
+    const turn = await model.turn({ system: opts.system, messages, tools: opts.tools.map((t) => t.spec) });
     usage.inputTokens += turn.usage.inputTokens;
     usage.outputTokens += turn.usage.outputTokens;
     usage.cacheReadTokens += turn.usage.cacheReadTokens ?? 0;

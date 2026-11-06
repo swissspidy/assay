@@ -98,7 +98,11 @@ object or a file path; `loadConfig()` finds the project's); the default is no co
   given config's `model` and `modelOptions`; without either it throws, naming the three forms.
 - `verify` / `verifyMany`: `recordDir`, `requireLocked`, `trustedKeys`, `policy` and escalation
   come from the given config where the options do not set them. `escalate: false` turns off
-  escalation the config asks for; an explicit `verifier` always escalates.
+  escalation the config asks for; an explicit `verifier` always escalates. The config's
+  `modelOptions` (except `id`, which names the config's own model) also apply to an explicit
+  `verifier` or `proposer` given as a string, an AI SDK model or a function; explicit fields win,
+  and a `ModelClient` is used as it is. A config object is checked anew on every call, so edits
+  to it apply.
 - `stressTest` is synchronous and takes its options explicitly
   (`stressTest(cs, refs, (await loadConfig()).config.stress)`).
 
@@ -137,8 +141,12 @@ directory the process started in.
    (`npm i -D ai @ai-sdk/anthropic`); an unknown provider lists the known ones.
 
 `ai` stays an optional peer dependency, and provider packages are the user's own dependencies, not
-declared by Assay. Both are imported lazily, first from Assay's own location and then from the
-project directory (for a linked or global Assay).
+declared by Assay. Both are loaded lazily, **from the project first** (resolved from the project
+directory, as the project would `require` them) and only then from Assay's own location. With a
+linked or global Assay, its own location may have no copy of `ai`, or a different one (its
+development dependency). The adapter's core takes the AI SDK's `generateText` and `jsonSchema` as
+arguments, so `resolveModel` uses the project's `ai`; the `@swissspidy/assay/ai-sdk` entry keeps
+its static import.
 
 When nothing is configured, the error says what needs a model and shows the three forms, plus,
 from the CLI, `--model`, `ANTHROPIC_API_KEY` and `--cassette`.
@@ -164,7 +172,11 @@ Each turn is driven in one of two **modes**:
 `jsonModeModel(inner)` implements this over any `ModelClient`. How a mode is chosen:
 
 - **Declared.** `modelOptions.mode: 'tools' | 'json'` forces one; a custom adapter declaring
-  `capabilities: { tools: false }` is driven in JSON mode.
+  `capabilities: { tools: false }` is driven in JSON mode wherever it meets tool requests:
+  `resolveModel`, `runAgent` and `recordingModel` (so a recorded text-only adapter is recorded
+  as JSON-mode turns at the tool-request boundary and replays). Clients that drive JSON mode
+  themselves (`jsonModeModel`, AI SDK clients) are marked (`isJsonModeModel`) and never wrapped
+  twice.
 - **Detected (AI SDK, `mode: 'auto'`, the default).** The AI SDK has no static "supports tools"
   flag, and the provider-level specs do not carry one either, so detection is by the provider's
   answer to the first request with tools:

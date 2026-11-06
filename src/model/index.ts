@@ -10,7 +10,7 @@ export {
   type ReplayModel,
   type ReplayOptions,
 } from './replay.ts';
-export { jsonModeModel, parseJsonReply, type ParsedReply } from './json-mode.ts';
+export { jsonModeModel, isJsonModeModel, parseJsonReply, type ParsedReply } from './json-mode.ts';
 export { resolveModel, PROVIDERS, type ModelInput, type ModelOptions, type LanguageModelLike } from './resolve.ts';
 export {
   anthropicModel,

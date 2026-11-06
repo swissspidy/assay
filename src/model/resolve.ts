@@ -13,9 +13,9 @@
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { jsonModeModel } from './json-mode.ts';
+import { isJsonModeModel, jsonModeModel } from './json-mode.ts';
 import type { ModelClient, ModelMode } from './types.ts';
-import type { AiSdkOptions } from './ai-sdk.ts';
+import { createAiSdkModel, type AiFunctions, type AiSdkOptions } from './ai-sdk-core.ts';
 import { ModelError } from './types.ts';
 
 /**
@@ -105,22 +105,33 @@ const isModuleNotFound = (e: unknown) =>
   ['ERR_MODULE_NOT_FOUND', 'MODULE_NOT_FOUND'].includes((e as NodeJS.ErrnoException)?.code ?? '');
 
 /**
- * Import an optional package: from Assay's own location (the usual install), else from the
- * project in `cwd` (a linked or globally installed Assay). Undefined when it is not installed.
+ * Import an optional package as the project in `cwd` sees it, else from Assay's own location.
+ * The project comes first: with a linked or globally installed Assay, its own location may hold
+ * no copy, or another one (its development dependencies). Undefined when neither has it.
  */
 export async function importOptional(pkg: string, cwd = process.cwd()): Promise<Record<string, unknown> | undefined> {
+  const req = createRequire(join(cwd, 'package.json'));
+  let resolved: string | undefined;
+  try {
+    resolved = req.resolve(pkg);
+  } catch {
+    // Not in the project: fall back to Assay's own location below.
+  }
+  if (resolved !== undefined) {
+    try {
+      // require() of the package (CommonJS, or ES modules in Node 24) loads it as the project would.
+      return req(pkg) as Record<string, unknown>;
+    } catch {
+      // An ES module require() cannot load (top-level await): import the resolved file instead.
+      return (await import(pathToFileURL(resolved).href)) as Record<string, unknown>;
+    }
+  }
   try {
     return (await import(pkg)) as Record<string, unknown>;
   } catch (e) {
-    if (!isModuleNotFound(e) || !String((e as Error).message).includes(pkg)) throw e;
+    if (isModuleNotFound(e) && String((e as Error).message).includes(pkg)) return undefined;
+    throw e;
   }
-  let resolved: string;
-  try {
-    resolved = createRequire(join(cwd, 'package.json')).resolve(pkg);
-  } catch {
-    return undefined;
-  }
-  return (await import(pathToFileURL(resolved).href)) as Record<string, unknown>;
 }
 
 export const isModelClient = (x: unknown): x is ModelClient =>
@@ -141,15 +152,19 @@ export function describeModel(input: ModelInput | undefined, opts: ModelOptions 
   return typeof input === 'function' ? 'model (from a function)' : 'model';
 }
 
-async function loadAiSdk(why: string) {
-  try {
-    return await import('./ai-sdk.ts');
-  } catch (e) {
-    if (isModuleNotFound(e)) {
-      throw new ModelError(`${why} needs the Vercel AI SDK, an optional peer dependency: npm i -D ai`, { cause: e });
-    }
-    throw e;
-  }
+/** The AI SDK functions from the `ai` package (the project's first), or undefined when it is not installed. */
+async function aiFunctions(cwd: string): Promise<AiFunctions | undefined> {
+  const ai = await importOptional('ai', cwd);
+  if (!ai) return undefined;
+  if (typeof ai.generateText !== 'function' || typeof ai.jsonSchema !== 'function')
+    throw new ModelError('the installed `ai` package has no generateText or jsonSchema: Assay needs ai 7 or later');
+  return ai as unknown as AiFunctions;
+}
+
+async function loadAiSdk(why: string, cwd: string): Promise<AiFunctions> {
+  const ai = await aiFunctions(cwd);
+  if (!ai) throw new ModelError(`${why} needs the Vercel AI SDK, an optional peer dependency: npm i -D ai`);
+  return ai;
 }
 
 function aiOptions(opts: ModelOptions): AiSdkOptions {
@@ -176,8 +191,7 @@ async function fromString(s: string, opts: ModelOptions, cwd: string): Promise<M
   if (!parsed) {
     // A gateway id ("anthropic/claude-opus-5-5") goes to the AI SDK's default provider.
     if (/^[\w.-]+\/[\w.:-]+$/.test(s)) {
-      const { aiSdkModel } = await loadAiSdk(`model "${s}"`);
-      return aiSdkModel(s, aiOptions(opts));
+      return createAiSdkModel(await loadAiSdk(`model "${s}"`, cwd), s, aiOptions(opts));
     }
     throw new ModelError(
       `model "${s}" names no known provider: write "provider:model", e.g. "anthropic:claude-opus-5-5" (providers: ${Object.keys(PROVIDERS).join(', ')}), or pass an AI SDK model or an adapter in assay.config.ts`,
@@ -185,15 +199,9 @@ async function fromString(s: string, opts: ModelOptions, cwd: string): Promise<M
   }
   const { provider, modelId } = parsed;
   const { pkg, factory } = PROVIDERS[provider]!;
-  const [adapter, mod] = await Promise.all([
-    import('./ai-sdk.ts').catch((e: unknown) => {
-      if (isModuleNotFound(e)) return undefined;
-      throw e;
-    }),
-    importOptional(pkg, cwd),
-  ]);
+  const [ai, mod] = await Promise.all([aiFunctions(cwd), importOptional(pkg, cwd)]);
   // Name everything that is missing at once.
-  const missing = [...(adapter ? [] : ['ai']), ...(mod || pkg === 'ai' ? [] : [pkg])];
+  const missing = [...(ai ? [] : ['ai']), ...(mod || pkg === 'ai' ? [] : [pkg])];
   if (missing.length) {
     const what =
       missing.length === 2
@@ -203,11 +211,10 @@ async function fromString(s: string, opts: ModelOptions, cwd: string): Promise<M
           : `the AI SDK provider package ${pkg}`;
     throw new ModelError(`model "${s}" needs ${what}: npm i -D ${missing.join(' ')}`);
   }
-  const { aiSdkModel } = adapter!;
   const make = mod![factory];
   if (typeof make !== 'function') throw new ModelError(`${pkg} has no export "${factory}" to create "${s}" with`);
   const model = (make as (id: string) => LanguageModelLike)(modelId);
-  return aiSdkModel(model as never, { id: s, ...aiOptions(opts) });
+  return createAiSdkModel(ai!, model as never, { id: s, ...aiOptions(opts) });
 }
 
 /**
@@ -224,13 +231,22 @@ export async function resolveModel(
   if (typeof input === 'string') return fromString(input.trim(), opts, cwd);
   if (isModelClient(input)) {
     if (typeof input.id !== 'string' || !input.id) throw new ModelError('a model adapter needs a string `id`');
+    // A client that drives JSON mode itself (jsonModeModel, an AI SDK client) is never wrapped again.
+    if (isJsonModeModel(input)) return input;
     const json = opts.mode === 'json' || (opts.mode !== 'tools' && input.capabilities?.tools === false);
-    const client = opts.id && opts.id !== input.id ? { id: opts.id, turn: input.turn.bind(input) } : input;
+    const client =
+      opts.id && opts.id !== input.id
+        ? {
+            id: opts.id,
+            turn: input.turn.bind(input),
+            ...(input.capabilities ? { capabilities: input.capabilities } : {}),
+          }
+        : input;
     return json ? jsonModeModel(client) : client;
   }
   if (isLanguageModel(input)) {
-    const { aiSdkModel } = await loadAiSdk(`model ${input.provider}:${input.modelId}`);
-    return aiSdkModel(input as never, aiOptions(opts));
+    const ai = await loadAiSdk(`model ${input.provider}:${input.modelId}`, cwd);
+    return createAiSdkModel(ai, input as never, aiOptions(opts));
   }
   throw new ModelError(`not a model: expected ${MODEL_FORMS}`);
 }

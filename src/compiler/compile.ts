@@ -49,7 +49,7 @@ import { canonical } from '../text.ts';
 import { ASSAY_VERSION } from '../version.ts';
 import { runAgent, type AgentTool, type AgentRun } from '../model/agent.ts';
 import type { ModelClient, ModelMode } from '../model/types.ts';
-import { noModelError, resolveModel, type ModelInput, type ModelOptions } from '../model/resolve.ts';
+import { describeModel, noModelError, resolveModel, type ModelInput, type ModelOptions } from '../model/resolve.ts';
 import { loadConfig, normalizeConfig, type AssayConfig } from '../config/config.ts';
 import { parseOutcomes, parseOutcomesDetailed, type Clause } from './outcomes.ts';
 import { stressTest, type FindingRef } from '../stress/stress.ts';
@@ -1178,9 +1178,9 @@ export function discoverySystem(refs: Reference[]): string {
   ].join('\n\n');
 }
 
-/** The model for a compile: the given one, else the config's (ADR 0017). */
-async function compileModel(opts: CompileOptions): Promise<ModelClient> {
-  if (opts.model !== undefined) return resolveModel(opts.model, opts.modelOptions ?? {});
+/** The model input for a compile, not yet resolved: the given one, else the config's (ADR 0017). */
+async function compileModel(opts: CompileOptions): Promise<{ input: ModelInput; options: ModelOptions }> {
+  if (opts.model !== undefined) return { input: opts.model, options: opts.modelOptions ?? {} };
   // Only a config passed in: compileTask never reads assay.config.* by itself (ADR 0017).
   const config =
     opts.config === undefined || opts.config === false
@@ -1189,7 +1189,7 @@ async function compileModel(opts: CompileOptions): Promise<ModelClient> {
         ? normalizeConfig(opts.config, process.cwd(), 'config')
         : (await loadConfig({ path: opts.config })).config;
   if (config.model === undefined) throw noModelError('compileTask', 'pass `model`, or a `config` that sets one');
-  return resolveModel(config.model, { ...config.modelOptions, ...opts.modelOptions });
+  return { input: config.model, options: { ...config.modelOptions, ...opts.modelOptions } };
 }
 
 export async function compileTask(
@@ -1204,7 +1204,9 @@ export async function compileTask(
       throw new Error(`Duplicate reference name ${JSON.stringify(r.name)}; reference names must be unique.`);
     seen.add(r.name);
   }
-  const model = await compileModel(opts);
+  // The model is resolved only once the inputs are known to be usable: a bad reference set is
+  // reported as such even when the model could not be loaded.
+  const { input, options } = await compileModel(opts);
   const log = opts.log ?? (() => {});
   const usage = { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheWriteTokens: 0 };
   const models = new Set<string>();
@@ -1212,7 +1214,7 @@ export async function compileTask(
   const report: CompileReport = {
     task: task.id,
     status: 'failed',
-    model: model.id,
+    model: describeModel(input, options),
     modelsUsed: [],
     turns: { rubric: 0, discovery: 0 },
     usage,
@@ -1244,6 +1246,8 @@ export async function compileTask(
       report: { ...report, reason: 'Expected outcomes were given, but no outcome clause could be read from them.' },
     };
   }
+  const model = await resolveModel(input, options);
+  report.model = model.id;
 
   // 1. Rubric
   let requirements: Requirement[];

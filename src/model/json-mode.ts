@@ -132,7 +132,8 @@ export function parseJsonReply(text: string, tools: ToolSpec[]): ParsedReply {
 /** An empty reply keeps an empty `raw`, so the agent loop does not send it back (providers reject empty turns). */
 const jsonRaw = (t: ModelTurn): JsonRaw | [] => (t.text ? { mode: 'json', text: t.text, inner: t.raw } : []);
 
-const add = (a: ModelTurn['usage'], b: ModelTurn['usage']): ModelTurn['usage'] => {
+/** Two calls' usage added up, cache reads and writes included where either reports them. */
+export const addUsage = (a: ModelTurn['usage'], b: ModelTurn['usage']): ModelTurn['usage'] => {
   const out: ModelTurn['usage'] = {
     inputTokens: a.inputTokens + b.inputTokens,
     outputTokens: a.outputTokens + b.outputTokens,
@@ -144,15 +145,36 @@ const add = (a: ModelTurn['usage'], b: ModelTurn['usage']): ModelTurn['usage'] =
   return out;
 };
 
+const HANDLES_TOOLS = Symbol.for('assay.jsonMode');
+
+/** Mark a client that drives JSON mode itself when it needs to, so it is never wrapped again. */
+export function markJsonMode<T extends ModelClient>(client: T): T {
+  return Object.defineProperty(client, HANDLES_TOOLS, { value: true });
+}
+
+/** Whether a client already drives JSON mode itself (`jsonModeModel`, an AI SDK client). */
+export const isJsonModeModel = (client: unknown): boolean =>
+  !!client && typeof client === 'object' && (client as Record<symbol, unknown>)[HANDLES_TOOLS] === true;
+
+/**
+ * The client as one that takes tool requests: an adapter that declares
+ * `capabilities: { tools: false }` (or any client, with `force`) is wrapped in JSON mode,
+ * unless it already drives JSON mode itself. Used wherever a client meets tool requests:
+ * `resolveModel`, `runAgent` and `recordingModel`.
+ */
+export function withToolCalling(client: ModelClient, force = false): ModelClient {
+  if (isJsonModeModel(client)) return client;
+  return force || client.capabilities?.tools === false ? jsonModeModel(client) : client;
+}
+
 /**
  * Drive `inner` in JSON mode. Its requests carry no tools; every turn it answers is
  * returned as `mode: "json"`. The id stays the wrapped model's: the cassette key
  * records the mode separately (ADR 0017).
  */
 export function jsonModeModel(inner: Pick<ModelClient, 'id' | 'turn'>): ModelClient {
-  return {
+  return markJsonMode({
     id: inner.id,
-    capabilities: { tools: false },
     async turn(req: ModelRequest): Promise<ModelTurn> {
       const system = jsonModeSystem(req.system, req.tools);
       const messages = jsonModeMessages(req.messages);
@@ -177,7 +199,7 @@ export function jsonModeModel(inner: Pick<ModelClient, 'id' | 'turn'>): ModelCli
             },
           ],
         });
-        usage = add(usage, retry.usage);
+        usage = addUsage(usage, retry.usage);
         if (retry.stop === 'refusal' || retry.stop === 'max_tokens') {
           return { ...retry, usage, raw: jsonRaw(retry), mode: 'json' };
         }
@@ -205,5 +227,5 @@ export function jsonModeModel(inner: Pick<ModelClient, 'id' | 'turn'>): ModelCli
         mode: 'json',
       };
     },
-  };
+  });
 }

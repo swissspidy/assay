@@ -28,9 +28,12 @@ export async function loadPlaywright(
   }
 }
 
-/** Where `--out` puts the snapshot: a `.json` path as is, else a file in that directory. */
-export function outFile(out: string, url: URL, now = new Date()): string {
-  if (out.endsWith('.json')) return out;
+/**
+ * Where the snapshot goes: a `--out` path ending in `.json` as is, else a file in that directory.
+ * With `directory` (the config's `snapshots`), the path is always a directory.
+ */
+export function outFile(out: string, url: URL, now = new Date(), opts: { directory?: boolean } = {}): string {
+  if (out.endsWith('.json') && !opts.directory) return out;
   const host = (url.host || 'page').replace(/[^\w.-]+/g, '_');
   return join(out, `${host}-${now.toISOString().replace(/[:.]/g, '-')}.json`);
 }
@@ -40,10 +43,16 @@ export function outFile(out: string, url: URL, now = new Date()): string {
  * names in a directory is created exclusively, so a capture in the same millisecond gets a
  * suffixed name (`-2`, `-3`, …) instead of overwriting another one.
  */
-export function writeSnapshot(out: string, url: URL, json: string, now = new Date()): string {
-  const file = outFile(out, url, now);
+export function writeSnapshot(
+  out: string,
+  url: URL,
+  json: string,
+  now = new Date(),
+  opts: { directory?: boolean } = {},
+): string {
+  const file = outFile(out, url, now, opts);
   mkdirSync(dirname(file), { recursive: true });
-  if (out.endsWith('.json')) {
+  if (out.endsWith('.json') && !opts.directory) {
     writeFileSync(file, json);
     return file;
   }
@@ -72,6 +81,9 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
   const wait = values.wait === undefined ? 0 : Number(values.wait);
   if (!Number.isFinite(wait) || wait < 0) throw new UsageError('--wait must be a number of milliseconds');
 
+  // Where the snapshot goes, decided before Chromium starts: a bad config must not cost a capture.
+  const flagOut = values.out as string | undefined;
+  const out = flagOut ?? (await cliConfig(values, io)).config.snapshots;
   const { chromium } = await loadPlaywright();
   const { EvidenceRecorder, captureSnapshot } = await import('../../snapshot/capture.ts');
   const exe = values['executable-path'] as string | undefined;
@@ -92,12 +104,12 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
   }
 
   const json = JSON.stringify(snapshot, null, 2) + '\n';
-  const out = (values.out as string | undefined) ?? (await cliConfig(values, io)).config.snapshots;
   if (!out) {
     io.out(json.trimEnd());
     return EXIT.ok;
   }
-  const file = writeSnapshot(out, url, json);
+  // The config's `snapshots` is a directory even when its name ends in .json.
+  const file = writeSnapshot(out, url, json, new Date(), { directory: flagOut === undefined });
   io.out(values.json ? JSON.stringify({ file }) : `Wrote ${file}`);
   return EXIT.ok;
 }

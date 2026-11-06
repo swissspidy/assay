@@ -10,7 +10,14 @@ import { compileChecks, runPlan, runPlanMany, type CheckPlan } from '../plan/pla
 import { buildStore } from '../store/store.ts';
 import { checkSetDigest } from '../snapshot/digest.ts';
 import type { ModelClient } from '../model/types.ts';
-import { describeModel, noModelError, resolveModel, type ModelInput, type ModelOptions } from '../model/resolve.ts';
+import {
+  describeModel,
+  isModelClient,
+  noModelError,
+  resolveModel,
+  type ModelInput,
+  type ModelOptions,
+} from '../model/resolve.ts';
 import { loadConfig, normalizeConfig, readTrustedKeys, type AssayConfig } from '../config/config.ts';
 import type { Probe } from '../snapshot/capture.ts';
 import { compileTask } from '../compiler/compile.ts';
@@ -167,9 +174,8 @@ interface Models {
   proposer?: LazyModel;
 }
 
-const keysOf = new WeakMap<AssayConfig, ReturnType<typeof readTrustedKeys>>();
-/** A config object passed in, checked once (a hot loop passes the same object every time). */
-const given = new WeakMap<AssayConfig, AssayConfig>();
+/** Trusted keys read from files, by the list of entries (a hot loop passes the same list every time). */
+const keysOf = new Map<string, ReturnType<typeof readTrustedKeys>>();
 
 /**
  * The config an option names: an object (checked once per object) or a file path. Nothing,
@@ -178,9 +184,8 @@ const given = new WeakMap<AssayConfig, AssayConfig>();
 export async function configOf(config: AssayConfig | string | false | undefined): Promise<AssayConfig> {
   if (config === undefined || config === false) return {};
   if (typeof config === 'string') return (await loadConfig({ path: config })).config;
-  let c = given.get(config);
-  if (!c) given.set(config, (c = normalizeConfig(config, process.cwd(), 'config')));
-  return c;
+  // Checked on every call (it is cheap), so a caller that edits its config object sees the edit.
+  return normalizeConfig(config, process.cwd(), 'config');
 }
 
 /**
@@ -192,8 +197,9 @@ export function applyConfig(opts: VerifyOptions, config: AssayConfig): VerifyOpt
   const out: VerifyOptions = { ...opts, config: false };
   if (out.recordDir === undefined && config.recordDir !== undefined) out.recordDir = config.recordDir;
   if (config.trustedKeys?.length) {
-    let keys = keysOf.get(config);
-    if (!keys) keysOf.set(config, (keys = readTrustedKeys(config.trustedKeys)));
+    const entries = JSON.stringify(config.trustedKeys);
+    let keys = keysOf.get(entries);
+    if (!keys) keysOf.set(entries, (keys = readTrustedKeys(config.trustedKeys)));
     out.trustedKeys ??= keys;
     if (out.requireLocked === undefined && config.requireLocked === 'signed') out.requireLocked = { trustedKeys: keys };
   }
@@ -204,9 +210,17 @@ export function applyConfig(opts: VerifyOptions, config: AssayConfig): VerifyOpt
       throw noModelError('verify with escalation', 'pass `verifier`, or turn escalation off');
     out.verifier = config.model;
     out.modelOptions = { ...config.modelOptions, ...opts.modelOptions };
+  } else if (config.modelOptions && (needsOptions(out.verifier) || needsOptions(out.proposer))) {
+    // An explicit model given as a string, an AI SDK model or a function still takes the config's
+    // options (explicit fields win), except `id`, which names the config's own model. A ModelClient
+    // is already configured, and is used as it is.
+    const { id: _id, ...shared } = config.modelOptions;
+    out.modelOptions = { ...shared, ...opts.modelOptions };
   }
   return out;
 }
+
+const needsOptions = (m: ModelInput | undefined) => m !== undefined && !isModelClient(m);
 
 /** The options with the given config applied, and the models to use (resolved on first use). */
 async function withConfig(opts: VerifyOptions): Promise<[VerifyOptions, Models]> {

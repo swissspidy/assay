@@ -69,13 +69,15 @@ const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`;
 
 /** The check set files the config's `checks` names: a directory (every `*.checks.json` under it) or a glob. */
 export function configuredChecks(checks: string): string[] {
-  const pattern = /[*?[{]/.test(checks)
-    ? checks
-    : existsSync(checks) && statSync(checks).isDirectory()
-      ? join(checks, '**/*.checks.json')
-      : checks;
-  const files = globSync(pattern).toSorted();
-  if (!files.length) throw new CliError(`no check sets match \`checks\` in the config: ${pattern}`);
+  // A path that exists is literal, even when its name has glob characters (`project[abc]`).
+  let files: string[];
+  if (existsSync(checks)) {
+    files = statSync(checks).isDirectory()
+      ? globSync('**/*.checks.json', { cwd: checks }).map((f) => join(checks, f))
+      : [checks];
+  } else files = globSync(checks);
+  files = files.toSorted();
+  if (!files.length) throw new CliError(`no check sets match \`checks\` in the config: ${checks}`);
   return files;
 }
 
