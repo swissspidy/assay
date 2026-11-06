@@ -368,7 +368,8 @@ test('a candidate that fails on a correct reference or a valid variant does not 
   // The same value and record in both: survives, but "shows" needs page evidence, so it does not settle the requirement.
   const probe = m.candidates.find((c) => c.family === 'probe')!;
   expect(probe.survives).toBe(true);
-  expect(probe.unexplained).toEqual(['shows']);
+  // "3 Blue Mugs" binds 3 to "blue", which no key of the record names.
+  expect(probe.unexplained).toEqual(['shows', '3 blue']);
   expect(probe.decisive).toBe(false);
 });
 
@@ -422,8 +423,13 @@ const withRequest = (
     },
   );
 
-/** The server's JSON answer to a saved setting, and a login page served with 200 instead. */
+/**
+ * Answers to a saved setting: JSON that does not echo it, JSON that does, a 200 validation error
+ * with the same fields, and a login page served with 200.
+ */
 const SAVED: Json = { id: 7, updatedAt: '2026-11-06T10:00:00Z' };
+const ECHO: Json = { id: 7, newsletterEnabled: true };
+const INVALID: Json = { id: null, updatedAt: null, error: 'validation failed' };
 const LOGIN: Json = '<!doctype html><title>Log in</title><form action="/login" method="post"></form>';
 
 /** A check set of one mined candidate. */
@@ -508,51 +514,51 @@ test.describe('what settles a requirement', () => {
     expect(sent.length).toBeGreaterThan(0);
     expect(sent.every((c) => c.survives && !c.decisive)).toBe(true);
     expect(redirected.requirements[0]!.decisive).toEqual([]);
-    // A success status with the server's JSON answer is outcome evidence: the request is then
-    // decisive, on its origin only, and requires that answer's shape.
+    // Nor with a 200 and a JSON answer: what was sent is not what the server did.
     const ok = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: withRequest(200, body, undefined, SAVED) }]);
-    expect(ok.requirements[0]!.decisive[0]!.assert).toEqual({
-      kind: 'request',
-      match: {
-        method: 'POST',
-        url: { origin: 'http://shop.test', path: '/settings' },
-        status: { gte: 200, lt: 300 },
-        requestBody: {
-          type: 'object',
-          required: ['newsletterEnabled'],
-          properties: { newsletterEnabled: { const: true } },
-        },
-        responseBody: { type: 'object', required: ['id', 'updatedAt'] },
-      },
-    });
+    const sentOk = ok.candidates.filter((c) => c.assert.kind === 'request' && c.assert.match.requestBody);
+    expect(sentOk.length).toBeGreaterThan(0);
+    expect(sentOk.every((c) => c.survives && !c.decisive)).toBe(true);
+    expect(ok.requirements[0]!.decisive).toEqual([]);
+    // An incorrect reference that lacks the request still makes it decisive.
+    const neg = mineOne(quote, [
+      { name: 'ref', kind: 'success', snapshot: withRequest(200, body, undefined, SAVED) },
+      { name: 'nothing', kind: 'negative', snapshot: snap({}) },
+    ]);
+    expect(neg.requirements[0]!.decisive.some((c) => c.assert.kind === 'request')).toBe(true);
   });
 
   test('a 2xx answer alone does not settle a state change: it may be a login page', async () => {
     const quote = 'the newsletter is enabled';
     const body = { newsletterEnabled: true };
-    // An HTML answer, JSON with only status fields, or no answer says nothing of the outcome.
-    for (const response of [LOGIN, { ok: true }, undefined]) {
+    // An HTML answer, JSON with only status fields or other fields, an error, or no answer.
+    for (const response of [LOGIN, { ok: true }, SAVED, INVALID, undefined]) {
       const m = mineOne(quote, [
         { name: 'ref', kind: 'success', snapshot: withRequest(200, body, undefined, response) },
       ]);
       expect(m.requirements[0]!.decisive, JSON.stringify(response)).toEqual([]);
     }
-    // With the server's JSON answer, a 200 login page for the same request does not pass.
-    const m = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: withRequest(200, body, undefined, SAVED) }]);
-    const cs = checkSetOf(quote, m.requirements[0]!.decisive[0]!);
+    // An answer that echoes the stated value settles it, and a 200 validation error or login page
+    // for the same request does not pass.
+    const m = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: withRequest(200, body, undefined, ECHO) }]);
+    const best = m.requirements[0]!.decisive[0]!;
+    expect(best.assert).toMatchObject({ kind: 'request', match: { responseBody: expect.anything() } });
+    expect(best.assert.kind === 'request' && best.assert.match.requestBody).toBeFalsy();
+    const cs = checkSetOf(quote, best);
     const { evaluate } = await import('../../src/index.ts');
-    expect(evaluate(cs, withRequest(200, body, undefined, SAVED)).verdict).toBe('success');
+    expect(evaluate(cs, withRequest(200, body, undefined, ECHO)).verdict).toBe('success');
+    expect(evaluate(cs, withRequest(200, body, undefined, INVALID)).verdict).not.toBe('success');
     expect(evaluate(cs, withRequest(200, body, undefined, LOGIN)).verdict).not.toBe('success');
   });
 
   test('a request check names where the request went', async () => {
     const quote = 'the newsletter is enabled';
     const body = { newsletterEnabled: true };
-    const m = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: withRequest(200, body, undefined, SAVED) }]);
+    const m = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: withRequest(200, body, undefined, ECHO) }]);
     const { evaluate } = await import('../../src/index.ts');
     const cs = checkSetOf(quote, m.requirements[0]!.decisive[0]!);
-    expect(evaluate(cs, withRequest(200, body, undefined, SAVED)).verdict).toBe('success');
-    expect(evaluate(cs, withRequest(200, body, 'http://elsewhere.test/settings', SAVED)).verdict).not.toBe('success');
+    expect(evaluate(cs, withRequest(200, body, undefined, ECHO)).verdict).toBe('success');
+    expect(evaluate(cs, withRequest(200, body, 'http://elsewhere.test/settings', ECHO)).verdict).not.toBe('success');
   });
 
   test('the per-family limit keeps the candidates that account for the quote', () => {
@@ -598,13 +604,35 @@ test.describe('what settles a requirement', () => {
   test('one scalar does not settle a quote that states a value twice', () => {
     const quote = 'the quantity is 2 and the price is 2';
     const one = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: snap({ quantityPrice: 2 }) }]);
-    expect(one.candidates.find((c) => c.family === 'probe')!.unexplained).toEqual(['2']);
+    expect(one.candidates.find((c) => c.family === 'probe')!.unexplained).toEqual(['2', 'quantity 2', 'price 2']);
     expect(one.requirements[0]!.decisive).toEqual([]);
     // Each value in its own field: both are compared, and that settles it.
     const each = mineOne(quote, [
       { name: 'ref', kind: 'success', snapshot: snap({ line: { quantity: 2, price: 2 } }) },
     ]);
     expect(each.requirements[0]!.decisive.length).toBeGreaterThan(0);
+  });
+
+  test('a stated value is bound to its field: a probe name does not stand in for it', () => {
+    const quote = 'the quantity is 2 and the price is 2';
+    // Two values of 2, but the price is not one of them: "price" is only in the probe's name.
+    const wrong = mineOne(quote, [
+      { name: 'ref', kind: 'success', snapshot: snap({ quantityPrice: { quantity: 2, discount: 2 } }) },
+    ]);
+    expect(wrong.requirements[0]!.decisive).toEqual([]);
+    // The field's own key must hold the value: "the cart total is $21.50" from /total.
+    const total = mineOne('the cart total is $21.50', [
+      { name: 'ref', kind: 'success', snapshot: snap({ cart: { total: 21.5, count: 2 } }) },
+    ]);
+    expect(total.requirements[0]!.decisive[0]!.assert).toEqual({
+      kind: 'value',
+      source: { from: 'probe', probe: 'cart', pointer: '/total' },
+      expect: { equals: 21.5 },
+    });
+    const named = mineOne('the cart total is $21.50', [
+      { name: 'ref', kind: 'success', snapshot: snap({ cartTotal: 21.5 }) },
+    ]);
+    expect(named.requirements[0]!.decisive).toEqual([]);
   });
 
   test('one scalar does not settle fields the quote coordinates over one value', () => {

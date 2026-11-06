@@ -213,6 +213,75 @@ const COORD = new RegExp(
   'gu',
 );
 
+/** A value a condition states for a field (`fact` as `facts` writes it). */
+export interface Binding {
+  field: string;
+  fact: string;
+  /** The words that state it, for an open requirement's reason. */
+  text: string;
+}
+
+/** Conditions for binding values: like `CLAUSE`, but a comma before a number ("May 5, 2026") does not part them. */
+const BIND_CLAUSE = /;|,(?!\s*\d)|\b(?:and|but|while|whereas)\b/i;
+/** Words between a field and its value ("the price is now set to 2"). */
+const COPULA = new Set('is are was were be been being now set to equals equal becomes become of'.split(' '));
+
+/** A word that can name a field: not filler, a generic or presentation verb, a quantifier, a number or a month. */
+const fieldWord = (t: string | undefined): t is string =>
+  !!t &&
+  !STOP.has(t) &&
+  !LIGHT.has(t) &&
+  !QUANT.has(t) &&
+  !PRESENT.has(t) &&
+  !/^\d/.test(t) &&
+  !(t in NUMBER_WORDS) &&
+  !MONTHS.includes(t);
+
+function bindingsOf(text: string): Binding[] {
+  const out: Binding[] = [];
+  // Bare field names waiting for the value a later condition states ("the quantity and price are 2").
+  let pending: string[] = [];
+  for (const part of text.replace(/"[^"]*"|“[^”]*”/g, ' ').split(BIND_CLAUSE)) {
+    const w = tokens(part);
+    if (!w.length) continue;
+    const cq = new Quote(part);
+    const stated: { i: number; j: number; fact: string; shown: string }[] = [];
+    for (const n of cq.numbers) {
+      const i = w.findIndex((t) => t === String(Math.trunc(n)) || NUMBER_WORDS[t] === n);
+      if (i >= 0) stated.push({ i, j: i + (Number.isInteger(n) ? 1 : 2), fact: `#num:${n}`, shown: String(n) });
+    }
+    for (const d of cq.dates) {
+      const month = MONTHS[Number(d.slice(5, 7)) - 1]!;
+      const i = w.includes(month) ? w.indexOf(month) : w.indexOf(d.slice(0, 4));
+      if (i >= 0) stated.push({ i, j: -1, fact: `#date:${d}`, shown: d });
+    }
+    for (const t of cq.times) {
+      const [hh, mm] = t.split(':');
+      const i = w.findIndex((x, k) => /^\d+$/.test(x) && Number(x) === Number(hh) && w[k + 1] === mm);
+      if (i >= 0) stated.push({ i, j: -1, fact: `#time:${t}`, shown: t });
+    }
+    if (!stated.length) {
+      const content = w.filter((t) => fieldWord(t));
+      const bare = content.length === 1 && w.every((t) => t === content[0] || STOP.has(t));
+      pending = bare ? [...pending, content[0]!] : [];
+      continue;
+    }
+    for (const v of stated) {
+      let k = v.i - 1;
+      while (k >= 0 && COPULA.has(w[k]!)) k--;
+      // "<field> is <value>" first, else "<value> <field>" (numbers only: "2 guests").
+      const before = fieldWord(w[k]) ? w[k] : undefined;
+      const after = !before && v.j >= 0 && fieldWord(w[v.j]) ? w[v.j] : undefined;
+      const field = before ?? after;
+      if (!field) continue;
+      for (const f of [...pending, field])
+        out.push({ field: f, fact: v.fact, text: after ? `${v.shown} ${f}` : `${f} ${v.shown}` });
+    }
+    pending = [];
+  }
+  return out;
+}
+
 /** One condition of a quote: its words, and whether it negates. */
 interface Clause {
   text: string;
@@ -409,6 +478,18 @@ export class Quote {
       if (group.length >= 2) out.push(group);
     }
     return out;
+  }
+
+  private bound?: Binding[];
+
+  /**
+   * The values the quote states for a field, per condition: "the price is 2" binds 2 to
+   * "price", "2 guests" binds 2 to "guests", and "the quantity and price are 2" binds 2 to both.
+   * A value with no field next to it ("on November 7, 2026", "at 08:00") binds nothing.
+   * Numbers, dates and times only: a string value is named by its own words.
+   */
+  get bindings(): Binding[] {
+    return (this.bound ??= bindingsOf(this.text));
   }
 
   /** The quote speaks of all, only, other or no longer: a set or an absence, which mining does not check. */
@@ -822,14 +903,12 @@ const segmentNamed = (q: Quote, seg: string) => tokens(seg).some((w) => q.namesW
  * every correct reference, alone or with a body shape. The origin is where the request went: a
  * request with the same path and body to another host is not the same request.
  *
- * A request body shows what the browser asked for, not what happened: a POST the server answers
- * with a redirect to its login page, or with a 200 login page or validation error, sends the same
- * body. So a request-body candidate states the outcome only with the server's answer as evidence:
- * every reference saw a 2xx answer whose body is a JSON object, with fields beyond status fields
- * ("ok", "error", "message", …) that every reference's answer has. The candidate then requires a
- * 2xx answer that is a JSON object with those fields, which an HTML page (captured as text) or an
- * error object never is. Otherwise it settles nothing unless an incorrect reference fails it. A
- * response body that holds the quoted values is the server's own answer, and states the outcome.
+ * A request body shows what the browser asked for, not what the server did: a POST answered with
+ * a redirect to the login page, a 200 login page or a 200 validation error sends the same body.
+ * So a request-body candidate never settles a requirement by itself, whatever the answer; it
+ * settles only when an incorrect reference fails it. The network evidence that can settle one on
+ * its own is a response body that echoes the values the quote states (each pinned as `const`, so
+ * never null, and bound to its field as `unaccounted` requires).
  */
 function networkCandidates(q: Quote, refs: Ref[], push: (c: Omit<Candidate, 'id' | 'requirement'>) => void): void {
   if (refs.some((r) => !r.snapshot.network)) return;
@@ -869,7 +948,6 @@ function networkCandidates(q: Quote, refs: Ref[], push: (c: Omit<Candidate, 'id'
     };
     const named = g.path.split('/').some((s) => s !== '*' && s !== '' && segmentNamed(q, s));
     if (named) push({ family: 'network', assert: { kind: 'request', match }, stated: false, description: '' });
-    const answer = ok2xx ? answerShape(groups.map((m) => m.get(key)!.responses)) : undefined;
     // Bodies: a like-shape of the named fields, the same in every reference (one body each).
     for (const which of ['requestBody', 'responseBody'] as const) {
       const per = groups.map((m) => (which === 'requestBody' ? m.get(key)!.bodies : m.get(key)!.responses));
@@ -887,35 +965,15 @@ function networkCandidates(q: Quote, refs: Ref[], push: (c: Omit<Candidate, 'id'
         schema = s.schema;
       }
       if (!schema) continue;
-      if (which === 'responseBody') {
-        const assert: Assertion = { kind: 'request', match: { ...match, responseBody: schema } };
-        push({ family: 'network', assert, stated: identified(assert), description: '' });
-      } else {
-        const assert: Assertion = {
-          kind: 'request',
-          match: { ...match, requestBody: schema, ...(answer ? { responseBody: answer } : {}) },
-        };
-        push({ family: 'network', assert, stated: !!answer && identified(assert), description: '' });
-      }
+      const assert: Assertion = { kind: 'request', match: { ...match, [which]: schema } };
+      push({
+        family: 'network',
+        assert,
+        stated: which === 'responseBody' && identified(assert),
+        description: '',
+      });
     }
   }
-}
-
-/** Fields of an answer that only report how the request went, not what it changed. */
-const STATUS_FIELDS = new Set(
-  'ok success status error errors message messages code result redirect location url next'.split(' '),
-);
-
-/**
- * The shape every reference's answer to a request shares: a JSON object with the fields (other
- * than status fields) all of them have. Undefined when an answer is missing, is not one JSON
- * object (an HTML page is captured as text), or no such field is left.
- */
-function answerShape(responses: Json[][]): JsonSchema | undefined {
-  if (responses.some((r) => r.length !== 1 || !isObj(r[0]))) return undefined;
-  const objs = responses.map((r) => r[0] as Record<string, Json>);
-  const keys = Object.keys(objs[0]!).filter((k) => !STATUS_FIELDS.has(k.toLowerCase()) && objs.every((o) => k in o));
-  return keys.length ? { type: 'object', required: keys } : undefined;
 }
 
 function urlCandidates(q: Quote, refs: Ref[], push: (c: Omit<Candidate, 'id' | 'requirement'>) => void): void {
@@ -1179,9 +1237,9 @@ export function evidenceWords(a: Assertion): string[] {
 /**
  * The content words of the quote a candidate does not account for. Words about which page is
  * open ("page", "screen") need page evidence (the tree or the URL); words about what it presents
- * ("shows", "visible") need the tree. A word naming a kind of element ("button", "checkbox") is
- * not in either set: like any other word, the candidate's evidence (its role) must name it, so a
- * URL never accounts for a button.
+ * ("shows", "visible") and kinds of element ("button", "checkbox") outside quotation marks need
+ * tree evidence that names them, never a URL, path or key. Values the quote states for a field
+ * need a compared value under that field (`Quote.bindings`).
  */
 function unaccounted(q: Quote, c: Pick<Candidate, 'family' | 'assert'>): string[] {
   const ev = evidenceWords(c.assert);
@@ -1205,57 +1263,81 @@ function unaccounted(q: Quote, c: Pick<Candidate, 'family' | 'assert'>): string[
   // Numbers, identifiers, dates and times the quote states must be among the values compared,
   // once per time the quote states them: "the quantity is 2 and the price is 2" needs two values.
   for (const f of q.facts) if (ev.filter((e) => e === f).length < q.factCount(f)) out.push(f.slice(f.indexOf(':') + 1));
-  // Fields the quote coordinates ("the quantity and price are 2") each need a compared value of
-  // their own: one scalar, whatever its name, checks one field.
   const leaves = comparedLeaves(c.assert);
-  for (const group of q.coordinated) if (!eachHasLeaf(group, leaves)) out.push(group.join(' and '));
+  // Fields the quote coordinates ("the quantity and price are 2") each need a compared value of
+  // their own, named by its key path or value: one scalar, whatever its name, checks one field.
+  for (const group of q.coordinated)
+    if (!assignLeaves(group, leaves, (w, l) => [...l.path, ...l.value].some((e) => sameWord(e, w))))
+      out.push(group.join(' and '));
+  // A value the quote states for a field ("the price is 2") must be compared under that field:
+  // a leaf whose own key path names the field and whose value is the stated one. Each binding
+  // needs a leaf of its own; the probe's or request's name never stands in for the field.
+  const bound = q.bindings;
+  if (bound.length && !assignLeaves(bound, leaves, holdsBinding)) out.push(...bound.map((b) => b.text));
   return out;
 }
 
 /**
- * The values a candidate compares, each with the words that name it: its field name (the
- * source's for an `equals`) and its value. A tree check compares one thing.
+ * One value a candidate compares: the words of its own key and of the keys above it inside the
+ * compared value (a JSON Pointer's segments, a schema's property names), and the words of the
+ * value itself. The probe, storage key or request it is read from is not part of its path: those
+ * name where evidence is read, not which field holds the value.
  */
-function comparedLeaves(a: Assertion): string[][] {
-  const out: string[][] = [];
-  const walk = (s: unknown, key: string | undefined): void => {
-    if (Array.isArray(s)) return s.forEach((x) => walk(x, key));
+interface Leaf {
+  path: string[];
+  value: string[];
+}
+
+/** The values a candidate compares. A tree check compares one thing, named by its role, name and state. */
+function comparedLeaves(a: Assertion): Leaf[] {
+  const out: Leaf[] = [];
+  const walk = (s: unknown, path: string[]): void => {
+    if (Array.isArray(s)) return s.forEach((x) => walk(x, path));
     if (!s || typeof s !== 'object') return;
     const o = s as Record<string, unknown>;
     if ('const' in o || 'pattern' in o) {
       const v: string[] = [];
       schemaWords({ const: o.const, pattern: o.pattern }, v);
-      out.push([...(key ? keyWords(key) : []), ...v]);
+      out.push({ path, value: v });
       return;
     }
     for (const [k, v] of Object.entries(o)) {
       if (k === 'properties' && v && typeof v === 'object')
-        for (const [name, sub] of Object.entries(v)) walk(sub, name);
-      else if (k !== 'required' && k !== 'type') walk(v, key);
+        for (const [name, sub] of Object.entries(v)) walk(sub, [...path, ...keyWords(name)]);
+      else if (k !== 'required' && k !== 'type') walk(v, path);
     }
   };
   switch (a.kind) {
-    case 'value':
-      if ('equals' in a.expect) out.push([...sourceWords(a.source), ...valueWords(a.expect.equals)]);
-      if ('schema' in a.expect) walk(a.expect.schema, sourceKey(a.source));
+    case 'value': {
+      const src = a.source;
+      const base =
+        (src.from === 'probe' || src.from === 'request' || src.from === 'response') && src.pointer
+          ? pathWords(src.pointer)
+          : [];
+      if ('equals' in a.expect) out.push({ path: base, value: valueWords(a.expect.equals) });
+      if ('schema' in a.expect) walk(a.expect.schema, base);
       break;
+    }
     case 'request':
-      walk(a.match.requestBody, undefined);
-      walk(a.match.responseBody, undefined);
+      walk(a.match.requestBody, []);
+      walk(a.match.responseBody, []);
       break;
     default:
-      out.push(evidenceWords(a));
+      out.push({ path: evidenceWords(a), value: [] });
   }
-  return out.map((l) => l.map((w) => w.toLowerCase()));
+  return out.map((l) => ({ path: l.path.map((w) => w.toLowerCase()), value: l.value.map((w) => w.toLowerCase()) }));
 }
 
-/** Whether each coordinated word can be given a compared value of its own that names it. */
-function eachHasLeaf(group: string[], leaves: string[][]): boolean {
+/** A leaf holds a binding: its value is the stated one, and its own key path names the field. */
+const holdsBinding = (b: Binding, l: Leaf) => l.value.includes(b.fact) && l.path.some((e) => sameWord(e, b.field));
+
+/** Gives each item a distinct leaf it accepts (a small matching, by backtracking). */
+function assignLeaves<T>(items: T[], leaves: Leaf[], fits: (item: T, leaf: Leaf) => boolean): boolean {
   const used = new Set<number>();
   const assign = (i: number): boolean => {
-    if (i === group.length) return true;
+    if (i === items.length) return true;
     for (let j = 0; j < leaves.length; j++) {
-      if (used.has(j) || !leaves[j]!.some((e) => sameWord(e, group[i]!))) continue;
+      if (used.has(j) || !fits(items[i]!, leaves[j]!)) continue;
       used.add(j);
       if (assign(i + 1)) return true;
       used.delete(j);

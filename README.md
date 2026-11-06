@@ -258,7 +258,7 @@ Design details: [ADR 0001](docs/adr/0001-evidence-snapshot-and-check-dsl.md).
    check settles a requirement only when its evidence accounts for every word of the quote. A
    quote about the page is settled by page evidence that does (a checked "Newsletter" checkbox for
    "the newsletter checkbox is checked"), not by a URL or a stored value; "all", "only", "no
-   longer" or "add", a request the server did not answer with JSON (a redirect, a login page),
+   longer" or "add", a request whose response does not echo the stated values (a redirect, a login page, an error),
    and wording no single piece of evidence accounts for ("the cart page lists …") stay with the
    model
    ([ADR 0020](docs/adr/0020-mining-first-compiler.md)).

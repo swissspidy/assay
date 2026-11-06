@@ -104,9 +104,18 @@ A survivor is **decisive** only when all of these hold:
    (the probe and field names, path segments, roles, the compared values and state words), and
    every number, `#n`, date and time the quote states is among its compared values, once for each
    time the quote states it ("the quantity is 2 and the price is 2" needs two compared values, not
-   one scalar). Fields the quote coordinates ("the quantity and price are 2", "X, Y and Z") each
-   need a compared value of their own, a leaf whose field name or value names that word: one
-   scalar never settles them, whatever its name (`quantityPrice`). Words about which page is open
+   one scalar). **Values are bound to their fields.** A condition that states a number, date or
+   time for a field ("the price is 2", "the cart total is $21.50", "2 guests", and the coordinated
+   "the quantity and price are 2") needs a compared value of its own that equals the stated one
+   and whose key path names the field: the leaf's own key and the keys above it inside the compared
+   value (a pointer's segments, a schema's property names). The probe, storage key or request it
+   is read from never stands in for the field; those names account only for context words. So
+   `quantityPrice: {quantity: 2, discount: 2}` does not settle "the quantity is 2 and the price is
+   2", `cartTotal: 21.5` does not settle "the cart total is $21.50" (`cart.total` does), and a value
+   next to a name rather than a field ("one Red Mug") stays open. A value with no field next to it
+   ("on November 7, 2026", "at 08:00") binds nothing and only has to be compared. Other fields the
+   quote coordinates ("X, Y and Z") likewise each need a compared value of their own, named by its
+   key path or value: one scalar never settles them. Words about which page is open
    ("page", "screen") are accounted for only by tree or URL evidence. Words about what it presents
    ("shows", "visible") and kinds of element ("button", "checkbox", "heading") are accounted for
    only by tree evidence (its role, name and state), never by a URL, request path or field name that
@@ -119,16 +128,14 @@ A survivor is **decisive** only when all of these hold:
 3. **It is evidence of the outcome.** It rejects an incorrect reference, or it compares a value the
    quote names (a stated candidate, with its records identified) and the baseline did not already
    pass it. A request, a URL or a node that is merely present settles nothing without an incorrect
-   reference that lacks it. A request body is what the browser asked for, not what happened: a POST
-   the server answers with a redirect to its login page, or with a 200 login page or validation
-   error, sends the same body. So a request-body candidate states the outcome only with the
-   server's answer as evidence: every reference saw a 2xx answer that is a JSON object, with fields
-   beyond status fields ("ok", "error", "message", …) that all of them share. The candidate then
-   requires a 2xx answer of that shape (`responseBody: {type: "object", required: [...]}`), which
-   an HTML page (captured as text) or a bare status object never is. Otherwise it settles nothing
-   without an incorrect reference that fails it. A response body that holds the quoted values is
-   the server's own answer, and states the outcome. Every request candidate names the origin the
-   references sent it to, so the same path and body sent to another host do not pass.
+   reference that lacks it. A request body is what the browser asked for, not what the server did:
+   a POST answered with a redirect to the login page, a 200 login page or a 200 validation error
+   (`{"id": null, "error": "validation failed"}`) sends the same body. So a request-body candidate
+   never settles a requirement by itself, whatever the answer; only an incorrect reference that
+   fails it makes it decisive. The network evidence that settles a requirement on its own is a
+   response body that echoes the values the quote states: each pinned as `const` (so never null)
+   and bound to its field as above. Every request candidate names the origin the references sent it
+   to, so the same path and body sent to another host do not pass.
 
 `selectMined` takes the best decisive candidate per requirement, then, for each incorrect reference
 the picks would still judge a success, the best survivor that rejects it.
@@ -174,7 +181,7 @@ judged on the task's held-out labelled runs.
 | Dataset  | Rubric        | Tasks | Compiled mine-only | Requirements covered | Held-out as labelled | False successes | Mining ms (median / max) |
 | -------- | ------------- | ----: | -----------------: | -------------------: | -------------------: | --------------: | -----------------------: |
 | examples | deterministic |    30 |                 11 |                19/44 |                32/33 |               0 |               5.8 / 47.1 |
-| examples | model         |    30 |                  9 |                25/57 |                28/28 |               0 |               2.8 / 14.4 |
+| examples | model         |    30 |                  9 |                24/57 |                28/28 |               0 |               2.8 / 14.4 |
 | real     | deterministic |    44 |                  0 |                 0/44 |                    – |               – |               6.8 / 26.2 |
 | real     | model         |    44 |                  0 |                 6/84 |                    – |               – |               5.3 / 27.8 |
 
@@ -190,7 +197,7 @@ is re-recorded.
 covered by mining (all of them example tasks). Under `mine-first` they run the rubric turn only: 26
 of the 224 discovery turns (12%), 500 k of 4.86 M input tokens (10%) and 4.8 k of 86 k output
 tokens (6%) of the committed compiles are not spent (the rubric run's turns, as recorded in each
-cassette, are left out of these). For the 14 tasks mining covers in part (18 of their 46
+cassette, are left out of these). For the 14 tasks mining covers in part (17 of their 46
 requirements) the agent still runs, on fewer requirements and seeded; what
 that saves needs live runs (its requests differ from the cassettes), so it is not claimed here.
 The default strategy is unchanged: the `compile-replay` workload reproduces all 10 committed check
@@ -200,20 +207,20 @@ sets, and every committed compile replays byte for byte.
 deterministic rubric is one requirement quoting the whole instruction ("Close the issue "Crash when
 uploading empty file" in acme/webapp."), and its content words ("acme", "webapp", "repository",
 "back office", the imperative verb) are context no single value accounts for. The model's rubric
-splits instructions into parts, which helps a little (6/84). The 179 open requirements over both
+splits instructions into parts, which helps a little (6/84). The 180 open requirements over both
 datasets and rubrics, by reason:
 
 | Reason                                                                                                                                                                                                | Open |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---: |
-| a content word no survivor accounts for: repository and shop context, page wording ("the cart page lists"), synonyms the miner does not know ("preference" for `settings`, "going" for `rsvp: "yes"`) |  111 |
+| a content word no survivor accounts for: repository and shop context, page wording ("the cart page lists"), synonyms the miner does not know ("preference" for `settings`, "going" for `rsvp: "yes"`) |  113 |
 | "add" also keeps the collection (ADR 0011)                                                                                                                                                            |   21 |
 | a quantifier ("every open bug", "only open issues", "keep everything else")                                                                                                                           |   16 |
-| only presence (a request, URL or node) or a request answered with a redirect, and no incorrect reference to show it discriminates                                                                     |   16 |
+| only presence (a request, URL or node) or what a request sent, and no incorrect reference to show it discriminates                                                                                    |   15 |
 | no candidate: no evidence holds a value the quote names                                                                                                                                               |    7 |
 | the baseline already passes the best survivor                                                                                                                                                         |    8 |
 
 Each is a requirement mining declines rather than half-checks: across the 20 mined sets and their
-61 held-out runs, mining produced no false success. The request rules (the server's answer, the origin)
+61 held-out runs, mining produced no false success. The request rules (the server's echo, the origin)
 cost the most coverage: `tiny-tracker/01-create-bug` and `02-create-high-priority` create their
 issue with a form POST the server answers with a redirect, so "the new issue has the bug label" and
 "its priority is high" now go to the model, as do the Gitea milestone and PrestaShop price forms.
@@ -221,7 +228,7 @@ issue with a form POST the server answers with a redirect, so "the new issue has
 ## Consequences
 
 - Compiling is cheaper and deterministic where the evidence is plain: a fifth of the requirements
-  of the model rubrics (31 of 141) and 9 whole tasks need no discovery model; `mine-only` with the
+  of the model rubrics (30 of 141) and 9 whole tasks need no discovery model; `mine-only` with the
   deterministic rubric compiles 11 example tasks with no model at all, in milliseconds.
 - Mining is deliberately conservative, so on instruction-only tasks it mostly hands requirements to
   the model, seeded. A wrong mined check would be worse than a model turn; the gate, the
