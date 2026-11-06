@@ -7,12 +7,12 @@
 | tiny-tracker/close-issue | 22/22 | 8/8 (8 / 0) | – | – | 0 |
 | tiny-tracker/reopen-issue | 22/22 | 4/4 (4 / 0) | – | – | 0 |
 | tiny-tracker/assign-bob | 22/22 | 8/8 (8 / 0) | – | – | 0 |
-| tiny-tracker/add-feature-label | 22/22 | 12/12 (12 / 0) | – | – | 0 |
-| tiny-tracker/comment | 22/22 | 8/8 (8 / 0) | – | – | 0 |
+| tiny-tracker/add-feature-label | 24/24 | 20/20 (20 / 0) | – | – | 0 |
+| tiny-tracker/comment | 22/22 | 10/10 (10 / 0) | – | – | 0 |
 | tiny-tracker/rename | 22/22 | 4/4 (4 / 0) | – | – | 0 |
 | tiny-tracker/unassign | 22/22 | 4/4 (4 / 0) | – | – | 0 |
 | tiny-tracker/filter-open-bugs | 20/20 | 30/30 (30 / 0) | – | – | 0 |
-| **tiny-tracker** | **218/218** | **94/94** (94 / 0) | | | 0 |
+| **tiny-tracker** | **220/220** | **104/104** (104 / 0) | | | 0 |
 
 ## tiny-tracker/create-bug v1
 
@@ -41,14 +41,14 @@
 - Mutants with a success claim added still rejected: 8/8
 ## tiny-tracker/add-feature-label v1
 
-- Valid variants accepted: **22/22** (100%)
-- Mutants rejected: **12/12** (100%; 12 by fail, 0 by abstain)
-- Mutants with a success claim added still rejected: 12/12
+- Valid variants accepted: **24/24** (100%)
+- Mutants rejected: **20/20** (100%; 20 by fail, 0 by abstain)
+- Mutants with a success claim added still rejected: 20/20
 ## tiny-tracker/comment v1
 
 - Valid variants accepted: **22/22** (100%)
-- Mutants rejected: **8/8** (100%; 8 by fail, 0 by abstain)
-- Mutants with a success claim added still rejected: 8/8
+- Mutants rejected: **10/10** (100%; 10 by fail, 0 by abstain)
+- Mutants with a success claim added still rejected: 10/10
 ## tiny-tracker/rename v1
 
 - Valid variants accepted: **22/22** (100%)

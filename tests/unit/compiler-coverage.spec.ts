@@ -37,7 +37,10 @@ test('references of one page without frames or form bodies get the prompt and to
   expect(discoverySystem(refs(plain))).toBe(BASE);
   expect(kinds(dslDefinitions(false))).not.toContain('page');
   expect('pageMatch' in dslDefinitions(false)).toBe(false);
-  expect(dslDefinitions(true)).toBe(checkSetSchema.definitions);
+  // The full DSL once a sameAs tolerance is offered too (ADR 0014); until then, without it.
+  expect(dslDefinitions(true, true)).toBe(checkSetSchema.definitions);
+  expect('tolerance' in dslDefinitions(true)).toBe(false);
+  expect(JSON.stringify(dslDefinitions(true))).not.toContain('"tolerance"');
   expect(summary(plain)).not.toContain('other open pages');
 });
 

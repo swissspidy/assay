@@ -1,4 +1,4 @@
-import type { Comparison, Json, Money } from '../types.ts';
+import type { Comparison, Json, Money, Tolerance } from '../types.ts';
 import { compileSchema, schemaErrors } from './json.ts';
 import { canonical, stripGlobal } from '../text.ts';
 import { canonicalJson } from '../snapshot/digest.ts';
@@ -72,15 +72,87 @@ class CurrencyMismatch extends Error {
 }
 
 /**
+ * How far `v` is from `target` for `approx`: the difference and the allowed tolerance,
+ * in days for dates, minutes for date-times, the value's own unit otherwise. Throws
+ * NormalizeError('type_mismatch') when the two cannot be compared that way.
+ */
+function approxGap(
+  v: TypedValue,
+  target: unknown,
+  abs = 0,
+  rel = 0,
+): { diff: number; tol: number; unit: string; scale: number } {
+  if (v.type === 'date') {
+    if (typeof target !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(target)) throw mismatch('approx', v);
+    return { diff: daysBetween(v.value, target), tol: abs, unit: ' days', scale: 0 };
+  }
+  if (v.type === 'datetime') {
+    if (typeof target !== 'string' || instantOf(target) === undefined) throw mismatch('approx', v);
+    return { diff: minutesBetween(v.value, target), tol: abs, unit: ' minutes', scale: 0 };
+  }
+  const [a, b] = scalar(v, target, 'approx');
+  return {
+    diff: Math.abs(a - b),
+    tol: Math.max(abs, rel * Math.abs(b)),
+    unit: '',
+    scale: Math.max(Math.abs(a), Math.abs(b)),
+  };
+}
+
+/**
+ * Whether `diff` is within `tol`, inclusive. The floating-point slack is two units in the last
+ * place of the largest number involved (the compared values, for numbers and money; the
+ * difference and the tolerance): each value parsed from decimal text is off by at most half a
+ * unit, and the subtraction rounds once more. So a difference of exactly the tolerance passes
+ * at any scale, and nothing larger does. A tolerance finer than the values' own precision
+ * (1e-12 on values near 1e6, where doubles are 1.2e-10 apart) cannot be told apart from
+ * exact equality plus that rounding; it accepts at most two units of difference. Dates and
+ * date-times are differences of whole milliseconds, so only the difference and tolerance set
+ * their scale.
+ */
+const ROUNDING_ULPS = 2;
+/** The spacing of doubles at `x`: 2^(exponent of x − 52), or the smallest subnormal for 0. */
+const ulp = (x: number): number => {
+  const a = Math.abs(x);
+  if (a === 0 || !Number.isFinite(a)) return Number.MIN_VALUE;
+  let e = Math.floor(Math.log2(a));
+  if (2 ** e > a) e -= 1; // log2 can round up just below a power of two
+  return Math.max(2 ** (e - 52), Number.MIN_VALUE);
+};
+const within = ({ diff, tol, scale }: { diff: number; tol: number; scale: number }): boolean =>
+  diff <= tol + ROUNDING_ULPS * ulp(Math.max(scale, tol, diff));
+
+/** Whether a tolerance can apply to values of this type: numbers, money, dates and date-times. */
+export const tolerable = (t: TypedValue['type']): boolean =>
+  t === 'number' || t === 'money' || t === 'date' || t === 'datetime';
+
+/**
  * Equality of two normalized values read from different sources (a `sameAs`
  * binding). Both must have the same type; otherwise NormalizeError('type_mismatch').
+ * With a `tolerance`, `a` may differ from `b` as far as `approx` with `b` as its value allows.
  */
-export function compareValues(a: TypedValue, b: TypedValue): CompareOutcome {
+export function compareValues(a: TypedValue, b: TypedValue, tolerance?: Tolerance): CompareOutcome {
   if (a.type !== b.type)
     throw new NormalizeError(
       `sameAs cannot compare a ${a.type} value (${describeValue(a)}) with a ${b.type} value (${describeValue(b)}); normalize both sides to the same type`,
       'type_mismatch',
     );
+  if (tolerance) {
+    if (!tolerable(a.type))
+      throw new NormalizeError(
+        `a sameAs tolerance applies to numbers, money, dates and date-times, not to a ${a.type} value (${describeValue(a)})`,
+        'type_mismatch',
+      );
+    if (a.type === 'money' && b.type === 'money' && a.value.currency !== b.value.currency)
+      return { ok: false, message: `${describeValue(a)} ≠ ${describeValue(b)} (currency differs)` };
+    const gap = approxGap(a, toJson(b), tolerance.abs, tolerance.rel);
+    const { diff, tol, unit } = gap;
+    const ok = within(gap);
+    return {
+      ok,
+      message: `${describeValue(a)} ${ok ? '≈' : '≉'} ${describeValue(b)} (Δ=${+diff.toFixed(6)}, tolerance ${+tol.toFixed(6)}${unit})`,
+    };
+  }
   // deepEqual takes the other side as JSON: money as {amount, currency}, a datetime as its ISO string.
   const ok = deepEqual(a, toJson(b));
   return { ok, message: `${describeValue(a)} ${ok ? '=' : '≠'} ${describeValue(b)}` };
@@ -117,26 +189,12 @@ export function compare(v: TypedValue, cmp: Comparison): CompareOutcome {
     }
     if ('approx' in cmp) {
       const { value: target, abs = 0, rel = 0 } = cmp.approx;
-      let diff: number;
-      let ref: number;
-      if (v.type === 'date') {
-        if (typeof target !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(target)) throw mismatch('approx', v);
-        diff = daysBetween(v.value, target);
-        ref = 0;
-      } else if (v.type === 'datetime') {
-        if (typeof target !== 'string' || instantOf(target) === undefined) throw mismatch('approx', v);
-        diff = minutesBetween(v.value, target);
-        ref = 0;
-      } else {
-        const [a, b] = scalar(v, target, 'approx');
-        diff = Math.abs(a - b);
-        ref = Math.abs(b);
-      }
-      const tol = Math.max(abs, rel * ref) + 1e-9;
-      const ok = diff <= tol;
+      const gap = approxGap(v, target, abs, rel);
+      const { diff, tol, unit } = gap;
+      const ok = within(gap);
       return {
         ok,
-        message: `${shown} ${ok ? '≈' : '≉'} ${JSON.stringify(target)} (Δ=${+diff.toFixed(6)}, tolerance ${Math.max(abs, rel * ref)}${v.type === 'date' ? ' days' : v.type === 'datetime' ? ' minutes' : ''})`,
+        message: `${shown} ${ok ? '≈' : '≉'} ${JSON.stringify(target)} (Δ=${+diff.toFixed(6)}, tolerance ${tol}${unit})`,
       };
     }
     if ('schema' in cmp) {

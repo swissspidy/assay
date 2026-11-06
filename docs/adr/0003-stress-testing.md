@@ -29,6 +29,7 @@ Generic, task-independent presentation changes:
 - `spacing`: non-breaking and doubled spaces.
 - `extra-json-fields`: extra fields in JSON objects that are records. This and `json-array-order` edit the baseline's probes too: an API returns the same shape before and after the task. Map-like objects whose keys are data (`{"MUG-BLUE": 1}`) are left alone.
 - `json-array-order`: JSON arrays in reverse order.
+- `nested-array-order`: arrays inside JSON records (and JSON text in storage) in reverse order, the outer lists unchanged (ADR 0014).
 - `network-noise`: an analytics beacon and repeated GET requests.
 - `retry`: each state-changing request first fails with HTTP 503 and is retried.
 - `extra-storage`: unrelated cookies and storage keys.

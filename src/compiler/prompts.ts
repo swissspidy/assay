@@ -115,5 +115,19 @@ Some references had several pages open (tabs, popups); the outline lists the oth
 export const DISCOVERY_FORMS = `## Form bodies
 Form request bodies (URL-encoded and multipart) are objects of their fields: a repeated field is an array, an uploaded file is {filename, type, size}. Match a field with a requestBody JSON Schema or read it with a pointer ("/title").`;
 
+/**
+ * Sent with the first refused submission in which a sameAs binding fails on a correct
+ * reference by a small difference of numbers, money, dates or date-times. Only then do
+ * submit_checks and try_assertion accept a tolerance, so compiles (and the recordings
+ * keyed on them) that never meet one are unchanged.
+ */
+export const DISCOVERY_TOLERANCE = `## Tolerance on sameAs (now accepted by submit_checks and try_assertion)
+A sameAs binding fails on a correct run only because its two sides differ by a small amount (listed below). Exact equality stays right for identifiers, statuses, quantities and almost every value: first make sure both sides read the same record and field, normalized the same way. Only when the task or the references show that correct runs differ like this, give the binding an explicit tolerance: {sameAs: {source, normalize?, tolerance: {abs?, rel?, because}}}. It reads like approx with the other side's value as its value: |a − b| ≤ max(abs, rel × |b|).
+- numbers and money: abs in the value's unit, rel a fraction of the other side's value (at most 0.05). E.g. a total the page rounds to the cent while the backend keeps more decimals: {abs: 0.01}.
+- date-times: abs in minutes, at most 60. E.g. a time the page shows to the minute and the backend stores to the second: {abs: 1}; a timestamp the server sets moments after the request: {abs: 2}.
+- dates: abs in whole days, at most 7. rel applies to numbers and money only; text, booleans and collections take no tolerance.
+- "because" is required: what in the task or in the references makes the difference valid (e.g. "the page shows the time to the minute; the probe stores seconds"). A reviewer reads it next to the check.
+- Use the smallest tolerance that covers what the references show and the reason allows, never one wide enough to accept a value the task distinguishes (another item's price, another day or time slot). Values just past it are stress-tested as near misses, values inside it as valid variants.`;
+
 export const DISCOVERY_NUDGE =
   'Continue exploring if needed, then call submit_checks with your checks. Every requirement needs at least one check.';

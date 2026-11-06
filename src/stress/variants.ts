@@ -16,13 +16,16 @@ import type {
   NetworkEntry,
   AXNode,
   ProbeResult,
+  Redacted,
+  StorageRecord,
   ValueSource,
 } from '../types.ts';
 import { AXIndex, readNodeField, resolveTarget, type INode } from '../runtime/axindex.ts';
-import { applyNormalizers, zoneOffset, type TypedValue } from '../runtime/values.ts';
+import { applyNormalizers, describeValue, zoneOffset, type TypedValue } from '../runtime/values.ts';
+import { compareValues } from '../runtime/compare.ts';
 import { canonical, stripGlobal } from '../text.ts';
 import { clone, editById, replaceText, treeChanged } from './edit.ts';
-import { readSpan, timezoneOf } from './mutants.ts';
+import { PRECISIONS, fromScalar, readSpan, readTyped, rewriteValue, scalarOf, snapTo, timezoneOf } from './mutants.ts';
 
 export interface Variant {
   id: string;
@@ -39,6 +42,7 @@ export const GENERIC_VARIANTS = [
   'spacing',
   'extra-json-fields',
   'json-array-order',
+  'nested-array-order',
   'network-noise',
   'retry',
   'extra-storage',
@@ -287,6 +291,55 @@ const reverseArrays = (v: Json): Json =>
     : v && typeof v === 'object'
       ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, reverseArrays(x)]))
       : v;
+
+/** Arrays inside an array's items (each line's options, each record's tags) reversed; the outer arrays keep their order. */
+const reverseNested = (v: Json, inArray = false): Json =>
+  Array.isArray(v)
+    ? ((xs: Json[]) => (inArray ? xs.toReversed() : xs))(v.map((x) => reverseNested(x, true)))
+    : v && typeof v === 'object'
+      ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, reverseNested(x, inArray)]))
+      : v;
+
+/**
+ * `nested-array-order`: the arrays nested inside records reversed in JSON bodies, probe
+ * results (before and after the task) and JSON text in local and session storage. Unlike
+ * `json-array-order` it keeps the outer lists' order, so a task that asks for an order of
+ * its records (and skips that variant) still has the order inside each record tested.
+ */
+function nestedArrayOrder(s: EvidenceSnapshot): EvidenceSnapshot | null {
+  const out = mapBodies(s, (v) => reverseNested(v)) ?? s;
+  const storage = mapStorageJson(out.storage, reverseNested);
+  const baseline = out.baseline
+    ? { ...out.baseline, storage: mapStorageJson(out.baseline.storage, reverseNested) }
+    : undefined;
+  const next = { ...out, storage, ...(baseline ? { baseline } : {}) };
+  return JSON.stringify(next) === JSON.stringify(s) ? null : next;
+}
+
+/** Local and session storage with `fn` applied to every value that is JSON text of an object or array. */
+function mapStorageJson(st: StorageRecord | null, fn: (v: Json) => Json): StorageRecord | null {
+  if (!st) return st;
+  const value = (x: string | Redacted): string | Redacted => {
+    if (typeof x !== 'string') return x;
+    let parsed: Json;
+    try {
+      parsed = JSON.parse(x) as Json;
+    } catch {
+      return x;
+    }
+    if (!isObj(parsed)) return x;
+    const next = JSON.stringify(fn(parsed));
+    return next === JSON.stringify(parsed) ? x : next;
+  };
+  const area = (a: StorageRecord['local']): StorageRecord['local'] =>
+    Object.fromEntries(
+      Object.entries(a).map(([origin, kv]) => [
+        origin,
+        Object.fromEntries(Object.entries(kv).map(([k, x]) => [k, value(x)])),
+      ]),
+    );
+  return { ...st, local: area(st.local), session: area(st.session) };
+}
 
 function networkNoise(s: EvidenceSnapshot): EvidenceSnapshot | null {
   if (!s.network) return null;
@@ -564,6 +617,90 @@ function formattingVariants(cs: CheckSet, s: EvidenceSnapshot, idx: AXIndex): Va
   return out;
 }
 
+// --- sameAs tolerance variants -------------------------------------------------
+
+/**
+ * A `sameAs` binding with a tolerance accepts values that differ by up to the tolerance:
+ * each side in turn moved toward the edge of the tolerance (all of it, or half), in both
+ * directions, at a precision its source can show. A check that rejects one is
+ * over-constrained by its own reviewed tolerance (or by another check of the set).
+ */
+function toleranceVariants(cs: CheckSet, s: EvidenceSnapshot, idx: AXIndex): Variant[] {
+  const out: Variant[] = [];
+  // A side that another assertion also reads (in another check, or a sibling in the same
+  // allOf/anyOf/each/page) is left alone: that assertion holds the value to its own terms.
+  const readers = new Map<string, Set<Assertion>>();
+  const collect = (a: Assertion): void => {
+    if (a.kind === 'value')
+      for (const r of readsOf(a)) {
+        const k = JSON.stringify(r.source);
+        readers.set(k, new Set([...(readers.get(k) ?? []), a]));
+      }
+    const parts = a as { assert?: Assertion; of?: Assertion[] };
+    if (parts.assert) collect(parts.assert);
+    for (const b of parts.of ?? []) collect(b);
+  };
+  for (const c of cs.checks) collect(c.assert);
+  const sharedWithOther = (src: ValueSource, self: Assertion) =>
+    [...(readers.get(JSON.stringify(src)) ?? [])].some((x) => x !== self);
+  for (const c of cs.checks) {
+    let records = 0;
+    for (const { a, rec } of valueAssertions(c.assert, idx)) {
+      if (!('sameAs' in a.expect) || !a.expect.sameAs.tolerance) continue;
+      if (rec && ++records > 2) break;
+      const other = a.expect.sameAs;
+      const tol = other.tolerance!;
+      const left = readTyped(s, idx, a.source, a.normalize, rec);
+      const right = readTyped(s, idx, other.source, other.normalize, rec);
+      if (!left || !right || left.type !== right.type) continue;
+      const sides = [
+        { k: 0, src: a.source, steps: a.normalize, cur: left, base: right },
+        { k: 1, src: other.source, steps: other.normalize, cur: right, base: left },
+      ];
+      for (const { k, src, steps, cur, base } of sides) {
+        if (sharedWithOther(src, a)) continue;
+        const b = scalarOf(base);
+        if (b === undefined) continue;
+        const width = Math.max(tol.abs ?? 0, (tol.rel ?? 0) * Math.abs(b));
+        for (const sign of [1, -1]) {
+          let found: { v: TypedValue; snap: EvidenceSnapshot } | undefined;
+          for (const f of [1, 0.5]) {
+            for (const g of PRECISIONS[cur.type] ?? []) {
+              // Rounded toward the other side, so the precision never takes it past the tolerance.
+              const v = fromScalar(cur, snapTo(b + sign * f * width, g, sign < 0));
+              if (!v || JSON.stringify(v) === JSON.stringify(cur)) continue;
+              const pair = k === 0 ? [v, base] : [base, v];
+              let ok: boolean;
+              try {
+                ok = compareValues(pair[0]!, pair[1]!, tol).ok;
+              } catch {
+                ok = false;
+              }
+              if (!ok) continue;
+              const edited = rewriteValue(s, idx, src, steps, v, rec);
+              if (edited) {
+                found = { v, snap: edited };
+                break;
+              }
+            }
+            if (found) break;
+          }
+          if (!found) continue;
+          let id = `tolerance:${c.id}:${k ? 'sameAs:' : ''}${sign > 0 ? '+' : '-'}`;
+          for (let n = 2; out.some((x) => x.id === id); n++)
+            id = `tolerance:${c.id}:${k ? 'sameAs:' : ''}${sign > 0 ? '+' : '-'}#${n}`;
+          out.push({
+            id,
+            description: `${c.id}'s ${k ? 'compared ' : ''}value is ${describeValue(found.v)} instead of ${describeValue(cur)}, within its tolerance of ${describeValue(base)}`,
+            snapshot: found.snap,
+          });
+        }
+      }
+    }
+  }
+  return out;
+}
+
 export function generateVariants(cs: CheckSet, s: EvidenceSnapshot): Variant[] {
   const generic: [string, string, EvidenceSnapshot | null][] = [
     ['reorder', 'list items and table rows in reverse order', reorder(s)],
@@ -574,6 +711,11 @@ export function generateVariants(cs: CheckSet, s: EvidenceSnapshot): Variant[] {
     ['spacing', 'non-breaking and doubled spaces in visible text', spacing(s)],
     ['extra-json-fields', 'extra fields in JSON bodies and probe results', mapBodies(s, addFields)],
     ['json-array-order', 'arrays in JSON bodies and probe results in reverse order', mapBodies(s, reverseArrays)],
+    [
+      'nested-array-order',
+      'arrays nested inside JSON records (bodies, probe results, storage) in reverse order',
+      nestedArrayOrder(s),
+    ],
     ['network-noise', 'an analytics beacon and repeated GET requests', networkNoise(s)],
     ['retry', 'each state-changing request first failed with HTTP 503 and was retried', retry(s)],
     ['extra-storage', 'unrelated cookies and storage keys', extraStorage(s, cs)],
@@ -591,5 +733,6 @@ export function generateVariants(cs: CheckSet, s: EvidenceSnapshot): Variant[] {
       .filter((g): g is [string, string, EvidenceSnapshot] => g[2] !== null)
       .map(([id, description, snapshot]) => ({ id, description, snapshot })),
     ...formattingVariants(cs, s, new AXIndex(s.a11y)),
+    ...toleranceVariants(cs, s, new AXIndex(s.a11y)),
   ];
 }

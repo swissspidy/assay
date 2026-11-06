@@ -7,12 +7,12 @@
 | tiny-shop/03-cart-two-mugs | 24/24 | 28/28 (28 / 0) | – | – | 0 |
 | tiny-shop/04-remove-red-mug | 23/23 | 27/27 (27 / 0) | – | – | 0 |
 | tiny-shop/05-set-quantity | 22/22 | 14/14 (12 / 2) | – | – | 0 |
-| tiny-shop/06-cart-total | 30/30 | 38/38 (38 / 0) | – | – | 0 |
+| tiny-shop/06-cart-total | 30/30 | 50/50 (50 / 0) | – | – | 0 |
 | tiny-shop/07-express-order | 20/20 | 32/32 (32 / 0) | – | – | 0 |
 | tiny-shop/08-delivery-date | 36/36 | 54/54 (46 / 8) | – | – | 0 |
 | tiny-shop/09-gift-wrap | 20/20 | 12/12 (12 / 0) | – | – | 0 |
 | tiny-shop/10-dark-german | 16/16 | 12/12 (12 / 0) | – | – | 0 |
-| **tiny-shop** | **231/231** | **227/227** (217 / 10) | | | 0 |
+| **tiny-shop** | **231/231** | **239/239** (229 / 10) | | | 0 |
 
 ## tiny-shop/01-newsletter v1
 
@@ -45,8 +45,8 @@
 ## tiny-shop/06-cart-total v1
 
 - Valid variants accepted: **30/30** (100%)
-- Mutants rejected: **38/38** (100%; 38 by fail, 0 by abstain)
-- Mutants with a success claim added still rejected: 38/38
+- Mutants rejected: **50/50** (100%; 50 by fail, 0 by abstain)
+- Mutants with a success claim added still rejected: 50/50
 ## tiny-shop/07-express-order v1
 
 - Valid variants accepted: **20/20** (100%)

@@ -18,6 +18,7 @@ import type {
   RequirementResult,
   Status,
   Target,
+  Tolerance,
   ValueSource,
 } from '../types.ts';
 import { CHANNEL_TRUST } from '../types.ts';
@@ -356,17 +357,30 @@ export function readValue(ctx: EvalCtx, src: ValueSource, steps: Normalizer[] | 
   return isResult(r) || !r.value ? undefined : toJson(r.value);
 }
 
+/** Both sides of a `sameAs` binding, read and normalized; undefined when either cannot be read or is absent. */
+export function bindingSides(
+  ctx: EvalCtx,
+  a: Extract<Assertion, { kind: 'value' }>,
+): { left: TypedValue; right: TypedValue } | undefined {
+  if (!('sameAs' in a.expect)) return undefined;
+  const left = readNormalized(ctx, a.source, a.normalize);
+  const right = readNormalized(ctx, a.expect.sameAs.source, a.expect.sameAs.normalize);
+  if (isResult(left) || isResult(right) || !left.value || !right.value) return undefined;
+  return { left: left.value, right: right.value };
+}
+
 /**
- * A `sameAs` binding: the value equals the value read from a second source. Either side
- * unreadable abstains; an observed absence on either side fails (there is nothing to be equal to).
+ * A `sameAs` binding: the value equals the value read from a second source (within the
+ * binding's tolerance, if it has one). Either side unreadable abstains; an observed absence
+ * on either side fails (there is nothing to be equal to).
  */
 function evaluateBinding(ctx: EvalCtx, left: Normalized, other: Operand): AssertionResult {
   const right = readNormalized(ctx, other.source, other.normalize);
-  if (isResult(right)) return bindingResult(left, right);
-  return withSeq(bindingResult(left, right), latest(left.seq, right.seq));
+  if (isResult(right)) return bindingResult(left, right, other.tolerance);
+  return withSeq(bindingResult(left, right, other.tolerance), latest(left.seq, right.seq));
 }
 
-function bindingResult(left: Normalized, right: Normalized | AssertionResult): AssertionResult {
+function bindingResult(left: Normalized, right: Normalized | AssertionResult, tolerance?: Tolerance): AssertionResult {
   if (isResult(right))
     return {
       ...right,
@@ -382,7 +396,7 @@ function bindingResult(left: Normalized, right: Normalized | AssertionResult): A
     return fail(`${unset.join(' and ')}; nothing to compare`, evidence, drift);
   }
   try {
-    const c = compareValues(left.value, right.value);
+    const c = compareValues(left.value, right.value, tolerance);
     const msg = `${c.message} (${where})`;
     return c.ok ? pass(msg, evidence, drift) : fail(msg, evidence, drift);
   } catch (e) {

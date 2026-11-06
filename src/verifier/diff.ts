@@ -3,10 +3,10 @@
  * checks were added, removed or changed, in the review sheet's plain language, and
  * which requirements a reviewer must therefore look at again.
  */
-import type { Assertion, Channel, Check, CheckSet, Requirement, ValueSource } from '../types.ts';
+import type { Assertion, Channel, Check, CheckSet, Json, Requirement, ValueSource } from '../types.ts';
 import { CHANNEL_TRUST } from '../types.ts';
 import { canonicalJson } from '../snapshot/digest.ts';
-import { contentDigest, describeAssertion, unlocked } from './lock.ts';
+import { contentDigest, describeAssertion, tolerancesIn, tolerancesOf, unlocked } from './lock.ts';
 import { cat, oneLine, render, type Block, type DocFormat, type Inline, type ListItem } from './doc.ts';
 
 const CHANNEL_NAMES: Record<Channel, string> = {
@@ -82,6 +82,8 @@ export function checkSettings(c: Check): string[] {
   if (c.onFail) out.push(`on fail: ${c.onFail === 'escalate' ? 'escalate to the verifier' : 'keep the failure'}`);
   if (c.onMissing === 'abstain') out.push('on missing route evidence: abstain (the run may have done it another way)');
   else if (c.onMissing === 'fail') out.push('on missing route evidence: fail');
+  // A tolerance relaxes what the check accepts, so it is listed as a setting too (ADR 0014).
+  for (const t of tolerancesOf(c.assert)) out.push(`sameAs tolerance: ${t}`);
   return out;
 }
 
@@ -192,6 +194,9 @@ function reorderedIds(a: { id: string }[], b: { id: string }[]): boolean {
   return x.some((id, i) => id !== y[i]);
 }
 
+/** A check's sameAs tolerances as stored, for comparing two versions. */
+const rawTolerances = (x: Check) => canonicalJson(tolerancesIn(x.assert).map((t) => t.tolerance) as unknown as Json);
+
 /** Compare two versions of a check set (requirements and checks are matched by id). */
 export function diffCheckSets(before: CheckSet, after: CheckSet): CheckSetDiff {
   const a = unlocked(before);
@@ -244,6 +249,8 @@ export function diffCheckSets(before: CheckSet, after: CheckSet): CheckSetDiff {
     if (!old) added.push(c);
     else {
       const fields = fieldsChanged(old, c, CHECK_FIELDS);
+      // Decided on the raw tolerances, not their rendering (which rounds).
+      if (rawTolerances(old) !== rawTolerances(c)) fields.push('tolerance');
       if (fields.length) checks.changed.push({ id: c.id, before: checkView(old), after: checkView(c), fields });
       else checks.unchanged.push(c.id);
     }
