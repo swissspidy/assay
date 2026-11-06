@@ -524,6 +524,13 @@ function checkSchema(s: unknown, at: string, errors: string[]): void {
     }
   } catch (e) {
     errors.push(`${at}: invalid JSON Schema: ${(e as Error).message}`);
+  } finally {
+    // Only whether it compiles matters here; drop Ajv's own copy so its cache does not grow.
+    try {
+      schemaCompiler.removeSchema(s as object);
+    } catch {
+      // Not cached (e.g. a boolean schema): nothing to drop.
+    }
   }
 }
 

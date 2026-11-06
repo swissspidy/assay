@@ -31,8 +31,13 @@ export function compileSchema(schema: JsonSchema): ValidateFunction {
   fn = schemaCache.get(key);
   if (!fn) {
     fn = ajv.compile(schema as object | boolean);
-    // Bounded like the other caches: a long-running process can compile many schemas.
-    if (schemaCache.size >= 1_000) schemaCache.clear();
+    // Bounded like the other caches: a long-running process can compile many schemas. Ajv keeps
+    // its own cache of every compiled schema, so clear that too; removeSchema() with no argument
+    // keeps the meta-schemas, and validators already compiled keep working.
+    if (schemaCache.size >= 1_000) {
+      schemaCache.clear();
+      ajv.removeSchema();
+    }
     schemaCache.set(key, fn);
   }
   if (isObject) schemaObjects.set(schema, fn);
