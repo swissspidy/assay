@@ -301,6 +301,10 @@ test.describe('sameAs tolerance', () => {
     expect(compareValues(n(1e-12), n(0), { abs: 1e-12, because: 'x' }).ok).toBe(true);
     expect(compareValues(n(1_000_000.01), n(1_000_000), { abs: 0.01, because: 'x' }).ok).toBe(true);
     expect(compareValues(n(1_000_000.02), n(1_000_000), { abs: 0.01, because: 'x' }).ok).toBe(false);
+    // A small tolerance on large values is not widened by the slack.
+    expect(compareValues(n(1_000_000.0005), n(1_000_000), { abs: 1e-6, because: 'x' }).ok).toBe(false);
+    expect(compareValues(n(1_000_000.000001), n(1_000_000), { abs: 1e-6, because: 'x' }).ok).toBe(true);
+    expect(compareValues(n(0.1 + 0.2), n(0.3), { abs: 1e-15, because: 'x' }).ok).toBe(true);
   });
 
   test('review fixes: bindings inside a page assertion are read on that page', () => {

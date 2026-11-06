@@ -100,14 +100,16 @@ function approxGap(
 }
 
 /**
- * Whether `diff` is within `tol`, inclusive. The floating-point slack is relative to the
- * numbers involved (the compared values, for numbers and money; the difference and the
- * tolerance), so a difference of exactly the tolerance passes at any scale and a tiny
- * tolerance is not swamped by a fixed slack. Dates and date-times are differences of
+ * Whether `diff` is within `tol`, inclusive. The floating-point slack is a few units in the
+ * last place of the largest number involved (the compared values, for numbers and money; the
+ * difference and the tolerance): enough to absorb the rounding of the subtraction, so a
+ * difference of exactly the tolerance passes at any scale, and far too small to widen a
+ * tolerance (1e-6 on values near 1e6 stays 1e-6). Dates and date-times are differences of
  * whole milliseconds, so only the difference and tolerance set their scale.
  */
+const ROUNDING_ULPS = 8;
 const within = ({ diff, tol, scale }: { diff: number; tol: number; scale: number }): boolean =>
-  diff <= tol + 1e-9 * Math.max(scale, tol, diff);
+  diff <= tol + ROUNDING_ULPS * Number.EPSILON * Math.max(scale, tol, diff);
 
 /** Whether a tolerance can apply to values of this type: numbers, money, dates and date-times. */
 export const tolerable = (t: TypedValue['type']): boolean =>
