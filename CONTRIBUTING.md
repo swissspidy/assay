@@ -84,9 +84,10 @@ calibration loop (sorted-key JSON, SHA-256 and `JSON.parse` over a fixed synthet
 of the library). It cancels much of a machine's speed, so it is the number to compare across machines.
 Absolute times are only comparable on one machine.
 
-The `bench` job in CI benches the pull request's base commit (its library and data, with this
-branch's script, via `--root`) and then the pull request, both on the same runner. The job fails when
-a workload's median is more than 1.5× the base's. If the base can't be benched, the job falls back to
+The `bench` job in CI benches the base commit's library (`--lib`) and then the pull request's, both
+on the same runner and both on the pull request's data, so the two sides get identical inputs. The job
+fails when a workload fails, or when its median is more than 1.5× the base's. If the base can't be
+benched (for a workload, say the data needs something only the pull request's library has), the job falls back to
 the committed [`bench/baseline.json`](bench/baseline.json): it compares normalized times and fails
 above 2×. The job summary shows both comparisons, the replayed compile's model usage and the snapshot
 sizes. After an intended speed change, re-record the baseline with

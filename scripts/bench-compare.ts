@@ -151,7 +151,7 @@ if (size) {
   );
 }
 
-if (failures.length) lines.push('', `**Regressed:** ${failures.join(', ')}.`);
+if (failures.length) lines.push('', `**Failed or regressed:** ${failures.join(', ')}.`);
 const md = lines.join('\n') + '\n';
 console.log(md);
 if (summary) appendFileSync(summary, md);

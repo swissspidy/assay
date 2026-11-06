@@ -4,7 +4,7 @@
  * Nothing is written outside `--json`, and no model or browser is started.
  *
  *   node --expose-gc scripts/bench.ts [--filter load,verify] [--iterations N] [--warmup N]
- *                                     [--json [file]] [--root <checkout>]
+ *                                     [--json [file]] [--lib <checkout>]
  *
  * Workloads: load, verify, verify-batch, stress, compile-replay, snapshot-size. Each timed
  * workload runs `--warmup` untimed and `--iterations` timed passes over the same work and
@@ -17,14 +17,17 @@
  * the machine's speed in this run: `normalized` = workload median / calibration median, which
  * scripts/bench-compare.ts compares across machines (docs: CONTRIBUTING.md, "Benchmarks").
  *
- * `--root` runs the same workloads against another checkout's library and data (CI benches
- * the pull request's base this way), so a workload must only use APIs that checkout has.
+ * `--lib` runs the same workloads with another checkout's library (its src/) on this checkout's
+ * data, so both sides of a comparison get identical inputs (CI benches the pull request's base
+ * this way). A workload must only use APIs that checkout has; one it cannot run (say the data
+ * needs a DSL feature, or a prompt change the base's cassette keys do not match) is reported as
+ * failed and the comparison falls back to the committed baseline for it.
  */
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { cpus, platform, arch } from 'node:os';
 import { dirname, resolve } from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { gunzipSync } from 'node:zlib';
 import type * as Assay from '../src/index.ts';
 import type * as Stress from '../src/stress/index.ts';
@@ -62,7 +65,7 @@ function parseArgs(argv: string[]) {
     iterations: 7,
     warmup: 1,
     json: undefined as string | undefined,
-    root: resolve(new URL('..', import.meta.url).pathname),
+    lib: fileURLToPath(new URL('..', import.meta.url)),
   };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!;
@@ -78,28 +81,33 @@ function parseArgs(argv: string[]) {
           throw new Error(`unknown workload ${n}; one of ${WORKLOADS.join(', ')}`);
       }
       opts.filter = new Set(names as WorkloadName[]);
-    } else if (a === '--iterations') opts.iterations = positive(a, value());
-    else if (a === '--warmup') opts.warmup = Number(value());
-    else if (a === '--root') opts.root = resolve(value());
+    } else if (a === '--iterations') opts.iterations = count(a, value(), 1);
+    else if (a === '--warmup') opts.warmup = count(a, value(), 0);
+    else if (a === '--lib') opts.lib = resolve(value());
     else if (a === '--json') opts.json = argv[i + 1] && !argv[i + 1]!.startsWith('--') ? value() : '-';
     else throw new Error(`unknown option ${a}`);
   }
   return opts;
 }
 
-function positive(name: string, v: string): number {
+/** A whole number of passes, at least `min` (rejects NaN, Infinity and fractions). */
+function count(name: string, v: string, min: number): number {
   const n = Number(v);
-  if (!Number.isInteger(n) || n < 1) throw new Error(`${name} must be a positive integer`);
+  if (!Number.isSafeInteger(n) || n < min) throw new Error(`${name} must be an integer >= ${min}, got ${v}`);
   return n;
 }
 
 const opts = parseArgs(process.argv.slice(2));
-const ROOT = pathToFileURL(opts.root + '/');
+/** Data (runs, check sets, cassettes, task definitions) always comes from this checkout. */
+const ROOT = new URL('..', import.meta.url);
 const at = (path: string) => new URL(path, ROOT);
 const load = async <T>(path: string) => (await import(at(path).href)) as T;
+/** The library under test: this checkout's src/, or `--lib`'s. */
+const LIB = pathToFileURL(opts.lib + '/');
+const loadLib = async <T>(path: string) => (await import(new URL(path, LIB).href)) as T;
 
-const assay = await load<typeof Assay>('src/index.ts');
-const stress = await load<typeof Stress>('src/stress/index.ts');
+const assay = await loadLib<typeof Assay>('src/index.ts');
+const stress = await loadLib<typeof Stress>('src/stress/index.ts');
 
 // --- Statistics and timing -----------------------------------------------------------
 
@@ -417,7 +425,7 @@ async function benchVerifyBatch(): Promise<Timed> {
       }));
       return {
         items: batches.reduce((a, b) => a + b.snapshots.length, 0),
-        // The batch API, once it exists, goes here (feature-detected, so --root still benches older checkouts).
+        // The batch API, once it exists, goes here (feature-detected, so --lib still benches older checkouts).
         run: async () => {
           for (const b of batches) for (const s of b.snapshots) await assay.verify(b.checkSet, s);
         },
@@ -498,7 +506,7 @@ async function compileJobs(): Promise<CompileJob[]> {
         ...(def.skipVariants ? { skipVariants: def.skipVariants } : {}),
       },
       refs: [{ name: ref, kind: 'success', file: new URL(`references/${taskId}/${ref}.json`, app.dir), gz: false }],
-      cassette: new URL(`compiled/${taskId}.cassette.json`, app.dir).pathname,
+      cassette: fileURLToPath(new URL(`compiled/${taskId}.cassette.json`, app.dir)),
       checks: new URL(`compiled/${taskId}.checks.json`, app.dir),
     });
   }
@@ -533,7 +541,7 @@ async function compileJobs(): Promise<CompileJob[]> {
               })();
         return { name, kind: 'success' as const, file, gz: true, ...(note ? { note } : {}) };
       }),
-      cassette: at(`eval/real/compiled/${appName}/${taskId}.cassette.json`).pathname,
+      cassette: fileURLToPath(at(`eval/real/compiled/${appName}/${taskId}.cassette.json`)),
       checks: at(`eval/real/compiled/${appName}/${taskId}.checks.json`),
     });
   }
@@ -541,9 +549,9 @@ async function compileJobs(): Promise<CompileJob[]> {
 }
 
 async function benchCompileReplay(): Promise<Timed> {
-  const compiler = await load<typeof Compiler>('src/compiler/index.ts');
-  const models = await load<typeof Models>('src/model/index.ts');
-  const { costUsd, PRICING } = await load<typeof Metrics>('src/eval/metrics.ts');
+  const compiler = await loadLib<typeof Compiler>('src/compiler/index.ts');
+  const models = await loadLib<typeof Models>('src/model/index.ts');
+  const { costUsd, PRICING } = await loadLib<typeof Metrics>('src/eval/metrics.ts');
   const jobs = await compileJobs();
   let reports: { id: string; report: Compiler.CompileReport; reproduced: boolean }[] = [];
   return timed(
@@ -568,6 +576,9 @@ async function benchCompileReplay(): Promise<Timed> {
               model,
               provenance: model.recorded,
             });
+            // A compile that stops early would time as fast: fail the workload instead.
+            if (!checkSet || report.status !== 'compiled')
+              throw new Error(`${j.id} did not compile: ${report.reason ?? report.status}`);
             out.push({
               id: j.id,
               report,
@@ -663,7 +674,7 @@ const runners: Record<WorkloadName, () => Promise<Timed | Sized> | Sized> = {
   'snapshot-size': benchSnapshotSize,
 };
 if (!gc) console.warn('(run with node --expose-gc for steadier numbers: npm run bench does)');
-// A workload that fails (e.g. an older --root checkout lacks what it uses) is recorded and the others still run.
+// A workload that fails (e.g. an older --lib checkout lacks what it uses) is recorded and the others still run.
 for (const name of WORKLOADS) {
   if (!opts.filter.has(name)) continue;
   try {

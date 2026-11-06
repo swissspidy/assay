@@ -120,20 +120,26 @@ jobs:
           cache: npm
       - run: npm ci
       # The base's library resolves its dependencies from ./node_modules unless its lockfile differs.
+      # A failed install skips the base; Compare then falls back to the committed baseline.
       - name: Install the base's dependencies
-        if: steps.base.outcome == 'success'
-        run: cmp -s package-lock.json .bench-base/package-lock.json || (cd .bench-base && npm ci)
-      # This branch's bench script against the base's library and data, on the same runner, so
-      # the comparison does not depend on how fast the runner is. A base it cannot run is skipped.
-      - name: Bench the base
+        id: base-deps
         if: steps.base.outcome == 'success'
         continue-on-error: true
-        run: node --expose-gc scripts/bench.ts --root .bench-base --json ci-results/bench-base.json
+        run: cmp -s package-lock.json .bench-base/package-lock.json || (cd .bench-base && npm ci)
+      # The base's library (--lib) on this commit's data, on the same runner: identical inputs, and
+      # the comparison does not depend on how fast the runner is. A base it cannot run is skipped.
+      - name: Bench the base
+        if: steps.base-deps.outcome == 'success'
+        continue-on-error: true
+        run: node --expose-gc scripts/bench.ts --lib .bench-base --json ci-results/bench-base.json
+      # Fails (after writing its results) when a workload fails.
       - name: Bench this commit
         run: node --expose-gc scripts/bench.ts --json ci-results/bench.json
-      # Fails when a workload's median is over 1.5x the base's (or, without a base, 2x the
-      # committed baseline after normalizing for machine speed).
+      # Fails when a workload failed or its median is over 1.5x the base's (or, without a base
+      # number, 2x the committed baseline after normalizing for machine speed). Runs even after a
+      # failed workload, so the summary shows the error next to the other comparisons.
       - name: Compare
+        if: ${{ !cancelled() && hashFiles('ci-results/bench.json') != '' }}
         run: node scripts/bench-compare.ts ci-results/bench.json --base ci-results/bench-base.json --baseline bench/baseline.json --summary "$GITHUB_STEP_SUMMARY"
       - name: Upload results
         if: always()
