@@ -23,7 +23,9 @@ import { MAX_TOLERANCE, checkSetSchema } from './schema.ts';
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 const validateShape = ajv.compile(checkSetSchema);
-const schemaCompiler = schemaAjv();
+let schemaCompiler = schemaAjv();
+let compiledHere = 0;
+const SCHEMA_LIMIT = 1_000;
 
 export interface ValidationReport {
   ok: boolean;
@@ -517,6 +519,12 @@ function checkSchema(s: unknown, at: string, errors: string[]): void {
   const key = plainJson(s) ? JSON.stringify(s) : undefined;
   if (key !== undefined && compiledSchemas.has(key)) return;
   try {
+    // Ajv keeps every schema it compiles; only whether this one compiles matters here, so start
+    // a fresh Ajv every SCHEMA_LIMIT attempts, failed ones included.
+    if (++compiledHere > SCHEMA_LIMIT) {
+      schemaCompiler = schemaAjv();
+      compiledHere = 1;
+    }
     schemaCompiler.compile(s as object);
     if (key !== undefined && !/"\$(?:id|anchor|dynamicAnchor|recursiveAnchor)"/.test(key)) {
       if (compiledSchemas.size >= 10_000) compiledSchemas.clear();
@@ -524,13 +532,6 @@ function checkSchema(s: unknown, at: string, errors: string[]): void {
     }
   } catch (e) {
     errors.push(`${at}: invalid JSON Schema: ${(e as Error).message}`);
-  } finally {
-    // Only whether it compiles matters here; drop Ajv's own copy so its cache does not grow.
-    try {
-      schemaCompiler.removeSchema(s as object);
-    } catch {
-      // Not cached (e.g. a boolean schema): nothing to drop.
-    }
   }
 }
 

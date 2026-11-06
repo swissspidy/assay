@@ -7,7 +7,12 @@ import { canonicalJson } from '../snapshot/digest.ts';
 
 // Draft 2019-09, so minContains and maxContains (which the stress test also mutates) are
 // enforced; draft-07 schemas mean the same there. Ajv's default (draft-07) ignored them.
-const ajv = schemaAjv({ allErrors: false });
+// Replaced after it has compiled SCHEMA_LIMIT schemas: Ajv keeps every schema it has compiled
+// (in its cache and in its code-generation scope), and removeSchema() clears only the cache.
+// Validators already compiled hold their own code and keep working.
+let ajv = schemaAjv({ allErrors: false });
+let compiled = 0;
+const SCHEMA_LIMIT = 1_000;
 
 /**
  * An Ajv for the JSON Schemas inside check sets: draft 2019-09, with the draft-07 meta-schema
@@ -30,14 +35,13 @@ export function compileSchema(schema: JsonSchema): ValidateFunction {
   const key = canonicalJson(schema);
   fn = schemaCache.get(key);
   if (!fn) {
-    fn = ajv.compile(schema as object | boolean);
-    // Bounded like the other caches: a long-running process can compile many schemas. Ajv keeps
-    // its own cache of every compiled schema, so clear that too; removeSchema() with no argument
-    // keeps the meta-schemas, and validators already compiled keep working.
-    if (schemaCache.size >= 1_000) {
+    // Every attempt counts, failed ones included: Ajv can keep part of a schema that failed.
+    if (++compiled > SCHEMA_LIMIT) {
+      ajv = schemaAjv({ allErrors: false });
+      compiled = 1;
       schemaCache.clear();
-      ajv.removeSchema();
     }
+    fn = ajv.compile(schema as object | boolean);
     schemaCache.set(key, fn);
   }
   if (isObject) schemaObjects.set(schema, fn);
