@@ -65,6 +65,21 @@ await expectOutcome(page, checks, { probes });
 `verify` validates the check set first and throws `CheckSetError` if it is invalid. `evaluate` is
 the same check run without validation or a record, for hot loops.
 
+To verify many runs of one task (an evaluation, a nightly batch), `verifyMany` returns what
+`verify` returns for each snapshot, in order, and runs each check across all of them in turn:
+
+```ts
+import { verifyMany } from '@swissspidy/assay';
+
+const results = await verifyMany(checks, snapshots, { recordDir: 'assay-records' });
+const failed = results.filter((r) => r.outcome.verdict !== 'success');
+```
+
+Both index a snapshot and prepare a check set once per object and reuse that on later calls, so a
+repeated `verify` costs tens of microseconds
+([ADR 0015](docs/adr/0015-evidence-store-and-compiled-checks.md)). Do not edit a snapshot or check
+set after verifying it; edit a copy.
+
 ## Concepts
 
 - **Evidence snapshot.** What a run left behind: the accessibility tree, visible text, URL, network
@@ -423,6 +438,7 @@ five ([ADR 0011](docs/adr/0011-route-robust-compilation.md)).
 - [ADR 0012](docs/adr/0012-snapshot-frames-pages-bodies.md): frames, open pages and form bodies in snapshots
 - [ADR 0013](docs/adr/0013-review-workflow-and-signed-locks.md): the review workflow and signed locks
 - [ADR 0014](docs/adr/0014-sameas-tolerance-and-nested-mutants.md): `sameAs` tolerance and nested JSON array mutants
+- [ADR 0015](docs/adr/0015-evidence-store-and-compiled-checks.md): the evidence store, compiled check plans and `verifyMany`
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
 - Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)
 

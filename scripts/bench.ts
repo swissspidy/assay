@@ -427,9 +427,12 @@ async function benchVerifyBatch(): Promise<Timed> {
       }));
       return {
         items: batches.reduce((a, b) => a + b.snapshots.length, 0),
-        // The batch API, once it exists, goes here (feature-detected, so --lib still benches older checkouts).
+        // verifyMany where the library has it; feature-detected so --lib still benches older checkouts.
         run: async () => {
-          for (const b of batches) for (const s of b.snapshots) await assay.verify(b.checkSet, s);
+          const many = (assay as { verifyMany?: (cs: unknown, s: unknown[]) => Promise<unknown> }).verifyMany;
+          for (const b of batches)
+            if (many) await many(b.checkSet, b.snapshots);
+            else for (const s of b.snapshots) await assay.verify(b.checkSet, s);
         },
       };
     },

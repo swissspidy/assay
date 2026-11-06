@@ -2,6 +2,7 @@ import type { Comparison, Json, Money, Tolerance } from '../types.ts';
 import { compileSchema, schemaErrors } from './json.ts';
 import { canonical, stripGlobal } from '../text.ts';
 import { canonicalJson } from '../snapshot/digest.ts';
+import { regExp } from './once.ts';
 import {
   NormalizeError,
   daysBetween,
@@ -184,7 +185,7 @@ export function compare(v: TypedValue, cmp: Comparison): CompareOutcome {
     }
     if ('regex' in cmp) {
       if (v.type !== 'string') throw mismatch('regex', v);
-      const ok = new RegExp(cmp.regex, stripGlobal(cmp.flags)).test(canonical(v.value));
+      const ok = regExp(cmp.regex, stripGlobal(cmp.flags)).test(canonical(v.value));
       return { ok, message: `${shown} ${ok ? 'matches' : 'does not match'} /${cmp.regex}/${cmp.flags ?? ''}` };
     }
     if ('approx' in cmp) {

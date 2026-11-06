@@ -23,7 +23,9 @@ import { MAX_TOLERANCE, checkSetSchema } from './schema.ts';
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 const validateShape = ajv.compile(checkSetSchema);
-const schemaCompiler = schemaAjv();
+let schemaCompiler = schemaAjv();
+let compiledHere = 0;
+const SCHEMA_LIMIT = 1_000;
 
 export interface ValidationReport {
   ok: boolean;
@@ -44,6 +46,9 @@ type VType = 'string' | 'number' | 'money' | 'date' | 'datetime' | 'boolean' | '
 export function validateCheckSet(input: unknown): ValidationReport {
   const errors: string[] = [];
   const warnings: string[] = [];
+  // A check set built in code can contain itself; JSON cannot, and every walk below would overflow.
+  const cycle = cycleAt(input);
+  if (cycle !== undefined) return { ok: false, errors: [`${cycle} contains itself (a cycle)`], warnings };
   if (!validateShape(input)) {
     for (const e of validateShape.errors ?? [])
       errors.push(
@@ -456,6 +461,19 @@ export function assertValidCheckSet(input: unknown): CheckSet {
   return input as CheckSet;
 }
 
+/** The JSON Pointer of the first value that contains itself, or undefined when there is none. */
+function cycleAt(v: unknown, at = '', path = new Set<object>()): string | undefined {
+  if (!v || typeof v !== 'object') return undefined;
+  if (path.has(v)) return at || '/';
+  path.add(v);
+  for (const [k, x] of Object.entries(v)) {
+    const c = cycleAt(x, `${at}/${k}`, path);
+    if (c !== undefined) return c;
+  }
+  path.delete(v);
+  return undefined;
+}
+
 function dedupe(xs: string[]): string[] {
   return [...new Set(xs)];
 }
@@ -490,12 +508,43 @@ function checkTarget(t: Target, at: string, errors: string[]): void {
   for (const l of 'anchors' in t ? t.anchors : [t]) checkLocator(l, at, errors);
 }
 
+/**
+ * Schemas (as JSON) that compiled. Ajv caches by schema object, so a fresh copy of a check set
+ * (parsed again from its file) recompiled every schema; a schema that compiled once compiles
+ * again. Not for schemas that register a name (`$id`, anchors): compiling those twice fails.
+ */
+const compiledSchemas = new Set<string>();
+
 function checkSchema(s: unknown, at: string, errors: string[]): void {
+  const key = plainJson(s) ? JSON.stringify(s) : undefined;
+  if (key !== undefined && compiledSchemas.has(key)) return;
   try {
+    // Ajv keeps every schema it compiles; only whether this one compiles matters here, so start
+    // a fresh Ajv every SCHEMA_LIMIT attempts, failed ones included.
+    if (++compiledHere > SCHEMA_LIMIT) {
+      schemaCompiler = schemaAjv();
+      compiledHere = 1;
+    }
     schemaCompiler.compile(s as object);
+    if (key !== undefined && !/"\$(?:id|anchor|dynamicAnchor|recursiveAnchor)"/.test(key)) {
+      if (compiledSchemas.size >= 10_000) compiledSchemas.clear();
+      compiledSchemas.add(key);
+    }
   } catch (e) {
     errors.push(`${at}: invalid JSON Schema: ${(e as Error).message}`);
   }
+}
+
+/** Plain JSON data: what JSON.stringify writes in full (no undefined, functions or class instances). */
+function plainJson(v: unknown): boolean {
+  if (v === null || typeof v === 'string' || typeof v === 'boolean') return true;
+  if (typeof v === 'number') return Number.isFinite(v);
+  if (Array.isArray(v)) {
+    for (let i = 0; i < v.length; i++) if (!(i in v) || !plainJson(v[i])) return false;
+    return true;
+  }
+  if (typeof v !== 'object' || Object.getPrototypeOf(v) !== Object.prototype) return false;
+  return Object.values(v).every(plainJson);
 }
 
 function sourceType(src: ValueSource): VType {
