@@ -6,7 +6,7 @@
 import type { Page } from '@playwright/test';
 import type { CheckSet, EvidenceSnapshot, Outcome, Requirement, RequirementResult, Verdict } from '../types.ts';
 import { kleeneAnd } from '../plan/assertions.ts';
-import { compileChecks, runPlan, type CheckPlan } from '../plan/plan.ts';
+import { compileChecks, runPlan, runPlanMany, type CheckPlan } from '../plan/plan.ts';
 import { buildStore } from '../store/store.ts';
 import { checkSetDigest } from '../snapshot/digest.ts';
 import type { ModelClient } from '../model/types.ts';
@@ -128,6 +128,25 @@ export async function verify(
   const t0 = performance.now();
   const checksOutcome = runPlan(plan, buildStore(snapshot));
   return finish(plan, cs, snapshot, checksOutcome, performance.now() - t0, opts);
+}
+
+/**
+ * Verify many runs of one task: the same results as `verify` on each snapshot in turn, in
+ * order. The check set is validated (and its lock checked) once, and its checks run one at a
+ * time across all snapshots before escalation and records follow, run by run (ADR 0015).
+ */
+export async function verifyMany(
+  checkSet: CheckSet | unknown,
+  snapshots: readonly EvidenceSnapshot[],
+  opts: VerifyOptions = {},
+): Promise<VerifyResult[]> {
+  const [plan, cs] = prepare(checkSet, opts);
+  const timings = new Float64Array(snapshots.length);
+  const outcomes = runPlanMany(plan, snapshots.map(buildStore), {}, timings);
+  const results: VerifyResult[] = [];
+  for (const [i, snapshot] of snapshots.entries())
+    results.push(await finish(plan, cs, snapshot, outcomes[i]!, timings[i]!, opts));
+  return results;
 }
 
 /**

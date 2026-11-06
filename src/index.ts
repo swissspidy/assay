@@ -6,7 +6,13 @@
  * adapter) and `/eval` (baselines and metrics).
  */
 export * from './types.ts';
-export { verify, type EscalationPolicy, type VerifyOptions, type VerifyResult } from './verifier/escalate.ts';
+export {
+  verify,
+  verifyMany,
+  type EscalationPolicy,
+  type VerifyOptions,
+  type VerifyResult,
+} from './verifier/escalate.ts';
 export { evaluate, type EvaluateOptions } from './runtime/evaluate.ts';
 export { loadSnapshot } from './snapshot/load.ts';
 export { snapshotDigest, checkSetDigest } from './snapshot/digest.ts';

@@ -7,7 +7,7 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { gunzipSync } from 'node:zlib';
-import { verify } from '../../src/index.ts';
+import { verify, verifyMany } from '../../src/index.ts';
 import { stressTest } from '../../src/stress/index.ts';
 import { collectCases, digest, GOLDEN, normalize, type Golden, type VerifyCase } from './equivalence/cases.ts';
 
@@ -43,6 +43,28 @@ test('verify returns the golden outcome and record for every case, cold and warm
     same(c.id, await result(structuredClone(c.checkSet), structuredClone(c.snapshot)));
   // Shared objects: the first call builds the store and the plan, later calls reuse them.
   for (let pass = 0; pass < 2; pass++) for (const c of cases.verify) same(c.id, await result(c.checkSet, c.snapshot));
+});
+
+test('verifyMany returns the golden outcome and record for every case, and what verify returns', async () => {
+  test.setTimeout(120_000);
+  const bySet = Map.groupBy(cases.verify, (c) => c.checkSet);
+  for (const [checkSet, group] of bySet) {
+    const many = await verifyMany(
+      checkSet,
+      group.map((c) => c.snapshot),
+    );
+    many.forEach((r, i) => same(group[i]!.id, normalize(r)));
+  }
+  // With options that reach the record, on fresh copies (nothing cached yet).
+  const opts = { taskId: 'batch', agentReport: 'I did it.' };
+  for (const [checkSet, group] of [...bySet].slice(0, 12)) {
+    const snaps = group.map((c) => structuredClone(c.snapshot));
+    const one = await Promise.all(snaps.map((s) => verify(checkSet, s, opts)));
+    const many = await verifyMany(structuredClone(checkSet), snaps, opts);
+    expect(many.map(normalize)).toEqual(one.map(normalize));
+    expect(JSON.stringify(many.map(normalize))).toBe(JSON.stringify(one.map(normalize)));
+  }
+  expect(await verifyMany(cases.verify[0]!.checkSet, [])).toEqual([]);
 });
 
 test('stressTest returns the golden report for every committed check set', () => {
