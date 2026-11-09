@@ -1,0 +1,285 @@
+{
+ "schema": "assay.cassette/v1",
+ "model": "anthropic:claude-opus-5-5@high",
+ "recordedAt": "2026-11-09T21:51:15.874Z",
+ "turns": {
+  "sha256:76c199ee16bb0bf4fd43f45802e7fc25f946d098a78b9e43c8be694736b1c59d": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01JCaEJ8jkfnCMF2jrmmd3s1",
+     "name": "submit_rubric",
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The newsletter subscription is saved.",
+        "field": "outcomes",
+        "quote": "the newsletter subscription is saved"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
+        "text": "The newsletter checkbox in the preferences is checked.",
+        "field": "outcomes",
+        "quote": "the newsletter checkbox in the preferences is checked"
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01JCaEJ8jkfnCMF2jrmmd3s1",
+     "name": "submit_rubric",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "requirements": [
+       {
+        "id": "R1",
+        "kind": "hard",
+        "text": "The newsletter subscription is saved.",
+        "field": "outcomes",
+        "quote": "the newsletter subscription is saved"
+       },
+       {
+        "id": "R2",
+        "kind": "hard",
+        "text": "The newsletter checkbox in the preferences is checked.",
+        "field": "outcomes",
+        "quote": "the newsletter checkbox in the preferences is checked"
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 1151,
+    "outputTokens": 177,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 1147
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:0356bfe9e13e07f6d1c526a92cb5a5c6a6b591c434e5dd50618f774964e88f13": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01QQDL3ooRQW1yAnFeGXduiQ",
+     "name": "page_outline",
+     "input": {}
+    },
+    {
+     "id": "toolu_01SW5oaihD1V9jeAnCw1rN3n",
+     "name": "probes",
+     "input": {}
+    },
+    {
+     "id": "toolu_01DynKeQV7ZVYQ8cZNhJbay6",
+     "name": "mined_candidates",
+     "input": {}
+    }
+   ],
+   "raw": [
+    {
+     "type": "tool_use",
+     "id": "toolu_01QQDL3ooRQW1yAnFeGXduiQ",
+     "name": "page_outline",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01SW5oaihD1V9jeAnCw1rN3n",
+     "name": "probes",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01DynKeQV7ZVYQ8cZNhJbay6",
+     "name": "mined_candidates",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {}
+    }
+   ],
+   "usage": {
+    "inputTokens": 19401,
+    "outputTokens": 75,
+    "cacheReadTokens": 0,
+    "cacheWriteTokens": 19397
+   },
+   "model": "claude-opus-5-5"
+  },
+  "sha256:05f75030421142cbb3e088d873b4acd516d4f35033b26f11c88fd45c400b4616": {
+   "stop": "tool_use",
+   "text": "",
+   "toolCalls": [
+    {
+     "id": "toolu_01HRGNFM9NhUucP8pgjPrBfb",
+     "name": "submit_checks",
+     "input": {
+      "checks": [
+       {
+        "id": "R1-probe-newsletter",
+        "requirement": "R1",
+        "description": "The backend settings record has newsletter set to true.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "settings",
+          "pointer": "/newsletter"
+         },
+         "expect": {
+          "equals": true
+         }
+        }
+       },
+       {
+        "id": "R2-checkbox-checked",
+        "requirement": "R2",
+        "description": "The newsletter checkbox inside the Preferences form is checked.",
+        "assert": {
+         "kind": "state",
+         "target": {
+          "anchors": [
+           {
+            "role": "checkbox",
+            "name": {
+             "contains": "newsletter",
+             "ignoreCase": true
+            },
+            "within": {
+             "role": "form",
+             "name": {
+              "equals": "Preferences",
+              "ignoreCase": true
+             }
+            }
+           },
+           {
+            "role": "checkbox",
+            "name": {
+             "contains": "newsletter",
+             "ignoreCase": true
+            },
+            "landmark": {
+             "role": "form",
+             "name": {
+              "contains": "Preferences",
+              "ignoreCase": true
+             }
+            }
+           }
+          ]
+         },
+         "expect": {
+          "checked": true
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "raw": [
+    {
+     "type": "thinking",
+     "thinking": "",
+     "signature": "CAQStAsKEAgTGAI4AUIIdGhpbmtpbmcSDOwiYthOCzmtaKRatBoMw+tPJOBJ8YkjshGOIjC8Y9YQ7ETdqmI16o/DV4xi3x5SRBXcKbAXhhh4daU219k5Piijvbda8hidZZt16Rkq0QofRRJ1temj0905+QL9dV1vWHgemHxfVn7i8SFQuqGYMgyOyLtHwBXcVTjMaI6tEmU0UowdxT5Uggf0ms8TLPkqeXoWzZY/a3/Ya5XSjTHJBa7HvHR2tbMI6+7c4PupNl/3ESWeybQYwgjKbAHd/BLp6idZ7qSGNq94WaeQDhJrRVI3oU/9o4TV1TDrAPnJMTtP43TKdiA3mNm4gkOhnziqJFRR+fZqiqVJcwii2q43CUHWXG9oCiaW+GjePXT9N57dGnrdXPfZTnqMgvjxsMx0Sx/39zRNEuxOAqLjej0XBRNbp7Dq1DxjpDg2ACBuL/7aUw25bVI5u4fDrhRITfR1Zvhqm51TrvTMpri+jdjr5lq9iIBprLmKzDtrNtsxu8uX7pv5QmzToklY53JehZxLHBdtIJ7KTVfZQbmUaFWttErxv+7hx1ELmifz7+74eLTcMHh1rcdC7hQDfiBzsumNzt4vqUgUlTckQf/8GYKbPvXYtSCQRplUr/sNmDIR0KFFQGXqvn/HXgAAhT9MAJpipU6va1SaXUiGcQ8qpntQqLK602SDLymAmcFwf/ZPpnyGdIY8RCewdQDokpo/DY4OWCEO6ZOX1Wpm4JYjvLah4/49dZvcEMqwinL028tbETDY456UNzaPvyK+MpSOoo1s9/Q1m0JEdZ9OfNVnHnhqnfiHiMjLADc7H5R+Od7iHtnXvKtbGkKsw+92rS8IzzhtFOvywqjiOGFcwe+CMx/qfGZH2fb2YLdAN3JoaQ2hP9mZiMxfj+hCdsAN5QVSXCuasNSdCNDwcJZ33ZoE0xkD6/28DhP7HNSm9TwH49BAiCCqIUamc+rqp7M2A6wyXAMiqppK845I4zXhCei1QLZIHD4Qu7xpiu6WJ+ySkbnfc2VFUuwqBL5Amzfy31vg8ruZzB9ZpBTpHOoDrajKV/Ue7Fp2nSEnBwqcieEo66H2FGqTJlCyrZbYtF+R6IC4dy3sNkBOqmPLl9zOjsC9frlzBYF+YsUTu6j6H9JMd+XqUUSPuXYQdshtn7d0/Dt3kKmB4PpHaZ3mtQV6rib228hHUdtcurJsbjjazrjAhoVGsswdVoj6Jw/B4fINYVlECE3VYnBlbA+1eULkgWEAJ8GCvl3986qwqDrXKK2Z+aDl+yiVWBMqHhVf05v69b8gL6lK9C1uATuSklV+ACsIo7LIROkzsD4VimmDt+vv5x55oo+iw8ORBLSkT5KPkN7fO47qmS8sdwVZ5zq/bgWifwXvKdTnUyGGfxkf17NlcN5C6RB4LrImbnpx5y95wz616gnRRoy6TB9canhCjF+Ve9QGw1nQ2+fhk3jxk6ge9l8gBNcZ/MofHFfMROH8ljn5qA1+hd3F13YPC4wRttP0BUIX65ct8OS/zYm7O9g2E+iqyLGKnXFeEvPMgrHgQgjPebICXLFIai3hRhVfH45lxaYF3U+3PW2a3ASadfEGuF182U/SwbFE0cmH2EIxXB9blFtlFVh48cRkGCD+/o+YtDee1nUhLhZr/aRezkAECXeiwuf5JH2npMsAkYYpqkh7/aLyE5kXQqN6kkW4VA0lXuJYAUovEh3TXC9m8ldD6VEZXhABEnaNHb50Rhk8HcCz5aMuKG7TP79c4qrEHqrm58mjCJRBQVvO4dU+J5xpYrrlu/HChnmEQ5P/Q6eeJWpGVfj57IaxjUBfXvDIfGwTU0LM77noy5T81aBq63Dme8JQxzY8q+rNeUC2BbuO4xYUflHx38bgr8aUQ6awnz7GDBfs6hr6MeZD1amO/cCdpjUuyONbDhJSGTmXMal505aK3I4/xRgB"
+    },
+    {
+     "type": "tool_use",
+     "id": "toolu_01HRGNFM9NhUucP8pgjPrBfb",
+     "name": "submit_checks",
+     "caller": {
+      "type": "direct"
+     },
+     "input": {
+      "checks": [
+       {
+        "id": "R1-probe-newsletter",
+        "requirement": "R1",
+        "description": "The backend settings record has newsletter set to true.",
+        "assert": {
+         "kind": "value",
+         "source": {
+          "from": "probe",
+          "probe": "settings",
+          "pointer": "/newsletter"
+         },
+         "expect": {
+          "equals": true
+         }
+        }
+       },
+       {
+        "id": "R2-checkbox-checked",
+        "requirement": "R2",
+        "description": "The newsletter checkbox inside the Preferences form is checked.",
+        "assert": {
+         "kind": "state",
+         "target": {
+          "anchors": [
+           {
+            "role": "checkbox",
+            "name": {
+             "contains": "newsletter",
+             "ignoreCase": true
+            },
+            "within": {
+             "role": "form",
+             "name": {
+              "equals": "Preferences",
+              "ignoreCase": true
+             }
+            }
+           },
+           {
+            "role": "checkbox",
+            "name": {
+             "contains": "newsletter",
+             "ignoreCase": true
+            },
+            "landmark": {
+             "role": "form",
+             "name": {
+              "contains": "Preferences",
+              "ignoreCase": true
+             }
+            }
+           }
+          ]
+         },
+         "expect": {
+          "checked": true
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "inputTokens": 22041,
+    "outputTokens": 657,
+    "cacheReadTokens": 19397,
+    "cacheWriteTokens": 2642
+   },
+   "model": "claude-opus-5-5"
+  }
+ }
+}
