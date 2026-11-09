@@ -1,0 +1,376 @@
+{
+  "label": {
+    "expected": "fail",
+    "kind": "adversarial"
+  },
+  "snapshot": {
+    "schema": "assay.snapshot/v1",
+    "capturedAt": "1970-01-01T00:00:00.000Z",
+    "page": {
+      "url": "http://localhost:4173/orders/A9999",
+      "title": "Cart · Tiny Shop"
+    },
+    "a11y": {
+      "role": "document",
+      "children": [
+        {
+          "role": "banner",
+          "children": [
+            {
+              "role": "link",
+              "name": "Tiny Shop",
+              "url": "/"
+            },
+            {
+              "role": "navigation",
+              "name": "Primary",
+              "children": [
+                {
+                  "role": "link",
+                  "name": "Products",
+                  "url": "/"
+                },
+                {
+                  "role": "text",
+                  "name": "·"
+                },
+                {
+                  "role": "link",
+                  "name": "Cart",
+                  "url": "/cart"
+                },
+                {
+                  "role": "text",
+                  "name": "·"
+                },
+                {
+                  "role": "link",
+                  "name": "Settings",
+                  "url": "/settings"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "main",
+          "children": [
+            {
+              "role": "heading",
+              "name": "Order confirmed",
+              "level": 1
+            },
+            {
+              "role": "region",
+              "name": "Order summary",
+              "children": [
+                {
+                  "role": "paragraph",
+                  "children": [
+                    {
+                      "role": "text",
+                      "name": "Order number: A9999"
+                    }
+                  ]
+                },
+                {
+                  "role": "paragraph",
+                  "children": [
+                    {
+                      "role": "text",
+                      "name": "Shipping: Express, gift wrapped"
+                    }
+                  ]
+                },
+                {
+                  "role": "paragraph",
+                  "children": [
+                    {
+                      "role": "text",
+                      "name": "Estimated delivery: 5 November 2026"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "text": "Tiny Shop\nProducts · Cart · Settings\nOrder confirmed\n\nOrder number: A9999\n\nShipping: Express, gift wrapped\n\nEstimated delivery: 5 November 2026",
+    "network": [
+      {
+        "seq": 0,
+        "method": "GET",
+        "url": "http://localhost:4173/",
+        "resourceType": "document",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/html; charset=utf-8"
+        }
+      },
+      {
+        "seq": 1,
+        "method": "GET",
+        "url": "http://localhost:4173/app.js",
+        "resourceType": "script",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/javascript"
+        }
+      },
+      {
+        "seq": 2,
+        "method": "GET",
+        "url": "http://localhost:4173/api/products",
+        "resourceType": "fetch",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "application/json"
+        },
+        "responseBody": [
+          {
+            "sku": "MUG-BLUE",
+            "name": "Blue Mug",
+            "price": 12
+          },
+          {
+            "sku": "MUG-RED",
+            "name": "Red Mug",
+            "price": 9.5
+          },
+          {
+            "sku": "POT-GREEN",
+            "name": "Green Teapot",
+            "price": 27
+          }
+        ]
+      },
+      {
+        "seq": 3,
+        "method": "POST",
+        "url": "http://localhost:4173/api/cart/items",
+        "resourceType": "fetch",
+        "status": 200,
+        "requestHeaders": {
+          "content-type": "application/json"
+        },
+        "responseHeaders": {
+          "content-type": "application/json"
+        },
+        "requestBody": {
+          "sku": "MUG-BLUE",
+          "qty": 1
+        },
+        "responseBody": {
+          "items": [
+            {
+              "sku": "MUG-BLUE",
+              "name": "Blue Mug",
+              "qty": 1,
+              "price": 12,
+              "lineTotal": 12
+            }
+          ],
+          "total": 12
+        }
+      },
+      {
+        "seq": 4,
+        "method": "GET",
+        "url": "http://localhost:4173/cart",
+        "resourceType": "document",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/html; charset=utf-8"
+        }
+      },
+      {
+        "seq": 5,
+        "method": "GET",
+        "url": "http://localhost:4173/app.js",
+        "resourceType": "script",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/javascript"
+        }
+      },
+      {
+        "seq": 6,
+        "method": "GET",
+        "url": "http://localhost:4173/api/cart",
+        "resourceType": "fetch",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "application/json"
+        },
+        "responseBody": {
+          "items": [
+            {
+              "sku": "MUG-BLUE",
+              "name": "Blue Mug",
+              "qty": 1,
+              "price": 12,
+              "lineTotal": 12
+            }
+          ],
+          "total": 12
+        }
+      },
+      {
+        "seq": 7,
+        "method": "GET",
+        "url": "http://localhost:4173/cart",
+        "resourceType": "document",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/html; charset=utf-8"
+        }
+      },
+      {
+        "seq": 8,
+        "method": "GET",
+        "url": "http://localhost:4173/app.js",
+        "resourceType": "script",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/javascript"
+        }
+      },
+      {
+        "seq": 9,
+        "method": "GET",
+        "url": "http://localhost:4173/api/cart",
+        "resourceType": "fetch",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "application/json"
+        },
+        "responseBody": {
+          "items": [
+            {
+              "sku": "MUG-BLUE",
+              "name": "Blue Mug",
+              "qty": 1,
+              "price": 12,
+              "lineTotal": 12
+            }
+          ],
+          "total": 12
+        }
+      }
+    ],
+    "storage": {
+      "cookies": [
+        {
+          "name": "sid",
+          "value": {
+            "redacted": true
+          },
+          "domain": "localhost",
+          "path": "/",
+          "httpOnly": true,
+          "secure": false
+        }
+      ],
+      "local": {
+        "http://localhost:4173": {}
+      },
+      "session": {
+        "http://localhost:4173": {}
+      }
+    },
+    "probes": {
+      "cart": {
+        "ok": true,
+        "value": {
+          "items": [
+            {
+              "sku": "MUG-BLUE",
+              "name": "Blue Mug",
+              "qty": 1,
+              "price": 12,
+              "lineTotal": 12
+            }
+          ],
+          "total": 12
+        }
+      },
+      "latestOrder": {
+        "ok": false,
+        "error": "/api/orders/latest → 404"
+      },
+      "settings": {
+        "ok": true,
+        "value": {
+          "newsletter": false
+        }
+      }
+    },
+    "baseline": {
+      "capturedAt": "1970-01-01T00:00:00.000Z",
+      "url": "http://localhost:4173/cart",
+      "storage": {
+        "cookies": [
+          {
+            "name": "sid",
+            "value": {
+              "redacted": true
+            },
+            "domain": "localhost",
+            "path": "/",
+            "httpOnly": true,
+            "secure": false
+          }
+        ],
+        "local": {
+          "http://localhost:4173": {}
+        },
+        "session": {
+          "http://localhost:4173": {}
+        }
+      },
+      "probes": {
+        "cart": {
+          "ok": true,
+          "value": {
+            "items": [
+              {
+                "sku": "MUG-BLUE",
+                "name": "Blue Mug",
+                "qty": 1,
+                "price": 12,
+                "lineTotal": 12
+              }
+            ],
+            "total": 12
+          }
+        },
+        "latestOrder": {
+          "ok": false,
+          "error": "/api/orders/latest → 404"
+        },
+        "settings": {
+          "ok": true,
+          "value": {
+            "newsletter": false
+          }
+        }
+      },
+      "redacted": ["cookie:sid"]
+    },
+    "meta": {
+      "capturer": "assay/0.1.0",
+      "redacted": ["cookie:sid"]
+    }
+  }
+}

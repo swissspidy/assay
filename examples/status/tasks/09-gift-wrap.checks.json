@@ -1,0 +1,81 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/gift-wrap",
+  "version": "1",
+  "task": {
+    "instruction": "Check out my cart as a gift: it must be gift wrapped.",
+    "outcomes": "Then the order is gift wrapped"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The order is gift wrapped",
+      "source": {
+        "field": "outcomes",
+        "quote": "the order is gift wrapped"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "The browser submitted an order with giftWrap = true and the server accepted it.",
+      "assert": {
+        "kind": "request",
+        "match": {
+          "method": "POST",
+          "url": {
+            "path": "/api/orders"
+          },
+          "status": 201,
+          "requestBody": {
+            "type": "object",
+            "required": ["giftWrap"],
+            "properties": {
+              "giftWrap": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "C2",
+      "requirement": "R1",
+      "description": "The backend's latest order (probe 'latestOrder') is gift wrapped.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "latestOrder",
+          "pointer": "/giftWrap"
+        },
+        "expect": {
+          "equals": true
+        }
+      }
+    }
+  ],
+  "locked": {
+    "by": "alice",
+    "at": "2026-11-09T09:00:00.000Z",
+    "content": "sha256:3322a6efec2fe8170d1b72c7a3cb8c6224ed49ff70f6553da97bc6a88ac236a9",
+    "items": {
+      "id": "sha256:01c5fd0ad3aae18af21711387c06a27d3c715c2dc37336e1f42aebd4b04cd982",
+      "version": "sha256:391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf",
+      "task": "sha256:86f9631058912a40b78d95ab606d7891d1d497b46393d4d1b9f45315a53f2db1",
+      "requirement:R1": "sha256:443b91b809423cd52ab7e3e32fa198d11bb0198635ebf182f8c8ac893bab2a93",
+      "check:C1": "sha256:0e0bc9df11973548a3d57e069bd81b4a93733e5da4db9b796aeb37dbb32ec043",
+      "check:C2": "sha256:dd5972c300bde36a8aad8a2982386e67dbdbd7b2f3e6ea2a5530831078c4082f"
+    },
+    "digest": "sha256:03bc89c455c7ba5198708f3bd932527d5c1baa181cfc11b3314dcea69ffcc40b",
+    "signature": {
+      "alg": "ed25519",
+      "keyId": "ed25519:b1f5ce323542975f",
+      "value": "4LIWnmBlaNDeFuKYs92y0pGkgHoVltKOeRiE720ddvk2n99VQm2XgNT4ygiyQ9JWxzEeS9/ZX1LfFHONsxRKDA=="
+    }
+  }
+}

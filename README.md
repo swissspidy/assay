@@ -363,6 +363,44 @@ labelled run is not as expected, and `--json` prints each round as a line of JSO
 
 Design: [ADR 0019](docs/adr/0019-typed-checks-matcher-and-watch.md).
 
+## Task status
+
+`assay status` shows how far each task is from production, and what blocks it:
+
+```sh
+assay status                     # the config's `checks`, or: assay status checks/ -r runs/
+assay status --stage locked      # CI: exit 1 unless every task is reviewed and locked
+```
+
+```
+Task               Valid  Covered  Locked  Stress  References  Recent  Blocker
+─────────────────  ─────  ───────  ──────  ──────  ──────────  ──────  ───────
+02-add-blue-mug    ✔      ✘        –       –       –           –       R2 has no checks
+05-set-quantity    ✔      ✔        ✘       –       –           –       changed since lock: check C1 changed
+07-express-order   ✔      ✔        ✔       ✘       –           –       C1 fails on variant express-gift-wrapped/extra-json-fields (+1 more)
+10-dark-german     ✔      ✔        ✔       ✔       ✔           ✔       ready
+
+4 tasks: 1 ready, 1 blocked at covered, 1 at locked, 1 at stress
+```
+
+Each stage is evaluated only once the one before it passed (`–`: not reached):
+
+1. **Valid**: the check set validates.
+2. **Covered**: every hard requirement has a check, and not only checks that read free page text.
+3. **Locked**: the set is approved, unchanged since, and signed by a trusted key when there are
+   any (`--trusted-key`, `ASSAY_TRUSTED_KEYS`, `trustedKeys`).
+4. **Stress**: no valid variant of a correct run is rejected (`--no-stress` leaves it out).
+5. **References**: every labelled run in `references/<task>/` is judged as labelled.
+6. **Recent**: the newest runs in `<snapshots>/<task>/` succeed; only with `snapshots` in the
+   config, and `·` (skipped) for a task without any.
+
+Runs are found as `assay watch` finds them. No model runs and no file changes. Without `--stage`
+the exit status is 0; `--json` prints `{ schema: "assay.status/v1", stages, tasks, summary }`. The
+config's `status: { stages, recentRuns: { last: 10, minPassRate: 1 } }` sets the ladder and the
+recent-runs window. In code: `formatStatus(await status({ config: 'assay.config.ts' }))`. A
+fixture with one task stopped at each stage: [examples/status](examples/status)
+([ADR 0022](docs/adr/0022-task-status.md)).
+
 ## Review and signed locks
 
 A compiled check set is a **proposal** until a reviewer approves it, which locks it, or rejects it
@@ -442,6 +480,7 @@ assay capture http://localhost:4173/cart --out runs/
 assay bench -m anthropic:claude-opus-5-5 -m openai:gpt-5  # compare models on your tasks
 assay gate --baseline runs/main --candidate runs/pr checks/  # did any task get worse?
 assay watch checks/ --stress                 # re-verify runs as you edit check sets
+assay status --stage locked                  # each task's readiness ladder and blocker
 assay checks print --ts checks/add-blue-mug.checks.json   # the set as builder TypeScript
 ```
 
@@ -642,6 +681,7 @@ five ([ADR 0011](docs/adr/0011-route-robust-compilation.md)).
 - [ADR 0019](docs/adr/0019-typed-checks-matcher-and-watch.md): the check builder, `toHaveCompleted` and `assay watch`
 - [ADR 0020](docs/adr/0020-mining-first-compiler.md): the mining-first compiler
 - [ADR 0021](docs/adr/0021-agent-regression-gate.md): `assay gate`, the agent regression gate
+- [ADR 0022](docs/adr/0022-task-status.md): `assay status`, the readiness ladder
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
 - Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)
 

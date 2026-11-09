@@ -399,6 +399,41 @@ Exit status: 0 stopped (or --once and every labelled run as expected), 1 --once 
 expected or an invalid set, 3 usage, 4 error.`,
     load: () => import('./commands/watch.ts'),
   },
+  status: {
+    summary: 'Show how far each task is on the readiness ladder, and what blocks it',
+    usage: 'assay status [checks...] [options]',
+    args: [0, Infinity],
+    options: {
+      reference: { type: 'string', multiple: true, short: 'r' },
+      stage: { type: 'string' },
+      stress: { type: 'boolean' },
+      ...TRUSTED_KEY_OPTION,
+    },
+    help: `One row per task (the check sets given, else the config's \`checks\`) with its ladder, in order:
+valid, covered (every hard requirement has a check that is not free text only), locked (a lock
+that verifies, by a trusted key when keys are given, on the set as it is now), stress (no valid
+variant of a correct run rejected), references (every labelled run judged as labelled) and
+recent (the newest runs in <snapshots>/<task>/ succeed; only with \`snapshots\` in the config).
+A stage is evaluated only when the one before it passed: ✔ passed, ✘ failed (the blocker is
+shown), – not reached, · skipped. No model runs and no file is changed.
+
+The runs of a task <name> are the .json files in <dir>/<name>/ for each --reference directory
+(default: the config's \`bench.references\`), and in references/ next to the set's directory.
+
+Options:
+  -r, --reference <dir>  A directory of runs, one subdirectory per task (repeatable)
+  --stage <name>         Exit 1 unless every task got through this stage (e.g. --stage locked)
+  --no-stress            Leave out the stress stage
+${TRUSTED_KEY_HELP}
+  --json                 Print { schema, stages, tasks, summary } as JSON
+
+The config's \`status: { stages, recentRuns: { last, minPassRate } }\` sets the stages and the
+recent-runs window (default: the newest 10, all must succeed).
+
+Exit status: 0 (or, with --stage, every task got through it), 1 a task did not get through
+--stage, 3 usage, 4 error.`,
+    load: () => import('./commands/status.ts'),
+  },
   checks: {
     summary: 'Print a check set as builder TypeScript, or a *.checks.ts module as JSON',
     usage: 'assay checks print <checks> [--ts] [options]',

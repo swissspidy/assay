@@ -1,0 +1,212 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/express-order",
+  "version": "1",
+  "task": {
+    "instruction": "Order what is in my cart with express shipping, in the name of Ada Lovelace.",
+    "outcomes": "Then an order is placed\nThen the order ships express\nThen the order confirmation is shown"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "An order is placed",
+      "source": {
+        "field": "outcomes",
+        "quote": "an order is placed"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The order ships express",
+      "source": {
+        "field": "outcomes",
+        "quote": "the order ships express"
+      }
+    },
+    {
+      "id": "R3",
+      "kind": "soft",
+      "text": "The order confirmation is shown",
+      "source": {
+        "field": "outcomes",
+        "quote": "the order confirmation is shown"
+      }
+    },
+    {
+      "id": "R4",
+      "kind": "hard",
+      "text": "The order holds what was in the cart before the task",
+      "source": {
+        "field": "instruction",
+        "quote": "Order what is in my cart"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "POST /api/orders returned 201 with status 'placed'.",
+      "assert": {
+        "kind": "request",
+        "match": {
+          "method": "POST",
+          "url": {
+            "path": "/api/orders"
+          },
+          "status": 201,
+          "responseBody": {
+            "type": "object",
+            "required": ["id", "status"],
+            "properties": {
+              "status": {
+                "const": "placed"
+              }
+            }
+          },
+          "requestBody": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {},
+              "shipping": {},
+              "giftWrap": {}
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "C2",
+      "requirement": "R2",
+      "description": "The placed order's shipping method is express (from the server's response).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "response",
+          "match": {
+            "method": "POST",
+            "url": {
+              "path": "/api/orders"
+            },
+            "status": 201
+          },
+          "pointer": "/shipping",
+          "pick": "last"
+        },
+        "expect": {
+          "equals": "express"
+        }
+      }
+    },
+    {
+      "id": "C3",
+      "requirement": "R3",
+      "description": "The browser is on an order page, or an 'Order confirmed' heading is shown.",
+      "assert": {
+        "kind": "anyOf",
+        "of": [
+          {
+            "kind": "url",
+            "match": {
+              "path": "/orders/:id"
+            }
+          },
+          {
+            "kind": "contains",
+            "scope": {
+              "role": "main"
+            },
+            "match": {
+              "role": "heading",
+              "name": {
+                "contains": "Order confirmed"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "C4",
+      "requirement": "R4",
+      "description": "An order was placed, and its items (from the server's response) are the items the cart held before the task.",
+      "assert": {
+        "kind": "allOf",
+        "of": [
+          {
+            "kind": "request",
+            "match": {
+              "method": "POST",
+              "url": {
+                "path": "/api/orders"
+              },
+              "status": 201
+            }
+          },
+          {
+            "kind": "value",
+            "source": {
+              "from": "response",
+              "match": {
+                "method": "POST",
+                "url": {
+                  "path": "/api/orders"
+                },
+                "status": 201
+              },
+              "pointer": "/items",
+              "pick": "last"
+            },
+            "normalize": [
+              {
+                "op": "items"
+              }
+            ],
+            "expect": {
+              "sameAs": {
+                "source": {
+                  "from": "probe",
+                  "probe": "cart",
+                  "pointer": "/items",
+                  "at": "before"
+                },
+                "normalize": [
+                  {
+                    "op": "items"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "locked": {
+    "by": "alice",
+    "at": "2026-11-09T09:00:00.000Z",
+    "content": "sha256:3939030c91038c67f343ae7e8ae83550519d56a0e8bdb1e11f509fbf5c98106e",
+    "items": {
+      "id": "sha256:88e96a3ec46dff36b87e09470c5f60668360a87a38b4ab3fd4b05ef79d293e51",
+      "version": "sha256:391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf",
+      "task": "sha256:a817939b8604cb3e90bc58c5eae9a1d1f01d74069b4accb7faabe39eac97b86b",
+      "requirement:R1": "sha256:e4801bb58339ae9a8b61d1fe2b673aa72b38b1235333f179302e5e19fcfdd11f",
+      "requirement:R2": "sha256:6fb1bbfb141b773add298d5b77e32c9cd177559acf49650ac77733d0129f7864",
+      "requirement:R3": "sha256:1d81939d6b0d6704c498bff8d88e51f19c15b73ebee25100b81c4fb5b3ad6fdf",
+      "requirement:R4": "sha256:9b1cd19ece4a04a53bba4c71c7a257d22397f7d0a52362f7ec6a0e68f87cd8e5",
+      "check:C1": "sha256:e89c18b51b92761298f70e9e83a702035d023a92b39be577ff423b163db4d1a0",
+      "check:C2": "sha256:470d4b393ccb59597dbc545ab5973dbbc5a3185b527f875dd47d9bb205e462ae",
+      "check:C3": "sha256:1f4c84bf2886b52fa54bddb62f7a63057de9a0cac5522b9ddefda9f5d975f39e",
+      "check:C4": "sha256:acf3b02d20c790e7ac5cc719ec4116e342a05edf12c184054a95c259964a9e97"
+    },
+    "digest": "sha256:096f92192b15bdd7ef085b5ae3b331eeb6582d57408cf1537af18192b12a547b",
+    "signature": {
+      "alg": "ed25519",
+      "keyId": "ed25519:b1f5ce323542975f",
+      "value": "aOARux4F/8KMyKILN8u1SVo2zN5/ivs0dePbIJAq/LcbwTcInq/+2BCiYb9XbkwXxnLS6lB7gd+iP3wabKqUAw=="
+    }
+  }
+}

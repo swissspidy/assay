@@ -11,7 +11,9 @@ import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'nod
 import type { CheckSet, EvidenceSnapshot, Status, Verdict } from '../../types.ts';
 import { validateCheckSet, verifyMany } from '../../index.ts';
 import { stressTest } from '../../stress/index.ts';
-import { checkSetName, discoverSets, isModuleFile, loadCheckSetFileWithDeps } from '../../checks/load.ts';
+import { checkSetName, discoverSets, isModuleFile, loadCheckSetFileWithDeps, runDirsFor } from '../../checks/load.ts';
+
+export { discoverSets, runDirsFor };
 import { CliError, EXIT, UsageError, paint, readSnapshotFile, toSnapshot, type Invocation, type Io } from '../io.ts';
 import { cliConfig } from '../config.ts';
 import { problems } from './stress.ts';
@@ -43,8 +45,6 @@ export interface SetResult {
   stress?: string;
 }
 
-export { discoverSets };
-
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`;
 
 /**
@@ -56,12 +56,6 @@ export function isScratch(path: string): boolean {
   if (parts.includes('.git') || parts.includes('node_modules')) return true;
   const name = parts.at(-1) ?? '';
   return /^\.#|~$|\.(swp|swo|swx|tmp)$|^4913$|^\.DS_Store$/.test(name);
-}
-
-/** Where a set's runs live: `<root>/<name>/` for each run root, and references/ next to the set's directory. */
-export function runDirsFor(file: string, roots: string[]): string[] {
-  const all = [...roots, join(dirname(dirname(file)), 'references')];
-  return [...new Set(all.map((r) => join(r, checkSetName(file))))];
 }
 
 interface CachedRun {

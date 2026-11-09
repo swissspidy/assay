@@ -1,0 +1,67 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/no-references",
+  "version": "1",
+  "task": {
+    "instruction": "Add a Blue Mug to my cart.",
+    "outcomes": "Then the cart contains a Blue Mug"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The cart contains a Blue Mug",
+      "source": {
+        "field": "outcomes",
+        "quote": "the cart contains a Blue Mug"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "The backend cart (probe 'cart') has a line item named Blue Mug.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "probe",
+          "probe": "cart",
+          "pointer": "/items"
+        },
+        "expect": {
+          "schema": {
+            "type": "array",
+            "contains": {
+              "type": "object",
+              "required": ["name"],
+              "properties": {
+                "name": {
+                  "const": "Blue Mug"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "locked": {
+    "by": "alice",
+    "at": "2026-11-09T09:00:00.000Z",
+    "content": "sha256:20eb477a01c23720f12103607467e9a5c7e689fb9dbad73e74fa4db72c0f370d",
+    "items": {
+      "id": "sha256:37b614087162de6c8634b3b7ace1a21dd25b62fe351b5b4b1761dfc408c6cddd",
+      "version": "sha256:391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf",
+      "task": "sha256:e8653948ec449deb97a073a8f8ab54d4da67321fdb238b700ea667bc5653c912",
+      "requirement:R1": "sha256:31d64cdfc6319430dbe8dcb6e3d7f25aee720a8006559cf88e67ef89db1297a0",
+      "check:C1": "sha256:5a0f2ab5ded663619e1919c50a34c6aaab4ee90f79b4ce1e31a410a54dcb29a1"
+    },
+    "digest": "sha256:d47962711e4715cd641ca4690a912a64cc177cd6dca33b6859e94d80fc6c6f91",
+    "signature": {
+      "alg": "ed25519",
+      "keyId": "ed25519:b1f5ce323542975f",
+      "value": "USApQ+HnKETB28tqGgzh2BIVaxgRzeC2Jp+JovLLm98fEgZ2+YgsEFm+6Cx3s5FxHWRpw8umWEAyNw7QkhZiDA=="
+    }
+  }
+}

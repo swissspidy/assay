@@ -1,0 +1,83 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/cart-total",
+  "version": "1",
+  "task": {
+    "instruction": "Add one Blue Mug and one Red Mug to my cart and open the cart.",
+    "outcomes": "Then the cart total is $21.50"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The cart total is $21.50",
+      "source": {
+        "field": "outcomes",
+        "quote": "the cart total is $21.50"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "The 'Cart total' output shows US$21.50 (to the cent).",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "node",
+          "field": "text",
+          "target": {
+            "anchors": [
+              {
+                "role": "status",
+                "name": "Cart total"
+              },
+              {
+                "role": "status",
+                "landmark": {
+                  "role": "region",
+                  "name": "Cart summary"
+                }
+              }
+            ]
+          }
+        },
+        "normalize": [
+          {
+            "op": "currency",
+            "locale": "en-US",
+            "currency": "USD"
+          }
+        ],
+        "expect": {
+          "approx": {
+            "value": {
+              "amount": 21.5,
+              "currency": "USD"
+            },
+            "abs": 0.005
+          }
+        }
+      }
+    }
+  ],
+  "locked": {
+    "by": "mallory",
+    "at": "2026-11-09T09:00:00.000Z",
+    "content": "sha256:ed2cae36f476e396705203c9165d44050a26af2ce8b762ea0aaa54ddc7b06906",
+    "items": {
+      "id": "sha256:e23717e4585c798c3a984fc1b604321fdeaf63fbc6cea648b0acac5abb95207b",
+      "version": "sha256:391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf",
+      "task": "sha256:b8f8cf19361688fe0aa6d5ddfe604884e20d1265b8c18a07cad0b13a822231b2",
+      "requirement:R1": "sha256:4742686f364c16fcf79bfaa9bc2e83f211e3ea8181bae915f468268011f4ab5e",
+      "check:C1": "sha256:a632ff0aa539eb82d20257c7a2c350aa929555b6e590ff8e4e309ef5171c527d"
+    },
+    "digest": "sha256:f4b1e2256ad562707813c09f61682365e949a13136e679c0aeb0f313bbffaafe",
+    "signature": {
+      "alg": "ed25519",
+      "keyId": "ed25519:f1c5e8dc9f3eaf7b",
+      "value": "pGLkwpqF0lHe3ZXxeFzGSfcV3jnnEqZUEfSm/66VqVEA8SxQnXAF8rRnU9zkGBZR3if+3lCyYEadLTPpMWpoAg=="
+    }
+  }
+}

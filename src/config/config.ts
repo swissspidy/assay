@@ -61,6 +61,30 @@ export interface AssayConfig {
      */
     discovery?: 'model' | 'mine-first' | 'mine-only';
   };
+  /** Defaults for `assay status` and `status()`: the readiness ladder (ADR 0022). */
+  status?: StatusConfig;
+}
+
+/** The stages of the readiness ladder, in order (ADR 0022). */
+export const STATUS_STAGES = ['valid', 'covered', 'locked', 'stress', 'references', 'recent'] as const;
+/** A stage of the readiness ladder. */
+export type StatusStage = (typeof STATUS_STAGES)[number];
+
+/** `status` in the config: the ladder's stages and the recent-runs window. */
+export interface StatusConfig {
+  /**
+   * The stages this project's ladder has, of `valid`, `covered`, `locked`, `stress`,
+   * `references` and `recent` (default: all). A stage left out is skipped for every task, e.g.
+   * `locked` in a project that does not review check sets.
+   */
+  stages?: StatusStage[];
+  /** The `recent` stage: the runs under `snapshots/<task>/`, newest first by `capturedAt`. */
+  recentRuns?: {
+    /** How many of the newest runs count (default 10). */
+    last?: number;
+    /** The share of them that must succeed, from 0 to 1 (default 1: all). */
+    minPassRate?: number;
+  };
 }
 
 /**
@@ -138,6 +162,7 @@ const KEYS = new Set<string>([
   'bench',
   'gate',
   'compile',
+  'status',
 ]);
 const MODEL_OPTION_KEYS = new Set(['mode', 'id', 'providerOptions', 'maxOutputTokens', 'maxRetries']);
 const STRESS_KEYS = new Set(['skipVariants', 'successClaims']);
@@ -206,7 +231,39 @@ export function normalizeConfig(raw: unknown, dir: string, where = 'assay config
     if (d !== undefined && d !== 'model' && d !== 'mine-first' && d !== 'mine-only')
       throw bad('compile.discovery', '"model", "mine-first" or "mine-only"');
   }
+  if (c.status !== undefined) checkStatus(c.status, where);
   return c;
+}
+
+function checkStatus(raw: unknown, where: string): void {
+  const bad = (key: string, want: string) => new ConfigError(`${where}: \`status.${key}\` must be ${want}`);
+  if (!isObject(raw)) throw new ConfigError(`${where}: \`status\` must be an object`);
+  for (const k of Object.keys(raw)) {
+    if (k !== 'stages' && k !== 'recentRuns')
+      throw new ConfigError(`${where}: unknown option \`status.${k}\` (stages, recentRuns)`);
+  }
+  const { stages, recentRuns } = raw;
+  const names = STATUS_STAGES as readonly unknown[];
+  if (stages !== undefined && (!Array.isArray(stages) || stages.some((x) => !names.includes(x))))
+    throw bad('stages', `an array of ${STATUS_STAGES.map((n) => `"${n}"`).join(', ')}`);
+  if (recentRuns !== undefined) checkRecentRuns(recentRuns, where, 'status.recentRuns');
+}
+
+/**
+ * Check a recent-runs window (`status.recentRuns` in the config, `recentRuns` of `status()`):
+ * known keys, `last` a positive integer, `minPassRate` a number from 0 to 1. Throws `ConfigError`.
+ */
+export function checkRecentRuns(raw: unknown, where: string, key = 'recentRuns'): void {
+  const bad = (k: string, want: string) => new ConfigError(`${where}: \`${key}${k}\` must be ${want}`);
+  if (!isObject(raw)) throw bad('', 'an object');
+  for (const k of Object.keys(raw)) {
+    if (k !== 'last' && k !== 'minPassRate')
+      throw new ConfigError(`${where}: unknown option \`${key}.${k}\` (last, minPassRate)`);
+  }
+  const { last, minPassRate } = raw;
+  if (last !== undefined && (!Number.isInteger(last) || (last as number) < 1)) throw bad('.last', 'a positive integer');
+  if (minPassRate !== undefined && (typeof minPassRate !== 'number' || !(minPassRate >= 0 && minPassRate <= 1)))
+    throw bad('.minPassRate', 'a number from 0 to 1');
 }
 
 /** Model options (`modelOptions`, a named bench model's `options`): known keys, and a valid mode. */

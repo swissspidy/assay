@@ -1,0 +1,16 @@
+Task               Valid  Covered  Locked  Stress  References  Recent  Blocker
+─────────────────  ─────  ───────  ──────  ──────  ──────────  ──────  ───────
+01-newsletter      ✘      –        –       –       –           –       requirement R1: quote "the newsletter subscription is confirmed" does not appear in task.outcomes
+02-add-blue-mug    ✔      ✘        –       –       –           –       R2 has no checks
+03-cart-two-mugs   ✔      ✘        –       –       –           –       R2 is checked by free page text only (C2)
+04-remove-red-mug  ✔      ✔        ✘       –       –           –       not locked
+05-set-quantity    ✔      ✔        ✘       –       –           –       changed since lock: check C1 changed
+06-cart-total      ✔      ✔        ✘       –       –           –       untrusted key: signed with ed25519:f1c5e8dc9f3eaf7b
+07-express-order   ✔      ✔        ✔       ✘       –           –       C1 fails on variant express-gift-wrapped/extra-json-fields (+1 more)
+08-delivery-date   ✔      ✔        ✔       ✔       ✘           –       standard-order-mislabelled: FAIL, expected success (C2 fail)
+09-gift-wrap       ✔      ✔        ✔       ✔       ✔           ✘       2/3 recent runs succeed; localhost-2026-11-09T10-00-00-000Z: FAIL (C1 fail)
+10-dark-german     ✔      ✔        ✔       ✔       ✔           ✔       ready
+11-unsigned        ✔      ✔        ✘       –       –           –       not signed (locked by bob; a trusted key is required)
+12-no-references   ✔      ✔        ✔       ✘       –           –       no correct reference run to stress-test
+
+12 tasks: 1 ready, 1 blocked at valid, 2 at covered, 4 at locked, 2 at stress, 1 at references, 1 at recent

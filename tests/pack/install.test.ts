@@ -324,6 +324,32 @@ export default checks({ id: 'blue', instruction: 'Add a Blue Mug to my cart.' },
   );
 });
 
+test('the installed executable prints the readiness ladder of the status fixture, and status() returns it', async () => {
+  const config = join(root, 'examples/status/assay.config.ts');
+  const table = await assay(dir, ['status', '-c', config]);
+  assert.equal(table.code, 0, table.stderr);
+  assert.equal(table.stdout, await readFile(join(root, 'examples/status/STATUS.txt'), 'utf8'));
+  // --stage gates CI: one task of the fixture is not valid, every task with a lock is locked.
+  assert.equal((await assay(dir, ['status', '-c', config, '--stage', 'valid'])).code, 1);
+  const ready = join(root, 'examples/status/tasks/10-dark-german.checks.json');
+  assert.equal((await assay(dir, ['status', '-c', config, ready, '--stage', 'recent'])).code, 0);
+  const json = JSON.parse((await assay(dir, ['status', '-c', config, '--json'])).stdout) as {
+    schema: string;
+    summary: { tasks: number; ready: number };
+  };
+  assert.equal(json.schema, 'assay.status/v1');
+  assert.deepEqual([json.summary.tasks, json.summary.ready], [12, 1]);
+  const script = join(dir, 'status.js');
+  await writeFile(
+    script,
+    `import { formatStatus, status } from '${name}';
+const result = await status({ config: ${JSON.stringify(config)}, cwd: ${JSON.stringify(root)} });
+process.stdout.write(formatStatus(result) + '\\n');`,
+  );
+  const api = await run(process.execPath, [script], { cwd: dir, env: cliEnv() });
+  assert.equal(api.stdout, table.stdout);
+});
+
 test('the installed package signs an approval and verifies it against a trusted key', async () => {
   const ex = (p: string) => join(root, 'examples/tiny-shop', p);
   const work = await mkdtemp(join(dir, 'review-'));

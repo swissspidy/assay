@@ -1,0 +1,226 @@
+{
+  "label": {
+    "expected": "fail",
+    "kind": "partial"
+  },
+  "snapshot": {
+    "schema": "assay.snapshot/v1",
+    "capturedAt": "1970-01-01T00:00:00.000Z",
+    "page": {
+      "url": "http://localhost:4173/settings",
+      "title": "Settings · Tiny Shop"
+    },
+    "a11y": {
+      "role": "document",
+      "children": [
+        {
+          "role": "banner",
+          "children": [
+            {
+              "role": "link",
+              "name": "Tiny Shop",
+              "url": "/"
+            },
+            {
+              "role": "navigation",
+              "name": "Primary",
+              "children": [
+                {
+                  "role": "link",
+                  "name": "Products",
+                  "url": "/"
+                },
+                {
+                  "role": "text",
+                  "name": "·"
+                },
+                {
+                  "role": "link",
+                  "name": "Cart",
+                  "url": "/cart"
+                },
+                {
+                  "role": "text",
+                  "name": "·"
+                },
+                {
+                  "role": "link",
+                  "name": "Settings",
+                  "url": "/settings"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "role": "main",
+          "children": [
+            {
+              "role": "heading",
+              "name": "Settings",
+              "level": 1
+            },
+            {
+              "role": "form",
+              "name": "Preferences",
+              "children": [
+                {
+                  "role": "paragraph",
+                  "children": [
+                    {
+                      "role": "checkbox",
+                      "name": "Email me the newsletter"
+                    },
+                    {
+                      "role": "text",
+                      "name": "Email me the newsletter"
+                    }
+                  ]
+                },
+                {
+                  "role": "paragraph",
+                  "children": [
+                    {
+                      "role": "text",
+                      "name": "Theme"
+                    },
+                    {
+                      "role": "combobox",
+                      "name": "Theme",
+                      "children": [
+                        {
+                          "role": "option",
+                          "name": "Light"
+                        },
+                        {
+                          "role": "option",
+                          "name": "Dark",
+                          "states": {
+                            "selected": true
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "role": "paragraph",
+                  "children": [
+                    {
+                      "role": "text",
+                      "name": "Language"
+                    },
+                    {
+                      "role": "combobox",
+                      "name": "Language",
+                      "children": [
+                        {
+                          "role": "option",
+                          "name": "English",
+                          "states": {
+                            "selected": true
+                          }
+                        },
+                        {
+                          "role": "option",
+                          "name": "Deutsch"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "role": "status",
+              "children": [
+                {
+                  "role": "text",
+                  "name": "Settings saved"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "text": "Tiny Shop\nProducts · Cart · Settings\nSettings\n\n Email me the newsletter\n\nTheme \nLight\nDark\n\nLanguage \nEnglish\nDeutsch\n\nSettings saved",
+    "network": [
+      {
+        "seq": 0,
+        "method": "GET",
+        "url": "http://localhost:4173/settings",
+        "resourceType": "document",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/html; charset=utf-8"
+        }
+      },
+      {
+        "seq": 1,
+        "method": "GET",
+        "url": "http://localhost:4173/app.js",
+        "resourceType": "script",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/javascript"
+        }
+      },
+      {
+        "seq": 2,
+        "method": "GET",
+        "url": "http://localhost:4173/api/settings",
+        "resourceType": "fetch",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "application/json"
+        },
+        "responseBody": {
+          "newsletter": false
+        }
+      }
+    ],
+    "storage": {
+      "cookies": [
+        {
+          "name": "sid",
+          "value": {
+            "redacted": true
+          },
+          "domain": "localhost",
+          "path": "/",
+          "httpOnly": true,
+          "secure": false
+        }
+      ],
+      "local": {
+        "http://localhost:4173": {
+          "theme": "dark"
+        }
+      },
+      "session": {
+        "http://localhost:4173": {}
+      }
+    },
+    "probes": {
+      "cart": {
+        "ok": true,
+        "value": {
+          "items": [],
+          "total": 0
+        }
+      },
+      "latestOrder": {
+        "ok": false,
+        "error": "/api/orders/latest → 404"
+      }
+    },
+    "meta": {
+      "capturer": "assay/0.1.0",
+      "redacted": ["cookie:sid"]
+    }
+  }
+}
