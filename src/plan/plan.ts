@@ -11,6 +11,7 @@ import type {
   Outcome,
   RequirementResult,
 } from '../types.ts';
+import { SCOPED_SNAPSHOT_SCHEMA } from '../types.ts';
 import { CheckSetError, validateCheckSet, type ValidationReport } from '../dsl/validate.ts';
 import { checkSetDigest } from '../snapshot/digest.ts';
 import { verifyLock, type LockCheckOptions, type LockStatus } from '../verifier/lock.ts';
@@ -326,5 +327,10 @@ export function runPlanMany(
 
 /** Evaluate a check set on a snapshot (no validation, no escalation), through its plan and the snapshot's store. */
 export function evaluate(checkSet: CheckSet, snapshot: EvidenceSnapshot, opts: EvaluateOptions = {}): Outcome {
+  // A scoped snapshot (ADR 0025) leaves sections out; only `verify` maps it back for its own set.
+  if ((snapshot as { schema?: unknown })?.schema === SCOPED_SNAPSHOT_SCHEMA)
+    throw new Error(
+      `evaluate takes a full snapshot; this is a scoped snapshot (${SCOPED_SNAPSHOT_SCHEMA}): verify it with verify() and the check set it was scoped to`,
+    );
   return runPlan(compileChecks(checkSet), buildStore(snapshot), opts);
 }

@@ -95,7 +95,8 @@ only writes the file, passes it.
 Capturing only the union of a check set's read-sets (ADR 0015 §5) is not part of this change.
 `readKeys` gives what it needs (which probes, whether the network log, storage or the tree is
 read), but leaving sections out changes snapshots and their digests, and an absent section reads
-as "not recorded" (abstain) rather than "empty", so it needs its own opt-in format.
+as "not recorded" (abstain) rather than "empty", so it needs its own opt-in format. That format is
+[ADR 0025](0025-scoped-capture.md).
 
 ## Consequences
 

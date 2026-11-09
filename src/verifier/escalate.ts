@@ -4,7 +4,16 @@
  * outcome; optionally propose a recompiled check set for re-approval.
  */
 import type { Page } from '@playwright/test';
-import type { CheckSet, EvidenceSnapshot, Outcome, Requirement, RequirementResult, Verdict } from '../types.ts';
+import type {
+  CheckSet,
+  EvidenceSnapshot,
+  Outcome,
+  Requirement,
+  RequirementResult,
+  ScopedSnapshot,
+  Verdict,
+} from '../types.ts';
+import { assertFullSnapshot, isScoped, scopedEvidence, withSnapshotDigest } from '../snapshot/scope.ts';
 import { kleeneAnd } from '../plan/assertions.ts';
 import { compileChecks, runPlan, runPlanMany, type CheckPlan } from '../plan/plan.ts';
 import { buildStore } from '../store/store.ts';
@@ -96,7 +105,8 @@ export interface VerifyOptions {
   recordDir?: string;
 }
 
-export interface VerifyResult {
+/** `S`: the snapshot verified, full or scoped (ADR 0025). */
+export interface VerifyResult<S extends EvidenceSnapshot | ScopedSnapshot = EvidenceSnapshot> {
   /** Final outcome after escalation; requirement and verdict statuses reflect the verifier's decisions. */
   outcome: Outcome;
   /** The checks-only outcome. */
@@ -104,7 +114,7 @@ export interface VerifyResult {
   record: OutcomeRecord;
   /** The validated check set that ran. */
   checkSet: CheckSet;
-  snapshot: EvidenceSnapshot;
+  snapshot: S;
   verifier?: VerifierResult;
   proposal?: CheckSet;
   /** Where the record went, when `recordDir` was given. */
@@ -147,16 +157,40 @@ export type EscalationSelection = 'policy' | 'onFail' | 'kept';
  * Verify a task outcome: validate the check set (throws `CheckSetError`), run it
  * on the snapshot, escalate what it cannot decide to `opts.verifier` (if given),
  * and build the outcome record. No model runs unless `verifier` or `proposer` is set.
+ *
+ * A scoped snapshot (ADR 0025) is verified only with the check set it was scoped to (else
+ * `ScopedSnapshotError`); its outcome is the full snapshot's, citing the scoped digest. It is
+ * never escalated: the verifier needs the full page, so what the checks left undecided stays
+ * undecided and the record's escalation says why.
  */
 export async function verify(
   checkSet: CheckSet | unknown,
   snapshot: EvidenceSnapshot,
+  options?: VerifyOptions,
+): Promise<VerifyResult>;
+export async function verify(
+  checkSet: CheckSet | unknown,
+  snapshot: ScopedSnapshot,
+  options?: VerifyOptions,
+): Promise<VerifyResult<ScopedSnapshot>>;
+export async function verify(
+  checkSet: CheckSet | unknown,
+  snapshot: EvidenceSnapshot | ScopedSnapshot,
+  options?: VerifyOptions,
+): Promise<VerifyResult<EvidenceSnapshot | ScopedSnapshot>>;
+export async function verify(
+  checkSet: CheckSet | unknown,
+  snapshot: EvidenceSnapshot | ScopedSnapshot,
   options: VerifyOptions = {},
-): Promise<VerifyResult> {
+): Promise<VerifyResult<EvidenceSnapshot | ScopedSnapshot>> {
   const [opts, models] = await withConfig(options);
   const [plan, cs] = prepare(checkSet, opts);
   const t0 = performance.now();
-  const checksOutcome = runPlan(plan, buildStore(snapshot));
+  let checksOutcome: Outcome;
+  if (isScoped(snapshot)) {
+    const scoped = scopedEvidence(snapshot, cs);
+    checksOutcome = withSnapshotDigest(runPlan(plan, buildStore(scoped.snapshot)), scoped.digest);
+  } else checksOutcome = runPlan(plan, buildStore(snapshot));
   return finish(plan, cs, snapshot, checksOutcome, performance.now() - t0, opts, models);
 }
 
@@ -252,15 +286,30 @@ async function withConfig(opts: VerifyOptions): Promise<[VerifyOptions, Models]>
 export async function verifyMany(
   checkSet: CheckSet | unknown,
   snapshots: readonly EvidenceSnapshot[],
+  options?: VerifyOptions,
+): Promise<VerifyResult[]>;
+export async function verifyMany(
+  checkSet: CheckSet | unknown,
+  snapshots: readonly (EvidenceSnapshot | ScopedSnapshot)[],
+  options?: VerifyOptions,
+): Promise<VerifyResult<EvidenceSnapshot | ScopedSnapshot>[]>;
+export async function verifyMany(
+  checkSet: CheckSet | unknown,
+  snapshots: readonly (EvidenceSnapshot | ScopedSnapshot)[],
   options: VerifyOptions = {},
-): Promise<VerifyResult[]> {
+): Promise<VerifyResult<EvidenceSnapshot | ScopedSnapshot>[]> {
   // Mapping `verify` over no snapshots never validates the set, so neither does this.
   if (snapshots.length === 0) return [];
   const [opts, models] = await withConfig(options);
   const [plan, cs] = prepare(checkSet, opts);
   const timings = new Float64Array(snapshots.length);
-  const outcomes = runPlanMany(plan, snapshots.map(buildStore), {}, timings);
-  const results: VerifyResult[] = [];
+  // Scoped snapshots run on their evidence and cite their own digest (ADR 0025).
+  const scoped = snapshots.map((s) => (isScoped(s) ? scopedEvidence(s, cs) : undefined));
+  const stores = snapshots.map((s, i) => buildStore(scoped[i]?.snapshot ?? (s as EvidenceSnapshot)));
+  const outcomes = runPlanMany(plan, stores, {}, timings).map((o, i) =>
+    scoped[i] ? withSnapshotDigest(o, scoped[i].digest) : o,
+  );
+  const results: VerifyResult<EvidenceSnapshot | ScopedSnapshot>[] = [];
   for (const [i, snapshot] of snapshots.entries())
     results.push(await finish(plan, cs, snapshot, outcomes[i]!, timings[i]!, opts, models));
   return results;
@@ -281,12 +330,12 @@ function prepare(checkSet: CheckSet | unknown, opts: VerifyOptions): [CheckPlan,
 async function finish(
   plan: CheckPlan,
   cs: CheckSet,
-  snapshot: EvidenceSnapshot,
+  snapshot: EvidenceSnapshot | ScopedSnapshot,
   checksOutcome: Outcome,
   checksMs: number,
   opts: VerifyOptions,
   models: Models,
-): Promise<VerifyResult> {
+): Promise<VerifyResult<EvidenceSnapshot | ScopedSnapshot>> {
   const policy: Required<EscalationPolicy> = {
     on: opts.policy?.on ?? ['abstain'],
     includeSoft: opts.policy?.includeSoft ?? false,
@@ -305,7 +354,15 @@ async function finish(
   let verifierError: string | undefined;
   let escalationMs: number | undefined;
   let verifierId = models.verifier?.label;
-  if (models.verifier && toEscalate.length) {
+  if (models.verifier && toEscalate.length && isScoped(snapshot)) {
+    // The verifier explores the whole page; a scoped snapshot left it out (ADR 0025).
+    try {
+      assertFullSnapshot(snapshot, 'Escalation');
+    } catch (e) {
+      verifierError = message(e);
+    }
+    escalationMs = 0;
+  } else if (models.verifier && toEscalate.length) {
     const hints: Record<string, string> = {};
     for (const r of toEscalate) {
       hints[r.id] = checksOutcome.checks
@@ -322,7 +379,7 @@ async function finish(
         {
           task: cs.task,
           requirements: toEscalate,
-          snapshot,
+          snapshot: snapshot as EvidenceSnapshot,
           hints,
           ...(opts.page ? { page: opts.page } : {}),
           ...(opts.probes ? { probes: opts.probes } : {}),
@@ -378,7 +435,8 @@ async function finish(
           instruction: cs.task.instruction,
           ...(cs.task.outcomes !== undefined ? { outcomes: cs.task.outcomes } : {}),
         },
-        [{ name: 'escalated-run', kind: 'success', snapshot }],
+        // Only a full snapshot gets here: a scoped one is never escalated, so never rescued.
+        [{ name: 'escalated-run', kind: 'success', snapshot: snapshot as EvidenceSnapshot }],
         { model: await models.proposer.get(), requirements: cs.requirements, config: false },
       );
       if (res.checkSet) {
@@ -496,7 +554,7 @@ async function finish(
     },
   };
 
-  const result: VerifyResult = {
+  const result: VerifyResult<EvidenceSnapshot | ScopedSnapshot> = {
     outcome,
     checksOutcome,
     record,

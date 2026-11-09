@@ -53,6 +53,7 @@ import { describeModel, noModelError, resolveModel, type ModelInput, type ModelO
 import { loadConfig, normalizeConfig, type AssayConfig } from '../config/config.ts';
 import { parseOutcomes, parseOutcomesDetailed, type Clause } from './outcomes.ts';
 import { stressTest, type FindingRef } from '../stress/stress.ts';
+import { assertFullSnapshot } from '../snapshot/scope.ts';
 import { findNodes, networkEntry, networkLog, outline, probesView, storageView, summary } from './explore.ts';
 import {
   mineCandidates,
@@ -1281,6 +1282,7 @@ export async function compileTask(
   // Tools select references by name (an enum in their schemas), so names must be unique.
   const seen = new Set<string>();
   for (const r of refs) {
+    assertFullSnapshot(r.snapshot, `Compiling (reference ${r.name})`);
     if (seen.has(r.name))
       throw new Error(`Duplicate reference name ${JSON.stringify(r.name)}; reference names must be unique.`);
     seen.add(r.name);

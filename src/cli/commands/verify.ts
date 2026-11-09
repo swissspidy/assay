@@ -24,6 +24,7 @@ import {
 import { selectModel } from '../model.ts';
 import { trustedKeys } from '../keys.ts';
 import { cliConfig } from '../config.ts';
+import { isScoped, ScopedSnapshotError } from '../../snapshot/scope.ts';
 
 /** Whether `verify` with this policy would escalate a requirement (the checks are validated by it later). */
 function escalates(
@@ -47,7 +48,9 @@ export const exitCodeFor = (verdict: Verdict): number =>
 export async function run({ values, positionals }: Invocation, io: Io): Promise<number> {
   const [checksPath, snapshotPath] = positionals as [string, string];
   const checks = await readCheckSetFile(checksPath);
-  const snapshot = toSnapshot(readSnapshotFile(snapshotPath));
+  // A scoped snapshot (ADR 0025) verifies with the check set it was scoped to, and never escalates.
+  const snapshot = toSnapshot(readSnapshotFile(snapshotPath), { scoped: true });
+  const scoped = isScoped(snapshot);
   const loaded = await cliConfig(values, io);
   const { config } = loaded;
   const keys = trustedKeys(values, io.env, config);
@@ -68,7 +71,9 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
   const policy = typeof config.escalate === 'object' ? config.escalate : undefined;
   // The model is selected (and a key needed) only when a requirement will actually escalate.
   const verifier =
-    escalate && escalates(checks, snapshot, policy) ? await selectModel(values, io.env, loaded, 'verify') : undefined;
+    escalate && !scoped && escalates(checks, snapshot as EvidenceSnapshot, policy)
+      ? await selectModel(values, io.env, loaded, 'verify')
+      : undefined;
   const recordDir = typeof values.record === 'string' ? values.record : config.recordDir;
 
   let res: Awaited<ReturnType<typeof verify>>;
@@ -85,6 +90,7 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
     });
   } catch (e) {
     if (e instanceof CheckSetError) throw new CliError(`${checksPath}: ${e.message}`);
+    if (e instanceof ScopedSnapshotError) throw new CliError(`${snapshotPath}: ${e.message}`);
     throw e;
   }
   verifier?.save();
@@ -113,6 +119,8 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
     io.out(
       `Escalated ${esc.requirements.join(', ')} to ${esc.model}: ${esc.status}${esc.error ? ` (${esc.error})` : ''}`,
     );
+  } else if (escalate && scoped) {
+    io.out('Not escalated: a scoped snapshot holds only what the checks read; the verifier needs a full snapshot.');
   } else if (escalate) {
     io.out('Nothing to escalate.');
   }

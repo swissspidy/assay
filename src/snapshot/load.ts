@@ -1,5 +1,5 @@
-import type { EvidenceSnapshot } from '../types.ts';
-import { SNAPSHOT_SCHEMA } from '../types.ts';
+import type { EvidenceSnapshot, ScopedSnapshot } from '../types.ts';
+import { SCOPED_SNAPSHOT_SCHEMA, SNAPSHOT_SCHEMA } from '../types.ts';
 
 /**
  * The accessibility tree's shape: every node an object with a string role, and
@@ -25,8 +25,24 @@ function assertTree(root: unknown, at = 'a11y'): void {
  * tree's shape, and the baseline and other open pages where present). Snapshots written
  * before frames, pages and parsed form bodies were captured load unchanged (ADR 0012).
  */
-export function loadSnapshot(input: string | unknown): EvidenceSnapshot {
+export function loadSnapshot(input: string | unknown): EvidenceSnapshot;
+/**
+ * With `scoped: true`, a scoped snapshot (ADR 0025) loads too: its scope, page and the
+ * sections it kept are checked. Only `verify` with its check set accepts one.
+ */
+export function loadSnapshot(input: string | unknown, opts: { scoped: true }): EvidenceSnapshot | ScopedSnapshot;
+export function loadSnapshot(
+  input: string | unknown,
+  opts: { scoped?: boolean } = {},
+): EvidenceSnapshot | ScopedSnapshot {
   const s = (typeof input === 'string' ? JSON.parse(input) : input) as EvidenceSnapshot;
+  if (s && typeof s === 'object' && (s.schema as string) === SCOPED_SNAPSHOT_SCHEMA) {
+    if (!opts.scoped)
+      throw new Error(
+        `this is a scoped snapshot (${SCOPED_SNAPSHOT_SCHEMA}): it holds only what one check set reads, so only verify with that check set accepts it`,
+      );
+    return assertScoped(s as unknown as ScopedSnapshot);
+  }
   if (!s || typeof s !== 'object' || s.schema !== SNAPSHOT_SCHEMA)
     throw new Error(`not an ${SNAPSHOT_SCHEMA} document`);
   if (!s.a11y || typeof s.page?.url !== 'string') throw new Error('snapshot is missing a11y or page');
@@ -37,6 +53,33 @@ export function loadSnapshot(input: string | unknown): EvidenceSnapshot {
 }
 
 const isObject = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x);
+
+/** A scoped snapshot: its scope (check set and read keys), page, and the shape of each section it kept. */
+function assertScoped(s: ScopedSnapshot): ScopedSnapshot {
+  const scope = s.scope as unknown;
+  const cs = isObject(scope) ? scope.checkSet : undefined;
+  if (
+    !isObject(scope) ||
+    !isObject(cs) ||
+    typeof cs.id !== 'string' ||
+    typeof cs.version !== 'string' ||
+    typeof cs.content !== 'string' ||
+    !Array.isArray(scope.reads) ||
+    !scope.reads.every((r) => typeof r === 'string')
+  )
+    throw new Error('scoped snapshot has no valid scope (checkSet {id, version, content} and reads)');
+  if (typeof s.page?.url !== 'string') throw new Error('scoped snapshot is missing page');
+  if (s.a11y !== undefined) assertTree(s.a11y);
+  if (s.text !== undefined && typeof s.text !== 'string') throw new Error('scoped snapshot text is not a string');
+  if (s.network !== undefined && s.network !== null && !Array.isArray(s.network))
+    throw new Error('scoped snapshot network is not an array or null');
+  if (s.storage !== undefined && s.storage !== null) assertStorage(s.storage, 'storage');
+  if (s.probes !== undefined && !isObject(s.probes)) throw new Error('scoped snapshot probes is not an object');
+  if (s.pages !== undefined) assertPages(s.pages);
+  if (s.baseline !== undefined)
+    assertBaseline({ probes: {}, storage: null, ...s.baseline } as unknown as Record<string, unknown>);
+  return s;
+}
 
 /** Other open pages: each with a URL, title, text and an accessibility tree. `page` checks select among them. */
 function assertPages(pages: unknown): void {
