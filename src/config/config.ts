@@ -114,6 +114,28 @@ export interface BenchConfig {
   runs?: number;
   /** Compiles running at once (default 2). */
   concurrency?: number;
+  /**
+   * The discovery strategies to compare (ADR 0020, ADR 0026), in this order (default:
+   * `['model']`, the bench as before). Each model gets one row per strategy; `'mine-only'` runs
+   * no model and gets one row of its own.
+   */
+  discovery?: ('model' | 'mine-first' | 'mine-only')[];
+  /**
+   * Model prices in USD per million tokens, over the built-in list (ADR 0026), keyed by
+   * `'provider:model'` or the bare model name: `{ 'openai:gpt-5': { input: 1.25, output: 10 } }`.
+   * `--prices <file.json>` wins over these.
+   */
+  prices?: Record<string, BenchPrice>;
+}
+
+/** A model's price in USD per million tokens (`bench.prices`, `--prices`). */
+export interface BenchPrice {
+  input: number;
+  output: number;
+  /** Cache reads; without it, a job that read from the cache has no known cost. */
+  cacheRead?: number;
+  /** Cache writes; without it, a job that wrote to the cache has no known cost. */
+  cacheWrite?: number;
 }
 
 export interface GateConfig {
@@ -166,7 +188,67 @@ const KEYS = new Set<string>([
 ]);
 const MODEL_OPTION_KEYS = new Set(['mode', 'id', 'providerOptions', 'maxOutputTokens', 'maxRetries']);
 const STRESS_KEYS = new Set(['skipVariants', 'successClaims']);
-const BENCH_KEYS = new Set(['models', 'tasks', 'references', 'cassettes', 'runs', 'concurrency']);
+const BENCH_KEYS = new Set([
+  'models',
+  'tasks',
+  'references',
+  'cassettes',
+  'runs',
+  'concurrency',
+  'discovery',
+  'prices',
+]);
+const PRICE_KEYS = ['input', 'output', 'cacheRead', 'cacheWrite'] as const;
+const STRATEGIES = ['model', 'mine-first', 'mine-only'] as const;
+
+/**
+ * Check a discovery strategy list (`bench.discovery`, `--discovery`): a non-empty list of known
+ * strategies, none twice. Returns the error, or undefined.
+ */
+export function strategyListError(raw: unknown): string | undefined {
+  const want = `a non-empty array of ${STRATEGIES.map((s) => `"${s}"`).join(', ')}`;
+  if (!Array.isArray(raw) || !raw.length) return `must be ${want}`;
+  for (const x of raw) {
+    if (!(STRATEGIES as readonly unknown[]).includes(x)) return `must be ${want}, got ${JSON.stringify(x)}`;
+  }
+  const twice = raw.find((x, i) => raw.indexOf(x) !== i);
+  if (twice !== undefined) return `names ${JSON.stringify(twice)} twice`;
+  return undefined;
+}
+
+/**
+ * Check a price table (`bench.prices`, a `--prices` file): an object of model keys to
+ * `{ input, output, cacheRead?, cacheWrite? }`, each a non-negative finite number in USD per
+ * million tokens, and no other keys. Throws `ConfigError` naming the entry; `what` names the table.
+ */
+export function checkPrices(raw: unknown, what: string): Record<string, BenchPrice> {
+  if (!isObject(raw))
+    throw new ConfigError(
+      `${what} must be an object of "provider:model" keys to { input, output, cacheRead?, cacheWrite? }`,
+    );
+  for (const [model, p] of Object.entries(raw)) {
+    const at = `${what}[${JSON.stringify(model)}]`;
+    if (!model.trim()) throw new ConfigError(`${what}: a model key must not be empty`);
+    if (!isObject(p))
+      throw new ConfigError(`${at} must be { input, output, cacheRead?, cacheWrite? } in USD per million tokens`);
+    for (const k of Object.keys(p)) {
+      if (!(PRICE_KEYS as readonly string[]).includes(k))
+        throw new ConfigError(`${at}: unknown key \`${k}\` (${PRICE_KEYS.join(', ')})`);
+    }
+    for (const k of PRICE_KEYS) {
+      const v = p[k];
+      if (v === undefined) {
+        if (k === 'input' || k === 'output') throw new ConfigError(`${at}.${k} is missing (USD per million tokens)`);
+        continue;
+      }
+      if (typeof v !== 'number' || !Number.isFinite(v) || v < 0)
+        throw new ConfigError(
+          `${at}.${k} must be a non-negative finite number (USD per million tokens), got ${JSON.stringify(v)}`,
+        );
+    }
+  }
+  return raw as Record<string, BenchPrice>;
+}
 const GATE_KEYS = new Set(['baseline', 'candidate', 'checks', 'allow', 'tolerance', 'minRuns']);
 
 const GLOB = /[*?[\]{}]/;
@@ -305,6 +387,11 @@ function normalizeBench(raw: unknown, dir: string, where: string): BenchConfig {
   for (const k of ['runs', 'concurrency'] as const) {
     if (b[k] !== undefined && (!Number.isInteger(b[k]) || (b[k] as number) < 1)) throw bad(k, 'a positive integer');
   }
+  if (b.discovery !== undefined) {
+    const err = strategyListError(b.discovery);
+    if (err) throw new ConfigError(`${where}: \`bench.discovery\` ${err}`);
+  }
+  if (b.prices !== undefined) checkPrices(b.prices, `${where}: \`bench.prices\``);
   return b;
 }
 

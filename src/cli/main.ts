@@ -284,6 +284,8 @@ Exit status: 0, 3 usage, 4 error.`,
       record: { type: 'boolean' },
       cassettes: { type: 'string' },
       escalate: { type: 'boolean' },
+      discovery: { type: 'string', multiple: true },
+      prices: { type: 'string' },
       out: { type: 'string', short: 'o' },
     },
     help: `Compiles each task with each model, as \`assay compile\` would, from the task's reference
@@ -313,6 +315,13 @@ Options:
                            \`bench.cassettes\`, else assay-bench/. An existing cassette is replayed;
                            ASSAY_MODEL_MODE=replay never calls a model (CI)
   --escalate               Send held-out runs the checks abstain on to the same model as verifier
+  --discovery <list>       Compare discovery strategies: model, mine-first, mine-only
+                           (comma-separated). One row per model and strategy, with requirements
+                           mined and discovered; mine-only gets one row and runs no model.
+                           Default: \`bench.discovery\`, else model
+  --prices <file.json>     Model prices in USD per million tokens, over \`bench.prices\` and the
+                           built-in list: { "provider:model": { "input", "output", "cacheRead",
+                           "cacheWrite" } }. The report says where each price came from
   -o, --out <file>         Also write a Markdown report
   --json                   Print the full result (every job) as JSON
 

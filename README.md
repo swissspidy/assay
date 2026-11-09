@@ -581,6 +581,15 @@ finished. `--record` writes cassettes per model under `assay-bench/`, which late
 `model`. A replayable example: `examples/bench`
 ([ADR 0018](docs/adr/0018-model-bench.md)).
 
+`--discovery model,mine-first,mine-only` (or `bench.discovery`) compares the discovery
+strategies of the mining-first compiler side by side for each model: cost, and requirements mined
+vs. discovered, tasks that needed no discovery turn and the accept rate. `mine-only` runs no model
+and gets one row of its own; `mine-first` cassettes are kept apart, under `<task>/mine-first/`.
+Prices default to the built-in list; `bench.prices` and `--prices <file.json>` override and extend
+it (`{ "openai:gpt-5": { "input": 1.25, "output": 10 } }`, USD per million tokens), and the
+report says where each price came from, or `price unknown`. Example: `examples/bench-strategies`
+([ADR 0026](docs/adr/0026-bench-strategies-and-prices.md)).
+
 ## Regression gate
 
 When an agent changes (its prompt, model, tools or code), `assay gate` checks that no task got
@@ -707,6 +716,7 @@ five ([ADR 0011](docs/adr/0011-route-robust-compilation.md)).
 - [ADR 0021](docs/adr/0021-agent-regression-gate.md): `assay gate`, the agent regression gate
 - [ADR 0022](docs/adr/0022-task-status.md): `assay status`, the readiness ladder
 - [ADR 0025](docs/adr/0025-scoped-capture.md): scoped capture, snapshots of only what a check set reads
+- [ADR 0026](docs/adr/0026-bench-strategies-and-prices.md): `assay bench` compares discovery strategies, with configurable prices
 - [ADR 0028](docs/adr/0028-scoped-text-outcomes-and-descriptions.md): scoped text in run outcomes and check descriptions
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
 - Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)

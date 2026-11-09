@@ -86,6 +86,7 @@ export {
   type AssayConfig,
   type BenchConfig,
   type BenchModelInput,
+  type BenchPrice,
   type GateConfig,
   type LoadedConfig,
 } from './config/config.ts';

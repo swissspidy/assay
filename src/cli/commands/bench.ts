@@ -6,10 +6,18 @@
 import { existsSync, globSync, mkdirSync, statSync, writeFileSync } from 'node:fs';
 import { basename, dirname, extname, isAbsolute, join, matchesGlob, relative, resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { escapeGlob, type BenchModelInput, type LoadedConfig } from '../../config/config.ts';
+import {
+  ConfigError,
+  escapeGlob,
+  strategyListError,
+  type BenchModelInput,
+  type LoadedConfig,
+} from '../../config/config.ts';
+import type { DiscoveryStrategy } from '../../compiler/index.ts';
 import { describeModel, resolveModel, type ModelInput, type ModelOptions } from '../../model/resolve.ts';
 import type { ModelClient } from '../../model/types.ts';
 import { benchJson, formatBench, formatBenchMarkdown } from '../bench/format.ts';
+import { priceBook, readPriceFile } from '../bench/prices.ts';
 import { runBench, type BenchModel, type BenchRun, type BenchTask, type CassetteMode } from '../bench/run.ts';
 import { cliConfig } from '../config.ts';
 import {
@@ -264,6 +272,31 @@ export function benchModels(
   return models;
 }
 
+/**
+ * The discovery strategies, by precedence: `--discovery` (comma-separated, repeatable), then
+ * `bench.discovery`, then `['model']` (the bench as before ADR 0026).
+ */
+export function benchStrategies(values: Values, loaded: LoadedConfig): DiscoveryStrategy[] {
+  const flags = (values.discovery as string[] | undefined) ?? [];
+  if (flags.length) {
+    const list = flags.flatMap((f) => f.split(',')).map((s) => s.trim());
+    const err = strategyListError(list);
+    if (err) throw new UsageError(`--discovery ${err}`);
+    return list as DiscoveryStrategy[];
+  }
+  return loaded.config.bench?.discovery ?? ['model'];
+}
+
+/** A `--prices` file, its problems as a command error (exit 4), like a bad config. */
+function priceFile(file: string, shown: string) {
+  try {
+    return readPriceFile(file, shown);
+  } catch (e) {
+    if (e instanceof ConfigError) throw new CliError(e.message);
+    throw e;
+  }
+}
+
 /** Ctrl-C stops the bench: the first one prints what finished, a second one exits at once. */
 function sigint(): { signal: AbortSignal; dispose(): void } {
   const ac = new AbortController();
@@ -301,7 +334,16 @@ export async function run({ values }: Invocation, io: Io): Promise<number> {
   const cassettes =
     cassettesFlag !== undefined ? resolve(cwd, cassettesFlag) : (bench.cassettes ?? join(base, 'assay-bench'));
 
-  const models = benchModels(values, io.env, loaded, cwd);
+  const strategies = benchStrategies(values, loaded);
+  // mine-only runs no model: a bench of it alone needs none.
+  const needsModel = strategies.some((s) => s !== 'mine-only');
+  const models = needsModel ? benchModels(values, io.env, loaded, cwd) : [];
+  if (!needsModel && values.model) io.err('mine-only runs no model: --model is not used');
+  const pricesFlag = str(values.prices);
+  const prices = priceBook({
+    ...(pricesFlag !== undefined ? { file: priceFile(resolve(cwd, pricesFlag), pricesFlag) } : {}),
+    ...(bench.prices ? { config: bench.prices } : {}),
+  });
   const { tasks, skipped } = await findTasks(
     tasksSpec,
     referencesDir,
@@ -320,8 +362,9 @@ export async function run({ values }: Invocation, io: Io): Promise<number> {
 
   const interrupt = io.signal ? undefined : sigint();
   const shownCassettes = relative(cwd, cassettes) || '.';
+  const shownStrategies = strategies.length === 1 && strategies[0] === 'model' ? '' : ` (${strategies.join(', ')})`;
   io.err(
-    `Benchmarking ${models.length} model(s) on ${tasks.length} task(s)${runs > 1 ? ` × ${runs} runs` : ''}` +
+    `Benchmarking ${models.length} model(s)${shownStrategies} on ${tasks.length} task(s)${runs > 1 ? ` × ${runs} runs` : ''}` +
       (mode === 'record'
         ? `, recording to ${shownCassettes}`
         : mode === 'replay'
@@ -338,6 +381,8 @@ export async function run({ values }: Invocation, io: Io): Promise<number> {
       cassettes,
       mode,
       escalate: !!values.escalate,
+      discovery: strategies,
+      prices,
       ...(config.stress ? { stress: config.stress } : {}),
       ...((io.signal ?? interrupt?.signal) ? { signal: (io.signal ?? interrupt?.signal)! } : {}),
       onJob(j, n, total) {
@@ -347,7 +392,11 @@ export async function run({ values }: Invocation, io: Io): Promise<number> {
             : j.status === 'refused'
               ? `not compiled: ${j.reason}`
               : `error: ${j.reason}`;
-        io.err(`[${n}/${total}] ${j.model} · ${j.task}${runs > 1 ? ` · run ${j.run}` : ''}: ${what}`);
+        const row =
+          j.discovery === 'mine-only'
+            ? 'mine-only'
+            : `${j.model}${j.discovery && shownStrategies ? ` · ${j.discovery}` : ''}`;
+        io.err(`[${n}/${total}] ${row} · ${j.task}${runs > 1 ? ` · run ${j.run}` : ''}: ${what}`);
       },
     });
   } finally {
