@@ -275,8 +275,9 @@ function makeReader(src: ValueSource): Reader {
             [ev(channel, { locator })],
             drift,
           );
-        // Free page text is the weakest channel even when scoped by an a11y anchor.
-        return { value: { type: 'string', value: v }, evidence: ev('text', { locator, value: v }), drift };
+        // The value comes from where it was read: a scope's or a record's text is the accessibility
+        // tree's (semantic), only the whole document's text is free text (ADR 0028).
+        return { value: { type: 'string', value: v }, evidence: ev(channel, { locator, value: v }), drift };
       };
     }
     case 'url':
