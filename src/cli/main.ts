@@ -322,6 +322,51 @@ others go on. Ctrl-C prints what has finished.
 Exit status: 0 done, 1 a model or compile errored, 3 usage, 4 error, 130 interrupted.`,
     load: () => import('./commands/bench.ts'),
   },
+  gate: {
+    summary: 'Regression gate: did any task get worse between two sets of agent runs?',
+    usage: 'assay gate --baseline <dir|glob> --candidate <dir|glob> [checks...] [options]',
+    args: [0, Infinity],
+    options: {
+      baseline: { type: 'string', multiple: true, short: 'b' },
+      candidate: { type: 'string', multiple: true },
+      allow: { type: 'string', multiple: true },
+      tolerance: { type: 'string' },
+      'min-runs': { type: 'string' },
+      markdown: { type: 'string' },
+    },
+    help: `Verifies the runs captured before an agent change (baseline) and after it (candidate) with
+the same check sets, deterministic checks only (no model), and compares each task's success
+count and each requirement's pass count. Prints the tasks that changed first, then a verdict.
+
+Each side is a directory (or a glob of directories) with one directory of .json snapshots per
+task, <dir>/<task>/*.json, as references/ is laid out. A task's check set is the one named like
+it (02-add-blue-mug.checks.ts → <dir>/02-add-blue-mug/). A side may hold <task>.checks.json next
+to <task>/, the set it was judged with; both sides must come to the same set, else it is an error.
+
+A task or requirement is regressed when its pass count drops by more than --tolerance runs (the
+baseline's rate scaled to the candidate's run count), improved when it rises by more, else
+unchanged; new when only the candidate ran it, missing when only the baseline did. Abstain counts
+as not passing. Missing tasks block, like regressions; new ones do not.
+
+<checks> are check set files, directories or globs. Default: \`gate.checks\`, else \`checks\`.
+
+Options:
+  -b, --baseline <dir|glob>  The runs before the change (repeatable; runs of one task are pooled)
+  --candidate <dir|glob>     The runs after the change (repeatable)
+  --allow <rule>             <task> or <task>:<requirement> (globs): report its regressions, but
+                             do not fail on them (repeatable; replaces \`gate.allow\`)
+  --tolerance <n>            Runs a pass count may drop by before it is a regression (default 0)
+  --min-runs <n>             The fewest runs a side may have for a task it ran (default 1)
+  --markdown <file>          Also write a report for a pull request comment: each regression
+                             with the failing check, what it expected and found, and the run
+  --json                     Print the full result (assay.gate/v1) as JSON
+
+Defaults for every option: \`gate\` in assay.config.ts.
+
+Exit status: 0 nothing regressed, 1 a blocking regression or missing task, 3 usage, 4 error
+(including check sets that differ between the sides, an empty side or too few runs).`,
+    load: () => import('./commands/gate.ts'),
+  },
   watch: {
     summary: 'Re-validate and re-verify check sets and their runs as you edit them',
     usage: 'assay watch [checks...] [options]',

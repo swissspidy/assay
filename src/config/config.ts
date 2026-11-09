@@ -50,6 +50,8 @@ export interface AssayConfig {
   };
   /** Defaults for `assay bench`: comparing models on this project's tasks (ADR 0018). */
   bench?: BenchConfig;
+  /** Defaults for `assay gate`: the agent regression gate (ADR 0021). */
+  gate?: GateConfig;
   /** Defaults for `assay compile`. */
   compile?: {
     /**
@@ -90,6 +92,24 @@ export interface BenchConfig {
   concurrency?: number;
 }
 
+export interface GateConfig {
+  /** The runs from before the agent change: directories (or globs) of `<task>/*.json`. */
+  baseline?: string | string[];
+  /** The runs from after the change, in the same layout. */
+  candidate?: string | string[];
+  /** The check sets, matched to tasks by name: a directory or glob. Default: `checks`. */
+  checks?: string;
+  /**
+   * Known-flaky tasks or requirements whose regressions are reported but do not fail the gate:
+   * `'<task>'` or `'<task>:<requirement>'`, each part a glob (`'checkout-*'`, `'02-add-blue-mug:R2'`).
+   */
+  allow?: string[];
+  /** How many runs a pass count may drop by before it is a regression (default 0). */
+  tolerance?: number;
+  /** The fewest runs a side may have for a task it ran (default 1). */
+  minRuns?: number;
+}
+
 /** Type the config file: `export default defineConfig({ model: 'anthropic:claude-opus-5-5' })`. */
 export function defineConfig(config: AssayConfig): AssayConfig {
   return config;
@@ -116,11 +136,13 @@ const KEYS = new Set<string>([
   'trustedKeys',
   'stress',
   'bench',
+  'gate',
   'compile',
 ]);
 const MODEL_OPTION_KEYS = new Set(['mode', 'id', 'providerOptions', 'maxOutputTokens', 'maxRetries']);
 const STRESS_KEYS = new Set(['skipVariants', 'successClaims']);
 const BENCH_KEYS = new Set(['models', 'tasks', 'references', 'cassettes', 'runs', 'concurrency']);
+const GATE_KEYS = new Set(['baseline', 'candidate', 'checks', 'allow', 'tolerance', 'minRuns']);
 
 const GLOB = /[*?[\]{}]/;
 /** A path as a glob that matches only itself: each glob character in a one-character class. */
@@ -174,6 +196,7 @@ export function normalizeConfig(raw: unknown, dir: string, where = 'assay config
     }
   }
   if (c.bench !== undefined) c.bench = normalizeBench(c.bench, dir, where);
+  if (c.gate !== undefined) c.gate = normalizeGate(c.gate, dir, where);
   if (c.compile !== undefined) {
     if (!isObject(c.compile)) throw bad('compile', 'an object');
     for (const k of Object.keys(c.compile)) {
@@ -226,6 +249,42 @@ function normalizeBench(raw: unknown, dir: string, where: string): BenchConfig {
     if (b[k] !== undefined && (!Number.isInteger(b[k]) || (b[k] as number) < 1)) throw bad(k, 'a positive integer');
   }
   return b;
+}
+
+/** A path or glob from the config, absolute against `dir` (a glob keeps `dir` literal). */
+const configPath = (p: string, dir: string) =>
+  GLOB.test(p) && !existsSync(resolve(dir, p)) && !isAbsolute(p) ? `${escapeGlob(resolve(dir))}/${p}` : resolve(dir, p);
+
+function normalizeGate(raw: unknown, dir: string, where: string): GateConfig {
+  const bad = (key: string, want: string) => new ConfigError(`${where}: \`gate.${key}\` must be ${want}`);
+  if (!isObject(raw)) throw new ConfigError(`${where}: \`gate\` must be an object`);
+  for (const k of Object.keys(raw)) {
+    if (!GATE_KEYS.has(k))
+      throw new ConfigError(`${where}: unknown option \`gate.${k}\` (${[...GATE_KEYS].join(', ')})`);
+  }
+  const g = { ...raw } as GateConfig & Record<string, unknown>;
+  for (const k of ['baseline', 'candidate'] as const) {
+    const v = g[k];
+    if (v === undefined) continue;
+    const list = typeof v === 'string' ? [v] : v;
+    if (!Array.isArray(list) || !list.length || list.some((x) => typeof x !== 'string' || !x))
+      throw bad(k, 'a path or glob, or an array of them');
+    g[k] = list.map((x) => configPath(x, dir));
+  }
+  if (g.checks !== undefined) {
+    if (typeof g.checks !== 'string' || !g.checks) throw bad('checks', 'a path');
+    g.checks = configPath(g.checks, dir);
+  }
+  if (g.allow !== undefined && (!Array.isArray(g.allow) || g.allow.some((x) => typeof x !== 'string' || !x)))
+    throw bad('allow', 'an array of "<task>" or "<task>:<requirement>" patterns');
+  if (
+    g.tolerance !== undefined &&
+    (typeof g.tolerance !== 'number' || !Number.isFinite(g.tolerance) || g.tolerance < 0)
+  )
+    throw bad('tolerance', 'a number of runs, 0 or more');
+  if (g.minRuns !== undefined && (!Number.isInteger(g.minRuns) || (g.minRuns as number) < 1))
+    throw bad('minRuns', 'a positive integer');
+  return g;
 }
 
 /** The config file in `cwd`, if there is one. */

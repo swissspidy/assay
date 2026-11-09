@@ -440,6 +440,7 @@ assay stress checks/add-blue-mug.checks.json --reference runs/
 assay verify checks/add-blue-mug.checks.json snapshot.json --record assay-records
 assay capture http://localhost:4173/cart --out runs/
 assay bench -m anthropic:claude-opus-5-5 -m openai:gpt-5  # compare models on your tasks
+assay gate --baseline runs/main --candidate runs/pr checks/  # did any task get worse?
 assay watch checks/ --stress                 # re-verify runs as you edit check sets
 assay checks print --ts checks/add-blue-mug.checks.json   # the set as builder TypeScript
 ```
@@ -516,6 +517,51 @@ finished. `--record` writes cassettes per model under `assay-bench/`, which late
 (`ASSAY_MODEL_MODE=replay` in CI never calls a model). Models default to `bench.models`, then
 `model`. A replayable example: `examples/bench`
 ([ADR 0018](docs/adr/0018-model-bench.md)).
+
+## Regression gate
+
+When an agent changes (its prompt, model, tools or code), `assay gate` checks that no task got
+worse. Capture the agent's runs before and after the change, laid out like `references/`, and
+compare them with the same check sets, deterministic checks only:
+
+```sh
+assay gate --baseline runs/main --candidate runs/pr checks/ --markdown gate.md
+```
+
+```
+   Task              Change     Success    Requirements
+─  ────────────────  ─────────  ─────────  ────────────
+✘  02-add-blue-mug   regressed  2/2 → 1/2  R1 2/2 → 1/2
+✔  07-express-order  improved   1/2 → 2/2  R2 1/2 → 2/2
++  09-gift-wrap      new        — → 1/1    —
+·  01-newsletter     unchanged  2/2 → 2/2
+
+✘ 02-add-blue-mug R1: C1 fail: schema mismatch: data must contain at least 1 valid item(s)  (candidate/02-add-blue-mug/run-2.json)
+
+Gate failed (blocking: 02-add-blue-mug). 1 regressed, 1 improved, 1 new, 1 unchanged.
+```
+
+Each side holds `<task>/*.json` runs (globs and several directories pool runs). A task or
+requirement regressed when fewer candidate runs passed than the baseline's pass rate predicts, by
+more than `--tolerance` runs (default 0); abstain counts as not passing. A task only the baseline
+ran is missing and blocks too; a new one does not. The exit status is 0 when nothing regressed and
+1 otherwise. `--allow <task>` or `--allow <task>:<requirement>` (globs) reports known-flaky work
+without failing on it. `--markdown` writes a pull request comment with each regression's failing
+check, what it expected and found, the run, and what it found in a passing baseline run; `--json`
+prints the full result. Both sides must be judged by the same check set (by digest), else the gate
+stops with exit 4. Defaults go in the config's `gate: { baseline, candidate, allow, tolerance,
+minRuns }`.
+
+For an optimizer, `gate()` is the acceptance function, with runs on disk or in memory:
+
+```ts
+import { gate } from '@swissspidy/assay';
+
+const result = await gate({ baseline: 'runs/before', candidate: 'runs/after', checks: 'checks' });
+const keep = result.ok && result.summary.improved > 0; // improves something, regresses nothing
+```
+
+A replayable example: `examples/gate` ([ADR 0021](docs/adr/0021-agent-regression-gate.md)).
 
 ## Model providers
 
@@ -595,6 +641,7 @@ five ([ADR 0011](docs/adr/0011-route-robust-compilation.md)).
 - [ADR 0018](docs/adr/0018-model-bench.md): `assay bench`, comparing models on your own tasks
 - [ADR 0019](docs/adr/0019-typed-checks-matcher-and-watch.md): the check builder, `toHaveCompleted` and `assay watch`
 - [ADR 0020](docs/adr/0020-mining-first-compiler.md): the mining-first compiler
+- [ADR 0021](docs/adr/0021-agent-regression-gate.md): `assay gate`, the agent regression gate
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
 - Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)
 

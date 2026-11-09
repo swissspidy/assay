@@ -6,12 +6,12 @@
  * it is a development loop.
  */
 import { createHash } from 'node:crypto';
-import { existsSync, globSync, readFileSync, readdirSync, statSync, watch, type FSWatcher } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync, watch, type FSWatcher } from 'node:fs';
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import type { CheckSet, EvidenceSnapshot, Status, Verdict } from '../../types.ts';
 import { validateCheckSet, verifyMany } from '../../index.ts';
 import { stressTest } from '../../stress/index.ts';
-import { CHECK_SET_GLOBS, checkSetName, isModuleFile, loadCheckSetFileWithDeps } from '../../checks/load.ts';
+import { checkSetName, discoverSets, isModuleFile, loadCheckSetFileWithDeps } from '../../checks/load.ts';
 import { CliError, EXIT, UsageError, paint, readSnapshotFile, toSnapshot, type Invocation, type Io } from '../io.ts';
 import { cliConfig } from '../config.ts';
 import { problems } from './stress.ts';
@@ -43,6 +43,8 @@ export interface SetResult {
   stress?: string;
 }
 
+export { discoverSets };
+
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`;
 
 /**
@@ -54,19 +56,6 @@ export function isScratch(path: string): boolean {
   if (parts.includes('.git') || parts.includes('node_modules')) return true;
   const name = parts.at(-1) ?? '';
   return /^\.#|~$|\.(swp|swo|swx|tmp)$|^4913$|^\.DS_Store$/.test(name);
-}
-
-/** Every check set the specs name: files, directories (searched) and globs. */
-export function discoverSets(specs: string[]): string[] {
-  const files = new Set<string>();
-  for (const spec of specs) {
-    if (existsSync(spec)) {
-      if (statSync(spec).isDirectory()) {
-        for (const g of CHECK_SET_GLOBS) for (const f of globSync(g, { cwd: spec })) files.add(resolve(spec, f));
-      } else files.add(resolve(spec));
-    } else for (const f of globSync(spec)) files.add(resolve(f));
-  }
-  return [...files].filter((f) => !f.split(sep).includes('node_modules')).toSorted();
 }
 
 /** Where a set's runs live: `<root>/<name>/` for each run root, and references/ next to the set's directory. */
