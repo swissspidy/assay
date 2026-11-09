@@ -15,6 +15,7 @@ import type {
   UrlMatch,
   ValueSource,
 } from '../types.ts';
+import { textSourceChannel } from '../types.ts';
 import { canonical } from '../text.ts';
 import { canonicalJson } from '../snapshot/digest.ts';
 import { instantOf } from '../runtime/values.ts';
@@ -762,10 +763,10 @@ function walkAssertion(
         for (const src of [a.source, ...('sameAs' in a.expect ? [a.expect.sameAs.source] : [])])
           if (src.from !== 'node' && src.from !== 'text' && src.from !== 'url')
             errors.push(notOnPage(at, `a ${src.from} source`));
-      const t = checkValueSource(a.source, a.normalize, at, errors, warnings);
+      const t = checkValueSource(a.source, a.normalize, at, errors, warnings, inRecord);
       if ('sameAs' in a.expect) {
         const other = a.expect.sameAs;
-        const ot = checkValueSource(other.source, other.normalize, `${at} sameAs`, errors, warnings);
+        const ot = checkValueSource(other.source, other.normalize, `${at} sameAs`, errors, warnings, inRecord);
         if (t !== 'unknown' && ot !== 'unknown' && t !== ot)
           errors.push(`${at}: sameAs compares a ${t} with a ${ot}; normalize both sides to the same type`);
         if (side(a.source, a.normalize) === side(other.source, other.normalize))
@@ -827,13 +828,17 @@ const before = (src: ValueSource) => (src.from === 'probe' || src.from === 'stor
 const side = (src: ValueSource, n: Normalizer[] | undefined) =>
   canonicalJson({ src, n: (n ?? []).map((x) => (typeof x === 'string' ? { op: x } : x)) } as unknown as Json);
 
-/** Checks one value source and its normalizers; returns the type the pipeline produces. */
+/**
+ * Checks one value source and its normalizers; returns the type the pipeline produces.
+ * `inRecord`: inside an `each`, where an unscoped text source reads the record's text.
+ */
 function checkValueSource(
   src: ValueSource,
   normalize: Normalizer[] | undefined,
   at: string,
   errors: string[],
   warnings: string[],
+  inRecord: boolean,
 ): VType {
   if (src.from === 'node') {
     checkTarget(src.target, at, errors);
@@ -850,9 +855,12 @@ function checkValueSource(
   if (src.from === 'text') {
     if (src.scope) checkTarget(src.scope, at, errors);
     checkRegex(src.pattern, src.flags, at, errors);
-    warnings.push(
-      `${at}: reads free page text, which is the easiest evidence to spoof; prefer a11y, network or probe evidence`,
-    );
+    // Only the whole document's text is free text; a scope's or a record's text is read from
+    // the accessibility tree, as the evaluator does (textSourceChannel).
+    if (textSourceChannel(src, inRecord) === 'text')
+      warnings.push(
+        `${at}: reads free page text, which is the easiest evidence to spoof; prefer a11y, network or probe evidence`,
+      );
   }
   if (src.from === 'request' || src.from === 'response') checkRequestMatch(src.match, at, errors);
   return flowType(sourceType(src), normalize, at, errors);

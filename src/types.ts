@@ -487,6 +487,15 @@ export const CHANNEL_TRUST: Record<Channel, Trust> = {
   text: 'freetext',
 };
 
+/**
+ * What a `from: "text"` source reads (ADR 0001 §2.6): with a `scope`, or inside an `each`
+ * record (`inRecord`), the canonical text of that accessibility node, which is derived from
+ * accessible names ("a11y"); otherwise the whole document's free text ("text"). The
+ * evaluator reads by it and the validator, status and compiler coverage judge by it.
+ */
+export const textSourceChannel = (src: { scope?: unknown }, inRecord: boolean): 'a11y' | 'text' =>
+  src.scope !== undefined || inRecord ? 'a11y' : 'text';
+
 export interface Evidence {
   channel: Channel;
   trust: Trust;

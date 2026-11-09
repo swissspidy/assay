@@ -26,7 +26,7 @@ import type {
   Tolerance,
   ValueSource,
 } from '../types.ts';
-import { CHANNEL_TRUST } from '../types.ts';
+import { CHANNEL_TRUST, textSourceChannel } from '../types.ts';
 import { canonical, describeTextMatch, stripGlobal, textTest, type TextTest } from '../text.ts';
 import {
   AXIndex,
@@ -244,7 +244,7 @@ function makeReader(src: ValueSource): Reader {
         let locator = 'document text';
         let channel: Channel = 'text';
         // Inside a record, an unscoped text source reads the record's text, not the page's.
-        const scoped = src.scope !== undefined || ctx.record !== undefined;
+        const scoped = textSourceChannel(src, ctx.record !== undefined) === 'a11y';
         if (scoped) {
           let node = ctx.record!;
           if (src.scope) {

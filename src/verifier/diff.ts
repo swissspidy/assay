@@ -4,7 +4,7 @@
  * which requirements a reviewer must therefore look at again.
  */
 import type { Assertion, Channel, Check, CheckSet, Json, Requirement, ValueSource } from '../types.ts';
-import { CHANNEL_TRUST } from '../types.ts';
+import { CHANNEL_TRUST, textSourceChannel } from '../types.ts';
 import { canonicalJson } from '../snapshot/digest.ts';
 import { contentDigest, describeAssertion, tolerancesIn, tolerancesOf, unlocked } from './lock.ts';
 import { cat, oneLine, render, type Block, type DocFormat, type Inline, type ListItem } from './doc.ts';
@@ -20,12 +20,13 @@ const CHANNEL_NAMES: Record<Channel, string> = {
 
 const TRUST_NAMES = { structured: 'structured', semantic: 'semantic', freetext: 'free text, spoofable' } as const;
 
-function sourceChannel(s: ValueSource): Channel {
+/** `inRecord`: inside an `each`, where an unscoped text source reads the record (textSourceChannel). */
+function sourceChannel(s: ValueSource, inRecord: boolean): Channel {
   switch (s.from) {
     case 'node':
       return 'a11y';
     case 'text':
-      return 'text';
+      return textSourceChannel(s, inRecord);
     case 'url':
       return 'url';
     case 'request':
@@ -38,7 +39,7 @@ function sourceChannel(s: ValueSource): Channel {
   }
 }
 
-function channels(a: Assertion, out: Set<Channel>): void {
+function channels(a: Assertion, out: Set<Channel>, inRecord = false): void {
   switch (a.kind) {
     case 'state':
     case 'contains':
@@ -46,8 +47,8 @@ function channels(a: Assertion, out: Set<Channel>): void {
       out.add('a11y');
       break;
     case 'value':
-      out.add(sourceChannel(a.source));
-      if ('sameAs' in a.expect) out.add(sourceChannel(a.expect.sameAs.source));
+      out.add(sourceChannel(a.source, inRecord));
+      if ('sameAs' in a.expect) out.add(sourceChannel(a.expect.sameAs.source, inRecord));
       break;
     case 'url':
       out.add('url');
@@ -61,9 +62,10 @@ function channels(a: Assertion, out: Set<Channel>): void {
       break;
   }
   // Composite assertions (allOf, anyOf, each, and any that wrap another) read what their parts read.
+  // Inside an each, its assertion reads the record.
   const parts = a as { assert?: Assertion; of?: Assertion[] };
-  if (parts.assert) channels(parts.assert, out);
-  for (const b of parts.of ?? []) channels(b, out);
+  if (parts.assert) channels(parts.assert, out, inRecord || a.kind === 'each');
+  for (const b of parts.of ?? []) channels(b, out, inRecord);
 }
 
 /** The evidence an assertion reads, strongest first, e.g. ["network log (structured)", "page text (free text, spoofable)"]. */
