@@ -494,6 +494,14 @@ export function describeAssertion(a: Assertion, inRecord = false): string {
     }
     case 'page':
       return `on the one open page (tab or popup) with ${describePageMatch(a.match)}: ${describeAssertion(a.assert)}`;
+    case 'sequence':
+      return `in this order in the run's trajectory: ${a.steps
+        .map((st) =>
+          'request' in st
+            ? `a request ${describeRequestMatch(st.request)}`
+            : `a navigation to ${describeUrlMatch(st.url)}`,
+        )
+        .join(', then ')}${a.strict ? ' (strict: no step occurs again once the next has begun)' : ''}`;
     case 'allOf':
       return `all of: ${a.of.map((b) => describeAssertion(b, inRecord)).join('; ')}`;
     case 'anyOf':

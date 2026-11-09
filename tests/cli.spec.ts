@@ -84,6 +84,18 @@ test('capture writes a snapshot of a live page that verify can read', async ({ b
   expect(v.code).toBe(2);
 });
 
+test('capture --trajectory records the order of requests and navigations (ADR 0024)', async ({ baseURL }, testInfo) => {
+  const exe = testInfo.project.use.launchOptions?.executablePath;
+  const r = await assay(['capture', `${baseURL}/`, '--trajectory', ...(exe ? ['--executable-path', exe] : [])]);
+  expect(r.code).toBe(0);
+  const snapshot = loadSnapshot(r.stdout);
+  const requests = snapshot.trajectory!.flatMap((e) => (e.type === 'request' ? [e.seq] : []));
+  expect(requests).toEqual(snapshot.network!.map((e) => e.seq));
+  expect(snapshot.trajectory).toContainEqual(
+    expect.objectContaining({ type: 'navigation', url: `${baseURL}/`, page: 0 }),
+  );
+});
+
 test('capture includes iframe content, same- and cross-origin (ADR 0012)', async () => {
   const { app, other } = await startSites();
   try {

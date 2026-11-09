@@ -38,6 +38,8 @@ export {
   req,
   RequestRef,
   RequirementBuilder,
+  sequence,
+  SequenceRef,
   StandaloneCheck,
   storage,
   text,
@@ -53,6 +55,7 @@ export {
   type LikeShape,
   type RequirementOptions,
   type SchemaInShape,
+  type StepInput,
 } from './builder.ts';
 export { printCheckSet, type PrintOptions } from './print.ts';
 export { loadCheckSetFile, CheckSetFileError } from './load.ts';

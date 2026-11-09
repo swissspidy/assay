@@ -32,6 +32,7 @@ import {
   type Rejection,
   type Requirement,
   type RequestMatch,
+  type SequenceStep,
   type StateExpect,
   type Target,
   type TextMatch,
@@ -429,6 +430,35 @@ export const network = {
   patch: byMethod('PATCH'),
   delete: byMethod('DELETE'),
 };
+
+/** A step of a sequence: a request (`network.post('/api/verify')`), a navigation (`url('/confirm')`), or a plain step. */
+export type StepInput = RequestRef | AssertionBuilder<Extract<Assertion, { kind: 'url' }>> | SequenceStep;
+
+function stepOf(s: StepInput): SequenceStep {
+  if (!(s instanceof AssertionBuilder)) return s;
+  const a = s.toJSON();
+  if (a.kind === 'request') {
+    if (a.count) throw new Error('a sequence step is a request, not a number of requests: drop .count()');
+    return { request: a.match };
+  }
+  return { url: a.match };
+}
+
+/** Steps in order (ADR 0024): `sequence(network.post('/api/verify'), network.post('/api/refill'))`. */
+export class SequenceRef extends AssertionBuilder<Extract<Assertion, { kind: 'sequence' }>> {
+  readonly steps: SequenceStep[];
+  constructor(steps: SequenceStep[], strict?: boolean) {
+    super({ kind: 'sequence', steps, ...(strict !== undefined ? { strict } : {}) });
+    this.steps = steps;
+  }
+  /** The steps also do not interleave: no event of a step after the next step began. */
+  strict(strict = true): SequenceRef {
+    return new SequenceRef(this.steps, strict);
+  }
+}
+
+/** The steps happen in this order in the run's trajectory (ADR 0024). */
+export const sequence = (...steps: StepInput[]): SequenceRef => new SequenceRef(steps.map(stepOf));
 
 /** Normalizers that take arguments; the simple ones are strings (`'trim'`, `'lowercase'`, …). */
 export const norm = {

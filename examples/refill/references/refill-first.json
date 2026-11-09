@@ -1,0 +1,160 @@
+{
+  "label": {
+    "expected": "fail",
+    "order": ["refill", "verify"]
+  },
+  "snapshot": {
+    "schema": "assay.snapshot/v1",
+    "capturedAt": "1970-01-01T00:00:00.000Z",
+    "page": {
+      "url": "http://127.0.0.1:4176/done",
+      "title": "Done"
+    },
+    "a11y": {
+      "role": "document",
+      "children": [
+        {
+          "role": "main",
+          "children": [
+            {
+              "role": "heading",
+              "name": "Thank you",
+              "level": 1
+            },
+            {
+              "role": "paragraph",
+              "children": [
+                {
+                  "role": "text",
+                  "name": "Your request for RX-1001 was received."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "text": "Thank you\n\nYour request for RX-1001 was received.",
+    "network": [
+      {
+        "seq": 0,
+        "method": "GET",
+        "url": "http://127.0.0.1:4176/",
+        "resourceType": "document",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/html; charset=utf-8"
+        }
+      },
+      {
+        "seq": 1,
+        "method": "POST",
+        "url": "http://127.0.0.1:4176/api/refill",
+        "resourceType": "fetch",
+        "status": 200,
+        "requestHeaders": {
+          "content-type": "application/json"
+        },
+        "responseHeaders": {
+          "content-type": "application/json"
+        },
+        "requestBody": {
+          "rx": "RX-1001"
+        },
+        "responseBody": {
+          "rx": "RX-1001",
+          "status": "refilled"
+        }
+      },
+      {
+        "seq": 2,
+        "method": "POST",
+        "url": "http://127.0.0.1:4176/api/verify",
+        "resourceType": "fetch",
+        "status": 200,
+        "requestHeaders": {
+          "content-type": "application/json"
+        },
+        "responseHeaders": {
+          "content-type": "application/json"
+        },
+        "requestBody": {
+          "rx": "RX-1001",
+          "dob": "1980-04-02"
+        },
+        "responseBody": {
+          "rx": "RX-1001",
+          "verified": true
+        }
+      },
+      {
+        "seq": 3,
+        "method": "GET",
+        "url": "http://127.0.0.1:4176/done",
+        "resourceType": "document",
+        "status": 200,
+        "requestHeaders": {},
+        "responseHeaders": {
+          "content-type": "text/html; charset=utf-8"
+        }
+      }
+    ],
+    "storage": {
+      "cookies": [],
+      "local": {
+        "http://127.0.0.1:4176": {}
+      },
+      "session": {
+        "http://127.0.0.1:4176": {}
+      }
+    },
+    "probes": {
+      "prescription": {
+        "ok": true,
+        "value": {
+          "verified": true,
+          "refilled": true
+        }
+      }
+    },
+    "trajectory": [
+      {
+        "type": "request",
+        "seq": 0,
+        "t": 327
+      },
+      {
+        "type": "navigation",
+        "url": "http://127.0.0.1:4176/",
+        "page": 0,
+        "t": 359
+      },
+      {
+        "type": "request",
+        "seq": 1,
+        "t": 722
+      },
+      {
+        "type": "request",
+        "seq": 2,
+        "t": 854
+      },
+      {
+        "type": "request",
+        "seq": 3,
+        "t": 1016
+      },
+      {
+        "type": "navigation",
+        "url": "http://127.0.0.1:4176/done",
+        "page": 0,
+        "t": 1034
+      }
+    ],
+    "meta": {
+      "capturer": "assay/0.1.0",
+      "redacted": []
+    }
+  }
+}

@@ -31,6 +31,11 @@ export interface ReadSet {
   /** Probe results read (the whole result: pointers select inside it). */
   probes: { probe: string; at: Moment }[];
   /**
+   * The trajectory (ADR 0024): the order of requests and navigations a `sequence` reads. Its
+   * request steps are also listed in `requests`, since they match through the network log.
+   */
+  trajectory: boolean;
+  /**
    * The check has a part the read-set cannot describe (an unknown assertion kind or value
    * source): it may read anything. Validation rejects such checks; `evaluate` does not.
    */
@@ -46,6 +51,7 @@ export const emptyReadSet = (): ReadSet => ({
   requests: [],
   storage: [],
   probes: [],
+  trajectory: false,
   opaque: false,
 });
 
@@ -66,6 +72,7 @@ export function unionReadSets(sets: ReadSet[]): ReadSet {
     out.text ||= s.text;
     out.url ||= s.url;
     out.pages ||= s.pages;
+    out.trajectory ||= s.trajectory;
     out.opaque ||= s.opaque;
     for (const r of s.roles) roles.add(r);
     out.requests.push(...s.requests);
@@ -158,6 +165,10 @@ function walk(a: Assertion, rs: ReadSet, roles: Set<string>, inRecord: boolean):
     case 'request':
       rs.requests.push(a.match);
       return;
+    case 'sequence':
+      rs.trajectory = true;
+      for (const step of a.steps) if ('request' in step) rs.requests.push(step.request);
+      return;
     case 'each':
       rs.a11y = true;
       target(a.scope, rs, roles);
@@ -180,7 +191,7 @@ function walk(a: Assertion, rs: ReadSet, roles: Set<string>, inRecord: boolean):
 
 /**
  * A part of a snapshot that a check's result can depend on (ADR 0016): a top-level section
- * (`a11y`, `text`, `page`, `pages`, `network`, `storage`, `probes`, `baseline`), or a part of
+ * (`a11y`, `text`, `page`, `pages`, `network`, `storage`, `probes`, `baseline`, `trajectory`), or a part of
  * one: `probes:<name>` (one probe's result), `baseline.storage`, `baseline.probes:<name>`.
  * A key stands for everything under it, so `probes` covers `probes:cart`.
  */
@@ -200,6 +211,7 @@ export function readKeys(rs: ReadSet): ReadonlySet<ReadKey> | null {
   // A page assertion selects among all open pages (their URLs and titles) and reads the selected one.
   if (rs.pages) for (const k of ['page', 'a11y', 'text', 'pages']) out.add(k);
   if (rs.requests.length) out.add('network');
+  if (rs.trajectory) out.add('trajectory');
   // Before the task: whether a baseline was captured, then its storage or probe.
   for (const st of rs.storage) out.add(st.at === 'before' ? 'baseline.storage' : 'storage');
   for (const p of rs.probes) out.add(p.at === 'before' ? `baseline.probes:${p.probe}` : `probes:${p.probe}`);

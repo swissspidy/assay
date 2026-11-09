@@ -110,6 +110,19 @@ export function networkLog(
   );
 }
 
+/** The trajectory (ADR 0024): each event with its order index, requests with their entry. */
+export function trajectoryView(snapshot: EvidenceSnapshot, limit = 200): string {
+  const events = snapshot.trajectory;
+  if (!events) return 'The trajectory was not recorded for this snapshot.';
+  const bySeq = new Map((snapshot.network ?? []).map((e) => [e.seq, e]));
+  const rows = events.slice(0, limit).map((e, i) => {
+    if (e.type === 'navigation') return `[${i}] navigation (page ${e.page}) to ${e.url}`;
+    const n = bySeq.get(e.seq);
+    return `[${i}] request #${e.seq}${n ? ` ${n.method} ${n.url} → ${n.status ?? n.failure ?? 'pending'} (${n.resourceType})` : ''}`;
+  });
+  return rows.join('\n') + (events.length > limit ? `\n… ${events.length - limit} more` : '');
+}
+
 const body = (b: Json | undefined) =>
   b === undefined ? '(none)' : clip(typeof b === 'string' ? b : JSON.stringify(b, null, 1), 3000);
 

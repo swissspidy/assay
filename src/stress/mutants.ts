@@ -41,6 +41,7 @@ import { canonical, stripGlobal } from '../text.ts';
 import { clone, editById, nearMiss, replaceText, treeChanged, withPointer } from './edit.ts';
 import { exampleOf, schemaViolations } from './schema.ts';
 import { renderLike, violations } from './violate.ts';
+import { sequenceMutants } from './trajectory.ts';
 
 export { schemaViolations } from './schema.ts';
 
@@ -1490,6 +1491,8 @@ function assertionMutants(s: EvidenceSnapshot, idx: AXIndex, a: Assertion, rec?:
     }
     case 'request':
       return requestMutants(s, a);
+    case 'sequence':
+      return sequenceMutants(s, a);
     case 'page':
       return pageMutants(s, a);
     case 'allOf':

@@ -1,0 +1,5 @@
+---
+'@swissspidy/assay': minor
+---
+
+Trajectory evidence and `sequence` checks (ADR 0024). A recorder attached with `{ trajectory: true }` (`test.use({ evidenceOptions: { trajectory: true } })`, `assay capture --trajectory`) records the run's requests and main-frame navigations in order, with their times, as the snapshot's optional `trajectory`. The new `sequence` assertion checks process requirements such as "verify the identity before refilling": `{ "kind": "sequence", "steps": [{ "request": RequestMatch } | { "url": UrlMatch }, …], "strict"?: boolean }` passes when each step's first event comes after the previous step's first event, fails when a step comes first or never happens, and abstains on snapshots without a trajectory. Snapshots captured without the option, and their digests, are unchanged. The validator, read-sets, stress test (step-swap, step-moved-earlier, interleave and missing-step mutants; a `trajectory-noise` variant), the builder (`sequence(...)`), `assay checks print --ts` and the review sheet cover it; the compiler offers it only for references that have a trajectory.

@@ -464,6 +464,7 @@ Exit status: 0, 3 usage, 4 error (including an invalid check set).`,
       'wait-until': { type: 'string' },
       wait: { type: 'string' },
       storage: { type: 'boolean' },
+      trajectory: { type: 'boolean' },
       'executable-path': { type: 'string' },
     },
     help: `Opens the URL in headless Chromium, records the network from the start, and captures the
@@ -476,6 +477,7 @@ Options:
   --wait-until <event>      load (default), domcontentloaded or networkidle
   --wait <ms>               Wait this long after loading before capturing
   --no-storage              Leave cookies and web storage out
+  --trajectory              Also record the order of requests and navigations (for sequence checks)
   --executable-path <file>  Chromium binary to use instead of Playwright's
 
 Exit status: 0 captured, 3 usage, 4 error.`,
