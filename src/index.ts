@@ -1,6 +1,8 @@
 /**
  * `@swissspidy/assay`: verify task outcomes with compiled checks.
  *
+ * The agent regression gate: `gate()` compares runs before and after an agent change (ADR 0021).
+ *
  * Configuration: `defineConfig` and `loadConfig` for assay.config.ts, and
  * `resolveModel` for the three model forms (ADR 0017).
  *
@@ -83,6 +85,7 @@ export {
   type AssayConfig,
   type BenchConfig,
   type BenchModelInput,
+  type GateConfig,
   type LoadedConfig,
 } from './config/config.ts';
 export {
@@ -92,3 +95,23 @@ export {
   type ModelOptions,
   type LanguageModelLike,
 } from './model/resolve.ts';
+export {
+  gate,
+  classifyCounts,
+  GateError,
+  GATE_SCHEMA,
+  type GateOptions,
+  type GateResult,
+  type GateTask,
+  type GateRequirement,
+  type GateFinding,
+  type GateCheckDetail,
+  type GateEvidence,
+  type GateCounts,
+  type GateRunResult,
+  type GateRunInput,
+  type GateSideInput,
+  type GateStatus,
+  type GateSummary,
+} from './gate/gate.ts';
+export { formatGate, formatGateMarkdown, gateJson } from './gate/format.ts';

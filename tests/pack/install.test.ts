@@ -251,6 +251,40 @@ test('the installed assay executable verifies, validates, reviews, stress-tests 
   assert.equal(await readFile(report, 'utf8'), await readFile(join(root, 'examples/bench/REPORT.md'), 'utf8'));
 });
 
+test('the installed assay gate reproduces the fixture report, and gate() is exported with its types', async () => {
+  const gateDir = join(root, 'examples/gate');
+  const report = join(dir, 'gate.md');
+  // The fixture's candidate regresses one task: exit 1, and the committed report byte for byte.
+  const failed = await assay(dir, ['gate', '-c', join(gateDir, 'assay.config.ts'), '--markdown', report]);
+  assert.equal(failed.code, 1, failed.stderr);
+  assert.match(failed.stdout, /✘ {2}02-add-blue-mug +regressed +2\/2 → 1\/2 +R1 2\/2 → 1\/2/);
+  assert.equal(await readFile(report, 'utf8'), await readFile(join(gateDir, 'REPORT.md'), 'utf8'));
+  const allowed = await assay(dir, ['gate', '-c', join(gateDir, 'assay.config.ts'), '--allow', '02-add-blue-mug']);
+  assert.equal(allowed.code, 0, allowed.stdout);
+  // Baseline against itself: nothing regressed.
+  const self = ['gate', '-b', join(gateDir, 'baseline'), '--candidate', join(gateDir, 'baseline')];
+  assert.equal((await assay(dir, [...self, join(root, 'examples/tiny-shop/tasks')])).code, 0);
+  assert.equal((await assay(dir, ['gate', '--candidate', join(gateDir, 'candidate')])).code, 3);
+
+  const script = join(dir, 'gate.ts');
+  await writeFile(
+    script,
+    `import { formatGateMarkdown, gate, type GateResult } from '${name}';
+const accept = (r: GateResult): boolean => r.ok && r.summary.improved > 0;
+const r = await gate({
+  baseline: ${JSON.stringify(join(gateDir, 'baseline'))},
+  candidate: ${JSON.stringify(join(gateDir, 'candidate'))},
+  checks: ${JSON.stringify(join(root, 'examples/tiny-shop/tasks'))},
+  relativeTo: ${JSON.stringify(gateDir)},
+  allow: ['02-add-blue-mug:R1'],
+});
+console.log(JSON.stringify({ schema: r.schema, ok: r.ok, accept: accept(r), md: formatGateMarkdown(r).startsWith('# Agent regression gate') }));
+`,
+  );
+  const { stdout } = await run(process.execPath, [script], { cwd: dir });
+  assert.deepEqual(JSON.parse(stdout), { schema: 'assay.gate/v1', ok: true, accept: true, md: true });
+});
+
 test('the installed executable takes a *.checks.ts written with @swissspidy/assay/checks, and prints one', async () => {
   const ex = (p: string) => join(root, 'examples/tiny-shop', p);
   const work = await mkdtemp(join(dir, 'ts-'));
@@ -435,6 +469,13 @@ import type { CompileOptions } from '${name}/compiler';
 import type { StressReport } from '${name}/stress';
 import type { Metrics } from '${name}/eval';
 export const verdictOf = (cs: CheckSet, s: EvidenceSnapshot): Outcome['verdict'] => evaluate(cs, s).verdict;
+import { gate, type GateOptions, type GateResult, type GateStatus } from '${name}';
+export const gateOptions: GateOptions = { baseline: { t: [] as EvidenceSnapshot[] }, candidate: 'runs/after', checks: { t: built }, tolerance: 1, allow: ['t:R1'] };
+export const accept = async (o: GateOptions): Promise<[boolean, GateStatus[]]> => {
+  const r: GateResult = await gate(o);
+  return [r.ok, r.tasks.map((t) => t.status)];
+};
+export const gateConfig = defineConfig({ gate: { baseline: 'runs/before', candidate: ['runs/after'], minRuns: 3 } });
 export const escalated = async (cs: CheckSet, s: EvidenceSnapshot, verifier: ModelClient) =>
   (await verify(cs, s, { verifier })).record;
 export const options: ExpectOutcomeOptions = { timeout: 0, requireLocked: true, baseline: null };
