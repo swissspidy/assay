@@ -4,7 +4,7 @@
  * stages are not reached, `--stage` gates CI, and the JSON shape is stable. No model, no browser.
  */
 import { test, expect } from '@playwright/test';
-import { cpSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { stripVTControlCharacters } from 'node:util';
@@ -330,5 +330,117 @@ test.describe('status()', () => {
   test('assay help lists the command', async () => {
     expect((await assay(['--help'])).stdout).toMatch(/^ {2}status +Show how far each task is on the readiness ladder/m);
     expect((await assay(['status', '--help'])).stdout).toContain('Usage: assay status [checks...] [options]');
+  });
+});
+
+test.describe('review fixes (PR #34)', () => {
+  const runFile = (task: string, file: string) =>
+    JSON.parse(readFileSync(shop(`references/${task}/${file}.json`), 'utf8'));
+  /** A project with 02-add-blue-mug in tasks/. */
+  function project(dir = tmp()) {
+    mkdirSync(join(dir, 'tasks'), { recursive: true });
+    writeFileSync(
+      join(dir, 'tasks/02-add-blue-mug.checks.json'),
+      readFileSync(shop('tasks/02-add-blue-mug.checks.json')),
+    );
+    return dir;
+  }
+  const put = (dir: string, sub: string, name: string, x: unknown) => {
+    mkdirSync(join(dir, sub), { recursive: true });
+    writeFileSync(join(dir, sub, `${name}.json`), typeof x === 'string' ? x : JSON.stringify(x));
+  };
+  const snap = (file: string, capturedAt: unknown) => ({ ...runFile('02-add-blue-mug', file).snapshot, capturedAt });
+
+  test('recent runs in a directory that is also a references directory are judged, not skipped', async () => {
+    const dir = project();
+    put(dir, 'runs/02-add-blue-mug', 'added-blue-mug', runFile('02-add-blue-mug', 'added-blue-mug'));
+    put(dir, 'runs/02-add-blue-mug', 'added-red-mug', runFile('02-add-blue-mug', 'added-red-mug'));
+    const r = await status({
+      checks: 'tasks',
+      cwd: dir,
+      references: ['runs'],
+      recent: 'runs',
+      stages: ['valid', 'references', 'recent'],
+    });
+    expect(r.tasks[0]!.stages.recent.status).toBe('fail');
+    expect(r.tasks[0]!.blocker).toBe('1/2 recent runs succeed; added-red-mug: FAIL (C1 fail)');
+  });
+
+  test('a recent run whose capture time is unknown fails the stage instead of falling out of the window', async () => {
+    const dir = project();
+    put(dir, 'snaps/02-add-blue-mug', 'a-good', snap('added-blue-mug', '2026-11-09T10:00:00.000Z'));
+    put(dir, 'snaps/02-add-blue-mug', 'truncated', '{ "schema": "assay.snap');
+    const opts = { checks: 'tasks', cwd: dir, recent: 'snaps', recentRuns: { last: 1 } };
+    const truncated = await status({ ...opts, stages: ['valid', 'recent'] });
+    expect(truncated.tasks[0]!.blocker).toMatch(/^truncated: snapshot .* is not valid JSON/);
+    rmSync(join(dir, 'snaps/02-add-blue-mug/truncated.json'));
+    put(dir, 'snaps/02-add-blue-mug', 'undated', snap('added-blue-mug', 'yesterday'));
+    const undated = await status({ ...opts, stages: ['valid', 'recent'] });
+    expect(undated.tasks[0]!.blocker).toBe('undated: capturedAt "yesterday" is not a date');
+  });
+
+  test('recent runs are ordered by instant, across UTC offsets', async () => {
+    const dir = project();
+    // 10:00+02:00 is 08:00Z: older than the failing run at 09:00Z, though it sorts later as text.
+    put(dir, 'snaps/02-add-blue-mug', 'older-success', snap('added-blue-mug', '2026-11-09T10:00:00+02:00'));
+    put(dir, 'snaps/02-add-blue-mug', 'newer-fail', snap('added-red-mug', '2026-11-09T09:00:00Z'));
+    const r = await status({
+      checks: 'tasks',
+      cwd: dir,
+      recent: 'snaps',
+      stages: ['valid', 'recent'],
+      recentRuns: { last: 1 },
+    });
+    expect(r.tasks[0]!.blocker).toBe('0/1 recent runs succeed; newer-fail: FAIL (C1 fail)');
+  });
+
+  test('a run labelled fail must fail: an abstain is not as labelled (as in assay watch)', async () => {
+    const dir = project();
+    put(dir, 'runs/02-add-blue-mug', 'added-blue-mug', runFile('02-add-blue-mug', 'added-blue-mug'));
+    // The probe the checks read was not recorded, so they abstain.
+    const blue = runFile('02-add-blue-mug', 'added-blue-mug');
+    put(dir, 'runs/02-add-blue-mug', 'elsewhere', {
+      snapshot: { ...blue.snapshot, probes: {} },
+      label: { expected: 'fail' },
+    });
+    const r = await status({ checks: 'tasks', cwd: dir, references: ['runs'], stages: ['valid', 'references'] });
+    expect(r.tasks[0]!.blocker).toBe('elsewhere: ABSTAIN, expected fail');
+  });
+
+  test('recentRuns options are checked like the config', async () => {
+    const dir = project();
+    const opts = { checks: 'tasks', cwd: dir, recent: 'snaps' };
+    await expect(status({ ...opts, recentRuns: { last: 0 } })).rejects.toThrow(
+      /`recentRuns.last` must be a positive integer/,
+    );
+    await expect(status({ ...opts, recentRuns: { minPassRate: Number.NaN } })).rejects.toThrow(
+      /`recentRuns.minPassRate` must be a number from 0 to 1/,
+    );
+  });
+
+  test('a ladder without `valid` still loads and validates the set first', async () => {
+    const dir = project();
+    const covered = await status({ checks: 'tasks', cwd: dir, stages: ['covered'] });
+    expect(covered.tasks[0]!.ready).toBe(true);
+    expect(covered.tasks[0]!.checkSet).toEqual({ id: 'tiny-shop/add-blue-mug', version: '1' });
+    writeFileSync(join(dir, 'tasks/02-add-blue-mug.checks.json'), '{}');
+    const invalid = await status({ checks: 'tasks', cwd: dir, stages: ['covered', 'locked'] });
+    expect(invalid.tasks[0]!.blockedAt).toBe('covered');
+    expect(invalid.tasks[0]!.blocker).toMatch(/^invalid check set: /);
+    expect(invalid.tasks[0]!.stages.locked.status).toBe('not-reached');
+  });
+
+  test('a config path is relative to cwd', async () => {
+    const r = await status({ config: 'assay.config.ts', cwd: FIXTURE });
+    expect(r).toEqual(await status({ config: CONFIG, cwd: FIXTURE }));
+  });
+
+  test('a cwd with glob characters stays literal in relative check globs', async () => {
+    const base = tmp();
+    const literal = project(join(base, 'proj[1]'));
+    project(join(base, 'proj1'));
+    writeFileSync(join(base, 'proj1/tasks/other.checks.json'), readFileSync(shop('tasks/02-add-blue-mug.checks.json')));
+    const r = await status({ checks: 'tasks/*.checks.json', cwd: literal, stages: ['valid'] });
+    expect(r.tasks.map((t) => t.file)).toEqual(['tasks/02-add-blue-mug.checks.json']);
   });
 });

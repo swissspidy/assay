@@ -11,6 +11,8 @@ import { CheckSetFileError, checkSetName, discoverSets, loadCheckSetFile, runDir
 import { readSnapshotFile, toSnapshot } from '../cli/io.ts';
 import {
   STATUS_STAGES,
+  checkRecentRuns,
+  escapeGlob,
   readTrustedKeys,
   type AssayConfig,
   type StatusConfig,
@@ -31,6 +33,7 @@ export { STATUS_STAGES, type StatusConfig, type StatusStage };
  */
 export type StageStatus = 'pass' | 'fail' | 'not-reached' | 'skipped';
 
+/** One stage of one task's ladder. */
 export interface StageResult {
   status: StageStatus;
   /** Why the stage failed: one line naming the first problem. */
@@ -39,6 +42,7 @@ export interface StageResult {
   detail?: string;
 }
 
+/** One task's row: its ladder and, when blocked, where and why. */
 export interface TaskStatus {
   /** The task's name: the check set's file name without `.checks.json` / `.checks.ts`. */
   name: string;
@@ -58,6 +62,7 @@ export interface TaskStatus {
   runs: { references: number; recent: number };
 }
 
+/** What `status()` returns, and `assay status --json` prints (`assay.status/v1`). */
 export interface StatusResult {
   schema: 'assay.status/v1';
   /** The stages this ladder evaluates, in order (the others are skipped for every task). */
@@ -71,6 +76,7 @@ export interface StatusResult {
   };
 }
 
+/** Options of `status()`; each defaults to the config's setting when a config is given. */
 export interface StatusOptions {
   /** Check set files, directories (searched for `*.checks.json` and `*.checks.ts`) or globs. Default: the config's `checks`. */
   checks?: string | readonly string[];
@@ -106,6 +112,7 @@ interface Run {
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`;
 const more = (n: number) => (n > 1 ? ` (+${n - 1} more)` : '');
 const oneLine = (s: string) => s.replace(/\s+/g, ' ').trim();
+const GLOB = /[*?[\]{}]/;
 
 /** The `.json` runs in these directories, each read once (and its snapshot built once). */
 function readRuns(dirs: readonly string[]): Run[] {
@@ -173,13 +180,22 @@ const keySetOf = (k: readonly TrustedKey[] | TrustedKeySet): TrustedKeySet =>
  */
 export async function status(options: StatusOptions = {}): Promise<StatusResult> {
   const cwd = resolve(options.cwd ?? process.cwd());
-  const config = await configOf(options.config);
+  // A config path is relative to `cwd`, like every other path here.
+  const config = await configOf(typeof options.config === 'string' ? resolve(cwd, options.config) : options.config);
+  if (options.recentRuns !== undefined) checkRecentRuns(options.recentRuns, 'status()');
   const abs = (p: string) => resolve(cwd, p);
   const specs =
     options.checks === undefined ? [] : typeof options.checks === 'string' ? [options.checks] : options.checks;
-  const specList = specs.length ? specs.map(abs) : config.checks ? [config.checks] : [];
+  for (const s of specs) if (!GLOB.test(s) && !existsSync(abs(s))) throw new Error(`check set not found: ${abs(s)}`);
+  // A relative glob keeps `cwd` literal, even with glob characters in its name (as `gate` does).
+  const specList = specs.length
+    ? specs.map((s) => (isAbsolute(s) || existsSync(abs(s)) ? abs(s) : `${escapeGlob(cwd)}/${s}`))
+    : config.checks
+      ? [config.checks]
+      : [];
   if (!specList.length) throw new Error('no check sets: pass `checks`, or set `checks` in the config');
-  for (const s of specList) if (!/[*?[\]{}]/.test(s) && !existsSync(s)) throw new Error(`check set not found: ${s}`);
+  if (!specs.length && !GLOB.test(config.checks!) && !existsSync(config.checks!))
+    throw new Error(`check set not found: ${config.checks}`);
   const files = discoverSets(specList);
   if (!files.length) throw new Error(`no check sets (*.checks.json, *.checks.ts) at ${specList.join(', ')}`);
 
@@ -204,6 +220,14 @@ export async function status(options: StatusOptions = {}): Promise<StatusResult>
     return r && !r.startsWith('..') && !isAbsolute(r) ? r.split(sep).join('/') : f;
   };
 
+  /** Runs per directory, read once: a directory that is both a references and a recent-runs directory is read once. */
+  const runCache = new Map<string, Run[]>();
+  const runsIn = (dir: string): Run[] => {
+    let runs = runCache.get(dir);
+    if (!runs) runCache.set(dir, (runs = readRuns([dir])));
+    return runs;
+  };
+
   const tasks: TaskStatus[] = [];
   for (const file of files) {
     const name = checkSetName(file);
@@ -217,32 +241,35 @@ export async function status(options: StatusOptions = {}): Promise<StatusResult>
     };
     let cs: CheckSet | undefined;
     let warnings: string[] = [];
-    let refRuns: Run[] | undefined;
     const refDirs = runDirsFor(file, refRoots);
-    const references = () => (refRuns ??= readRuns(refDirs));
+    const references = () => refDirs.flatMap(runsIn);
+
+    // The set and its validation come first, whatever the ladder: every other stage reads them.
+    const load = async (): Promise<StageResult> => {
+      let input: unknown;
+      try {
+        input = await loadCheckSetFile(file);
+      } catch (e) {
+        if (!(e instanceof CheckSetFileError)) throw e;
+        const why =
+          e.code === 'EJSON' ? e.message.replace(/^check set .* is not valid JSON/, 'not valid JSON') : e.message;
+        return { status: 'fail', blocker: oneLine(why) };
+      }
+      const plan = compileChecks(input);
+      const report = plan.report;
+      if (!report.ok) return { status: 'fail', blocker: oneLine(report.errors[0]!) + more(report.errors.length) };
+      cs = input as CheckSet;
+      warnings = report.warnings;
+      task.checkSet = { id: cs.id, version: cs.version };
+      return {
+        status: 'pass',
+        detail: `${plural(cs.requirements.length, 'requirement')}, ${plural(cs.checks.length, 'check')}`,
+      };
+    };
+    const validity = await load();
 
     const evaluate: Record<StatusStage, () => Promise<StageResult>> = {
-      valid: async () => {
-        let input: unknown;
-        try {
-          input = await loadCheckSetFile(file);
-        } catch (e) {
-          if (!(e instanceof CheckSetFileError)) throw e;
-          const why =
-            e.code === 'EJSON' ? e.message.replace(/^check set .* is not valid JSON/, 'not valid JSON') : e.message;
-          return { status: 'fail', blocker: oneLine(why) };
-        }
-        const plan = compileChecks(input);
-        const report = plan.report;
-        if (!report.ok) return { status: 'fail', blocker: oneLine(report.errors[0]!) + more(report.errors.length) };
-        cs = input as CheckSet;
-        warnings = report.warnings;
-        task.checkSet = { id: cs.id, version: cs.version };
-        return {
-          status: 'pass',
-          detail: `${plural(cs.requirements.length, 'requirement')}, ${plural(cs.checks.length, 'check')}`,
-        };
-      },
+      valid: async () => validity,
       covered: async () => {
         const gaps = coverage(cs!, warnings);
         if (gaps.length) return { status: 'fail', blocker: gaps[0]! + more(gaps.length) };
@@ -310,24 +337,35 @@ export async function status(options: StatusOptions = {}): Promise<StatusResult>
           const r = labelled[i]!;
           if (r.expected === 'success' && o.verdict !== 'success')
             wrong.push(`${r.name}: ${o.verdict.toUpperCase()}, expected success (${decidingCheck(o)})`);
-          if (r.expected === 'fail' && o.verdict === 'success') wrong.push(`${r.name}: SUCCESS, expected fail`);
+          // Only a fail is as labelled, as in `assay watch`: an abstain does not show the run is wrong.
+          if (r.expected === 'fail' && o.verdict !== 'fail')
+            wrong.push(`${r.name}: ${o.verdict.toUpperCase()}, expected fail`);
         });
         if (wrong.length) return { status: 'fail', blocker: wrong[0]! + more(wrong.length) };
         return { status: 'pass', detail: `${labelled.length}/${labelled.length} labelled runs as expected` };
       },
       recent: async () => {
         const dir = join(recentRoot!, name);
-        const runs = refDirs.includes(dir) ? [] : readRuns([dir]);
+        const runs = runsIn(dir);
         if (!runs.length) return { status: 'skipped', detail: 'no recent runs' };
-        // Newest first: by capture time, then by name (assay capture names files by time).
+        // A run that cannot be read, or whose capture time is unknown, cannot be placed in the
+        // window: it fails the stage rather than silently falling out of it.
+        const broken = runs.find((r) => r.error);
+        if (broken) return { status: 'fail', blocker: `${broken.name}: ${oneLine(broken.error!)}` };
+        const at = new Map(runs.map((r) => [r, Date.parse(r.capturedAt)] as const));
+        const undated = runs.find((r) => Number.isNaN(at.get(r)));
+        if (undated) {
+          const what =
+            typeof undated.capturedAt === 'string'
+              ? `capturedAt ${JSON.stringify(undated.capturedAt)} is not a date`
+              : 'no capturedAt';
+          return { status: 'fail', blocker: `${undated.name}: ${what}` };
+        }
+        // Newest first: by the instant captured (offsets count), then by name (assay capture names files by time).
         const newest = runs
-          .toSorted((a, b) =>
-            a.capturedAt === b.capturedAt ? (a.name < b.name ? 1 : -1) : a.capturedAt < b.capturedAt ? 1 : -1,
-          )
+          .toSorted((a, b) => at.get(b)! - at.get(a)! || (a.name < b.name ? 1 : a.name > b.name ? -1 : 0))
           .slice(0, last);
         task.runs.recent = newest.length;
-        const broken = newest.find((r) => r.error);
-        if (broken) return { status: 'fail', blocker: `${broken.name}: ${oneLine(broken.error!)}` };
         const results = await verifyMany(
           cs!,
           newest.map((r) => r.snapshot!),
@@ -351,7 +389,11 @@ export async function status(options: StatusOptions = {}): Promise<StatusResult>
       if (!enabled.includes(stage)) stages[stage] = { status: 'skipped' };
       else if (blocked) stages[stage] = { status: 'not-reached' };
       else {
-        const r = await evaluate[stage]();
+        // Without `valid` in the ladder, a set that does not load or validate blocks the first stage.
+        const r: StageResult =
+          stage === 'valid' || cs
+            ? await evaluate[stage]()
+            : { status: 'fail', blocker: `invalid check set: ${validity.blocker!}` };
         stages[stage] = r;
         if (r.status === 'fail') {
           blocked = true;

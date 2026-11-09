@@ -2,6 +2,7 @@
 import { styleText } from 'node:util';
 import type { StageStatus, StatusResult, StatusStage } from './status.ts';
 
+/** Column headings of the table, per stage. */
 export const STAGE_LABELS: Record<StatusStage, string> = {
   valid: 'Valid',
   covered: 'Covered',

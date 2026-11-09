@@ -9,6 +9,7 @@ import { trustedKeys } from '../keys.ts';
 
 const isStage = (s: string): s is StatusStage => (STATUS_STAGES as readonly string[]).includes(s);
 
+/** Run `assay status`: print the ladder, and with `--stage` exit 1 unless every task got through it. */
 export async function run({ values, positionals }: Invocation, io: Io): Promise<number> {
   const cwd = io.cwd ?? process.cwd();
   const { config } = await cliConfig(values, io);

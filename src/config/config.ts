@@ -67,8 +67,10 @@ export interface AssayConfig {
 
 /** The stages of the readiness ladder, in order (ADR 0022). */
 export const STATUS_STAGES = ['valid', 'covered', 'locked', 'stress', 'references', 'recent'] as const;
+/** A stage of the readiness ladder. */
 export type StatusStage = (typeof STATUS_STAGES)[number];
 
+/** `status` in the config: the ladder's stages and the recent-runs window. */
 export interface StatusConfig {
   /**
    * The stages this project's ladder has, of `valid`, `covered`, `locked`, `stress`,
@@ -244,17 +246,24 @@ function checkStatus(raw: unknown, where: string): void {
   const names = STATUS_STAGES as readonly unknown[];
   if (stages !== undefined && (!Array.isArray(stages) || stages.some((x) => !names.includes(x))))
     throw bad('stages', `an array of ${STATUS_STAGES.map((n) => `"${n}"`).join(', ')}`);
-  if (recentRuns === undefined) return;
-  if (!isObject(recentRuns)) throw bad('recentRuns', 'an object');
-  for (const k of Object.keys(recentRuns)) {
+  if (recentRuns !== undefined) checkRecentRuns(recentRuns, where, 'status.recentRuns');
+}
+
+/**
+ * Check a recent-runs window (`status.recentRuns` in the config, `recentRuns` of `status()`):
+ * known keys, `last` a positive integer, `minPassRate` a number from 0 to 1. Throws `ConfigError`.
+ */
+export function checkRecentRuns(raw: unknown, where: string, key = 'recentRuns'): void {
+  const bad = (k: string, want: string) => new ConfigError(`${where}: \`${key}${k}\` must be ${want}`);
+  if (!isObject(raw)) throw bad('', 'an object');
+  for (const k of Object.keys(raw)) {
     if (k !== 'last' && k !== 'minPassRate')
-      throw new ConfigError(`${where}: unknown option \`status.recentRuns.${k}\` (last, minPassRate)`);
+      throw new ConfigError(`${where}: unknown option \`${key}.${k}\` (last, minPassRate)`);
   }
-  const { last, minPassRate } = recentRuns;
-  if (last !== undefined && (!Number.isInteger(last) || (last as number) < 1))
-    throw bad('recentRuns.last', 'a positive integer');
+  const { last, minPassRate } = raw;
+  if (last !== undefined && (!Number.isInteger(last) || (last as number) < 1)) throw bad('.last', 'a positive integer');
   if (minPassRate !== undefined && (typeof minPassRate !== 'number' || !(minPassRate >= 0 && minPassRate <= 1)))
-    throw bad('recentRuns.minPassRate', 'a number from 0 to 1');
+    throw bad('.minPassRate', 'a number from 0 to 1');
 }
 
 /** Model options (`modelOptions`, a named bench model's `options`): known keys, and a valid mode. */

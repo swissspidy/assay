@@ -31,14 +31,16 @@ with these stages in order:
 | `covered`    | every hard requirement has a check, and not only checks the validator warns read free page text                   | `R2 has no checks`, `R2 is checked by free page text only (C2)`                                |
 | `locked`     | a lock verifies on the set as it is now; with trusted keys, it is signed by one of them                           | `not locked`, `rejected by bob: …`, `changed since lock: check C1 changed`, `untrusted key: …` |
 | `stress`     | no valid variant of a correct run is rejected                                                                     | `C1 fails on variant <run>/<variant>`, `no correct reference run to stress-test`               |
-| `references` | every labelled run is judged as labelled                                                                          | `<run>: FAIL, expected success (C2 fail)`, `<run>: SUCCESS, expected fail`                     |
+| `references` | every labelled run is judged as labelled                                                                          | `<run>: FAIL, expected success (C2 fail)`, `<run>: ABSTAIN, expected fail`                     |
 | `recent`     | at least `minPassRate` of the newest `last` runs in `<snapshots>/<task>/` succeed (default: all of the newest 10) | `2/3 recent runs succeed; <run>: FAIL (C1 fail)`                                               |
 
 A stage is evaluated only when every stage before it passed; the later ones are `not-reached`
 and cost nothing (a set that is not locked reads no runs). A stage that is not part of the ladder
 (`--no-stress`, `status.stages`, or `recent` without a recent-runs root) is `skipped` for every
 task; `recent` is also skipped for one task with no recent runs. Skipped stages do not block. A
-task is **ready** when no stage failed or went unreached.
+task is **ready** when no stage failed or went unreached. The set is loaded and validated first
+whatever the ladder: without `valid` in it, a set that does not validate fails the first stage
+that is, with `invalid check set: …`.
 
 Choices inside the stages, and why:
 
@@ -66,9 +68,14 @@ Choices inside the stages, and why:
   after stress), so a task whose correct run fails still shows "stress ✔" when the variants of its
   other correct runs pass.
 - **References need a labelled correct run.** Zero labelled runs would pass vacuously; a task
-  nobody has a correct run for is not ready. An unreadable run file is the stage's blocker.
-- **Recent runs are the newest by `capturedAt`** (ties by file name, newest first), because file
-  modification times change on checkout. A run passes when its verdict is `success`; labels are
+  nobody has a correct run for is not ready. An unreadable run file is the stage's blocker. A
+  run labelled `fail` must get the verdict `fail`, as `assay watch` judges "as expected": an
+  abstain shows the checks could not tell, not that the run is wrong. (`assay bench` scores an
+  abstain on a negative run as correct for balanced accuracy; the gate takes the stricter rule.)
+- **Recent runs are the newest by `capturedAt`**, compared as instants (so UTC offsets order
+  correctly; ties by file name, newest first), because file modification times change on
+  checkout. A run that cannot be read, or whose `capturedAt` is missing or not a date, fails the
+  stage before the window is taken, so a truncated capture is never silently left out. A run passes when its verdict is `success`; labels are
   not read there, since recent runs are production evidence, not curated references. The blocker
   names the newest failing run.
 
@@ -76,8 +83,9 @@ Runs are discovered as `assay watch` and `assay bench` discover them (ADR 0019):
 for each `--reference` directory (default: the config's `bench.references`) and `references/`
 next to the set's directory. `discoverSets` and `runDirsFor` moved from `watch.ts` to
 `checks/load.ts`, where both commands import them. Recent runs live under the config's
-`snapshots` (where `assay capture` writes), in `<snapshots>/<task>/`; a recent directory that is
-also a references directory is not read twice.
+`snapshots` (where `assay capture` writes), in `<snapshots>/<task>/`. Runs are read once per
+directory: a directory that is both a references and a recent-runs directory is read once and
+judged by both stages.
 
 ### Output and exit status
 
@@ -105,7 +113,9 @@ project's ladder (a project that does not review sets can leave out `locked`); `
 (ADR 0017). `status(options)` is the engine and `formatStatus(result, { color })` the table, both
 exported from the root with their types (`StatusOptions`, `StatusResult`, `TaskStatus`,
 `StageResult`, `StageStatus`, `StatusStage`, `STATUS_STAGES`). Like `verify`, `status()` reads a
-config only when given one (`config: 'assay.config.ts'` or an object); explicit options win.
+config only when given one (`config: 'assay.config.ts'`, relative to `cwd`, or an object); explicit
+options win, and `recentRuns` is checked against the config's bounds. Relative check globs keep
+`cwd` literal (`escapeGlob`), as `gate()` does.
 
 ### Speed
 
