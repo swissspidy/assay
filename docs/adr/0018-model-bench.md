@@ -5,6 +5,7 @@
 - Scope: CLI (`assay bench`), config (`bench`), `priceFor` in `@swissspidy/assay/eval`
 - Builds on: [ADR 0005](0005-evaluation-and-stability.md), [ADR 0010](0010-command-line-tool.md),
   [ADR 0017](0017-config-file-and-bring-your-own-model.md)
+- Extended by: [ADR 0026](0026-bench-strategies-and-prices.md) (discovery strategies, configurable prices)
 
 ## Context
 
