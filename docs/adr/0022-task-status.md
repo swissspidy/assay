@@ -48,7 +48,9 @@ Choices inside the stages, and why:
   makes every run abstain. A soft requirement without a check is a review note, not a blocker.
   "Free text only" reuses the validator's warning (`reads free page text`): a requirement is
   blocked when every one of its checks drew it. One free-text check among others is the
-  reviewer's call, as it is today.
+  reviewer's call, as it is today. The warning is drawn only by a `text` source that reads the
+  whole document: one with a `scope`, or inside an `each` record, reads that node's text, which
+  is derived from accessible names, as the evaluator reads it (ADR 0001 §2.6).
 - **Locked follows `validate --require-signed`.** With trusted keys (`--trusted-key`,
   `ASSAY_TRUSTED_KEYS`, the config's `trustedKeys`, in that precedence), only a lock signed by one
   of them passes; without any, any lock that verifies passes and its signature is reported as not
@@ -163,7 +165,8 @@ reference, a failing recent run, and one ready task. Its labelled runs are copie
 - Stress here is a narrower gate than `assay stress`, whose exit status also counts weak checks
   and missed mutants. Both are right for their question; the ADR names the difference so a
   ladder that passes stress is not read as "no stress findings".
-- On the committed examples, `assay status examples/tiny-shop` reports
-  `R4 is checked by free page text only` for the compiled `08-delivery-date`: the compiler's
-  check for "the delivery date shown matches the order" reads the date from page text. Nothing
-  showed that per requirement before; the validator only warned per check.
+- On the committed examples, `assay status examples/tiny-shop` first reported
+  `R4 is checked by free page text only` for the compiled `08-delivery-date`. That was a false
+  positive of the validator, which warned about every `text` source: the check reads the date
+  from the text of an "Order summary" paragraph found with `each`, which is accessibility-tree
+  evidence. The warning now follows the evaluator's rule, and the task passes `covered`.

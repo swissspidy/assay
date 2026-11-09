@@ -22,7 +22,7 @@ import type {
   Trust,
   ValueSource,
 } from '../types.ts';
-import { CHECKS_SCHEMA, CHANNEL_TRUST } from '../types.ts';
+import { CHECKS_SCHEMA, CHANNEL_TRUST, textSourceChannel } from '../types.ts';
 import { MAX_TOLERANCE, checkSetSchema } from '../dsl/schema.ts';
 import {
   looseMatches,
@@ -473,12 +473,19 @@ async function modelRubric(
 const TRUST_RANK: Record<Trust, number> = { freetext: 1, semantic: 2, structured: 3 };
 const RANK_TRUST: Trust[] = ['freetext', 'freetext', 'semantic', 'structured'];
 
-function sourceChannel(src: ValueSource): Channel {
+/** `inRecord`: inside an `each`, where an unscoped text source reads the record (textSourceChannel). */
+function sourceChannel(src: ValueSource, inRecord: boolean): Channel {
   const f = src.from;
-  return f === 'node' ? 'a11y' : f === 'request' || f === 'response' ? 'network' : f === 'text' ? 'text' : f;
+  return f === 'node'
+    ? 'a11y'
+    : f === 'request' || f === 'response'
+      ? 'network'
+      : f === 'text'
+        ? textSourceChannel(src, inRecord)
+        : f;
 }
 
-function sourceChannels(a: Assertion): Channel[] {
+function sourceChannels(a: Assertion, inRecord = false): Channel[] {
   switch (a.kind) {
     case 'state':
     case 'contains':
@@ -488,14 +495,18 @@ function sourceChannels(a: Assertion): Channel[] {
     case 'request':
       return ['network'];
     case 'value':
-      return [...new Set([a.source, ...('sameAs' in a.expect ? [a.expect.sameAs.source] : [])].map(sourceChannel))];
+      return [
+        ...new Set(
+          [a.source, ...('sameAs' in a.expect ? [a.expect.sameAs.source] : [])].map((s) => sourceChannel(s, inRecord)),
+        ),
+      ];
     case 'each':
-      return [...new Set(['a11y' as const, ...sourceChannels(a.assert)])];
+      return [...new Set(['a11y' as const, ...sourceChannels(a.assert, true)])];
     case 'page':
-      return sourceChannels(a.assert);
+      return sourceChannels(a.assert, inRecord);
     case 'allOf':
     case 'anyOf':
-      return [...new Set(a.of.flatMap(sourceChannels))];
+      return [...new Set(a.of.flatMap((b) => sourceChannels(b, inRecord)))];
   }
 }
 
@@ -504,21 +515,21 @@ function sourceChannels(a: Assertion): Channel[] {
  * as its weakest branch (that branch alone can pass); `allOf` as strong as its
  * strongest part (every part must pass); a `sameAs` binding as its weaker source.
  */
-export function assertionTrust(a: Assertion): number {
+export function assertionTrust(a: Assertion, inRecord = false): number {
   switch (a.kind) {
     case 'anyOf':
-      return Math.min(...a.of.map(assertionTrust));
+      return Math.min(...a.of.map((b) => assertionTrust(b, inRecord)));
     case 'allOf':
-      return Math.max(...a.of.map(assertionTrust));
+      return Math.max(...a.of.map((b) => assertionTrust(b, inRecord)));
     case 'each':
       // Records are found in the accessibility tree; what is read inside them can be weaker.
-      return Math.min(TRUST_RANK.semantic, assertionTrust(a.assert));
+      return Math.min(TRUST_RANK.semantic, assertionTrust(a.assert, true));
     case 'page':
-      return assertionTrust(a.assert);
+      return assertionTrust(a.assert, inRecord);
     default:
       // A sameAs binding passes when one side is made to show what the other holds, so
       // faking the weaker side alone is enough: it counts as its weaker source.
-      return Math.min(...sourceChannels(a).map((c) => TRUST_RANK[CHANNEL_TRUST[c]]));
+      return Math.min(...sourceChannels(a, inRecord).map((c) => TRUST_RANK[CHANNEL_TRUST[c]]));
   }
 }
 
