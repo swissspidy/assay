@@ -2,7 +2,8 @@
  * Equivalence of the evidence store and compiled plans with the evaluator they replaced
  * (ADR 0015): `verify` and `stressTest` on every committed snapshot and check set return
  * what the evaluator of the commit in golden.json.gz returned, byte for byte (records
- * without their id, time and timings).
+ * without their id, time and timings), with one intended change: ADR 0028's evidence channel
+ * and trust for scoped and record text, applied and checked by equivalence/migrate-0028.ts.
  */
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
