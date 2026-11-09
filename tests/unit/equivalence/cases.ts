@@ -101,7 +101,7 @@ export const digest = (x: unknown): string => createHash('sha256').update(JSON.s
 export const GOLDEN = new URL('./golden.json.gz', import.meta.url);
 
 export interface Golden {
-  /** The commit whose evaluator produced it. */
+  /** The commit whose evaluator produced it (before the migrations named in generate.ts). */
   commit: string;
   /** Case id → JSON of the normalized result (own cases) or its digest (others). */
   verify: Record<string, { json?: string; digest: string }>;

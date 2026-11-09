@@ -5,7 +5,8 @@
  *
  * `<checkout>` is a directory holding the `src/` of the evaluator to record (the golden file
  * was written from the commit before ADR 0015); run it again only when an evaluation result
- * is meant to change, and say so in the pull request.
+ * is meant to change, and say so in the pull request. An intended change moves the golden file
+ * with a script that applies only that change and checks the result instead (migrate-0028.ts).
  */
 import { writeFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
