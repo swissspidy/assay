@@ -4,6 +4,7 @@
  * bytes every time. The best value in each column is marked with `*` in the terminal and in
  * bold in Markdown, so it does not depend on colour.
  */
+import { alignTable } from '../../table.ts';
 import { paint } from '../io.ts';
 import type { BenchResult, JobResult, ModelResult, ModelSummary, Stat } from './run.ts';
 
@@ -138,26 +139,24 @@ function notes(r: BenchResult): string[] {
 }
 
 const text = (c: Cell) => c.text + (c.best ? '*' : '');
-const line = (cells: string[]) => cells.join('  ').trimEnd();
 
 /** The terminal table, aligned, with `*` on the best value in each column. */
 export function formatBench(r: BenchResult, color = false): string {
   const { head, rows } = grid(r);
-  const width = head.map((h, i) => Math.max(h.length, ...rows.map((row) => text(row[i]!).length)));
-  const pad = (s: string, i: number) => (i < 2 ? s.padEnd(width[i]!) : s.padStart(width[i]!));
   const out = [
     paint(color, 'bold', 'assay bench') + `: ${headline(r)}`,
     '',
-    line(head.map(pad)),
-    line(width.map((w) => '─'.repeat(w))),
-    ...rows.map((row) =>
-      line(
-        row.map((c, i) => {
-          const s = pad(text(c), i);
+    ...alignTable(
+      head,
+      rows.map((row) => row.map(text)),
+      {
+        align: head.map((_, i) => (i < 2 ? 'left' : 'right')),
+        style(s, ri, i) {
+          const c = rows[ri]![i]!;
           if (i === 1 && c.text === 'error') return paint(color, 'red', s);
           return c.best ? paint(color, 'green', paint(color, 'bold', s)) : s;
-        }),
-      ),
+        },
+      },
     ),
     '',
     `* best in column.${r.runs > 1 ? ' ± is the standard deviation over runs.' : ''}`,
