@@ -40,7 +40,13 @@ import {
   type ValueSource,
 } from '../types.ts';
 import { canonical } from '../text.ts';
-import { describeAssertion } from '../verifier/lock.ts';
+import {
+  contentDigest,
+  describeAssertion,
+  describeAssertionAs,
+  isLocked,
+  type DescriptionWording,
+} from '../verifier/lock.ts';
 
 // ---------------------------------------------------------------------------
 // Assertions
@@ -638,7 +644,8 @@ const plain = <T>(x: T): T => JSON.parse(JSON.stringify(x)) as T;
 /**
  * A check set: the task (its instruction, or `{ id, version, instruction, outcomes }`) and its
  * requirements with their checks. Returns the plain `assay.checks/v1` object; check it with
- * `validateCheckSet` or `assay validate`.
+ * `validateCheckSet` or `assay validate`. A check without a description gets `describeAssertion`'s;
+ * a set whose `locked` or `rejected` decision was made on the wording before ADR 0028 keeps that.
  */
 export function checks(
   task: string | CheckSetSpec,
@@ -666,25 +673,34 @@ export function checks(
     });
     entries.push(...item.entries);
   }
-  const list: Check[] = entries.map((e, i) => ({
-    id: e.options.id ?? `C${i + 1}`,
-    requirement: e.requirement,
-    description: e.options.description ?? describeAssertion(e.assert),
-    assert: e.assert,
-    ...(e.options.onFail !== undefined ? { onFail: e.options.onFail } : {}),
-    ...(e.options.onMissing !== undefined ? { onMissing: e.options.onMissing } : {}),
-  }));
-  return plain({
-    schema: CHECKS_SCHEMA,
-    id: spec.id ?? slug(spec.instruction),
-    version: spec.version ?? '1',
-    task: t,
-    requirements,
-    checks: list,
-    ...(spec.compiled ? { compiled: spec.compiled } : {}),
-    ...(spec.locked ? { locked: spec.locked } : {}),
-    ...(spec.rejected ? { rejected: spec.rejected } : {}),
-  });
+  const build = (wording: DescriptionWording): CheckSet =>
+    plain({
+      schema: CHECKS_SCHEMA,
+      id: spec.id ?? slug(spec.instruction),
+      version: spec.version ?? '1',
+      task: t,
+      requirements,
+      checks: entries.map((e, i): Check => ({
+        id: e.options.id ?? `C${i + 1}`,
+        requirement: e.requirement,
+        description: e.options.description ?? describeAssertionAs(e.assert, wording),
+        assert: e.assert,
+        ...(e.options.onFail !== undefined ? { onFail: e.options.onFail } : {}),
+        ...(e.options.onMissing !== undefined ? { onMissing: e.options.onMissing } : {}),
+      })),
+      ...(spec.compiled ? { compiled: spec.compiled } : {}),
+      ...(spec.locked ? { locked: spec.locked } : {}),
+      ...(spec.rejected ? { rejected: spec.rejected } : {}),
+    });
+  const cs = build('current');
+  if (!spec.locked && !spec.rejected) return cs;
+  // A lock or rejection is a decision on the exact text, default descriptions included (ADR 0013).
+  // ADR 0028 reworded the default description of scoped and record text; a set decided on the
+  // earlier wording keeps it, so its decision still matches. Nothing else is ever substituted.
+  const decided = (x: CheckSet) => (spec.locked ? isLocked(x) : spec.rejected!.content === contentDigest(x));
+  if (decided(cs)) return cs;
+  const before = build('pre-0028');
+  return decided(before) ? before : cs;
 }
 
 /** The default description of a check with this assertion. */
