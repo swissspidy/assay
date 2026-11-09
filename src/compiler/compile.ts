@@ -1604,14 +1604,25 @@ function openReason(
   if (r.decisive.length) return 'its mined checks were not accepted together with the others';
   const n = `${r.survivors} candidate(s) survived, but none settles it`;
   const q = new Quote(r.quote);
-  if (q.adds)
-    return `${n}: "add" also keeps what the collection held before (ADR 0011), a comparison mining does not build`;
-  if (q.quantified)
-    return `${n}: the quote speaks of all, only, the others or no longer, which a mined check does not express`;
+  const form = q.form;
+  if (q.adds && form !== 'add')
+    return `${n}: "add" also keeps what the collection held before (ADR 0011), and the quote mixes it with other set words or a negation`;
+  if (form === undefined)
+    return `${n}: the quote speaks of the others, no longer, a negated set or several set words, which a mined check does not express`;
+  // Only survivors that express the quote's set comparison (a plain check for a plain quote) can settle it.
+  const seeds = r.seeds.filter((c) => (c.covers ?? 'plain') === form);
+  if (!seeds.length)
+    return form === 'add'
+      ? `${n}: "add" also keeps what the collection held before (ADR 0011), and no before/after comparison of the collection survived`
+      : `${n}: the quote says "${form}", and no per-record check survived`;
   // The survivor that comes closest: fewest words left unaccounted for, then rank.
-  const best = r.seeds.reduce((a, b) => (b.unexplained.length < a.unexplained.length ? b : a));
+  const best = seeds.reduce((a, b) => (b.unexplained.length < a.unexplained.length ? b : a));
   if (best.unexplained.length)
     return `${n}: the best (${best.id}, ${best.family}) does not account for ${best.unexplained.map((w) => JSON.stringify(w)).join(', ')}`;
   if (best.baseline === 'pass') return `${n}: the baseline already passes the best (${best.id})`;
+  if (best.covers === 'add')
+    return `${n}: the best (${best.id}) needs the state before the task, and no baseline tells`;
+  if (best.covers && best.family === 'a11y')
+    return `${n}: the best (${best.id}) checks every record a page lists, which may be the data rather than the filter the quote asks for, and no incorrect reference fails it`;
   return `${n}: the best (${best.id}, ${best.family}) only shows that something is present or that a request was sent, and no incorrect reference fails it`;
 }

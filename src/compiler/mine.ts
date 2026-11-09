@@ -12,6 +12,7 @@
 import type {
   Assertion,
   CheckSet,
+  Locator,
   EvidenceSnapshot,
   Json,
   JsonSchema,
@@ -50,6 +51,18 @@ export interface Candidate {
    * baseline says the value was already there.
    */
   stated: boolean;
+  /**
+   * The set comparison it expresses (`Quote.form`): "add" (X is there and the collection still
+   * holds what it held before), "only" (no record outside X) or "every" (each record matching X
+   * satisfies Y). Absent: a plain check, which settles only a quote without set words.
+   */
+  covers?: Exclude<QuoteForm, 'plain'>;
+  /**
+   * For a set comparison: the plain check of the same values (each field once) whose words and
+   * compared values are what it accounts for in the quote. The comparison's other parts repeat
+   * those values (a `not`, a witness, the before side) and must not count twice.
+   */
+  core?: Assertion;
 }
 
 /** What one candidate did across the batch. */
@@ -144,6 +157,35 @@ const ELEMENT = 'checkbox button heading link tab field form menu switch dialog'
 /** Singular and plural only ("buttons", "checkboxes", "switches"): "linked" or "switched" is no element. */
 const ELEMENT_FORMS = new Set(ELEMENT.flatMap((e) => [e, `${e}s`, `${e}es`]));
 const isElement = (w: string) => ELEMENT_FORMS.has(w);
+
+/**
+ * Field-name synonyms and abbreviations (ADR 0020): a quote word on the left is also accounted
+ * for by a field name spelled as a word on the right (a probe name, a storage key, a pointer
+ * segment, a schema property, a table column), inflections aside. Only field names: a compared
+ * value, a node's name, a URL or request path never accounts for a quote word through this table,
+ * and it never decides which values a quote names (`namesString`, `namedScalar` do not read it).
+ * Each entry is a word the committed quotes use for a field the apps spell otherwise. Keep it
+ * tiny: every entry widens what counts as the quote's field.
+ */
+export const FIELD_SYNONYMS: Readonly<Record<string, readonly string[]>> = {
+  quantity: ['qty'],
+  preference: ['settings', 'prefs'],
+  appointment: ['event'],
+  category: ['categories'],
+  labelled: ['label'],
+  labeled: ['label'],
+  repository: ['repo'],
+};
+
+/** Whether the field name `name` stands for the quote word `word` through `FIELD_SYNONYMS`. */
+export function fieldSynonym(word: string, name: string): boolean {
+  for (const [k, syns] of Object.entries(FIELD_SYNONYMS))
+    if (sameWord(k, word) && syns.some((s) => sameWord(s, name))) return true;
+  return false;
+}
+
+/** What a quote's set words ask a candidate to express (see `Quote.form`). */
+export type QuoteForm = 'plain' | 'add' | 'only' | 'every';
 
 const NUMBER_WORDS: Record<string, number> = {
   zero: 0,
@@ -531,7 +573,85 @@ export class Quote {
   get adds(): boolean {
     return this.unquoted.some((w) => ADDS.has(w));
   }
+
+  /**
+   * The one set comparison a candidate must express to settle this quote: `plain` (no set word),
+   * `add` ("add X": X is there and what the collection held before still is, ADR 0011), `only`
+   * ("only X": no record outside X) or `every` ("every X is Y": each record matching X satisfies
+   * Y). Undefined when the quote mixes them, negates ("not", "no", "un…") or speaks of the rest of
+   * a collection or an absence ("other", "else", "keep", "no longer"), which no mined check
+   * expresses.
+   */
+  get form(): QuoteForm | undefined {
+    const quant = new Set(this.unquoted.filter((w) => QUANT.has(w)));
+    if (!quant.size && !this.adds) return 'plain';
+    if (this.negated || this.unquoted.some((w) => w === 'no' || w === 'none' || w === 'nothing')) return undefined;
+    if (!quant.size) return 'add';
+    if (this.adds) return undefined;
+    if (quant.size === 1 && quant.has('only')) return 'only';
+    if ([...quant].every((w) => w === 'every' || w === 'all' || w === 'each')) return 'every';
+    return undefined;
+  }
+
+  /** The quote's words, each marked when it is inside quotation marks (a name, not a set word). */
+  private get marked(): { w: string; quoted: boolean }[] {
+    const out: { w: string; quoted: boolean }[] = [];
+    let at = 0;
+    for (const m of this.text.matchAll(/"[^"]*"|“[^”]*”/g)) {
+      for (const w of tokens(this.text.slice(at, m.index))) out.push({ w, quoted: false });
+      for (const w of tokens(m[0])) out.push({ w, quoted: true });
+      at = m.index + m[0].length;
+    }
+    for (const w of tokens(this.text.slice(at))) out.push({ w, quoted: false });
+    return out;
+  }
+
+  /**
+   * Where a value the quote names stands relative to its set word: `x` inside the noun phrase
+   * the set word opens ("every *open bug* is …", up to the first copula, relative pronoun or
+   * preposition), `y` after it, `before` ahead of the set word; undefined when the quote does not
+   * name it or has no set word. "only" opens no predicate: everything after it is `x`.
+   */
+  placeOf(value: string): 'x' | 'y' | 'before' | undefined {
+    const m = this.marked;
+    const words = m.map((t) => t.w);
+    const k = m.findIndex((t) => !t.quoted && QUANT.has(t.w));
+    if (k < 0) return undefined;
+    const at = runAt(words, tokens(value));
+    if (at < 0) return undefined;
+    if (at <= k) return 'before';
+    if (words[k] === 'only') return 'x';
+    let end = k + 1;
+    while (end < m.length && (m[end]!.quoted || !PHRASE_END.has(m[end]!.w))) end++;
+    return at + tokens(value).length <= end ? 'x' : at >= end ? 'y' : undefined;
+  }
 }
+
+/** Words that end the noun phrase after "every"/"all"/"each": a copula, a relative pronoun, a preposition. */
+const PHRASE_END = new Set([
+  ...COPULA,
+  'has',
+  'have',
+  'had',
+  'that',
+  'which',
+  'who',
+  'whose',
+  'where',
+  'to',
+  'into',
+  'in',
+  'on',
+  'with',
+  'without',
+  'from',
+  'for',
+  'by',
+  'at',
+  'as',
+  'get',
+  'gets',
+]);
 
 /** The same word, or an inflection of it: a shared stem of four or more letters, or a plural `s`. */
 export function sameWord(a: string, b: string): boolean {
@@ -818,6 +938,211 @@ function sourceKey(s: ValueSource): string | undefined {
   return s.from === 'probe' ? s.probe : undefined;
 }
 
+type Push = (c: Omit<Candidate, 'id' | 'requirement'>) => void;
+type SchemaObj = { [k: string]: Json };
+
+/** The like-shape of a collection, the same in every correct reference (records the task added or changed first). */
+function collectionShape(
+  q: Quote,
+  values: (Json | undefined)[],
+  befores: (Json | undefined)[] | undefined,
+  source: ValueSource,
+): SchemaObj | undefined {
+  let shape: string | undefined;
+  let schema: SchemaObj | undefined;
+  for (let i = 0; i < values.length; i++) {
+    const v = values[i];
+    if (!Array.isArray(v)) return undefined;
+    const s = likeShape(q, v, sourceKey(source), 0, befores ? newItems(befores[i]) : undefined);
+    if (!s || typeof s.schema !== 'object') return undefined;
+    const c = canon(s.schema);
+    if (shape !== undefined && c !== shape) return undefined;
+    shape = c;
+    schema = s.schema;
+  }
+  return schema;
+}
+
+/** The fields of a record like-shape that name the record (an id, a title, a prose field), with their shapes. */
+function identifyingFields(record: SchemaObj): [string, SchemaObj][] {
+  const props = (record.properties ?? {}) as Record<string, SchemaObj>;
+  return Object.entries(props).filter(
+    ([k, p]) => (IDENT_KEY.test(k) || PROSE_KEY.test(k)) && ('const' in p || 'pattern' in p),
+  );
+}
+
+/** Whether a record in a collection holds every identifying field as the shape pins it. */
+function holdsFields(item: Json, fields: [string, SchemaObj][]): boolean {
+  if (!isObj(item)) return false;
+  return fields.every(([k, p]) => {
+    const v = item[k];
+    if ('const' in p) return canon(v) === canon(p.const);
+    return typeof v === 'string' && new RegExp(p.pattern as string).test(v);
+  });
+}
+
+/**
+ * "Add X" (ADR 0011): X is in the collection, and the collection without X equals the collection
+ * before the task without X, read with `at: "before"` and the `items` normalizer, so an "add" that
+ * drops or replaces what was there fails. The collection is the one X joined, from the references'
+ * baseline: a record the baseline lacks joined the collection read here (a new user, a wishlist
+ * entry, a comment); a record the baseline already held (by its identifying fields) gained X in
+ * its one list field (a post's tags), whose other members must stay. Nothing without a baseline
+ * value in every correct reference, or when X is not one identified record or one listed value.
+ */
+function addCandidate(
+  q: Quote,
+  values: (Json | undefined)[],
+  befores: (Json | undefined)[],
+  source: ValueSource,
+  normalize: Normalizer[] | undefined,
+): Omit<Candidate, 'id' | 'requirement'> | undefined {
+  if (!befores.every(Array.isArray)) return undefined;
+  const schema = collectionShape(q, values, befores, source);
+  if (!schema) return undefined;
+  const core: Assertion = { kind: 'value', source, ...(normalize ? { normalize } : {}), expect: { schema } };
+  const inner = schema.contains as SchemaObj | undefined;
+  if (!inner || !identified(core)) return undefined;
+  let keep: Normalizer[];
+  if ('const' in inner) keep = [{ op: 'items', where: { not: inner } }];
+  else if (inner.type === 'object') {
+    const ids = identifyingFields(inner);
+    const existed = (befores as Json[][]).map((b) => b.some((item) => holdsFields(item, ids)));
+    if (existed.every((x) => !x)) keep = [{ op: 'items', where: { not: inner } }];
+    else if (existed.every((x) => x)) {
+      // The record was there: X joined its one list field, the other named fields identify it.
+      const props = inner.properties as Record<string, SchemaObj>;
+      const rest = Object.entries(props).filter(([k]) => !ids.some(([i]) => i === k));
+      const [field, list] = rest[0] ?? [];
+      const member = list?.contains as SchemaObj | undefined;
+      if (rest.length !== 1 || list?.type !== 'array' || !member || !('const' in member)) return undefined;
+      const where: JsonSchema = {
+        type: 'object',
+        required: ids.map(([k]) => k),
+        properties: Object.fromEntries(ids),
+      };
+      keep = [
+        { op: 'items', where, pointer: `/${esc(field!)}`, flatten: true },
+        { op: 'items', where: { not: member } },
+      ];
+    } else return undefined;
+  } else return undefined;
+  const norm = [...(normalize ?? []), ...keep];
+  const before = { ...source, at: 'before' } as ValueSource;
+  return {
+    family: source.from === 'storage' ? 'storage' : 'probe',
+    assert: {
+      kind: 'allOf',
+      of: [core, { kind: 'value', source, normalize: norm, expect: { sameAs: { source: before, normalize: norm } } }],
+    },
+    stated: true,
+    covers: 'add',
+    core,
+    description: '',
+  };
+}
+
+/** The string values a record or value like-shape pins (consts, also inside lists); undefined for any other leaf. */
+function pinnedStrings(s: unknown): string[] | undefined {
+  if (!s || typeof s !== 'object') return [];
+  const o = s as Record<string, unknown>;
+  if ('pattern' in o) return undefined;
+  if ('const' in o) return typeof o.const === 'string' ? [o.const] : undefined;
+  const out: string[] = [];
+  for (const [k, v] of Object.entries(o)) {
+    if (k === 'required' || k === 'type') continue;
+    const vs = k === 'properties' ? Object.values(v as object).map(pinnedStrings) : [pinnedStrings(v)];
+    for (const x of vs) {
+      if (!x) return undefined;
+      out.push(...x);
+    }
+  }
+  return out;
+}
+
+/**
+ * "Only X" and "every X is Y" over a collection read here: per-record checks (ADR 0008) on JSON
+ * records, written as JSON Schema over the array. "Only X": every record is X (no record outside
+ * X), and there is one (the witness). "Every X is Y": every record that is X is also Y, and one
+ * record is both. X and Y are the record's named fields, split by where the quote names their
+ * values (`Quote.placeOf`); string values only, so every field is placed. The record shape comes
+ * from the references and keeps every named field, so each record's fields are bound as the
+ * shape's are.
+ */
+function setCandidate(
+  q: Quote,
+  values: (Json | undefined)[],
+  source: ValueSource,
+  normalize: Normalizer[] | undefined,
+): Omit<Candidate, 'id' | 'requirement'> | undefined {
+  const form = q.form;
+  if (form !== 'only' && form !== 'every') return undefined;
+  const schema = collectionShape(q, values, undefined, source);
+  const record = schema?.contains as SchemaObj | undefined;
+  if (!schema || !record) return undefined;
+  let set: JsonSchema;
+  if (form === 'only') {
+    const strings = pinnedStrings(record);
+    if (!strings?.length || strings.some((v) => q.placeOf(v) !== 'x')) return undefined;
+    set = { type: 'array', minItems: 1, items: record };
+  } else {
+    const fields: [string, SchemaObj][] =
+      record.type === 'object' ? Object.entries(record.properties as Record<string, SchemaObj>) : [['', record]];
+    const x: [string, SchemaObj][] = [];
+    const y: [string, SchemaObj][] = [];
+    for (const f of fields) {
+      const strings = pinnedStrings(f[1]);
+      if (!strings?.length) return undefined;
+      const places = new Set(strings.map((v) => q.placeOf(v)));
+      if (places.size !== 1) return undefined;
+      const [place] = places;
+      if (place === 'x') x.push(f);
+      else if (place === 'y') y.push(f);
+      else return undefined;
+    }
+    if (!y.length) return undefined;
+    const part = (fs: [string, SchemaObj][]): SchemaObj =>
+      fs[0]![0] === ''
+        ? fs[0]![1]
+        : { type: 'object', required: fs.map(([k]) => k), properties: Object.fromEntries(fs) };
+    set = x.length
+      ? {
+          type: 'array',
+          items: { anyOf: [{ not: part(x) }, part(y)] },
+          contains: { allOf: [part(x), part(y)] },
+        }
+      : { type: 'array', minItems: 1, items: part(y) };
+  }
+  const core: Assertion = { kind: 'value', source, ...(normalize ? { normalize } : {}), expect: { schema } };
+  return {
+    family: source.from === 'storage' ? 'storage' : 'probe',
+    assert: { kind: 'value', source, ...(normalize ? { normalize } : {}), expect: { schema: set } },
+    stated: true,
+    covers: form,
+    core,
+    description: '',
+  };
+}
+
+/** Set comparisons over a probe's or storage key's collection, when the quote asks for one. */
+function collectionCandidates(
+  q: Quote,
+  values: (Json | undefined)[],
+  befores: (Json | undefined)[],
+  source: ValueSource,
+  normalize: Normalizer[] | undefined,
+  push: Push,
+): void {
+  const form = q.form;
+  if (form === 'add') {
+    const c = addCandidate(q, values, befores, source, normalize);
+    if (c) push(c);
+  } else if (form === 'only' || form === 'every') {
+    const c = setCandidate(q, values, source, normalize);
+    if (c) push(c);
+  }
+}
+
 /** Top-level fields of a probe's value worth their own candidate (objects with records or settings). */
 function probeSources(values: Json[]): string[] {
   const out = [''];
@@ -831,7 +1156,7 @@ function probeSources(values: Json[]): string[] {
   return out;
 }
 
-function probeCandidates(q: Quote, refs: Ref[], push: (c: Omit<Candidate, 'id' | 'requirement'>) => void): void {
+function probeCandidates(q: Quote, refs: Ref[], push: Push): void {
   const first = refs[0]!.snapshot;
   for (const name of Object.keys(first.probes ?? {}).toSorted()) {
     const results = refs.map((r) => r.snapshot.probes?.[name]);
@@ -846,6 +1171,7 @@ function probeCandidates(q: Quote, refs: Ref[], push: (c: Omit<Candidate, 'id' |
       });
       const a = jsonCandidate(q, vals, befores, source, undefined);
       if (a) push({ family: 'probe', assert: a, stated: identified(a), description: '' });
+      collectionCandidates(q, vals, befores, source, undefined, push);
     }
   }
 }
@@ -879,6 +1205,7 @@ function storageCandidates(q: Quote, refs: Ref[], push: (c: Omit<Candidate, 'id'
             }
           });
           a = jsonCandidate(q, parsed, befores, source, ['json']);
+          collectionCandidates(q, parsed, befores, source, ['json'], push);
         } else if (strs.every((s) => s === strs[0]) && namedScalar(q, key, strs[0]!)) {
           a = { kind: 'value', source, expect: { equals: strs[0]! } };
         }
@@ -1032,6 +1359,84 @@ function a11yCandidates(q: Quote, refs: Ref[], push: (c: Omit<Candidate, 'id' | 
   }
   for (const s of seen.values())
     if (s.count === refs.length) push({ family: 'a11y', assert: s.a, stated: s.stated, description: '' });
+  tableCandidates(q, refs, push);
+}
+
+const TABLE_ROLES = new Set(['table', 'grid', 'treegrid']);
+const CELL_ROLES = new Set(['cell', 'gridcell']);
+
+/**
+ * The columns of each table in a tree whose every data cell holds the same text: per table (by
+ * role and name) and column header, that text and the cells' role.
+ */
+function uniformColumns(
+  index: AXIndex,
+): Map<string, { role: string; name?: string; header: string; cell: string; text: string }> {
+  const out = new Map<string, { role: string; name?: string; header: string; cell: string; text: string }>();
+  const bad = new Set<string>();
+  for (const t of index.all) {
+    if (!TABLE_ROLES.has(t.node.role)) continue;
+    const name = typeof t.node.name === 'string' && t.node.name ? canonical(t.node.name) : undefined;
+    for (const c of index.descendants(t)) {
+      if (!CELL_ROLES.has(c.node.role)) continue;
+      // A cell of a nested table belongs to that table.
+      let owner = c.parent;
+      while (owner && !TABLE_ROLES.has(owner.node.role)) owner = owner.parent;
+      if (owner !== t) continue;
+      const h = index.columnHeader(c);
+      const header = h ? index.canonicalName(h) : undefined;
+      if (!header) continue;
+      const key = canon([t.node.role, name ?? null, header]);
+      if (bad.has(key)) continue;
+      // Blank cells state no value (the records are the cells with a name, as in `tableCandidates`).
+      const text = index.canonicalText(c);
+      if (!/\S/.test(index.canonicalName(c) ?? '')) continue;
+      const seen = out.get(key);
+      if (seen && (seen.text !== text || seen.cell !== c.node.role)) {
+        out.delete(key);
+        bad.add(key);
+      } else if (!seen) out.set(key, { role: t.node.role, ...(name ? { name } : {}), header, cell: c.node.role, text });
+    }
+  }
+  return out;
+}
+
+/**
+ * "Only X" and "every … is X" in a table (ADR 0008 per-record checks): an `each` whose records
+ * are the cells of one column (so the header row is no record), each of which must read exactly
+ * the value the quote names, with the column header as the witness and at least one record. A
+ * column qualifies when every data cell of it reads that value in every correct reference. For
+ * "every", the value must be in the predicate ("every listed issue is *open*"): a filter on the
+ * records ("every *open* bug is …") is not a property of every row. Several qualifying columns
+ * also give one check of all of them ("only the open bugs").
+ */
+function tableCandidates(q: Quote, refs: Ref[], push: Push): void {
+  const form = q.form;
+  if (form !== 'only' && form !== 'every') return;
+  const per = refs.map((r) => uniformColumns(AXIndex.of(r.snapshot.a11y)));
+  const checks: Assertion[] = [];
+  for (const [key, col] of per[0]!) {
+    if (!per.every((m) => m.get(key)?.text === col.text && m.get(key)?.cell === col.cell)) continue;
+    if (!q.namesString(col.text) || q.placeOf(col.text) !== (form === 'only' ? 'x' : 'y')) continue;
+    checks.push({
+      kind: 'each',
+      scope: { role: col.role, ...(col.name ? { name: col.name } : {}) },
+      witness: { role: 'columnheader', name: col.header },
+      // A blank cell states no value: the stress test's unrelated extra row (ADR 0003) has them.
+      match: { role: col.cell, column: col.header, name: { regex: '\\S' } },
+      count: { gte: 1 },
+      assert: { kind: 'value', source: { from: 'text', pattern: '^([\\s\\S]*)$' }, expect: { equals: col.text } },
+    });
+  }
+  const sets = checks.map((c) => [c]);
+  if (checks.length > 1) sets.push(checks);
+  // A table is a view: that it lists only open issues now may be the data (no closed issue
+  // matches its other filter) rather than the filter the quote asks for. So the check is not
+  // `stated`: it settles a requirement only when it rejects an incorrect reference.
+  for (const set of sets) {
+    const assert: Assertion = set.length === 1 ? set[0]! : { kind: 'allOf', of: set };
+    push({ family: 'a11y', assert, stated: false, covers: form, core: assert, description: '' });
+  }
 }
 
 /**
@@ -1095,8 +1500,8 @@ function nodeCandidates(q: Quote, index: AXIndex, n: INode): { a: Assertion; sta
  * compares is named by the requirement's quote.
  *
  * At most `limit` per requirement and family. When a family has more, the ones that leave
- * fewest of the quote's words unaccounted for are kept (then those that state a value, then
- * the first found), so twelve probes that merely hold a quoted word cannot crowd out a later
+ * fewest of the quote's words unaccounted for are kept (then those that express the quote's set
+ * comparison, then those that state a value, then the first found), so twelve probes that merely hold a quoted word cannot crowd out a later
  * one that accounts for the whole quote. The kept ones stay in the order they were found.
  */
 export function generateCandidates(
@@ -1117,6 +1522,7 @@ export function generateCandidates(
       seen.add(k);
       found.push(c);
     };
+    const form = q.form;
     probeCandidates(q, ok, push);
     storageCandidates(q, ok, push);
     networkCandidates(q, ok, push);
@@ -1125,7 +1531,11 @@ export function generateCandidates(
     const keep = new Set<number>();
     for (const family of Object.keys(FAMILY_TIER) as CandidateFamily[]) {
       const mine = found.flatMap((c, i) => (c.family === family ? [{ i, gap: unaccounted(q, c).length, c }] : []));
-      const best = mine.toSorted((a, b) => a.gap - b.gap || Number(b.c.stated) - Number(a.c.stated) || a.i - b.i);
+      // A set comparison the quote asks for first, among those leaving as few words: only it can settle the quote.
+      const fits = (c: Omit<Candidate, 'id' | 'requirement'>) => Number((c.covers ?? 'plain') === form);
+      const best = mine.toSorted(
+        (a, b) => a.gap - b.gap || fits(b.c) - fits(a.c) || Number(b.c.stated) - Number(a.c.stated) || a.i - b.i,
+      );
       for (const x of best.slice(0, limit)) keep.add(x.i);
     }
     let n = 0;
@@ -1181,31 +1591,47 @@ function decodeSafe(s: string): string {
   }
 }
 
-function schemaWords(s: unknown, out: string[]): void {
-  if (Array.isArray(s)) return s.forEach((x) => schemaWords(x, out));
+/** One word of a candidate's evidence; `field` when it is a field name (`FIELD_SYNONYMS` may widen it). */
+interface EvWord {
+  w: string;
+  field: boolean;
+}
+
+function schemaEvidence(s: unknown, out: EvWord[]): void {
+  if (Array.isArray(s)) return s.forEach((x) => schemaEvidence(x, out));
   if (!s || typeof s !== 'object') return;
   for (const [k, v] of Object.entries(s)) {
-    if (k === 'const') out.push(...valueWords(v as Json));
+    if (k === 'const') for (const w of valueWords(v as Json)) out.push({ w, field: false });
     else if (k === 'pattern' && typeof v === 'string')
-      out.push(...tokens(v.replace(/\\[sdwbSDWB]|[\\^$.*+?()[\]{}|]/g, ' ')));
+      for (const w of tokens(v.replace(/\\[sdwbSDWB]|[\\^$.*+?()[\]{}|]/g, ' '))) out.push({ w, field: false });
     else if (k === 'properties' && v && typeof v === 'object') {
       for (const [name, sub] of Object.entries(v)) {
-        out.push(...keyWords(name));
-        schemaWords(sub, out);
+        for (const w of keyWords(name)) out.push({ w, field: true });
+        schemaEvidence(sub, out);
       }
-    } else schemaWords(v, out);
+    } else schemaEvidence(v, out);
   }
 }
 
-function sourceWords(src: ValueSource): string[] {
+function schemaWords(s: unknown, out: string[]): void {
+  const ev: EvWord[] = [];
+  schemaEvidence(s, ev);
+  out.push(...ev.map((e) => e.w));
+}
+
+/** The field names a value source reads (probe, pointer, storage key); request paths are not fields. */
+function sourceEvidence(src: ValueSource): EvWord[] {
   switch (src.from) {
     case 'probe':
-      return [...keyWords(src.probe), ...pathWords(src.pointer)];
+      return [...keyWords(src.probe), ...pathWords(src.pointer)].map((w) => ({ w, field: true }));
     case 'storage':
-      return keyWords(src.key);
+      return keyWords(src.key).map((w) => ({ w, field: true }));
     case 'request':
     case 'response':
-      return [...pathWords(src.match.url?.path), ...pathWords(src.pointer)];
+      return [
+        ...pathWords(src.match.url?.path).map((w) => ({ w, field: false })),
+        ...pathWords(src.pointer).map((w) => ({ w, field: true })),
+      ];
     default:
       return [];
   }
@@ -1220,51 +1646,83 @@ const matchWords = (m: unknown): string[] =>
         )
       : [];
 
+/** A locator's words: its role and name or text (not fields), and a cell's column header (a field). */
+function locatorEvidence(l: Locator | undefined, out: EvWord[]): void {
+  if (!l) return;
+  for (const w of [l.role, ...matchWords(l.name), ...matchWords(l.text)]) out.push({ w, field: false });
+  for (const w of matchWords(l.column)) out.push({ w, field: true });
+}
+
+function evidence(a: Assertion): EvWord[] {
+  const out: EvWord[] = [];
+  const plain = (ws: string[]) => ws.forEach((w) => out.push({ w, field: false }));
+  switch (a.kind) {
+    case 'value':
+      out.push(...sourceEvidence(a.source));
+      if ('equals' in a.expect) plain(valueWords(a.expect.equals));
+      if ('schema' in a.expect) schemaEvidence(a.expect.schema, out);
+      break;
+    case 'request':
+      plain(pathWords(a.match.url?.path));
+      schemaEvidence(a.match.requestBody, out);
+      schemaEvidence(a.match.responseBody, out);
+      break;
+    case 'url':
+      plain(pathWords(a.match.path));
+      break;
+    case 'state': {
+      const t = 'role' in a.target ? a.target : undefined;
+      if (t) plain([t.role, ...matchWords(t.name)]);
+      for (const k of Object.keys(a.expect)) plain(STATE_WORDS[k] ?? []);
+      break;
+    }
+    case 'contains':
+      plain([a.match.role, ...matchWords(a.match.name), ...matchWords(a.match.text)]);
+      break;
+    case 'each':
+      // The records (a column's cells) and their scope; the witness repeats the column.
+      if (a.scope && 'role' in a.scope) locatorEvidence(a.scope, out);
+      locatorEvidence(a.match, out);
+      out.push(...evidence(a.assert));
+      break;
+    case 'allOf':
+      for (const x of a.of) out.push(...evidence(x));
+      break;
+    default:
+      break;
+  }
+  return out.map((e) => ({ ...e, w: e.w.toLowerCase() })).filter((e) => e.w);
+}
+
 /**
  * The words a candidate's evidence stands for: the source it reads (probe, field and storage key
  * names, request and URL path segments, roles), the values it compares, its node's name and
  * its state words. A quote word another word here inflects is accounted for.
  */
 export function evidenceWords(a: Assertion): string[] {
-  const out: string[] = [];
-  switch (a.kind) {
-    case 'value':
-      out.push(...sourceWords(a.source));
-      if ('equals' in a.expect) out.push(...valueWords(a.expect.equals));
-      if ('schema' in a.expect) schemaWords(a.expect.schema, out);
-      break;
-    case 'request':
-      out.push(...pathWords(a.match.url?.path));
-      schemaWords(a.match.requestBody, out);
-      schemaWords(a.match.responseBody, out);
-      break;
-    case 'url':
-      out.push(...pathWords(a.match.path));
-      break;
-    case 'state': {
-      const t = 'role' in a.target ? a.target : undefined;
-      if (t) out.push(t.role, ...matchWords(t.name));
-      for (const k of Object.keys(a.expect)) out.push(...(STATE_WORDS[k] ?? []));
-      break;
-    }
-    case 'contains':
-      out.push(a.match.role, ...matchWords(a.match.name), ...matchWords(a.match.text));
-      break;
-    default:
-      break;
-  }
-  return out.map((w) => w.toLowerCase()).filter(Boolean);
+  return evidence(a).map((e) => e.w);
 }
+
+/** A compared value's words: its key path (field names, unless a tree check's) and the value's own words. */
+const leafWords = (l: Leaf): EvWord[] => [
+  ...l.path.map((w) => ({ w, field: l.field })),
+  ...l.value.map((w) => ({ w, field: false })),
+];
+
+/** A quote word an evidence word accounts for: the same word or an inflection, or a field name's synonym. */
+const accounts = (w: string, e: EvWord) => sameWord(e.w, w) || (e.field && fieldSynonym(w, e.w));
 
 /**
  * The content words of the quote a candidate does not account for. Words about which page is
  * open ("page", "screen") need page evidence (the tree or the URL); words about what it presents
  * ("shows", "visible") and kinds of element ("button", "checkbox") outside quotation marks need
  * tree evidence that names them, never a URL, path or key. Values the quote states for a field
- * need a compared value under that field (`Quote.bindings`).
+ * need a compared value under that field (`Quote.bindings`). A set comparison accounts for what
+ * its plain core does (`Candidate.core`).
  */
-function unaccounted(q: Quote, c: Pick<Candidate, 'family' | 'assert'>): string[] {
-  const ev = evidenceWords(c.assert);
+function unaccounted(q: Quote, c: Pick<Candidate, 'family' | 'assert' | 'core'>): string[] {
+  const a = c.core ?? c.assert;
+  const ev = evidence(a);
   const out: string[] = [];
   // Words in quotation marks are names and values ("Yes, see the docs."), not words about the page.
   const loose = new Set(q.unquoted);
@@ -1279,18 +1737,18 @@ function unaccounted(q: Quote, c: Pick<Candidate, 'family' | 'assert'>): string[
     // A word the quote uses twice ("the Dentist event is called Dentist (Dr. Lee)") names two
     // things; the evidence must account for each use, or one of them is left unchecked.
     const need = q.words.filter((x) => x === w).length;
-    const have = ev.filter((e) => sameWord(e, w)).length;
+    const have = ev.filter((e) => accounts(w, e)).length;
     if (have === 0 || (need > 1 && have < need)) out.push(w);
   }
   // Numbers, identifiers, dates and times the quote states must be among the values compared,
   // once per time the quote states them: "the quantity is 2 and the price is 2" needs two values.
-  for (const f of q.facts) if (ev.filter((e) => e === f).length < q.factCount(f)) out.push(f.slice(f.indexOf(':') + 1));
-  const leaves = comparedLeaves(c.assert);
+  for (const f of q.facts)
+    if (ev.filter((e) => e.w === f).length < q.factCount(f)) out.push(f.slice(f.indexOf(':') + 1));
+  const leaves = comparedLeaves(a);
   // Fields the quote coordinates ("the quantity and price are 2") each need a compared value of
   // their own, named by its key path or value: one scalar, whatever its name, checks one field.
   for (const group of q.coordinated)
-    if (!assignLeaves(group, leaves, (w, l) => [...l.path, ...l.value].some((e) => sameWord(e, w))))
-      out.push(group.join(' and '));
+    if (!assignLeaves(group, leaves, (w, l) => leafWords(l).some((e) => accounts(w, e)))) out.push(group.join(' and '));
   // A value the quote states for a field ("the price is 2") must be compared under that field:
   // a leaf whose own key path names the field and whose value is the stated one. Each binding
   // needs a leaf of its own; the probe's or request's name never stands in for the field.
@@ -1301,17 +1759,19 @@ function unaccounted(q: Quote, c: Pick<Candidate, 'family' | 'assert'>): string[
 
 /**
  * One value a candidate compares: the words of its own key and of the keys above it inside the
- * compared value (a JSON Pointer's segments, a schema's property names), and the words of the
- * value itself. The probe, storage key or request it is read from is not part of its path: those
- * name where evidence is read, not which field holds the value.
+ * compared value (a JSON Pointer's segments, a schema's property names, a cell's column), and the
+ * words of the value itself. The probe, storage key or request it is read from is not part of its
+ * path: those name where evidence is read, not which field holds the value. `field`: the path is
+ * made of field names (not a tree check's role and name), which `FIELD_SYNONYMS` may widen.
  */
 interface Leaf {
   path: string[];
   value: string[];
+  field: boolean;
 }
 
 /** The values a candidate compares. A tree check compares one thing, named by its role, name and state. */
-function comparedLeaves(a: Assertion): Leaf[] {
+function comparedLeaves(a: Assertion, prefix: string[] = []): Leaf[] {
   const out: Leaf[] = [];
   const walk = (s: unknown, path: string[]): void => {
     if (Array.isArray(s)) return s.forEach((x) => walk(x, path));
@@ -1320,7 +1780,7 @@ function comparedLeaves(a: Assertion): Leaf[] {
     if ('const' in o || 'pattern' in o) {
       const v: string[] = [];
       schemaWords({ const: o.const, pattern: o.pattern }, v);
-      out.push({ path, value: v });
+      out.push({ path, value: v, field: true });
       return;
     }
     for (const [k, v] of Object.entries(o)) {
@@ -1334,9 +1794,9 @@ function comparedLeaves(a: Assertion): Leaf[] {
       const src = a.source;
       const base =
         (src.from === 'probe' || src.from === 'request' || src.from === 'response') && src.pointer
-          ? pathWords(src.pointer)
-          : [];
-      if ('equals' in a.expect) out.push({ path: base, value: valueWords(a.expect.equals) });
+          ? [...prefix, ...pathWords(src.pointer)]
+          : prefix;
+      if ('equals' in a.expect) out.push({ path: base, value: valueWords(a.expect.equals), field: true });
       if ('schema' in a.expect) walk(a.expect.schema, base);
       break;
     }
@@ -1344,14 +1804,29 @@ function comparedLeaves(a: Assertion): Leaf[] {
       walk(a.match.requestBody, []);
       walk(a.match.responseBody, []);
       break;
+    case 'each':
+      // A record's value sits under the records' column.
+      out.push(...comparedLeaves(a.assert, [...prefix, ...matchWords(a.match.column)]));
+      break;
+    case 'allOf':
+      for (const x of a.of) out.push(...comparedLeaves(x, prefix));
+      break;
     default:
-      out.push({ path: evidenceWords(a), value: [] });
+      out.push({ path: evidenceWords(a), value: [], field: false });
   }
-  return out.map((l) => ({ path: l.path.map((w) => w.toLowerCase()), value: l.value.map((w) => w.toLowerCase()) }));
+  return out.map((l) => ({
+    ...l,
+    path: l.path.map((w) => w.toLowerCase()),
+    value: l.value.map((w) => w.toLowerCase()),
+  }));
 }
 
-/** A leaf holds a binding: its value is the stated one, and its own key path names the field. */
-const holdsBinding = (b: Binding, l: Leaf) => l.value.includes(b.fact) && l.path.some((e) => sameWord(e, b.field));
+/**
+ * A leaf holds a binding: its value is the stated one, and its own key path names the field (the
+ * same word, or a field name `FIELD_SYNONYMS` gives for it: "the quantity is 2" binds `qty: 2`).
+ */
+const holdsBinding = (b: Binding, l: Leaf) =>
+  l.value.includes(b.fact) && l.path.some((e) => sameWord(e, b.field) || (l.field && fieldSynonym(b.field, e)));
 
 /** Gives each item a distinct leaf it accepts (a small matching, by backtracking). */
 function assignLeaves<T>(items: T[], leaves: Leaf[], fits: (item: T, leaf: Leaf) => boolean): boolean {
@@ -1474,14 +1949,15 @@ export function mineCandidates(input: MineInput): MineResult {
     const q = quotes.get(c.requirement)!;
     const discrimination = negatives[i]!.length + (baseline[i] === 'fail' ? 1 : 0);
     const unexplained = unaccounted(q, c);
-    // Settles its requirement: it accounts for every content word of a quote mining can
-    // express, and either rejects an incorrect reference, or compares a value the quote names
-    // that the baseline (when there is one) did not already hold.
-    const decisive =
-      alive[i]! &&
-      !q.quantified &&
-      !unexplained.length &&
-      (negatives[i]!.length > 0 || (c.stated && baseline[i] !== 'pass'));
+    // Settles its requirement: it expresses the quote's set comparison (none for a plain quote),
+    // accounts for every content word, and either rejects an incorrect reference, or compares a
+    // value the quote names that the baseline (when there is one) did not already hold. An "add"
+    // reads the collection before the task, so it needs a baseline, and one without X.
+    const evidenced =
+      c.covers === 'add'
+        ? baseline[i] !== null && (negatives[i]!.length > 0 || (c.stated && baseline[i] === 'fail'))
+        : negatives[i]!.length > 0 || (c.stated && baseline[i] !== 'pass');
+    const decisive = alive[i]! && (c.covers ?? 'plain') === q.form && !unexplained.length && evidenced;
     return {
       ...c,
       survives: alive[i]!,
