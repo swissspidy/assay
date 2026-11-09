@@ -682,6 +682,7 @@ five ([ADR 0011](docs/adr/0011-route-robust-compilation.md)).
 - [ADR 0020](docs/adr/0020-mining-first-compiler.md): the mining-first compiler
 - [ADR 0021](docs/adr/0021-agent-regression-gate.md): `assay gate`, the agent regression gate
 - [ADR 0022](docs/adr/0022-task-status.md): `assay status`, the readiness ladder
+- [ADR 0023](docs/adr/0023-incremental-tree-index.md): incremental accessibility-tree index for stress overlays
 - [ADR 0028](docs/adr/0028-scoped-text-outcomes-and-descriptions.md): scoped text in run outcomes and check descriptions
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
 - Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)

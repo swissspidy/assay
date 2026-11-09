@@ -24,7 +24,8 @@ import { AXIndex, readNodeField, resolveTarget, type INode } from '../runtime/ax
 import { applyNormalizers, describeValue, zoneOffset, type TypedValue } from '../runtime/values.ts';
 import { compareValues } from '../runtime/compare.ts';
 import { canonical, stripGlobal } from '../text.ts';
-import { clone, editById, replaceText, sameJson, treeChanged } from './edit.ts';
+import { editById, replaceText, sameJson, treeChanged } from './edit.ts';
+import { AXTable, noteDerived, regularTree } from '../store/ax.ts';
 import { PRECISIONS, fromScalar, readSpan, readTyped, rewriteValue, scalarOf, snapTo, timezoneOf } from './mutants.ts';
 
 export interface Variant {
@@ -54,17 +55,35 @@ export const GENERIC_VARIANTS = [
 ] as const;
 
 const REORDERABLE = new Set(['list', 'rowgroup', 'table', 'listbox', 'menu', 'grid', 'tree', 'feed']);
+
+/**
+ * The ids an `editById` callback can edit, picked from the tree's table, so the edit rebuilds
+ * their ancestors only (ADR 0016, 0023); undefined (walk the whole tree) when it is not regular.
+ */
+function editable(s: EvidenceSnapshot, pick: (t: AXTable) => Iterable<number>): Iterable<number> | undefined {
+  return regularTree(s.a11y) ? pick(AXTable.of(s.a11y)) : undefined;
+}
+
+/** The ids of the nodes with any of `roles`. */
+const withRoles =
+  (...roles: string[]) =>
+  (t: AXTable): number[] =>
+    roles.flatMap((r) => [...t.withRole(r)]);
 const isHeader = (n: AXNode): boolean => n.role === 'columnheader' || (n.children ?? []).some(isHeader);
 
 function reorder(s: EvidenceSnapshot): EvidenceSnapshot | null {
-  const out = editById(s, (n) => {
-    if (!REORDERABLE.has(n.role) || !n.children || n.children.length < 2) return undefined;
-    // Header rows (and header rowgroups) stay first.
-    const head = n.children.filter(isHeader);
-    const body = n.children.filter((c) => !head.includes(c));
-    if (body.length < 2) return undefined;
-    return { ...n, children: [...head, ...body.toReversed()] };
-  });
+  const out = editById(
+    s,
+    (n) => {
+      if (!REORDERABLE.has(n.role) || !n.children || n.children.length < 2) return undefined;
+      // Header rows (and header rowgroups) stay first.
+      const head = n.children.filter(isHeader);
+      const body = n.children.filter((c) => !head.includes(c));
+      if (body.length < 2) return undefined;
+      return { ...n, children: [...head, ...body.toReversed()] };
+    },
+    editable(s, withRoles(...REORDERABLE)),
+  );
   return treeChanged(s, out) ? out : null;
 }
 
@@ -75,32 +94,44 @@ function reorder(s: EvidenceSnapshot): EvidenceSnapshot | null {
 const isTermPart = (n: AXNode) => n.role === 'term' || n.role === 'definition';
 
 function reorderTerms(s: EvidenceSnapshot): EvidenceSnapshot | null {
-  const out = editById(s, (n) => {
-    const kids = n.children ?? [];
-    if (!kids.some((c) => c.role === 'term')) return undefined;
-    const next: AXNode[] = [];
-    for (let i = 0; i < kids.length;) {
-      if (!isTermPart(kids[i]!)) {
-        next.push(kids[i++]!);
-        continue;
+  const out = editById(
+    s,
+    (n) => {
+      const kids = n.children ?? [];
+      if (!kids.some((c) => c.role === 'term')) return undefined;
+      const next: AXNode[] = [];
+      for (let i = 0; i < kids.length;) {
+        if (!isTermPart(kids[i]!)) {
+          next.push(kids[i++]!);
+          continue;
+        }
+        // One run of terms and definitions, split into groups that each start at a term.
+        const groups: AXNode[][] = [];
+        for (; i < kids.length && isTermPart(kids[i]!); i++) {
+          const k = kids[i]!;
+          const prev = groups.at(-1);
+          if (!prev || (k.role === 'term' && prev.at(-1)!.role === 'definition')) groups.push([k]);
+          else prev.push(k);
+        }
+        next.push(...groups.toReversed().flat());
       }
-      // One run of terms and definitions, split into groups that each start at a term.
-      const groups: AXNode[][] = [];
-      for (; i < kids.length && isTermPart(kids[i]!); i++) {
-        const k = kids[i]!;
-        const prev = groups.at(-1);
-        if (!prev || (k.role === 'term' && prev.at(-1)!.role === 'definition')) groups.push([k]);
-        else prev.push(k);
-      }
-      next.push(...groups.toReversed().flat());
-    }
-    return { ...n, children: next };
-  });
+      return { ...n, children: next };
+    },
+    editable(s, termParents),
+  );
   return treeChanged(s, out) ? out : null;
 }
 
+/** The nodes with a term among their children (edits keep every node's role). */
+function termParents(t: AXTable): number[] {
+  const out = new Set<number>();
+  for (const id of t.withRole('term')) if (t.parent[id]! >= 0) out.add(t.parent[id]!);
+  return [...out];
+}
+
 const UNRELATED_TEXT = ['Recommended for you', 'Gift card', 'Tea towel', 'Free shipping on orders over $50.00'];
-const UNRELATED: AXNode[] = [
+/** Unrelated content, made anew for each variant (a literal costs less than a structured clone). */
+const unrelated = (): AXNode[] => [
   {
     role: 'region',
     name: 'Recommended for you',
@@ -120,12 +151,20 @@ const UNRELATED: AXNode[] = [
 
 function extraContent(s: EvidenceSnapshot): EvidenceSnapshot {
   let placed = false;
-  let out = editById(s, (n) => {
-    if (n.role !== 'main' || placed) return undefined;
-    placed = true;
-    return { ...n, children: [...(n.children ?? []), ...clone(UNRELATED)] };
-  });
-  if (!placed) out = { ...out, a11y: { ...out.a11y, children: [...(out.a11y.children ?? []), ...clone(UNRELATED)] } };
+  let out = editById(
+    s,
+    (n) => {
+      if (n.role !== 'main' || placed) return undefined;
+      placed = true;
+      return { ...n, children: [...(n.children ?? []), ...unrelated()] };
+    },
+    editable(s, withRoles('main')),
+  );
+  if (!placed) {
+    const a11y = { ...out.a11y, children: [...(out.a11y.children ?? []), ...unrelated()] };
+    noteDerived(a11y, out.a11y);
+    out = { ...out, a11y };
+  }
   return { ...out, text: `${out.text}\n${UNRELATED_TEXT.join('\n')}` };
 }
 
@@ -152,7 +191,7 @@ const adFrame = (url: string): AXNode => ({
   role: 'iframe',
   name: 'Advertisement',
   url: `${httpOrigin(url) ?? 'https://ads.example'}/ads/frame`,
-  children: clone(UNRELATED),
+  children: unrelated(),
 });
 
 /** A page view with the ad frame added, when it has frame content; else the same view. */
@@ -212,32 +251,51 @@ function extraPage(s: EvidenceSnapshot): EvidenceSnapshot | null {
 }
 
 function extraTableRow(s: EvidenceSnapshot): EvidenceSnapshot | null {
-  const out = editById(s, (n) => {
-    if (n.role !== 'rowgroup' && n.role !== 'table') return undefined;
-    const rows = (n.children ?? []).filter((r) => r.role === 'row' && !isHeader(r));
-    const sample = rows.find((r) => r.children?.some((c) => c.role === 'cell' || c.role === 'gridcell'));
-    if (!sample) return undefined;
-    const cells = (sample.children ?? []).map((c, i) => ({ role: c.role, name: i === 0 ? 'Gift card' : '' }));
-    return { ...n, children: [...(n.children ?? []), { role: 'row', name: 'Gift card', children: cells }] };
-  });
+  const out = editById(
+    s,
+    (n) => {
+      if (n.role !== 'rowgroup' && n.role !== 'table') return undefined;
+      const rows = (n.children ?? []).filter((r) => r.role === 'row' && !isHeader(r));
+      const sample = rows.find((r) => r.children?.some((c) => c.role === 'cell' || c.role === 'gridcell'));
+      if (!sample) return undefined;
+      const cells = (sample.children ?? []).map((c, i) => ({ role: c.role, name: i === 0 ? 'Gift card' : '' }));
+      return { ...n, children: [...(n.children ?? []), { role: 'row', name: 'Gift card', children: cells }] };
+    },
+    editable(s, withRoles('rowgroup', 'table')),
+  );
   return treeChanged(s, out) ? out : null;
 }
 
 function wrapMain(s: EvidenceSnapshot): EvidenceSnapshot | null {
   let done = false;
-  const out = editById(s, (n) => {
-    if (n.role !== 'main' || done) return undefined;
-    done = true;
-    return { ...n, children: [{ role: 'region', name: 'Page content', children: n.children ?? [] }] };
-  });
+  const out = editById(
+    s,
+    (n) => {
+      if (n.role !== 'main' || done) return undefined;
+      done = true;
+      return { ...n, children: [{ role: 'region', name: 'Page content', children: n.children ?? [] }] };
+    },
+    editable(s, withRoles('main')),
+  );
   return done ? out : null;
+}
+
+/** The nodes with a name (an edit copies a node's fields, its name among them). */
+function named(t: AXTable): number[] {
+  const out: number[] = [];
+  for (let i = 0; i < t.size; i++) if (t.nodes[i]!.name !== undefined) out.push(i);
+  return out;
 }
 
 /** Non-breaking space followed by a space: same rendering, different characters. */
 const respace = (t: string) => t.replace(/ /g, '  ');
 
 function spacing(s: EvidenceSnapshot): EvidenceSnapshot {
-  const out = editById(s, (n) => (n.name !== undefined ? { ...n, name: respace(n.name) } : undefined));
+  const out = editById(
+    s,
+    (n) => (n.name !== undefined ? { ...n, name: respace(n.name) } : undefined),
+    editable(s, named),
+  );
   return { ...out, text: out.text.replace(/ /g, '  ') };
 }
 
@@ -300,6 +358,12 @@ function put(o: { [key: string]: Json }, k: string, x: Json): void {
   else o[k] = x;
 }
 
+/** A probe result written exactly as `{ ok: true, value }` would be. */
+const isOkValue = (p: ProbeResult): boolean => {
+  const keys = Object.keys(p);
+  return p.ok === true && keys.length === 2 && keys[0] === 'ok' && keys[1] === 'value';
+};
+
 const isObj = (v: Json | undefined): v is Json => v !== undefined && v !== null && typeof v === 'object';
 
 function mapBodies(s: EvidenceSnapshot, fn: (v: Json) => Json): EvidenceSnapshot | null {
@@ -309,17 +373,25 @@ function mapBodies(s: EvidenceSnapshot, fn: (v: Json) => Json): EvidenceSnapshot
     if (!changed && !sameJson(out, v)) changed = true;
     return out;
   };
-  const network = s.network?.map((e) => ({
-    ...e,
-    ...(isObj(e.requestBody) ? { requestBody: apply(e.requestBody) } : {}),
-    ...(isObj(e.responseBody) ? { responseBody: apply(e.responseBody) } : {}),
-  }));
+  // An entry or probe whose bodies `fn` returns unchanged is kept as it is (the same JSON).
+  const network = s.network?.map((e) => {
+    const req = isObj(e.requestBody) ? apply(e.requestBody) : e.requestBody;
+    const res = isObj(e.responseBody) ? apply(e.responseBody) : e.responseBody;
+    return req === e.requestBody && res === e.responseBody
+      ? e
+      : {
+          ...e,
+          ...(isObj(e.requestBody) ? { requestBody: req } : {}),
+          ...(isObj(e.responseBody) ? { responseBody: res } : {}),
+        };
+  });
   const mapProbes = (ps: Record<string, ProbeResult>) =>
     Object.fromEntries(
-      Object.entries(ps).map(([k, p]) => [
-        k,
-        p.ok && isObj(p.value) ? { ok: true as const, value: apply(p.value) } : p,
-      ]),
+      Object.entries(ps).map(([k, p]) => {
+        if (!p.ok || !isObj(p.value)) return [k, p];
+        const value = apply(p.value);
+        return [k, value === p.value && isOkValue(p) ? p : { ok: true as const, value }];
+      }),
     );
   const probes = mapProbes(s.probes);
   // The API's shape is the same before and after the task, so the baseline gets the same edit.
