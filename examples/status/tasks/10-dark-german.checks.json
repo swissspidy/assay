@@ -1,0 +1,85 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/dark-german",
+  "version": "1",
+  "task": {
+    "instruction": "Switch Tiny Shop to the dark theme and to German.",
+    "outcomes": "Then the theme preference is dark\nThen the language preference is German"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Theme is dark",
+      "source": {
+        "field": "instruction",
+        "quote": "the dark theme"
+      }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "Language is German",
+      "source": {
+        "field": "instruction",
+        "quote": "to German"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "localStorage 'theme' is 'dark'.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "storage",
+          "area": "local",
+          "key": "theme"
+        },
+        "normalize": ["trim", "lowercase"],
+        "expect": {
+          "equals": "dark"
+        }
+      }
+    },
+    {
+      "id": "C2",
+      "requirement": "R2",
+      "description": "The 'lang' cookie is 'de'.",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "storage",
+          "area": "cookie",
+          "key": "lang"
+        },
+        "normalize": ["trim", "lowercase"],
+        "expect": {
+          "oneOf": ["de", "de-de"]
+        }
+      }
+    }
+  ],
+  "locked": {
+    "by": "alice",
+    "at": "2026-11-09T09:00:00.000Z",
+    "content": "sha256:4f76471e40a677525edcf641eb8229de07767a1daa75bb6e366ce9c4677e0826",
+    "items": {
+      "id": "sha256:cd92d1af9ff2cd20fb3d49880f59c50f3f433da273e0f57dd653a544b369141c",
+      "version": "sha256:391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf",
+      "task": "sha256:1a53b7b0622a23177049078cf2a4b5813e6582879e772426954d4516e433ac3f",
+      "requirement:R1": "sha256:a0b9b1bdd30bac1c8e10451880cbc2e88743df2066bcf5bb0ff80d8c72b8e019",
+      "requirement:R2": "sha256:5f4fbecc7d76d7ddfff8f06a883e59fae77fb5d55fc5f0746f427438d11a6eb7",
+      "check:C1": "sha256:1e9896c472eef03006a1eaf4abecd87ea8120086c96d501756e8c94d72fe68a8",
+      "check:C2": "sha256:95e5769eae507936618394b698acfb135b761464420a15c90ca321f3304186a9"
+    },
+    "digest": "sha256:098c86a20e66ba6b2ba3b6e92e157c6f85201c8ea476984b4355b3838cea58bf",
+    "signature": {
+      "alg": "ed25519",
+      "keyId": "ed25519:b1f5ce323542975f",
+      "value": "36FfZ9t15vl+QcWqPGTzhHKf1uNqGctS29YJok0CL2ljXlzFfuz/CFp2Y/kKnhQx74TzutMFyl98JJ/ZJ6cFBQ=="
+    }
+  }
+}

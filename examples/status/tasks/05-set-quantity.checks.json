@@ -1,0 +1,78 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-shop/set-quantity",
+  "version": "1",
+  "task": {
+    "instruction": "Change the quantity of the Blue Mug in my cart to 3.",
+    "outcomes": "Then the cart shows 3 Blue Mugs"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "The Blue Mug quantity is 3",
+      "source": {
+        "field": "instruction",
+        "quote": "quantity of the Blue Mug in my cart to 3"
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "The quantity field for Blue Mug in the Cart table reads 3. (edited)",
+      "assert": {
+        "kind": "value",
+        "source": {
+          "from": "node",
+          "field": "value",
+          "target": {
+            "anchors": [
+              {
+                "role": "spinbutton",
+                "name": "Quantity for Blue Mug"
+              },
+              {
+                "role": "spinbutton",
+                "within": {
+                  "role": "row",
+                  "name": {
+                    "contains": "Blue Mug"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "normalize": [
+          {
+            "op": "number",
+            "locale": "en-US"
+          }
+        ],
+        "expect": {
+          "equals": 3
+        }
+      }
+    }
+  ],
+  "locked": {
+    "by": "alice",
+    "at": "2026-11-09T09:00:00.000Z",
+    "content": "sha256:fd1d1dc6c07d82d64563bedbefc73d5f4450c90c9ee7f8f16da430697f72b314",
+    "items": {
+      "id": "sha256:650ad44a50cf5a91f03b6bea507504028ed18faa5209ed7456dbe69a2470ba15",
+      "version": "sha256:391552c099c101b131feaf24c5795a6a15bc8ec82015424e0d2b4274a369a0bf",
+      "task": "sha256:21d3b0530610b50c108d0d3a29517101baee047f9fd44f13328319db152681c9",
+      "requirement:R1": "sha256:217946f94251ad9dbd478a2a164a1c36752a186553093e45caa070da233c86c9",
+      "check:C1": "sha256:9376aba85ad9540bb47ba3ba7ec6f972d1cdd159d23f17d2ab3bf5f51aaaf66f"
+    },
+    "digest": "sha256:5c72f3cd67d5fdd5d446897e226ebae9fa99177749b693cc5f8a6483f38eb211",
+    "signature": {
+      "alg": "ed25519",
+      "keyId": "ed25519:b1f5ce323542975f",
+      "value": "MJB6YrOUsx4xOpaSAC8DyqhRJT3IWezZKy8849gSxrA8twUItaaLhxs3ZX1kXDI4SZ5USpiEAqWe/CoZC7PeCg=="
+    }
+  }
+}

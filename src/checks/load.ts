@@ -5,9 +5,9 @@
  */
 import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, globSync, mkdtempSync, readFileSync, rmSync, statSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 /** A check set module rather than JSON. */
@@ -21,6 +21,28 @@ export const isModuleFile = (path: string) => MODULE_FILE.test(path);
 
 /** A check set file's task name: `02-add-blue-mug.checks.ts` → `02-add-blue-mug`. */
 export const checkSetName = (file: string): string => (file.split(/[\\/]/).at(-1) ?? file).replace(CHECK_SET_FILE, '');
+
+/** Every check set the specs name: files, directories (searched for `CHECK_SET_GLOBS`) and globs. */
+export function discoverSets(specs: string[]): string[] {
+  const files = new Set<string>();
+  for (const spec of specs) {
+    if (existsSync(spec)) {
+      if (statSync(spec).isDirectory()) {
+        for (const g of CHECK_SET_GLOBS) for (const f of globSync(g, { cwd: spec })) files.add(resolve(spec, f));
+      } else files.add(resolve(spec));
+    } else for (const f of globSync(spec)) files.add(resolve(f));
+  }
+  return [...files].filter((f) => !f.split(sep).includes('node_modules')).toSorted();
+}
+
+/**
+ * Where a set's runs live (ADR 0019): `<root>/<name>/` for each run root, and references/ next
+ * to the set's directory (`tasks/x.checks.json` → `references/x/`, as in examples/*).
+ */
+export function runDirsFor(file: string, roots: string[]): string[] {
+  const all = [...roots, join(dirname(dirname(file)), 'references')];
+  return [...new Set(all.map((r) => join(r, checkSetName(file))))];
+}
 
 /** A file that could not be read or run. `code` is the file system's error code, if any. */
 export class CheckSetFileError extends Error {

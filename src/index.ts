@@ -86,6 +86,18 @@ export {
   type LoadedConfig,
 } from './config/config.ts';
 export {
+  status,
+  formatStatus,
+  STATUS_STAGES,
+  type StageResult,
+  type StageStatus,
+  type StatusConfig,
+  type StatusOptions,
+  type StatusResult,
+  type StatusStage,
+  type TaskStatus,
+} from './status/index.ts';
+export {
   resolveModel,
   PROVIDERS,
   type ModelInput,

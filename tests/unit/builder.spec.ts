@@ -50,6 +50,8 @@ const committed = globSync(
 )
   .filter((f) => !f.includes('.scratch'))
   .toSorted();
+/** The `assay status` fixture's task that stops at the first rung (ADR 0022): invalid on purpose. */
+const INVALID_ON_PURPOSE = new Set(['examples/status/tasks/01-newsletter.checks.json']);
 
 test('the builder writes the README example as plain assay.checks/v1 JSON', () => {
   const cs = checks('Add a blue mug to the cart', [
@@ -370,7 +372,7 @@ test.describe('printing builder code', () => {
       files.push(file);
       const back = await loadCheckSetFile(file);
       expect(back, f).toStrictEqual(cs);
-      expect(validateCheckSet(back).ok, f).toBe(true);
+      expect(validateCheckSet(back).ok, f).toBe(!INVALID_ON_PURPOSE.has(f));
     }
     expect(plainObjects).toBe(0);
 
