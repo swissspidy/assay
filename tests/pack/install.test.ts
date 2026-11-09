@@ -249,6 +249,18 @@ test('the installed assay executable verifies, validates, reviews, stress-tests 
   });
   assert.equal(bench.code, 0, bench.stderr);
   assert.equal(await readFile(report, 'utf8'), await readFile(join(root, 'examples/bench/REPORT.md'), 'utf8'));
+  // So does the strategy bench (ADR 0026), mine-only row included.
+  const strategies = join(dir, 'bench-strategies.md');
+  const byStrategy = await assay(
+    dir,
+    ['bench', '-c', join(root, 'examples/bench-strategies/assay.config.ts'), '-o', strategies],
+    { ASSAY_MODEL_MODE: 'replay' },
+  );
+  assert.equal(byStrategy.code, 0, byStrategy.stderr);
+  assert.equal(
+    await readFile(strategies, 'utf8'),
+    await readFile(join(root, 'examples/bench-strategies/REPORT.md'), 'utf8'),
+  );
 });
 
 test('the installed assay gate reproduces the fixture report, and gate() is exported with its types', async () => {
