@@ -17,6 +17,7 @@ import type {
   Tolerance,
   ValueSource,
 } from '../types.ts';
+import { textSourceChannel } from '../types.ts';
 import { canonicalJson, checkSetDigest, sha256 } from '../snapshot/digest.ts';
 import { assertValidCheckSet } from '../dsl/validate.ts';
 import { describeTextMatch } from '../text.ts';
@@ -401,13 +402,26 @@ const target = (t: Target) =>
 const loc = (l: Locator) => describeLocator(l);
 const tm = (m: TextMatch) => describeTextMatch(m);
 
+/**
+ * How a description words a `from: "text"` source. "current" (ADR 0028) words it by what it
+ * reads (`textSourceChannel`): a scope's or a record's text is accessibility-tree text, and only
+ * the whole document's text is "free text, spoofable". "pre-0028" is the wording before, which
+ * called every text source free text. It is kept only so that builder sets whose lock or
+ * rejection was made on it still match.
+ */
+export type DescriptionWording = 'current' | 'pre-0028';
+
 /** `inRecord`: inside an `each`, where an unscoped text source reads the record's text. */
-function source(s: ValueSource, inRecord = false): string {
+function source(s: ValueSource, inRecord: boolean, wording: DescriptionWording): string {
   switch (s.from) {
     case 'node':
       return `the ${s.field} of ${target(s.target)}`;
-    case 'text':
-      return `${inRecord && !s.scope ? 'the record' : 'page'} text matching /${s.pattern}/${s.scope ? ` inside ${target(s.scope)}` : ''} (free text, spoofable)`;
+    case 'text': {
+      const inside = s.scope ? ` inside ${target(s.scope)}` : '';
+      if (wording === 'pre-0028' || textSourceChannel(s, inRecord) === 'text')
+        return `${inRecord && !s.scope ? 'the record' : 'page'} text matching /${s.pattern}/${inside} (free text, spoofable)`;
+      return `${s.scope ? 'the' : 'the record'} text matching /${s.pattern}/${inside} (accessibility-tree text)`;
+    }
     case 'url':
       return `the page URL's ${typeof s.part === 'object' ? `query parameter ${s.part.param}` : s.part}`;
     case 'request':
@@ -468,6 +482,16 @@ export const tolerancesOf = (a: Assertion): string[] =>
  * inside an `each`, where an unscoped contains or text source reads the record.
  */
 export function describeAssertion(a: Assertion, inRecord = false): string {
+  return describe(a, inRecord, 'current');
+}
+
+/**
+ * @internal `describeAssertion` in a given wording. The builder uses "pre-0028" to keep the default
+ * descriptions a set's lock or rejection was made on (ADR 0028).
+ */
+export const describeAssertionAs = (a: Assertion, wording: DescriptionWording): string => describe(a, false, wording);
+
+function describe(a: Assertion, inRecord: boolean, wording: DescriptionWording): string {
   const where = (scope: Target | undefined) => (scope ? target(scope) : inRecord ? 'the record' : 'the page');
   switch (a.kind) {
     case 'state': {
@@ -482,21 +506,21 @@ export function describeAssertion(a: Assertion, inRecord = false): string {
       return `${where(a.scope)} contains ${describeNumberCompare(a.count ?? { gte: 1 })} ${loc(a.match)}${a.witness ? ` (witness: ${loc(a.witness)} must exist)` : ''}`;
     case 'value':
       return 'sameAs' in a.expect
-        ? `${source(a.source, inRecord)}${normalized(a.normalize)}, equals ${source(a.expect.sameAs.source, inRecord)}${normalized(a.expect.sameAs.normalize)}${tolerance(a.expect.sameAs.tolerance, [...(a.normalize ?? []), ...(a.expect.sameAs.normalize ?? [])])}`
-        : `${source(a.source, inRecord)}${normalized(a.normalize)}, ${JSON.stringify(a.expect)}`;
+        ? `${source(a.source, inRecord, wording)}${normalized(a.normalize)}, equals ${source(a.expect.sameAs.source, inRecord, wording)}${normalized(a.expect.sameAs.normalize)}${tolerance(a.expect.sameAs.tolerance, [...(a.normalize ?? []), ...(a.expect.sameAs.normalize ?? [])])}`
+        : `${source(a.source, inRecord, wording)}${normalized(a.normalize)}, ${JSON.stringify(a.expect)}`;
     case 'url':
       return `the page URL matches ${describeUrlMatch(a.match)}`;
     case 'request':
       return `${describeNumberCompare(a.count ?? { gte: 1 })} request(s) match ${describeRequestMatch(a.match)}`;
     case 'each': {
       const record = a.match.role === 'term' ? `${loc(a.match)} (with its definitions)` : loc(a.match);
-      return `in ${where(a.scope)}, ${describeNumberCompare(a.count ?? { gte: 1 })} ${record}${a.witness ? ` (witness: ${loc(a.witness)} must exist once)` : ''}, and inside each: ${describeAssertion(a.assert, true)}`;
+      return `in ${where(a.scope)}, ${describeNumberCompare(a.count ?? { gte: 1 })} ${record}${a.witness ? ` (witness: ${loc(a.witness)} must exist once)` : ''}, and inside each: ${describe(a.assert, true, wording)}`;
     }
     case 'page':
-      return `on the one open page (tab or popup) with ${describePageMatch(a.match)}: ${describeAssertion(a.assert)}`;
+      return `on the one open page (tab or popup) with ${describePageMatch(a.match)}: ${describe(a.assert, false, wording)}`;
     case 'allOf':
-      return `all of: ${a.of.map((b) => describeAssertion(b, inRecord)).join('; ')}`;
+      return `all of: ${a.of.map((b) => describe(b, inRecord, wording)).join('; ')}`;
     case 'anyOf':
-      return `any of: ${a.of.map((b) => describeAssertion(b, inRecord)).join('; ')}`;
+      return `any of: ${a.of.map((b) => describe(b, inRecord, wording)).join('; ')}`;
   }
 }
