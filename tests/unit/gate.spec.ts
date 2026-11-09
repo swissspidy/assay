@@ -390,3 +390,90 @@ test.describe('assay gate', () => {
     expect(r.stderr).toContain('unknown option `gate.tolerence`');
   });
 });
+
+test.describe('review fixes', () => {
+  test('relative globs stay relative to a working directory whose name has glob characters', async () => {
+    const dir = join(tmp(), 'project[1]');
+    sides(join(dir, 'shard-1'), { baseline: { '02-add-blue-mug': ['added-blue-mug'] }, candidate: {} });
+    sides(dir, { baseline: {}, candidate: { '02-add-blue-mug': ['added-blue-mug'] } });
+    mkdirSync(join(dir, 'checks'));
+    cpSync(shop('tasks/02-add-blue-mug.checks.json'), join(dir, 'checks/02-add-blue-mug.checks.json'));
+    const r = await assay(['gate', '-b', 'shard-*/baseline', '--candidate', 'candidate', 'checks/*.checks.json'], dir);
+    expect(r.code, r.stderr).toBe(0);
+    expect(r.stdout).toMatch(/· {2}02-add-blue-mug +unchanged +1\/1 → 1\/1/);
+  });
+
+  test('two valid pinned sets are compared even when the shared set is invalid', async () => {
+    const dir = tmp();
+    const s = sides(dir, {
+      baseline: { '02-add-blue-mug': ['added-blue-mug'] },
+      candidate: { '02-add-blue-mug': ['added-blue-mug'] },
+    });
+    const cs = JSON.stringify(set('02-add-blue-mug'));
+    writeFileSync(join(s.baseline, '02-add-blue-mug.checks.json'), cs);
+    writeFileSync(join(s.candidate, '02-add-blue-mug.checks.json'), cs);
+    mkdirSync(join(dir, 'shared'));
+    writeFileSync(join(dir, 'shared/02-add-blue-mug.checks.json'), JSON.stringify({ id: 'broken' }));
+    const r = await gate({ ...s, checks: join(dir, 'shared') });
+    expect([r.ok, r.tasks[0]!.status]).toEqual([true, 'unchanged']);
+  });
+
+  test('markdown code spans hold evidence with backtick runs', async () => {
+    const res = JSON.parse((await assay(['gate', '-c', CONFIG, '--json'])).stdout) as GateResult;
+    res.tasks[0]!.findings[0]!.checks[0]!.found = [{ channel: 'text', value: 'a``b`c' }];
+    expect(formatGateMarkdown(res)).toContain('  - Found: ``` "a``b`c" ```\n');
+  });
+
+  test('an unreadable run file or an invalid snapshot is a GateError, on disk and in memory', async () => {
+    const dir = tmp();
+    const s = sides(dir, {
+      baseline: { '02-add-blue-mug': ['added-blue-mug'] },
+      candidate: { '02-add-blue-mug': ['added-blue-mug'] },
+    });
+    writeFileSync(join(s.candidate, '02-add-blue-mug/run-2.json'), '{ not json');
+    await expect(gate({ ...s, checks: shop('tasks') })).rejects.toThrow(GateError);
+    const checks = { t: set('02-add-blue-mug') };
+    await expect(
+      gate({
+        baseline: { t: [snap('02-add-blue-mug/added-blue-mug')] },
+        candidate: { t: [{ nope: 1 } as never] },
+        checks,
+      }),
+    ).rejects.toThrow(GateError);
+  });
+
+  test('an outcome regression is explained even when an allowed requirement also regressed', async () => {
+    // R5 (soft) holds when both R2 and R4 do. The hard requirements keep their pass counts, but
+    // the candidate fails a different one in each run: the outcome drops from 1/2 to 0/2.
+    const cs = set('07-express-order');
+    const assertion = (id: string) => cs.checks.find((c) => c.id === id)!.assert;
+    cs.requirements.push({ ...cs.requirements[1]!, id: 'R5', kind: 'soft', text: 'Express and the cart items' });
+    cs.checks.push({
+      id: 'C5',
+      requirement: 'R5',
+      description: 'Express, with the items the cart held.',
+      assert: { kind: 'allOf', of: [assertion('C2'), assertion('C4')] },
+    });
+    const r = await gate({
+      baseline: { t: [snap('07-express-order/express-order'), snap('07-express-order/validation-error')] },
+      candidate: { t: [snap('07-express-order/standard-order'), snap('07-express-order/ordered-extra-item')] },
+      checks: { t: cs },
+      allow: ['t:R5'],
+    });
+    const [t] = r.tasks;
+    expect(t!.requirements.map((q) => [q.id, q.status])).toEqual([
+      ['R1', 'improved'],
+      ['R2', 'unchanged'],
+      ['R3', 'improved'],
+      ['R4', 'unchanged'],
+      ['R5', 'regressed'],
+    ]);
+    expect([r.ok, t!.blocking, t!.outcome.status]).toEqual([false, true, 'regressed']);
+    expect(t!.findings.map((f) => [f.requirement ?? 'outcome', f.allowed])).toEqual([
+      ['R5', true],
+      ['outcome', false],
+    ]);
+    expect(t!.findings[1]).toMatchObject({ run: 'candidate/t/run-1', verdict: 'fail' });
+    expect(formatGateMarkdown(r)).toContain('### t: the outcome\n');
+  });
+});

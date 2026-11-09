@@ -180,6 +180,16 @@ interface Side {
   empty: string[];
 }
 
+/** Run `read`; any error it throws becomes a GateError with the same message (after `prefix`). */
+function asGateError<T>(read: () => T, prefix = ''): T {
+  try {
+    return read();
+  } catch (e) {
+    if (e instanceof GateError) throw e;
+    throw new GateError(`${prefix}${e instanceof Error ? e.message : String(e)}`, { cause: e });
+  }
+}
+
 const isPathList = (x: unknown): x is string | readonly string[] => typeof x === 'string' || Array.isArray(x);
 const byName = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`;
@@ -229,7 +239,11 @@ function readSideDirs(specs: readonly string[], cwd: string, show: (p: string) =
       const runs = side.runs.get(e.name) ?? [];
       for (const f of files) {
         const file = join(path, f);
-        runs.push({ name: basename(f, '.json'), path: show(file), snapshot: toSnapshot(readSnapshotFile(file)) });
+        runs.push({
+          name: basename(f, '.json'),
+          path: show(file),
+          snapshot: asGateError(() => toSnapshot(readSnapshotFile(file))),
+        });
       }
       side.runs.set(e.name, runs);
     }
@@ -253,7 +267,10 @@ function readSideMemory(input: Readonly<Record<string, readonly GateRunInput[]>>
         const wrapped = !!r && typeof r === 'object' && 'snapshot' in r && !('schema' in r);
         const name = (wrapped && (r as { name?: string }).name) || `run-${i + 1}`;
         const path = (wrapped && (r as { path?: string }).path) || `${what}/${task}/${name}`;
-        const snapshot = loadSnapshot(wrapped ? (r as { snapshot: unknown }).snapshot : r);
+        const snapshot = asGateError(
+          () => loadSnapshot(wrapped ? (r as { snapshot: unknown }).snapshot : r),
+          `${what} run ${path} is not an evidence snapshot: `,
+        );
         return { name, path, snapshot };
       }),
     );
@@ -476,9 +493,12 @@ export async function gate(options: GateOptions): Promise<GateResult> {
     const b = before.runs.get(task) ?? [];
     const c = after.runs.get(task) ?? [];
     if (!b.length && !c.length) continue;
-    const common = await shared.get(task)?.();
-    const sb = (await pinnedSet(before, task)) ?? common;
-    const sc = (await pinnedSet(after, task)) ?? common;
+    // The shared set is loaded only for a side that pins none, so a broken one cannot stop two pins.
+    const pb = await pinnedSet(before, task);
+    const pc = await pinnedSet(after, task);
+    const common = !pb || !pc ? await shared.get(task)?.() : undefined;
+    const sb = pb ?? common;
+    const sc = pc ?? common;
     if (!sb && !sc) {
       skipped.push({ task, reason: `no check set named "${task}"` });
       continue;
@@ -569,7 +589,10 @@ export async function gate(options: GateOptions): Promise<GateResult> {
         const f = finding(cs, r.id, r.allowed, vb, vc);
         if (f) findings.push(f);
       }
-      if (outcomeStatus === 'regressed' && !findings.length) {
+      // A regressed hard requirement explains a lower success count; a soft one does not (the
+      // hard ones can keep their pass counts while the runs that pass all of them drop).
+      const hard = new Set(cs.requirements.filter((q) => q.kind === 'hard').map((q) => q.id));
+      if (outcomeStatus === 'regressed' && !findings.some((f) => f.requirement && hard.has(f.requirement))) {
         const f = finding(cs, undefined, outcomeAllowed, vb, vc);
         if (f) findings.push(f);
       }

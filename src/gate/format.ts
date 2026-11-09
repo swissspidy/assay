@@ -127,10 +127,13 @@ export function formatGate(r: GateResult, color = false): string {
 }
 
 const md = (s: string) => s.replace(/\|/g, '\\|').replace(/\n/g, ' ');
+/** A Markdown code span: delimited by one backtick more than the longest run in the text (CommonMark). */
 const code = (s: string) => {
   const t = s.replace(/\n/g, ' ');
-  const ticks = t.includes('`') ? '``' : '`';
-  return `${ticks}${ticks.length > 1 ? ' ' : ''}${t}${ticks.length > 1 ? ' ' : ''}${ticks}`;
+  const longest = Math.max(0, ...(t.match(/`+/g) ?? []).map((run) => run.length));
+  if (!longest) return `\`${t}\``;
+  const ticks = '`'.repeat(longest + 1);
+  return `${ticks} ${t} ${ticks}`;
 };
 const countsLine = (c: GateCounts) =>
   `${c.pass} of ${c.runs} passed${c.fail ? `, ${c.fail} failed` : ''}${c.abstain ? `, ${c.abstain} abstained` : ''}`;

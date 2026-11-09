@@ -31,9 +31,11 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
   const g = config.gate ?? {};
   const base = loaded.path ? dirname(loaded.path) : cwd;
 
+  // Paths from flags and arguments go to gate() as given: it resolves them against `cwd` and
+  // keeps that prefix literal in a glob (a directory named `project[1]`).
   const flagged = (k: string) => {
     const v = values[k] as string[] | undefined;
-    return v?.length ? v.map((p) => resolve(cwd, p)) : undefined;
+    return v?.length ? v : undefined;
   };
   const baseline = flagged('baseline') ?? listOf(g.baseline);
   const candidate = flagged('candidate') ?? listOf(g.candidate);
@@ -41,7 +43,7 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
     throw new UsageError(
       `missing --${!baseline ? 'baseline' : 'candidate'} <dir|glob> (or \`gate.${!baseline ? 'baseline' : 'candidate'}\` in assay.config.ts)`,
     );
-  const checks = positionals.length ? positionals.map((p) => resolve(cwd, p)) : (g.checks ?? config.checks);
+  const checks = positionals.length ? positionals : (g.checks ?? config.checks);
   const tolerance = number(str(values.tolerance), '--tolerance', false) ?? g.tolerance ?? 0;
   const minRuns = number(str(values['min-runs']), '--min-runs', true) ?? g.minRuns ?? 1;
   const allowFlag = values.allow as string[] | undefined;
