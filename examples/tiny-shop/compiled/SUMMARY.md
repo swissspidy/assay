@@ -11,7 +11,7 @@ The remaining labelled runs were held out; the last column counts how many the c
 | 04-remove-red-mug | 2 | 2 | R1:probe, R2:probe | 4/4 |
 | 05-set-quantity | 1 | 2 | R1:probe+a11y | 2/2 |
 | 06-cart-total | 4 | 6 | R1:probe+a11y, R2:probe, R3:probe, R4:url+a11y | 2/2 |
-| 07-express-order | 5 | 8 | R1:network+probe, R2:probe, R3:url+probe+a11y+text, R4:probe, R5:probe | 5/5 |
-| 08-delivery-date | 4 | 6 | R1:url+probe+a11y+text, R2:network+probe, R3:probe, R4:a11y+text+probe | 4/4 |
+| 07-express-order | 5 | 8 | R1:network+probe, R2:probe, R3:url+probe+a11y, R4:probe, R5:probe | 5/5 |
+| 08-delivery-date | 4 | 6 | R1:url+probe+a11y, R2:network+probe, R3:probe, R4:a11y+probe | 4/4 |
 | 09-gift-wrap | 2 | 3 | R1:probe, R2:network+probe | 3/3 |
 | 10-dark-german | 2 | 2 | R1:storage, R2:storage | 3/3 |
