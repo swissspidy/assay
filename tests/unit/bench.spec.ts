@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 import { run } from '../../src/cli/main.ts';
 import type { Io } from '../../src/cli/io.ts';
 import { isModulePath, slugOf, splitRuns } from '../../src/cli/commands/bench.ts';
-import { cassetteFile, stat, type BenchResult } from '../../src/cli/bench/run.ts';
+import { cassetteFile, priceRows, stat, type BenchResult, type ModelResult } from '../../src/cli/bench/run.ts';
 import { priceBook, priceKeys, priceUsage } from '../../src/cli/bench/prices.ts';
 import { duration, tokens, usd } from '../../src/cli/bench/format.ts';
 import { loadConfig } from '../../src/index.ts';
@@ -701,5 +701,18 @@ test.describe('prices (ADR 0026)', () => {
     expect(priceUsage(usage, priceBook({}).find('claude-opus-5-5')!)).toEqual({
       usd: costUsd(usage, priceFor('claude-opus-5-5')),
     });
+  });
+
+  test('a model priced through its compile report is listed with that price, not as unknown', () => {
+    const book = priceBook({});
+    const job = { modelId: 'my-adapter', price: { key: 'claude-opus-5-5', source: 'default' as const } };
+    const model = { label: 'my-adapter', ids: ['my-adapter'], jobs: [job] } as unknown as ModelResult;
+    expect(book.find('my-adapter')).toBeUndefined();
+    expect(priceRows([model], book)).toEqual([
+      { model: 'my-adapter', source: 'default', key: 'claude-opus-5-5', ...book.find('claude-opus-5-5')!.price },
+    ]);
+    // No recorded price and no entry: still unknown.
+    const unpriced = { ...model, jobs: [{ modelId: 'my-adapter', price: null }] } as unknown as ModelResult;
+    expect(priceRows([unpriced], book)).toEqual([{ model: 'my-adapter', source: 'unknown' }]);
   });
 });

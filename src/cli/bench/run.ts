@@ -659,7 +659,9 @@ export function priceRows(models: ModelResult[], book: PriceBook): PriceRow[] {
     for (const id of m.ids.length ? m.ids : ran.has(m.label) ? [] : [m.label]) {
       if (seen.has(id)) continue;
       seen.add(id);
-      const found = book.find(id);
+      // A job priced by its compile report's model (an adapter id with no entry) keeps that price here.
+      const used = m.jobs.find((j) => j.modelId === id && j.price)?.price;
+      const found = book.find(id) ?? (used ? book.find(used.key) : undefined);
       out.push(
         found ? { model: id, source: found.source, key: found.key, ...found.price } : { model: id, source: 'unknown' },
       );
