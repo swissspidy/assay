@@ -4,7 +4,7 @@
  * page's own format.
  */
 import type { Comparison, Json, Money } from '../types.ts';
-import { compare } from '../runtime/compare.ts';
+import { compareOk } from '../runtime/compare.ts';
 import { NormalizeError, instantOf, zoneOffset, type TypedValue } from '../runtime/values.ts';
 import { nearMiss, shiftDate, shiftInstant } from './edit.ts';
 import { schemaViolations } from './schema.ts';
@@ -175,7 +175,7 @@ export function violations(v: TypedValue, cmp: Comparison): { value: TypedValue;
     seen.add(k);
     let violates: boolean;
     try {
-      violates = !compare(c, cmp).ok;
+      violates = !compareOk(c, cmp);
     } catch (e) {
       if (e instanceof NormalizeError) continue;
       throw e;

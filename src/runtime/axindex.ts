@@ -36,8 +36,9 @@ export class AXIndex {
   private textCache?: WeakMap<INode, string>;
   private headerCache?: Map<INode, INode[]>;
 
-  constructor(tree: AXNode) {
-    const table = (this.table = new AXTable(tree));
+  /** An index of `tree` over `table` (by default, a table built from scratch). */
+  constructor(tree: AXNode, table: AXTable = new AXTable(tree)) {
+    this.table = table;
     const all: INode[] = (this.all = []);
     for (let i = 0; i < table.size; i++) {
       const p = table.parent[i]!;
@@ -49,12 +50,33 @@ export class AXIndex {
     this.texts = [];
     this.canonicalTexts = [];
     this.paths = [];
+    // A table derived from another tree's (ADR 0023) shares subtrees with it: a subtree's
+    // derived text depends on the subtree alone, so what the other index computed holds here.
+    const from = table.base && indexes.get(table.base.nodes[0]!);
+    if (from && from.table === table.base) {
+      const copies = table.copies!;
+      for (let k = 0; k < copies.length; k += 3) {
+        const at = copies[k]!;
+        const there = copies[k + 1]!;
+        for (let i = 0; i < copies[k + 2]!; i++) {
+          const t = from.texts[there + i];
+          if (t === undefined) continue;
+          this.texts[at + i] = t;
+          const c = from.canonicalTexts[there + i];
+          if (c !== undefined) this.canonicalTexts[at + i] = c;
+        }
+      }
+    }
   }
 
-  /** The index of `tree`, built on first use and shared by every reader of the same tree object. */
+  /**
+   * The index of `tree`, built on first use and shared by every reader of the same tree object.
+   * Its table is the tree's (`AXTable.of`): derived from the edited tree's when the tree is a
+   * recorded edit of an indexed one (ADR 0023).
+   */
   static of(tree: AXNode): AXIndex {
     let index = indexes.get(tree);
-    if (!index) indexes.set(tree, (index = new AXIndex(tree)));
+    if (!index) indexes.set(tree, (index = new AXIndex(tree, AXTable.of(tree))));
     return index;
   }
 
