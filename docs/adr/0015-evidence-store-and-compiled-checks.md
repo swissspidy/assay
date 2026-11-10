@@ -81,10 +81,12 @@ Invariants:
 ...) as a view over the table, so the compiler and stress generators are unchanged. `AXIndex.of(tree)`
 caches one per tree object.
 
-**Interning.** Each table has two `Interner`s (string → small integer): roles, fixed once the table
-is built, and canonical names, added to as names are first read. Role and exact-name tests compare
-integers, and a role or name that occurs nowhere in the tree fails its lookup without a scan.
-Tables never share ids. A later on-disk format writes the string tables once (§5).
+**Interning.** Each table has two `Interner`s (string → small integer): roles and canonical names,
+the names added to as they are first read. Role and exact-name tests compare integers, and a role or
+name that occurs nowhere in the tree fails its lookup without a scan. A table built from scratch owns
+its interners. A table derived from another (a stress variant's, [ADR 0023](0023-incremental-tree-index.md))
+shares its base's and may add roles to them; ids only grow, so the base's stay valid. A later on-disk
+format writes the string tables once (§5).
 
 **Network as a table** (`NetworkTable`): the entries in capture order, an index from upper-cased
 method to entry ids, and URLs parsed once (`ParsedUrl`: origin, path segments, decoded segments,
