@@ -876,6 +876,28 @@ test.describe('set comparisons', () => {
     expect(await verdict(quote, best, withBefore(post(['testing', 'ci']), post(['ci'])))).toBe('success');
   });
 
+  test('every "add" verb settles: append, insert, adding, adds, puts (ADR 0020 §1a)', async () => {
+    const post = (tags: string[]) => ({ posts: [{ title: 'Flaky tests', tags }] });
+    for (const quote of [
+      'append the tag "testing" to the post "Flaky tests"',
+      'appends the tag "testing" to the post "Flaky tests"',
+      'insert the tag "testing" into the post "Flaky tests"',
+      'inserts the tag "testing" into the post "Flaky tests"',
+      'adding the tag "testing" to the post "Flaky tests"',
+      'adds the tag "testing" to the post "Flaky tests"',
+      'puts the tag "testing" on the post "Flaky tests"',
+    ]) {
+      expect(new Quote(quote).form, quote).toBe('add');
+      const m = mineOne(quote, [
+        { name: 'ref', kind: 'success', snapshot: withBefore(post(['ci', 'testing']), post(['ci'])) },
+      ]);
+      const best = m.requirements[0]!.decisive[0];
+      expect(best, quote).toBeDefined();
+      expect(best!.covers, quote).toBe('add');
+      expect(await verdict(quote, best!, withBefore(post(['testing']), post(['ci']))), quote).toBe('fail');
+    }
+  });
+
   test('"only": every record is X, and one is; an extra record outside X is not decisive', async () => {
     const quote = 'the cart contains only Blue Mugs';
     const m = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: snap({ cart: { items: [BLUE, BLUE] } }) }]);

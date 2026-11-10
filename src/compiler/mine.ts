@@ -128,7 +128,7 @@ const STOP = new Set(
 
 /** Generic outcome verbs: a candidate need not account for them ("the subscription is saved"). */
 const LIGHT = new Set(
-  'saved stored exists exist contains contain updated changed created added called named titled now again add create change update'.split(
+  'saved stored exists exist contains contain updated changed created added called named titled now again add adds adding append appends insert inserts puts create change update'.split(
     ' ',
   ),
 );
