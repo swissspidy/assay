@@ -1258,9 +1258,14 @@ function discoveryTools(
         name: 'trajectory',
         description:
           'The order of requests and navigations in a reference run, one event per line with its order index. Sequence steps match these events.',
-        inputSchema: obj(refProp),
+        inputSchema: obj({
+          ...refProp,
+          offset: { type: 'integer', minimum: 0, description: 'Skip this many events (for paging).' },
+        }),
       },
-      run: (i: In<object>) => ({ content: trajectoryView(pickRef(i.reference).snapshot) }),
+      run: (i: In<{ offset?: number }>) => ({
+        content: trajectoryView(pickRef(i.reference).snapshot, undefined, i.offset),
+      }),
     });
   if (seed)
     tools.splice(tools.length - 2, 0, {

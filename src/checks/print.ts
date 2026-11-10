@@ -34,6 +34,7 @@ import {
   probe,
   quoteField,
   sequence,
+  stepOf,
   storage,
   text,
   url,
@@ -638,7 +639,7 @@ class Printer {
               value: url(path ? st.url.path! : st.url),
             };
           } else p = this.requestRef(st.request);
-          const same = p && isDeepStrictEqual(plain(sequence(p.value).steps[0]), st);
+          const same = p && isDeepStrictEqual(plain(stepOf(p.value)), st);
           return same ? p! : { doc: json(st as unknown as Json), value: st };
         });
         const doc = call(this.use('sequence'), ...steps.map((x) => x.doc));

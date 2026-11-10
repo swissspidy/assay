@@ -319,6 +319,8 @@ test('the builder writes sequence, and the printer gives it back', () => {
   ]);
   expect(validateCheckSet(cs).ok).toBe(true);
   expect(() => sequence(network.post('/a').count(2), REFILL)).toThrow(/drop \.count\(\)/);
+  expect(() => sequence(REFILL)).toThrow('a sequence needs at least two steps, got 1');
+  expect(() => sequence()).toThrow('got 0');
   const printed = printCheckSet(cs);
   expect(printed).toContain("sequence(network.post('/api/verify').status(200), network.post('/api/refill'))");
   expect(printed).toContain("sequence(url('/review'), network.post('/api/refill'), url('/done')).strict()");
@@ -338,6 +340,28 @@ test('the compiler offers sequence and the trajectory only for references that h
     /^\[0\] request #0 GET http:\/\/127\.0\.0\.1:4176\/ → 200 \(document\)\n\[1\] navigation \(page 0\) to http:\/\/127\.0\.0\.1:4176\//,
   );
   expect(trajectoryView(old as EvidenceSnapshot)).toBe('The trajectory was not recorded for this snapshot.');
+});
+
+test('the trajectory tool pages past its first 200 events, with absolute indices', () => {
+  const base = ref('verified-first');
+  const trajectory = Array.from({ length: 450 }, (_, i) => ({
+    type: 'navigation' as const,
+    url: `http://x/${i}`,
+    page: 0,
+    t: i,
+  }));
+  const long = { ...base, trajectory } as EvidenceSnapshot;
+  const first = trajectoryView(long);
+  expect(first.split('\n')).toHaveLength(201);
+  expect(first).toContain('[199] navigation (page 0) to http://x/199');
+  expect(first).toMatch(/… 250 more; pass offset 200$/);
+  const second = trajectoryView(long, undefined, 200);
+  expect(second.split('\n')[0]).toBe('[200] navigation (page 0) to http://x/200');
+  expect(second).toMatch(/… 50 more; pass offset 400$/);
+  const last = trajectoryView(long, undefined, 400);
+  expect(last.split('\n')).toHaveLength(50);
+  expect(last.split('\n').at(-1)).toBe('[449] navigation (page 0) to http://x/449');
+  expect(trajectoryView(long, undefined, 450)).toBe('No events at offset 450; the trajectory has 450.');
 });
 
 test('snapshots without a trajectory load and digest as before; a malformed one does not load', () => {
