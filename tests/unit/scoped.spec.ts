@@ -245,7 +245,7 @@ test('a scoped snapshot keeps the trajectory a sequence check reads (ADR 0024 wi
     expect(full.trajectory?.length, name).toBeGreaterThan(0);
     const s = scopeSnapshot(full, cs);
     expect(s.scope.reads, name).toContain('trajectory');
-    expect((s as { trajectory?: unknown }).trajectory, name).toEqual(full.trajectory);
+    expect(s.trajectory, name).toEqual(full.trajectory);
     const [a, b] = await Promise.all([verify(cs, full), verify(cs, s)]);
     expect(sansDigest(b.outcome), name).toEqual(sansDigest(a.outcome));
   }
@@ -259,6 +259,13 @@ test('a scoped snapshot keeps the trajectory a sequence check reads (ADR 0024 wi
     ).outcome.verdict;
   expect(await verdict('verified-first')).toBe('success');
   expect(await verdict('refill-first')).toBe('fail');
+  // Loading validates it as a full snapshot's: a scoped file with a malformed trajectory is refused.
+  const kept = scopeSnapshot(
+    readJson<{ snapshot: EvidenceSnapshot }>(refill('references/verified-first.json')).snapshot,
+    cs,
+  );
+  expect(loadSnapshot(JSON.stringify(kept), { scoped: true })).toEqual(kept);
+  expect(() => loadSnapshot({ ...kept, trajectory: [{ type: 'request' }] }, { scoped: true })).toThrow(/trajectory/);
   // A set that reads no trajectory leaves it out.
   const noSeq = { ...cs, checks: cs.checks.filter((c) => c.assert.kind !== 'sequence') };
   noSeq.requirements = cs.requirements.filter((r) => noSeq.checks.some((c) => c.requirement === r.id));

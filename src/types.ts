@@ -200,6 +200,8 @@ export interface ScopedSnapshot {
   /** The baseline's storage and probes only where read. */
   baseline?: Omit<Baseline, 'storage' | 'probes'> & Partial<Pick<Baseline, 'storage' | 'probes'>>;
   pages?: PageView[];
+  /** The trajectory, whole, when a `sequence` check reads it (ADR 0024). */
+  trajectory?: TrajectoryEvent[];
   meta: { capturer: string; redacted: string[] };
 }
 

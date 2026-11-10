@@ -95,6 +95,7 @@ function assertScoped(s: ScopedSnapshot): ScopedSnapshot {
   if (s.storage !== undefined && s.storage !== null) assertStorage(s.storage, 'storage');
   if (s.probes !== undefined && !isObject(s.probes)) throw new Error('scoped snapshot probes is not an object');
   if (s.pages !== undefined) assertPages(s.pages);
+  if (s.trajectory !== undefined) assertTrajectory(s.trajectory);
   if (s.baseline !== undefined)
     assertBaseline({ probes: {}, storage: null, ...s.baseline } as unknown as Record<string, unknown>);
   return s;

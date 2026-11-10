@@ -47,7 +47,7 @@ test.describe('with the trajectory recorded', () => {
       ]);
       // A scoped capture (ADR 0025) of the same moment keeps the trajectory and gives the same verdict.
       const scoped = await captureScopedSnapshot(page, CHECKS, { probes: refillProbes(app) });
-      expect((scoped as { trajectory?: unknown }).trajectory).toEqual(s.trajectory);
+      expect(scoped.trajectory).toEqual(s.trajectory);
       expect((await verify(CHECKS, scoped)).outcome.verdict).toBe(run.expected);
     });
 });
