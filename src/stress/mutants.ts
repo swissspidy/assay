@@ -25,9 +25,9 @@ import type {
   ValueSource,
 } from '../types.ts';
 import { AXIndex, readNodeField, resolveTarget, type INode } from '../runtime/axindex.ts';
-import { regularTree } from '../store/ax.ts';
+import { AXTable, noteDerived, regularTree } from '../store/ax.ts';
 import { matchPage, matchRequest } from '../runtime/network.ts';
-import { compare, compareNumber, compareValues, jsonPointer, tolerable } from '../runtime/compare.ts';
+import { compareOk, compareNumber, compareValues, jsonPointer, tolerable } from '../runtime/compare.ts';
 import { evaluateAssertion, openPages } from '../runtime/evaluate.ts';
 import {
   applyNormalizers,
@@ -38,7 +38,7 @@ import {
   type TypedValue,
 } from '../runtime/values.ts';
 import { canonical, stripGlobal } from '../text.ts';
-import { clone, editById, nearMiss, replaceText, treeChanged, withPointer } from './edit.ts';
+import { clone, editById, nearMiss, replaceText, sameJson, treeChanged, withPointer } from './edit.ts';
 import { exampleOf, schemaViolations } from './schema.ts';
 import { renderLike, violations } from './violate.ts';
 import { sequenceMutants } from './trajectory.ts';
@@ -239,7 +239,7 @@ function pairingSwaps(arr: Json[]): { what: string; value: Json }[] {
     const pair = arr.slice(0, 8).flatMap((x, i) =>
       arr.slice(i + 1, 8).flatMap((y, d) => {
         if (!isRecord(x) || !isRecord(y) || !(k in x) || !(k in y)) return [];
-        return JSON.stringify(x[k]) !== JSON.stringify(y[k]) ? [[i, i + 1 + d] as const] : [];
+        return !sameJson(x[k], y[k]) ? [[i, i + 1 + d] as const] : [];
       }),
     )[0];
     if (!pair) continue;
@@ -632,7 +632,7 @@ function valueMutants(
   if (doc) {
     const violates = (next: Json) => {
       try {
-        return !compare(applyNormalizers(fromJson(next), a.normalize), a.expect).ok;
+        return !compareOk(applyNormalizers(fromJson(next), a.normalize), a.expect);
       } catch {
         return false;
       }
@@ -1674,7 +1674,7 @@ export function withSuccessClaim(m: Mutant): Mutant {
   // (one with holes or odd `children` lists may not index); any other is walked whole.
   let only: number[] | undefined;
   if (regularTree(m.snapshot.a11y)) {
-    const t = AXIndex.of(m.snapshot.a11y).table;
+    const t = AXTable.of(m.snapshot.a11y);
     let main = -1;
     for (const id of t.withRole('main')) if (main < 0 || t.end[id]! <= t.end[main]!) main = id;
     only = main < 0 ? [] : [main];
@@ -1688,7 +1688,11 @@ export function withSuccessClaim(m: Mutant): Mutant {
     },
     only,
   );
-  if (!placed) snap = { ...snap, a11y: { ...snap.a11y, children: [claim(), ...(snap.a11y.children ?? [])] } };
+  if (!placed) {
+    const a11y = { ...snap.a11y, children: [claim(), ...(snap.a11y.children ?? [])] };
+    noteDerived(a11y, snap.a11y);
+    snap = { ...snap, a11y };
+  }
   return {
     ...m,
     id: `${m.id}+claim`,

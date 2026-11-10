@@ -164,29 +164,57 @@ export function compareValues(a: TypedValue, b: TypedValue, tolerance?: Toleranc
  * operator cannot apply to the value's type (=> abstain).
  */
 export function compare(v: TypedValue, cmp: Comparison): CompareOutcome {
-  const shown = describeValue(v);
+  return compareWith(v, cmp, true);
+}
+
+/**
+ * `compare(v, cmp).ok` without building the message (the stress generators only ask whether
+ * a candidate violates a comparison): the same tests in the same order, so it throws where
+ * `compare` throws.
+ */
+export function compareOk(v: TypedValue, cmp: Comparison): boolean {
+  return compareWith(v, cmp, false).ok;
+}
+
+const NO_MESSAGE = '';
+
+function compareWith(v: TypedValue, cmp: Comparison, messages: boolean): CompareOutcome {
+  const shown = messages ? describeValue(v) : NO_MESSAGE;
   try {
     if ('sameAs' in cmp)
       throw new NormalizeError('sameAs compares with a second source; the evaluator reads it', 'type_mismatch');
     if ('equals' in cmp) {
       const ok = deepEqual(v, cmp.equals);
-      return { ok, message: `${shown} ${ok ? '=' : '≠'} ${JSON.stringify(cmp.equals)}` };
+      return { ok, message: messages ? `${shown} ${ok ? '=' : '≠'} ${JSON.stringify(cmp.equals)}` : NO_MESSAGE };
     }
     if ('oneOf' in cmp) {
       const ok = cmp.oneOf.some((e) => deepEqual(v, e));
-      return { ok, message: `${shown} ${ok ? 'is' : 'is not'} one of ${JSON.stringify(cmp.oneOf)}` };
+      return {
+        ok,
+        message: messages ? `${shown} ${ok ? 'is' : 'is not'} one of ${JSON.stringify(cmp.oneOf)}` : NO_MESSAGE,
+      };
     }
     if ('contains' in cmp) {
       if (v.type !== 'string') throw mismatch('contains', v);
       const a = canonical(v.value);
       const e = canonical(cmp.contains);
       const ok = cmp.ignoreCase ? a.toLowerCase().includes(e.toLowerCase()) : a.includes(e);
-      return { ok, message: `${shown} ${ok ? 'contains' : 'does not contain'} ${JSON.stringify(cmp.contains)}` };
+      return {
+        ok,
+        message: messages
+          ? `${shown} ${ok ? 'contains' : 'does not contain'} ${JSON.stringify(cmp.contains)}`
+          : NO_MESSAGE,
+      };
     }
     if ('regex' in cmp) {
       if (v.type !== 'string') throw mismatch('regex', v);
       const ok = regExp(cmp.regex, stripGlobal(cmp.flags)).test(canonical(v.value));
-      return { ok, message: `${shown} ${ok ? 'matches' : 'does not match'} /${cmp.regex}/${cmp.flags ?? ''}` };
+      return {
+        ok,
+        message: messages
+          ? `${shown} ${ok ? 'matches' : 'does not match'} /${cmp.regex}/${cmp.flags ?? ''}`
+          : NO_MESSAGE,
+      };
     }
     if ('approx' in cmp) {
       const { value: target, abs = 0, rel = 0 } = cmp.approx;
@@ -195,17 +223,26 @@ export function compare(v: TypedValue, cmp: Comparison): CompareOutcome {
       const ok = within(gap);
       return {
         ok,
-        message: `${shown} ${ok ? '≈' : '≉'} ${JSON.stringify(target)} (Δ=${+diff.toFixed(6)}, tolerance ${tol}${unit})`,
+        message: messages
+          ? `${shown} ${ok ? '≈' : '≉'} ${JSON.stringify(target)} (Δ=${+diff.toFixed(6)}, tolerance ${tol}${unit})`
+          : NO_MESSAGE,
       };
     }
     if ('schema' in cmp) {
       const fn = compileSchema(cmp.schema);
       const ok = fn(v.type === 'money' ? { ...v.value } : v.value) as boolean;
-      return { ok, message: ok ? `${shown.slice(0, 120)} matches schema` : `schema mismatch: ${schemaErrors(fn)}` };
+      return {
+        ok,
+        message: messages
+          ? ok
+            ? `${shown.slice(0, 120)} matches schema`
+            : `schema mismatch: ${schemaErrors(fn)}`
+          : NO_MESSAGE,
+      };
     }
     if ('exists' in cmp) {
       const ok = !(v.type === 'string' && canonical(v.value) === '') && !(v.type === 'json' && v.value === null);
-      return { ok, message: ok ? `${shown} is present` : 'value is empty' };
+      return { ok, message: messages ? (ok ? `${shown} is present` : 'value is empty') : NO_MESSAGE };
     }
     // Range: gt/gte/lt/lte (any combination)
     const parts: string[] = [];
@@ -219,9 +256,9 @@ export function compare(v: TypedValue, cmp: Comparison): CompareOutcome {
       parts.push(`${{ gt: '>', gte: '≥', lt: '<', lte: '≤' }[op]} ${JSON.stringify(bound)}`);
     }
     if (!parts.length) throw new NormalizeError('empty comparison', 'type_mismatch');
-    return { ok, message: `${shown} ${ok ? 'is' : 'is not'} ${parts.join(' and ')}` };
+    return { ok, message: messages ? `${shown} ${ok ? 'is' : 'is not'} ${parts.join(' and ')}` : NO_MESSAGE };
   } catch (e) {
-    if (e instanceof CurrencyMismatch) return { ok: false, message: `${shown}: ${e.message}` };
+    if (e instanceof CurrencyMismatch) return { ok: false, message: messages ? `${shown}: ${e.message}` : NO_MESSAGE };
     throw e;
   }
 }

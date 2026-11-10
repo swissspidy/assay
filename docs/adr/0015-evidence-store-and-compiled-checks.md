@@ -81,10 +81,12 @@ Invariants:
 ...) as a view over the table, so the compiler and stress generators are unchanged. `AXIndex.of(tree)`
 caches one per tree object.
 
-**Interning.** Each table has two `Interner`s (string → small integer): roles, fixed once the table
-is built, and canonical names, added to as names are first read. Role and exact-name tests compare
-integers, and a role or name that occurs nowhere in the tree fails its lookup without a scan.
-Tables never share ids. A later on-disk format writes the string tables once (§5).
+**Interning.** Each table has two `Interner`s (string → small integer): roles and canonical names,
+the names added to as they are first read. Role and exact-name tests compare integers, and a role or
+name that occurs nowhere in the tree fails its lookup without a scan. A table built from scratch owns
+its interners. A table derived from another (a stress variant's, [ADR 0023](0023-incremental-tree-index.md))
+shares its base's and may add roles to them; ids only grow, so the base's stay valid. A later on-disk
+format writes the string tables once (§5).
 
 **Network as a table** (`NetworkTable`): the entries in capture order, an index from upper-cased
 method to entry ids, and URLs parsed once (`ParsedUrl`: origin, path segments, decoded segments,
@@ -171,7 +173,8 @@ time spent on that run's checks.
   variant or mutant shares every part of its reference it does not change (sections, subtrees,
   entries and bodies, by identity), and only the checks whose read keys an edit touches run again.
   An overlay at the level of the tree's rows (an index that copies the base's rows for shared
-  subtrees) is still open. ADR 0016 also takes the snapshot digest at capture time.
+  subtrees) is done in [ADR 0023](0023-incremental-tree-index.md). ADR 0016 also takes the
+  snapshot digest at capture time.
 - **Scoped capture.** Capture only the union of a check set's read-sets (no full network log or
   tree when the checks read three requests and a probe). Still open; see ADR 0016 for why it needs
   its own opt-in format.
