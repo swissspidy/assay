@@ -2,7 +2,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import type { BrowserType } from '@playwright/test';
-import { CliError, EXIT, UsageError, type Invocation, type Io } from '../io.ts';
+import { CliError, EXIT, UsageError, readCheckSetFile, type Invocation, type Io } from '../io.ts';
 import { cliConfig } from '../config.ts';
 
 /** The part of Playwright that capture uses. */
@@ -84,8 +84,18 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
   // Where the snapshot goes, decided before Chromium starts: a bad config must not cost a capture.
   const flagOut = values.out as string | undefined;
   const out = flagOut ?? (await cliConfig(values, io)).config.snapshots;
+  // A scoped capture (ADR 0025) records only what the check set reads; it is read first, so a bad set costs no browser.
+  const scope = typeof values.scope === 'string' ? await readCheckSetFile(values.scope) : undefined;
+  if (scope !== undefined) {
+    const { scopePlan } = await import('../../snapshot/scope.ts');
+    try {
+      scopePlan(scope);
+    } catch (e) {
+      throw new CliError(`${values.scope as string}: ${(e as Error).message}`);
+    }
+  }
   const { chromium } = await loadPlaywright();
-  const { EvidenceRecorder, captureSnapshot } = await import('../../snapshot/capture.ts');
+  const { EvidenceRecorder, captureScopedSnapshot, captureSnapshot } = await import('../../snapshot/capture.ts');
   const exe = values['executable-path'] as string | undefined;
   const browser = await chromium.launch(exe ? { executablePath: exe } : {});
   let snapshot;
@@ -97,7 +107,10 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
     const response = await page.goto(url.href, { waitUntil: waitUntil as (typeof WAIT_UNTIL)[number] });
     if (wait) await page.waitForTimeout(wait);
     // Written to a file and never verified here: no digest to take at capture time.
-    snapshot = await captureSnapshot(page, { digest: false, ...(values.storage === false ? { storage: false } : {}) });
+    const opts = values.storage === false ? { storage: false } : {};
+    snapshot = scope
+      ? await captureScopedSnapshot(page, scope, opts)
+      : await captureSnapshot(page, { digest: false, ...opts });
     if (response && !response.ok()) io.err(`warning: ${url.href} answered ${response.status()}`);
   } finally {
     await browser.close();

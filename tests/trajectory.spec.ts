@@ -5,8 +5,8 @@
  */
 import { expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { captureSnapshot, test } from '../src/playwright/index.ts';
-import { evaluate, type CheckSet } from '../src/index.ts';
+import { captureScopedSnapshot, captureSnapshot, test } from '../src/playwright/index.ts';
+import { evaluate, verify, type CheckSet } from '../src/index.ts';
 import { RUNS, refillProbes, runRefill, startRefillApp, type RefillApp } from '../examples/refill/app.ts';
 
 const CHECKS = JSON.parse(
@@ -45,6 +45,10 @@ test.describe('with the trajectory recorded', () => {
         'pass',
         run.expected === 'success' ? 'pass' : 'fail',
       ]);
+      // A scoped capture (ADR 0025) of the same moment keeps the trajectory and gives the same verdict.
+      const scoped = await captureScopedSnapshot(page, CHECKS, { probes: refillProbes(app) });
+      expect(scoped.trajectory).toEqual(s.trajectory);
+      expect((await verify(CHECKS, scoped)).outcome.verdict).toBe(run.expected);
     });
 });
 

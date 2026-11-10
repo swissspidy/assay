@@ -6,7 +6,16 @@
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
-import type { AbstainReason, CheckSet, Evidence, EvidenceSnapshot, Json, Status, Verdict } from '../types.ts';
+import type {
+  AbstainReason,
+  CheckSet,
+  Evidence,
+  EvidenceSnapshot,
+  Json,
+  Status,
+  Verdict,
+  ScopedSnapshot,
+} from '../types.ts';
 import { checkSetDigest, sha256, snapshotDigest } from '../snapshot/digest.ts';
 import type { Observation, RequirementVerdict, VerifierResult } from './verifier.ts';
 import type { SignatureStatus } from './lock.ts';
@@ -131,7 +140,8 @@ function writeOnce(file: string, content: string): void {
 /** What `writeOutcomeRecord` needs: the parts of a `verify` result it writes. */
 export interface RecordInput {
   record: OutcomeRecord;
-  snapshot: EvidenceSnapshot;
+  /** The snapshot verified: a full one, or a scoped one (ADR 0025), stored as it is. */
+  snapshot: EvidenceSnapshot | ScopedSnapshot;
   checkSet: CheckSet;
   proposal?: CheckSet;
 }

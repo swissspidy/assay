@@ -168,6 +168,43 @@ export interface EvidenceSnapshot {
   meta: { capturer: string; redacted: string[] };
 }
 
+/** A scoped snapshot (ADR 0025): only what one check set reads, for that check set alone. */
+export const SCOPED_SNAPSHOT_SCHEMA = 'assay.snapshot.scoped/v1' as const;
+
+/** What a scoped snapshot is for, and what it kept. */
+export interface SnapshotScope {
+  /** The check set it was scoped to: id, version and content digest (`contentDigest`, lock left out). */
+  checkSet: { id: string; version: string; content: string };
+  /** The read keys of the check set's plan (ADR 0016) the snapshot keeps, sorted. */
+  reads: string[];
+  /** The digest of the full snapshot it was derived from; absent when it was captured scoped. */
+  source?: string;
+}
+
+/**
+ * A scoped snapshot: the parts of an evidence snapshot its check set reads, and nothing else.
+ * A section the check set does not read is left out; a read network log keeps only the entries
+ * some read request match could match, and read storage and probes only the keys and probes
+ * read. Only `verify` (and `verifyMany`) with that check set accept it.
+ */
+export interface ScopedSnapshot {
+  schema: typeof SCOPED_SNAPSHOT_SCHEMA;
+  capturedAt: string;
+  scope: SnapshotScope;
+  page: { url: string; title: string };
+  a11y?: AXNode;
+  text?: string;
+  network?: NetworkEntry[] | null;
+  storage?: StorageRecord | null;
+  probes?: Record<string, ProbeResult>;
+  /** The baseline's storage and probes only where read. */
+  baseline?: Omit<Baseline, 'storage' | 'probes'> & Partial<Pick<Baseline, 'storage' | 'probes'>>;
+  pages?: PageView[];
+  /** The trajectory, whole, when a `sequence` check reads it (ADR 0024). */
+  trajectory?: TrajectoryEvent[];
+  meta: { capturer: string; redacted: string[] };
+}
+
 // ---------------------------------------------------------------------------
 // Check DSL (assay.checks/v1)
 // ---------------------------------------------------------------------------

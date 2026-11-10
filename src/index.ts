@@ -20,6 +20,7 @@ export {
 } from './verifier/escalate.ts';
 export { evaluate, type EvaluateOptions } from './runtime/evaluate.ts';
 export { loadSnapshot } from './snapshot/load.ts';
+export { scopeSnapshot, isScoped, ScopedSnapshotError } from './snapshot/scope.ts';
 export { snapshotDigest, checkSetDigest } from './snapshot/digest.ts';
 export { checkSetSchema } from './dsl/schema.ts';
 export { validateCheckSet, assertValidCheckSet, CheckSetError, type ValidationReport } from './dsl/validate.ts';

@@ -7,6 +7,7 @@ import type { CheckSet, EvidenceSnapshot, Outcome, Status } from '../types.ts';
 import { compileChecks, PlanRun } from '../plan/plan.ts';
 import { buildStore } from '../store/store.ts';
 import { generateVariants } from './variants.ts';
+import { assertFullSnapshot } from '../snapshot/scope.ts';
 import { generateMutants, withSuccessClaim, type Mutant } from './mutants.ts';
 
 export interface StressReference {
@@ -112,6 +113,8 @@ const finding = (c: Outcome['checks'][number]): CheckFinding => ({
 });
 
 export function stressTest(cs: CheckSet, refs: StressReference[], options: StressOptions = {}): StressReport {
+  // Variants and mutants edit the whole page; a scoped snapshot left most of it out (ADR 0025).
+  for (const r of refs) assertFullSnapshot(r.snapshot, `Stress testing (reference ${r.name})`);
   const skip = new Set(options.skipVariants ?? []);
   const variants: VariantResult[] = [];
   const mutants: MutantResult[] = [];

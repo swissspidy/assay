@@ -453,6 +453,30 @@ again. Keys come from files or `ASSAY_SIGNING_KEY` / `ASSAY_TRUSTED_KEYS` (PEM t
 example GitHub workflow that posts the review sheet on pull requests:
 [ADR 0013](docs/adr/0013-review-workflow-and-signed-locks.md).
 
+## Scoped capture
+
+A check set usually reads a small part of a run: a probe and a few requests. A scoped snapshot
+records only that, for one check set:
+
+```ts
+import { captureScopedSnapshot } from '@swissspidy/assay/playwright';
+import { verify } from '@swissspidy/assay';
+
+const scoped = await captureScopedSnapshot(page, checkSet, { probes });
+const { outcome } = await verify(checkSet, scoped); // the outcome a full snapshot gives
+```
+
+It keeps the sections the check set's checks read (the tree, the text, other pages), only the
+requests some check could match, and only the storage keys and probes read, and skips capturing
+the rest. It has its own schema (`assay.snapshot.scoped/v1`) and names the check set's content
+digest, so `verify` with any other check set refuses it, as do escalation, `stressTest`,
+`compileTask` and `loadSnapshot` (unless given `{ scoped: true }`). Approving the set keeps it
+valid. `scopeSnapshot(snapshot, checkSet)` derives one from a full snapshot, and
+`assay capture <url> --scope checks.json` captures one. On the 228 real-app runs, scoped snapshots
+are 97% smaller than full ones; live captures of the example apps take 43–85% less time
+([ADR 0025](docs/adr/0025-scoped-capture.md)). Keep full snapshots for references and for runs that
+may need the verifier.
+
 ## Escalation and records
 
 ```ts
@@ -717,6 +741,7 @@ five ([ADR 0011](docs/adr/0011-route-robust-compilation.md)).
 - [ADR 0022](docs/adr/0022-task-status.md): `assay status`, the readiness ladder
 - [ADR 0023](docs/adr/0023-incremental-tree-index.md): incremental accessibility-tree index for stress overlays
 - [ADR 0024](docs/adr/0024-trajectory-evidence.md): trajectory evidence and `sequence` checks
+- [ADR 0025](docs/adr/0025-scoped-capture.md): scoped capture, snapshots of only what a check set reads
 - [ADR 0026](docs/adr/0026-bench-strategies-and-prices.md): `assay bench` compares discovery strategies, with configurable prices
 - [ADR 0028](docs/adr/0028-scoped-text-outcomes-and-descriptions.md): scoped text in run outcomes and check descriptions
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)

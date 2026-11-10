@@ -1,7 +1,10 @@
 import type { BrowserContext, Frame, Page, Request } from '@playwright/test';
 import {
   SNAPSHOT_SCHEMA,
+  type AXNode,
   type Baseline,
+  type CheckSet,
+  type ScopedSnapshot,
   type CookieRecord,
   type EvidenceSnapshot,
   type Json,
@@ -18,6 +21,7 @@ import { attachFrames, FRAME_LIMITS } from './frames.ts';
 import { randomUUID } from 'node:crypto';
 import { ASSAY_VERSION } from '../version.ts';
 import { sealDigest } from './digest.ts';
+import { scopeCaptured, scopePlan } from './scope.ts';
 
 /** Names the capturing package and its version. */
 export const CAPTURER = ASSAY_VERSION;
@@ -710,8 +714,8 @@ export type BaselineOptions = Pick<CaptureOptions, 'probes' | 'storage' | 'keepC
 export const CREDENTIAL_NAME = /token|secret|passw(or)?d|session|auth|jwt|bearer|api[-_]?key|credential/i;
 
 /** Page state read inside the page: text, title, origin and web storage. */
-async function readDom(page: Page) {
-  return page.evaluate(() => {
+async function readDom(page: Page, withText = true) {
+  return page.evaluate((keepText) => {
     // oxlint-disable-next-line unicorn/consistent-function-scoping -- runs in the page, must be self-contained
     const dump = (s: Storage) => {
       const o: Record<string, string> = {};
@@ -730,13 +734,14 @@ async function readDom(page: Page) {
       /* opaque origin */
     }
     return {
-      text: document.body ? document.body.innerText : '',
+      // innerText lays the page out; scoped capture skips it when no check reads the text.
+      text: keepText && document.body ? document.body.innerText : '',
       title: document.title,
       origin: location.origin,
       local,
       session,
     };
-  });
+  }, withText);
 }
 
 async function readStorage(
@@ -878,34 +883,96 @@ export async function readOtherPage(p: Page, frames: boolean, timeout = PAGE_TIM
  * a popup or tab it opened that was opened or navigated more recently.
  */
 export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Promise<EvidenceSnapshot> {
+  const snapshot = await captureParts(page, opts, EVERYTHING);
+  // The digest the record needs, taken now rather than on the verify path; kept beside the
+  // snapshot object (not in it), so the snapshot and its file are what they always were. The
+  // snapshot is frozen with it, so the digest stays the digest of its evidence.
+  if (opts.digest !== false) sealDigest(snapshot);
+  return snapshot;
+}
+
+/** What a capture reads of the page and the context (scoped capture reads only what checks read). */
+interface Needs {
+  /** The accessibility tree, with frames, and the text (frames' text follows the page's). */
+  tree: boolean;
+  text: boolean;
+  pages: boolean;
+  network: boolean;
+  /** The order of requests and navigations, when the recorder keeps one (ADR 0024). */
+  trajectory: boolean;
+  storage: boolean;
+  /** The probes to run; undefined: all. */
+  probes?: ReadonlySet<string>;
+}
+
+const EVERYTHING: Needs = { tree: true, text: true, pages: true, network: true, trajectory: true, storage: true };
+
+/**
+ * Capture a scoped snapshot (ADR 0025): only what `checkSet` reads. The page's accessibility
+ * tree and frames are read only when a check reads the tree or the text, other open pages only
+ * for a `page` assertion, storage only when a storage key is read, only the probes read are
+ * run, and the network log is settled (its bodies waited for) only when a request is read; it
+ * then keeps the entries a read request match does not rule out. `verify` with `checkSet` gives
+ * the outcome a full snapshot of the same moment gives; nothing else accepts it.
+ */
+export async function captureScopedSnapshot(
+  page: Page,
+  checkSet: CheckSet | unknown,
+  opts: Omit<CaptureOptions, 'digest'> = {},
+): Promise<ScopedSnapshot> {
+  const plan = scopePlan(checkSet);
+  const reads = new Set(plan.reads);
+  const rs = plan.readSet;
+  const needs: Needs = {
+    tree: reads.has('a11y') || reads.has('text'),
+    text: reads.has('text'),
+    pages: reads.has('pages'),
+    network: reads.has('network'),
+    trajectory: reads.has('trajectory'),
+    storage: rs.storage.some((r) => r.at === 'after'),
+    probes: new Set(rs.probes.filter((r) => r.at === 'after').map((r) => r.probe)),
+  };
+  return scopeCaptured(await captureParts(page, opts, needs), plan);
+}
+
+/** A snapshot of what `needs` asks for; the rest is left empty (scoped capture prunes it). */
+async function captureParts(page: Page, opts: CaptureOptions, needs: Needs): Promise<EvidenceSnapshot> {
   const recorder = opts.recorder === undefined ? EvidenceRecorder.for(page.context()) : opts.recorder;
   const baseline = opts.baseline === undefined ? baselines.get(page.context()) : opts.baseline;
   const redacted: string[] = [];
   const frames = opts.frames !== false;
   const active = opts.pages === false ? page : await activePage(page, recorder);
 
-  const a11y = parseAriaSnapshot(await active.locator('body').ariaSnapshot());
+  const a11y: AXNode = needs.tree
+    ? parseAriaSnapshot(await active.locator('body').ariaSnapshot())
+    : { role: 'document' };
   const frameTexts: string[] = [];
-  if (frames) await attachFrames(active.mainFrame(), a11y, frameTexts);
-  const dom = await readDom(active);
-  const storage = await readStorage(active, dom, opts, redacted);
+  if (frames && needs.tree) await attachFrames(active.mainFrame(), a11y, frameTexts);
+  const dom = await readDom(active, needs.text);
+  const storage = needs.storage ? await readStorage(active, dom, opts, redacted) : null;
   const others =
-    opts.pages === false
+    opts.pages === false || !needs.pages
       ? []
       : active
           .context()
           .pages()
           .filter((p) => p !== active && !p.isClosed());
   const pages = await Promise.all(others.map((p) => readOtherPage(p, frames)));
-  const probes = await runProbes(opts.probes);
+  const wanted = needs.probes;
+  const probes = await runProbes(
+    wanted && opts.probes
+      ? Object.fromEntries(Object.entries(opts.probes).filter(([n]) => wanted.has(n)))
+      : opts.probes,
+  );
 
   let network: NetworkEntry[] | null = null;
   let trajectory: TrajectoryEvent[] | undefined;
-  if (recorder) {
+  if (recorder && needs.network) {
     await recorder.settle();
     network = recorder.log();
-    trajectory = recorder.trajectory();
   }
+  // A recorder asked for one keeps the order of requests and navigations (ADR 0024).
+  if (recorder && needs.trajectory) trajectory = recorder.trajectory();
 
   const snapshot: EvidenceSnapshot = {
     schema: SNAPSHOT_SCHEMA,
@@ -925,9 +992,5 @@ export async function captureSnapshot(page: Page, opts: CaptureOptions = {}): Pr
     ...(trajectory ? { trajectory } : {}),
     meta: { capturer: CAPTURER, redacted: redacted.toSorted() },
   };
-  // The digest the record needs, taken now rather than on the verify path; kept beside the
-  // snapshot object (not in it), so the snapshot and its file are what they always were. The
-  // snapshot is frozen with it, so the digest stays the digest of its evidence.
-  if (opts.digest !== false) sealDigest(snapshot);
   return snapshot;
 }

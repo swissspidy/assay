@@ -5,7 +5,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { styleText } from 'node:util';
-import type { EvidenceSnapshot } from '../types.ts';
+import type { EvidenceSnapshot, ScopedSnapshot } from '../types.ts';
 import { loadSnapshot } from '../snapshot/load.ts';
 import { CheckSetFileError, loadCheckSetFile } from '../checks/load.ts';
 
@@ -180,10 +180,12 @@ export function readSnapshotFile(path: string): SnapshotFile {
   return { name, path, snapshot: json };
 }
 
-/** The file's snapshot, validated as `loadSnapshot` does. */
-export function toSnapshot(f: SnapshotFile): EvidenceSnapshot {
+/** The file's snapshot, validated as `loadSnapshot` does; with `scoped`, a scoped snapshot too (ADR 0025). */
+export function toSnapshot(f: SnapshotFile): EvidenceSnapshot;
+export function toSnapshot(f: SnapshotFile, opts: { scoped: true }): EvidenceSnapshot | ScopedSnapshot;
+export function toSnapshot(f: SnapshotFile, opts: { scoped?: boolean } = {}): EvidenceSnapshot | ScopedSnapshot {
   try {
-    return loadSnapshot(f.snapshot);
+    return opts.scoped ? loadSnapshot(f.snapshot, { scoped: true }) : loadSnapshot(f.snapshot);
   } catch (e) {
     throw new CliError(`${f.path} is not an evidence snapshot: ${(e as Error).message}`);
   }
