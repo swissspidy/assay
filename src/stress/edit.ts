@@ -1,8 +1,7 @@
 /** Low-level, immutable snapshot edits used by variant and mutant generators. */
 import type { AXNode, EvidenceSnapshot, Json } from '../types.ts';
 import { formatInstant } from '../runtime/values.ts';
-import { AXIndex, type INode } from '../runtime/axindex.ts';
-import { plainNode, regularTree } from '../store/ax.ts';
+import { AXTable, noteDerived, plainNode, regularTree } from '../store/ax.ts';
 
 export const clone = <T>(x: T): T => structuredClone(x);
 
@@ -72,40 +71,47 @@ export function editById(
   };
   const roots: AXNode[] = [];
   walk(snapshot.a11y, roots);
-  return { ...snapshot, a11y: roots[0] ?? { role: 'document' } };
+  const a11y = roots[0] ?? { role: 'document' };
+  // The new tree shares the subtrees the edit left alone: its table derives from the old one's.
+  noteDerived(a11y, snapshot.a11y);
+  return { ...snapshot, a11y };
 }
 
-/** `editById` for a regular tree when the ids `fn` edits are known: rebuilds their ancestors only. */
+/**
+ * `editById` for a regular tree when the ids `fn` edits are known: rebuilds their ancestors
+ * only. Works on the tree's table (ADR 0023), so an edited tree that is edited again (a mutant
+ * given a success claim) is never indexed for it.
+ */
 function editAt(
   snapshot: EvidenceSnapshot,
   fn: (node: AXNode, id: number) => AXNode | AXNode[] | null | undefined,
   only: Iterable<number>,
 ): EvidenceSnapshot {
-  const idx = AXIndex.of(snapshot.a11y);
-  const targets = new Set<number>();
-  // The targets and their ancestors: the nodes the full walk could copy.
-  const path = new Set<number>();
-  for (const t of only) {
-    const n = idx.all[t];
-    if (!n || n.id !== t) continue;
-    targets.add(t);
-    for (let a: INode | null = n; a && !path.has(a.id); a = a.parent) path.add(a.id);
+  const t = AXTable.of(snapshot.a11y);
+  const { nodes, parent, end } = t;
+  // 1: a target (fn is called for it); 2: an ancestor of one (the nodes the full walk could copy).
+  const mark = new Uint8Array(t.size);
+  for (const id of only) {
+    if (!(Number.isInteger(id) && id >= 0 && id < t.size)) continue;
+    mark[id] = 1;
+    for (let a = parent[id]!; a >= 0 && mark[a] === 0; a = parent[a]!) mark[a] = 2;
   }
   // As the full walk: post-order, so `fn` sees a node's edited children, in the same order.
-  const walk = (n: INode, out: AXNode[]): void => {
-    if (!path.has(n.id)) {
-      out.push(n.node);
+  const walk = (id: number, out: AXNode[]): void => {
+    const node = nodes[id]!;
+    if (mark[id] === 0) {
+      out.push(node);
       return;
     }
-    const node = n.node;
     let copy = node;
-    if (n.children.length) {
+    const e = end[id]!;
+    if (e > id + 1) {
       const children: AXNode[] = [];
       let same = true;
-      for (const c of n.children) {
+      for (let c = id + 1; c < e; c = end[c]!) {
         const at = children.length;
         walk(c, children);
-        if (same && (children.length !== at + 1 || children[at] !== c.node)) same = false;
+        if (same && (children.length !== at + 1 || children[at] !== nodes[c])) same = false;
       }
       if (!same) {
         copy = { ...node };
@@ -113,19 +119,21 @@ function editAt(
         else delete copy.children;
       }
     }
-    if (!targets.has(n.id)) {
+    if (mark[id] !== 1) {
       out.push(copy);
       return;
     }
-    const r = fn(copy, n.id);
+    const r = fn(copy, id);
     if (r === undefined) out.push(copy);
     else if (r === null) return;
     else if (Array.isArray(r)) out.push(...r);
     else out.push(r);
   };
   const roots: AXNode[] = [];
-  walk(idx.root, roots);
-  return { ...snapshot, a11y: roots[0] ?? { role: 'document' } };
+  walk(0, roots);
+  const a11y = roots[0] ?? { role: 'document' };
+  noteDerived(a11y, snapshot.a11y);
+  return { ...snapshot, a11y };
 }
 
 /** Did an edit change the accessibility tree at all? (Generators drop no-op edits.) */

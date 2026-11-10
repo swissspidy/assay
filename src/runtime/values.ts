@@ -401,10 +401,11 @@ export function utcTime(y: number, month0: number, d: number, h = 0, mi = 0, s =
 }
 
 function isoDate(y: number, m: number, d: number, raw: string): string {
-  const fail = new NormalizeError(`date: invalid calendar date in ${JSON.stringify(raw)}`, 'normalize_failed');
-  if (m < 1 || m > 12 || d < 1) throw fail;
+  // Made only when thrown: an error captures a stack trace, which costs more than the parse.
+  const fail = () => new NormalizeError(`date: invalid calendar date in ${JSON.stringify(raw)}`, 'normalize_failed');
+  if (m < 1 || m > 12 || d < 1) throw fail();
   const dim = new Date(utcTime(y, m, 0)).getUTCDate();
-  if (d > dim) throw fail;
+  if (d > dim) throw fail();
   return `${String(y).padStart(4, '0')}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 }
 

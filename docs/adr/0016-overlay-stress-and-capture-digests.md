@@ -119,7 +119,10 @@ as "not recorded" (abstain) rather than "empty", so it needs its own opt-in form
   evidence, and copying is gone from the profile. What remains is mostly the generators' own
   work (choosing near misses, normalizing and comparing candidate values), indexing edited trees,
   and running the checks an overlay touches. An incremental tree index (copying the base's rows
-  for shared subtrees) would cut the second; it was not built here.
+  for shared subtrees) would cut the second; it was not built here. Done in
+  [ADR 0023](0023-incremental-tree-index.md): edited trees get tables derived from the
+  reference's, and profiling there found tree work was about a quarter of stress time, not most
+  of it.
 
 - Snapshots, their sections, nodes and bodies are shared between a reference and its variants
   and mutants. Code that receives a `Variant` or `Mutant` must not edit its snapshot in place.
