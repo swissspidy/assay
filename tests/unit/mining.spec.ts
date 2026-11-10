@@ -160,10 +160,22 @@ function pinnedLiterals(a: Assertion): Json[] {
       if (t.contains !== undefined) out.push(t.contains);
     }
   };
+  // The records an `items` normalizer keeps or drops are literals too ("add" leaves X out).
+  const normalizers = (ns: unknown[] | undefined) =>
+    ns?.forEach((n) => n && typeof n === 'object' && 'where' in n && schema((n as { where: unknown }).where));
   switch (a.kind) {
     case 'value':
+      normalizers(a.normalize);
       if ('equals' in a.expect) out.push(a.expect.equals);
       if ('schema' in a.expect) schema(a.expect.schema);
+      if ('sameAs' in a.expect) normalizers(a.expect.sameAs.normalize);
+      break;
+    case 'allOf':
+      for (const x of a.of) out.push(...pinnedLiterals(x));
+      break;
+    case 'each':
+      text(a.match.name);
+      out.push(...pinnedLiterals(a.assert));
       break;
     case 'request':
       schema(a.match.requestBody);
@@ -687,6 +699,327 @@ test.describe('what settles a requirement', () => {
       { name: 'ref', kind: 'success', snapshot: snap({ latestOrder: { shipping: 'express' } }) },
     ]);
     expect(single.requirements[0]!.decisive.length).toBeGreaterThan(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Set comparisons ("add", "only", "every") and field-name synonyms
+// ---------------------------------------------------------------------------
+
+/** A snapshot with probes after the task and the same probes as they were before it. */
+const withBefore = (after: Record<string, Json>, before: Record<string, Json>): EvidenceSnapshot =>
+  snap(after, {
+    baseline: {
+      capturedAt: '2026-11-06T00:00:00.000Z',
+      url: 'http://shop.test/',
+      storage: null,
+      probes: Object.fromEntries(Object.entries(before).map(([k, v]) => [k, { ok: true, value: v }])),
+      redacted: [],
+    },
+  });
+
+/** A snapshot whose page lists issues in a table with the given status and label per row. */
+const issueTable = (rows: [string, string, string][]): EvidenceSnapshot =>
+  snap(
+    {},
+    {
+      a11y: {
+        role: 'document',
+        children: [
+          {
+            role: 'main',
+            children: [
+              {
+                role: 'table',
+                name: 'Issues',
+                children: [
+                  {
+                    role: 'row',
+                    children: ['Title', 'Status', 'Labels'].map((name) => ({ role: 'columnheader', name })),
+                  },
+                  ...rows.map((r) => ({ role: 'row', children: r.map((name) => ({ role: 'cell', name })) })),
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    },
+  );
+
+const verdict = async (quote: string, c: CandidateResult, s: EvidenceSnapshot) => {
+  const { evaluate } = await import('../../src/index.ts');
+  return evaluate(checkSetOf(quote, c), s).verdict;
+};
+
+const RED = { name: 'Red Mug', qty: 1 };
+const BLUE = { name: 'Blue Mug', qty: 1 };
+
+test.describe('set comparisons', () => {
+  test('a quote has one form: plain, add, only or every; mixed or negated sets have none', () => {
+    expect(new Quote('the order ships express').form).toBe('plain');
+    expect(new Quote('add a Blue Mug to the cart').form).toBe('add');
+    expect(new Quote('the list shows only open issues').form).toBe('only');
+    expect(new Quote('every open issue is assigned to dave').form).toBe('every');
+    expect(new Quote('all issues are closed').form).toBe('every');
+    // The rest of a collection, an absence, a negation, or two set words: no mined check expresses it.
+    for (const quote of [
+      'the other items stay in the cart',
+      'the cart no longer contains a Red Mug',
+      'add a Blue Mug, but keep everything else',
+      'only issues that are not closed are listed',
+      'every open bug that has no assignee is assigned to dave',
+      'add every post of the Events category to it',
+      'every issue except the first is closed',
+    ])
+      expect(new Quote(quote).form, quote).toBeUndefined();
+    // A quoted title is a name, not a set word.
+    expect(new Quote('the issue "Only once" is closed').form).toBe('plain');
+    // Where a value stands: in the noun phrase the set word opens, or in its predicate.
+    const q = new Quote('every open bug in the tracker is assigned to dave');
+    expect([q.placeOf('open'), q.placeOf('bug'), q.placeOf('dave'), q.placeOf('tracker')]).toEqual([
+      'x',
+      'x',
+      'y',
+      'y',
+    ]);
+  });
+
+  test('"add": the item is there and what the collection held before still is', async () => {
+    const quote = 'add a Blue Mug to the cart';
+    const ref = withBefore({ cart: { items: [RED, BLUE] } }, { cart: { items: [RED] } });
+    const m = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: ref }]);
+    const best = m.requirements[0]!.decisive[0]!;
+    expect(best.covers).toBe('add');
+    expect(best.assert).toMatchObject({
+      kind: 'allOf',
+      of: [
+        { kind: 'value', source: { from: 'probe', probe: 'cart', pointer: '/items' } },
+        {
+          kind: 'value',
+          normalize: [{ op: 'items', where: { not: expect.anything() } }],
+          expect: { sameAs: { source: { from: 'probe', probe: 'cart', pointer: '/items', at: 'before' } } },
+        },
+      ],
+    });
+    expect(validateCheckSet(checkSetOf(quote, best)).ok).toBe(true);
+    // The plain "the cart contains a Blue Mug" survives too, but does not settle an "add".
+    expect(m.candidates.some((c) => !c.covers && c.survives && !c.decisive && c.unexplained.length === 0)).toBe(true);
+    // Held out: an "add" that dropped (or replaced) the Red Mug fails; one that kept it passes.
+    expect(await verdict(quote, best, withBefore({ cart: { items: [BLUE] } }, { cart: { items: [RED] } }))).toBe(
+      'fail',
+    );
+    expect(
+      await verdict(
+        quote,
+        best,
+        withBefore({ cart: { items: [BLUE, { ...RED, qty: 3 }] } }, { cart: { items: [RED] } }),
+      ),
+    ).toBe('fail');
+    expect(await verdict(quote, best, withBefore({ cart: { items: [BLUE, RED] } }, { cart: { items: [RED] } }))).toBe(
+      'success',
+    );
+  });
+
+  test('a mined "add" passes the acceptance gate, stress test included', async () => {
+    const task: TaskInput = { id: 't', instruction: 'Add a Blue Mug to my cart.' };
+    const ref = withBefore({ cart: { items: [RED, BLUE] } }, { cart: { items: [RED] } });
+    const { checkSet, report } = await compileTask(task, [{ name: 'ref', kind: 'success', snapshot: ref }], {
+      discovery: 'mine-only',
+      requirements: [
+        {
+          ...req('R1', 'Add a Blue Mug to my cart'),
+          source: { field: 'instruction', quote: 'Add a Blue Mug to my cart' },
+        },
+      ],
+    });
+    expect(report.status, report.reason).toBe('compiled');
+    expect(checkSet!.checks.map((c) => c.assert.kind)).toEqual(['allOf']);
+  });
+
+  test('"add" where the old items were dropped is not decisive', () => {
+    // The "correct" reference itself replaced the cart: the before/after comparison fails on it.
+    const m = mineOne('add a Blue Mug to the cart', [
+      { name: 'ref', kind: 'success', snapshot: withBefore({ cart: { items: [BLUE] } }, { cart: { items: [RED] } }) },
+    ]);
+    expect(m.candidates.filter((c) => c.covers === 'add').every((c) => !c.survives)).toBe(true);
+    expect(m.requirements[0]!.decisive).toEqual([]);
+  });
+
+  test('"add" needs the state before the task, and one without the item', () => {
+    // No baseline: nothing to compare with.
+    const none = mineOne('add a Blue Mug to the cart', [
+      { name: 'ref', kind: 'success', snapshot: snap({ cart: { items: [RED, BLUE] } }) },
+    ]);
+    expect(none.requirements[0]!.decisive).toEqual([]);
+    // The Blue Mug was already there: the run need not have added anything.
+    const already = mineOne('add a Blue Mug to the cart', [
+      {
+        name: 'ref',
+        kind: 'success',
+        snapshot: withBefore({ cart: { items: [RED, BLUE] } }, { cart: { items: [RED, BLUE] } }),
+      },
+    ]);
+    expect(already.requirements[0]!.decisive).toEqual([]);
+  });
+
+  test('"add" to a record\'s list keeps the record\'s other members (ADR 0011, w10)', async () => {
+    const quote = 'add the tag "testing" to the post "Flaky tests"';
+    const post = (tags: string[]) => ({ posts: [{ title: 'Flaky tests', tags }] });
+    const m = mineOne(quote, [
+      { name: 'ref', kind: 'success', snapshot: withBefore(post(['ci', 'testing']), post(['ci'])) },
+    ]);
+    const best = m.requirements[0]!.decisive[0]!;
+    expect(best.covers).toBe('add');
+    expect(JSON.stringify(best.assert)).toContain('"flatten":true');
+    expect(await verdict(quote, best, withBefore(post(['testing']), post(['ci'])))).toBe('fail');
+    expect(await verdict(quote, best, withBefore(post(['testing', 'ci']), post(['ci'])))).toBe('success');
+  });
+
+  test('every "add" verb settles: append, insert, adding, adds, puts (ADR 0020 §1a)', async () => {
+    const post = (tags: string[]) => ({ posts: [{ title: 'Flaky tests', tags }] });
+    for (const quote of [
+      'append the tag "testing" to the post "Flaky tests"',
+      'appends the tag "testing" to the post "Flaky tests"',
+      'insert the tag "testing" into the post "Flaky tests"',
+      'inserts the tag "testing" into the post "Flaky tests"',
+      'adding the tag "testing" to the post "Flaky tests"',
+      'adds the tag "testing" to the post "Flaky tests"',
+      'puts the tag "testing" on the post "Flaky tests"',
+    ]) {
+      expect(new Quote(quote).form, quote).toBe('add');
+      const m = mineOne(quote, [
+        { name: 'ref', kind: 'success', snapshot: withBefore(post(['ci', 'testing']), post(['ci'])) },
+      ]);
+      const best = m.requirements[0]!.decisive[0];
+      expect(best, quote).toBeDefined();
+      expect(best!.covers, quote).toBe('add');
+      expect(await verdict(quote, best!, withBefore(post(['testing']), post(['ci']))), quote).toBe('fail');
+    }
+  });
+
+  test('"only": every record is X, and one is; an extra record outside X is not decisive', async () => {
+    const quote = 'the cart contains only Blue Mugs';
+    const m = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: snap({ cart: { items: [BLUE, BLUE] } }) }]);
+    const best = m.requirements[0]!.decisive[0]!;
+    expect(best.covers).toBe('only');
+    expect(best.assert).toMatchObject({ expect: { schema: { type: 'array', minItems: 1, items: expect.anything() } } });
+    expect(await verdict(quote, best, snap({ cart: { items: [BLUE, RED] } }))).toBe('fail');
+    expect(await verdict(quote, best, snap({ cart: { items: [] } }))).toBe('fail');
+    // A correct reference with a record outside X: no "only" check survives, nothing settles it.
+    const extra = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: snap({ cart: { items: [BLUE, RED] } }) }]);
+    expect(extra.candidates.filter((c) => c.covers === 'only').every((c) => !c.survives)).toBe(true);
+    expect(extra.requirements[0]!.decisive).toEqual([]);
+    // The plain "contains a Blue Mug" never settles an "only".
+    const plain = m.candidates.filter((c) => !c.covers && c.survives);
+    expect(plain.length).toBeGreaterThan(0);
+    expect(plain.every((c) => !c.decisive)).toBe(true);
+  });
+
+  test('"only" on a page: an `each` over a column, decisive only against an incorrect run', async () => {
+    const quote = 'the list shows only open issues';
+    const ok = issueTable([
+      ['Login broken', 'Open', 'bug'],
+      ['Dark mode', 'Open', 'feature'],
+    ]);
+    const closed = issueTable([
+      ['Login broken', 'Open', 'bug'],
+      ['Typo', 'Closed', 'docs'],
+    ]);
+    // The table may list only open issues because no closed one matches its other filter: the
+    // page alone does not settle it.
+    const alone = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: ok }]);
+    const each = alone.candidates.find((c) => c.covers === 'only' && c.assert.kind === 'each')!;
+    expect(each.assert).toMatchObject({
+      kind: 'each',
+      witness: { role: 'columnheader', name: 'Status' },
+      match: { role: 'cell', column: 'Status' },
+      count: { gte: 1 },
+      assert: { expect: { equals: 'Open' } },
+    });
+    expect(each.survives).toBe(true);
+    expect(each.unexplained).toEqual([]);
+    expect(alone.requirements[0]!.decisive).toEqual([]);
+    expect(await verdict(quote, each, closed)).toBe('fail');
+    // An incorrect run that lists a closed issue makes it decisive.
+    const vs = mineOne(quote, [
+      { name: 'ref', kind: 'success', snapshot: ok },
+      { name: 'closed', kind: 'negative', snapshot: closed },
+    ]);
+    expect(vs.requirements[0]!.decisive[0]!.assert.kind).toBe('each');
+    // A correct reference that lists a closed issue: no column qualifies.
+    const extra = mineOne(quote, [{ name: 'ref', kind: 'success', snapshot: closed }]);
+    expect(extra.candidates.filter((c) => c.covers)).toEqual([]);
+  });
+
+  test('"every X is Y": each record that is X is Y, the others are free', async () => {
+    const quote = 'every open issue is assigned to dave';
+    const issues = (...xs: [string, string][]) => ({ issues: xs.map(([state, assignee]) => ({ state, assignee })) });
+    const m = mineOne(quote, [
+      {
+        name: 'ref',
+        kind: 'success',
+        snapshot: withBefore(issues(['open', 'dave'], ['closed', 'bob']), issues(['open', 'bob'], ['closed', 'bob'])),
+      },
+    ]);
+    const best = m.requirements[0]!.decisive[0]!;
+    expect(best.covers).toBe('every');
+    expect(best.assert).toMatchObject({
+      expect: {
+        schema: {
+          items: {
+            anyOf: [
+              { not: { properties: { state: { const: 'open' } } } },
+              { properties: { assignee: { const: 'dave' } } },
+            ],
+          },
+          contains: { allOf: [expect.anything(), expect.anything()] },
+        },
+      },
+    });
+    expect(await verdict(quote, best, snap(issues(['open', 'dave'], ['open', 'bob'])))).toBe('fail');
+    expect(await verdict(quote, best, snap(issues(['closed', 'bob'])))).toBe('fail');
+    expect(await verdict(quote, best, snap(issues(['open', 'dave'], ['open', 'dave'], ['closed', 'eve'])))).toBe(
+      'success',
+    );
+  });
+});
+
+test.describe('field-name synonyms', () => {
+  test('a synonym widens which field names account for a quote word', () => {
+    // "quantity" binds the value of `qty`; "appointment" is accounted for by the `events` probe.
+    const qty = mineOne('the quantity is 2', [{ name: 'ref', kind: 'success', snapshot: snap({ line: { qty: 2 } }) }]);
+    expect(qty.requirements[0]!.decisive[0]!.assert).toEqual({
+      kind: 'value',
+      source: { from: 'probe', probe: 'line', pointer: '/qty' },
+      expect: { equals: 2 },
+    });
+    const pref = mineOne('the theme preference is dark', [
+      { name: 'ref', kind: 'success', snapshot: snap({ settings: { theme: 'dark' } }) },
+    ]);
+    expect(pref.requirements[0]!.decisive.length).toBeGreaterThan(0);
+  });
+
+  test('a synonym never binds or names a value', () => {
+    // The quote does not name the value "qty" or "settings" through the table.
+    expect(new Quote('the quantity is 2').namesString('qty')).toBe(false);
+    expect(new Quote('the theme preference is dark').namesString('settings')).toBe(false);
+    // "settings" as a compared value does not account for "preference"; only a field name does.
+    const m = mineOne('the dark preference is "settings"', [
+      { name: 'ref', kind: 'success', snapshot: snap({ theme: { dark: 'settings' } }) },
+    ]);
+    const c = m.candidates.find((x) => x.family === 'probe')!;
+    expect(JSON.stringify(c.assert)).toContain('"settings"');
+    expect(c.unexplained).toContain('preference');
+    expect(m.requirements[0]!.decisive).toEqual([]);
+    // A value named "qty" is no field: 2 stays unbound to "quantity".
+    const v = mineOne('the quantity is 2', [
+      { name: 'ref', kind: 'success', snapshot: snap({ line: { amount: 2, unit: 'qty' } }) },
+    ]);
+    expect(v.requirements[0]!.decisive).toEqual([]);
+    // A synonym is only for the words in the table: "price" is not "qty".
+    const price = mineOne('the price is 2', [{ name: 'ref', kind: 'success', snapshot: snap({ line: { qty: 2 } }) }]);
+    expect(price.requirements[0]!.decisive).toEqual([]);
   });
 });
 
