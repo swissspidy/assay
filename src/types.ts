@@ -124,6 +124,23 @@ export interface Baseline {
   redacted: string[];
 }
 
+/**
+ * One event of a run's trajectory (ADR 0024), in the order the recorder saw it: the position
+ * in `trajectory` is the event's order index. `t` is milliseconds since the recorder was
+ * attached; it is kept for people and tools, and checks never read it.
+ */
+export type TrajectoryEvent =
+  /** A request started: the network entry with this `seq`. */
+  | { type: 'request'; seq: number; t: number }
+  /** A page's main frame navigated (a load, or a same-document history change) to `url`. */
+  | {
+      type: 'navigation';
+      url: string;
+      /** Which page navigated: 0 for the first page the recorder saw, then in the order pages opened. */
+      page: number;
+      t: number;
+    };
+
 export interface EvidenceSnapshot {
   schema: typeof SNAPSHOT_SCHEMA;
   capturedAt: string;
@@ -143,6 +160,11 @@ export interface EvidenceSnapshot {
    * describe the active page (ADR 0012).
    */
   pages?: PageView[];
+  /**
+   * The run's requests and navigations in order (ADR 0024); absent when the recorder was not
+   * asked to record it, so snapshots without one (and their digests) are unchanged.
+   */
+  trajectory?: TrajectoryEvent[];
   meta: { capturer: string; redacted: string[] };
 }
 
@@ -377,8 +399,18 @@ export type Assertion =
    * the active page. No such page, or several → abstain (ADR 0012).
    */
   | { kind: 'page'; match: PageMatch; assert: Assertion }
+  /**
+   * Order (ADR 0024): in the trajectory, the first event matching each step comes after the
+   * first event matching the step before it, so every event of a step is preceded by one of
+   * the step before. `strict`: also no event of a step after the first event of the next one
+   * (the steps do not interleave). A step that never occurs fails; no trajectory abstains.
+   */
+  | { kind: 'sequence'; steps: SequenceStep[]; strict?: boolean }
   | { kind: 'allOf'; of: Assertion[] }
   | { kind: 'anyOf'; of: Assertion[] };
+
+/** One step of a `sequence`: a request (a request event's network entry) or a navigation to a URL. */
+export type SequenceStep = { request: RequestMatch } | { url: UrlMatch };
 
 export interface Requirement {
   id: string;

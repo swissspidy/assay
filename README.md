@@ -145,7 +145,7 @@ set after verifying it; edit a copy.
   Assertion kinds: `state`, `contains`, `value` (read from a node, text, the URL, a request or
   response, storage or a probe, then normalized and compared with a literal, or with a second
   source via `sameAs`), `url`, `request`, `each`, `page` (another open tab or popup, selected by
-  URL or title) and `allOf`/`anyOf`. Normalizers parse numbers,
+  URL or title), `sequence` (requests and navigations in order) and `allOf`/`anyOf`. Normalizers parse numbers,
   money, dates and date-times (`datetime`, compared as instants; `approx` on them is in minutes).
   The JSON Schema is exported as `checkSetSchema`; `validateCheckSet` adds semantic checks.
 
@@ -198,6 +198,30 @@ set after verifying it; edit a copy.
   elsewhere) it abstains with `route_missing` and escalates, instead of failing a run that took
   another route. Evidence that is found but wrong still fails, and inside an `anyOf` the branch of
   the route the run took decides ([ADR 0011](docs/adr/0011-route-robust-compilation.md)).
+
+- **Order.** Some requirements are about process: "verify the identity before refilling",
+  "confirm before deleting". The end state cannot show them, so a recorder attached with
+  `{ trajectory: true }` (`test.use({ evidenceOptions: { trajectory: true } })`, or
+  `assay capture --trajectory`) also records the run's trajectory: every request and main-frame
+  navigation in order, with its time. A `sequence` check reads it:
+
+  ```json
+  {
+    "kind": "sequence",
+    "steps": [
+      { "request": { "method": "POST", "url": { "path": "/api/verify" }, "status": 200 } },
+      { "request": { "method": "POST", "url": { "path": "/api/refill" } } }
+    ]
+  }
+  ```
+
+  It passes when each step's first event comes after the previous step's first event (so every
+  refill has a verification before it), fails when a step comes first or never happens, and
+  abstains on a snapshot without a trajectory. `"strict": true` also fails when a step occurs
+  again after the next one began. A step is `{ "request": RequestMatch }` or `{ "url": UrlMatch }`
+  (a navigation). Snapshots captured without the option are unchanged. The stress test swaps steps
+  and moves a step earlier, so a step that an unrelated request can stand for is reported as weak
+  ([ADR 0024](docs/adr/0024-trajectory-evidence.md)).
 
 - **Tolerance.** Where a correct run gives two sources slightly different values (a total the page
   rounds to the cent, a time shown to the minute and stored to the second), a `sameAs` binding can
@@ -316,7 +340,7 @@ export default checks('Add a Blue Mug to my cart.', [
 like each element); `node(...)`, `text(/re/)`, `url.part()`, `storage.local()`, `probe()` and
 `network.post(...).response('/pointer')` read values; `.normalize(...)`, `.equals()`, `.sameAs()`,
 `.approx()`, `.matches()` and the rest compare them; `contains`, `each`, `page`, `allOf` and `anyOf`
-compose. A check's description defaults to a plain-language rendering of what it tests, its id to
+compose; `sequence(network.post('/api/verify'), network.post('/api/refill'))` checks order. A check's description defaults to a plain-language rendering of what it tests, its id to
 `C1`, `C2`, … The result is a plain object: `verify`, `stressTest`, locks and the review sheet treat
 it like the JSON.
 
@@ -716,6 +740,7 @@ five ([ADR 0011](docs/adr/0011-route-robust-compilation.md)).
 - [ADR 0021](docs/adr/0021-agent-regression-gate.md): `assay gate`, the agent regression gate
 - [ADR 0022](docs/adr/0022-task-status.md): `assay status`, the readiness ladder
 - [ADR 0023](docs/adr/0023-incremental-tree-index.md): incremental accessibility-tree index for stress overlays
+- [ADR 0024](docs/adr/0024-trajectory-evidence.md): trajectory evidence and `sequence` checks
 - [ADR 0025](docs/adr/0025-scoped-capture.md): scoped capture, snapshots of only what a check set reads
 - [ADR 0026](docs/adr/0026-bench-strategies-and-prices.md): `assay bench` compares discovery strategies, with configurable prices
 - [ADR 0028](docs/adr/0028-scoped-text-outcomes-and-descriptions.md): scoped text in run outcomes and check descriptions

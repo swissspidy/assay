@@ -236,3 +236,35 @@ test('the digest of a scoped snapshot is defined by its content and stable', () 
   const other = scopeSnapshot(full, checks('compiled/07-express-order.checks.json'));
   expect(snapshotDigest(other)).not.toBe(snapshotDigest(a));
 });
+
+test('a scoped snapshot keeps the trajectory a sequence check reads (ADR 0024 with ADR 0025)', async () => {
+  const refill = (f: string) => new URL(`../../examples/refill/${f}`, import.meta.url);
+  const cs = readJson<CheckSet>(refill('refill.checks.json'));
+  for (const name of ['verified-first', 'refill-first']) {
+    const full = readJson<{ snapshot: EvidenceSnapshot }>(refill(`references/${name}.json`)).snapshot;
+    expect(full.trajectory?.length, name).toBeGreaterThan(0);
+    const s = scopeSnapshot(full, cs);
+    expect(s.scope.reads, name).toContain('trajectory');
+    expect((s as { trajectory?: unknown }).trajectory, name).toEqual(full.trajectory);
+    const [a, b] = await Promise.all([verify(cs, full), verify(cs, s)]);
+    expect(sansDigest(b.outcome), name).toEqual(sansDigest(a.outcome));
+  }
+  // The two runs differ only in order: the scoped snapshots still tell them apart.
+  const verdict = async (name: string) =>
+    (
+      await verify(
+        cs,
+        scopeSnapshot(readJson<{ snapshot: EvidenceSnapshot }>(refill(`references/${name}.json`)).snapshot, cs),
+      )
+    ).outcome.verdict;
+  expect(await verdict('verified-first')).toBe('success');
+  expect(await verdict('refill-first')).toBe('fail');
+  // A set that reads no trajectory leaves it out.
+  const noSeq = { ...cs, checks: cs.checks.filter((c) => c.assert.kind !== 'sequence') };
+  noSeq.requirements = cs.requirements.filter((r) => noSeq.checks.some((c) => c.requirement === r.id));
+  const s = scopeSnapshot(
+    readJson<{ snapshot: EvidenceSnapshot }>(refill('references/verified-first.json')).snapshot,
+    noSeq,
+  );
+  expect('trajectory' in s).toBe(false);
+});

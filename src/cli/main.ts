@@ -474,6 +474,7 @@ Exit status: 0, 3 usage, 4 error (including an invalid check set).`,
       wait: { type: 'string' },
       storage: { type: 'boolean' },
       scope: { type: 'string' },
+      trajectory: { type: 'boolean' },
       'executable-path': { type: 'string' },
     },
     help: `Opens the URL in headless Chromium, records the network from the start, and captures the
@@ -488,6 +489,7 @@ Options:
   --no-storage              Leave cookies and web storage out
   --scope <checks>          Capture only what this check set reads (a scoped snapshot that only
                             assay verify with that check set accepts)
+  --trajectory              Also record the order of requests and navigations (for sequence checks)
   --executable-path <file>  Chromium binary to use instead of Playwright's
 
 Exit status: 0 captured, 3 usage, 4 error.`,

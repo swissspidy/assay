@@ -112,6 +112,9 @@ Frame content is in the tree under its iframe node (named by the iframe's title;
 export const DISCOVERY_PAGES = `## Other open pages
 Some references had several pages open (tabs, popups); the outline lists the others after the active page. The page, tree, text and URL a check reads are the active page's. To read another open page, wrap the assertion: {kind:"page", match:{url?: UrlMatch, title?: TextMatch}, assert: Assertion}. Select the page by what identifies it (its path); a match that fits several pages or none abstains. Inside, read only the page: state, contains, each, url, and value from node, text or url sources.`;
 
+export const DISCOVERY_TRAJECTORY = `## Order of events (trajectory)
+The references recorded their trajectory: every request and navigation in order (the trajectory tool lists it). When a requirement is about process or order ("verify identity before refilling", "confirm before deleting"), check it with {kind:"sequence", steps:[{request: RequestMatch} | {url: UrlMatch}, …], strict?: boolean}. It passes when each step's first event comes after the previous step's first event, fails when a step comes first or never happens, and abstains without a trajectory. strict also forbids an event of a step after the next step began; use it only for state-changing steps. Give every request step a method and a URL path, so an unrelated earlier request cannot stand for it. A sequence is about order only: keep the end state checked by its own checks.`;
+
 export const DISCOVERY_FORMS = `## Form bodies
 Form request bodies (URL-encoded and multipart) are objects of their fields: a repeated field is an array, an uploaded file is {filename, type, size}. Match a field with a requestBody JSON Schema or read it with a pointer ("/title").`;
 

@@ -130,6 +130,9 @@ A scoped snapshot is therefore never evaluated by anything that could read evide
   may need a verifier, and scope the routine ones (CI, monitoring) whose check set is locked.
 - **Not done.** The tree is kept whole when read; pruning it to the subtrees the locators can
   reach needs a proof that paths, derived text and column headers are unchanged. Request and
-  response bodies are kept whole on the entries kept. A snapshot that holds the trajectory of
-  ADR 0024 scopes it like any other top-level section once both are merged: it is kept when a
-  check reads the `trajectory` key.
+  response bodies are kept whole on the entries kept.
+- **Trajectories (ADR 0024).** A `sequence` check reads the `trajectory` key, and `network` for its
+  request steps. Scoping keeps the trajectory whole when it is read and leaves it out otherwise;
+  scoped capture reads it from the recorder only then. Request events whose entry was pruned
+  match no step of the set, since every step's request match is among those that keep entries.
+  Tested on the Tiny Pharmacy references, derived and live.

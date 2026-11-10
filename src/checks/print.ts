@@ -33,6 +33,8 @@ import {
   page,
   probe,
   quoteField,
+  sequence,
+  stepOf,
   storage,
   text,
   url,
@@ -41,6 +43,7 @@ import {
   type Bound,
   type LikeShape,
   type RequestRef,
+  type StepInput,
   type Value,
 } from './builder.ts';
 
@@ -624,6 +627,26 @@ class Printer {
         const r = this.requestRef(a.match);
         if (!r) return undefined;
         return a.count ? { doc: chain(r.doc, 'count', this.count(a.count)), value: r.value.count(a.count) } : r;
+      }
+      case 'sequence': {
+        // Each step as the builder call that gives it back exactly, else as the plain step.
+        const steps = a.steps.map((st): Printed<StepInput> => {
+          let p: Printed<StepInput> | undefined;
+          if ('url' in st) {
+            const path = Object.keys(st.url).length === 1 && st.url.path !== undefined;
+            p = {
+              doc: call(this.use('url'), path ? atom(str(st.url.path!)) : json(st.url as Json)),
+              value: url(path ? st.url.path! : st.url),
+            };
+          } else p = this.requestRef(st.request);
+          const same = p && isDeepStrictEqual(plain(stepOf(p.value)), st);
+          return same ? p! : { doc: json(st as unknown as Json), value: st };
+        });
+        const doc = call(this.use('sequence'), ...steps.map((x) => x.doc));
+        const v = sequence(...steps.map((x) => x.value));
+        return a.strict === undefined
+          ? { doc, value: v }
+          : { doc: chain(doc, 'strict', ...(a.strict ? [] : [json(false)])), value: v.strict(a.strict) };
       }
       case 'page':
         return {

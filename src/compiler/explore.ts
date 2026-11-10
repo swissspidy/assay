@@ -110,6 +110,26 @@ export function networkLog(
   );
 }
 
+/**
+ * The trajectory (ADR 0024): each event with its order index, requests with their entry. Pages of
+ * `limit` events from `offset`; the indices are absolute, so pages line up.
+ */
+export function trajectoryView(snapshot: EvidenceSnapshot, limit = 200, offset = 0): string {
+  const events = snapshot.trajectory;
+  if (!events) return 'The trajectory was not recorded for this snapshot.';
+  const from = Math.max(0, Math.floor(offset));
+  if (from >= events.length) return `No events at offset ${from}; the trajectory has ${events.length}.`;
+  const bySeq = new Map((snapshot.network ?? []).map((e) => [e.seq, e]));
+  const rows = events.slice(from, from + limit).map((e, k) => {
+    const i = from + k;
+    if (e.type === 'navigation') return `[${i}] navigation (page ${e.page}) to ${e.url}`;
+    const n = bySeq.get(e.seq);
+    return `[${i}] request #${e.seq}${n ? ` ${n.method} ${n.url} → ${n.status ?? n.failure ?? 'pending'} (${n.resourceType})` : ''}`;
+  });
+  const left = events.length - from - limit;
+  return rows.join('\n') + (left > 0 ? `\n… ${left} more; pass offset ${from + limit}` : '');
+}
+
 const body = (b: Json | undefined) =>
   b === undefined ? '(none)' : clip(typeof b === 'string' ? b : JSON.stringify(b, null, 1), 3000);
 

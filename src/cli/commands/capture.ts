@@ -102,7 +102,7 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
   try {
     const context = await browser.newContext();
     // Attached before navigating, so the log holds every request the page makes.
-    await EvidenceRecorder.attach(context);
+    await EvidenceRecorder.attach(context, values.trajectory === true ? { trajectory: true } : {});
     const page = await context.newPage();
     const response = await page.goto(url.href, { waitUntil: waitUntil as (typeof WAIT_UNTIL)[number] });
     if (wait) await page.waitForTimeout(wait);

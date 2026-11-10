@@ -234,6 +234,13 @@ function looseAssertion(a: Assertion, at: string, out: string[], inTerm = false)
     case 'request':
       looseRequestMatch(a.match, at, out);
       return;
+    case 'sequence':
+      a.steps.forEach((st, i) =>
+        'request' in st
+          ? looseRequestMatch(st.request, `${at} step ${i + 1}`, out)
+          : looseUrlMatch(st.url, `${at} step ${i + 1}`, out),
+      );
+      return;
     case 'page':
       if (a.match.url) looseUrlMatch(a.match.url, `${at} page`, out);
       looseAssertion(a.assert, `${at}.assert`, out, inTerm);
@@ -416,9 +423,12 @@ function readsNetworkValue(a: Assertion): boolean {
   );
 }
 
-/** A leaf that reads route evidence: a request or url assertion, or a value read from a request or response. */
+/**
+ * A leaf that reads route evidence: a request, url or sequence assertion (the order of requests
+ * and navigations is how the run went, ADR 0024), or a value read from a request or response.
+ */
 function routeLeaf(a: Assertion): boolean {
-  if (a.kind === 'request' || a.kind === 'url') return true;
+  if (a.kind === 'request' || a.kind === 'url' || a.kind === 'sequence') return true;
   return a.kind === 'value' && readsNetworkValue(a);
 }
 
@@ -799,6 +809,11 @@ function walkAssertion(
       if (onPage) errors.push(notOnPage(at, 'a request assertion'));
       checkRequestMatch(a.match, at, errors);
       return;
+    case 'sequence':
+      if (inRecord) errors.push(notInRecord(at, 'sequence'));
+      if (onPage) errors.push(notOnPage(at, 'a sequence assertion'));
+      checkSequence(a, at, errors, warnings);
+      return;
     case 'page':
       if (inRecord)
         errors.push(`${at}: a page assertion cannot be inside each; put the each inside the page assertion`);
@@ -814,6 +829,48 @@ function walkAssertion(
       return;
   }
 }
+
+/**
+ * A sequence's steps (ADR 0024): each request match or URL match checked as elsewhere. Two
+ * adjacent steps that are the same can never be in order (their first events are one event),
+ * so that is an error. A step that matches any request, or any URL, says nothing about which
+ * event it stands for: an earlier unrelated request satisfies it, so the order is not tested.
+ */
+function checkSequence(
+  a: Extract<Assertion, { kind: 'sequence' }>,
+  at: string,
+  errors: string[],
+  warnings: string[],
+): void {
+  a.steps.forEach((st, i) => {
+    const where = `${at} step ${i + 1}`;
+    if ('request' in st) {
+      checkRequestMatch(st.request, where, errors);
+      if (st.request.url === undefined)
+        warnings.push(
+          `${where}: has no url, so an unrelated request (an earlier one too) can stand for this step and the order is not tested; give it a url`,
+        );
+    } else {
+      if (st.url.regex) checkRegex(st.url.regex, undefined, where, errors);
+      for (const v of Object.values(st.url.query ?? {})) if (v) checkTextMatch(v, where, errors);
+    }
+    const next = a.steps[i + 1];
+    if (next && canonicalJson(st as unknown as Json) === canonicalJson(next as unknown as Json))
+      errors.push(
+        `${at}: steps ${i + 1} and ${i + 2} are the same, so their first events are one event and can never be in order`,
+      );
+  });
+  if (a.strict && a.steps.some((st) => 'request' in st && isGet(st.request.method)))
+    warnings.push(
+      `${at}: strict order with a GET step fails whenever the page fetches that data again later (polling, a refresh); use strict only for steps that change state, or drop strict`,
+    );
+}
+
+/** A request match that only accepts GET (or HEAD). */
+const isGet = (m: RequestMatch['method']): boolean => {
+  const ms = m === undefined ? [] : Array.isArray(m) ? m : [m];
+  return ms.length > 0 && ms.every((x) => ['GET', 'HEAD'].includes(x.toUpperCase()));
+};
 
 const notOnPage = (at: string, what: string) =>
   `${at}: ${what} inside a page assertion does not read the page, so it is the same whatever page is selected; move it out of the page assertion`;

@@ -13,6 +13,7 @@ import {
   type ProbeResult,
   type StorageRecord,
   type Redacted,
+  type TrajectoryEvent,
 } from '../types.ts';
 import { parseAriaSnapshot } from './aria.ts';
 import { formObject, multipartBoundary, parseMultipart, type FormValue } from './body.ts';
@@ -39,6 +40,12 @@ export interface RecorderOptions {
    * then filled from the page tap or marked unavailable.
    */
   bodyTimeoutMs?: number;
+  /**
+   * Also record the run's trajectory (ADR 0024): every request and every main-frame
+   * navigation, in order, with the time since the recorder was attached. Snapshots then carry
+   * it as `trajectory`, which `sequence` checks read. Default false: snapshots are unchanged.
+   */
+  trajectory?: boolean;
 }
 
 const TIMED_OUT = Symbol('timeout');
@@ -390,6 +397,11 @@ export class EvidenceRecorder {
   private readonly maxBody: number;
   private readonly bodyTimeout: number;
   private readonly token = randomUUID();
+  /** The trajectory so far; undefined when it is not recorded. */
+  private readonly events: TrajectoryEvent[] | undefined;
+  private readonly startedAt = performance.now();
+  private readonly pageIds = new WeakMap<Page, number>();
+  private pageCount = 0;
 
   readonly context: BrowserContext;
 
@@ -397,14 +409,18 @@ export class EvidenceRecorder {
     this.context = context;
     this.maxBody = Math.max(0, opts.maxBodyBytes ?? 1024 * 1024);
     this.bodyTimeout = opts.bodyTimeoutMs ?? 3000;
+    this.events = opts.trajectory ? [] : undefined;
     context.on('request', (req) => this.onRequest(req));
     context.on('response', (resp) => this.track(this.onResponse(resp.request())));
     context.on('requestfailed', (req) => this.onFailed(req));
     // Page activity: when each page last opened or navigated, to find the active one.
     const watch = (p: Page) => {
       this.touch(p);
+      this.pageIds.set(p, this.pageCount++);
       p.on('framenavigated', (f) => {
-        if (f === p.mainFrame()) this.touch(p);
+        if (f !== p.mainFrame()) return;
+        this.touch(p);
+        this.events?.push({ type: 'navigation', url: f.url(), page: this.pageIds.get(p)!, t: this.now() });
       });
     };
     context.pages().forEach(watch);
@@ -413,6 +429,11 @@ export class EvidenceRecorder {
 
   private readonly activity = new WeakMap<Page, number>();
   private ticks = 0;
+
+  /** Whole milliseconds since the recorder was attached. */
+  private now(): number {
+    return Math.round(performance.now() - this.startedAt);
+  }
 
   private touch(p: Page): void {
     this.activity.set(p, ++this.ticks);
@@ -494,6 +515,7 @@ export class EvidenceRecorder {
       entry.requestBodyUnavailable = true;
     }
     this.entries.push(entry);
+    this.events?.push({ type: 'request', seq: entry.seq, t: this.now() });
     this.byRequest.set(req, entry);
     try {
       this.frameOf.set(entry, req.frame());
@@ -636,6 +658,11 @@ export class EvidenceRecorder {
   /** A deep copy of the log so far. */
   log(): NetworkEntry[] {
     return structuredClone(this.entries);
+  }
+
+  /** A copy of the trajectory so far (ADR 0024); undefined when this recorder does not record one. */
+  trajectory(): TrajectoryEvent[] | undefined {
+    return this.events?.map((e) => ({ ...e }));
   }
 }
 
@@ -871,12 +898,14 @@ interface Needs {
   text: boolean;
   pages: boolean;
   network: boolean;
+  /** The order of requests and navigations, when the recorder keeps one (ADR 0024). */
+  trajectory: boolean;
   storage: boolean;
   /** The probes to run; undefined: all. */
   probes?: ReadonlySet<string>;
 }
 
-const EVERYTHING: Needs = { tree: true, text: true, pages: true, network: true, storage: true };
+const EVERYTHING: Needs = { tree: true, text: true, pages: true, network: true, trajectory: true, storage: true };
 
 /**
  * Capture a scoped snapshot (ADR 0025): only what `checkSet` reads. The page's accessibility
@@ -899,6 +928,7 @@ export async function captureScopedSnapshot(
     text: reads.has('text'),
     pages: reads.has('pages'),
     network: reads.has('network'),
+    trajectory: reads.has('trajectory'),
     storage: rs.storage.some((r) => r.at === 'after'),
     probes: new Set(rs.probes.filter((r) => r.at === 'after').map((r) => r.probe)),
   };
@@ -936,10 +966,13 @@ async function captureParts(page: Page, opts: CaptureOptions, needs: Needs): Pro
   );
 
   let network: NetworkEntry[] | null = null;
+  let trajectory: TrajectoryEvent[] | undefined;
   if (recorder && needs.network) {
     await recorder.settle();
     network = recorder.log();
   }
+  // A recorder asked for one keeps the order of requests and navigations (ADR 0024).
+  if (recorder && needs.trajectory) trajectory = recorder.trajectory();
 
   const snapshot: EvidenceSnapshot = {
     schema: SNAPSHOT_SCHEMA,
@@ -955,6 +988,8 @@ async function captureParts(page: Page, opts: CaptureOptions, needs: Needs): Pro
     ...(baseline ? { baseline: structuredClone(baseline) } : {}),
     // Likewise: a snapshot of a context with one page has no `pages`.
     ...(pages.length ? { pages } : {}),
+    // Likewise: only a recorder asked for the trajectory adds one (ADR 0024).
+    ...(trajectory ? { trajectory } : {}),
     meta: { capturer: CAPTURER, redacted: redacted.toSorted() },
   };
   return snapshot;

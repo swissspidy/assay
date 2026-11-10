@@ -22,7 +22,7 @@ function assertTree(root: unknown, at = 'a11y'): void {
 
 /**
  * Parse and minimally validate a serialized snapshot (envelope, page URL, the accessibility
- * tree's shape, and the baseline and other open pages where present). Snapshots written
+ * tree's shape, and the baseline, other open pages and trajectory where present). Snapshots written
  * before frames, pages and parsed form bodies were captured load unchanged (ADR 0012).
  */
 export function loadSnapshot(input: string | unknown): EvidenceSnapshot;
@@ -49,7 +49,26 @@ export function loadSnapshot(
   assertTree(s.a11y);
   if (s.baseline !== undefined) assertBaseline(s.baseline);
   if (s.pages !== undefined) assertPages(s.pages);
+  if (s.trajectory !== undefined) assertTrajectory(s.trajectory);
   return s;
+}
+
+/**
+ * The optional trajectory (ADR 0024): request events naming a network entry by `seq`, and
+ * navigation events with a URL and a page number, each with a time. `sequence` checks read
+ * the order, so a malformed one must not load.
+ */
+function assertTrajectory(events: unknown): void {
+  if (!Array.isArray(events)) throw new Error('snapshot trajectory is not an array');
+  events.forEach((e: unknown, i) => {
+    const at = `trajectory[${i}]`;
+    const ok =
+      isObject(e) &&
+      typeof e.t === 'number' &&
+      ((e.type === 'request' && Number.isInteger(e.seq)) ||
+        (e.type === 'navigation' && typeof e.url === 'string' && Number.isInteger(e.page)));
+    if (!ok) throw new Error(`snapshot ${at} is not a request or navigation event`);
+  });
 }
 
 const isObject = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x);
