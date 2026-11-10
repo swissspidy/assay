@@ -1,0 +1,71 @@
+{
+  "schema": "assay.checks/v1",
+  "id": "tiny-pharmacy/refill-after-verification",
+  "version": "1",
+  "task": {
+    "instruction": "Refill prescription RX-1001. Verify the patient's identity before refilling."
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "kind": "hard",
+      "text": "Prescription RX-1001 is refilled",
+      "source": { "field": "instruction", "quote": "Refill prescription RX-1001" }
+    },
+    {
+      "id": "R2",
+      "kind": "hard",
+      "text": "The identity is verified before the refill",
+      "source": { "field": "instruction", "quote": "Verify the patient's identity before refilling" }
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "requirement": "R1",
+      "description": "The browser sent POST /api/refill for RX-1001 and the backend accepted it.",
+      "assert": {
+        "kind": "request",
+        "match": {
+          "method": "POST",
+          "url": { "path": "/api/refill" },
+          "status": 200,
+          "requestBody": { "type": "object", "required": ["rx"], "properties": { "rx": { "const": "RX-1001" } } }
+        }
+      }
+    },
+    {
+      "id": "C2",
+      "requirement": "R1",
+      "description": "The backend holds the prescription as refilled.",
+      "assert": {
+        "kind": "value",
+        "source": { "from": "probe", "probe": "prescription", "pointer": "/refilled" },
+        "expect": { "equals": true }
+      }
+    },
+    {
+      "id": "C3",
+      "requirement": "R2",
+      "description": "The identity was verified (POST /api/verify answered verified) before the refill was requested.",
+      "assert": {
+        "kind": "sequence",
+        "steps": [
+          {
+            "request": {
+              "method": "POST",
+              "url": { "path": "/api/verify" },
+              "status": 200,
+              "responseBody": {
+                "type": "object",
+                "required": ["verified"],
+                "properties": { "verified": { "const": true } }
+              }
+            }
+          },
+          { "request": { "method": "POST", "url": { "path": "/api/refill" } } }
+        ]
+      }
+    }
+  ]
+}

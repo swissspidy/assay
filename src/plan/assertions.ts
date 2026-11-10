@@ -608,6 +608,8 @@ function makeRun(a: Assertion): Run {
     }
     case 'each':
       return eachRun(a);
+    case 'sequence':
+      return sequenceRun(a);
     case 'page': {
       const sub = lazyRun(a.assert);
       return (ctx) => {
@@ -803,6 +805,162 @@ function eachRun(a: Extract<Assertion, { kind: 'each' }>): Run {
       );
     }
     return { status, message, evidence, drift: allDrift };
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Order (ADR 0024)
+// ---------------------------------------------------------------------------
+
+/** Where the events matching one step are: definitely (`yes`) and possibly (`unknown`), ascending. */
+interface StepHits {
+  yes: number[];
+  unknown: number[];
+}
+
+/** A trajectory event as messages show it: its order index, and the request or URL. */
+function describeEvent(snapshot: EvidenceSnapshot, i: number, bySeq: Map<number, NetworkEntry>): string {
+  const e = snapshot.trajectory![i]!;
+  if (e.type === 'navigation') return `[${i}] navigation to ${e.url}`;
+  const n = bySeq.get(e.seq);
+  return n ? `[${i}] #${n.seq} ${n.method} ${n.url}` : `[${i}] #${e.seq}`;
+}
+
+/** The network log by `seq`, built once per log. */
+const logsBySeq = new WeakMap<object, Map<number, NetworkEntry>>();
+function bySeqOf(log: NetworkEntry[] | null): Map<number, NetworkEntry> {
+  if (!log) return new Map();
+  let m = logsBySeq.get(log);
+  if (!m) logsBySeq.set(log, (m = new Map(log.map((e) => [e.seq, e]))));
+  return m;
+}
+
+/**
+ * Where the events matching each step of a sequence are in the snapshot's trajectory. A
+ * request event matches through its network entry (three-valued, as for `request`); one whose
+ * entry the log does not hold matches nothing. A navigation event matches a URL step.
+ * @internal Exported for the stress test's reorder mutants.
+ */
+export function sequenceHits(s: EvidenceSnapshot, a: Extract<Assertion, { kind: 'sequence' }>): StepHits[] {
+  const events = s.trajectory ?? [];
+  const bySeq = bySeqOf(s.network);
+  return a.steps.map((step) => {
+    const hits: StepHits = { yes: [], unknown: [] };
+    if ('request' in step) {
+      const m = requestMatcher(step.request);
+      events.forEach((e, i) => {
+        if (e.type !== 'request') return;
+        const entry = bySeq.get(e.seq);
+        const r = entry ? m.test(entry) : 'no';
+        if (r !== 'no') hits[r].push(i);
+      });
+    } else {
+      const m = urlMatcher(step.url);
+      events.forEach((e, i) => {
+        if (e.type === 'navigation' && m(e.url)) hits.yes.push(i);
+      });
+    }
+    return hits;
+  });
+}
+
+const describeStep = (step: Extract<Assertion, { kind: 'sequence' }>['steps'][number]): string =>
+  'request' in step
+    ? `a request ${describeRequestMatch(step.request)}`
+    : `a navigation to ${describeUrlMatch(step.url)}`;
+
+/**
+ * `sequence`: the first event of each step comes after the first event of the step before
+ * (so every event of a step has one of the previous step before it); `strict`, also every
+ * event of a step before the first event of the next. Events whose match is unknown (an
+ * unreadable body) count both ways: the check decides only when every reading agrees, as
+ * `request` does. No trajectory (or no network log, for request steps) abstains.
+ */
+function sequenceRun(a: Extract<Assertion, { kind: 'sequence' }>): Run {
+  const descs = once(() => a.steps.map(describeStep));
+  return (ctx) => {
+    const s = ctx.snapshot;
+    if (!s.trajectory)
+      return abstain(
+        'evidence_unavailable',
+        'the trajectory (the order of requests and navigations) was not recorded; capture with the recorder option trajectory: true',
+      );
+    if (!s.network && a.steps.some((st) => 'request' in st))
+      return abstain('evidence_unavailable', 'network log was not recorded');
+    const d = descs();
+    const hits = sequenceHits(s, a);
+    const bySeq = bySeqOf(s.network);
+    const show = (i: number) => describeEvent(s, i, bySeq);
+    const evidence = hits.map((h, k) =>
+      ev('request' in a.steps[k]! ? 'network' : 'url', {
+        locator: `trajectory, step ${k + 1}: ${d[k]}`,
+        value: [...h.yes, ...h.unknown]
+          .toSorted((x, y) => x - y)
+          .slice(0, 10)
+          .map(show),
+      }),
+    );
+    const INF = Number.POSITIVE_INFINITY;
+    // First event of each step: at the earliest a possible one, at the latest the first definite one.
+    const lo = hits.map((h) => Math.min(h.yes[0] ?? INF, h.unknown[0] ?? INF));
+    const hi = hits.map((h) => h.yes[0] ?? INF);
+    const lastYes = hits.map((h) => h.yes.at(-1) ?? -1);
+    const lastAny = hits.map((h) => Math.max(h.yes.at(-1) ?? -1, h.unknown.at(-1) ?? -1));
+    const n = a.steps.length;
+    const seqOf = (i: number) => {
+      const e = s.trajectory![i];
+      return e?.type === 'request' ? e.seq : undefined;
+    };
+    const seq = latest(...hi.filter((i) => i < INF).map(seqOf));
+
+    // A definite violation fails, whatever else is unknown: a step's first event comes at or
+    // before every possible first event of the step before it, or (strict) a definite event of
+    // a step comes at or after the first event of the next.
+    for (let k = 0; k + 1 < n; k++) {
+      if (hi[k + 1] === INF) continue;
+      if (lo[k] === INF)
+        return withSeq(
+          fail(
+            `${d[k + 1]} occurred (${show(hi[k + 1]!)}) without ${d[k]} before it: no event matches step ${k + 1}`,
+            evidence,
+          ),
+          seq,
+        );
+      if (lo[k]! >= hi[k + 1]!)
+        return withSeq(
+          fail(
+            `${d[k + 1]} first occurred at ${show(hi[k + 1]!)}, before ${d[k]} (first at ${show(lo[k]!)})`,
+            evidence,
+          ),
+          seq,
+        );
+      if (a.strict && lastYes[k]! >= hi[k + 1]!)
+        return withSeq(
+          fail(
+            `${d[k]} occurred again at ${show(lastYes[k]!)}, after ${d[k + 1]} first occurred at ${show(hi[k + 1]!)} (strict order)`,
+            evidence,
+          ),
+          seq,
+        );
+    }
+    const absent = lo.findIndex((x) => x === INF);
+    if (absent >= 0) {
+      const none = lo.every((x) => x === INF);
+      // No step occurred at all: with onMissing "abstain", a route the run did not take (ADR 0011).
+      if (none && ctx.routeMissing)
+        return abstain('route_missing', `no event matches any step of the sequence; ${ROUTE_HINT}`, evidence);
+      return withSeq(fail(`no event matches step ${absent + 1}: ${d[absent]}`, evidence), seq);
+    }
+    const certain = hits.every((h) => h.yes.length > 0);
+    let ordered = certain;
+    for (let k = 0; ordered && k + 1 < n; k++) ordered = hi[k]! < lo[k + 1]! && (!a.strict || lastAny[k]! < lo[k + 1]!);
+    if (!ordered)
+      return abstain(
+        'value_unavailable',
+        `the order of ${d.join(' → ')} could not be decided: some candidate requests could not be fully read`,
+        evidence,
+      );
+    return withSeq(pass(`in ${a.strict ? 'strict ' : ''}order: ${hi.map((i) => show(i)).join(' → ')}`, evidence), seq);
   };
 }
 

@@ -233,6 +233,22 @@ export const checkSetSchema = {
       },
     },
     jsonSchema: { type: ['object', 'boolean'] },
+    sequenceStep: {
+      oneOf: [
+        {
+          type: 'object',
+          additionalProperties: false,
+          required: ['request'],
+          properties: { request: { $ref: '#/definitions/requestMatch' } },
+        },
+        {
+          type: 'object',
+          additionalProperties: false,
+          required: ['url'],
+          properties: { url: { $ref: '#/definitions/urlMatch' } },
+        },
+      ],
+    },
     requestMatch: {
       type: 'object',
       additionalProperties: false,
@@ -570,6 +586,16 @@ export const checkSetSchema = {
             kind: { const: 'page' },
             match: { $ref: '#/definitions/pageMatch' },
             assert: { $ref: '#/definitions/assertion' },
+          },
+        },
+        {
+          type: 'object',
+          additionalProperties: false,
+          required: ['kind', 'steps'],
+          properties: {
+            kind: { const: 'sequence' },
+            steps: { type: 'array', minItems: 2, items: { $ref: '#/definitions/sequenceStep' } },
+            strict: { type: 'boolean' },
           },
         },
         {

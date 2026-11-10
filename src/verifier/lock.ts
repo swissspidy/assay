@@ -518,6 +518,14 @@ function describe(a: Assertion, inRecord: boolean, wording: DescriptionWording):
     }
     case 'page':
       return `on the one open page (tab or popup) with ${describePageMatch(a.match)}: ${describe(a.assert, false, wording)}`;
+    case 'sequence':
+      return `in this order in the run's trajectory: ${a.steps
+        .map((st) =>
+          'request' in st
+            ? `a request ${describeRequestMatch(st.request)}`
+            : `a navigation to ${describeUrlMatch(st.url)}`,
+        )
+        .join(', then ')}${a.strict ? ' (strict: no step occurs again once the next has begun)' : ''}`;
     case 'allOf':
       return `all of: ${a.of.map((b) => describe(b, inRecord, wording)).join('; ')}`;
     case 'anyOf':

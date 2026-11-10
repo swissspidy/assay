@@ -56,6 +56,9 @@ function channels(a: Assertion, out: Set<Channel>, inRecord = false): void {
     case 'request':
       out.add('network');
       break;
+    case 'sequence':
+      for (const st of a.steps) out.add('request' in st ? 'network' : 'url');
+      break;
     case 'page':
       // The page is selected by its URL (and/or title); then the inner assertion reads it.
       if (a.match.url) out.add('url');

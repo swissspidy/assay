@@ -53,7 +53,16 @@ import { describeModel, noModelError, resolveModel, type ModelInput, type ModelO
 import { loadConfig, normalizeConfig, type AssayConfig } from '../config/config.ts';
 import { parseOutcomes, parseOutcomesDetailed, type Clause } from './outcomes.ts';
 import { stressTest, type FindingRef } from '../stress/stress.ts';
-import { findNodes, networkEntry, networkLog, outline, probesView, storageView, summary } from './explore.ts';
+import {
+  findNodes,
+  networkEntry,
+  networkLog,
+  outline,
+  probesView,
+  storageView,
+  summary,
+  trajectoryView,
+} from './explore.ts';
 import {
   mineCandidates,
   Quote,
@@ -69,6 +78,7 @@ import {
   DISCOVERY_FRAMES,
   DISCOVERY_NUDGE,
   DISCOVERY_PAGES,
+  DISCOVERY_TRAJECTORY,
   DISCOVERY_SYSTEM,
   DISCOVERY_TOLERANCE,
   RUBRIC_SYSTEM,
@@ -494,6 +504,8 @@ function sourceChannels(a: Assertion, inRecord = false): Channel[] {
       return ['url'];
     case 'request':
       return ['network'];
+    case 'sequence':
+      return [...new Set(a.steps.map((st): Channel => ('request' in st ? 'network' : 'url')))];
     case 'value':
       return [
         ...new Set(
@@ -1016,27 +1028,34 @@ function captureSections(snapshots: EvidenceSnapshot[]): string[] {
     parts.push(DISCOVERY_FRAMES);
   if (snapshots.some((s) => s.pages?.length)) parts.push(DISCOVERY_PAGES);
   if (snapshots.some((s) => s.network?.some((e) => e.requestBodyRaw !== undefined))) parts.push(DISCOVERY_FORMS);
+  if (snapshots.some((s) => s.trajectory)) parts.push(DISCOVERY_TRAJECTORY);
   return parts;
 }
 
 /**
  * The DSL definitions the compiler's tools take. The `page` assertion (ADR 0012) is offered
- * only when a reference has other open pages, and a sameAs `tolerance` (ADR 0014) only once
- * a submission shows a binding that one could be for (DISCOVERY_TOLERANCE), so the tools
- * (and the recordings keyed on them) change only for such tasks.
+ * only when a reference has other open pages, the `sequence` assertion (ADR 0024) only when
+ * a reference has a trajectory, and a sameAs `tolerance` (ADR 0014) only once a submission
+ * shows a binding that one could be for (DISCOVERY_TOLERANCE), so the tools (and the
+ * recordings keyed on them) change only for such tasks.
  * @internal Exported for tests.
  */
-export function dslDefinitions(withPages: boolean, withTolerance = false) {
+export function dslDefinitions(withPages: boolean, withTolerance = false, withTrajectory = false) {
   const defs = checkSetSchema.definitions;
-  const paged = withPages
-    ? defs
-    : (() => {
-        const { pageMatch: _, ...rest } = defs;
-        const oneOf = defs.assertion.oneOf.filter(
-          (a) => !('const' in a.properties.kind && a.properties.kind.const === 'page'),
-        );
-        return { ...rest, assertion: { oneOf } };
-      })();
+  const left = (kind: string) => (kind === 'page' && !withPages) || (kind === 'sequence' && !withTrajectory);
+  const paged =
+    withPages && withTrajectory
+      ? defs
+      : (() => {
+          const rest: Record<string, unknown> = { ...defs };
+          if (!withPages) delete rest.pageMatch;
+          if (!withTrajectory) delete rest.sequenceStep;
+          const oneOf = defs.assertion.oneOf.filter(
+            (a) => !('const' in a.properties.kind && left(a.properties.kind.const)),
+          );
+          // The same shape, less what is not offered.
+          return { ...rest, assertion: { oneOf } } as unknown as typeof defs;
+        })();
   // Same shape either way; only the optional tolerance property is left out.
   return (withTolerance ? paged : withoutTolerance(paged)) as typeof paged;
 }
@@ -1053,16 +1072,16 @@ function withoutTolerance<D extends object>(defs: D): Record<string, unknown> {
 }
 
 /** @internal Exported for tests: the submit_checks input schema. */
-export const checksToolSchema = (withPages: boolean, withTolerance = false) => ({
+export const checksToolSchema = (withPages: boolean, withTolerance = false, withTrajectory = false) => ({
   type: 'object',
   additionalProperties: false,
   required: ['checks'],
   properties: { checks: { type: 'array', minItems: 1, items: { $ref: '#/definitions/check' } } },
-  definitions: dslDefinitions(withPages, withTolerance),
+  definitions: dslDefinitions(withPages, withTolerance, withTrajectory),
 });
 
 /** @internal Exported for tests: the try_assertion input schema. */
-export const assertToolSchema = (withPages: boolean, withTolerance = false) => ({
+export const assertToolSchema = (withPages: boolean, withTolerance = false, withTrajectory = false) => ({
   type: 'object',
   additionalProperties: false,
   required: ['assert'],
@@ -1070,7 +1089,7 @@ export const assertToolSchema = (withPages: boolean, withTolerance = false) => (
     assert: { $ref: '#/definitions/assertion' },
     onMissing: { enum: ['fail', 'abstain'], description: 'Evaluate as a check with this onMissing setting.' },
   },
-  definitions: dslDefinitions(withPages, withTolerance),
+  definitions: dslDefinitions(withPages, withTolerance, withTrajectory),
 });
 
 const show = (f: FindingRef) => `${f.description} [${f.reference}/${f.id}]`;
@@ -1104,6 +1123,8 @@ function discoveryTools(
 ) {
   const refNames = refs.map((r) => r.name);
   const withPages = refs.some((r) => r.snapshot.pages?.length);
+  // The sequence assertion and the trajectory tool exist only for references with a trajectory (ADR 0024).
+  const withTrajectory = refs.some((r) => r.snapshot.trajectory);
   const pickRef = (name: string | undefined): Reference => refs.find((r) => r.name === name) ?? refs[0]!;
   const refProp = {
     reference: { type: 'string', enum: refNames, description: 'Reference snapshot name (default: the first one).' },
@@ -1171,7 +1192,7 @@ function discoveryTools(
         name: 'try_assertion',
         description:
           'Evaluate one assertion against every reference snapshot and report pass/fail/abstain with the reason.',
-        inputSchema: assertToolSchema(withPages),
+        inputSchema: assertToolSchema(withPages, false, withTrajectory),
       },
       run(i: { assert: Assertion; onMissing?: 'fail' | 'abstain' }) {
         const lines = refs.map((r) => {
@@ -1193,7 +1214,7 @@ function discoveryTools(
         name: 'submit_checks',
         description:
           'Submit the complete list of checks. They are validated and run against all references; you get errors to fix, or acceptance.',
-        inputSchema: checksToolSchema(withPages),
+        inputSchema: checksToolSchema(withPages, false, withTrajectory),
       },
       run(i: { checks: Check[] }) {
         const cs: CheckSet = {
@@ -1216,9 +1237,9 @@ function discoveryTools(
               offered = true;
               for (const t of tools)
                 if (t.spec.name === 'submit_checks')
-                  t.spec = { ...t.spec, inputSchema: checksToolSchema(withPages, true) };
+                  t.spec = { ...t.spec, inputSchema: checksToolSchema(withPages, true, withTrajectory) };
                 else if (t.spec.name === 'try_assertion')
-                  t.spec = { ...t.spec, inputSchema: assertToolSchema(withPages, true) };
+                  t.spec = { ...t.spec, inputSchema: assertToolSchema(withPages, true, withTrajectory) };
             }
           }
           return {
@@ -1231,6 +1252,21 @@ function discoveryTools(
       },
     },
   ];
+  if (withTrajectory)
+    tools.splice(tools.length - 2, 0, {
+      spec: {
+        name: 'trajectory',
+        description:
+          'The order of requests and navigations in a reference run, one event per line with its order index. Sequence steps match these events.',
+        inputSchema: obj({
+          ...refProp,
+          offset: { type: 'integer', minimum: 0, description: 'Skip this many events (for paging).' },
+        }),
+      },
+      run: (i: In<{ offset?: number }>) => ({
+        content: trajectoryView(pickRef(i.reference).snapshot, undefined, i.offset),
+      }),
+    });
   if (seed)
     tools.splice(tools.length - 2, 0, {
       spec: {

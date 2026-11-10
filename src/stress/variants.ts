@@ -25,6 +25,7 @@ import { applyNormalizers, describeValue, zoneOffset, type TypedValue } from '..
 import { compareValues } from '../runtime/compare.ts';
 import { canonical, stripGlobal } from '../text.ts';
 import { editById, replaceText, sameJson, treeChanged } from './edit.ts';
+import { appendRequests, remapRequests, trajectoryNoise } from './trajectory.ts';
 import { AXTable, noteDerived, regularTree } from '../store/ax.ts';
 import { PRECISIONS, fromScalar, readSpan, readTyped, rewriteValue, scalarOf, snapTo, timezoneOf } from './mutants.ts';
 
@@ -52,6 +53,8 @@ export const GENERIC_VARIANTS = [
   // Only for snapshots with captured frames or several open pages (ADR 0012).
   'extra-frame',
   'extra-page',
+  // Only for snapshots with a trajectory (ADR 0024).
+  'trajectory-noise',
 ] as const;
 
 const REORDERABLE = new Set(['list', 'rowgroup', 'table', 'listbox', 'menu', 'grid', 'tree', 'feed']);
@@ -489,7 +492,8 @@ function networkNoise(s: EvidenceSnapshot): EvidenceSnapshot | null {
     .slice(0, 3)) {
     extra.push({ ...e, seq: seq++ });
   }
-  return { ...s, network: [...s.network, ...extra] };
+  const trajectory = appendRequests(s.trajectory, extra);
+  return { ...s, network: [...s.network, ...extra], ...(trajectory ? { trajectory } : {}) };
 }
 
 /** Each state-changing request first failed (HTTP 503) and was retried successfully. */
@@ -498,14 +502,22 @@ function retry(s: EvidenceSnapshot): EvidenceSnapshot | null {
   const out: NetworkEntry[] = [];
   let seq = 0;
   let changed = false;
+  // Old seq -> new seqs, for the trajectory's request events (ADR 0024).
+  const seqs = new Map<number, number[]>();
   for (const e of s.network) {
+    const mine: number[] = [];
     if (e.method !== 'GET' && e.status !== null && e.status < 400) {
+      mine.push(seq);
       out.push({ ...e, seq: seq++, status: 503, responseBody: { error: 'Service Unavailable' } });
       changed = true;
     }
+    mine.push(seq);
     out.push({ ...e, seq: seq++ });
+    seqs.set(e.seq, mine);
   }
-  return changed ? { ...s, network: out } : null;
+  if (!changed) return null;
+  const trajectory = remapRequests(s.trajectory, seqs);
+  return { ...s, network: out, ...(trajectory ? { trajectory } : {}) };
 }
 
 /** Storage keys some check reads; an unrelated-storage variant must not write them. */
@@ -853,6 +865,11 @@ export function generateVariants(cs: CheckSet, s: EvidenceSnapshot): Variant[] {
     ['url-hash', 'a fragment on the page URL', urlVariant(s, (u) => (u.hash = 'top'))],
     ['extra-frame', 'an unrelated embedded frame (an advertisement) with its own content', extraFrame(s)],
     ['extra-page', 'an unrelated extra tab (a help page) is open', extraPage(s)],
+    [
+      'trajectory-noise',
+      'an unrelated request (an analytics beacon) between every two events of the run',
+      trajectoryNoise(s),
+    ],
   ];
   return [
     ...generic
