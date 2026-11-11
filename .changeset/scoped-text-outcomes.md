@@ -1,5 +1,0 @@
----
-'@swissspidy/assay': patch
----
-
-Run outcomes and check descriptions now treat a `text` source with a `scope`, or one inside an `each` record, as accessibility-tree text, as the validator, coverage and the review sheet already do. The evidence for a value it reads, in check results, outcomes, records, `formatOutcome` and `toHaveCompleted` messages, says channel `a11y` and trust `semantic` instead of `text` and `freetext`. Only an unscoped source outside a record still records free page text. No verdict, status or escalation changes, because trust never decided them. `describeAssertion`, and so the builder's default description, the review sheet, `assay review` and the gate, words such a source as "(accessibility-tree text)" instead of "(free text, spoofable)". A TypeScript check set that carries a `locked` or `rejected` decision made on the earlier wording keeps that wording, so it stays approved (or rejected) and does not read as changed since lock. Approve it again to move it to the new wording. JSON check sets store their descriptions as written and are unaffected.
