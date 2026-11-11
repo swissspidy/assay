@@ -17,9 +17,10 @@ import { checkSetDigest } from '../snapshot/digest.ts';
 import { verifyLock, type LockCheckOptions, type LockStatus } from '../verifier/lock.ts';
 import { keyId, trustedKeySet, type TrustedKeySet } from '../verifier/sign.ts';
 import { buildStore, changedKeys, type EvidenceStore } from '../store/store.ts';
-import { regularTree } from '../store/ax.ts';
+import { regularEdit } from '../store/ax.ts';
 import { abstain, compileAssertion, kleeneAnd, type EvalCtx, type Run, type Seq } from './assertions.ts';
-import { readKeys, readsChanged, readSetOf, unionReadSets, type ReadKey, type ReadSet } from './readset.ts';
+import { readKeys, readSetOf, unionReadSets, type ReadKey, type ReadSet } from './readset.ts';
+import { fineReadsOf, OverlayChange, type FineReads } from './delta.ts';
 import { once } from '../runtime/once.ts';
 
 /** One check of a plan. */
@@ -34,6 +35,11 @@ export interface PlannedCheck {
    * cannot be told (an unknown kind, or a check too malformed to describe): all of it.
    */
   readonly reads: ReadonlySet<ReadKey> | null;
+  /**
+   * What the check reads of each part, finely enough to tell whether an overlay's change to a
+   * part can reach it (ADR 0029); null when that cannot be told.
+   */
+  readonly fine: FineReads | null;
 }
 
 export class CheckPlan {
@@ -61,6 +67,7 @@ export class CheckPlan {
             return null;
           }
         });
+        const fine = once(() => fineReadsOf(check.assert));
         return {
           check,
           run: once(() => compileAssertion(check.assert)),
@@ -69,6 +76,9 @@ export class CheckPlan {
           },
           get reads() {
             return reads();
+          },
+          get fine() {
+            return fine();
           },
         };
       }),
@@ -240,15 +250,17 @@ export function runPlan(plan: CheckPlan, store: EvidenceStore, opts: EvaluateOpt
  * With a `base` run, the store is an overlay on the base's: its snapshot was made from the
  * base's by replacing some parts and sharing the others by identity, as the stress test's
  * variants and mutants are. A check that reads none of the replaced parts (`readKeys`,
- * `changedKeys`) takes the base's result for it; only the others run here. Every result
- * equals what `runPlan(plan, store)` gives for that check, and `outcome()` equals its outcome.
+ * `changedKeys`), or whose reads of the replaced parts provably give what they gave on the base
+ * (`OverlayChange`, ADR 0029), takes the base's result for it; only the others run here. Every
+ * result equals what `runPlan(plan, store)` gives for that check, and `outcome()` equals its
+ * outcome.
  */
 export class PlanRun {
   readonly plan: CheckPlan;
   readonly store: EvidenceStore;
   private readonly base?: PlanRun;
   /** What the store replaced of the base's snapshot; null: compare nothing, run every check. */
-  private readonly changed: ReadonlySet<string> | null;
+  private readonly change: OverlayChange | null;
   private readonly ctxs: [EvalCtx, EvalCtx];
   private readonly results: (CheckResult | undefined)[];
 
@@ -256,24 +268,32 @@ export class PlanRun {
   constructor(plan: CheckPlan, store: EvidenceStore, base?: PlanRun) {
     this.plan = plan;
     this.store = store;
-    this.changed = base && base.plan === plan ? changedKeys(base.store.snapshot, store.snapshot) : null;
-    if (this.changed) this.base = base;
+    const changed = base && base.plan === plan ? changedKeys(base.store.snapshot, store.snapshot) : null;
+    this.change = changed ? new OverlayChange(base!.store.snapshot, store.snapshot, changed) : null;
+    if (this.change) this.base = base;
     // runPlan indexes the tree before any check runs, so a tree that cannot be indexed throws
     // there. An overlay whose tree is the base's, or regular (which always indexes), indexes
     // it when a check first reads it: a mutant whose checks read other evidence never does.
-    const lazy = !!this.changed && (!this.changed.has('a11y') || regularTree(store.snapshot.a11y));
+    // Whether it is regular is asked of the nodes it does not share with the base's tree only,
+    // without building its table (ADR 0029).
+    const lazy = !!changed && (!changed.has('a11y') || regularEdit(base!.store.snapshot.a11y, store.snapshot.a11y));
     this.ctxs = lazy ? lazyContexts(store) : contexts(store);
-    this.results = Array.from({ length: plan.checks.length });
+    // Filled by index as checks are asked for (an unset index reads as undefined).
+    this.results = [];
   }
 
-  /** The result of the plan's check `i`. */
-  check(i: number): CheckResult {
+  /**
+   * The result of the plan's check `i`. `targeted`: the overlay was made to change what this
+   * check reads (a mutant's target), so the change is not described further than its read keys
+   * (ADR 0029): it would only cost time. The result is the same either way.
+   */
+  check(i: number, targeted = false): CheckResult {
     let r = this.results[i];
     if (!r) {
       const c = this.plan.checks[i]!;
       const reads = c.reads;
       r =
-        this.base && reads !== null && !readsChanged(reads, this.changed!)
+        this.base && reads !== null && !this.change!.sees(reads, targeted ? null : c.fine)
           ? this.base.check(i)
           : checkResult(c, this.ctxs);
       this.results[i] = r;

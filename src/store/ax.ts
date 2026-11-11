@@ -236,6 +236,25 @@ export class AXTable {
     return (this.regularValue ??= walkRegular(this.nodes[0]!));
   }
 
+  /**
+   * `regularTree(tree)` for a tree that may share subtrees with this one (an edit of it, ADR
+   * 0029), without building its table: a subtree whose root is one of this regular tree's nodes
+   * is regular, so only the other nodes are asked (as `derive` asks them). Undefined when this
+   * tree is not regular (ask `regularTree`).
+   */
+  regularOver(tree: AXNode): boolean | undefined {
+    if (!this.regular) return undefined;
+    const ids = this.ids;
+    const ok = (node: AXNode): boolean => {
+      if (ids.has(node)) return true;
+      if (!regularNode(node)) return false;
+      const kids = node.children;
+      if (kids) for (let i = 0; i < kids.length; i++) if (!ok(kids[i]!)) return false;
+      return true;
+    };
+    return ok(tree);
+  }
+
   /** Node object → id (the last id of a node object that occurs more than once). */
   private get ids(): Map<AXNode, number> {
     if (!this.idsValue) {
@@ -353,6 +372,17 @@ export function regularTree(node: AXNode): boolean {
   return t ? t.regular : walkRegular(node);
 }
 
+/**
+ * `regularTree(next)` for `next` made by an edit of `base` that shares subtrees with it (an
+ * overlay, ADR 0029): only the nodes that are not `base`'s are asked, and `next`'s table is not
+ * built (it waits for a check that reads the tree).
+ */
+export function regularEdit(base: AXNode, next: AXNode): boolean {
+  const own = next && typeof next === 'object' ? tables.get(next) : undefined;
+  if (own) return own.regular;
+  return (regularTree(base) && AXTable.of(base).regularOver(next)) || regularTree(next);
+}
+
 /** `regularTree` by walking the tree, remembered per node, so a tree is checked along its new nodes only. */
 function walkRegular(node: AXNode): boolean {
   if (!node || typeof node !== 'object') return false;
@@ -368,7 +398,7 @@ function walkRegular(node: AXNode): boolean {
  * What `regularTree` asks of one node: an object that inherits nothing, whose `children`, when
  * it has the field, is its own non-empty list without holes. (Its children are asked in turn.)
  */
-function regularNode(node: AXNode): boolean {
+export function regularNode(node: AXNode): boolean {
   if (!node || typeof node !== 'object' || !plainNode(node)) return false;
   if (Object.hasOwn(node, 'children')) {
     const kids = node.children;

@@ -126,6 +126,11 @@ identity. A tree that is not regular is walked whole, as before.
   further gain needs fewer candidates or checks per overlay, which changes the reports, or a
   dependency tracking of what each check read in the tree (re-run a check only when an edit
   touches a node it looked at, including the candidates a locator rejected and the ancestors a
-  path names), which is the next step if stress speed matters again.
+  path names), which is the next step if stress speed matters again. Done in
+  [ADR 0029](0029-re-check-only-what-an-overlay-changed.md), statically rather than by tracking:
+  overlays describe what they changed (touched and kept roles, added entries, values at the
+  pointers read) and checks whose reads miss it take the base's result. Skipping turned out to
+  be bounded too (most evaluations left give a different result); together with not building
+  variants no check can observe, stress got about 1.2× faster.
 - Memory: a derived table keeps its base table alive, and a slab stays allocated while any
   table in it is reachable (at most 64 KB per retained table).

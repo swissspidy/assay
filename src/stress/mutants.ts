@@ -235,15 +235,23 @@ const isRecord = (x: Json | undefined): x is { [key: string]: Json } =>
 function pairingSwaps(arr: Json[]): { what: string; value: Json }[] {
   const out: { what: string; value: Json }[] = [];
   const keys = [...new Set(arr.slice(0, 8).flatMap((x) => (isRecord(x) ? Object.keys(x) : [])))];
+  const limit = Math.min(arr.length, 8);
   for (const k of keys) {
-    const pair = arr.slice(0, 8).flatMap((x, i) =>
-      arr.slice(i + 1, 8).flatMap((y, d) => {
-        if (!isRecord(x) || !isRecord(y) || !(k in x) || !(k in y)) return [];
-        return !sameJson(x[k], y[k]) ? [[i, i + 1 + d] as const] : [];
-      }),
-    )[0];
-    if (!pair) continue;
-    const [i, j] = pair;
+    // The first pair (i < j, among the first eight items) whose records differ in k.
+    let i = -1;
+    let j = -1;
+    for (let x = 0; x < limit && i < 0; x++) {
+      const a = arr[x];
+      if (!(x in arr) || !isRecord(a) || !(k in a)) continue;
+      for (let y = x + 1; y < limit; y++) {
+        const b = arr[y];
+        if (!(y in arr) || !isRecord(b) || !(k in b) || sameJson(a[k], b[k])) continue;
+        i = x;
+        j = y;
+        break;
+      }
+    }
+    if (i < 0) continue;
     const a = arr[i] as { [key: string]: Json };
     const b = arr[j] as { [key: string]: Json };
     const value = arr.map((x, n) => (n === i ? { ...a, [k]: b[k]! } : n === j ? { ...b, [k]: a[k]! } : x));
