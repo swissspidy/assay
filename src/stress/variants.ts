@@ -535,7 +535,8 @@ function readKeys(cs: CheckSet): Set<string> {
   return keys;
 }
 
-function extraStorage(s: EvidenceSnapshot, cs: CheckSet): EvidenceSnapshot | null {
+/** The page URL extra-storage writes at, or null when it adds nothing (no storage, or a key it would write is the task's). */
+function extraStorageAt(s: EvidenceSnapshot, cs: CheckSet): URL | null {
   if (!s.storage) return null;
   const read = readKeys(cs);
   if (['_ga', 'consent', 'scrollY'].some((k) => read.has(k))) return null;
@@ -548,6 +549,13 @@ function extraStorage(s: EvidenceSnapshot, cs: CheckSet): EvidenceSnapshot | nul
   const st = s.storage;
   // Overwriting a key the task itself stores would not be an unrelated change.
   if (st.local[u.origin]?.consent !== undefined || st.session[u.origin]?.scrollY !== undefined) return null;
+  return u;
+}
+
+function extraStorage(s: EvidenceSnapshot, cs: CheckSet): EvidenceSnapshot | null {
+  const u = extraStorageAt(s, cs);
+  if (!u) return null;
+  const st = s.storage!;
   return {
     ...s,
     storage: {
@@ -839,43 +847,144 @@ function toleranceVariants(cs: CheckSet, s: EvidenceSnapshot, idx: AXIndex): Var
   return out;
 }
 
+/** A generic variant: its id, description and generator. */
+type Generic = [id: string, description: string, make: (s: EvidenceSnapshot, cs: CheckSet) => EvidenceSnapshot | null];
+
+const GENERIC: Generic[] = [
+  ['reorder', 'list items and table rows in reverse order', reorder],
+  ['reorder-terms', 'term groups (a term with its definitions) in reverse order', reorderTerms],
+  ['extra-content', 'unrelated recommendations and a promotional status message on the page', extraContent],
+  ['extra-row', 'an unrelated extra row in each table', extraTableRow],
+  ['wrap-main', 'main content wrapped in an extra region', wrapMain],
+  ['spacing', 'non-breaking and doubled spaces in visible text', spacing],
+  ['extra-json-fields', 'extra fields in JSON bodies and probe results', (s) => mapBodies(s, addFields)],
+  ['json-array-order', 'arrays in JSON bodies and probe results in reverse order', (s) => mapBodies(s, reverseArrays)],
+  [
+    'nested-array-order',
+    'arrays nested inside JSON records (bodies, probe results, storage) in reverse order',
+    nestedArrayOrder,
+  ],
+  ['network-noise', 'an analytics beacon and repeated GET requests', networkNoise],
+  ['retry', 'each state-changing request first failed with HTTP 503 and was retried', retry],
+  ['extra-storage', 'unrelated cookies and storage keys', extraStorage],
+  [
+    'url-decoration',
+    'a tracking query parameter on the page URL',
+    (s) => urlVariant(s, (u) => u.searchParams.set('utm_source', 'newsletter')),
+  ],
+  ['url-hash', 'a fragment on the page URL', (s) => urlVariant(s, (u) => (u.hash = 'top'))],
+  ['extra-frame', 'an unrelated embedded frame (an advertisement) with its own content', extraFrame],
+  ['extra-page', 'an unrelated extra tab (a help page) is open', extraPage],
+  [
+    'trajectory-noise',
+    'an unrelated request (an analytics beacon) between every two events of the run',
+    trajectoryNoise,
+  ],
+];
+
 export function generateVariants(cs: CheckSet, s: EvidenceSnapshot): Variant[] {
-  const generic: [string, string, EvidenceSnapshot | null][] = [
-    ['reorder', 'list items and table rows in reverse order', reorder(s)],
-    ['reorder-terms', 'term groups (a term with its definitions) in reverse order', reorderTerms(s)],
-    ['extra-content', 'unrelated recommendations and a promotional status message on the page', extraContent(s)],
-    ['extra-row', 'an unrelated extra row in each table', extraTableRow(s)],
-    ['wrap-main', 'main content wrapped in an extra region', wrapMain(s)],
-    ['spacing', 'non-breaking and doubled spaces in visible text', spacing(s)],
-    ['extra-json-fields', 'extra fields in JSON bodies and probe results', mapBodies(s, addFields)],
-    ['json-array-order', 'arrays in JSON bodies and probe results in reverse order', mapBodies(s, reverseArrays)],
-    [
-      'nested-array-order',
-      'arrays nested inside JSON records (bodies, probe results, storage) in reverse order',
-      nestedArrayOrder(s),
-    ],
-    ['network-noise', 'an analytics beacon and repeated GET requests', networkNoise(s)],
-    ['retry', 'each state-changing request first failed with HTTP 503 and was retried', retry(s)],
-    ['extra-storage', 'unrelated cookies and storage keys', extraStorage(s, cs)],
-    [
-      'url-decoration',
-      'a tracking query parameter on the page URL',
-      urlVariant(s, (u) => u.searchParams.set('utm_source', 'newsletter')),
-    ],
-    ['url-hash', 'a fragment on the page URL', urlVariant(s, (u) => (u.hash = 'top'))],
-    ['extra-frame', 'an unrelated embedded frame (an advertisement) with its own content', extraFrame(s)],
-    ['extra-page', 'an unrelated extra tab (a help page) is open', extraPage(s)],
-    [
-      'trajectory-noise',
-      'an unrelated request (an analytics beacon) between every two events of the run',
-      trajectoryNoise(s),
-    ],
-  ];
-  return [
-    ...generic
-      .filter((g): g is [string, string, EvidenceSnapshot] => g[2] !== null)
-      .map(([id, description, snapshot]) => ({ id, description, snapshot })),
-    ...formattingVariants(cs, s, AXIndex.of(s.a11y)),
-    ...toleranceVariants(cs, s, AXIndex.of(s.a11y)),
-  ];
+  return stressVariants(cs, s) as Variant[];
+}
+
+/** A variant of the stress test: without a snapshot when it was not built (`stressVariants`). */
+export interface StressVariant {
+  id: string;
+  description: string;
+  snapshot?: EvidenceSnapshot;
+}
+
+/**
+ * The parts of a snapshot (read keys, ADR 0016) that the generic variants told apart by
+ * `unbuilt` change: they replace nothing else.
+ */
+const CHANGES: Record<string, readonly string[]> = {
+  'extra-content': ['a11y', 'text'],
+  'wrap-main': ['a11y'],
+  spacing: ['a11y', 'text'],
+  'network-noise': ['network', 'trajectory'],
+  retry: ['network', 'trajectory'],
+  'extra-storage': ['storage'],
+};
+
+const objects = (xs: unknown[]) => xs.every((x) => x !== null && typeof x === 'object');
+
+/** A network log (and trajectory) every generator that reads it reads without throwing. */
+function plainLog(s: EvidenceSnapshot): boolean {
+  const t = s.trajectory as unknown;
+  return (
+    Array.isArray(s.network) &&
+    // Spread into Math.max as arguments.
+    s.network.length <= 10_000 &&
+    objects(s.network) &&
+    (!t || (Array.isArray(t) && objects(t)))
+  );
+}
+
+/**
+ * Whether generic variant `id` exists for `s` (its generator returns a snapshot), told without
+ * building it (ADR 0029). Undefined when that cannot be told: the variant has no such test, or
+ * the snapshot is not one its generator is known to build without throwing. Where it reads the
+ * snapshot or the check set, it reads them as the generator does, so it throws where that throws.
+ */
+function unbuilt(id: string, s: EvidenceSnapshot, cs: CheckSet): boolean | undefined {
+  switch (id) {
+    case 'extra-content':
+    case 'wrap-main':
+    case 'spacing': {
+      // Edits by id on a regular tree, of string names and text, do not throw.
+      if (!regularTree(s.a11y) || typeof s.text !== 'string') return undefined;
+      const t = AXTable.of(s.a11y);
+      if (id === 'wrap-main') return t.withRole('main').length > 0;
+      if (id === 'spacing')
+        for (const n of t.nodes) if (n.name !== undefined && typeof n.name !== 'string') return undefined;
+      return true;
+    }
+    case 'network-noise':
+    case 'retry': {
+      if (!s.network) return false;
+      if (!plainLog(s)) return undefined;
+      if (id === 'retry') return s.network.some((e) => e.method !== 'GET' && e.status !== null && e.status < 400);
+      // As the generator parses it (inside its try): whether `new URL` would throw.
+      try {
+        return URL.canParse(s.page.url);
+      } catch {
+        return false;
+      }
+    }
+    case 'extra-storage': {
+      const u = extraStorageAt(s, cs);
+      if (!u) return false;
+      return Array.isArray(s.storage!.cookies) ? true : undefined;
+    }
+    default:
+      return undefined;
+  }
+}
+
+/**
+ * `generateVariants` for the stress test (ADR 0029). With `unread`, which tells whether no
+ * check reads any of some parts of a snapshot, a generic variant that changes only parts no
+ * check reads, and whose existence `unbuilt` can tell, is returned without a snapshot: every
+ * check gives on it what it gives on the reference. The variants, their order, ids and
+ * descriptions are `generateVariants`'s.
+ */
+export function stressVariants(
+  cs: CheckSet,
+  s: EvidenceSnapshot,
+  unread?: (keys: readonly string[]) => boolean,
+): StressVariant[] {
+  const out: StressVariant[] = [];
+  for (const [id, description, make] of GENERIC) {
+    const changes = unread && CHANGES[id];
+    const exists = changes && unread(changes) ? unbuilt(id, s, cs) : undefined;
+    if (exists === false) continue;
+    if (exists === true) {
+      out.push({ id, description });
+      continue;
+    }
+    const snapshot = make(s, cs);
+    if (snapshot) out.push({ id, description, snapshot });
+  }
+  out.push(...formattingVariants(cs, s, AXIndex.of(s.a11y)), ...toleranceVariants(cs, s, AXIndex.of(s.a11y)));
+  return out;
 }

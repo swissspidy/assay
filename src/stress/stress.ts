@@ -5,8 +5,10 @@
  */
 import type { CheckSet, EvidenceSnapshot, Outcome, Status } from '../types.ts';
 import { compileChecks, PlanRun } from '../plan/plan.ts';
-import { buildStore } from '../store/store.ts';
-import { generateVariants } from './variants.ts';
+import { buildStore, changedKeys } from '../store/store.ts';
+import { regularEdit } from '../store/ax.ts';
+import { stressVariants } from './variants.ts';
+import { readsChanged } from '../plan/readset.ts';
 import { assertFullSnapshot } from '../snapshot/scope.ts';
 import { generateMutants, withSuccessClaim, type Mutant } from './mutants.ts';
 
@@ -124,9 +126,37 @@ export function stressTest(cs: CheckSet, refs: StressReference[], options: Stres
   const hard = new Set(cs.requirements.filter((r) => r.kind === 'hard').map((r) => r.id));
   // A check the read-sets cannot describe runs on every mutant, as it always did (it may throw).
   const describable = plan.checks.every((c) => c.reads !== null);
-  /** Whether a check of a hard requirement fails, trying the mutant's target check `t` first. */
-  const failsHard = (run: PlanRun, t: number): boolean => {
-    const fails = (i: number) => run.check(i).status === 'fail' && hard.has(plan.checks[i]!.check.requirement);
+  // Whether no check reads any of `keys` (a variant that changes only those is accepted as it
+  // stands, ADR 0029); per list of keys, once.
+  const unreadOf = new Map<readonly string[], boolean>();
+  const unread = describable
+    ? (keys: readonly string[]): boolean => {
+        let u = unreadOf.get(keys);
+        if (u === undefined) {
+          const changed = new Set(keys);
+          unreadOf.set(keys, (u = plan.checks.every((c) => !readsChanged(c.reads!, changed))));
+        }
+        return u;
+      }
+    : undefined;
+  /**
+   * Whether no check reads anything `next` replaced of `base`: every check gives on it what it
+   * gives on `base`, as an overlay run would find, without making one. A tree an overlay run
+   * would index at once (one that is not regular: it may throw there) is left to the run.
+   */
+  const unseen = (base: EvidenceSnapshot, next: EvidenceSnapshot): boolean => {
+    if (!describable) return false;
+    const changed = changedKeys(base, next);
+    if (!changed || plan.checks.some((c) => readsChanged(c.reads!, changed))) return false;
+    return !changed.has('a11y') || regularEdit(base.a11y, next.a11y);
+  };
+  /**
+   * Whether a check of a hard requirement fails, trying the mutant's target check `t` first.
+   * `targeted`: the run is the mutant's own (not its success claim), made to change what `t` reads.
+   */
+  const failsHard = (run: PlanRun, t: number, targeted: boolean): boolean => {
+    const fails = (i: number) =>
+      run.check(i, targeted && i === t).status === 'fail' && hard.has(plan.checks[i]!.check.requirement);
     if (t >= 0 && fails(t)) return true;
     for (let i = 0; i < plan.checks.length; i++) if (i !== t && fails(i)) return true;
     return false;
@@ -152,8 +182,20 @@ export function stressTest(cs: CheckSet, refs: StressReference[], options: Stres
       });
       continue;
     }
-    for (const v of generateVariants(cs, reference.snapshot)) {
+    for (const v of stressVariants(cs, reference.snapshot, unread)) {
       if (skip.has(v.id.split(':')[0]!)) continue;
+      if (!v.snapshot || unseen(reference.snapshot, v.snapshot)) {
+        // It changes only what no check reads: every check gives what it gave on the reference.
+        variants.push({
+          reference: reference.name,
+          id: v.id,
+          description: v.description,
+          verdict: base.verdict,
+          accepted: true,
+          rejectedBy: [],
+        });
+        continue;
+      }
       const o = new PlanRun(plan, buildStore(v.snapshot), refRun).outcome(opts);
       const worse = o.checks.filter((c) => RANK[c.status] < RANK[baseStatus.get(c.check) ?? 'pass']);
       variants.push({
@@ -173,11 +215,11 @@ export function stressTest(cs: CheckSet, refs: StressReference[], options: Stres
       let target: Outcome['checks'][number] | undefined;
       let rejected: boolean;
       let by: 'fail' | 'abstain' | undefined;
-      if (describable && failsHard(run, t)) {
+      if (describable && failsHard(run, t, !claim)) {
         // A failing check of a hard requirement decides: the verdict is fail whatever the
         // other checks say, so they need not run (the full outcome would say the same).
         verdict = 'fail';
-        target = t >= 0 ? run.check(t) : undefined;
+        target = t >= 0 ? run.check(t, !claim) : undefined;
         rejected = true;
         by = 'fail';
       } else {

@@ -122,7 +122,10 @@ as "not recorded" (abstain) rather than "empty", so it needs its own opt-in form
   for shared subtrees) would cut the second; it was not built here. Done in
   [ADR 0023](0023-incremental-tree-index.md): edited trees get tables derived from the
   reference's, and profiling there found tree work was about a quarter of stress time, not most
-  of it.
+  of it. Read keys are refined in [ADR 0029](0029-re-check-only-what-an-overlay-changed.md): a
+  check that reads a replaced section also takes its base's result when the overlay's change to
+  that section (the roles of the tree it touched, the requests it added, the values at the
+  pointers the check reads) misses everything the check reads there.
 
 - Snapshots, their sections, nodes and bodies are shared between a reference and its variants
   and mutants. Code that receives a `Variant` or `Mutant` must not edit its snapshot in place.

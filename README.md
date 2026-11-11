@@ -744,6 +744,7 @@ five ([ADR 0011](docs/adr/0011-route-robust-compilation.md)).
 - [ADR 0025](docs/adr/0025-scoped-capture.md): scoped capture, snapshots of only what a check set reads
 - [ADR 0026](docs/adr/0026-bench-strategies-and-prices.md): `assay bench` compares discovery strategies, with configurable prices
 - [ADR 0028](docs/adr/0028-scoped-text-outcomes-and-descriptions.md): scoped text in run outcomes and check descriptions
+- [ADR 0029](docs/adr/0029-re-check-only-what-an-overlay-changed.md): stress testing re-checks only what a variant or mutant changed
 - Example check sets: [handwritten](examples/tiny-shop/tasks) and [compiled](examples/tiny-shop/compiled)
 - Development and releases: [CONTRIBUTING.md](CONTRIBUTING.md)
 
