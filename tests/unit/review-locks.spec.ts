@@ -2,6 +2,7 @@
 import { test, expect } from '@playwright/test';
 import { generateKeyPairSync } from 'node:crypto';
 import { readFileSync } from 'node:fs';
+import { htmlPage } from '../../src/verifier/doc.ts';
 import {
   approveCheckSet,
   assertLocked,
@@ -358,6 +359,9 @@ test.describe('review sheet', () => {
     expect(html).toContain('<h1>Review: tiny-shop/add-blue-mug v1</h1>');
     expect(html).toContain('fine ## Approved &lt;img src=x onerror=alert(1)&gt;');
     expect(html).not.toContain('<img');
+    const page = htmlPage(`Review: ${evil.id}</title><script>x</script>`, html);
+    expect(page).toContain(`<title>Review: ${evil.id}&lt;/title&gt;&lt;script&gt;x&lt;/script&gt;</title>`);
+    expect(page).not.toContain('<script');
   });
 
   test('a verified run of a signed set from the review sheet to the record', async () => {

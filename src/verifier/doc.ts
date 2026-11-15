@@ -112,3 +112,30 @@ function html(blocks: Block[]): string[] {
 export function render(blocks: Block[], format: DocFormat = 'markdown', opts: { details?: boolean } = {}): string {
   return format === 'html' ? html(blocks).join('\n') : markdown(blocks, !!opts.details).join('\n');
 }
+
+/**
+ * A standalone HTML page around rendered blocks, for a file opened in a browser: the encoding
+ * is declared (check set text may not be ASCII), the language, viewport and light/dark
+ * support are set, and a Content Security Policy forbids every script and subresource, so
+ * nothing can run or load even if escaping were bypassed. `render()` stays a fragment for
+ * embedding.
+ */
+export function htmlPage(title: string, body: string): string {
+  return [
+    '<!doctype html>',
+    '<html lang="en">',
+    '<head>',
+    '<meta charset="utf-8">',
+    '<meta name="viewport" content="width=device-width, initial-scale=1">',
+    '<meta name="color-scheme" content="light dark">',
+    `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'none'; form-action 'none'">`,
+    `<title>${esc(title)}</title>`,
+    '</head>',
+    '<body>',
+    '<main>',
+    body,
+    '</main>',
+    '</body>',
+    '</html>',
+  ].join('\n');
+}
