@@ -15,6 +15,12 @@ to an agentic verifier.
 npm install -D @swissspidy/assay @playwright/test
 ```
 
+Before a release reaches npm, install from GitHub; `prepare` builds `dist/` on install:
+
+```sh
+npm install -D github:swissspidy/assay#<commit> @playwright/test
+```
+
 Requires Node.js 24 or later. Models are only needed to compile checks and to escalate; any model
 works ([Configure a model](#configure-a-model)). Releases: [CHANGELOG.md](CHANGELOG.md).
 
