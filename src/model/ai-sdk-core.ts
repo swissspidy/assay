@@ -69,6 +69,8 @@ const STOP: Record<FinishReason, StopReason> = {
   length: 'max_tokens',
   'content-filter': 'refusal',
   error: 'other',
+  // The provider's stream ended without a completion signal: the output may be incomplete.
+  interrupted: 'other',
   other: 'other',
 };
 
