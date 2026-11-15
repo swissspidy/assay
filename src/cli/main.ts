@@ -191,7 +191,7 @@ Options:
                          re-review; unchanged requirements are listed without their checks
   --stress <report.json> A stress report (assay stress --json): rates, and findings per check
   --format <format>      markdown (default), github (Markdown with unchanged requirements
-                         collapsed, for a PR comment) or html
+                         collapsed, for a PR comment) or html (a standalone page)
 ${TRUSTED_KEY_HELP}
   --json                 Print the requirements and checks, warnings, lock and diff as JSON
 

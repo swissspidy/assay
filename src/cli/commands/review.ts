@@ -14,6 +14,7 @@ import {
 import type { StressReport } from '../../stress/index.ts';
 import { lockState, stressDigest, stressReportProblem } from '../../verifier/lock.ts';
 import { checkSettings } from '../../verifier/diff.ts';
+import { htmlPage } from '../../verifier/doc.ts';
 import { CliError, EXIT, UsageError, readJson, type Invocation, type Io } from '../io.ts';
 import { readCheckSet, trustedKeys } from '../keys.ts';
 import { cliConfig } from '../config.ts';
@@ -40,15 +41,15 @@ export async function run({ values, positionals }: Invocation, io: Io): Promise<
   const opts = keys ? { trustedKeys: keys } : {};
 
   if (!values.json) {
-    io.out(
-      reviewSheet(cs, {
-        ...opts,
-        format: format === 'html' ? 'html' : 'markdown',
-        details: format === 'github',
-        ...(previous ? { previous } : {}),
-        ...(stress ? { stress } : {}),
-      }),
-    );
+    const sheet = reviewSheet(cs, {
+      ...opts,
+      format: format === 'html' ? 'html' : 'markdown',
+      details: format === 'github',
+      ...(previous ? { previous } : {}),
+      ...(stress ? { stress } : {}),
+    });
+    // HTML is written to be saved and opened in a browser: a whole page, not a fragment.
+    io.out(format === 'html' ? htmlPage(`Review: ${cs.id} v${cs.version}`, sheet) : sheet);
     return EXIT.ok;
   }
   const lock = lockState(cs, opts);

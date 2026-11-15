@@ -565,6 +565,13 @@ test.describe('review workflow (ADR 0013)', () => {
     expect((await assay(['review', checks, '--diff', old, '--format', 'github'])).stdout).toContain('<details>');
     const html = await assay(['review', checks, '--diff', old, '--format', 'html']);
     expect(html.stdout).toContain('<h1>Review: tiny-shop/cart-two-mugs v1</h1>');
+    // A standalone page: encoding, language, viewport, light/dark and a CSP that blocks scripts.
+    expect(html.stdout).toMatch(/^<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n/);
+    expect(html.stdout).toContain('<meta name="viewport" content="width=device-width, initial-scale=1">');
+    expect(html.stdout).toContain('<meta name="color-scheme" content="light dark">');
+    expect(html.stdout).toContain(`content="default-src 'none'; base-uri 'none'; form-action 'none'"`);
+    expect(html.stdout).toContain('<title>Review: tiny-shop/cart-two-mugs v1</title>');
+    expect(html.stdout.trimEnd()).toMatch(/<\/main>\n<\/body>\n<\/html>$/);
     expect((await assay(['review', checks, '--format', 'pdf'])).code).toBe(3);
     const j = JSON.parse((await assay(['review', checks, '--diff', old, '--json'])).stdout);
     expect(j).toMatchObject({
