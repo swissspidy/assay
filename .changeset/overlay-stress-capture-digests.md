@@ -1,5 +1,0 @@
----
-'@swissspidy/assay': minor
----
-
-The stress test is about twice as fast, with the same reports. Variants and mutants now share every part of their reference snapshot they do not change instead of copying it, and only the checks that read a changed part run again; a mutant is judged by its target check first and stops at the first failing hard check. `captureSnapshot` now takes the snapshot's digest at capture time and keeps it beside the snapshot object, so a first `verify` of a snapshot just captured takes about 0.3 ms instead of 1.5 ms; the captured snapshot is frozen with it, so the digest is always that of the evidence verified (edit a copy, made with `structuredClone`, instead). A parsed or copied snapshot computes its digest as before, and snapshot contents and records are unchanged. Pass `digest: false` to neither take the digest nor freeze the snapshot. The snapshots of the variants and mutants that `generateVariants` and `generateMutants` return share objects with the reference; do not edit them in place.
